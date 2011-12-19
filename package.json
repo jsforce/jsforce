@@ -11,7 +11,7 @@
     "type" : "MIT",
     "url" : "http://github.com/stomita/node-salesforce/raw/master/LICENSE"
   }],
-  "main" : "./lib/salesforce"
+  "main" : "./lib/salesforce",
   "scripts": {
     "test": "vows test/*.test.js --spec"
   },
