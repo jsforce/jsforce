@@ -32,8 +32,11 @@ var conn = new sf.Connection({
 });
 conn.login(username, password, function(err) {
   if (!err) {
-    alert(conn.accessToken);
-    //...logic after authentication
+    // console.log(conn.accessToken);
+
+    //
+    // ... logics after authentication ...
+    //
   }
 });
 ```
