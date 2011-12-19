@@ -1,12 +1,17 @@
 {
   "author": "Shinichi Tomita <shinichi.tomita@gmail.com>",
-  "name": "node-salesforce-connection",
+  "name": "node-salesforce",
   "description": "Connecting Salesforce via RESTful API",
   "version": "0.1.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/stomita/node-sforce-connection.git"
+    "url": "git://github.com/stomita/node-salesforce.git"
   },
+  "licenses" : [{
+    "type" : "MIT",
+    "url" : "http://github.com/stomita/node-salesforce/raw/master/LICENSE"
+  }],
+  "main" : "./lib/salesforce"
   "scripts": {
     "test": "vows test/*.test.js --spec"
   },
