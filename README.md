@@ -2,7 +2,8 @@
 
 ## Abstract
 
-Node-salesforce is designed to be a wrapper of salesforce REST API from Node.js, which enables event-driven style development. It doesn't include authentication module, i.e light-weight. It works both on OAuth2 access token and session Id from SOAP API.
+Node-salesforce, which is designed to be a wrapper of Salesforce REST API in Node.js, enables Salesforce application development in event-driven style.
+It only capsulates the access of REST API end point, so it works both on OAuth2 access token and SOAP API sessionId.
 
 ## Install
 
@@ -47,11 +48,11 @@ conn.login(username, password, function(err) {
 });
 ```
 
-## Query Records by Event-Driven Style
+## Query Records in Event-Driven Style
 
 ```javascript
 var records = [];
-conn.query("SELECT Id, Name FROM Account");
+conn.query("SELECT Id, Name FROM Account")
   .on("record", function(record) {
     records.push(record);
   })
@@ -59,10 +60,10 @@ conn.query("SELECT Id, Name FROM Account");
     console.log("total in database : " + query.totalSize);
     console.log("total fetched : " + query.totalFetched);
   })
-  .run({ maxFetch : 4000 });
+  .run({ autoFetch : true, maxFetch : 4000 });
 ```
 
-## Query Records by Callback Style
+## Query Records in Callback Style
 
 ```javascript
 var records = [];
