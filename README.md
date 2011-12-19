@@ -7,6 +7,12 @@ Node-salesforce is designed to be a wrapper of salesforce REST API from Node.js,
 ## Install
 
 <pre>
+  npm install node-salesforce
+</pre>
+
+or
+
+<pre>
   git clone git://github.com/stomita/node-salesforce.git 
   cd node-salesforce
   npm link
