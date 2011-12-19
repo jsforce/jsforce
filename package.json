@@ -1,0 +1,24 @@
+{
+  "author": "Shinichi Tomita <shinichi.tomita@gmail.com>",
+  "name": "node-salesforce-connection",
+  "description": "Connecting Salesforce via RESTful API",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/stomita/node-sforce-connection.git"
+  },
+  "scripts": {
+    "test": "vows test/*.test.js --spec"
+  },
+  "engines": {
+    "node": "~0.4.10"
+  },
+  "dependencies": {
+    "async": ">= 0.1.12",
+    "request": ">= 2.1.1",
+    "underscore": ">= 1.2.1"
+  },
+  "devDependencies": {
+    "vows": ">= 0.5.11"
+  }
+}
