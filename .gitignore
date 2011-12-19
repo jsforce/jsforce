@@ -14,4 +14,4 @@ results
 node_modules
 npm-debug.log
 
-test/conf/*.js
+test/config/*.js
