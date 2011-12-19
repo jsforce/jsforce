@@ -1,8 +1,9 @@
 /**
- * copy and save this as "sf.js", by filling proper information;
+ * copy and save this as "salesforce.js", by filling proper information;
  */
 module.exports = {
   loginServerUrl : "https://login.salesforce.com",
   username : "usernamen@example.org",
   password : "your password is here"
+// , bigTable : "BigTable__c"
 };

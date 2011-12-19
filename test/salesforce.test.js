@@ -1,7 +1,7 @@
 var vows   = require('vows')
   , assert = require('assert')
-  , sf     = require('../lib/sf')
-  , config = require('./config/sf')
+  , sf     = require('../lib/salesforce')
+  , config = require('./config/salesforce')
   ;
 
 var conn = new sf.Connection({});
@@ -35,14 +35,13 @@ vows.describe("salesforce").addBatch({
       query.on('record', function(record, i, cnt){
         records.push(record); 
       });
-      query.on('end', function(fetched) {
+      query.on('end', function() {
         self.callback(null, { query : query, records : records });
       });
       query.on('error', function(err) {
         self.callback(err);
       });
-      query.autoFetch = true;
-      query.run();
+      query.run({ autoFetch : true });
     },
 
     "should scan all tables" : function(result) {
