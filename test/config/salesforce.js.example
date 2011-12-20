@@ -6,4 +6,6 @@ module.exports = {
   username : "usernamen@example.org",
   password : "your password is here"
 // , bigTable : "BigTable__c"
+// , upsertTable : "UpsertTable__c"
+// , upsertField : "ExtId__c"
 };

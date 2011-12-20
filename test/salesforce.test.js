@@ -98,6 +98,7 @@ vows.describe("salesforce").addBatch({
     },
     "should return a record" : function(record) {
       assert.isString(record.Id);
+      assert.isObject(record.attributes);
       assert.equal(record.Name, 'Hello');
     },
 
@@ -113,8 +114,9 @@ vows.describe("salesforce").addBatch({
     topic : function(ret) {
       conn.sobject('Account').retrieve(ret.id, this.callback);
     },
-    "sholuld return updated account object" : function(account) {
-      assert.equal(account.Name, 'Hello2');
+    "sholuld return updated account object" : function(record) {
+      assert.equal(record.Name, 'Hello2');
+      assert.isObject(record.attributes);
     },
 
   ", then delete account" : {
@@ -132,6 +134,65 @@ vows.describe("salesforce").addBatch({
     "should not return any record" : function(err, record) {
       assert.isNotNull(err);
       assert.equal(err.errorCode, 'NOT_FOUND');
+    }
+
+  }}}}}}
+
+
+
+}).addBatch({
+
+  "generate unique external id" : {
+    topic : "ID" + Date.now(),
+
+  ", upsert record with the ext id" : {
+    topic : function(extId) {
+      var rec = { Name : 'New Record' };
+      rec[config.upsertField] = extId;
+      conn.sobject(config.upsertTable).upsert(rec, config.upsertField, this.callback);
+    },
+    "should insert new record successfully" : function(ret) {
+      assert.ok(ret.success);
+      assert.isString(ret.id);
+    },
+
+  ", then upsert again with same ext id" : {
+    topic : function(ret, extId) {
+      var rec = { Name : 'Updated Record' };
+      rec[config.upsertField] = extId;
+      conn.sobject(config.upsertTable).upsert(rec, config.upsertField, this.callback);
+    },
+    "should update the record successfully" : function(ret) {
+      assert.ok(ret.success);
+      assert.isUndefined(ret.id);
+    },
+
+  ", then retrieve record by id" : {
+    topic : function(ret2, ret1) {
+      var id = ret1.id;
+      conn.sobject(config.upsertTable).retrieve(id, this.callback);
+    },
+    "should return updated record" : function(record) {
+      assert.equal(record.Name, "Updated Record");
+    },
+
+  ", then insert record with same ext id" : {
+    topic : function(record, ret2, ret1, extId) {
+      var rec = { Name : 'Duplicated Record' };
+      rec[config.upsertField] = extId;
+      conn.sobject(config.upsertTable).create(rec, this.callback);
+    }, 
+
+  "and upsert with the same ext id" : {
+    topic: function(ret3, record, ret2, ret1, extId) {
+      var rec = { Name : 'Updated Record, Twice' };
+      rec[config.upsertField] = extId;
+      conn.sobject(config.upsertTable).upsert(rec, config.upsertField, this.callback);
+    },
+    "should throw error and return array of choices" : function(err, ret) {
+      assert.isObject(err);
+      assert.isArray(ret);
+      assert.isString(ret[0]);
     }
 
   }}}}}}
