@@ -177,3 +177,59 @@ function(err, rets) {
 ```
 
 
+## Upsert Record(s)
+
+```javascript
+conn.sobject("UpsertTable__c").upsert({ 
+  Name : 'Record #1',
+  ExtId__c : 'ID-0000001'
+}, 'ExtId__c', function(err, ret) {
+  if (!err && ret.success) {
+    console.log('Upserted Successfully');
+  }
+});
+// Multiple records modification consumes one API request per record.
+// Be careful for the API quota.
+conn.sobject("UpsertTable__c").upsert([{
+  Name : 'Record #1',
+  ExtId__c : 'ID-0000001'
+}, {
+  Name : 'Record #2',
+  ExtId__c : 'ID-0000002'
+}], 
+'ExtId__c',
+function(err, rets) {
+  if (!err) {
+    for (var i=0; i<rets.length; i++) {
+      if (rets[i].success) {
+        console.log("Upserted Successfully");
+      }
+    }
+  }
+});
+```
+
+
+
+## Describe SObject
+
+```javascript
+conn.sobject("Account").describe(function(err, meta) {
+  if (!err) {
+    console.log('Label : ' + meta.label);
+    console.log('Num of Fields : ' + meta.fields.length);
+  }
+});
+```
+
+## Describe Global
+
+```javascript
+conn.describeGlobal(function(err, res) {
+  if (!err) {
+    console.log('Num of SObjects : ' + res.sobjects.length);
+  }
+});
+```
+
+
