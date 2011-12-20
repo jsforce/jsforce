@@ -103,7 +103,7 @@ vows.describe("salesforce").addBatch({
 
   ", then update account" : {
     topic : function(account) {
-      conn.sobject('Account').update({ Id : account.Id, Name : "Hello2" }, this.callback);
+      conn.sobject('Account').record(account.Id).update({ Name : "Hello2" }, this.callback);
     },
     "should update successfully" : function(ret) {
       assert.ok(ret.success);
@@ -111,7 +111,7 @@ vows.describe("salesforce").addBatch({
 
   ", then retrieve account" : {
     topic : function(ret) {
-      conn.sobject('Account').retrieve(ret.id, this.callback);
+      conn.sobject('Account').record(ret.id).retrieve(this.callback);
     },
     "sholuld return updated account object" : function(record) {
       assert.equal(record.Name, 'Hello2');
@@ -120,7 +120,7 @@ vows.describe("salesforce").addBatch({
 
   ", then delete account" : {
     topic : function(account) {
-      conn.sobject('Account').del(account.Id, this.callback);
+      conn.sobject('Account').record(account.Id).destroy(this.callback);
     },
     "should delete successfully" : function(ret) {
       assert.ok(ret.success);
