@@ -2,7 +2,7 @@
   "author": "Shinichi Tomita <shinichi.tomita@gmail.com>",
   "name": "node-salesforce",
   "description": "Connecting Salesforce via RESTful API",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "repository": {
     "type": "git",
     "url": "git://github.com/stomita/node-salesforce.git"
