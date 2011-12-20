@@ -83,6 +83,15 @@ conn.sobject("Account").retrieve("0017000000hOMChAAO", function(err, account) {
     console.log("Name : " + account.Name);
   }
 });
+// Retrieve via Record entity
+conn.sobject("Account")
+  .record("0017000000hOMChAAO")
+  .retrieve(function(err, account) {
+    if (!err) {
+      console.log("Name : " + account.Name);
+    }
+  });
+
 // Multiple records retrieval consumes one API request per record.
 // Be careful for the API quota.
 conn.sobject("Account").retrieve(["0017000000hOMChAAO", "0017000000iKOZTAA4"], function(err, accounts) {
@@ -131,6 +140,15 @@ conn.sobject("Account").update({
     console.log('Updated Successfully : ' + ret.id);
   }
 });
+// Update via Record entity
+conn.sobject("Account")
+  .record("0017000000hOMChAAO")
+  .update({ Name : 'Updated Account #1' }, function(err, ret) {
+    if (!err && ret.success) {
+      console.log('Updated Successfully : ' + ret.id);
+    }
+  });
+
 // Multiple records modification consumes one API request per record.
 // Be careful for the API quota.
 conn.sobject("Account").update([{
@@ -159,6 +177,15 @@ conn.sobject("Account").del('0017000000hOMChAAO', function(err, ret) {
     console.log('Deleted Successfully : ' + ret.id);
   }
 });
+// Delete from Record entity
+conn.sobject("Account")
+  .record("0017000000hOMChAAO")
+  .destroy(function(err, ret) { // synonym of "del"
+    if (!err && ret.success) {
+      console.log('Deleted Successfully : ' + ret.id);
+    }
+  });
+
 // Multiple records deletion consumes one API request per record.
 // Be careful for the API quota.
 conn.sobject("Account").destroy([ // synonym of "del"
