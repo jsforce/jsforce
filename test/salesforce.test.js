@@ -80,7 +80,6 @@ vows.describe("salesforce").addBatch({
   }
 
 
-
 }).addBatch({
 
   "create account" : {
@@ -132,6 +131,92 @@ vows.describe("salesforce").addBatch({
       conn.sobject('Account').retrieve(ret.id, this.callback);
     },
     "should not return any record" : function(err, record) {
+      assert.isNotNull(err);
+      assert.equal(err.errorCode, 'NOT_FOUND');
+    }
+
+  }}}}}}
+
+
+
+}).addBatch({
+
+
+  "create multiple accounts" : {
+    topic : function() {
+      conn.sobject('Account').create([
+        { Name : 'Account #1' }, 
+        { Name : 'Account #2' }
+      ], this.callback);
+    },
+    "should return created obj" : function(rets) {
+      assert.isArray(rets);
+      rets.forEach(function(ret) {
+        assert.ok(ret.success);
+        assert.isString(ret.id);
+      });
+    },
+
+  ", then retrieve accounts" : {
+    topic : function(rets) {
+      conn.sobject('Account').retrieve(
+        rets.map(function(ret){ return ret.id; }), this.callback);
+    },
+    "should return records" : function(records) {
+      assert.isArray(records);
+      records.forEach(function(record, i) {
+        assert.isString(record.Id);
+        assert.isObject(record.attributes);
+        assert.equal(record.Name, 'Account #' + (i+1));
+      });
+    },
+
+  ", then update accounts" : {
+    topic : function(accounts) {
+      conn.sobject('Account').update(
+        accounts.map(function(account) {
+          return { Id : account.Id, Name : "Updated " + account.Name };
+        }),
+        this.callback);
+    },
+    "should update successfully" : function(rets) {
+      assert.isArray(rets);
+      rets.forEach(function(ret){
+        assert.ok(ret.success);
+      });
+    },
+
+  ", then retrieve accounts" : {
+    topic : function(rets) {
+      conn.sobject('Account').retrieve(
+        rets.map(function(ret){ return ret.id; }), this.callback);
+    },
+    "sholuld return updated account object" : function(records) {
+      assert.isArray(records);
+      records.forEach(function(record, i) {
+        assert.equal(record.Name, 'Updated Account #' + (i+1));
+        assert.isObject(record.attributes);
+      });
+    },
+
+  ", then delete accounts" : {
+    topic : function(accounts) {
+      conn.sobject('Account').destroy(
+        accounts.map(function(account){ return account.Id; }), this.callback);
+    },
+    "should delete successfully" : function(rets) {
+      assert.isArray(rets);
+      rets.forEach(function(ret){
+        assert.ok(ret.success);
+      });
+    },
+
+  ", then retrieve account" : {
+    topic : function(rets) {
+      conn.sobject('Account').retrieve(
+        rets.map(function(ret){ return ret.id; }), this.callback);
+    },
+    "should not return any record" : function(err, records) {
       assert.isNotNull(err);
       assert.equal(err.errorCode, 'NOT_FOUND');
     }
