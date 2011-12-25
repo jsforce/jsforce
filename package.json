@@ -26,6 +26,8 @@
     "underscore": ">= 1.2.1"
   },
   "devDependencies": {
-    "vows": ">= 0.5.11"
+    "express": ">= 2.4.3",
+    "vows": ">= 0.5.11",
+    "zombie": ">= 0.12.9"
   }
 }
