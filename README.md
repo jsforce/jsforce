@@ -20,22 +20,37 @@ or
 </pre>
 
 
-## Create Connection by giving OAuth2 Token
+## Establish Connection 
+
+### Using Session ID
 
 ```javascript
 var sf = require('node-salesforce');
 var conn = new sf.Connection({
   serverUrl : 'https://na1.salesforce.com',
-  accessToken : '<your oauth2 access token is here>'
+  sessionId : '<your Salesforce session ID is here>'
 });
 ```
 
-## Create Connection and Login via SOAP API
+### Using OAuth2 Access Token
+
+```javascript
+var sf = require('node-salesforce');
+var conn = new sf.Connection({
+  instanceUrl : 'https://na1.salesforce.com',
+  accessToken : '<your Salesforrce OAuth2 access token is here>'
+// refreshToken : '<your Salesforce OAuth2 refresh token is here>'
+});
+```
+
+
+### Username and Password Login (SOAP API)
 
 ```javascript
 var sf = require('node-salesforce');
 var conn = new sf.Connection({
   loginUrl : 'https://login.salesforce.com'
+// loginUrl : 'https://test.salesforce.com' // you can change login URL to point sandbox env.
 });
 conn.login(username, password, function(err) {
   if (!err) {
@@ -48,7 +63,68 @@ conn.login(username, password, function(err) {
 });
 ```
 
-## Query Records in Event-Driven Style
+### Username and Password Login (OAuth2 Resource Owner Password Credential)
+
+```javascript
+var sf = require('node-salesforce');
+var conn = new sf.Connection({
+  loginUrl : 'https://login.salesforce.com'
+  clientId : '<your Salesforce OAuth2 client ID is here>',
+  clientSecret : '<your Salesforce OAuth2 client secret is here>',
+  rediretUri : '<callback URI is here>'
+});
+conn.login(username, password, function(err) {
+  if (!err) {
+    // ...
+  }
+});
+```
+
+
+## OAuth2 Web Server Flow
+
+### Autorization Request
+
+```javascript
+var sf = require('node-salesforce');
+
+// Following sample is using express
+// 
+// get authz url and redirect to it.
+app.get('/oauth2/auth', function(req, res) {
+  var conn = new sf.Connection({
+    clientId : '<your Salesforce OAuth2 client ID is here>',
+    clientSecret : '<your Salesforce OAuth2 client secret is here>',
+    rediretUri : '<callback URI is here>'
+  });
+  res.redirect(conn.oauth2.getAuthorizationUrl({ scope : 'api id web' }));
+});
+```
+
+### Access Token Request
+
+```javascript
+// pass received authz code and get access token
+app.get('/oauth2/callback', function(req, res) {
+  var conn = new sf.Connection({
+    clientId : '<your Salesforce OAuth2 client ID is here>',
+    clientSecret : '<your Salesforce OAuth2 client secret is here>',
+    rediretUri : '<callback URI is here>'
+  });
+  var code = req.param('code');
+  conn.authorize(code, function(err) {
+    if (!err) {
+      // ...
+    }
+  });
+});
+```
+
+
+
+## Query Records 
+
+### In Event-Driven Style
 
 ```javascript
 var records = [];
@@ -63,7 +139,7 @@ conn.query("SELECT Id, Name FROM Account")
   .run({ autoFetch : true, maxFetch : 4000 });
 ```
 
-## Query Records in Callback Style
+### In Callback Style
 
 ```javascript
 var records = [];
@@ -75,7 +151,9 @@ conn.query("SELECT Id, Name FROM Account", function(err, result) {
 });
 ```
 
-## Retrieve Records by Record ID(s)
+## CRUD Operation
+
+### Retrieve
 
 ```javascript
 conn.sobject("Account").retrieve("0017000000hOMChAAO", function(err, account) {
@@ -83,14 +161,6 @@ conn.sobject("Account").retrieve("0017000000hOMChAAO", function(err, account) {
     console.log("Name : " + account.Name);
   }
 });
-// Retrieve via Record entity
-conn.sobject("Account")
-  .record("0017000000hOMChAAO")
-  .retrieve(function(err, account) {
-    if (!err) {
-      console.log("Name : " + account.Name);
-    }
-  });
 
 // Multiple records retrieval consumes one API request per record.
 // Be careful for the API quota.
@@ -103,7 +173,7 @@ conn.sobject("Account").retrieve(["0017000000hOMChAAO", "0017000000iKOZTAA4"], f
 });
 ```
 
-## Create Record(s)
+### Create 
 
 ```javascript
 conn.sobject("Account").create({ Name : 'My Account #1' }, function(err, ret) {
@@ -129,7 +199,7 @@ function(err, rets) {
 });
 ```
 
-## Update Record(s)
+### Update
 
 ```javascript
 conn.sobject("Account").update({ 
@@ -140,14 +210,6 @@ conn.sobject("Account").update({
     console.log('Updated Successfully : ' + ret.id);
   }
 });
-// Update via Record entity
-conn.sobject("Account")
-  .record("0017000000hOMChAAO")
-  .update({ Name : 'Updated Account #1' }, function(err, ret) {
-    if (!err && ret.success) {
-      console.log('Updated Successfully : ' + ret.id);
-    }
-  });
 
 // Multiple records modification consumes one API request per record.
 // Be careful for the API quota.
@@ -169,7 +231,7 @@ function(err, rets) {
 });
 ```
 
-## Delete Record(s)
+### Delete
 
 ```javascript
 conn.sobject("Account").del('0017000000hOMChAAO', function(err, ret) {
@@ -177,14 +239,6 @@ conn.sobject("Account").del('0017000000hOMChAAO', function(err, ret) {
     console.log('Deleted Successfully : ' + ret.id);
   }
 });
-// Delete from Record entity
-conn.sobject("Account")
-  .record("0017000000hOMChAAO")
-  .destroy(function(err, ret) { // synonym of "del"
-    if (!err && ret.success) {
-      console.log('Deleted Successfully : ' + ret.id);
-    }
-  });
 
 // Multiple records deletion consumes one API request per record.
 // Be careful for the API quota.
@@ -204,7 +258,7 @@ function(err, rets) {
 ```
 
 
-## Upsert Record(s)
+### Upsert
 
 ```javascript
 conn.sobject("UpsertTable__c").upsert({ 
@@ -237,8 +291,9 @@ function(err, rets) {
 ```
 
 
+## Describe
 
-## Describe SObject
+### SObject
 
 ```javascript
 conn.sobject("Account").describe(function(err, meta) {
@@ -249,7 +304,7 @@ conn.sobject("Account").describe(function(err, meta) {
 });
 ```
 
-## Describe Global
+### Global
 
 ```javascript
 conn.describeGlobal(function(err, res) {
