@@ -55,10 +55,7 @@ var conn = new sf.Connection({
 conn.login(username, password, function(err) {
   if (!err) {
     // console.log(conn.accessToken);
-
-    //
-    // ... logics after authentication ...
-    //
+    // ...
   }
 });
 ```
@@ -68,13 +65,14 @@ conn.login(username, password, function(err) {
 ```javascript
 var sf = require('node-salesforce');
 var conn = new sf.Connection({
-  loginUrl : 'https://login.salesforce.com'
+//  loginUrl : 'https://login.salesforce.com'
   clientId : '<your Salesforce OAuth2 client ID is here>',
   clientSecret : '<your Salesforce OAuth2 client secret is here>',
   rediretUri : '<callback URI is here>'
 });
 conn.login(username, password, function(err) {
   if (!err) {
+    // console.log(conn.accessToken);
     // ...
   }
 });
@@ -83,7 +81,7 @@ conn.login(username, password, function(err) {
 
 ## OAuth2 Web Server Flow
 
-### Autorization Request
+### Authorization Request
 
 ```javascript
 var sf = require('node-salesforce');
@@ -114,12 +112,13 @@ app.get('/oauth2/callback', function(req, res) {
   var code = req.param('code');
   conn.authorize(code, function(err) {
     if (!err) {
+      // console.log(conn.accessToken);
+      // console.log(conn.refreshToken);
       // ...
     }
   });
 });
 ```
-
 
 
 ## Query Records 
@@ -304,7 +303,7 @@ conn.sobject("Account").describe(function(err, meta) {
 });
 ```
 
-### Global
+### Global Object
 
 ```javascript
 conn.describeGlobal(function(err, res) {
