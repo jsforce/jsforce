@@ -1,10 +1,14 @@
 var vows   = require('vows')
   , assert = require('assert')
+  , zombie = require('zombie')
+  , async  = require('async')
+  , querystring = require('querystring')
   , sf     = require('../lib/salesforce')
   , config = require('./config/salesforce')
   ;
 
-var conn = new sf.Connection({});
+var conn = new sf.Connection();
+var browser = new zombie.Browser();
 
 vows.describe("salesforce").addBatch({
   "login" : {
@@ -307,6 +311,97 @@ vows.describe("salesforce").addBatch({
     }
   }
 
+}).addBatch({
+
+  "login by oauth2" : {
+    topic : function() {
+      conn = new sf.Connection({
+        clientId : config.clientId,
+        clientSecret : config.clientSecret,
+        redirectUri : config.redirectUri 
+      });
+      browser.visit(conn.oauth2.getAuthorizationUrl(), this.callback);
+    },
+  "." : {
+    topic : function() {
+      var self = this;
+      browser.fill("input[name=un]", config.username)
+             .fill("input[name=pw]", config.password)
+             .pressButton("input[name=Login]", function() {
+               browser.wait(1500, self.callback);
+             });
+    },
+
+  "." : {
+    topic : function() {
+      var url = browser.location.href;
+      if (url.indexOf(config.redirectUri) === 0) {
+        this.callback();
+      } else {
+        browser.pressButton("#oaapprove", this.callback);
+      }
+    },
+
+  "." : {
+    topic : function() {
+      var url = browser.location.href;
+      url = require('url').parse(url);
+      var params = querystring.parse(url.query);
+      conn.authorize(params.code, this.callback);
+    },
+    "done" : function() {
+      assert.isString(conn.accessToken);
+      assert.isString(conn.refreshToken);
+    },
+
+  ", then query user" : {
+    topic : function() {
+      conn.query("SELECT Id FROM User", this.callback);
+    },
+
+    "should return some records" : function(res) {
+      assert.isArray(res.records);
+    },
+
+  ", then expire access token and query user" : {
+    topic : function() {
+      conn.accessToken = "invalid access token";
+      /*
+      conn.on('auth', function(){ console.log('auth requested'); });
+      conn.on('resume', function(){ console.log('resumed'); });
+      conn.on('request', function(method, url){ console.log(method + ", " + url); });
+      */
+      conn.query("SELECT Id FROM User", this.callback);
+    },
+    "should return records" : function(res) {
+      assert.isArray(res.records);
+    },
+
+  ", then again expire access token and call api in parallel" : {
+    topic : function() {
+      conn.accessToken = "invalid access token";
+      async.parallel([
+        function(cb) {
+          conn.query('SELECT Id FROM User', cb);
+        },
+        function(cb) {
+          conn.describeGlobal(cb);
+        },
+        function(cb) {
+          conn.sobject('User').describe(cb);
+        }
+      ], this.callback);
+    },
+
+    "should return responces" : function(results) {
+      assert.isArray(results);
+      assert.isArray(results[0].records);
+      assert.isArray(results[1].sobjects);
+      assert.isArray(results[2].fields);
+    }
+
+
+  }}}}}}}
 
 }).export(module);
 

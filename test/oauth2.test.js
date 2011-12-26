@@ -66,7 +66,7 @@ vows.describe("oauth2").addBatch({
       var url = browser.location.href;
       url = require('url').parse(url);
       var params = querystring.parse(url.query);
-      oauth2.authorizeCode(params.code, this.callback);
+      oauth2.requestToken(params.code, this.callback);
     },
 
     "should receive access token (and refresh token)" : function(res) {

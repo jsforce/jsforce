@@ -5,6 +5,11 @@ module.exports = {
   loginServerUrl : "https://login.salesforce.com",
   username : "usernamen@example.org",
   password : "your password is here"
+
+  clientId : "your oauth2 client id is here",
+  clientSecret : "your oauth2 client secret is here",
+  redirectUri : "http://localhost:4000/oauth2/callback",
+
 // , bigTable : "BigTable__c"
 // , upsertTable : "UpsertTable__c"
 // , upsertField : "ExtId__c"
