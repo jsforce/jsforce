@@ -85,4 +85,16 @@ vows.describe("oauth2").addBatch({
 
   }}}}}
 
+}).addBatch({
+
+  "OAuth2 username & password flow : authenticate" : {
+    topic : function() {
+      oauth2.authenticate(config.username, config.password, this.callback);
+    },
+
+    "should receive access token" : function(res) {
+      assert.isString(res.access_token);
+    }
+  }
+
 }).export(module);
