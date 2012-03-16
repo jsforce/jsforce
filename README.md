@@ -1,4 +1,4 @@
-# node-salesforce -- Connecting Salesforce via REST Api
+# node-salesforce -- Salesforce API Connection Library for Node.js Applications
 
 ## Abstract
 
