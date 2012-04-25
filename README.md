@@ -68,7 +68,7 @@ var conn = new sf.Connection({
 //  loginUrl : 'https://login.salesforce.com'
   clientId : '<your Salesforce OAuth2 client ID is here>',
   clientSecret : '<your Salesforce OAuth2 client secret is here>',
-  rediretUri : '<callback URI is here>'
+  redirectUri : '<callback URI is here>'
 });
 conn.login(username, password, function(err) {
   if (!err) {
@@ -93,7 +93,7 @@ app.get('/oauth2/auth', function(req, res) {
   var conn = new sf.Connection({
     clientId : '<your Salesforce OAuth2 client ID is here>',
     clientSecret : '<your Salesforce OAuth2 client secret is here>',
-    rediretUri : '<callback URI is here>'
+    redirectUri : '<callback URI is here>'
   });
   res.redirect(conn.oauth2.getAuthorizationUrl({ scope : 'api id web' }));
 });
@@ -107,7 +107,7 @@ app.get('/oauth2/callback', function(req, res) {
   var conn = new sf.Connection({
     clientId : '<your Salesforce OAuth2 client ID is here>',
     clientSecret : '<your Salesforce OAuth2 client secret is here>',
-    rediretUri : '<callback URI is here>'
+    redirectUri : '<callback URI is here>'
   });
   var code = req.param('code');
   conn.authorize(code, function(err) {
