@@ -313,4 +313,19 @@ conn.describeGlobal(function(err, res) {
 });
 ```
 
+## Streaming
+
+```javascript
+/**
+ Before the subscription, you should insert appropriate PushTopic record (in this example, "InvoiceStatementUpdates") as written in Streaming API guide.
+ */
+conn.topic("InvoiceStatementUpdates").subscribe(function(message) {
+  console.log('Event Type : ' + message.event.type);
+  console.log('Event Created : ' + message.event.createdDate);
+  console.log('Object Id : ' + message.sobject.Id);
+});
+```
+
+
+
 
