@@ -70,6 +70,7 @@ vows.describe("oauth2").addBatch({
     },
 
     "should receive access token (and refresh token)" : function(res) {
+      console.log(res.access_token);
       assert.isString(res.access_token);
       assert.isString(res.refresh_token);
     },
