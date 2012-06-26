@@ -27,9 +27,12 @@ vows.describe("streaming").addBatch({
       conn.topic(config.pushTopicName).subscribe(function(msg) {
         callback(null, msg);
       });
-      conn.sobject('Account').create({
-        Name: 'My New Account #'+Date.now()
-      }, function() {});
+      // wait 5 secs for subscription complete
+      setTimeout(function() {
+        conn.sobject('Account').create({
+          Name: 'My New Account #'+Date.now()
+        }, function() {});
+      }, 5000);
     },
     ", then receive event account created" : function(msg) {
       assert.equal("created", msg.event.type);
