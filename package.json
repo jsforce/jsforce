@@ -27,8 +27,8 @@
     "faye": "0.8.x"
   },
   "devDependencies": {
-    "express": ">= 2.4.3",
-    "vows": ">= 0.5.11",
-    "zombie": ">= 0.12.9"
+    "express": "2.5.x",
+    "vows": "0.5.x",
+    "zombie": "0.12.x"
   }
 }
