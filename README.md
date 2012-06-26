@@ -1,5 +1,7 @@
 # node-salesforce -- Salesforce API Connection Library for Node.js Applications
 
+[![Build Status](https://secure.travis-ci.org/stomita/node-salesforce.png)](http://travis-ci.org/stomita/node-salesforce)
+
 ## Abstract
 
 Node-salesforce, which is designed to be a wrapper of Salesforce REST API in Node.js, enables Salesforce application development in event-driven style.
