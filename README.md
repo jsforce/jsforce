@@ -1,6 +1,6 @@
 # node-salesforce -- Salesforce API Connection Library for Node.js Applications
 
-[![Build Status](https://secure.travis-ci.org/stomita/node-salesforce.png)](http://travis-ci.org/stomita/node-salesforce)
+[![Build Status](https://secure.travis-ci.org/stomita/node-salesforce.png?branch=travis-ci)](http://travis-ci.org/stomita/node-salesforce)
 
 ## Abstract
 
