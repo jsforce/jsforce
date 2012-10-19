@@ -398,10 +398,21 @@ vows.describe("salesforce").addBatch({
       assert.isArray(results[0].records);
       assert.isArray(results[1].sobjects);
       assert.isArray(results[2].fields);
+    },
+
+  ", then again expire access token and expire refresh token" : {
+    topic : function() {
+      conn.accessToken = "invalid access token";
+      conn.refreshToken = "invalid refresh token";
+      conn.query("SELECT Id FROM User", this.callback);
+    },
+
+    "should return error response" : function(err, user) {
+      assert.isObject(err);
+      assert.equal("invalid_grant", err.error);
     }
 
-
-  }}}}}}}
+  }}}}}}}}
 
 }).export(module);
 
