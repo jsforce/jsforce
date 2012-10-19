@@ -1,10 +1,10 @@
 {
   "author": "Shinichi Tomita <shinichi.tomita@gmail.com>",
   "name": "node-salesforce",
-  "description": "Connecting Salesforce via RESTful API",
+  "description": "Salesforce API Connection Library for Node.js Applications",
   "keywords": [ "salesforce", "salesforce.com", "sfdc", "force.com", "database.com" ],
   "homepage": "http://github.com/stomita/node-salesforce",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "repository": {
     "type": "git",
     "url": "git://github.com/stomita/node-salesforce.git"

@@ -5,7 +5,8 @@
 ## Abstract
 
 Node-salesforce, which is designed to be a wrapper of Salesforce REST API in Node.js, enables Salesforce application development in event-driven style.
-It only capsulates the access of REST API end point, so it works both on OAuth2 access token and SOAP API sessionId.
+It capsulates the access to REST API end point in asynchronous JavaScript function call.
+You can use both OAuth2 access token and SOAP login sessionId for API authentication.
 
 ## Install
 
