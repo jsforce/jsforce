@@ -9,6 +9,7 @@ var vows   = require('vows')
 
 var conn = new sf.Connection();
 var browser = new zombie.Browser();
+var context = {};
 
 vows.describe("salesforce").addBatch({
   "login" : {
@@ -21,6 +22,7 @@ vows.describe("salesforce").addBatch({
   }
 
 }).addBatch({
+
 
   "query accounts" : {
     topic : function() {
@@ -365,21 +367,30 @@ vows.describe("salesforce").addBatch({
 
   ", then expire access token and query user" : {
     topic : function() {
+      context.refreshCount = 0;
       conn.accessToken = "invalid access token";
-      /*
-      conn.on('auth', function(){ console.log('auth requested'); });
-      conn.on('resume', function(){ console.log('resumed'); });
-      conn.on('request', function(method, url){ console.log(method + ", " + url); });
-      */
+      conn.removeAllListeners("refresh");
+      conn.on("refresh", function(at) {
+        context.newAccessToken = at;
+        context.refreshCount++;
+      });
       conn.query("SELECT Id FROM User", this.callback);
     },
     "should return records" : function(res) {
+      assert.equal(context.refreshCount, 1);
+      assert.isString(context.newAccessToken);
       assert.isArray(res.records);
     },
 
   ", then again expire access token and call api in parallel" : {
     topic : function() {
+      context.refreshCount = 0;
       conn.accessToken = "invalid access token";
+      conn.removeAllListeners("refresh");
+      conn.on("refresh", function(at) {
+        context.newAccessToken = at;
+        context.refreshCount++;
+      });
       async.parallel([
         function(cb) {
           conn.query('SELECT Id FROM User', cb);
@@ -394,6 +405,8 @@ vows.describe("salesforce").addBatch({
     },
 
     "should return responces" : function(results) {
+      assert.equal(context.refreshCount, 1);
+      assert.isString(context.newAccessToken);
       assert.isArray(results);
       assert.isArray(results[0].records);
       assert.isArray(results[1].sobjects);
