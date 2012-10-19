@@ -5,7 +5,8 @@
 ## Abstract
 
 Node-salesforce, which is designed to be a wrapper of Salesforce REST API in Node.js, enables Salesforce application development in event-driven style.
-It only capsulates the access of REST API end point, so it works both on OAuth2 access token and SOAP API sessionId.
+It capsulates the access to REST API end point in asynchronous JavaScript function call.
+You can use both OAuth2 access token and SOAP login sessionId for API authentication.
 
 ## Install
 
@@ -41,7 +42,25 @@ var sf = require('node-salesforce');
 var conn = new sf.Connection({
   instanceUrl : 'https://na1.salesforce.com',
   accessToken : '<your Salesforrce OAuth2 access token is here>'
-// refreshToken : '<your Salesforce OAuth2 refresh token is here>'
+});
+```
+
+### Using OAuth2 Access Token with Refresh Token (automatically refresh access token when expired)
+
+```javascript
+var sf = require('node-salesforce');
+var conn = new sf.Connection({
+  oauth2 : {
+    clientId : '<your Salesforce OAuth2 client ID is here>',
+    clientSecret : '<your Salesforce OAuth2 client secret is here>',
+    redirectUri : '<your Salesforce OAuth2 redirect URI is here>'
+  },
+  instanceUrl : 'https://na1.salesforce.com',
+  accessToken : '<your Salesforrce OAuth2 access token is here>',
+  refreshToken : '<your Salesforce OAuth2 refresh token is here>'
+});
+conn.on("refresh", function(accessToken, res) {
+  // you can store renewed access token in your storage for next request
 });
 ```
 
@@ -67,10 +86,13 @@ conn.login(username, password, function(err) {
 ```javascript
 var sf = require('node-salesforce');
 var conn = new sf.Connection({
-//  loginUrl : 'https://login.salesforce.com'
-  clientId : '<your Salesforce OAuth2 client ID is here>',
-  clientSecret : '<your Salesforce OAuth2 client secret is here>',
-  redirectUri : '<callback URI is here>'
+  // you can change loginUrl to connect to sandbox or prerelease env.
+  // loginUrl : 'https://test.salesforce.com' 
+  oauth2 : {
+    clientId : '<your Salesforce OAuth2 client ID is here>',
+    clientSecret : '<your Salesforce OAuth2 client secret is here>',
+    redirectUri : '<callback URI is here>'
+  }
 });
 conn.login(username, password, function(err) {
   if (!err) {
@@ -93,9 +115,11 @@ var sf = require('node-salesforce');
 // get authz url and redirect to it.
 app.get('/oauth2/auth', function(req, res) {
   var conn = new sf.Connection({
-    clientId : '<your Salesforce OAuth2 client ID is here>',
-    clientSecret : '<your Salesforce OAuth2 client secret is here>',
-    redirectUri : '<callback URI is here>'
+    oauth2 : {
+      clientId : '<your Salesforce OAuth2 client ID is here>',
+      clientSecret : '<your Salesforce OAuth2 client secret is here>',
+      redirectUri : '<callback URI is here>'
+    }
   });
   res.redirect(conn.oauth2.getAuthorizationUrl({ scope : 'api id web' }));
 });
@@ -107,9 +131,11 @@ app.get('/oauth2/auth', function(req, res) {
 // pass received authz code and get access token
 app.get('/oauth2/callback', function(req, res) {
   var conn = new sf.Connection({
-    clientId : '<your Salesforce OAuth2 client ID is here>',
-    clientSecret : '<your Salesforce OAuth2 client secret is here>',
-    redirectUri : '<callback URI is here>'
+    oauth2 : {
+      clientId : '<your Salesforce OAuth2 client ID is here>',
+      clientSecret : '<your Salesforce OAuth2 client secret is here>',
+      redirectUri : '<callback URI is here>'
+    }
   });
   var code = req.param('code');
   conn.authorize(code, function(err) {
