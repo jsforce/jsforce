@@ -351,7 +351,9 @@ vows.describe("salesforce").addBatch({
       var params = querystring.parse(url.query);
       conn.authorize(params.code, this.callback);
     },
-    "done" : function() {
+    "done" : function(res) {
+      console.log("oauth2 res", res);
+      assert.isString(res.id);
       assert.isString(conn.accessToken);
       assert.isString(conn.refreshToken);
     },
