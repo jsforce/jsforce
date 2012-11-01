@@ -7,7 +7,7 @@ var vows   = require('vows')
   , config = require('./config/salesforce')
   ;
 
-var conn = new sf.Connection();
+var conn = new sf.Connection({ logLevel : config.logLevel });
 var browser = new zombie.Browser();
 var context = {};
 
