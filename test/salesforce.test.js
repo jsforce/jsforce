@@ -7,7 +7,7 @@ var vows   = require('vows')
   , config = require('./config/salesforce')
   ;
 
-var conn = new sf.Connection();
+var conn = new sf.Connection({ logLevel : config.logLevel });
 var browser = new zombie.Browser();
 var context = {};
 
@@ -352,7 +352,6 @@ vows.describe("salesforce").addBatch({
       conn.authorize(params.code, this.callback);
     },
     "done" : function(res) {
-      console.log("oauth2 res", res);
       assert.isString(res.id);
       assert.isString(conn.accessToken);
       assert.isString(conn.refreshToken);
