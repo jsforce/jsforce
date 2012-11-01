@@ -239,6 +239,68 @@ vows.describe("query").addBatch({
     "should equal to soql" : function(soql) {
       assert.equal(soql, "SELECT Id FROM Account");
     }
+  },
+  
+  "Query with sort option" : {
+    topic : Query.createSOQL({
+      table: "Opportunity",
+      sort: "-CreatedDate",
+      limit : 10
+    }),
+
+    "should equal to soql" : function(soql) {
+      assert.equal(soql,
+        "SELECT Id FROM Opportunity " +
+        "ORDER BY CreatedDate DESC " +
+        "LIMIT 10"
+      );
+    }
+  },
+
+  "Query with multiple sort option in array" : {
+    topic : Query.createSOQL({
+      table: "Opportunity",
+      conditions: {
+        "Owner.Name" : { $like : "A%" }
+      },
+      sort: [
+        [ "CreatedDate", "desc" ],
+        [ "Name", "asc" ]
+      ],
+      limit : 10
+    }),
+
+    "should equal to soql" : function(soql) {
+      assert.equal(soql,
+        "SELECT Id FROM Opportunity " +
+        "WHERE Owner.Name LIKE 'A%' " +
+        "ORDER BY CreatedDate DESC, Name ASC " +
+        "LIMIT 10"
+      );
+    }
+  },
+  
+  "Query with multiple sort option in hash" : {
+    topic : Query.createSOQL({
+      table: "Opportunity",
+      conditions: {
+        "Owner.Name" : { $like : "A%" }
+      },
+      sort: {
+        CreatedDate: "descending",
+        Name : "ascending"
+      },
+      limit : 10
+    }),
+
+    "should equal to soql" : function(soql) {
+      assert.equal(soql,
+        "SELECT Id FROM Opportunity " +
+        "WHERE Owner.Name LIKE 'A%' " +
+        "ORDER BY CreatedDate DESC, Name ASC " +
+        "LIMIT 10"
+      );
+    }
   }
-   
+     
 }).export(module);
