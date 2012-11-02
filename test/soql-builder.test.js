@@ -1,12 +1,12 @@
 var vows   = require('vows'),
     assert = require('assert'),
-    Query  = require('../lib/query'),
+    SOQLBuilder = require('../lib/soql-builder'),
     SfDate = require('../lib/date');
 
 vows.describe("query").addBatch({
 
   "Simple query" : {
-    topic : Query.createSOQL({
+    topic : SOQLBuilder.createSOQL({
       fields: [ "Id", "Name" ],
       table: "Account",
       conditions: { Id: '0011000000NPNrW' },
@@ -23,7 +23,7 @@ vows.describe("query").addBatch({
   },
 
   "Query with OR operator" : {
-    topic : Query.createSOQL({
+    topic : SOQLBuilder.createSOQL({
       fields: [ "Id", "Name" ],
       table: "Account",
       conditions: {
@@ -43,7 +43,7 @@ vows.describe("query").addBatch({
   },
 
   "Query with nested OR operator" : {
-    topic : Query.createSOQL({
+    topic : SOQLBuilder.createSOQL({
       fields: [ "Id", "Name" ],
       table: "Account",
       conditions: {
@@ -65,7 +65,7 @@ vows.describe("query").addBatch({
 
 
   "Query with nested OR/AND operator" : {
-    topic : Query.createSOQL({
+    topic : SOQLBuilder.createSOQL({
       table: "Opportunity",
       conditions: {
         $or : [
@@ -89,7 +89,7 @@ vows.describe("query").addBatch({
   },
 
   "Query with nested NOT/AND operator" : {
-    topic : Query.createSOQL({
+    topic : SOQLBuilder.createSOQL({
       table: "Opportunity",
       conditions: {
         $not : {
@@ -111,7 +111,7 @@ vows.describe("query").addBatch({
   },
 
   "Query with nested NOT operator" : {
-    topic : Query.createSOQL({
+    topic : SOQLBuilder.createSOQL({
       table: "Opportunity",
       conditions: {
         $not : {
@@ -130,7 +130,7 @@ vows.describe("query").addBatch({
   },
 
   "Query with nested OR/NOT/AND operator" : {
-    topic : Query.createSOQL({
+    topic : SOQLBuilder.createSOQL({
       table: "Opportunity",
       conditions: {
         $or : [
@@ -157,7 +157,7 @@ vows.describe("query").addBatch({
   },
 
   "Query with Date field for date literal" : {
-    topic : Query.createSOQL({
+    topic : SOQLBuilder.createSOQL({
       table: "Account",
       conditions: {
         $and : [
@@ -176,7 +176,7 @@ vows.describe("query").addBatch({
   },
 
   "Query with String field using $like/$nlike operator" : {
-    topic : Query.createSOQL({
+    topic : SOQLBuilder.createSOQL({
       table: "Account",
       conditions: {
         Name : { $like : "John's%"},
@@ -193,7 +193,7 @@ vows.describe("query").addBatch({
   },
 
   "Query using $in/$nin operator" : {
-    topic : Query.createSOQL({
+    topic : SOQLBuilder.createSOQL({
       table: "Contact",
       conditions: {
         "Id" : { $in : [] },
@@ -212,7 +212,7 @@ vows.describe("query").addBatch({
   },
 
   "Query for matching null " : {
-    topic : Query.createSOQL({
+    topic : SOQLBuilder.createSOQL({
       table: "Account",
       conditions: {
         Type: { $ne: null },
@@ -229,7 +229,7 @@ vows.describe("query").addBatch({
   },
 
   "Query with undefined condition" : {
-    topic : Query.createSOQL({
+    topic : SOQLBuilder.createSOQL({
       table: "Account",
       conditions: {
         Type : undefined
@@ -242,7 +242,7 @@ vows.describe("query").addBatch({
   },
   
   "Query with sort option" : {
-    topic : Query.createSOQL({
+    topic : SOQLBuilder.createSOQL({
       table: "Opportunity",
       sort: "-CreatedDate",
       limit : 10
@@ -258,7 +258,7 @@ vows.describe("query").addBatch({
   },
 
   "Query with multiple sort option in array" : {
-    topic : Query.createSOQL({
+    topic : SOQLBuilder.createSOQL({
       table: "Opportunity",
       conditions: {
         "Owner.Name" : { $like : "A%" }
@@ -281,7 +281,7 @@ vows.describe("query").addBatch({
   },
   
   "Query with multiple sort option in hash" : {
-    topic : Query.createSOQL({
+    topic : SOQLBuilder.createSOQL({
       table: "Opportunity",
       conditions: {
         "Owner.Name" : { $like : "A%" }
