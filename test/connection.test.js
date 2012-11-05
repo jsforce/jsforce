@@ -1,90 +1,26 @@
-var vows   = require('vows')
-  , assert = require('assert')
-  , zombie = require('zombie')
-  , async  = require('async')
-  , querystring = require('querystring')
-  , sf     = require('../lib/salesforce')
-  , config = require('./config/salesforce')
-  ;
+var vows   = require('vows'),
+    assert = require('assert'),
+    zombie = require('zombie'),
+    async  = require('async'),
+    querystring = require('querystring'),
+    sf     = require('../lib/salesforce'),
+    config = require('./config/salesforce');
 
-var conn = new sf.Connection();
+var conn = new sf.Connection({ logLevel : config.logLevel });
 var browser = new zombie.Browser();
 var context = {};
 
-vows.describe("salesforce").addBatch({
+vows.describe("connection").addBatch({
   "login" : {
     topic : function() {
       conn.login(config.username, config.password, this.callback);
     }, 
-    "done" : function() { 
+    "done" : function(userInfo) { 
       assert.isString(conn.accessToken);
+      assert.isString(userInfo.id);
+      assert.isString(userInfo.organizationId);
     }
   }
-
-}).addBatch({
-
-
-  "query accounts" : {
-    topic : function() {
-      conn.query("SELECT Id, Name FROM Account", this.callback);
-    },
-    "should return records" : function (res) {
-      assert.isNumber(res.totalSize);
-    }
-  },
-
-  "query big tables without autoFetch" : {
-    topic : function() {
-      var self = this;
-      var records = [];
-      var query = conn.query("SELECT Id, Name FROM " + (config.bigTable || 'Account'));
-      query.on('record', function(record, i, cnt){
-        records.push(record); 
-      });
-      query.on('end', function() {
-        self.callback(null, { query : query, records : records });
-      });
-      query.on('error', function(err) {
-        self.callback(err);
-      });
-      query.run({ autoFetch : false });
-    },
-
-    "should scan records in one query fetch" : function(result) {
-      assert.ok(result.query.totalFetched === result.records.length);
-      assert.ok(result.query.totalSize > 2000 ? 
-                result.query.totalFetched === 2000 : 
-                result.query.totalFetched === result.query.totalSize
-      );
-    }
-  },
-
-  "query big tables with autoFetch" : {
-    topic : function() {
-      var self = this;
-      var records = [];
-      var query = conn.query("SELECT Id, Name FROM " + (config.bigTable || 'Account'));
-      query.on('record', function(record, i, cnt){
-        records.push(record); 
-      });
-      query.on('end', function() {
-        self.callback(null, { query : query, records : records });
-      });
-      query.on('error', function(err) {
-        self.callback(err);
-      });
-      query.run({ autoFetch : true, maxFetch : 5000 });
-    },
-
-    "should scan records up to maxFetch num" : function(result) {
-      assert.ok(result.query.totalFetched === result.records.length);
-      assert.ok(result.query.totalSize > 5000 ? 
-                result.query.totalFetched === 5000 : 
-                result.query.totalFetched === result.query.totalSize
-      );
-    }
-  }
-
 
 }).addBatch({
 
@@ -315,14 +251,45 @@ vows.describe("salesforce").addBatch({
 
 }).addBatch({
 
+  "logout by soap api" : {
+    topic : function() {
+      var self = this;
+      context.sessionInfo = {
+        accessToken : conn.accessToken,
+        instanceUrl : conn.instanceUrl
+      };
+      conn.logout(this.callback);
+    },
+
+    "should logout" : function() {
+      assert.isNull(conn.accessToken);
+    },
+
+  "then connect using logouted session" : {
+    topic : function() {
+      conn = new sf.Connection(context.sessionInfo);
+      conn.query("SELECT Id FROM User", this.callback);
+    },
+
+    "should raise authentication error" : function(err, res) {
+      assert.isObject(err);
+    }
+  }}
+
+}).addBatch({
+
   "login by oauth2" : {
     topic : function() {
+      var self = this;
       conn = new sf.Connection({
         clientId : config.clientId,
         clientSecret : config.clientSecret,
-        redirectUri : config.redirectUri 
+        redirectUri : config.redirectUri,
+        logLevel : config.logLevel
       });
-      browser.visit(conn.oauth2.getAuthorizationUrl(), this.callback);
+      browser.visit(conn.oauth2.getAuthorizationUrl(), function() {
+        browser.wait(1500, self.callback);
+      });
     },
   "." : {
     topic : function() {
@@ -351,7 +318,9 @@ vows.describe("salesforce").addBatch({
       var params = querystring.parse(url.query);
       conn.authorize(params.code, this.callback);
     },
-    "done" : function() {
+    "done" : function(userInfo) {
+      assert.isString(userInfo.id);
+      assert.isString(userInfo.organizationId);
       assert.isString(conn.accessToken);
       assert.isString(conn.refreshToken);
     },
@@ -426,6 +395,9 @@ vows.describe("salesforce").addBatch({
     }
 
   }}}}}}}}
+
+
+
 
 }).export(module);
 
