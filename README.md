@@ -30,7 +30,7 @@ or
 ```javascript
 var sf = require('node-salesforce');
 var conn = new sf.Connection({
-  serverUrl : 'https://na1.salesforce.com',
+  serverUrl : '<your Salesforce server URL (e.g. https://na1.salesforce.com) is here>',
   sessionId : '<your Salesforce session ID is here>'
 });
 ```
@@ -40,7 +40,7 @@ var conn = new sf.Connection({
 ```javascript
 var sf = require('node-salesforce');
 var conn = new sf.Connection({
-  instanceUrl : 'https://na1.salesforce.com',
+  instanceUrl : '<your Salesforce server URL (e.g. https://na1.salesforce.com) is here>',
   accessToken : '<your Salesforrce OAuth2 access token is here>'
 });
 ```
@@ -55,12 +55,13 @@ var conn = new sf.Connection({
     clientSecret : '<your Salesforce OAuth2 client secret is here>',
     redirectUri : '<your Salesforce OAuth2 redirect URI is here>'
   },
-  instanceUrl : 'https://na1.salesforce.com',
+  instanceUrl : '<your Salesforce server URL (e.g. https://na1.salesforce.com) is here>',
   accessToken : '<your Salesforrce OAuth2 access token is here>',
   refreshToken : '<your Salesforce OAuth2 refresh token is here>'
 });
 conn.on("refresh", function(accessToken, res) {
-  // you can store renewed access token in your storage for next request
+  // Refresh event will be fired when renewed access token
+  // to store it in your storage for next request
 });
 ```
 
@@ -70,14 +71,15 @@ conn.on("refresh", function(accessToken, res) {
 ```javascript
 var sf = require('node-salesforce');
 var conn = new sf.Connection({
-  loginUrl : 'https://login.salesforce.com'
-// loginUrl : 'https://test.salesforce.com' // you can change login URL to point sandbox env.
+  // you can change loginUrl to connect to sandbox or prerelease env.
+  // loginUrl : 'https://test.salesforce.com'
 });
-conn.login(username, password, function(err) {
-  if (!err) {
-    // console.log(conn.accessToken);
-    // ...
-  }
+conn.login(username, password, function(err, userInfo) {
+  if (err) { return console.error(err); }
+  console.log(conn.accessToken);
+  console.log("User ID: " + userInfo.id);
+  console.log("Org ID: " + userInfo.organizationId);
+  // ...
 });
 ```
 
@@ -87,21 +89,35 @@ conn.login(username, password, function(err) {
 var sf = require('node-salesforce');
 var conn = new sf.Connection({
   // you can change loginUrl to connect to sandbox or prerelease env.
-  // loginUrl : 'https://test.salesforce.com' 
+  // loginUrl : 'https://test.salesforce.com',
   oauth2 : {
     clientId : '<your Salesforce OAuth2 client ID is here>',
     clientSecret : '<your Salesforce OAuth2 client secret is here>',
     redirectUri : '<callback URI is here>'
   }
 });
-conn.login(username, password, function(err) {
-  if (!err) {
-    // console.log(conn.accessToken);
-    // ...
-  }
+conn.login(username, password, function(err, userInfo) {
+  if (err) { return console.error(err); }
+  console.log(conn.accessToken);
+  console.log("User ID: " + userInfo.id);
+  console.log("Org ID: " + userInfo.organizationId);
+  // ...
 });
 ```
 
+### Logout (Only for SOAP API session)
+
+```javascript
+var sf = require('node-salesforce');
+var conn = new sf.Connection({
+  sessionId : '<session id to logout>',
+  serverUrl : '<your Salesforce Server url to logout is here>'
+});
+conn.logout(function(err) {
+  if (err) { return console.error(err); }
+  // now the session has been expired.
+});
+```
 
 ## OAuth2 Web Server Flow
 
@@ -110,7 +126,8 @@ conn.login(username, password, function(err) {
 ```javascript
 var sf = require('node-salesforce');
 
-// Following sample is using express
+//
+// Following example is using express.js framework
 // 
 // get authz url and redirect to it.
 app.get('/oauth2/auth', function(req, res) {
@@ -138,20 +155,22 @@ app.get('/oauth2/callback', function(req, res) {
     }
   });
   var code = req.param('code');
-  conn.authorize(code, function(err) {
-    if (!err) {
-      // console.log(conn.accessToken);
-      // console.log(conn.refreshToken);
-      // ...
-    }
+  conn.authorize(code, function(err, userInfo) {
+    if (err) { return console.error(err); }
+    console.log(conn.accessToken);
+    console.log("User ID: " + userInfo.id);
+    console.log("Org ID: " + userInfo.organizationId);
+    // ...
   });
 });
 ```
 
 
-## Query Records 
+## Query Records
 
-### In Event-Driven Style
+### Using SOQL
+
+#### Event-Driven Style
 
 ```javascript
 var records = [];
@@ -163,19 +182,49 @@ conn.query("SELECT Id, Name FROM Account")
     console.log("total in database : " + query.totalSize);
     console.log("total fetched : " + query.totalFetched);
   })
+  .on("error", function(err) {
+    console.error(err);
+  })
   .run({ autoFetch : true, maxFetch : 4000 });
 ```
 
-### In Callback Style
+#### Callback Style
 
 ```javascript
 var records = [];
 conn.query("SELECT Id, Name FROM Account", function(err, result) {
-  if (!err) {
+  if (err) { return console.error(err); }
+  console.log("total : " + result.totalSize);
+  console.log("fetched : " + result.records.length);
+});
+```
+
+### Using JSON-style Query object and method chaining (like MongoDB)
+
+```javascript
+// following query is equivalent to this SOQL
+// "SELECT Id, Name, CreatedDate FROM Contact
+//  WHERE LastName LIKE 'A%' AND CreatedDate >= YESTERDAY AND Account.Name = 'Sony, Inc.'
+//  ORDER BY CreatedDate DESC, Name ASC
+//  LIMIT 5 OFFSET 10"
+conn.sobject("Contact")
+  .find({
+    LastName : { $like : 'A%' },
+    CreatedDate: { $gte : sf.Date.YESTERDAY },
+    'Account.Name' : 'Sony, Inc.'
+  }, {
+    Id: 1,
+    Name: 1,
+    CreatedDate: 1
+  })
+  .sort({ CreatedDate: -1, Name : 1 })
+  .limit(5)
+  .skip(10)
+  .execute(function(err, result) {
+    if (err) { return console.error(err); }
     console.log("total : " + result.totalSize);
     console.log("fetched : " + result.records.length);
-  }
-});
+  });
 ```
 
 ## CRUD Operation
@@ -184,19 +233,19 @@ conn.query("SELECT Id, Name FROM Account", function(err, result) {
 
 ```javascript
 conn.sobject("Account").retrieve("0017000000hOMChAAO", function(err, account) {
-  if (!err) {
-    console.log("Name : " + account.Name);
-  }
+  if (err) { return console.error(err); }
+  console.log("Name : " + account.Name);
+  // ...
 });
 
 // Multiple records retrieval consumes one API request per record.
 // Be careful for the API quota.
 conn.sobject("Account").retrieve(["0017000000hOMChAAO", "0017000000iKOZTAA4"], function(err, accounts) {
-  if (!err) {
-    for (var i=0; i<accounts.length; i++) {
-      console.log("Name : " + accounts[i].Name);
-    }
+  if (err) { return console.error(err); }
+  for (var i=0; i<accounts.length; i++) {
+    console.log("Name : " + accounts[i].Name);
   }
+  // ...
 });
 ```
 
@@ -204,25 +253,24 @@ conn.sobject("Account").retrieve(["0017000000hOMChAAO", "0017000000iKOZTAA4"], f
 
 ```javascript
 conn.sobject("Account").create({ Name : 'My Account #1' }, function(err, ret) {
-  if (!err && ret.success) {
-    console.log("Created record id : " + ret.id);
-  }
+  if (err || !ret.success) { return console.error(err, ret); }
+  console.log("Created record id : " + ret.id);
+  // ...
 });
 // Multiple records creation consumes one API request per record.
 // Be careful for the API quota.
-conn.sobject("Account").create([{
-  Name : 'My Account #1'
-}, {
-  Name : 'My Account #2'
-}], 
+conn.sobject("Account").create([
+  { Name : 'My Account #1' },
+  { Name : 'My Account #2' }
+],
 function(err, rets) {
-  if (!err) {
-    for (var i=0; i<rets.length; i++) {
-      if (rets[i].success) {
-        console.log("Created record id : " + rets[i].id);
-      }
+  if (err) { return console.error(err); }
+  for (var i=0; i<rets.length; i++) {
+    if (rets[i].success) {
+      console.log("Created record id : " + rets[i].id);
     }
   }
+  // ...
 });
 ```
 
@@ -233,26 +281,22 @@ conn.sobject("Account").update({
   Id : '0017000000hOMChAAO',
   Name : 'Updated Account #1'
 }, function(err, ret) {
-  if (!err && ret.success) {
-    console.log('Updated Successfully : ' + ret.id);
-  }
+  if (err || !ret.success) { return console.error(err, ret); }
+  console.log('Updated Successfully : ' + ret.id);
+  // ...
 });
 
 // Multiple records modification consumes one API request per record.
 // Be careful for the API quota.
-conn.sobject("Account").update([{
-  Id : '0017000000hOMChAAO',
-  Name : 'Updated Account #1'
-}, {
-  Id : '0017000000iKOZTAA4',
-  Name : 'Updated Account #2'
-}], 
+conn.sobject("Account").update([
+  { Id : '0017000000hOMChAAO', Name : 'Updated Account #1' },
+  { Id : '0017000000iKOZTAA4', Name : 'Updated Account #2' }
+],
 function(err, rets) {
-  if (!err) {
-    for (var i=0; i<rets.length; i++) {
-      if (rets[i].success) {
-        console.log("Updated Successfully : " + rets[i].id);
-      }
+  if (err) { return console.error(err); }
+  for (var i=0; i<rets.length; i++) {
+    if (rets[i].success) {
+      console.log("Updated Successfully : " + rets[i].id);
     }
   }
 });
@@ -262,9 +306,8 @@ function(err, rets) {
 
 ```javascript
 conn.sobject("Account").del('0017000000hOMChAAO', function(err, ret) {
-  if (!err && ret.success) {
-    console.log('Deleted Successfully : ' + ret.id);
-  }
+  if (err || !ret.success) { return console.error(err, ret); }
+  console.log('Deleted Successfully : ' + ret.id);
 });
 
 // Multiple records deletion consumes one API request per record.
@@ -274,11 +317,10 @@ conn.sobject("Account").destroy([ // synonym of "del"
   '0017000000iKOZTAA4'
 }], 
 function(err, rets) {
-  if (!err) {
-    for (var i=0; i<rets.length; i++) {
-      if (rets[i].success) {
-        console.log("Deleted Successfully : " + rets[i].id);
-      }
+  if (err) { return console.error(err); }
+  for (var i=0; i<rets.length; i++) {
+    if (rets[i].success) {
+      console.log("Deleted Successfully : " + rets[i].id);
     }
   }
 });
@@ -292,28 +334,25 @@ conn.sobject("UpsertTable__c").upsert({
   Name : 'Record #1',
   ExtId__c : 'ID-0000001'
 }, 'ExtId__c', function(err, ret) {
-  if (!err && ret.success) {
-    console.log('Upserted Successfully');
-  }
+  if (err || !ret.success) { return console.error(err, ret); }
+  console.log('Upserted Successfully');
+  // ...
 });
 // Multiple records modification consumes one API request per record.
 // Be careful for the API quota.
-conn.sobject("UpsertTable__c").upsert([{
-  Name : 'Record #1',
-  ExtId__c : 'ID-0000001'
-}, {
-  Name : 'Record #2',
-  ExtId__c : 'ID-0000002'
-}], 
+conn.sobject("UpsertTable__c").upsert([
+ { Name : 'Record #1', ExtId__c : 'ID-0000001' },
+ { Name : 'Record #2', ExtId__c : 'ID-0000002' }
+],
 'ExtId__c',
 function(err, rets) {
-  if (!err) {
-    for (var i=0; i<rets.length; i++) {
-      if (rets[i].success) {
-        console.log("Upserted Successfully");
-      }
+  if (err) { return console.error(err); }
+  for (var i=0; i<rets.length; i++) {
+    if (rets[i].success) {
+      console.log("Upserted Successfully");
     }
   }
+  // ...
 });
 ```
 
@@ -324,10 +363,10 @@ function(err, rets) {
 
 ```javascript
 conn.sobject("Account").describe(function(err, meta) {
-  if (!err) {
-    console.log('Label : ' + meta.label);
-    console.log('Num of Fields : ' + meta.fields.length);
-  }
+  if (err) { return console.error(err); }
+  console.log('Label : ' + meta.label);
+  console.log('Num of Fields : ' + meta.fields.length);
+  // ...
 });
 ```
 
@@ -335,9 +374,9 @@ conn.sobject("Account").describe(function(err, meta) {
 
 ```javascript
 conn.describeGlobal(function(err, res) {
-  if (!err) {
-    console.log('Num of SObjects : ' + res.sobjects.length);
-  }
+  if (err) { return console.error(err); }
+  console.log('Num of SObjects : ' + res.sobjects.length);
+  // ...
 });
 ```
 
