@@ -1,11 +1,10 @@
-var vows   = require('vows')
-  , assert = require('assert')
-  , zombie = require('zombie')
-  , async  = require('async')
-  , querystring = require('querystring')
-  , sf     = require('../lib/salesforce')
-  , config = require('./config/salesforce')
-  ;
+var vows   = require('vows'),
+    assert = require('assert'),
+    zombie = require('zombie'),
+    async  = require('async'),
+    querystring = require('querystring'),
+    sf     = require('../lib/salesforce'),
+    config = require('./config/salesforce');
 
 var conn = new sf.Connection({ logLevel : config.logLevel });
 var browser = new zombie.Browser();
@@ -20,71 +19,6 @@ vows.describe("salesforce").addBatch({
       assert.isString(conn.accessToken);
     }
   }
-
-}).addBatch({
-
-
-  "query accounts" : {
-    topic : function() {
-      conn.query("SELECT Id, Name FROM Account", this.callback);
-    },
-    "should return records" : function (res) {
-      assert.isNumber(res.totalSize);
-    }
-  },
-
-  "query big tables without autoFetch" : {
-    topic : function() {
-      var self = this;
-      var records = [];
-      var query = conn.query("SELECT Id, Name FROM " + (config.bigTable || 'Account'));
-      query.on('record', function(record, i, cnt){
-        records.push(record); 
-      });
-      query.on('end', function() {
-        self.callback(null, { query : query, records : records });
-      });
-      query.on('error', function(err) {
-        self.callback(err);
-      });
-      query.run({ autoFetch : false });
-    },
-
-    "should scan records in one query fetch" : function(result) {
-      assert.ok(result.query.totalFetched === result.records.length);
-      assert.ok(result.query.totalSize > 2000 ? 
-                result.query.totalFetched === 2000 : 
-                result.query.totalFetched === result.query.totalSize
-      );
-    }
-  },
-
-  "query big tables with autoFetch" : {
-    topic : function() {
-      var self = this;
-      var records = [];
-      var query = conn.query("SELECT Id, Name FROM " + (config.bigTable || 'Account'));
-      query.on('record', function(record, i, cnt){
-        records.push(record); 
-      });
-      query.on('end', function() {
-        self.callback(null, { query : query, records : records });
-      });
-      query.on('error', function(err) {
-        self.callback(err);
-      });
-      query.run({ autoFetch : true, maxFetch : 5000 });
-    },
-
-    "should scan records up to maxFetch num" : function(result) {
-      assert.ok(result.query.totalFetched === result.records.length);
-      assert.ok(result.query.totalSize > 5000 ? 
-                result.query.totalFetched === 5000 : 
-                result.query.totalFetched === result.query.totalSize
-      );
-    }
-  }
-
 
 }).addBatch({
 
