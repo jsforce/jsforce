@@ -158,19 +158,22 @@ vows.describe("query").addBatch({
 
   "Query with Date field for date literal" : {
     topic : SOQLBuilder.createSOQL({
-      table: "Account",
+      table: "Opportunity",
       conditions: {
         $and : [
           { CloseDate: { $gte : SfDate.LAST_N_DAYS(10) } },
-          { CloseDate: { $lte : SfDate.TOMORROW } }
+          { CloseDate: { $lte : SfDate.TOMORROW } },
+          { CloseDate: { $gt : SfDate.toDateLiteral(new Date(1288958400000)) }},
+          { CreatedDate: { $lt : SfDate.toDateTimeLiteral('2010-11-02T04:45:04+09:00') }}
         ]
       }
     }),
 
     "should equal to soql" : function(soql) {
       assert.equal(soql,
-        "SELECT Id FROM Account " +
-        "WHERE CloseDate >= LAST_N_DAYS:10 AND CloseDate <= TOMORROW"
+        "SELECT Id FROM Opportunity " +
+        "WHERE CloseDate >= LAST_N_DAYS:10 AND CloseDate <= TOMORROW " +
+        "AND CloseDate > 2010-11-05 AND CreatedDate < 2010-11-01T19:45:04Z"
       );
     }
   },
