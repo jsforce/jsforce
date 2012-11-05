@@ -251,6 +251,33 @@ vows.describe("connection").addBatch({
 
 }).addBatch({
 
+  "logout by soap api" : {
+    topic : function() {
+      var self = this;
+      context.sessionInfo = {
+        accessToken : conn.accessToken,
+        instanceUrl : conn.instanceUrl
+      };
+      conn.logout(this.callback);
+    },
+
+    "should logout" : function() {
+      assert.isNull(conn.accessToken);
+    },
+
+  "then connect using logouted session" : {
+    topic : function() {
+      conn = new sf.Connection(context.sessionInfo);
+      conn.query("SELECT Id FROM User", this.callback);
+    },
+
+    "should raise authentication error" : function(err, res) {
+      assert.isObject(err);
+    }
+  }}
+
+}).addBatch({
+
   "login by oauth2" : {
     topic : function() {
       var self = this;
@@ -368,6 +395,9 @@ vows.describe("connection").addBatch({
     }
 
   }}}}}}}}
+
+
+
 
 }).export(module);
 
