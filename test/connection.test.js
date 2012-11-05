@@ -10,7 +10,7 @@ var conn = new sf.Connection({ logLevel : config.logLevel });
 var browser = new zombie.Browser();
 var context = {};
 
-vows.describe("salesforce").addBatch({
+vows.describe("connection").addBatch({
   "login" : {
     topic : function() {
       conn.login(config.username, config.password, this.callback);
@@ -251,12 +251,16 @@ vows.describe("salesforce").addBatch({
 
   "login by oauth2" : {
     topic : function() {
+      var self = this;
       conn = new sf.Connection({
         clientId : config.clientId,
         clientSecret : config.clientSecret,
-        redirectUri : config.redirectUri 
+        redirectUri : config.redirectUri,
+        logLevel : config.logLevel
       });
-      browser.visit(conn.oauth2.getAuthorizationUrl(), this.callback);
+      browser.visit(conn.oauth2.getAuthorizationUrl(), function() {
+        browser.wait(1500, self.callback);
+      });
     },
   "." : {
     topic : function() {
