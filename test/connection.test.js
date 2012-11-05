@@ -15,8 +15,10 @@ vows.describe("connection").addBatch({
     topic : function() {
       conn.login(config.username, config.password, this.callback);
     }, 
-    "done" : function() { 
+    "done" : function(userInfo) { 
       assert.isString(conn.accessToken);
+      assert.isString(userInfo.id);
+      assert.isString(userInfo.organizationId);
     }
   }
 
@@ -289,8 +291,9 @@ vows.describe("connection").addBatch({
       var params = querystring.parse(url.query);
       conn.authorize(params.code, this.callback);
     },
-    "done" : function(res) {
-      assert.isString(res.id);
+    "done" : function(userInfo) {
+      assert.isString(userInfo.id);
+      assert.isString(userInfo.organizationId);
       assert.isString(conn.accessToken);
       assert.isString(conn.refreshToken);
     },
