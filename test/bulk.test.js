@@ -19,26 +19,76 @@ vows.describe("bulk").addBatch({
 
 }).addBatch({
 
-  "bulkload records" : {
+  "bulk insert records" : {
     topic : function() {
-      var records = [
-        { Name: 'Account #1', NumberOfEmployees: 300 },
-        { Name: 'Account #2', NumberOfEmployees: 400 },
-        { Name: 'Account #3', NumberOfEmployees: 100 },
-        { Name: 'Account #4' },
-        { BillingState: 'CA' }
-      ];
+      var records = [];
+      for (var i=0; i<200; i++) {
+        records.push({
+          Name: 'Bulk Account #'+(i+1),
+          NumberOfEmployees: 300 * (i+1) 
+        });
+      }
+      records.push({ BillingState: 'CA' }); // should raise error
       conn.bulkload("Account", "insert", records, this.callback);
     },
     "should return result status" : function (rets) {
       assert.isArray(rets);
-      console.log(rets);
+      var ret;
+      for (var i=0; i<200; i++) {
+        ret = rets[i];
+        assert.isString(ret.id);
+        assert.equal(true, ret.success);
+      }
+      ret = rets[200];
+      assert.isNull(ret.id);
+      assert.equal(false, ret.success);
+    },
+
+  "then bulk update" : {
+    topic: function() {
+      conn.sobject('Account')
+          .find({ Name : { $like : 'Bulk Account%' }}, { Id: 1, Name : 1 })
+          .execute(this.callback);
+    },
+    "." : {
+      topic: function(records) {
+        records = records.map(function(rec) {
+          rec.Name = rec.Name + ' (Updated)';
+          return rec;
+        });
+        conn.bulkload('Account', 'update', records, this.callback);
+      },
+    "should return updated status" : function (rets) {
+      assert.isArray(rets);
+      var ret;
       for (var i=0; i<rets.length; i++) {
-        var ret = rets[i];
-        assert.isString(ret.Id);
+        ret = rets[i];
+        assert.isString(ret.id);
+        assert.equal(true, ret.success);
+      }
+    },
+
+  "then bulk delete" : {
+    topic: function() {
+      conn.sobject('Account')
+          .find({ Name : { $like : 'Bulk Account%' }})
+          .execute(this.callback);
+    },
+    "." : {
+      topic: function(records) {
+        conn.bulkload('Account', 'delete', records, this.callback);
+      },
+    "should return deleted status" : function (rets) {
+      assert.isArray(rets);
+      var ret;
+      for (var i=0; i<rets.length; i++) {
+        ret = rets[i];
+        assert.isString(ret.id);
+        assert.equal(true, ret.success);
       }
     }
-  }
+
+  }}}}}
 
 
 }).export(module);
