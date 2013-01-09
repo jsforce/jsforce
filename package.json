@@ -24,6 +24,7 @@
     "async": ">= 0.1.12",
     "request": ">= 2.1.1",
     "underscore": ">= 1.2.1",
+    "xml2json": "0.3.2",
     "faye": "0.8.x"
   },
   "devDependencies": {
