@@ -30,7 +30,7 @@ vows.describe("bulk").addBatch({
         });
       }
       records.push({ BillingState: 'CA' }); // should raise error
-      conn.bulkload("Account", "insert", records, this.callback);
+      conn.bulk.load("Account", "insert", records, this.callback);
     },
     "should return result status" : function (rets) {
       assert.isArray(rets);
@@ -59,7 +59,7 @@ vows.describe("bulk").addBatch({
             rec.Name = rec.Name + ' (Updated)';
             return rec;
           });
-          conn.bulkload('Account', 'update', records, next);
+          conn.bulk.load('Account', 'update', records, next);
         }
       ], this.callback);
     },
@@ -83,7 +83,7 @@ vows.describe("bulk").addBatch({
               .execute(next);
         },
         function(records, next) {
-          conn.bulkload('Account', 'delete', records, next);
+          conn.bulk.load('Account', 'delete', records, next);
         }
       ], this.callback);
     },
@@ -105,7 +105,7 @@ vows.describe("bulk").addBatch({
     topic: function() {
       var self = this;
       var fstream = fs.createReadStream(__dirname + "/data/Account.csv");
-      var batch = conn.bulkload("Account", "insert");
+      var batch = conn.bulk.load("Account", "insert");
       batch.on('response', function(results) { self.callback(null, results); });
       batch.on('error', function(err) { self.callback(err); });
       fstream.pipe(batch.stream());
@@ -122,22 +122,32 @@ vows.describe("bulk").addBatch({
 
   "then bulk delete from file" : {
     topic: function() {
+      var batch;
       async.waterfall([
-        function(cb) {
-          conn.sobject('Account').find({ Name : { $like : 'Bulk Account%' }}, cb);
+        function(next) {
+          conn.sobject('Account').find({ Name : { $like : 'Bulk Account%' }}, next);
         },
-        function(records, cb) {
+        function(records, next) {
           var data = "Id\n";
           for (var i=0; i<records.length; i++) {
             data += records[i].Id + "\n";
           }
-          fs.writeFile(__dirname + "/data/Account_delete.csv", data, cb);
+          fs.writeFile(__dirname + "/data/Account_delete.csv", data, next);
         },
-        function(cb) {
+        function(next) {
           var fstream = fs.createReadStream(__dirname + "/data/Account_delete.csv");
-          var batch = conn.bulkload("Account", "delete");
-          batch.on('response', function(rets) { cb(null, rets); });
-          batch.on('error', function(err) { cb(err); });
+          batch = conn.bulk.load("Account", "delete");
+          async.parallel([
+            function(cb) {
+              batch.on('response', function(rets) { cb(null, rets); });
+              batch.on('error', function(err) { cb(err); });
+            },
+            function(cb) {
+              batch.job.on('close', function() { cb(); }); // await job close
+            }
+          ], function(err, results) {
+            next(err, results && results[0]);
+          });
           fstream.pipe(batch.stream());
         }
       ], this.callback);
