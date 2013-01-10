@@ -3,7 +3,7 @@ var vows   = require('vows'),
     SOQLBuilder = require('../lib/soql-builder'),
     SfDate = require('../lib/date');
 
-vows.describe("query").addBatch({
+vows.describe("soql-builder").addBatch({
 
   "Simple query" : {
     topic : SOQLBuilder.createSOQL({

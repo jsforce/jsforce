@@ -1,7 +1,10 @@
 var vows   = require('vows'),
     assert = require('assert'),
+    fs     = require('fs'),
     async  = require('async'),
     events = require('events'),
+    stream = require('stream'),
+    Stream = stream.Stream,
     querystring = require('querystring'),
     sf     = require('../lib/salesforce'),
     RecordStream = require('../lib/record-stream'),
@@ -126,6 +129,35 @@ vows.describe("query").addBatch({
     }
 
   }
+
+}).addBatch({
+
+  "query table and convert to readable stream": {
+    topic : function() {
+      var self = this;
+      var query = conn.query("SELECT Id, Name FROM Account LIMIT 10");
+      var csvOut = new Stream();
+      csvOut.writable = true;
+      var result = '';
+      csvOut.write = function(data) {
+        result += data;
+      };
+      csvOut.end = function(data) {
+        result += data;
+        csvOut.writable = false;
+        self.callback(null, result);
+      };
+      query.stream().pipe(csvOut);
+    },
+
+    "should get CSV text" : function(csv) {
+      assert.isString(csv);
+      var header = csv.split("\n")[0];
+      assert.equal(header, "Id,Name");
+    }
+
+  }
+
 
 
 }).export(module);

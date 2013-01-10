@@ -293,7 +293,6 @@ vows.describe("connection").addBatch({
         })
         .fail(function(err) {
           // ignore js errors
-          console.log(err);
         })
         .then(function() {
           browser.fill("input[name=un]", config.username);
@@ -315,7 +314,6 @@ vows.describe("connection").addBatch({
           return browser.wait(1500);
         })
         .fail(function(err) {
-          console.log(err);
           // ignore connection failure
         })
         .then(function() {
