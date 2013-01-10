@@ -287,37 +287,48 @@ vows.describe("connection").addBatch({
         redirectUri : config.redirectUri,
         logLevel : config.logLevel
       });
-      browser.visit(conn.oauth2.getAuthorizationUrl(), function() {
-        browser.wait(1500, self.callback);
-      });
-    },
-  "." : {
-    topic : function() {
-      var self = this;
-      browser.fill("input[name=un]", config.username)
-             .fill("input[name=pw]", config.password)
-             .pressButton("input[name=Login]", function() {
-               browser.wait(1500, self.callback);
-             });
+      browser.visit(conn.oauth2.getAuthorizationUrl())
+        .then(function() {
+          return browser.wait(1500);
+        })
+        .fail(function(err) {
+          // ignore js errors
+          console.log(err);
+        })
+        .then(function() {
+          browser.fill("input[name=un]", config.username);
+          browser.fill("input[name=pw]", config.password);
+          return browser.pressButton("input[name=Login]");
+        })
+        .then(function() {
+          return browser.wait(1500);
+        })
+        .then(function() {
+          var url = browser.location.href;
+          if (url.indexOf(config.redirectUri) === 0) {
+            return;
+          } else {
+            return browser.pressButton("#oaapprove");
+          }
+        })
+        .then(function() {
+          return browser.wait(1500);
+        })
+        .fail(function(err) {
+          console.log(err);
+          // ignore connection failure
+        })
+        .then(function() {
+          var url = browser.location.href;
+          url = require('url').parse(url);
+          var params = querystring.parse(url.query);
+          conn.authorize(params.code, self.callback);
+        })
+        .fail(function(err) {
+          self.callback(err);
+        });
     },
 
-  "." : {
-    topic : function() {
-      var url = browser.location.href;
-      if (url.indexOf(config.redirectUri) === 0) {
-        this.callback();
-      } else {
-        browser.pressButton("#oaapprove", this.callback);
-      }
-    },
-
-  "." : {
-    topic : function() {
-      var url = browser.location.href;
-      url = require('url').parse(url);
-      var params = querystring.parse(url.query);
-      conn.authorize(params.code, this.callback);
-    },
     "done" : function(userInfo) {
       assert.isString(userInfo.id);
       assert.isString(userInfo.organizationId);
@@ -394,8 +405,7 @@ vows.describe("connection").addBatch({
       assert.equal("invalid_grant", err.error);
     }
 
-  }}}}}}}}
-
+  }}}}}
 
 
 
