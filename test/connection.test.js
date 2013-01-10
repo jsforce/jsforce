@@ -289,10 +289,11 @@ vows.describe("connection").addBatch({
       });
       browser.visit(conn.oauth2.getAuthorizationUrl())
         .then(function() {
-          return browser.wait(1500);
+          return browser.wait(2000);
         })
         .fail(function(err) {
           // ignore js errors
+          console.log(err.message);
         })
         .then(function() {
           browser.fill("input[name=un]", config.username);
@@ -300,21 +301,17 @@ vows.describe("connection").addBatch({
           return browser.pressButton("input[name=Login]");
         })
         .then(function() {
-          return browser.wait(1500);
+          return browser.wait(2000);
         })
         .then(function() {
-          var url = browser.location.href;
-          if (url.indexOf(config.redirectUri) === 0) {
-            return;
-          } else {
-            return browser.pressButton("#oaapprove");
-          }
+          return browser.pressButton("#oaapprove");
         })
         .then(function() {
           return browser.wait(1500);
         })
         .fail(function(err) {
           // ignore connection failure
+          console.log(err.message);
         })
         .then(function() {
           var url = browser.location.href;
