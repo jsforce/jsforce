@@ -8,6 +8,7 @@ Node-salesforce, which is designed to be a wrapper of Salesforce REST API in Nod
 It capsulates the access to REST API end point in asynchronous JavaScript function call.
 You can use both OAuth2 access token and SOAP login sessionId for API authentication.
 
+
 ## Install
 
 <pre>
@@ -242,7 +243,7 @@ conn.sobject("Account").retrieve("0017000000hOMChAAO", function(err, account) {
 // Be careful for the API quota.
 conn.sobject("Account").retrieve(["0017000000hOMChAAO", "0017000000iKOZTAA4"], function(err, accounts) {
   if (err) { return console.error(err); }
-  for (var i=0; i<accounts.length; i++) {
+  for (var i=0; i < accounts.length; i++) {
     console.log("Name : " + accounts[i].Name);
   }
   // ...
@@ -265,7 +266,7 @@ conn.sobject("Account").create([
 ],
 function(err, rets) {
   if (err) { return console.error(err); }
-  for (var i=0; i<rets.length; i++) {
+  for (var i=0; i < rets.length; i++) {
     if (rets[i].success) {
       console.log("Created record id : " + rets[i].id);
     }
@@ -294,7 +295,7 @@ conn.sobject("Account").update([
 ],
 function(err, rets) {
   if (err) { return console.error(err); }
-  for (var i=0; i<rets.length; i++) {
+  for (var i=0; i < rets.length; i++) {
     if (rets[i].success) {
       console.log("Updated Successfully : " + rets[i].id);
     }
@@ -318,7 +319,7 @@ conn.sobject("Account").destroy([ // synonym of "del"
 }], 
 function(err, rets) {
   if (err) { return console.error(err); }
-  for (var i=0; i<rets.length; i++) {
+  for (var i=0; i < rets.length; i++) {
     if (rets[i].success) {
       console.log("Deleted Successfully : " + rets[i].id);
     }
@@ -347,7 +348,7 @@ conn.sobject("UpsertTable__c").upsert([
 'ExtId__c',
 function(err, rets) {
   if (err) { return console.error(err); }
-  for (var i=0; i<rets.length; i++) {
+  for (var i=0; i < rets.length; i++) {
     if (rets[i].success) {
       console.log("Upserted Successfully");
     }
@@ -393,6 +394,43 @@ conn.topic("InvoiceStatementUpdates").subscribe(function(message) {
 });
 ```
 
+
+## Change History
+
+v0.4.0 (Nov 05, 2012):
+
+* Support JSON-style query object to query records other than SOQL, inspired by MongoDB query interface.
+
+* Change default API version to 26.0 (Winter '13).
+
+* Return logged-in user info in the callback response of Connection#login() and Connection#authorize().
+
+* Add Connection#logout() method to terminate session explicitly (Note: only useful for SOAP API login session).
+
+
+v0.3.4 (Oct 19, 2012):
+
+* Fix issue to refresh access token multiple time in concurrent requests.
+
+* Change to use "Bearer", not "OAuth" in HTTP Authorization header to attach access token.
+
+* Separate oauth2 configuration into different hash object in connection constructor option
+ (old style is still supported for backward compatiblity).
+
+
+v0.3.2 (Oct 18, 2012):
+
+* Fix error handling in access token refresh flow.
+
+
+v0.3.1 (Jun 26, 2012):
+
+* Add support of Node.js 0.8.x.
+
+
+v0.3.0 (May 10, 2012):
+
+* Support Salesforce Streaming API.
 
 
 
