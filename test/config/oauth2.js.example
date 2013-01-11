@@ -1,6 +1,5 @@
 module.exports = {
-  authzServiceUrl : "https://login.salesforce.com/services/oauth2/authorize",
-  tokenServiceUrl : "https://login.salesforce.com/services/oauth2/token",
+  loginUrl: "https://login.salesforce.com",
   clientId : "oauth2 client id is here",
   clientSecret : "oauth2 client secret is here",
   redirectUri : "http://localhost:4000/oauth2/callback",

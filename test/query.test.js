@@ -1,9 +1,13 @@
 var vows   = require('vows'),
     assert = require('assert'),
+    fs     = require('fs'),
     async  = require('async'),
     events = require('events'),
+    stream = require('stream'),
+    Stream = stream.Stream,
     querystring = require('querystring'),
     sf     = require('../lib/salesforce'),
+    RecordStream = require('../lib/record-stream'),
     config = require('./config/salesforce');
 
 
@@ -88,33 +92,34 @@ vows.describe("query").addBatch({
   },
 
 
-  "query big tables by piping randomly-waiting send stream object" : {
+
+  "query big tables by piping randomly-waiting output record stream object" : {
     topic : function() {
       var self = this;
       var records = [];
       var query = conn.query("SELECT Id, Name FROM " + (config.bigTable || 'Account'));
-      var sendstream = new events.EventEmitter();
-      sendstream.sendable = true;
-      sendstream.send = function(record) {
+      var outStream = new RecordStream();
+      outStream.sendable = true;
+      outStream.send = function(record) {
         records.push(record);
         if (records.length % 100 === 0) {
-          sendstream.sendable = false;
+          outStream.sendable = false;
           setTimeout(function() {
-            sendstream.sendable = true;
-            sendstream.emit('drain');
+            outStream.sendable = true;
+            outStream.emit('drain');
           }, 1000 * Math.random());
         }
-        return sendstream.sendable;
+        return outStream.sendable;
       };
-      sendstream.end = function() {
+      outStream.end = function() {
         self.callback(null, { query : query, records : records });
       };
-      query.pipe(sendstream);
-      query.resume();
+      query.pipe(outStream);
+      query.on("error", function(err) { self.callback(err); });
     },
 
 
-    "should scan records up to maxFetch num" : function(result) {
+    "should scan records via stream up to maxFetch num" : function(result) {
       assert.ok(result.query.totalFetched === result.records.length);
       assert.ok(result.query.totalSize > 5000 ? 
                 result.query.totalFetched === 5000 : 
@@ -123,6 +128,35 @@ vows.describe("query").addBatch({
     }
 
   }
+
+}).addBatch({
+
+  "query table and convert to readable stream": {
+    topic : function() {
+      var self = this;
+      var query = conn.query("SELECT Id, Name FROM Account LIMIT 10");
+      var csvOut = new Stream();
+      csvOut.writable = true;
+      var result = '';
+      csvOut.write = function(data) {
+        result += data;
+      };
+      csvOut.end = function(data) {
+        result += data;
+        csvOut.writable = false;
+        self.callback(null, result);
+      };
+      query.stream().pipe(csvOut);
+    },
+
+    "should get CSV text" : function(csv) {
+      assert.isString(csv);
+      var header = csv.split("\n")[0];
+      assert.equal(header, "Id,Name");
+    }
+
+  }
+
 
 
 }).export(module);
