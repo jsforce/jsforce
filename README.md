@@ -89,9 +89,9 @@ conn.login(username, password, function(err, userInfo) {
 ```javascript
 var sf = require('node-salesforce');
 var conn = new sf.Connection({
-  // you can change loginUrl to connect to sandbox or prerelease env.
-  // loginUrl : 'https://test.salesforce.com',
   oauth2 : {
+    // you can change loginUrl to connect to sandbox or prerelease env.
+    // loginUrl : 'https://test.salesforce.com',
     clientId : '<your Salesforce OAuth2 client ID is here>',
     clientSecret : '<your Salesforce OAuth2 client secret is here>',
     redirectUri : '<callback URI is here>'
@@ -124,22 +124,23 @@ conn.logout(function(err) {
 
 ### Authorization Request
 
+Following example is using express.js framework
+
 ```javascript
 var sf = require('node-salesforce');
 
-//
-// Following example is using express.js framework
-// 
+// OAuth2 client information can be shared with multiple connections.
+var oauth2 = new sf.OAuth2({
+  // you can change loginUrl to connect to sandbox or prerelease env.
+  // loginUrl : 'https://test.salesforce.com',
+  clientId : '<your Salesforce OAuth2 client ID is here>',
+  clientSecret : '<your Salesforce OAuth2 client secret is here>',
+  redirectUri : '<callback URI is here>'
+});
+
 // get authz url and redirect to it.
 app.get('/oauth2/auth', function(req, res) {
-  var conn = new sf.Connection({
-    oauth2 : {
-      clientId : '<your Salesforce OAuth2 client ID is here>',
-      clientSecret : '<your Salesforce OAuth2 client secret is here>',
-      redirectUri : '<callback URI is here>'
-    }
-  });
-  res.redirect(conn.oauth2.getAuthorizationUrl({ scope : 'api id web' }));
+  res.redirect(oauth2.getAuthorizationUrl({ scope : 'api id web' }));
 });
 ```
 
@@ -148,13 +149,7 @@ app.get('/oauth2/auth', function(req, res) {
 ```javascript
 // pass received authz code and get access token
 app.get('/oauth2/callback', function(req, res) {
-  var conn = new sf.Connection({
-    oauth2 : {
-      clientId : '<your Salesforce OAuth2 client ID is here>',
-      clientSecret : '<your Salesforce OAuth2 client secret is here>',
-      redirectUri : '<callback URI is here>'
-    }
-  });
+  var conn = new sf.Connection({ oauth2 : oauth2 });
   var code = req.param('code');
   conn.authorize(code, function(err, userInfo) {
     if (err) { return console.error(err); }
@@ -416,7 +411,7 @@ batch.on("queue", function(batchInfo) { // fired when batch request is queued in
   jobId = batchInfo.jobId);
   // ...
 });
-batch.execute(acconts);
+batch.execute(accounts);
 
 // and check the status later.
 var job = conn.bulk.job(jobId);
@@ -435,7 +430,7 @@ batch.on("response", function(rets) { // fired when batch finished and result re
 });
 
 // or use Bulk#load() method in one call to upload records and fetch results. 
-conn.bulk.load("Account", "insert", acconts, function(err, rets) {
+conn.bulk.load("Account", "insert", accounts, function(err, rets) {
   if (err) { return console.error(err); }
   for (var i=0; i < rets.length; i++) {
     if (rets[i].success) {
@@ -448,12 +443,12 @@ conn.bulk.load("Account", "insert", acconts, function(err, rets) {
 });
 
 // same as following calls
-conn.sobject("Account").insertBulk(acconts, function(err, rets) {
+conn.sobject("Account").insertBulk(accounts, function(err, rets) {
   // ...
 });
 
 // 
-conn.sobject("Account").bulkload("insert").execute(acconts, function(err, rets) {
+conn.sobject("Account").bulkload("insert").execute(accounts, function(err, rets) {
   // ...
 });
 ```
@@ -495,7 +490,19 @@ conn.bulk.load("Account", "insert", csvFileIn, function(err, rets) {
 
 ## Record Stream Pipeline
 
-### 
+Record stream is a stream system which regards records in its stream, similar to Node.js's standard readable/writable streams.
+
+Query object returned by Connection#query() / SObject#find() method is considered as InputRecordStream which emits event "record" when received record from server.
+
+Batch object returned by Job#createBatch() / Bulk#load() / SObject#bulkload() method is considered as OutputRecordStream and have send() and end() method to accept incoming record.
+
+You can use InputRecordStream#pipe(outputRecordStream) to pipe record stream.
+
+RecordStream can be converted to usual Node.js's stream object by calling RecordStream#stream() method.
+By default (and only currently) records are serizalized to CSV string.
+
+### Piping Query Record Stream
+
 ```javascript
 // DELETE FROM Account WHERE CreatedDate < LAST_YEAR
 var Account = conn.sobject('Account');
@@ -527,21 +534,41 @@ Opportunity.find({ "Account.Id" : accId },
 // Export all account records to CSV file
 var csvFileOut = require('fs').createWriteStream('path/to/Account.csv');
 conn.query("SELECT Id, Name, Type, BillingState, BillingCity, BillingStreet FROM Account")
-    .stream()
+    .stream() // Convert to Node.js's usual readable stream.
     .pipe(csvFileOut);
 
 ```
 
-### Data migration via bulk stream
+### Record Stream Filters
+
+```javascript
+// Map record and pass to downstream
+conn.sobject('Contact')
+    .find({}, { Id: 1, Name: 1 })
+    .pipe(sf.RecordStream.map(function(r) {
+      return { ID: r.Id, FULL_NAME: r.Name }
+    }))
+    .stream().pipe(fs.createWriteStream("Contact.csv"));
+
+// Filter only matching record to pass downstream
+conn.sobject('Lead')
+    .find({}, { Id: 1, Name: 1 })
+    .pipe(sf.RecordStream.filter(function(r) {
+      return { ID: r.Id, FULL_NAME: r.Name }
+    }))
+    .stream().pipe(fs.createWriteStream("Contact.csv"));
+```
+
+### Data Migration using Bulkload Batch Record Stream
 
 ```javascript
 
-// Connection for org which migrate to
+// Connection for org which migrating data from
 var conn1 = new sf.Connection(
   // ...
 );
 
-// Connection for org which migrate to
+// Connection for org which migrating data to
 var conn2 = new sf.Connection(
   // ...
 );
@@ -551,15 +578,19 @@ var job = conn2.bulk.createJob("Account", "insert");
 var batch = job.createBatch();
 query.pipe(batch);
 batch.on('queue', function() {
-  //...
   jobId = job.id;
   batchId = batch.id;
+  //...
 })
 
 ```
 
 
 ## Change History
+
+v0.5.1 (Jan 11, 2013):
+
+* Move Query#stream() method to RecordStream#stream() to support stream serialization even in filtered stream.
 
 v0.5.0 (Jan 11, 2013):
 
