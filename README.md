@@ -551,12 +551,15 @@ conn.sobject('Contact')
     .stream().pipe(fs.createWriteStream("Contact.csv"));
 
 // Filter only matching record to pass downstream
+var emails = {};
 conn.sobject('Lead')
-    .find({}, { Id: 1, Name: 1 })
+    .find({}, { Id: 1, Name: 1, Company: 1, Email: 1 })
     .pipe(sf.RecordStream.filter(function(r) {
-      return { ID: r.Id, FULL_NAME: r.Name }
+      var dup = emails[r.Email];
+      if (!dup) { emails[r.Email] = true; }
+      return !dup;
     }))
-    .stream().pipe(fs.createWriteStream("Contact.csv"));
+    .stream().pipe(fs.createWriteStream("Lead.csv"));
 ```
 
 ### Data Migration using Bulkload Batch Record Stream
