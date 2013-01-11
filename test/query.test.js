@@ -115,7 +115,6 @@ vows.describe("query").addBatch({
         self.callback(null, { query : query, records : records });
       };
       query.pipe(outStream);
-      query.resume();
       query.on("error", function(err) { self.callback(err); });
     },
 
