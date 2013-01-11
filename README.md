@@ -498,7 +498,8 @@ Batch object returned by Job#createBatch() / Bulk#load() / SObject#bulkload() me
 
 You can use InputRecordStream#pipe(outputRecordStream) to pipe record stream.
 
-RecordStream can convert to usual Node.js's stream object by calling RecordStream#stream() method.
+RecordStream can be converted to usual Node.js's stream object by calling RecordStream#stream() method.
+By default (and only currently) records are serizalized to CSV string.
 
 ### Piping Query Record Stream
 
@@ -589,11 +590,15 @@ batch.on('queue', function() {
 
 v0.5.1 (Jan 11, 2013):
 
+* Move Query#stream() method to RecordStream#stream() to support stream serialization even in filtered stream.
+
+v0.5.0 (Jan 11, 2013):
+
 * Support Bulk API for insert/update/upsert/delete/hardDelete operation (except for 'query').
 
 * Refine Query#pipe to pipe to other output record stream (like bulk upload batch).
 
-* Add RecordStream#stream() method to convert record stream to general node.js readable stream (generates CSV data).
+* Add Query#stream() method to convert record stream to general node.js readable stream (generates CSV data).
 
 
 v0.4.0 (Nov 05, 2012):
