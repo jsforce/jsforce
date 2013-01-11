@@ -561,6 +561,15 @@ batch.on('queue', function() {
 
 ## Change History
 
+v0.5.0 (Jan 11, 2013):
+
+* Support Bulk API for insert/update/upsert/delete/hardDelete operation (except for 'query').
+
+* Refine Query#pipe to pipe to other output record stream (like bulk upload batch).
+
+* Add Query#stream() method to convert record stream to general node.js readable stream (generates CSV data).
+
+
 v0.4.0 (Nov 05, 2012):
 
 * Support JSON-style query object to query records other than SOQL, inspired by MongoDB query interface.
