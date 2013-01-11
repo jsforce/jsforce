@@ -32,9 +32,6 @@ vows.describe("oauth2").addBatch({
     "should get login page" : function() {
       assert.ok(browser.success);
       assert.equal(browser.location.href.indexOf(oauth2.loginUrl), 0);
-      assert.lengthOf(browser.body.querySelectorAll('input[name=username]'), 1);
-      assert.lengthOf(browser.body.querySelectorAll('input[name=pw]'), 1);
-      assert.lengthOf(browser.body.querySelectorAll('input[name=Login]'), 1);
     },
 
   ", then input username/password" : {
