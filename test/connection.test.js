@@ -298,7 +298,7 @@ vows.describe("connection").addBatch({
         .then(function() {
           browser.fill("input[name=un]", config.username);
           browser.fill("input[name=pw]", config.password);
-          return browser.pressButton("input[name=Login]");
+          return browser.pressButton("button[name=Login]");
         })
         .then(function() {
           return browser.wait(2000);
