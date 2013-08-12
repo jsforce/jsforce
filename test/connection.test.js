@@ -237,9 +237,32 @@ vows.describe("connection").addBatch({
     }
   },
 
+  "describe cached Account" : {
+    topic : function() {
+      conn.sobject('Account').describe$(this.callback);
+    },
+    "should return described metadata information" : function(meta) {
+      assert.equal(meta.name, "Account");
+      assert.isArray(meta.fields);
+    }
+  },
+
   "describe global sobjects" : {
     topic : function() {
       conn.describeGlobal(this.callback);
+    },
+    "should return whole global sobject list" : function(res) {
+      assert.isArray(res.sobjects);
+      assert.isString(res.sobjects[0].name);
+      assert.isString(res.sobjects[0].label);
+      assert.isUndefined(res.sobjects[0].fields);
+    }
+  },
+
+  "describe cached global sobjects" : {
+    topic : function() {
+      var self = this;
+      conn.describeGlobal$(self.callback);
     },
     "should return whole global sobject list" : function(res) {
       assert.isArray(res.sobjects);
