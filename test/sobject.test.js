@@ -147,7 +147,92 @@ vows.describe("sobject").addBatch({
         }
       }
     }
-  }
+  },
 
+  "select records" : {
+    topic : function() {
+      Opportunity.select("Id,Owner.Name,CloseDate")
+                 .limit(10)
+                 .exec(this.callback);
+    },
+    "should return records" : function (records) {
+      assert.isArray(records);
+      assert.greater(records.length, 0);
+      assert.lesser(records.length, 11);
+      for (var i=0; i<records.length - 1; i++) {
+        var record = records[i];
+        assert.isString(record.Id);
+        assert.isObject(record.Owner);
+        assert.isString(record.Owner.Name);
+        assert.isString(record.CloseDate);
+      }
+    }
+  },
+
+  "select records with asterisk" : {
+    topic : function() {
+      Opportunity.select("*, Account.*, Owner.*").exec(this.callback);
+    },
+    "should return records" : function (records) {
+      assert.isArray(records);
+      for (var i=0; i<records.length - 1; i++) {
+        var record = records[i];
+        assert.isString(record.Id);
+        assert.isString(record.Name);
+        assert.isString(record.CloseDate);
+        assert.isObject(record.Account);
+        assert.isString(record.Account.Name);
+        assert.isObject(record.Owner);
+        assert.isString(record.Owner.Name);
+      }
+    }
+  },
+
+  "select records including child objects" : {
+    topic : function() {
+      Account.find(null, 'Id')
+             .include('Contacts').select('*').limit(2).end()
+             .include('Opportunities', null, 'Id, Name', { limit: 2 }).end()
+             .limit(10)
+             .exec(this.callback);
+    },
+    "should return records with child records" : function (records) {
+      assert.isArray(records);
+      assert.greater(records.length, 0);
+      assert.lesser(records.length, 11);
+      for (var i=0; i<records.length; i++) {
+        var record = records[i];
+        assert.isString(record.Id);
+        assert.isUndefined(record.Name);
+        if (record.Contacts) {
+          assert.isObject(record.Contacts);
+          var crecords = record.Contacts.records;
+          assert.isArray(crecords);
+          assert.greater(crecords.length, 0);
+          assert.lesser(crecords.length, 3);
+          for (var j=0; j<crecords.length; j++) {
+            var crecord = crecords[j];
+            assert.isString(crecord.Id);
+            assert.isString(crecord.FirstName);
+            assert.isString(crecord.LastName);
+          }
+        }
+        if (record.Opportunities) {
+          assert.isObject(record.Opportunities);
+          var orecords = record.Opportunities.records;
+          assert.isArray(orecords);
+          assert.greater(orecords.length, 0);
+          assert.lesser(orecords.length, 3);
+          for (var k=0; k<orecords.length; k++) {
+            var orecord = orecords[k];
+            assert.isString(orecord.Id);
+            assert.isString(orecord.Name);
+            assert.isUndefined(orecord.CloseDate);
+          }
+        }
+      }
+    }
+  }
+   
 }).export(module);
 
