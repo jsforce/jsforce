@@ -291,7 +291,10 @@ vows.describe("connection").addBatch({
   "then connect using logouted session" : {
     topic : function() {
       conn = new sf.Connection(context.sessionInfo);
-      conn.query("SELECT Id FROM User", this.callback);
+      var self = this;
+      setTimeout(function() { // wait a moment
+        conn.query("SELECT Id FROM User", self.callback);
+      }, 1000);
     },
 
     "should raise authentication error" : function(err, res) {
