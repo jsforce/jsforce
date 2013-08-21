@@ -217,9 +217,10 @@ vows.describe("connection").addBatch({
       conn.sobject(config.upsertTable).upsert(rec, config.upsertField, this.callback);
     },
     "should throw error and return array of choices" : function(err, ret) {
-      assert.isObject(err);
-      assert.isArray(ret);
-      assert.isString(ret[0]);
+      assert.instanceOf(err, Error);
+      assert.equal(err.name, "MULTIPLE_CHOICES");
+      assert.isArray(err.content);
+      assert.isString(err.content[0]);
     }
 
   }}}}}}
@@ -298,7 +299,7 @@ vows.describe("connection").addBatch({
     },
 
     "should raise authentication error" : function(err, res) {
-      assert.isObject(err);
+      assert.instanceOf(err, Error);
     }
   }}
 
@@ -422,8 +423,8 @@ vows.describe("connection").addBatch({
     },
 
     "should return error response" : function(err, user) {
-      assert.isObject(err);
-      assert.equal("invalid_grant", err.error);
+      assert.instanceOf(err, Error);
+      assert.equal(err.name, "invalid_grant");
     }
 
   }}}}}
