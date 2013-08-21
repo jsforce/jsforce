@@ -28,6 +28,9 @@
   "engines": {
     "node": ">=0.4.0"
   },
+  "bin": {
+    "sfjs": "./bin/sfjs"
+  },
   "dependencies": {
     "async": "0.1.x",
     "request": "2.12.x",

@@ -1,0 +1,4 @@
+#!/usr/bin/env node
+var repl = require('coffee-script/lib/coffee-script/repl');
+var sfrepl = require('../lib/repl.js');
+sfrepl(repl).start({});
