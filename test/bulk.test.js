@@ -38,11 +38,11 @@ vows.describe("bulk").addBatch({
       for (var i=0; i<200; i++) {
         ret = rets[i];
         assert.isString(ret.id);
-        assert.equal(true, ret.success);
+        assert.equal(ret.success, true);
       }
       ret = rets[200];
       assert.isNull(ret.id);
-      assert.equal(false, ret.success);
+      assert.equal(ret.success, false);
     },
 
 
@@ -70,7 +70,7 @@ vows.describe("bulk").addBatch({
       for (var i=0; i<rets.length; i++) {
         ret = rets[i];
         assert.isString(ret.id);
-        assert.equal(true, ret.success);
+        assert.equal(ret.success, true);
       }
     },
 
@@ -92,7 +92,7 @@ vows.describe("bulk").addBatch({
       for (var i=0; i<rets.length; i++) {
         var ret = rets[i];
         assert.isString(ret.id);
-        assert.equal(true, ret.success);
+        assert.equal(ret.success, true);
       }
     }
 
@@ -116,7 +116,7 @@ vows.describe("bulk").addBatch({
       for (var i=0; i<rets.length; i++) {
         ret = rets[i];
         assert.isString(ret.id);
-        assert.equal(true, ret.success);
+        assert.equal(ret.success, true);
       }
     },
 
@@ -158,11 +158,83 @@ vows.describe("bulk").addBatch({
       for (var i=0; i<rets.length; i++) {
         var ret = rets[i];
         assert.isString(ret.id);
-        assert.equal(true, ret.success);
+        assert.equal(ret.success, true);
       }
     }
 
   }}
   
+}).addBatch({
+
+  "bulk insert records" : {
+    topic : function() {
+      var records = [];
+      for (var i=0; i<200; i++) {
+        records.push({
+          Name: 'New Bulk Account #'+(i+1),
+          NumberOfEmployees: 300 * (i+1) 
+        });
+      }
+      conn.bulk.load("Account", "insert", records, this.callback);
+    },
+    "should return result status" : function (rets) {
+      assert.isArray(rets);
+      var ret;
+      for (var i=0; i<200; i++) {
+        ret = rets[i];
+        assert.isString(ret.id);
+        assert.equal(ret.success, true);
+      }
+    },
+
+  "then bulk update using Query#update" : {
+    topic: function() {
+      conn.sobject('Account')
+          .find({ Name : { $like : 'New Bulk Account%' }})
+          .update({ Name : '${Name} (Updated)' }, this.callback);
+    },
+    "should return updated status" : function (rets) {
+      assert.isArray(rets);
+      assert.equal(rets.length, 200);
+      for (var i=0; i<rets.length; i++) {
+        var ret = rets[i];
+        assert.isString(ret.id);
+        assert.equal(ret.success, true);
+      }
+    },
+
+  "then query updated records" : {
+    topic : function() {
+      conn.sobject('Account')
+          .find({ Name : { $like : 'New Bulk Account%' }}, 'Id, Name', this.callback);
+    },
+    "should return updated records" : function (records) {
+      assert.isArray(records);
+      assert.equal(records.length, 200);
+      var record;
+      for (var i=0; i<200; i++) {
+        record = records[i];
+        assert.isString(record.Id);
+        assert.ok(/\(Updated\)$/.test(record.Name));
+      }
+    },
+
+  "then bulk delete records using Query#destroy" : {
+    topic: function() {
+      conn.sobject('Account')
+          .find({ Name : { $like : 'New Bulk Account%' }})
+          .destroy(this.callback);
+    },
+    "should return deleted status" : function (rets) {
+      assert.isArray(rets);
+      assert.equal(rets.length, 200);
+      for (var i=0; i<rets.length; i++) {
+        var ret = rets[i];
+        assert.isString(ret.id);
+        assert.equal(true, ret.success);
+      }
+    }
+
+  }}}}
 
 }).export(module);
