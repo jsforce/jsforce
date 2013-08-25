@@ -217,9 +217,10 @@ vows.describe("connection").addBatch({
       conn.sobject(config.upsertTable).upsert(rec, config.upsertField, this.callback);
     },
     "should throw error and return array of choices" : function(err, ret) {
-      assert.isObject(err);
-      assert.isArray(ret);
-      assert.isString(ret[0]);
+      assert.instanceOf(err, Error);
+      assert.equal(err.name, "MULTIPLE_CHOICES");
+      assert.isArray(err.content);
+      assert.isString(err.content[0]);
     }
 
   }}}}}}
@@ -237,9 +238,32 @@ vows.describe("connection").addBatch({
     }
   },
 
+  "describe cached Account" : {
+    topic : function() {
+      conn.sobject('Account').describe$(this.callback);
+    },
+    "should return described metadata information" : function(meta) {
+      assert.equal(meta.name, "Account");
+      assert.isArray(meta.fields);
+    }
+  },
+
   "describe global sobjects" : {
     topic : function() {
       conn.describeGlobal(this.callback);
+    },
+    "should return whole global sobject list" : function(res) {
+      assert.isArray(res.sobjects);
+      assert.isString(res.sobjects[0].name);
+      assert.isString(res.sobjects[0].label);
+      assert.isUndefined(res.sobjects[0].fields);
+    }
+  },
+
+  "describe cached global sobjects" : {
+    topic : function() {
+      var self = this;
+      conn.describeGlobal$(self.callback);
     },
     "should return whole global sobject list" : function(res) {
       assert.isArray(res.sobjects);
@@ -268,11 +292,14 @@ vows.describe("connection").addBatch({
   "then connect using logouted session" : {
     topic : function() {
       conn = new sf.Connection(context.sessionInfo);
-      conn.query("SELECT Id FROM User", this.callback);
+      var self = this;
+      setTimeout(function() { // wait a moment
+        conn.query("SELECT Id FROM User", self.callback);
+      }, 1000);
     },
 
     "should raise authentication error" : function(err, res) {
-      assert.isObject(err);
+      assert.instanceOf(err, Error);
     }
   }}
 
@@ -298,7 +325,7 @@ vows.describe("connection").addBatch({
         .then(function() {
           browser.fill("input[name=un]", config.username);
           browser.fill("input[name=pw]", config.password);
-          return browser.pressButton("input[name=Login]");
+          return browser.pressButton("button[name=Login]");
         })
         .then(function() {
           return browser.wait(2000);
@@ -396,8 +423,8 @@ vows.describe("connection").addBatch({
     },
 
     "should return error response" : function(err, user) {
-      assert.isObject(err);
-      assert.equal("invalid_grant", err.error);
+      assert.instanceOf(err, Error);
+      assert.equal(err.name, "invalid_grant");
     }
 
   }}}}}

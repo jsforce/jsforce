@@ -40,7 +40,7 @@ vows.describe("oauth2").addBatch({
 
       browser.fill("input[name=un]", config.username)
              .fill("input[name=pw]", config.password)
-             .pressButton("input[name=Login]")
+             .pressButton("button[name=Login]")
              .then(function() {
                return browser.wait(2000);
              })

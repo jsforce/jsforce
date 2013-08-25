@@ -24,9 +24,69 @@ or
 </pre>
 
 
-## Establish Connection 
+## API Usage
 
-### Using Session ID
+
+### Connection
+
+
+#### Username and Password Login
+
+When you have Salesforce username and password (and maybe security token if required), you can use `Connection#login(username, password)` to establish connection to Salesforce.
+
+By default, it uses SOAP login API (so no OAuth2 client information is required).
+
+```javascript
+var sf = require('node-salesforce');
+var conn = new sf.Connection({
+  // you can change loginUrl to connect to sandbox or prerelease env.
+  // loginUrl : 'https://test.salesforce.com'
+});
+conn.login(username, password, function(err, userInfo) {
+  if (err) { return console.error(err); }
+  // Now you can get the access token and instance URL information.
+  // Save them to establish connection next time.
+  console.log(conn.accessToken);
+  console.log(conn.instanceUrl);
+  // logged in user property
+  console.log("User ID: " + userInfo.id);
+  console.log("Org ID: " + userInfo.organizationId);
+  // ...
+});
+```
+
+#### Username and Password Login (OAuth2 Resource Owner Password Credential)
+
+When an OAuth2 client information is given, `Connection#login(username, password)` uses OAuth2 Resource Owner Password Credential flow to login to Salesforce.
+
+```javascript
+var sf = require('node-salesforce');
+var conn = new sf.Connection({
+  oauth2 : {
+    // you can change loginUrl to connect to sandbox or prerelease env.
+    // loginUrl : 'https://test.salesforce.com',
+    clientId : '<your Salesforce OAuth2 client ID is here>',
+    clientSecret : '<your Salesforce OAuth2 client secret is here>',
+    redirectUri : '<callback URI is here>'
+  }
+});
+conn.login(username, password, function(err, userInfo) {
+  if (err) { return console.error(err); }
+  // Now you can get the access token and instance URL information.
+  // Save them to establish connection next time.
+  console.log(conn.accessToken);
+  console.log(conn.instanceUrl);
+  // logged in user property
+  console.log("User ID: " + userInfo.id);
+  console.log("Org ID: " + userInfo.organizationId);
+  // ...
+});
+```
+
+#### Session ID
+
+If Salesforce session ID and its server URL information is passed from Salesforce (from Custom Link or something), you can pass it to constructor.
+
 
 ```javascript
 var sf = require('node-salesforce');
@@ -36,7 +96,9 @@ var conn = new sf.Connection({
 });
 ```
 
-### Using OAuth2 Access Token
+#### Access Token
+
+After the login API call or OAuth2 authorization, you can get Salesforce access token and its instance URL. Next time you can use them to establish connection.
 
 ```javascript
 var sf = require('node-salesforce');
@@ -46,7 +108,11 @@ var conn = new sf.Connection({
 });
 ```
 
-### Using OAuth2 Access Token with Refresh Token (automatically refresh access token when expired)
+#### Access Token with Refresh Token
+
+If refresh token is given in constructor, the connection will automatically refresh access token when it has expired 
+
+NOTE: Refresh token is only available for OAuth2 authorization code flow.
 
 ```javascript
 var sf = require('node-salesforce');
@@ -67,46 +133,9 @@ conn.on("refresh", function(accessToken, res) {
 ```
 
 
-### Username and Password Login (SOAP API)
+#### Logout
 
-```javascript
-var sf = require('node-salesforce');
-var conn = new sf.Connection({
-  // you can change loginUrl to connect to sandbox or prerelease env.
-  // loginUrl : 'https://test.salesforce.com'
-});
-conn.login(username, password, function(err, userInfo) {
-  if (err) { return console.error(err); }
-  console.log(conn.accessToken);
-  console.log("User ID: " + userInfo.id);
-  console.log("Org ID: " + userInfo.organizationId);
-  // ...
-});
-```
-
-### Username and Password Login (OAuth2 Resource Owner Password Credential)
-
-```javascript
-var sf = require('node-salesforce');
-var conn = new sf.Connection({
-  oauth2 : {
-    // you can change loginUrl to connect to sandbox or prerelease env.
-    // loginUrl : 'https://test.salesforce.com',
-    clientId : '<your Salesforce OAuth2 client ID is here>',
-    clientSecret : '<your Salesforce OAuth2 client secret is here>',
-    redirectUri : '<callback URI is here>'
-  }
-});
-conn.login(username, password, function(err, userInfo) {
-  if (err) { return console.error(err); }
-  console.log(conn.accessToken);
-  console.log("User ID: " + userInfo.id);
-  console.log("Org ID: " + userInfo.organizationId);
-  // ...
-});
-```
-
-### Logout (Only for SOAP API session)
+`Connection#logout()` to logout from server and invalidate current session. Currently this method only works for SOAP API session.
 
 ```javascript
 var sf = require('node-salesforce');
@@ -120,16 +149,19 @@ conn.logout(function(err) {
 });
 ```
 
-## OAuth2 Web Server Flow
+### OAuth2 Authorization
 
-### Authorization Request
+(Following examples are assuming running on express.js framework.)
 
-Following example is using express.js framework
+#### Authorization Request
+
+First, you should redirect user to Salesforce page to get authorized. You can get Salesforce authorization page URL by `OAuth2#getAuthorizationUrl(options)`.
 
 ```javascript
 var sf = require('node-salesforce');
-
+//
 // OAuth2 client information can be shared with multiple connections.
+//
 var oauth2 = new sf.OAuth2({
   // you can change loginUrl to connect to sandbox or prerelease env.
   // loginUrl : 'https://test.salesforce.com',
@@ -137,23 +169,33 @@ var oauth2 = new sf.OAuth2({
   clientSecret : '<your Salesforce OAuth2 client secret is here>',
   redirectUri : '<callback URI is here>'
 });
-
-// get authz url and redirect to it.
+//
+// Get authz url and redirect to it.
+//
 app.get('/oauth2/auth', function(req, res) {
   res.redirect(oauth2.getAuthorizationUrl({ scope : 'api id web' }));
 });
 ```
 
-### Access Token Request
+
+#### Access Token Request
+
+After the acceptance of authorization request, your app is callbacked from Salesforce with authorization code in URL parameter. Pass the code to `Connection#authorize(code)` and get access token.
 
 ```javascript
-// pass received authz code and get access token
+//
+// Pass received authz code and get access token
+//
 app.get('/oauth2/callback', function(req, res) {
   var conn = new sf.Connection({ oauth2 : oauth2 });
   var code = req.param('code');
   conn.authorize(code, function(err, userInfo) {
     if (err) { return console.error(err); }
+    // Now you can get the access token, refresh token, and instance URL information.
+    // Save them to establish connection next time.
     console.log(conn.accessToken);
+    console.log(conn.refreshToken);
+    console.log(conn.instanceURL);
     console.log("User ID: " + userInfo.id);
     console.log("Org ID: " + userInfo.organizationId);
     // ...
@@ -162,11 +204,49 @@ app.get('/oauth2/callback', function(req, res) {
 ```
 
 
-## Query Records
+### Query
 
-### Using SOQL
+#### Using SOQL
 
-#### Event-Driven Style
+By using `Connection#query(soql)`, you can achieve very basic SOQL query to fetch Salesforce records.
+
+```javascript
+var records = [];
+conn.query("SELECT Id, Name FROM Account", function(err, result) {
+  if (err) { return console.error(err); }
+  console.log("total : " + result.totalSize);
+  console.log("fetched : " + result.records.length);
+});
+```
+
+##### Callback Style
+
+There're two ways to retrieve the result records.
+
+As we have seen above, our package provides widely-used callback style API call for query execution. It returns one API call result in its callback.
+
+```javascript
+var records = [];
+conn.query("SELECT Id, Name FROM Account", function(err, result) {
+  if (err) { return console.error(err); }
+  console.log("total : " + result.totalSize);
+  console.log("fetched : " + result.records.length);
+  console.log("done ? : " + result.done);
+  if (!result.done) {
+    // you can use the locator to fetch next records set.
+    // Connection#queryMore()
+    console.log("next records URL : " + result.nextRecordsUrl);
+  }
+});
+```
+
+##### Event-Driven Style
+
+When a query is executed, it emits "record" event for each fetched record. By listening the event you can collect fetched records.
+
+If you want to fetch records exceeding the limit number of returning records per one query, you can use `autoFetch` option in `Query#execute(options)` (or its synonym `Query#exec(options)`, `Query#run(options)`) method. It is recommended to use `maxFetch` option also, if you have no idea how large the query result will become.
+
+When query is completed, `end` event will be fired. The `error` event occurs something wrong when doing query.
 
 ```javascript
 var records = [];
@@ -181,62 +261,182 @@ conn.query("SELECT Id, Name FROM Account")
   .on("error", function(err) {
     console.error(err);
   })
-  .run({ autoFetch : true, maxFetch : 4000 });
+  .run({ autoFetch : true, maxFetch : 4000 }); // synonym of Query#execute();
 ```
 
-#### Callback Style
+#### Using Query Method-Chain
+
+##### Basic Method Chaining
+
+By using `SObject#find(conditions, fields)`, you can do query in JSON-based condition expression (like MongoDB). By chaining other query construction methods, you can create a query programatically.
 
 ```javascript
-var records = [];
-conn.query("SELECT Id, Name FROM Account", function(err, result) {
-  if (err) { return console.error(err); }
-  console.log("total : " + result.totalSize);
-  console.log("fetched : " + result.records.length);
-});
-```
-
-### Using JSON-style Query object and method chaining (like MongoDB)
-
-```javascript
-// following query is equivalent to this SOQL
+//
+// Following query is equivalent to this SOQL
+//
 // "SELECT Id, Name, CreatedDate FROM Contact
 //  WHERE LastName LIKE 'A%' AND CreatedDate >= YESTERDAY AND Account.Name = 'Sony, Inc.'
 //  ORDER BY CreatedDate DESC, Name ASC
 //  LIMIT 5 OFFSET 10"
+//
+conn.sobject("Contact")
+  .find(
+    // conditions in JSON object
+    { LastName : { $like : 'A%' },
+      CreatedDate: { $gte : sf.Date.YESTERDAY },
+      'Account.Name' : 'Sony, Inc.' },
+    // fields in JSON object
+    { Id: 1,
+      Name: 1,
+      CreatedDate: 1 }
+  )
+  .sort({ CreatedDate: -1, Name : 1 })
+  .limit(5)
+  .skip(10)
+  .execute(function(err, records) {
+    if (err) { return console.error(err); }
+    console.log("fetched : " + records.length);
+  });
+```
+
+Another representation of the query above.
+
+```javascript
 conn.sobject("Contact")
   .find({
     LastName : { $like : 'A%' },
     CreatedDate: { $gte : sf.Date.YESTERDAY },
     'Account.Name' : 'Sony, Inc.'
-  }, {
-    Id: 1,
-    Name: 1,
-    CreatedDate: 1
-  })
-  .sort({ CreatedDate: -1, Name : 1 })
+  },
+    'Id, Name, CreatedDate' // fields can be string of comma-separated field names
+                            // or array of field names (e.g. [ 'Id', 'Name', 'CreatedDate' ])
+  )
+  .sort('-CreatedDate Name') // if "-" is prefixed to field name, considered as descending.
   .limit(5)
   .skip(10)
-  .execute(function(err, result) {
-    if (err) { return console.error(err); }
-    console.log("total : " + result.totalSize);
-    console.log("fetched : " + result.records.length);
+  .execute(function(err, records) {
+    for (var i=0; i<records.length; i++) {
+      var record = records[i];
+      console.log("Name: " + record.Name);
+      console.log("Created Date: " + record.CreatedDate);
+    }
   });
 ```
 
-## CRUD Operation
+##### Wildcard Fields
 
-### Retrieve
+When `fields` argument is omitted in `SObject#find(conditions, fields)` call, it will implicitly describe current SObject fields before the query (lookup cached result first, if available) and then fetch all fields defined in the SObject.
+
+NOTE: In the version less than 0.6, it fetches only `Id` field if `fields` argument is omitted.
 
 ```javascript
+conn.sobject("Contact")
+  .find({ CreatedDate: sf.Date.TODAY }) // "fields" argument is omitted
+  .execute(function(err, records) {
+    // ...
+  });
+```
+
+The above query is equivalent to:
+
+```javascript
+conn.sobject("Contact")
+  .find({ CreatedDate: sf.Date.TODAY }, '*') // fields in asterisk, means wildcard.
+  .execute(function(err, records) {
+    // …
+  });
+```
+
+
+Query can also be represented in more SQL-like verbs - `SObject#select(fields)`, `Query#where(conditions)`, `Query#orderby(sort, dir)`, and `Query#offset(num)`.
+
+```javascript
+conn.sobject("Contact")
+  .select('*, Account.*') // asterisk means all fields in specified level are target.
+  .where("CreatedDate = TODAY") // conditions in raw SOQL where clause.
+  .limit(10)
+  .offset(20) // synonym of "skip"
+  .execute(function(err, records) {
+    for (var i=0; i<records.length; i++) {
+      var record = records[i];
+      console.log("First Name: " + record.FirstName);
+      console.log("Last Name: " + record.LastName);
+      // fields in Account relationship are fetched
+      console.log("Account Name: " + record.Account.Name); 
+    }
+  });
+```
+
+You can also include child relationship records into query result by calling `Query#include(childRelName)`. After `Query#include(childRelName)` call, it enters into the context of child query. In child query context, query construction call is applied to the child query. Use `SubQuery#end()` to recover from the child context.
+
+
+```javascript
+//
+// Following query is equivalent to this SOQL
+//
+// "SELECT Id, FirstName, LastName, ..., 
+//         Account.Id, Acount.Name, ...,
+//         (SELECT Id, Subject, … FROM Cases
+//          WHERE Status = 'New' AND OwnerId = :conn.userInfo.id
+//          ORDER BY CreatedDate DESC)
+//  FROM Contact
+//  WHERE CreatedDate = TODAY
+//  LIMIT 10 OFFSET 20"
+//
+conn.sobject("Contact")
+  .select('*, Account.*')
+  .include("Cases") // include child relationship records in query result. 
+     // after include() call, entering into the context of child query.
+     .select("*")
+     .where({
+        Status: 'New',
+        OwnerId : conn.userInfo.id,
+     })
+     .orderby("CreatedDate", "DESC")
+     .end() // be sure to call end() to exit child query context
+  .where("CreatedDate = TODAY")
+  .limit(10)
+  .offset(20)
+  .execute(function(err, records) {
+    for (var i=0; i<records.length; i++) {
+      var record = records[i];
+      console.log("First Name: " + record.FirstName);
+      console.log("Last Name: " + record.LastName);
+      // fields in Account relationship are fetched
+      console.log("Account Name: " + record.Account.Name); 
+      // 
+      if (record.Cases) {
+        console.log("Cases total: " + record.Cases.totalSize);
+        console.log("Cases fetched: " + record.Cases.records.length);
+      }
+    }
+  });
+```
+
+
+
+### CRUD Operation
+
+We support basic "CRUD" operation for records. It also supports multiple record manipulation, but it consumes one API request per record. Be careful for the API quota.
+
+#### Retrieve
+
+`SObject#retrieve(id)` fetches a record or records specified by id(s) in first argument.
+
+```javascript
+//
+//
 conn.sobject("Account").retrieve("0017000000hOMChAAO", function(err, account) {
   if (err) { return console.error(err); }
   console.log("Name : " + account.Name);
   // ...
 });
-
-// Multiple records retrieval consumes one API request per record.
-// Be careful for the API quota.
-conn.sobject("Account").retrieve(["0017000000hOMChAAO", "0017000000iKOZTAA4"], function(err, accounts) {
+//
+//
+conn.sobject("Account").retrieve([
+  "0017000000hOMChAAO",
+  "0017000000iKOZTAA4"
+], function(err, accounts) {
   if (err) { return console.error(err); }
   for (var i=0; i < accounts.length; i++) {
     console.log("Name : " + accounts[i].Name);
@@ -245,16 +445,20 @@ conn.sobject("Account").retrieve(["0017000000hOMChAAO", "0017000000iKOZTAA4"], f
 });
 ```
 
-### Create 
+#### Create 
+
+`SObject#create(record)` (or its synonym `SObject#insert(record)`) creates a record or records given in first argument.
 
 ```javascript
+//
+//
 conn.sobject("Account").create({ Name : 'My Account #1' }, function(err, ret) {
   if (err || !ret.success) { return console.error(err, ret); }
   console.log("Created record id : " + ret.id);
   // ...
 });
-// Multiple records creation consumes one API request per record.
-// Be careful for the API quota.
+//
+//
 conn.sobject("Account").create([
   { Name : 'My Account #1' },
   { Name : 'My Account #2' }
@@ -270,9 +474,13 @@ function(err, rets) {
 });
 ```
 
-### Update
+#### Update
+
+`SObject#update(record)` updates a record or records given in first argument.
 
 ```javascript
+//
+//
 conn.sobject("Account").update({ 
   Id : '0017000000hOMChAAO',
   Name : 'Updated Account #1'
@@ -281,9 +489,8 @@ conn.sobject("Account").update({
   console.log('Updated Successfully : ' + ret.id);
   // ...
 });
-
-// Multiple records modification consumes one API request per record.
-// Be careful for the API quota.
+//
+//
 conn.sobject("Account").update([
   { Id : '0017000000hOMChAAO', Name : 'Updated Account #1' },
   { Id : '0017000000iKOZTAA4', Name : 'Updated Account #2' }
@@ -298,17 +505,20 @@ function(err, rets) {
 });
 ```
 
-### Delete
+#### Delete
+
+`SObject#destroy(id)` (or its synonym `SObject#del(id)`, `SObject#delete(id)`) deletes a record or records given in first argument.
 
 ```javascript
-conn.sobject("Account").del('0017000000hOMChAAO', function(err, ret) {
+//
+//
+conn.sobject("Account").destroy('0017000000hOMChAAO', function(err, ret) {
   if (err || !ret.success) { return console.error(err, ret); }
   console.log('Deleted Successfully : ' + ret.id);
 });
-
-// Multiple records deletion consumes one API request per record.
-// Be careful for the API quota.
-conn.sobject("Account").destroy([ // synonym of "del"
+//
+//
+conn.sobject("Account").del([ // synonym of "destroy"
   '0017000000hOMChAAO',
   '0017000000iKOZTAA4'
 }], 
@@ -323,9 +533,14 @@ function(err, rets) {
 ```
 
 
-### Upsert
+#### Upsert
+
+`SObject#upsert(record, extIdField)` will upsert a record or records given in first argument. External ID field name must be specified in second argument.
+
 
 ```javascript
+//
+//
 conn.sobject("UpsertTable__c").upsert({ 
   Name : 'Record #1',
   ExtId__c : 'ID-0000001'
@@ -334,8 +549,8 @@ conn.sobject("UpsertTable__c").upsert({
   console.log('Upserted Successfully');
   // ...
 });
-// Multiple records modification consumes one API request per record.
-// Be careful for the API quota.
+//
+//
 conn.sobject("UpsertTable__c").upsert([
  { Name : 'Record #1', ExtId__c : 'ID-0000001' },
  { Name : 'Record #2', ExtId__c : 'ID-0000002' }
@@ -353,9 +568,13 @@ function(err, rets) {
 ```
 
 
-## Describe
+### Metadata Description
 
-### SObject
+Metadata description API for Salesforce object.
+
+#### Describe SObject
+
+You can use `SObject#describe()` to fetch SObject metadata,
 
 ```javascript
 conn.sobject("Account").describe(function(err, meta) {
@@ -366,7 +585,20 @@ conn.sobject("Account").describe(function(err, meta) {
 });
 ```
 
-### Global Object
+or can use `Connection#describe(sobjectType)` alternatively.
+
+```javascript
+conn.describe("Account", function(err, meta) {
+  if (err) { return console.error(err); }
+  console.log('Label : ' + meta.label);
+  console.log('Num of Fields : ' + meta.fields.length);
+  // ...
+});
+```
+
+#### Describe Global
+
+`SObject#describeGlobal()` returns all SObject information registered in Salesforce (without detail information like fields, childRelationships).
 
 ```javascript
 conn.describeGlobal(function(err, res) {
@@ -376,44 +608,129 @@ conn.describeGlobal(function(err, res) {
 });
 ```
 
-## Streaming
+#### Cache
+
+Each description API has "cached" version with suffix of `$` (coming from similar pronounce "cash"), which keeps the API call result for later use.
 
 ```javascript
-/**
- Before the subscription, you should insert appropriate PushTopic record (in this example, "InvoiceStatementUpdates") as written in Streaming API guide.
- */
-conn.topic("InvoiceStatementUpdates").subscribe(function(message) {
+//
+// First lookup local cache, and then call remote API if cache doesn't exist.
+//
+conn.sobject("Account").describe$(function(err, meta) {
+  if (err) { return console.error(err); }
+  console.log('Label : ' + meta.label);
+  console.log('Num of Fields : ' + meta.fields.length);
+  // ...
+});
+//
+// If you can assume it should have already cached the result,
+// you can use synchronous call to access the result;
+//
+var meta = conn.sobject("Account").describe$();
+console.log('Label : ' + meta.label);
+console.log('Num of Fields : ' + meta.fields.length);
+// ...
+```
+
+Cache clearance should be done explicitly by developers.
+
+```javascript
+//
+// Delete cache of 'Account' SObject description result
+//
+conn.sobject('Account').describe$.clear();
+//
+// Delete cache of global sobject description
+//
+conn.describeGlobal$.clear();
+//
+// Delete all API caches in connection.
+//
+conn.cache.clear();
+```
+
+
+
+### Streaming API
+
+You can subscribe topic and receive message from Salesforce Streaming API, by using `Topic#subscribe(topicName, listener)`.
+
+Before the subscription, you should insert appropriate PushTopic record (in this example, "InvoiceStatementUpdates") as written in Streaming API guide.
+
+```javascript
+conn.streaming.topic("InvoiceStatementUpdates").subscribe(function(message) {
   console.log('Event Type : ' + message.event.type);
   console.log('Event Created : ' + message.event.createdDate);
   console.log('Object Id : ' + message.sobject.Id);
 });
 ```
 
+NOTE: Before version 0.6, there are `Connection#topic(topicName)` to access streaming topic object, and `Connection#subscribe(topicName, listener)` is used to subscribe altenatively. These methods are now obsolete and use `Streaming#topic(topicName)` and `Streaming#subscribe(topicName, listener)` through `streaming` API object in connection object instead.
 
-## Bulk Operation
 
-### Loading records
+### Apex REST
+
+If you have a static Apex class in Salesforce and are exposing it using "Apex REST" feature, you can call it by using `Apex#get(path)`, `Apex#post(path, body)`, `Apex#put(path, body)`, `Apex#patch(path, body)`, and `Apex#del(path, body)` (or its synonym `Apex#delete(path, body)`) through `apex` API object in connection object.
 
 ```javascript
+// body payload structure is depending to the Apex REST method interface.
+var body = { title: 'hello', num : 1 };
+conn.apex.post("/MyTestApexRest/", body, function(res) {
+  // the response object structure depends on the definition of apex class
+});
+```
+
+
+### Bulk API
+
+Node-salesforce package also supports Bulk API. It is not only mapping each Bulk API endpoint in low level, but also introducing utility interface in bulk load operations.
+
+
+#### Loading From Records
+
+First, assume that you have record set in array object to insert into Salesforce.
+
+```javascript
+//
 // Records to insert in bulk.
+//
 var accounts = [
 { Name : 'Account #1', ... }, 
 { Name : 'Account #2', ... }, 
 { Name : 'Account #3', ... }, 
 ...
 ];
+```
 
-// Create bulkload job and add batch to execute loading,
+You can use `SObject#create(record)`, but it consumes API quota per record, so not practical for large set of records. We can use bulk API interface to load them.
+
+Similar to Salesforce Bulk API, first create bulk job by `Bulk#createJob(sobjectType, operation)` through `bulk` API object in connection object.
+
+Next, create a new batch in the job, by calling `Job#createBatch()` through the job object created previously.
+
+```javascript
 var job = conn.bulk.createJob("Account", "insert");
 var batch = job.createBatch();
+```
+
+Then bulk load the records by calling `Batch#execute(input)` of created batch object, passing the records in `input` argument.
+ 
+When the batch is queued in Salesforce, it is notified by `queue` event, and you can get job ID and batch ID.
+
+```javascript
+batch.execute(accounts);
 batch.on("queue", function(batchInfo) { // fired when batch request is queued in server.
   batchId = batchInfo.id);
   jobId = batchInfo.jobId);
   // ...
 });
-batch.execute(accounts);
+```
 
-// and check the status later.
+After the batch is queued and job / batch ID is created, wait the batch completion by polling.
+
+When the batch process in Salesforce has been completed, it is notified by `response` event with batch result information.
+
+```javascript
 var job = conn.bulk.job(jobId);
 var batch = job.batch(batchId);
 batch.poll(1000 /* interval(ms) */, 20000 /* timeout(ms) */); // start polling
@@ -428,8 +745,11 @@ batch.on("response", function(rets) { // fired when batch finished and result re
   }
   // ...
 });
+```
 
-// or use Bulk#load() method in one call to upload records and fetch results. 
+Alternatively, you can use `Bulk#load(sobjectType, operation, input)` interface to achieve the above process in one method call.
+
+```javascript
 conn.bulk.load("Account", "insert", accounts, function(err, rets) {
   if (err) { return console.error(err); }
   for (var i=0; i < rets.length; i++) {
@@ -441,38 +761,34 @@ conn.bulk.load("Account", "insert", accounts, function(err, rets) {
   }
   // ...
 });
+```
 
-// same as following calls
+Following are same calls but in different interfaces :
+
+```javascript
 conn.sobject("Account").insertBulk(accounts, function(err, rets) {
   // ...
 });
+```
 
-// 
+```javascript
 conn.sobject("Account").bulkload("insert").execute(accounts, function(err, rets) {
   // ...
 });
 ```
 
-### Loading CSV file
+#### Loading From CSV File
+
+It also supports bulk loading from CSV file. Just use CSV file input stream as `input` argument in `Bulk#load(sobjectType, operation, input)`, instead of passing records in array.
 
 ```javascript
-// CSV file to upload
+//
+// Create readable stream for CSV file to upload
+//
 var csvFileIn = require('fs').createReadStream("path/to/Account.csv");
-
-// Create bulkload job and add batch to execute loading,
-var job = conn.bulk.createJob("Account", "insert");
-var batch = job.createBatch();
-batch.on("queue", function(batchInfo) { // fired when batch request is queued in server.
-  batchId = batchInfo.id);
-  jobId = batchInfo.jobId);
-  // ...
-});
-
-// connect any readable stream via pipe method
-csvFileIn.pipe(batch.stream());
-
-
-// or use Bulk#load() method in one call to upload file and fetch results. 
+//
+// Call Bulk#load(sobjectType, operation, input) - use CSV file stream as "input" argument
+//
 conn.bulk.load("Account", "insert", csvFileIn, function(err, rets) {
   if (err) { return console.error(err); }
   for (var i=0; i < rets.length; i++) {
@@ -484,27 +800,132 @@ conn.bulk.load("Account", "insert", csvFileIn, function(err, rets) {
   }
   // ...
 });
-
-
 ```
 
-## Record Stream Pipeline
+`Batch#stream()` returns a Node.js standard writable stream which accepts batch input. You can pipe input stream to it afterward.
+
+
+```javascript
+var batch = conn.bulk.load("Account", "insert");
+batch.on("response", function(rets) { // fired when batch finished and result retrieved
+  if (err) { return console.error(err); }
+  for (var i=0; i < rets.length; i++) {
+    if (rets[i].success) {
+      console.log("#" + (i+1) + " loaded successfully, id = " + rets[i].id);
+    } else {
+      console.log("#" + (i+1) + " error occurred, message = " + rets[i].errors.join(', '));
+    }
+  }
+);
+//
+// When input stream becomes available, pipe it to batch stream.
+//
+csvFileIn.pipe(batch.stream());
+```
+  
+
+#### Updating/Deleting Queried Records
+
+If you want to bulkly update / delete records in Salesforce which match specified condtion, now you don't have to write a code which download & upload records information. `Query#update(mapping)` / `Query#destroy()` will directly manipulate records.
+
+
+```javascript
+//
+// DELETE FROM Account WHERE CreatedDate < LAST_YEAR
+//
+conn.sobject('Account')
+    .find({ CreatedDate : sf.Date.TODAY })
+    .destroy(function(err, rets) {
+      // ...
+    });
+```
+
+```javascript
+//
+// UPDATE Opportunity 
+// SET CloseDate = '2013-08-31'
+// WHERE Account.Name = 'Salesforce.com'
+//
+conn.sobject('Opportunity')
+    .find({ 'Account.Name' : 'Salesforce.com' })
+    .update({ CloseDate: '2013-08-31' }, function(err, rets) {
+      // ...
+    });
+```
+
+In `Query#update(mapping)`, you can include simple templating notation in mapping record.
+
+```javascript
+//
+// UPDATE Task 
+// SET Description = CONCATENATE(Subject || ' ' || Status)
+// WHERE ActivityDate = TODAY
+//
+conn.sobject('Task')
+    .find({ ActivityDate : sf.Date.TODAY })
+    .update({ Descritpion: '${Subject}  ${Status}' }, function(err, rets) {
+      //
+    });
+```
+
+To achieve further complex mapping, `Query#update(mapping)` accepts mapping function in `mapping` argument.
+
+```javascript
+conn.sobject('Task')
+    .find({ ActivityDate : sf.Date.TODAY })
+    .update(function(rec) {
+      return {
+        Descritpion: rec.Subject + ' ' + rec.Status
+      }
+    }, function(err, rets) {
+      // ...
+    });
+```
+
+If you are creating query object from SOQL by using `Connection#query(soql)`, the bulk delete/update operation cannot be achieved because no sobject type information available initially. You can avoid it by passing optional argument `sobjectType` in `Query#destroy(sobjectType)` or `Query#update(mapping, sobjectType)`.
+
+```javascript
+conn.query("SELECT Id FROM Account WHERE CreatedDate = TODAY")
+    .destroy('Account', function(err, rets) {
+      // ...
+    });
+```
+
+```javascript
+conn.query("SELECT Id FROM Task WHERE ActivityDate = TODAY")
+    .update({ Descritpion: '${Subject}  ${Status}' }, 'Task', function(err, rets) {
+      // ...
+    });
+```
+
+NOTE: Be careful when using this feature not to break/lose existing data in Salesforce. Careful testing is recommended before applying the code to your production environment.
+
+
+
+### Record Stream Pipeline
 
 Record stream is a stream system which regards records in its stream, similar to Node.js's standard readable/writable streams.
 
-Query object returned by Connection#query() / SObject#find() method is considered as InputRecordStream which emits event "record" when received record from server.
+Query object - usually returned by `Connection#query(soql)` / `SObject#find(conditions, fields)` methods - is considered as `InputRecordStream` which emits event `record` when received record from server.
 
-Batch object returned by Job#createBatch() / Bulk#load() / SObject#bulkload() method is considered as OutputRecordStream and have send() and end() method to accept incoming record.
+Batch object - usually returned by `Job#createBatch()` / `Bulk#load(sobjectType, operation, input)` / `SObject#bulkload(operation, input)` methods - is considered as `OutputRecordStream` and have `send()` and `end()` method to accept incoming record.
 
-You can use InputRecordStream#pipe(outputRecordStream) to pipe record stream.
+You can use `InputRecordStream#pipe(outputRecordStream)` to pipe record stream.
 
-RecordStream can be converted to usual Node.js's stream object by calling RecordStream#stream() method.
+RecordStream can be converted to usual Node.js's stream object by calling `RecordStream#stream()` method.
+
 By default (and only currently) records are serizalized to CSV string.
 
-### Piping Query Record Stream
+
+#### Piping Query Record Stream to Batch Record Stream
+
+The idea of record stream pipeline is the base of bulk operation for queried record. For example, the same process of `Query#destroy()` can be expressed as following:
+
 
 ```javascript
-// DELETE FROM Account WHERE CreatedDate < LAST_YEAR
+//
+// This is much more complex version of Query#destroy().
+//
 var Account = conn.sobject('Account');
 Account.find({ CreatedDate: { $lt: sf.Date.LAST_YEAR }})
        .pipe(Account.deleteBulk())
@@ -514,43 +935,83 @@ Account.find({ CreatedDate: { $lt: sf.Date.LAST_YEAR }})
        .on('error', function(err) {
          // ...
        });
+```
 
-// UPDATE Opportunity SET Name = Accout.Name + ' - ' + Name WHERE Account.Id = :accId
-var Opportunity = conn.sobject('Opportunity');
-Opportunity.find({ "Account.Id" : accId },
-                 { Id: 1, Name: 1, "Account.Name": 1 })
-           .pipe(sf.RecordStream.map(function(r) {
-             r.Name = r.Account.Name + ' - ' + r.Name;
-             return r;
-           }))
-           .pipe(Opportunity.updateBulk())
-           .on('response', function(rets) {
-             // ...
-           })
-           .on('error', function(err) {
-             // ...
-           });
+And `Query#update(mapping)` can be expressed as following:
 
-// Export all account records to CSV file
+```javascript
+//
+// This is much more complex version of Query#update().
+//
+var Opp = conn.sobject('Opportunity');
+Opp.find({ "Account.Id" : accId },
+         { Id: 1, Name: 1, "Account.Name": 1 })
+   .pipe(sf.RecordStream.map(function(r) {
+     return { Id: r.Id,
+              Name: r.Account.Name + ' - ' + r.Name };
+   }))
+   .pipe(Opp.updateBulk())
+   .on('response', function(rets) {
+     // ...
+   })
+   .on('error', function(err) {
+     // ...
+   });
+```
+
+Following is an example using `Query#stream()` (inherited `RecordStream#stream()`) to convert record stream to Node.js stream, in order to export all queried records to CSV file.
+
+```javascript
 var csvFileOut = require('fs').createWriteStream('path/to/Account.csv');
 conn.query("SELECT Id, Name, Type, BillingState, BillingCity, BillingStreet FROM Account")
     .stream() // Convert to Node.js's usual readable stream.
     .pipe(csvFileOut);
-
 ```
 
-### Record Stream Filters
+#### Record Stream Filtering / Mapping
+
+You can also filter / map the queried records to output record stream. Static functions like `InputRecordStream#map(mappingFn)` and `InputRecordStream#filter(filterFn)` create a record stream which accepts records from upstream and pass to downstream, applying given filtering / mapping function.
 
 ```javascript
-// Map record and pass to downstream
+//
+// Write down Contact records to CSV, with header name converted.
+//
+conn.sobject('Contact')
+    .find({}, { Id: 1, Name: 1 })
+    .map(function() {
+      return { ID: r.Id, FULL_NAME: r.Name };
+    })
+    .stream().pipe(fs.createWriteStream("Contact.csv"));
+//
+// Write down Lead records to CSV file, eliminating duplicated entry with same email address.
+//
+var emails = {};
+conn.sobject('Lead')
+    .find({}, { Id: 1, Name: 1, Company: 1, Email: 1 })
+    .filter(function(r) {
+      var dup = emails[r.Email];
+      if (!dup) { emails[r.Email] = true; }
+      return !dup;
+    })
+    .stream().pipe(fs.createWriteStream("Lead.csv"));
+```
+
+Here is much lower level code to achieve the same result using `InputRecordStream#pipe()`.
+
+
+```javascript
+//
+// Write down Contact records to CSV, with header name converted.
+//
 conn.sobject('Contact')
     .find({}, { Id: 1, Name: 1 })
     .pipe(sf.RecordStream.map(function(r) {
-      return { ID: r.Id, FULL_NAME: r.Name }
+      return { ID: r.Id, FULL_NAME: r.Name };
     }))
     .stream().pipe(fs.createWriteStream("Contact.csv"));
-
-// Filter only matching record to pass downstream
+//
+// Write down Lead records to CSV file, eliminating duplicated entry with same email address.
+//
 var emails = {};
 conn.sobject('Lead')
     .find({}, { Id: 1, Name: 1, Company: 1, Email: 1 })
@@ -562,20 +1023,27 @@ conn.sobject('Lead')
     .stream().pipe(fs.createWriteStream("Lead.csv"));
 ```
 
-### Data Migration using Bulkload Batch Record Stream
+#### Example: Data Migration
+
+By using record stream pipeline, you can achieve data migration in a simple code.
 
 ```javascript
-
+//
 // Connection for org which migrating data from
-var conn1 = new sf.Connection(
+//
+var conn1 = new sf.Connection({
   // ...
-);
-
+});
+//
 // Connection for org which migrating data to
-var conn2 = new sf.Connection(
+//
+var conn2 = new sf.Connection({
   // ...
-);
-
+});
+//
+// Get query record stream from Connetin #1
+// and pipe it to batch record stream from connection #2
+//
 var query = conn1.query("SELECT Id, Name, Type, BillingState, BillingCity, BillingStreet FROM Account");
 var job = conn2.bulk.createJob("Account", "insert");
 var batch = job.createBatch();
@@ -585,11 +1053,84 @@ batch.on('queue', function() {
   batchId = batch.id;
   //...
 })
+```
 
+## API Reference
+
+See API Reference document in https://stomita.github.io/node-salesforce/doc/ .
+
+
+## REPL (Interactive API Console) Usage
+
+Addition to API library, it includes `sfjs` and `sfcoffee` REPL interface to test and inspect node-salesforce APIs in interactive JavaScript/CoffeeScript shell.
+
+It includes buit-in support of node-salesforce package, default connection instance. In the REPL context, package root objects and API methods of default connection are exposed.
+
+Because the REPL automatically waits the promised object during its evaluation, no callback required for all async API calls. The `_` variable keeps evaluated result in previous statement (as usual Node.JS REPL).
+
+```
+$ cd ${NODE_SALESFORCE_HOME}
+$ ./bin/sfjs
+&gt; login("username@example.org", "mypassword123");
+{ id: '005xxxxxxxxxxxxxxx',
+  organizationId: '00Dyyyyyyyyyyyyyyy' }
+&gt; sobject('Account').find({}, "Id, Name").sort({ CreatedDate: 1}).limit(5);
+[ { attributes: 
+     { type: 'Account',
+       url: '/services/data/v28.0/sobjects/Account/001i0000009PyDrAAK' },
+    Id: '001i0000009PyDrAAK',
+    Name: 'GenePoint' },
+  { attributes: 
+     { type: 'Account',
+       url: '/services/data/v28.0/sobjects/Account/001i0000009PyDsAAK' },
+    Id: '001i0000009PyDsAAK',
+    Name: 'United Oil & Gas, UK' },
+  { attributes: 
+     { type: 'Account',
+       url: '/services/data/v28.0/sobjects/Account/001i0000009PyDtAAK' },
+    Id: '001i0000009PyDtAAK',
+    Name: 'United Oil & Gas, Singapore' },
+  { attributes: 
+     { type: 'Account',
+       url: '/services/data/v28.0/sobjects/Account/001i0000009PyDuAAK' },
+    Id: '001i0000009PyDuAAK',
+    Name: 'Edge Communications' },
+  { attributes: 
+     { type: 'Account',
+       url: '/services/data/v28.0/sobjects/Account/001i0000009PyDvAAK' },
+    Id: '001i0000009PyDvAAK',
+    Name: 'Burlington Textiles Corp of America' } ]
+&gt; _[0].Name
+'GenePoint'
+&gt;
 ```
 
 
 ## Change History
+
+v0.6.0 (Aug 23, 2013):
+
+* Change default Salesforce API ver. to 28.0 (Summer '13)
+
+* Add REPL interface for interactive API inspection.
+
+* Return Promises/A+ interface object for all async call. The interface is also added to Query / Batch.
+
+* Accept "*" in fields argument in `SObject#find()` to select all fields defined in SObject.
+
+* Add `Connection#describe$()`, `Connection#describeGlobal$()`, and `SObject#describe$()`, as caching versions of correspondings.
+
+* Changed `SObject#find(conditions, fields)` behavior in fields argument omission.
+
+* Add `SObject#select()` and `Query#where()` methods to construct a query in SQL-like verb.
+
+* Add `Query#update()` and `Query#destroy()` to apply bulk operation for queried records.
+
+* Add child relationship query support in `Query#include()`
+
+* Add Apex REST support.
+
+* Move streaming API methods from connection object to separated object.
 
 v0.5.1 (Jan 11, 2013):
 

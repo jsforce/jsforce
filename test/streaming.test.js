@@ -22,9 +22,9 @@ vows.describe("streaming").addBatch({
 
   "subscribe to topic and create account" : {
     topic : function() {
-      callback = this.callback;
+      var callback = this.callback;
       // pushTopic should be query for "SELECT Id, Name FROM Account"
-      conn.topic(config.pushTopicName).subscribe(function(msg) {
+      conn.streaming.topic(config.pushTopicName).subscribe(function(msg) {
         callback(null, msg);
       });
       // wait 5 secs for subscription complete

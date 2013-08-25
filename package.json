@@ -2,30 +2,42 @@
   "author": "Shinichi Tomita <shinichi.tomita@gmail.com>",
   "name": "node-salesforce",
   "description": "Salesforce API Connection Library for Node.js Applications",
-  "keywords": [ "salesforce", "salesforce.com", "sfdc", "force.com", "database.com" ],
+  "keywords": [
+    "salesforce",
+    "salesforce.com",
+    "sfdc",
+    "force.com",
+    "database.com"
+  ],
   "homepage": "http://github.com/stomita/node-salesforce",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/stomita/node-salesforce.git"
   },
-  "licenses" : [{
-    "type" : "MIT",
-    "url" : "http://github.com/stomita/node-salesforce/raw/master/LICENSE"
-  }],
-  "main" : "./lib/salesforce",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://github.com/stomita/node-salesforce/raw/master/LICENSE"
+    }
+  ],
+  "main": "./lib/salesforce",
   "scripts": {
     "test": "vows test/*.test.js --spec"
   },
   "engines": {
     "node": ">=0.4.0"
   },
+  "bin": {
+    "sfjs": "./bin/sfjs"
+  },
   "dependencies": {
     "async": "0.1.x",
     "request": "2.12.x",
     "underscore": "1.4.x",
     "xml2json": "0.3.2",
-    "faye": "0.8.x"
+    "faye": "0.8.x",
+    "q": "0.9.x"
   },
   "devDependencies": {
     "express": "2.5.x",
