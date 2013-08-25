@@ -1055,6 +1055,10 @@ batch.on('queue', function() {
 })
 ```
 
+## API Reference
+
+See API Reference document in https://stomita.github.io/node-salesforce/doc/ .
+
 
 ## REPL (Interactive API Console) Usage
 
