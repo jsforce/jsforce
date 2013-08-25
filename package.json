@@ -29,7 +29,8 @@
     "node": ">=0.4.0"
   },
   "bin": {
-    "sfjs": "./bin/sfjs"
+    "sfjs": "./bin/sfjs",
+    "sfcoffee": "./bin/sfcoffee"
   },
   "dependencies": {
     "async": "0.1.x",
