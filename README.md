@@ -1,4 +1,6 @@
-# node-salesforce -- Salesforce API Connection Library for Node.js Applications
+# node-salesforce 
+
+Salesforce API Connection Library for Node.js Applications
 
 [![Build Status](https://secure.travis-ci.org/stomita/node-salesforce.png?branch=travis-ci)](http://travis-ci.org/stomita/node-salesforce)
 
@@ -6,7 +8,7 @@
 
 Node-salesforce, which is designed to be a wrapper of Salesforce REST API in Node.js, enables Salesforce application development in event-driven style.
 It capsulates the access to REST API end point in asynchronous JavaScript function call.
-You can use both OAuth2 access token and SOAP login sessionId for API authentication.
+You can use both OAuth2 authorization scheme and SOAP API login for API authentication.
 
 
 ## Install
@@ -57,7 +59,7 @@ conn.login(username, password, function(err, userInfo) {
 
 #### Username and Password Login (OAuth2 Resource Owner Password Credential)
 
-When an OAuth2 client information is given, `Connection#login(username, password)` uses OAuth2 Resource Owner Password Credential flow to login to Salesforce.
+When OAuth2 client information is given, `Connection#login(username, password)` uses OAuth2 Resource Owner Password Credential flow to login to Salesforce.
 
 ```javascript
 var sf = require('node-salesforce');
@@ -85,7 +87,7 @@ conn.login(username, password, function(err, userInfo) {
 
 #### Session ID
 
-If Salesforce session ID and its server URL information is passed from Salesforce (from Custom Link or something), you can pass it to constructor.
+If Salesforce session ID and its server URL information is passed from Salesforce (from 'Custom Link' or something), you can pass it to constructor.
 
 
 ```javascript
@@ -221,7 +223,7 @@ conn.query("SELECT Id, Name FROM Account", function(err, result) {
 
 ##### Callback Style
 
-There're two ways to retrieve the result records.
+There are two ways to retrieve the result records.
 
 As we have seen above, our package provides widely-used callback style API call for query execution. It returns one API call result in its callback.
 
@@ -826,7 +828,7 @@ csvFileIn.pipe(batch.stream());
 
 #### Updating/Deleting Queried Records
 
-If you want to bulkly update / delete records in Salesforce which match specified condtion, now you don't have to write a code which download & upload records information. `Query#update(mapping)` / `Query#destroy()` will directly manipulate records.
+If you want to update / delete records in Salesforce which match specified condition in bulk, now you don't have to write a code which download & upload records information. `Query#update(mapping)` / `Query#destroy()` will directly manipulate records.
 
 
 ```javascript
@@ -914,7 +916,7 @@ You can use `InputRecordStream#pipe(outputRecordStream)` to pipe record stream.
 
 RecordStream can be converted to usual Node.js's stream object by calling `RecordStream#stream()` method.
 
-By default (and only currently) records are serizalized to CSV string.
+By default (and only currently) records are serialized to CSV string.
 
 
 #### Piping Query Record Stream to Batch Record Stream
@@ -970,7 +972,7 @@ conn.query("SELECT Id, Name, Type, BillingState, BillingCity, BillingStreet FROM
 
 #### Record Stream Filtering / Mapping
 
-You can also filter / map the queried records to output record stream. Static functions like `InputRecordStream#map(mappingFn)` and `InputRecordStream#filter(filterFn)` create a record stream which accepts records from upstream and pass to downstream, applying given filtering / mapping function.
+You can also filter / map queried records to output record stream. Static functions like `InputRecordStream#map(mappingFn)` and `InputRecordStream#filter(filterFn)` create a record stream which accepts records from upstream and pass to downstream, applying given filtering / mapping function.
 
 ```javascript
 //
@@ -1071,10 +1073,10 @@ Because the REPL automatically waits the promised object during its evaluation, 
 ```
 $ cd ${NODE_SALESFORCE_HOME}
 $ ./bin/sfjs
-&gt; login("username@example.org", "mypassword123");
+> login("username@example.org", "mypassword123");
 { id: '005xxxxxxxxxxxxxxx',
   organizationId: '00Dyyyyyyyyyyyyyyy' }
-&gt; sobject('Account').find({}, "Id, Name").sort({ CreatedDate: 1}).limit(5);
+> sobject('Account').find({}, "Id, Name").sort({ CreatedDate: 1}).limit(5);
 [ { attributes: 
      { type: 'Account',
        url: '/services/data/v28.0/sobjects/Account/001i0000009PyDrAAK' },
@@ -1100,13 +1102,22 @@ $ ./bin/sfjs
        url: '/services/data/v28.0/sobjects/Account/001i0000009PyDvAAK' },
     Id: '001i0000009PyDvAAK',
     Name: 'Burlington Textiles Corp of America' } ]
-&gt; _[0].Name
+> _[0].Name
 'GenePoint'
-&gt;
+>
 ```
 
 
 ## Change History
+
+v0.6.2 (Oct 15, 2013):
+
+* Change default Salesforce API ver. to 29.0 (Winter '14)
+
+* Fix issue in Connection#queryMore
+
+* Add identity URL information in the callback response of Connection#login/authorize.
+
 
 v0.6.0 (Aug 23, 2013):
 

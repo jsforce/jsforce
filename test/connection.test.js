@@ -19,6 +19,7 @@ vows.describe("connection").addBatch({
       assert.isString(conn.accessToken);
       assert.isString(userInfo.id);
       assert.isString(userInfo.organizationId);
+      assert.isString(userInfo.url);
     }
   }
 
@@ -354,6 +355,7 @@ vows.describe("connection").addBatch({
     "done" : function(userInfo) {
       assert.isString(userInfo.id);
       assert.isString(userInfo.organizationId);
+      assert.isString(userInfo.url);
       assert.isString(conn.accessToken);
       assert.isString(conn.refreshToken);
     },
