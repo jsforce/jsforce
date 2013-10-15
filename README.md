@@ -1108,6 +1108,15 @@ $ ./bin/sfjs
 
 ## Change History
 
+v0.6.2 (Oct 15, 2013):
+
+* Change default Salesforce API ver. to 29.0 (Winter '14)
+
+* Fix issue in Connection#queryMore
+
+* Add identity URL information in the callback response of Connection#login/authorize.
+
+
 v0.6.0 (Aug 23, 2013):
 
 * Change default Salesforce API ver. to 28.0 (Summer '13)
