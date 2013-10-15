@@ -38,6 +38,29 @@ vows.describe("query").addBatch({
   },
 
 
+  "query big table and execute queryMore" : {
+    topic : function() {
+      var self = this;
+      var records = [];
+      var query = conn.query("SELECT Id, Name FROM " + (config.bigTable || 'Account'), handleResult);
+      function handleResult(err, res) {
+        if (err) {
+          return self.callback(err);
+        }
+        records.push.apply(records, res.records);
+        if (res.done) {
+          self.callback(null, { result: res, records: records });
+        } else {
+          query = conn.queryMore(res.nextRecordsUrl, handleResult);
+        }
+      }
+    },
+
+    "should fetch all records" : function(result) {
+      assert.equal(result.records.length, result.result.totalSize);
+    }
+  },
+
   "query big tables without autoFetch" : {
     topic : function() {
       var self = this;
