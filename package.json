@@ -10,7 +10,7 @@
     "database.com"
   ],
   "homepage": "http://github.com/stomita/node-salesforce",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "repository": {
     "type": "git",
     "url": "git://github.com/stomita/node-salesforce.git"
