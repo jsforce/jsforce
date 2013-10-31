@@ -1110,6 +1110,10 @@ $ ./bin/sfjs
 
 ## Change History
 
+v0.6.3 (Oct 31, 2013):
+
+* Fix issue in building query using $exists operator in SObject#find()
+
 v0.6.2 (Oct 15, 2013):
 
 * Change default Salesforce API ver. to 29.0 (Winter '14)

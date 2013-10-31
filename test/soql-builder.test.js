@@ -214,6 +214,23 @@ vows.describe("soql-builder").addBatch({
     }
   },
 
+  "Query using $exists operator" : {
+    topic : SOQLBuilder.createSOQL({
+      table: "Task",
+      conditions: {
+        WhatId: { $exists: true },
+        WhoId: { $exists: false }
+      }
+    }),
+
+    "should equal to soql" : function(soql) {
+      assert.equal(soql,
+        "SELECT Id FROM Task " +
+        "WHERE WhatId != null AND WhoId = null"
+      );
+    }
+  },
+
   "Query for matching null " : {
     topic : SOQLBuilder.createSOQL({
       table: "Account",
