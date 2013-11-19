@@ -197,7 +197,7 @@ app.get('/oauth2/callback', function(req, res) {
     // Save them to establish connection next time.
     console.log(conn.accessToken);
     console.log(conn.refreshToken);
-    console.log(conn.instanceURL);
+    console.log(conn.instanceUrl);
     console.log("User ID: " + userInfo.id);
     console.log("Org ID: " + userInfo.organizationId);
     // ...
