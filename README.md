@@ -197,7 +197,7 @@ app.get('/oauth2/callback', function(req, res) {
     // Save them to establish connection next time.
     console.log(conn.accessToken);
     console.log(conn.refreshToken);
-    console.log(conn.instanceURL);
+    console.log(conn.instanceUrl);
     console.log("User ID: " + userInfo.id);
     console.log("Org ID: " + userInfo.organizationId);
     // ...
@@ -1109,6 +1109,14 @@ $ ./bin/sfjs
 
 
 ## Change History
+
+v0.6.4 (Dec 5, 2013):
+
+* Add Topic#unsubscribe for unsubscribing from a topic in Streaming API.
+
+v0.6.3 (Oct 31, 2013):
+
+* Fix issue in building query using $exists operator in SObject#find()
 
 v0.6.2 (Oct 15, 2013):
 
