@@ -1108,6 +1108,10 @@ $ ./bin/sfjs
 
 ## Change History
 
+v0.6.4 (Dec 5, 2013):
+
+* Add Topic#unsubscribe for unsubscribing from a topic in Streaming API.
+
 v0.6.3 (Oct 31, 2013):
 
 * Fix issue in building query using $exists operator in SObject#find()
