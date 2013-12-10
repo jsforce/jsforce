@@ -20,7 +20,7 @@ describe("bulk", function() {
    */
   before(function(done) {
     conn.login(config.username, config.password, function(err) {
-      if (err) { return done(err); }
+      if (err) { throw err; }
       if (!conn.accessToken) { done(new Error("No access token. Invalid login.")); }
       done();
     });
@@ -40,6 +40,7 @@ describe("bulk", function() {
       }
       records.push({ BillingState: 'CA' }); // should raise error
       conn.bulk.load("Account", "insert", records, function(err, rets) {
+        if (err) { throw err; }
         assert.ok(_.isArray(rets));
         var ret;
         for (var i=0; i<200; i++) {
@@ -73,6 +74,7 @@ describe("bulk", function() {
           conn.bulk.load('Account', 'update', records, next);
         }
       ], function(err, rets) {
+        if (err) { throw err; }
         assert.ok(_.isArray(rets));
         var ret;
         for (var i=0; i<rets.length; i++) {
@@ -99,6 +101,7 @@ describe("bulk", function() {
           conn.bulk.load('Account', 'delete', records, next);
         }
       ], function(err, rets) {
+        if (err) { throw err; }
         assert.ok(_.isArray(rets));
         for (var i=0; i<rets.length; i++) {
           var ret = rets[i];
@@ -120,7 +123,7 @@ describe("bulk", function() {
       batch.on('error', function(err) { next(err); });
       fstream.pipe(batch.stream());
       var next = function(err, rets) {
-        if (err) { return done(err); }
+        if (err) { throw err; }
         assert.ok(_.isArray(rets));
         var ret;
         for (var i=0; i<rets.length; i++) {
@@ -166,7 +169,7 @@ describe("bulk", function() {
           fstream.pipe(batch.stream());
         }
       ], function(err, rets) {
-        if (err) { return done(err); }
+        if (err) { throw err; }
         assert.ok(_.isArray(rets));
         for (var i=0; i<rets.length; i++) {
           var ret = rets[i];
@@ -196,7 +199,7 @@ describe("bulk", function() {
       conn.sobject('Account')
           .find({ Name : { $like : 'New Bulk Account%' }})
           .update({ Name : '${Name} (Updated)' }, function(err, rets) {
-            if (err) { return done(err); }
+            if (err) { throw err; }
             assert.ok(_.isArray(rets));
             assert.ok(rets.length === 200);
             for (var i=0; i<rets.length; i++) {
@@ -211,6 +214,7 @@ describe("bulk", function() {
       it("should return updated records", function(done) {
         conn.sobject('Account')
             .find({ Name : { $like : 'New Bulk Account%' }}, 'Id, Name', function(err, records) {
+              if (err) { throw err; }
               assert.ok(_.isArray(records));
               assert.ok(records.length === 200);
               var record;
@@ -232,6 +236,7 @@ describe("bulk", function() {
       conn.sobject('Account')
           .find({ Name : { $like : 'New Bulk Account%' }})
           .destroy(function(err, rets) {
+            if (err) { throw err; }
             assert.ok(_.isArray(rets));
             assert.ok(rets.length === 200);
             for (var i=0; i<rets.length; i++) {

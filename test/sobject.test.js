@@ -18,7 +18,7 @@ describe("sobject", function() {
    */
   before(function(done) {
     conn.login(config.username, config.password, function(err) {
-      if (err) { return done(err); }
+      if (err) { throw err; }
       if (!conn.accessToken) { done(new Error("No access token. Invalid login.")); }
       done();
     });
@@ -44,12 +44,14 @@ describe("sobject", function() {
 
     it("should return records", function(done) {
       Account.find().run(function(err, records) {
+        if (err) { throw err; }
         assert.ok(_.isArray(records));
       }.check(done));
     });
 
     it("should return records with direct callback", function(done) {
       Account.find({}, { Name : 1 }, function(err, records) {
+        if (err) { throw err; }
         assert.ok(_.isArray(records));
         acc = records[0]; // keep sample account record
       }.check(done));
@@ -58,6 +60,7 @@ describe("sobject", function() {
     it("should return records with conditions", function(done) {
       var likeStr = acc.Name[0] + "%";
       Account.find({ Name : { $like : likeStr } }, { Name : 1 }, function(err, records) {
+        if (err) { throw err; }
         assert.ok(_.isArray(records));
         assert.ok(records.length > 0);
       }.check(done));
@@ -70,6 +73,7 @@ describe("sobject", function() {
   describe("find one record", function() {
     it("should return a record", function(done) {
       Account.findOne({ Id : acc.Id }, function(err, record) {
+        if (err) { throw err; }
         assert.ok(_.isObject(record));
         assert.ok(_.isString(record.Id));
       }.check(done));
@@ -83,6 +87,7 @@ describe("sobject", function() {
     it("should return total size count", function(done) {
       var likeStr = acc.Name[0] + "%";
       Account.count({ Name : { $like : likeStr } }, function(err, count) {
+        if (err) { throw err; }
         assert.ok(_.isNumber(count));
         assert.ok(count > 0);
       }.check(done));
@@ -97,6 +102,7 @@ describe("sobject", function() {
       Opportunity.find({}, { CloseDate : 1 })
                  .sort("CloseDate", "desc")
                  .exec(function(err, records) {
+        if (err) { throw err; }
         assert.ok(_.isArray(records));
         assert.ok(records.length > 0);
         for (var i=0; i<records.length - 1; i++) {
@@ -114,6 +120,7 @@ describe("sobject", function() {
       Opportunity.find({}, { "Account.Name" : 1, CloseDate : 1 })
                  .sort("Account.Name -CloseDate")
                  .exec(function(err, records) {
+        if (err) { throw err; }
         assert.ok(_.isArray(records));
         assert.ok(records.length > 0);
         for (var i=0; i<records.length - 1; i++) {
@@ -136,6 +143,7 @@ describe("sobject", function() {
                  .sort({ "Owner.Name" : 1, CloseDate : -1 })
                  .limit(10)
                  .exec(function(err, records) {
+        if (err) { throw err; }
         assert.ok(_.isArray(records));
         assert.ok(records.length > 0);
         assert.ok(records.length < 11);
@@ -158,6 +166,7 @@ describe("sobject", function() {
       Opportunity.select("Id,Owner.Name,CloseDate")
                  .limit(10)
                  .exec(function(err, records) {
+        if (err) { throw err; }
         assert.ok(_.isArray(records));
         assert.ok(records.length > 0);
         assert.ok(records.length < 11);
@@ -178,6 +187,7 @@ describe("sobject", function() {
   describe("select records with asterisk", function() {
     it("should return records", function(done) {
       Opportunity.select("*, Account.*, Owner.*").exec(function(err, records) {
+        if (err) { throw err; }
         assert.ok(_.isArray(records));
         for (var i=0; i<records.length - 1; i++) {
           var record = records[i];
@@ -203,6 +213,7 @@ describe("sobject", function() {
              .include('Opportunities', null, 'Id, Name', { limit: 2 }).end()
              .limit(10)
              .exec(function(err, records) {
+        if (err) { throw err; }
         assert.ok(_.isArray(records));
         assert.ok(records.length > 0);
         assert.ok(records.length < 11);

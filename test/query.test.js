@@ -27,7 +27,7 @@ describe("query", function() {
    */
   before(function(done) {
     conn.login(config.username, config.password, function(err) {
-      if (err) { return done(err); }
+      if (err) { throw err; }
       if (!conn.accessToken) { done(new Error("No access token. Invalid login.")); }
       done();
     });
@@ -40,6 +40,7 @@ describe("query", function() {
     it("should return records", function(done) {
       var query = conn.query("SELECT Id, Name FROM Account");
       query.run(function(err, result) {
+        if (err) { throw err; }
         assert.ok(_.isNumber(result.totalSize));
       }.check(done));
     });
@@ -63,6 +64,7 @@ describe("query", function() {
       };
       var query = conn.query("SELECT Id, Name FROM " + (config.bigTable || 'Account'), handleResult);
       var callback = function(err, result) {
+        if (err) { throw err; }
         assert.equal(result.records.length, result.result.totalSize);
       }.check(done);
     });
@@ -86,6 +88,7 @@ describe("query", function() {
       });
       query.run({ autoFetch : false });
       var callback = function(err, result) {
+        if (err) { throw err; }
         assert.ok(result.query.totalFetched === result.records.length);
         assert.ok(result.query.totalSize > 2000 ? 
                   result.query.totalFetched === 2000 : 
@@ -114,6 +117,7 @@ describe("query", function() {
            })
            .run({ autoFetch : true, maxFetch : 5000 });
       var callback = function(err, result) {
+        if (err) { throw err; }
         assert.ok(result.query.totalFetched === result.records.length);
         assert.ok(result.query.totalSize > 5000 ? 
                   result.query.totalFetched === 5000 : 
@@ -151,6 +155,7 @@ describe("query", function() {
       query.on("error", function(err) { callback(err); });
 
       var callback = function(err, result) {
+        if (err) { throw err; }
         assert.ok(result.query.totalFetched === result.records.length);
         assert.ok(result.query.totalSize > 5000 ? 
                   result.query.totalFetched === 5000 : 
@@ -179,6 +184,7 @@ describe("query", function() {
       };
       query.stream().pipe(csvOut);
       var callback = function(err, csv) {
+        if (err) { throw err; }
         assert.ok(_.isString(csv));
         var header = csv.split("\n")[0];
         assert.equal(header, "Id,Name");

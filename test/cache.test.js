@@ -23,6 +23,7 @@ describe("cache", function() {
     it("should return time", function(done) {
       getTimeResCached = cache.makeResponseCacheable(getTime, null, { key: 'getTime' });
       getTimeResCached(function(err, t) {
+        if (err) { throw err; }
         t1 = t;
         assert.ok(_.isNumber(t1));
       }.check(done));
@@ -31,6 +32,7 @@ describe("cache", function() {
     describe("then call response-cached function", function() {
       it("should get different time", function(done) {
         getTimeResCached(function(err, t) {
+          if (err) { throw err; }
           t2 = t;
           assert.ok(_.isNumber(t2));
           assert.ok(t1 < t2);
@@ -44,6 +46,7 @@ describe("cache", function() {
         it("should get time which equals to latest fn call result", function(done) {
           getTimeCached = cache.makeCacheable(getTime, null, { key: 'getTime' });
           getTimeCached(function(err, t) {
+            if (err) { throw err; }
             t3 = t;
             assert.ok(_.isNumber(t3));
             assert.equal(t3, t2);
@@ -61,6 +64,7 @@ describe("cache", function() {
             it("should get time much newer than the latest", function(done) {
               cache.clear();
               getTimeCached(function(err, t) {
+                if (err) { throw err; }
                 t5 = t;
                 assert.ok(_.isNumber(t5));
                 assert.ok(t4 < t5);

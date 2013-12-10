@@ -32,7 +32,7 @@ describe("tooling", function() {
         "System.debug('Hello, World');"
       ].join('\n');
       conn.tooling.executeAnonymous(body, function(err, res) {
-        if (err) { return done(err); }
+        if (err) { throw err; }
         assert.ok(res.compiled === true);
         assert.ok(res.success === true);
       }.check(done));
@@ -45,7 +45,7 @@ describe("tooling", function() {
   describe("get completions", function() {
     it("should return completions", function(done) {
       conn.tooling.completions("apex", function(err, res) {
-        if (err) { return done(err); }
+        if (err) { throw err; }
         assert.ok(_.isObject(res));
         assert.ok(_.isObject(res.publicDeclarations));
       }.check(done));

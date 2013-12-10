@@ -17,7 +17,7 @@ describe("apex", function() {
    */
   before(function(done) {
     conn.login(config.username, config.password, function(err) {
-      if (err) { return done(err); }
+      if (err) { throw err; }
       if (!conn.accessToken) { done(new Error("No access token. Invalid login.")); }
       done();
     });
@@ -36,7 +36,7 @@ describe("apex", function() {
         website: 'http://www.google.com'
       };
       conn.apex.post('/MyApexRestTest/', params, function(err, id) {
-        if (err) { return done(err); }
+        if (err) { throw err; }
         assert.ok(_.isString(id));
         accountId = id;
       }.check(done));
@@ -49,7 +49,7 @@ describe("apex", function() {
   describe("get account info", function() {
     it("should return updated account", function(done) {
       conn.apex.get('/MyApexRestTest/' + accountId, function(err, acc) {
-        if (err) { return done(err); }
+        if (err) { throw err; }
         assert.ok(_.isObject(acc));
         assert.ok(acc.Name ==='My Apex Rest Test #1');
         assert.ok(acc.Phone === '654-321-0000');
@@ -70,7 +70,7 @@ describe("apex", function() {
         }
       };
       conn.apex.put('/MyApexRestTest/' + accountId, params, function(err, acc) {
-        if (err) { return done(err); }
+        if (err) { throw err; }
         assert.ok(_.isObject(acc));
         assert.ok(acc.Name === 'My Apex Rest Test #1 (put)');
         assert.ok(_.isUndefined(acc.Phone));
@@ -88,7 +88,7 @@ describe("apex", function() {
         name: 'My Apex Rest Test #1 (patch)'
       };
       conn.apex.patch('/MyApexRestTest/' + accountId, params, function(err, acc) {
-        if (err) { return done(err); }
+        if (err) { throw err; }
         assert.ok(_.isObject(acc));
         assert.ok(acc.Name === 'My Apex Rest Test #1 (patch)');
         assert.ok(_.isUndefined(acc.Phone));
@@ -110,6 +110,7 @@ describe("apex", function() {
           conn.sobject('Account').find({ Id: accountId }, cb);
         }
       ], function(err, records) {
+        if (err) { throw err; }
         assert.ok(records.length === 0);
       }.check(done));
     });

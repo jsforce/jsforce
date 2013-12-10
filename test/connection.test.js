@@ -21,7 +21,7 @@ describe("connection", function() {
   describe("login", function() {
     it("should login by username and password", function(done) {
       conn.login(config.username, config.password, function(err, userInfo) {
-        if (err) { return done(err); }
+        if (err) { throw err; }
         assert.ok(_.isString(conn.accessToken));
         assert.ok(_.isString(userInfo.id));
         assert.ok(_.isString(userInfo.organizationId));
@@ -37,6 +37,7 @@ describe("connection", function() {
   describe("create account", function() {
     it("should return created obj", function(done) {
       conn.sobject('Account').create({ Name : 'Hello' }, function(err, ret) {
+        if (err) { throw err; }
         assert.ok(ret.success);
         assert.ok(_.isString(ret.id));
         accountId = ret.id;
@@ -50,6 +51,7 @@ describe("connection", function() {
   describe("retrieve account", function() {
     it("should return a record", function(done) {
       conn.sobject('Account').retrieve(accountId, function(err, record) {
+        if (err) { throw err; }
         assert.ok(_.isString(record.Id));
         assert.ok(_.isObject(record.attributes));
         assert.ok(record.Name === 'Hello');
@@ -64,6 +66,7 @@ describe("connection", function() {
   describe("update account", function() {
     it("should update successfully", function(done) {
       conn.sobject('Account').record(account.Id).update({ Name : "Hello2" }, function(err, ret) {
+        if (err) { throw err; }
         assert.ok(ret.success);
       }.check(done));
     });
@@ -71,6 +74,7 @@ describe("connection", function() {
     describe("then retrieve the account", function() {
       it("sholuld return updated account object", function(done) {
         conn.sobject('Account').record(accountId).retrieve(function(err, record) {
+          if (err) { throw err; }
           assert.ok(record.Name === 'Hello2');
           assert.ok(_.isObject(record.attributes));
         }.check(done));
@@ -84,6 +88,7 @@ describe("connection", function() {
   describe("delete account", function() {
     it("should delete successfully", function(done) {
       conn.sobject('Account').record(account.Id).destroy(function(err, ret) {
+        if (err) { throw err; }
         assert.ok(ret.success);
       }.check(done));
     });
@@ -109,6 +114,7 @@ describe("connection", function() {
         { Name : 'Account #1' }, 
         { Name : 'Account #2' }
       ], function(err, rets) {
+        if (err) { throw err; }
         assert.ok(_.isArray(rets));
         rets.forEach(function(ret) {
           assert.ok(ret.success);
@@ -125,6 +131,7 @@ describe("connection", function() {
   describe("retrieve multiple accounts", function() {
     it("should return specified records", function(done) {
       conn.sobject('Account').retrieve(accountIds, function(err, records) {
+        if (err) { throw err; }
         assert.ok(_.isArray(records));
         records.forEach(function(record, i) {
           assert.ok(_.isString(record.Id));
@@ -146,6 +153,7 @@ describe("connection", function() {
           return { Id : account.Id, Name : "Updated " + account.Name };
         }),
         function(err, rets) {
+          if (err) { throw err; }
           assert.ok(_.isArray(rets));
           rets.forEach(function(ret){
             assert.ok(ret.success);
@@ -157,6 +165,7 @@ describe("connection", function() {
     describe("then retrieve the accounts", function() {
       it("sholuld return updated records", function(done) {
         conn.sobject('Account').retrieve(accountIds, function(err, records) {
+          if (err) { throw err; }
           assert.ok(_.isArray(records));
           records.forEach(function(record, i) {
             assert.ok(record.Name === 'Updated Account #' + (i+1));
@@ -173,6 +182,7 @@ describe("connection", function() {
   describe("delete multiple accounts", function() {
     it("should delete successfully", function(done) {
       conn.sobject('Account').destroy(accountIds, function(err, rets) {
+        if (err) { throw err; }
         assert.ok(_.isArray(rets));
         rets.forEach(function(ret){
           assert.ok(ret.success);
@@ -202,6 +212,7 @@ describe("connection", function() {
         var rec = { Name : 'New Record' };
         rec[config.upsertField] = extId;
         conn.sobject(config.upsertTable).upsert(rec, config.upsertField, function(err, ret) {
+          if (err) { throw err; }
           assert.ok(ret.success);
           assert.ok(_.isString(ret.id));
           recId = ret.id;
@@ -214,6 +225,7 @@ describe("connection", function() {
         var rec = { Name : 'Updated Record' };
         rec[config.upsertField] = extId;
         conn.sobject(config.upsertTable).upsert(rec, config.upsertField, function(err, ret) {
+          if (err) { throw err; }
           assert.ok(ret.success);
           assert.ok(_.isUndefined(ret.id));
         }.check(done));
@@ -222,6 +234,7 @@ describe("connection", function() {
       describe("then retrieve the record", function() {
         it("should return updated record", function(done) {
           conn.sobject(config.upsertTable).retrieve(recId, function(err, record) {
+            if (err) { throw err; }
             assert.ok(record.Name === "Updated Record");
           }.check(done));
         });
@@ -254,6 +267,7 @@ describe("connection", function() {
   describe("describe Account", function() {
     it("should return metadata information", function(done) {
       conn.sobject('Account').describe(function(err, meta) {
+        if (err) { throw err; }
         assert.ok(meta.name === "Account");
         assert.ok(_.isArray(meta.fields));
       }.check(done));
@@ -262,6 +276,7 @@ describe("connection", function() {
     describe("then describe cached Account", function() {
       it("should return metadata information", function(done) {
         conn.sobject('Account').describe$(function(err, meta) {
+          if (err) { throw err; }
           assert.ok(meta.name === "Account");
           assert.ok(_.isArray(meta.fields));
         }.check(done));
@@ -275,6 +290,7 @@ describe("connection", function() {
   describe("describe global sobjects", function() {
     it("should return whole global sobject list", function(done) {
       conn.describeGlobal(function(err, res) {
+        if (err) { throw err; }
         assert.ok(_.isArray(res.sobjects));
         assert.ok(_.isString(res.sobjects[0].name));
         assert.ok(_.isString(res.sobjects[0].label));
@@ -285,6 +301,7 @@ describe("connection", function() {
     describe("then describe cached global sobjects", function() {
       it("should return whole global sobject list", function(done) {
         conn.describeGlobal$(function(err, res) {
+          if (err) { throw err; }
           assert.ok(_.isArray(res.sobjects));
           assert.ok(_.isString(res.sobjects[0].name));
           assert.ok(_.isString(res.sobjects[0].label));
@@ -305,7 +322,8 @@ describe("connection", function() {
         accessToken : conn.accessToken,
         instanceUrl : conn.instanceUrl
       };
-      conn.logout(function() {
+      conn.logout(function(err) {
+        if (err) { throw err; }
         assert.ok(_.isNull(conn.accessToken));
       }.check(done));
     });
@@ -317,7 +335,7 @@ describe("connection", function() {
           conn.query("SELECT Id FROM User", function(err, res) {
             assert.ok(err instanceof Error);
           }.check(done));
-        }, 1000);
+        }, 5000);
       });
     });
   });
