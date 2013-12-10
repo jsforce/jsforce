@@ -49,6 +49,27 @@ describe("query", function() {
   /**
    *
    */
+  describe("query accounts with scanAll option", function() {
+    before(function(done) {
+      conn.sobject('Account').create({ Name: 'Deleting Account #1'}, function(err, ret) {
+        if (err) { return done(err); }
+        conn.sobject('Account').record(ret.id).destroy(done);
+      });
+    });
+
+    it("should return records", function(done) {
+      var query = conn.query("SELECT Id, IsDeleted, Name FROM Account WHERE IsDeleted = true");
+      query.run({ scanAll: true }, function(err, result) {
+        if (err) { throw err; }
+        assert.ok(_.isNumber(result.totalSize));
+        assert.ok(result.totalSize > 0);
+      }.check(done));
+    });
+  });
+
+  /**
+   *
+   */
   describe("query big table and execute queryMore", function() {
     this.timeout(30000);
     it("should fetch all records", function(done) {
