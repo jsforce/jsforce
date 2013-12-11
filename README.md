@@ -771,7 +771,7 @@ report.execute({ metadata : metadata }, function(err, result) {
 });
 ```
 
-`Report#executeAsync(options, callback)` executes the report asynchronously in Salesforce, registering an instance to the report to lookup the executed result in future.
+`Report#executeAsync(options)` executes the report asynchronously in Salesforce, registering an instance to the report to lookup the executed result in future.
 
 ```javascript
 var instanceId;
@@ -1198,10 +1198,10 @@ Because the REPL automatically waits the promised object during its evaluation, 
 
 ```
 $ sfjs
-&gt; login("username@example.org", "mypassword123");
+> login("username@example.org", "mypassword123");
 { id: '005xxxxxxxxxxxxxxx',
   organizationId: '00Dyyyyyyyyyyyyyyy' }
-&gt; sobject('Account').find({}, "Id, Name").sort({ CreatedDate: 1}).limit(5);
+> sobject('Account').find({}, "Id, Name").sort({ CreatedDate: 1}).limit(5);
 [ { attributes: 
      { type: 'Account',
        url: '/services/data/v28.0/sobjects/Account/001i0000009PyDrAAK' },
@@ -1227,9 +1227,9 @@ $ sfjs
        url: '/services/data/v28.0/sobjects/Account/001i0000009PyDvAAK' },
     Id: '001i0000009PyDvAAK',
     Name: 'Burlington Textiles Corp of America' } ]
-&gt; _[0].Name
+> _[0].Name
 'GenePoint'
-&gt;
+>
 ```
 
 
