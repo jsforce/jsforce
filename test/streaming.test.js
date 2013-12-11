@@ -4,12 +4,16 @@ var assert = require('power-assert'),
     sf     = require('../lib/salesforce'),
     config = require('./config/streaming');
 
-var conn = new sf.Connection();
 
 /**
  *
  */
 describe("streaming", function() {
+
+  this.timeout(40000); // set timeout to 40 sec.
+
+  var conn = new sf.Connection({ logLevel : config.logLevel });
+
   /**
    *
    */
@@ -25,7 +29,6 @@ describe("streaming", function() {
    *
    */
   describe("subscribe to topic and create account", function() {
-    this.timeout(10000); // set timeout to 10sec
     it("should receive event account created", function(done) {
       var listener = function(msg) {
         assert.equal("created", msg.event.type);

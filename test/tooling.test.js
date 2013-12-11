@@ -6,11 +6,14 @@ var assert = require('power-assert'),
     sf     = require('../lib/salesforce'),
     config = require('./config/salesforce');
 
-var conn = new sf.Connection({ logLevel : config.logLevel });
-
+/**
+ *
+ */
 describe("tooling", function() {
 
-  this.timeout(20000);
+  this.timeout(40000); // set timeout to 40 sec.
+
+  var conn = new sf.Connection({ logLevel : config.logLevel });
 
   /**
    *
@@ -43,6 +46,8 @@ describe("tooling", function() {
    *
    */
   describe("get completions", function() {
+    this.timeout(40000); // set timeout to 40 sec, because it tends to be long-time query
+
     it("should return completions", function(done) {
       conn.tooling.completions("apex", function(err, res) {
         if (err) { throw err; }

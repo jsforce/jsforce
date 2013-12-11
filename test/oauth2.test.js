@@ -5,18 +5,19 @@ var assert = require('power-assert'),
     OAuth2 = require('../lib/oauth2'),
     config = require('./config/oauth2');
 
-var oauth2 = new OAuth2(config);
-
 /**
  *
  */
 describe("oauth2", function() {
 
+  this.timeout(40000); // set timeout to 40 sec.
+
+  var oauth2 = new OAuth2(config);
+
   /**
    *
    */
   describe("OAuth2 web server flow", function() {
-    this.timeout(40000);
     var code, accessToken, refreshToken;
 
     it("should receive authz code", function(done) {

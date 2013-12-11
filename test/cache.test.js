@@ -3,18 +3,19 @@ var assert = require('power-assert'),
     _      = require('underscore'),
     Cache  = require('../lib/cache');
 
-var cache = new Cache();
-var getTime = function(callback) {
-  setTimeout(function() {
-    callback(null, Date.now());
-  }, 1000);
-};
-
 /**
  *
  */
 describe("cache", function() {
-  this.timeout(10000);
+  
+  this.timeout(40000); // set timeout to 40 sec.
+
+  var cache = new Cache();
+  var getTime = function(callback) {
+    setTimeout(function() {
+      callback(null, Date.now());
+    }, 1000);
+  };
 
   describe("call response-cached getTime function", function() {
     var t1, t2;

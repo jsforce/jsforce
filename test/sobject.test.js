@@ -6,11 +6,14 @@ var assert = require('power-assert'),
     SObject = require("../lib/sobject"),
     config = require('./config/salesforce');
 
-var conn = new sf.Connection({ logLevel : config.logLevel });
-
+/**
+ *
+ */
 describe("sobject", function() {
 
-  this.timeout(20000);
+  this.timeout(40000); // set timeout to 40 sec.
+
+  var conn = new sf.Connection({ logLevel : config.logLevel });
 
   var Account, Opportunity;
   /**

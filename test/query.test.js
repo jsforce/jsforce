@@ -2,8 +2,6 @@
 var assert = require('power-assert'),
     _      = require('underscore'),
     fs     = require('fs'),
-    async  = require('async'),
-    events = require('events'),
     stream = require('stream'),
     Stream = stream.Stream,
     querystring = require('querystring'),
@@ -11,16 +9,14 @@ var assert = require('power-assert'),
     RecordStream = require('../lib/record-stream'),
     config = require('./config/salesforce');
 
-
-var conn = new sf.Connection({ logLevel : config.logLevel });
-var context = {};
-
 /**
  *
  */
 describe("query", function() { 
 
-  this.timeout(20000);
+  this.timeout(40000); // set timeout to 40 sec.
+
+  var conn = new sf.Connection({ logLevel : config.logLevel });
 
   /**
    *
@@ -71,7 +67,6 @@ describe("query", function() {
    *
    */
   describe("query big table and execute queryMore", function() {
-    this.timeout(30000);
     it("should fetch all records", function(done) {
       var records = [];
       var handleResult = function(err, res) {
@@ -123,7 +118,6 @@ describe("query", function() {
    *
    */
   describe("query big tables with autoFetch", function() {
-    this.timeout(30000);
     it("should scan records up to maxFetch num", function(done) {
       var records = [];
       var query = conn.query("SELECT Id, Name FROM " + (config.bigTable || 'Account'));
@@ -152,7 +146,6 @@ describe("query", function() {
    *
    */
   describe("query big tables by piping randomly-waiting output record stream object", function() {
-    this.timeout(30000);
     it("should scan records via stream up to maxFetch num", function(done) {
       var records = [];
       var query = conn.query("SELECT Id, Name FROM " + (config.bigTable || 'Account'));
