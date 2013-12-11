@@ -34,11 +34,12 @@
   },
   "dependencies": {
     "async": "0.1.x",
+    "coffee-script": "1.6.x",
+    "faye": "0.8.x",
+    "q": "0.9.x",
     "request": "2.12.x",
     "underscore": "1.4.x",
-    "xml2json": "0.3.2",
-    "faye": "0.8.x",
-    "q": "0.9.x"
+    "xml2js": "0.4.x"
   },
   "devDependencies": {
     "mocha": "1.15.x",
