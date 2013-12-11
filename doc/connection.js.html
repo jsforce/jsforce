@@ -30,6 +30,7 @@
  * @author Shinichi Tomita &lt;shinichi.tomita@gmail.com>
  */
 var events  = require('events'),
+    util    = require('util'),
     async   = require('async'),
     _       = require('underscore')._,
     request = require('./request'),
@@ -40,9 +41,10 @@ var events  = require('events'),
     SObject = require('./sobject'),
     Bulk    = require('./bulk'),
     Streaming = require('./streaming'),
+    Tooling = require('./tooling'),
+    Analytics = require('./analytics'),
     Apex    = require('./apex'),
     Cache   = require('./cache');
-  
 
 var defaults = {
   loginUrl: "https://login.salesforce.com",
@@ -109,6 +111,18 @@ var Connection = module.exports = function(options) {
    */
   this.bulk = new Bulk(this);
   /**
+   * Tooling API object
+   * @memberof Connection.prototype
+   * @member {Tooling} tooling
+   */
+  this.tooling = new Tooling(this);
+  /**
+   * Analytics API object
+   * @memberof Connection.prototype
+   * @member {Analytics} analytics
+   */
+  this.analytics = new Analytics(this);
+  /**
    * Apex REST API object
    * @memberof Connection.prototype
    * @member {Apex} apex
@@ -136,7 +150,7 @@ var Connection = module.exports = function(options) {
   this.initialize(options);
 };
 
-Connection.prototype = new events.EventEmitter();
+util.inherits(Connection, events.EventEmitter);
 
 /**
  * Initialize connection.
@@ -179,9 +193,18 @@ Connection.prototype.initialize = function(options) {
     }
   }, this));
 
+  this.tooling.initialize();
+
   this._initializedAt = Date.now();
 };
 
+
+/**
+ * @private
+ */
+Connection.prototype._baseUrl = function() {
+  return this.urls.rest.base;
+};
 
 /**
  * Sending request to API endpoint
@@ -189,6 +212,10 @@ Connection.prototype.initialize = function(options) {
  */
 Connection.prototype._request = function(params, callback, options) {
   options = options || {};
+  // if params is simple string, regard it as url in GET method
+  if (_.isString(params)) {
+    params = { method: 'GET', url: params };
+  }
   var self = this;
   var logger = this._logger;
 
@@ -295,7 +322,12 @@ function parseJSON(str) {
 
 /** @private */
 function parseXML(str) {
-  return require('xml2json').toJson(str, { object: true });
+  var ret = {};
+  require('xml2js').parseString(str, { explicitArray: false }, function(err, result) {
+    ret = { error: err, result : result };
+  });
+  if (ret.error) { throw ret.error; }
+  return ret.result;
 }
 
 /** @private */
@@ -361,6 +393,22 @@ Connection.prototype.query = function(soql, callback) {
 };
 
 /**
+ * Execute query by using SOQL, including deleted records
+ * 
+ * @param {String} soql - SOQL string
+ * @param {Callback.&lt;QueryResult>} [callback] - Callback function
+ * @returns {Query.&lt;QueryResult>}
+ */
+Connection.prototype.queryAll = function(soql, callback) {
+  var query = new Query(this, soql);
+  query.scanAll(true);
+  if (callback) {
+    query.run(callback);
+  }
+  return query;
+};
+
+/**
  * Query next record set by using query locator
  * 
  * @param {String} locator - Next record set locator
@@ -392,7 +440,7 @@ Connection.prototype.retrieve = function(type, ids, callback) {
   }
   return Promise.all(
     _.map(ids, function(id) {
-      var url = [ self.urls.rest.base, "sobjects", type, id ].join('/');
+      var url = [ self._baseUrl(), "sobjects", type, id ].join('/');
       return self._request({
         method : 'GET',
         url : url
@@ -455,7 +503,7 @@ Connection.prototype.create = function(type, records, callback) {
       delete record.type;
       delete record.attributes;
 
-      var url = [ self.urls.rest.base, "sobjects", sobjectType ].join('/');
+      var url = [ self._baseUrl(), "sobjects", sobjectType ].join('/');
       return self._request({
         method : 'POST',
         url : url,
@@ -505,7 +553,7 @@ Connection.prototype.update = function(type, records, callback) {
       delete record.type;
       delete record.attributes;
 
-      var url = [ self.urls.rest.base, "sobjects", sobjectType, id ].join('/');
+      var url = [ self._baseUrl(), "sobjects", sobjectType, id ].join('/');
       return self._request({
         method : 'PATCH',
         url : url,
@@ -557,7 +605,7 @@ Connection.prototype.upsert = function(type, records, extIdField, callback) {
       delete record.type;
       delete record.attributes;
 
-      var url = [ self.urls.rest.base, "sobjects", sobjectType, extIdField, extId ].join('/');
+      var url = [ self._baseUrl(), "sobjects", sobjectType, extIdField, extId ].join('/');
       return self._request({
         method : 'PATCH',
         url : url,
@@ -615,7 +663,7 @@ Connection.prototype.destroy = function(type, ids, callback) {
   }
   return Promise.all(
     _.map(ids, function(id) {
-      var url = [ self.urls.rest.base, "sobjects", type, id ].join('/');
+      var url = [ self._baseUrl(), "sobjects", type, id ].join('/');
       return self._request({
         method : 'DELETE',
         url : url
@@ -626,6 +674,37 @@ Connection.prototype.destroy = function(type, ids, callback) {
   ).then(function(results) {
     return !isArray && _.isArray(results) ? results[0] : results;
   }).thenCall(callback);
+};
+
+/**
+ * Execute search by SOSL
+ * 
+ * @param {String} sosl - SOSL string
+ * @param {Callback.&lt;Array.&lt;RecordResult>>} [callback] - Callback function
+ * @returns {Promise.&lt;Array.&lt;RecordResult>>}
+ */
+Connection.prototype.search = function(sosl, callback) {
+  var url = this._baseUrl() + "/search?q=" + encodeURIComponent(sosl);
+  return this._request(url).thenCall(callback);
+};
+
+/**
+ * List recently viewed records
+ * 
+ * @param {Number} [limit] - Callback function
+ * @param {Callback.&lt;Array.&lt;RecordResult>>} [callback] - Callback function
+ * @returns {Promise.&lt;Array.&lt;RecordResult>>}
+ */
+Connection.prototype.recent = function(limit, callback) {
+  if (!_.isNumber(limit)) {
+    callback = limit;
+    limit = undefined;
+  }
+  var url = this._baseUrl() + "/recent";
+  if (limit) { 
+    url += "?limit=" + limit;
+  }
+  return this._request(url).thenCall(callback);
 };
 
 /**
@@ -653,7 +732,7 @@ Connection.prototype.destroy = function(type, ids, callback) {
  */
 Connection.prototype.describe = 
 Connection.prototype.describeSObject = function(type, callback) {
-  var url = [ this.urls.rest.base, "sobjects", type, "describe" ].join('/');
+  var url = [ this._baseUrl(), "sobjects", type, "describe" ].join('/');
   return this._request({
     method : 'GET',
     url : url
@@ -673,7 +752,7 @@ Connection.prototype.describeSObject = function(type, callback) {
  * @returns {Promise.&lt;DescribeGlobalResult>}
  */
 Connection.prototype.describeGlobal = function(callback) {
-  var url = this.urls.rest.base + "/sobjects";
+  var url = this._baseUrl() + "/sobjects";
   return this._request({
     method : 'GET',
     url : url
@@ -921,13 +1000,13 @@ Connection.prototype.logout = function(callback) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Apex.html">Apex</a></li><li><a href="Batch.html">Batch</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="Job.html">Job</a></li><li><a href="Logger.html">Logger</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query.SubQuery.html">SubQuery</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Topic.html">Topic</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Batch.html">Batch</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="Job.html">Job</a></li><li><a href="Logger.html">Logger</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query.SubQuery.html">SubQuery</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="Report.html">Report</a></li><li><a href="ReportInstance.html">ReportInstance</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Topic.html">Topic</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a> on Thu Dec 05 2013 23:11:56 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a> on Wed Dec 11 2013 21:23:30 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>
