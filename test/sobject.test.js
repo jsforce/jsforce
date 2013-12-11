@@ -1,238 +1,259 @@
-var vows   = require('vows'),
-    assert = require('assert'),
+/*global describe, it, before */
+var assert = require('power-assert'),
+    _      = require('underscore'),
     async  = require('async'),
     sf     = require('../lib/salesforce'),
     SObject = require("../lib/sobject"),
     config = require('./config/salesforce');
 
-var conn = new sf.Connection({ logLevel : config.logLevel });
-var context = {};
-var Account, Opportunity;
+/**
+ *
+ */
+describe("sobject", function() {
 
-vows.describe("sobject").addBatch({
-  "login" : {
-    topic : function() {
-      conn.login(config.username, config.password, this.callback);
-    }, 
-    "done" : function() { 
-      assert.isString(conn.accessToken);
-    }
-  }
+  this.timeout(40000); // set timeout to 40 sec.
 
-}).addBatch({
+  var conn = new sf.Connection({ logLevel : config.logLevel });
 
-  "create Account sobject" : {
-    topic : conn.sobject("Account"),
-    "should get SObject instance" : function(_Account) {
-      assert.ok(_Account instanceof SObject);
-      Account = _Account;
-    }
-  },
+  var Account, Opportunity;
+  /**
+   *
+   */
+  before(function(done) {
+    conn.login(config.username, config.password, function(err) {
+      if (err) { throw err; }
+      if (!conn.accessToken) { done(new Error("No access token. Invalid login.")); }
+      done();
+    });
+  });
 
-  "create Opportunity sobject" : {
-    topic : conn.sobject("Opportunity"),
-    "should get SObject instance" : function(_Opportunity) {
-      assert.ok(_Opportunity instanceof SObject);
-      Opportunity = _Opportunity;
-    }
-  }
+  /**
+   *
+   */
+  describe("create sobject", function() {
+    it("should get SObject instances", function() {
+      Account = conn.sobject("Account");
+      Opportunity = conn.sobject("Opportunity");
+      assert.ok(Account instanceof SObject);
+      assert.ok(Opportunity instanceof SObject);
+    });
+  });
   
-}).addBatch({
+  var acc;
+  /**
+   *
+   */
+  describe("find records", function() {
 
-  "find records" : {
-    topic : function() {
-      Account.find().run(this.callback);
-    },
-    "should return records" : function (records) {
-      assert.isArray(records);
-    }
-  },
+    it("should return records", function(done) {
+      Account.find().run(function(err, records) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(records));
+      }.check(done));
+    });
 
-  "find records (with direct callback)" : {
-    topic : function() {
-      Account.find({}, { Name : 1 }, this.callback);
-    },
-    "should return records" : function (records) {
-      assert.isArray(records);
-      context.acc = records[0]; // keep sample account record
-    }
-  }
+    it("should return records with direct callback", function(done) {
+      Account.find({}, { Name : 1 }, function(err, records) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(records));
+        acc = records[0]; // keep sample account record
+      }.check(done));
+    });
 
-}).addBatch({
+    it("should return records with conditions", function(done) {
+      var likeStr = acc.Name[0] + "%";
+      Account.find({ Name : { $like : likeStr } }, { Name : 1 }, function(err, records) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(records));
+        assert.ok(records.length > 0);
+      }.check(done));
+    });
+  });
 
-  "find records with conditions" : {
-    topic : function() {
-      var likeStr = context.acc.Name[0] + "%";
-      Account.find({ Name : { $like : likeStr } }, { Name : 1 },  this.callback);
-    },
-    "should return records" : function (records) {
-      assert.isArray(records);
-      assert.greater(records.length, 0);
-    }
-  },
+  /**
+   *
+   */
+  describe("find one record", function() {
+    it("should return a record", function(done) {
+      Account.findOne({ Id : acc.Id }, function(err, record) {
+        if (err) { throw err; }
+        assert.ok(_.isObject(record));
+        assert.ok(_.isString(record.Id));
+      }.check(done));
+    });
+  });
 
-  "find one record with conditions" : {
-    topic : function() {
-      Account.findOne({ Id : context.acc.Id }, this.callback);
-    },
-    "should return records" : function (record) {
-      assert.isObject(record);
-      assert.isString(record.Id);
-    }
-  },
+  /**
+   *
+   */
+  describe("count records", function() {
+    it("should return total size count", function(done) {
+      var likeStr = acc.Name[0] + "%";
+      Account.count({ Name : { $like : likeStr } }, function(err, count) {
+        if (err) { throw err; }
+        assert.ok(_.isNumber(count));
+        assert.ok(count > 0);
+      }.check(done));
+    });
+  });
 
-  "count records with conditions" : {
-    topic : function() {
-      var likeStr = context.acc.Name[0] + "%";
-      Account.count({ Name : { $like : likeStr } }, this.callback);
-    },
-    "should return total size count" : function (count) {
-      assert.isNumber(count);
-      assert.greater(count, 0);
-    }
-  }
-
-}).addBatch({
-
-  "find records with sort options" : {
-    topic : function() {
+  /**
+   *
+   */
+  describe("find records with sort option", function() {
+    it("should return sorted records", function(done) {
       Opportunity.find({}, { CloseDate : 1 })
                  .sort("CloseDate", "desc")
-                 .exec(this.callback);
-    },
-    "should return sorted records" : function (records) {
-      assert.isArray(records);
-      assert.greater(records.length, 0);
-      for (var i=0; i<records.length - 1; i++) {
-        assert.ok(records[i].CloseDate >= records[i+1].CloseDate);
-      }
-    }
-  },
+                 .exec(function(err, records) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(records));
+        assert.ok(records.length > 0);
+        for (var i=0; i<records.length - 1; i++) {
+          assert.ok(records[i].CloseDate >= records[i+1].CloseDate);
+        }
+      }.check(done));
+    });
+  });
 
-  "find records with multiple sort options" : {
-    topic : function() {
+  /**
+   *
+   */
+  describe("find records with multiple sort options", function() {
+    it("should return sorted records", function(done) {
       Opportunity.find({}, { "Account.Name" : 1, CloseDate : 1 })
                  .sort("Account.Name -CloseDate")
-                 .exec(this.callback);
-    },
-    "should return sorted records" : function (records) {
-      assert.isArray(records);
-      assert.greater(records.length, 0);
-      for (var i=0; i<records.length - 1; i++) {
-        var r1 = records[i], r2 = records[i+1];
-        assert.ok(r1.Account.Name <= r2.Account.Name);
-        if (r1.Account.Name === r2.Account.Name) {
-          assert.ok(r1.CloseDate >= r2.CloseDate);
+                 .exec(function(err, records) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(records));
+        assert.ok(records.length > 0);
+        for (var i=0; i<records.length - 1; i++) {
+          var r1 = records[i], r2 = records[i+1];
+          assert.ok(r1.Account.Name <= r2.Account.Name);
+          if (r1.Account.Name === r2.Account.Name) {
+            assert.ok(r1.CloseDate >= r2.CloseDate);
+          }
         }
-      }
-    }
-  },
+      }.check(done));
+    });
+  });
 
-  "find records with multiple sort options and limit option" : {
-    topic : function() {
+  /**
+   *
+   */
+  describe("find records with multiple sort options and limit option", function() {
+    it("should return sorted records", function(done) {
       Opportunity.find({}, { "Owner.Name" : 1, CloseDate : 1 })
                  .sort({ "Owner.Name" : 1, CloseDate : -1 })
                  .limit(10)
-                 .exec(this.callback);
-    },
-    "should return sorted records" : function (records) {
-      assert.isArray(records);
-      assert.greater(records.length, 0);
-      assert.lesser(records.length, 11);
-      for (var i=0; i<records.length - 1; i++) {
-        var r1 = records[i], r2 = records[i+1];
-        assert.ok(r1.Owner.Name <= r2.Owner.Name);
-        if (r1.Owner.Name === r2.Owner.Name) {
-          assert.ok(r1.CloseDate >= r2.CloseDate);
+                 .exec(function(err, records) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(records));
+        assert.ok(records.length > 0);
+        assert.ok(records.length < 11);
+        for (var i=0; i<records.length - 1; i++) {
+          var r1 = records[i], r2 = records[i+1];
+          assert.ok(r1.Owner.Name <= r2.Owner.Name);
+          if (r1.Owner.Name === r2.Owner.Name) {
+            assert.ok(r1.CloseDate >= r2.CloseDate);
+          }
         }
-      }
-    }
-  },
+      }.check(done));
+    });
+  });
 
-  "select records" : {
-    topic : function() {
+  /**
+   *
+   */
+  describe("select records", function() {
+    it("should return records", function(done) {
       Opportunity.select("Id,Owner.Name,CloseDate")
                  .limit(10)
-                 .exec(this.callback);
-    },
-    "should return records" : function (records) {
-      assert.isArray(records);
-      assert.greater(records.length, 0);
-      assert.lesser(records.length, 11);
-      for (var i=0; i<records.length - 1; i++) {
-        var record = records[i];
-        assert.isString(record.Id);
-        assert.isObject(record.Owner);
-        assert.isString(record.Owner.Name);
-        assert.isString(record.CloseDate);
-      }
-    }
-  },
+                 .exec(function(err, records) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(records));
+        assert.ok(records.length > 0);
+        assert.ok(records.length < 11);
+        for (var i=0; i<records.length - 1; i++) {
+          var record = records[i];
+          assert.ok(_.isString(record.Id));
+          assert.ok(_.isObject(record.Owner));
+          assert.ok(_.isString(record.Owner.Name));
+          assert.ok(_.isString(record.CloseDate));
+        }
+      }.check(done));
+    });
+  });
 
-  "select records with asterisk" : {
-    topic : function() {
-      Opportunity.select("*, Account.*, Owner.*").exec(this.callback);
-    },
-    "should return records" : function (records) {
-      assert.isArray(records);
-      for (var i=0; i<records.length - 1; i++) {
-        var record = records[i];
-        assert.isString(record.Id);
-        assert.isString(record.Name);
-        assert.isString(record.CloseDate);
-        assert.isObject(record.Account);
-        assert.isString(record.Account.Name);
-        assert.isObject(record.Owner);
-        assert.isString(record.Owner.Name);
-      }
-    }
-  },
+  /**
+   *
+   */
+  describe("select records with asterisk", function() {
+    it("should return records", function(done) {
+      Opportunity.select("*, Account.*, Owner.*").exec(function(err, records) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(records));
+        for (var i=0; i<records.length - 1; i++) {
+          var record = records[i];
+          assert.ok(_.isString(record.Id));
+          assert.ok(_.isString(record.Name));
+          assert.ok(_.isString(record.CloseDate));
+          assert.ok(_.isObject(record.Account));
+          assert.ok(_.isString(record.Account.Name));
+          assert.ok(_.isObject(record.Owner));
+          assert.ok(_.isString(record.Owner.Name));
+        }
+      }.check(done));
+    });
+  });
 
-  "select records including child objects" : {
-    topic : function() {
+  /**
+   *
+   */
+  describe("select records including child objects", function() {
+    it("should return records with child records", function(done) {
       Account.find(null, 'Id')
              .include('Contacts').select('*').limit(2).end()
              .include('Opportunities', null, 'Id, Name', { limit: 2 }).end()
              .limit(10)
-             .exec(this.callback);
-    },
-    "should return records with child records" : function (records) {
-      assert.isArray(records);
-      assert.greater(records.length, 0);
-      assert.lesser(records.length, 11);
-      for (var i=0; i<records.length; i++) {
-        var record = records[i];
-        assert.isString(record.Id);
-        assert.isUndefined(record.Name);
-        if (record.Contacts) {
-          assert.isObject(record.Contacts);
-          var crecords = record.Contacts.records;
-          assert.isArray(crecords);
-          assert.greater(crecords.length, 0);
-          assert.lesser(crecords.length, 3);
-          for (var j=0; j<crecords.length; j++) {
-            var crecord = crecords[j];
-            assert.isString(crecord.Id);
-            assert.isString(crecord.FirstName);
-            assert.isString(crecord.LastName);
+             .exec(function(err, records) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(records));
+        assert.ok(records.length > 0);
+        assert.ok(records.length < 11);
+        for (var i=0; i<records.length; i++) {
+          var record = records[i];
+          assert.ok(_.isString(record.Id));
+          assert.ok(_.isUndefined(record.Name));
+          if (record.Contacts) {
+            assert.ok(_.isObject(record.Contacts));
+            var crecords = record.Contacts.records;
+            assert.ok(_.isArray(crecords));
+            assert.ok(crecords.length > 0);
+            assert.ok(crecords.length < 3);
+            for (var j=0; j<crecords.length; j++) {
+              var crecord = crecords[j];
+              assert.ok(_.isString(crecord.Id));
+              assert.ok(_.isString(crecord.FirstName));
+              assert.ok(_.isString(crecord.LastName));
+            }
+          }
+          if (record.Opportunities) {
+            assert.ok(_.isObject(record.Opportunities));
+            var orecords = record.Opportunities.records;
+            assert.ok(_.isArray(orecords));
+            assert.ok(orecords.length > 0);
+            assert.ok(orecords.length < 3);
+            for (var k=0; k<orecords.length; k++) {
+              var orecord = orecords[k];
+              assert.ok(_.isString(orecord.Id));
+              assert.ok(_.isString(orecord.Name));
+              assert.ok(_.isUndefined(orecord.CloseDate));
+            }
           }
         }
-        if (record.Opportunities) {
-          assert.isObject(record.Opportunities);
-          var orecords = record.Opportunities.records;
-          assert.isArray(orecords);
-          assert.greater(orecords.length, 0);
-          assert.lesser(orecords.length, 3);
-          for (var k=0; k<orecords.length; k++) {
-            var orecord = orecords[k];
-            assert.isString(orecord.Id);
-            assert.isString(orecord.Name);
-            assert.isUndefined(orecord.CloseDate);
-          }
-        }
-      }
-    }
-  }
+      }.check(done));
+    });
+  });
    
-}).export(module);
+});
 

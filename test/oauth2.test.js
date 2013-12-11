@@ -1,126 +1,64 @@
-var vows   = require('vows')
-  , assert = require('assert')
-  , zombie = require('zombie')
-  , querystring = require('querystring')
-  , OAuth2 = require('../lib/oauth2')
-  , config = require('./config/oauth2')
-  ;
+/*global describe, it, before */
+var assert = require('power-assert'),
+    _      = require('underscore'),
+    authorize = require('./helper/webauth'),
+    OAuth2 = require('../lib/oauth2'),
+    config = require('./config/oauth2');
 
+/**
+ *
+ */
+describe("oauth2", function() {
 
-var oauth2 = new OAuth2(config);
+  this.timeout(40000); // set timeout to 40 sec.
 
-var browser = new zombie.Browser();
-browser.runScripts = true;
+  var oauth2 = new OAuth2(config);
 
-vows.describe("oauth2").addBatch({
+  /**
+   *
+   */
+  describe("OAuth2 web server flow", function() {
+    var code, accessToken, refreshToken;
 
-  "OAuth2 web server flow : access to authz url" : {
-    topic : function() {
-      var self = this;
-      browser.visit(oauth2.getAuthorizationUrl({ state : "hello" }))
-        .then(function() {
-          return browser.wait(2000);
-        })
-        .fail(function(err) {
-          console.log(err.message);
-        })
-        .then(function() {
-          self.callback();
-        });
-    },
+    it("should receive authz code", function(done) {
+      var url = oauth2.getAuthorizationUrl({ state: 'hello' });
+      authorize(url, config.username, config.password, function(err, params) {
+        if (err) { throw err; }
+        assert.ok(_.isString(params.code));
+        assert.ok(params.state === 'hello');
+        code = params.code;
+      }.check(done));
+    });
 
-    "should get login page" : function() {
-      assert.ok(browser.success);
-      assert.equal(browser.location.href.indexOf(oauth2.loginUrl), 0);
-    },
+    it("should receive access/refresh token", function(done) {
+      oauth2.requestToken(code, function(err, res) {
+        if (err) { throw err; }
+        assert.ok(_.isString(res.access_token));
+        assert.ok(_.isString(res.refresh_token));
+        accessToken = res.access_token;
+        refreshToken = res.refresh_token;
+      }.check(done));
+    });
 
-  ", then input username/password" : {
-    topic : function() {
-      var self = this;
+    it("should refresh access token", function(done) {
+      oauth2.refreshToken(refreshToken, function(err, res) {
+        if (err) { throw err; }
+        assert.ok(_.isString(res.access_token));
+      }.check(done));
+    });
 
-      browser.fill("input[name=un]", config.username)
-             .fill("input[name=pw]", config.password)
-             .pressButton("button[name=Login]")
-             .then(function() {
-               return browser.wait(2000);
-             })
-             .fail(function(err) {
-               console.log(err.message);
-             })
-             .then(function() {
-               self.callback();
-             });
+  });
 
-    },
+  /**
+   *
+   */
+  describe("OAuth2 username & password flow : authenticate", function() {
+    it("should receive access token", function(done) {
+      oauth2.authenticate(config.username, config.password, function(err, res) {
+        if (err) { throw err; }
+        assert.ok(_.isString(res.access_token));
+      }.check(done));
+    });
+  });
 
-    "should get authz page" : function() {
-      assert.ok(browser.success);
-    },
-
-  ", then press authorize, if it is required" : {
-    topic : function() {
-      var self = this;
-      var url = browser.location.href;
-      if (url.indexOf(config.redirectUri) === 0) {
-        this.callback();
-      } else {
-        browser.pressButton("#oaapprove")
-               .then(function() {
-                 return browser.wait(2000);
-               })
-               .fail(function(err) {
-                 console.log(err.message);
-               })
-               .then(function() {
-                 self.callback();
-               });
-
-      }
-    },
-
-    "should get authorization code and state" : function() {
-      var url = browser.location.href;
-      assert.equal(url.indexOf(config.redirectUri), 0);
-      url = require('url').parse(url);
-      var params = querystring.parse(url.query);
-      assert.equal(params.state, "hello");
-      assert.isString(params.code);
-    },
-
-  ", then retrieve access token" : {
-    topic : function() {
-      var url = browser.location.href;
-      url = require('url').parse(url);
-      var params = querystring.parse(url.query);
-      oauth2.requestToken(params.code, this.callback);
-    },
-
-    "should receive access token (and refresh token)" : function(res) {
-      assert.isString(res.access_token);
-      assert.isString(res.refresh_token);
-    },
-
-  ", then refresh token" : {
-    topic : function(res) {
-      oauth2.refreshToken(res.refresh_token, this.callback);
-    },
-
-    "should receive new access token" : function(res) {
-      assert.isString(res.access_token);
-    }
-
-  }}}}}
-
-}).addBatch({
-
-  "OAuth2 username & password flow : authenticate" : {
-    topic : function() {
-      oauth2.authenticate(config.username, config.password, this.callback);
-    },
-
-    "should receive access token" : function(res) {
-      assert.isString(res.access_token);
-    }
-  }
-
-}).export(module);
+});

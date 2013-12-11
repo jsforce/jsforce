@@ -1,8 +1,7 @@
-var vows   = require('vows'),
-    assert = require('assert'),
+/*global describe, it, before */
+var assert = require('power-assert'),
+    _      = require('underscore'),
     fs     = require('fs'),
-    async  = require('async'),
-    events = require('events'),
     stream = require('stream'),
     Stream = stream.Stream,
     querystring = require('querystring'),
@@ -10,115 +9,144 @@ var vows   = require('vows'),
     RecordStream = require('../lib/record-stream'),
     config = require('./config/salesforce');
 
+/**
+ *
+ */
+describe("query", function() { 
 
-var conn = new sf.Connection({ logLevel : config.logLevel });
-var context = {};
+  this.timeout(40000); // set timeout to 40 sec.
 
-vows.describe("query").addBatch({
-  "login" : {
-    topic : function() {
-      conn.login(config.username, config.password, this.callback);
-    }, 
-    "done" : function() { 
-      assert.isString(conn.accessToken);
-    }
-  }
+  var conn = new sf.Connection({ logLevel : config.logLevel });
 
-}).addBatch({
+  /**
+   *
+   */
+  before(function(done) {
+    conn.login(config.username, config.password, function(err) {
+      if (err) { throw err; }
+      if (!conn.accessToken) { done(new Error("No access token. Invalid login.")); }
+      done();
+    });
+  });
 
-
-  "query accounts" : {
-    topic : function() {
+  /**
+   *
+   */
+  describe("query accounts", function() {
+    it("should return records", function(done) {
       var query = conn.query("SELECT Id, Name FROM Account");
-      query.run(this.callback);
-    },
-    "should return records" : function (res) {
-      assert.isNumber(res.totalSize);
-    }
-  },
+      query.run(function(err, result) {
+        if (err) { throw err; }
+        assert.ok(_.isNumber(result.totalSize));
+      }.check(done));
+    });
+  });
 
+  /**
+   *
+   */
+  describe("query accounts with scanAll option", function() {
+    before(function(done) {
+      conn.sobject('Account').create({ Name: 'Deleting Account #1'}, function(err, ret) {
+        if (err) { return done(err); }
+        conn.sobject('Account').record(ret.id).destroy(done);
+      });
+    });
 
-  "query big table and execute queryMore" : {
-    topic : function() {
-      var self = this;
+    it("should return records", function(done) {
+      var query = conn.query("SELECT Id, IsDeleted, Name FROM Account WHERE IsDeleted = true");
+      query.run({ scanAll: true }, function(err, result) {
+        if (err) { throw err; }
+        assert.ok(_.isNumber(result.totalSize));
+        assert.ok(result.totalSize > 0);
+      }.check(done));
+    });
+  });
+
+  /**
+   *
+   */
+  describe("query big table and execute queryMore", function() {
+    it("should fetch all records", function(done) {
       var records = [];
-      var query = conn.query("SELECT Id, Name FROM " + (config.bigTable || 'Account'), handleResult);
-      function handleResult(err, res) {
-        if (err) {
-          return self.callback(err);
-        }
+      var handleResult = function(err, res) {
+        if (err) { callback(err); }
         records.push.apply(records, res.records);
         if (res.done) {
-          self.callback(null, { result: res, records: records });
+          callback(null, { result: res, records: records });
         } else {
           query = conn.queryMore(res.nextRecordsUrl, handleResult);
         }
-      }
-    },
+      };
+      var query = conn.query("SELECT Id, Name FROM " + (config.bigTable || 'Account'), handleResult);
+      var callback = function(err, result) {
+        if (err) { throw err; }
+        assert.equal(result.records.length, result.result.totalSize);
+      }.check(done);
+    });
+  });
 
-    "should fetch all records" : function(result) {
-      assert.equal(result.records.length, result.result.totalSize);
-    }
-  },
-
-  "query big tables without autoFetch" : {
-    topic : function() {
-      var self = this;
+  /**
+   *
+   */
+  describe("query big tables without autoFetch", function() {
+    describe("should scan records in one query fetch", function(done) {
       var records = [];
       var query = conn.query("SELECT Id, Name FROM " + (config.bigTable || 'Account'));
       query.on('record', function(record, i, cnt){
         records.push(record); 
       });
       query.on('end', function() {
-        self.callback(null, { query : query, records : records });
+        callback(null, { query : query, records : records });
       });
       query.on('error', function(err) {
-        self.callback(err);
+        callback(err);
       });
       query.run({ autoFetch : false });
-    },
+      var callback = function(err, result) {
+        if (err) { throw err; }
+        assert.ok(result.query.totalFetched === result.records.length);
+        assert.ok(result.query.totalSize > 2000 ? 
+                  result.query.totalFetched === 2000 : 
+                  result.query.totalFetched === result.query.totalSize
+        );
+      }.check(done);
+    });
+  });
 
-    "should scan records in one query fetch" : function(result) {
-      assert.ok(result.query.totalFetched === result.records.length);
-      assert.ok(result.query.totalSize > 2000 ? 
-                result.query.totalFetched === 2000 : 
-                result.query.totalFetched === result.query.totalSize
-      );
-    }
-  },
-
-
-  "query big tables with autoFetch" : {
-    topic : function() {
-      var self = this;
+  /**
+   *
+   */
+  describe("query big tables with autoFetch", function() {
+    it("should scan records up to maxFetch num", function(done) {
       var records = [];
       var query = conn.query("SELECT Id, Name FROM " + (config.bigTable || 'Account'));
       query.on('record', function(record) {
              records.push(record); 
            })
            .on('error', function(err) {
-             self.callback(err);
+             callback(err);
            })
            .on('end', function() {
-             self.callback(null, { query : query, records : records });
+             callback(null, { query : query, records : records });
            })
            .run({ autoFetch : true, maxFetch : 5000 });
-    },
+      var callback = function(err, result) {
+        if (err) { throw err; }
+        assert.ok(result.query.totalFetched === result.records.length);
+        assert.ok(result.query.totalSize > 5000 ? 
+                  result.query.totalFetched === 5000 : 
+                  result.query.totalFetched === result.query.totalSize
+        );
+      }.check(done);
+    });
+  });
 
-    "should scan records up to maxFetch num" : function(result) {
-      assert.ok(result.query.totalFetched === result.records.length);
-      assert.ok(result.query.totalSize > 5000 ? 
-                result.query.totalFetched === 5000 : 
-                result.query.totalFetched === result.query.totalSize
-      );
-    }
-  },
-
-
-
-  "query big tables by piping randomly-waiting output record stream object" : {
-    topic : function() {
-      var self = this;
+  /**
+   *
+   */
+  describe("query big tables by piping randomly-waiting output record stream object", function() {
+    it("should scan records via stream up to maxFetch num", function(done) {
       var records = [];
       var query = conn.query("SELECT Id, Name FROM " + (config.bigTable || 'Account'));
       var outStream = new RecordStream();
@@ -135,28 +163,27 @@ vows.describe("query").addBatch({
         return outStream.sendable;
       };
       outStream.end = function() {
-        self.callback(null, { query : query, records : records });
+        callback(null, { query : query, records : records });
       };
       query.pipe(outStream);
-      query.on("error", function(err) { self.callback(err); });
-    },
+      query.on("error", function(err) { callback(err); });
 
+      var callback = function(err, result) {
+        if (err) { throw err; }
+        assert.ok(result.query.totalFetched === result.records.length);
+        assert.ok(result.query.totalSize > 5000 ? 
+                  result.query.totalFetched === 5000 : 
+                  result.query.totalFetched === result.query.totalSize
+        );
+      }.check(done);
+    });
+  });
 
-    "should scan records via stream up to maxFetch num" : function(result) {
-      assert.ok(result.query.totalFetched === result.records.length);
-      assert.ok(result.query.totalSize > 5000 ? 
-                result.query.totalFetched === 5000 : 
-                result.query.totalFetched === result.query.totalSize
-      );
-    }
-
-  }
-
-}).addBatch({
-
-  "query table and convert to readable stream": {
-    topic : function() {
-      var self = this;
+  /**
+   *
+   */
+  describe("query table and convert to readable stream", function() {
+    it("should get CSV text", function(done) {
       var query = conn.query("SELECT Id, Name FROM Account LIMIT 10");
       var csvOut = new Stream();
       csvOut.writable = true;
@@ -167,20 +194,17 @@ vows.describe("query").addBatch({
       csvOut.end = function(data) {
         result += data;
         csvOut.writable = false;
-        self.callback(null, result);
+        callback(null, result);
       };
       query.stream().pipe(csvOut);
-    },
+      var callback = function(err, csv) {
+        if (err) { throw err; }
+        assert.ok(_.isString(csv));
+        var header = csv.split("\n")[0];
+        assert.equal(header, "Id,Name");
+      }.check(done);
+    });
+  });
 
-    "should get CSV text" : function(csv) {
-      assert.isString(csv);
-      var header = csv.split("\n")[0];
-      assert.equal(header, "Id,Name");
-    }
-
-  }
-
-
-
-}).export(module);
+});
 

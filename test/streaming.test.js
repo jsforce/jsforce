@@ -1,45 +1,49 @@
-var vows   = require('vows')
-  , assert = require('assert')
-  , async  = require('async')
-  , sf     = require('../lib/salesforce')
-  , config = require('./config/streaming')
-  ;
+/*global describe, it, before */
+var assert = require('power-assert'),
+    _      = require('underscore'),
+    sf     = require('../lib/salesforce'),
+    config = require('./config/streaming');
 
-var conn = new sf.Connection();
 
-vows.describe("streaming").addBatch({
+/**
+ *
+ */
+describe("streaming", function() {
 
-  "login" : {
-    topic : function() {
-      conn.login(config.username, config.password, this.callback);
-    }, 
-    "done" : function() { 
-      assert.isString(conn.accessToken);
-    }
-  }
+  this.timeout(40000); // set timeout to 40 sec.
 
-}).addBatch({
+  var conn = new sf.Connection({ logLevel : config.logLevel });
 
-  "subscribe to topic and create account" : {
-    topic : function() {
-      var callback = this.callback;
-      // pushTopic should be query for "SELECT Id, Name FROM Account"
-      conn.streaming.topic(config.pushTopicName).subscribe(function(msg) {
-        callback(null, msg);
-      });
+  /**
+   *
+   */
+  before(function(done) {
+    conn.login(config.username, config.password, function(err) {
+      if (err) { done(err); }
+      if (!conn.accessToken) { done(new Error("No access token. Invalid login.")); }
+      done();
+    });
+  });
+
+  /**
+   *
+   */
+  describe("subscribe to topic and create account", function() {
+    it("should receive event account created", function(done) {
+      var listener = function(msg) {
+        assert.equal("created", msg.event.type);
+        assert.ok(typeof msg.sobject.Name === 'string');
+        assert.ok(typeof msg.sobject.Id === 'string');
+      }.check(done);
+      conn.streaming.topic(config.pushTopicName).subscribe(listener);
       // wait 5 secs for subscription complete
       setTimeout(function() {
         conn.sobject('Account').create({
           Name: 'My New Account #'+Date.now()
         }, function() {});
       }, 5000);
-    },
-    ", then receive event account created" : function(msg) {
-      assert.equal("created", msg.event.type);
-      assert.isString(msg.sobject.Name);
-      assert.isString(msg.sobject.Id);
-    },
-  }
+    });
+  });
 
-}).export(module);
+});
 

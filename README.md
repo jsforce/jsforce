@@ -13,24 +13,30 @@ You can use both OAuth2 authorization scheme and SOAP API login for API authenti
 
 ## Install
 
+If you are using node-salesforce as an API library in your Node.js project :
+
 <pre>
-  npm install node-salesforce
+  $ npm install node-salesforce
 </pre>
 
-or
+If you want to utilize node-salesforce REPL (interactive API console) in tty:
 
 <pre>
-  git clone git://github.com/stomita/node-salesforce.git 
-  cd node-salesforce
-  npm link
+  $ npm install node-salesforce -g
+</pre>
+
+If you want to get the latest from GitHub :
+
+<pre>
+  $ git clone git://github.com/stomita/node-salesforce.git 
+  $ cd node-salesforce
+  $ npm link
 </pre>
 
 
 ## API Usage
 
-
 ### Connection
-
 
 #### Username and Password Login
 
@@ -670,6 +676,115 @@ conn.streaming.topic("InvoiceStatementUpdates").subscribe(function(message) {
 NOTE: Before version 0.6, there are `Connection#topic(topicName)` to access streaming topic object, and `Connection#subscribe(topicName, listener)` is used to subscribe altenatively. These methods are now obsolete and use `Streaming#topic(topicName)` and `Streaming#subscribe(topicName, listener)` through `streaming` API object in connection object instead.
 
 
+### Tooling API
+
+You can use Tooling API to execute anonymous Apex Code, by passing apex code string text to `Tooling#executeAnonymous`.
+
+```javascript
+// execute anonymous Apex Code
+var apexBody = "System.debug('Hello, World');";
+conn.tooling.executeAnonymous(apexBody, function(err, res) {
+  if (err) { return console.error(err); }
+  console.log(res.compiled); // compiled successfully
+  console.log(res.success); // executed successfully
+  // ...
+});
+```
+
+### Analytics API
+
+By using Analytics API, you can get the output result from a report registered in Salesforce.
+
+`Analytics#reports()` lists recently accessed reports.
+
+```javascript
+// get recent reports
+conn.analytics.reports(function(err, reports) {
+  if (err) { return console.error(err); }
+  for (var i=0; i < reports.length; i++) {
+    console.log(reports[i].id);
+    console.log(reports[i].name);
+  }
+  // ...
+});
+```
+
+`Analytics#report(reportId)` gives a reference to the report object specified in `reportId`.
+By calling `Report#execute(options)`, the report is exected in Salesforce, and returns executed result synchronously.
+Please refer to Analytics API document about the format of retruning result.
+
+```javascript
+// get report reference
+var reportId = '00O10000000pUw2EAE';
+var report = conn.analytics.report(reportId);
+// execute report synchronously
+report.execute(function(err, result) {
+  if (err) { return console.error(err); }
+  console.log(result.reportMetadata);
+  console.log(result.factMap);
+  console.log(result.factMap["T!T"]);
+  console.log(result.factMap["T!T"].aggregates);
+  // ...
+});
+```
+
+Setting `details` to true in `options`, it returns execution result with detail rows.
+
+```javascript
+// execute report synchronously with details option,
+// to get detail rows in execution result.
+report.execute({ details: true }, function(err, result) {
+  if (err) { return console.error(err); }
+  console.log(result.reportMetadata);
+  console.log(result.factMap);
+  console.log(result.factMap["T!T"]);
+  console.log(result.factMap["T!T"].aggregates);
+  console.log(result.factMap["T!T"].rows); // <= detail rows in array
+  // ...
+});
+```
+
+You can override report behavior by putting `metadata` object in `options`.
+For example, following code shows how to update filtering conditions of a report on demand.
+
+```javascript
+// overriding report metadata
+var metadata = { 
+  reportMetadata : {
+    reportFilters : [{
+      column: 'COMPANY',
+      operator: 'contains',
+      value: ',Inc.'
+    }]
+  }
+};
+// execute report synchronously with overridden filters.
+report.execute({ metadata : metadata }, function(err, result) {
+  if (err) { return console.error(err); }
+  console.log(result.reportMetadata);
+  console.log(result.reportMetadata.reportFilters.length); // <= 1
+  console.log(result.reportMetadata.reportFilters[0].column); // <= 'COMPANY' 
+  console.log(result.reportMetadata.reportFilters[0].operator); // <= 'contains' 
+  console.log(result.reportMetadata.reportFilters[0].value); // <= ',Inc.' 
+  // ...
+});
+```
+
+`Report#executeAsync(options, callback)` executes the report asynchronously in Salesforce, registering an instance to the report to lookup the executed result in future.
+
+```javascript
+// get report reference
+var report = conn.analytics.report(reportId);
+// execute report synchronously
+report.executeAsync({ details: true }, function(err, instance) {
+  if (err) { return console.error(err); }
+  console.log(result.reportMetadata);
+  console.log(result.factMap);
+  console.log(result.factMap["T!T"]);
+  // ...
+});
+```
+
 ### Apex REST
 
 If you have a static Apex class in Salesforce and are exposing it using "Apex REST" feature, you can call it by using `Apex#get(path)`, `Apex#post(path, body)`, `Apex#put(path, body)`, `Apex#patch(path, body)`, and `Apex#del(path, body)` (or its synonym `Apex#delete(path, body)`) through `apex` API object in connection object.
@@ -1064,19 +1179,18 @@ See API Reference document in https://stomita.github.io/node-salesforce/doc/ .
 
 ## REPL (Interactive API Console) Usage
 
-Addition to API library, it includes `sfjs` and `sfcoffee` REPL interface to test and inspect node-salesforce APIs in interactive JavaScript/CoffeeScript shell.
+Node-salesforce is not merely an API library, but gives `sfjs` and `sfcoffee` REPL interface to test and inspect node-salesforce APIs in interactive JavaScript/CoffeeScript shell.
 
 It includes buit-in support of node-salesforce package, default connection instance. In the REPL context, package root objects and API methods of default connection are exposed.
 
 Because the REPL automatically waits the promised object during its evaluation, no callback required for all async API calls. The `_` variable keeps evaluated result in previous statement (as usual Node.JS REPL).
 
 ```
-$ cd ${NODE_SALESFORCE_HOME}
-$ ./bin/sfjs
-> login("username@example.org", "mypassword123");
+$ sfjs
+&gt; login("username@example.org", "mypassword123");
 { id: '005xxxxxxxxxxxxxxx',
   organizationId: '00Dyyyyyyyyyyyyyyy' }
-> sobject('Account').find({}, "Id, Name").sort({ CreatedDate: 1}).limit(5);
+&gt; sobject('Account').find({}, "Id, Name").sort({ CreatedDate: 1}).limit(5);
 [ { attributes: 
      { type: 'Account',
        url: '/services/data/v28.0/sobjects/Account/001i0000009PyDrAAK' },
@@ -1102,13 +1216,26 @@ $ ./bin/sfjs
        url: '/services/data/v28.0/sobjects/Account/001i0000009PyDvAAK' },
     Id: '001i0000009PyDvAAK',
     Name: 'Burlington Textiles Corp of America' } ]
-> _[0].Name
+&gt; _[0].Name
 'GenePoint'
->
+&gt;
 ```
 
 
 ## Change History
+
+v0.7.0 (Dec 11, 2013):
+
+* Support Analytics API and Tooling API.
+
+* Add Connection#queryAll to include deleted/archived records in query.
+
+* Add Connection#recent to fetch recently viewed record information.
+
+* Add RecordReference#blob(fieldName) to access blob in a record field.
+
+* Fix installation issue in Windows environment.
+
 
 v0.6.4 (Dec 5, 2013):
 
@@ -1198,6 +1325,4 @@ v0.3.1 (Jun 26, 2012):
 v0.3.0 (May 10, 2012):
 
 * Support Salesforce Streaming API.
-
-
 
