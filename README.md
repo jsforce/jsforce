@@ -717,6 +717,7 @@ Please refer to Analytics API document about the format of retruning result.
 // get report reference
 var reportId = '00O10000000pUw2EAE';
 var report = conn.analytics.report(reportId);
+
 // execute report synchronously
 report.execute(function(err, result) {
   if (err) { return console.error(err); }
@@ -773,14 +774,24 @@ report.execute({ metadata : metadata }, function(err, result) {
 `Report#executeAsync(options, callback)` executes the report asynchronously in Salesforce, registering an instance to the report to lookup the executed result in future.
 
 ```javascript
-// get report reference
-var report = conn.analytics.report(reportId);
-// execute report synchronously
+var instanceId;
+
+// execute report asynchronously
 report.executeAsync({ details: true }, function(err, instance) {
+  if (err) { return console.error(err); }
+  console.log(instance.id); // <= registered report instance id
+  instanceId = instance.id;
+  // ...
+});
+
+// retrieve asynchronously executed result afterward.
+report.instance(instanceId).retrieve(function(err, result) {
   if (err) { return console.error(err); }
   console.log(result.reportMetadata);
   console.log(result.factMap);
   console.log(result.factMap["T!T"]);
+  console.log(result.factMap["T!T"].aggregates);
+  console.log(result.factMap["T!T"].rows);
   // ...
 });
 ```
