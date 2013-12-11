@@ -1,437 +1,443 @@
-var vows   = require('vows'),
-    assert = require('assert'),
-    zombie = require('zombie'),
+/*global describe, it, before */
+var assert = require('power-assert'),
     async  = require('async'),
-    querystring = require('querystring'),
+    _      = require('underscore'),
+    authorize = require('./helper/webauth'),
     sf     = require('../lib/salesforce'),
     config = require('./config/salesforce');
 
-var conn = new sf.Connection({ logLevel : config.logLevel });
-var browser = new zombie.Browser();
-var context = {};
+/**
+ *
+ */
+describe("connection", function() {
 
-vows.describe("connection").addBatch({
-  "login" : {
-    topic : function() {
-      conn.login(config.username, config.password, this.callback);
-    }, 
-    "done" : function(userInfo) { 
-      assert.isString(conn.accessToken);
-      assert.isString(userInfo.id);
-      assert.isString(userInfo.organizationId);
-      assert.isString(userInfo.url);
-    }
-  }
+  this.timeout(40000); // set timeout to 40 sec.
 
-}).addBatch({
+  var conn = new sf.Connection({ logLevel : config.logLevel });
 
-  "create account" : {
-    topic : function() {
-      conn.sobject('Account').create({ Name : 'Hello' }, this.callback);
-    },
-    "should return created obj" : function(ret) {
-      assert.ok(ret.success);
-      assert.isString(ret.id);
-    },
+  /**
+   *
+   */
+  describe("login", function() {
+    it("should login by username and password", function(done) {
+      conn.login(config.username, config.password, function(err, userInfo) {
+        if (err) { throw err; }
+        assert.ok(_.isString(conn.accessToken));
+        assert.ok(_.isString(userInfo.id));
+        assert.ok(_.isString(userInfo.organizationId));
+        assert.ok(_.isString(userInfo.url));
+      }.check(done));
+    });
+  });
 
-  ", then retrieve account" : {
-    topic : function(ret) {
-      conn.sobject('Account').retrieve(ret.id, this.callback);
-    },
-    "should return a record" : function(record) {
-      assert.isString(record.Id);
-      assert.isObject(record.attributes);
-      assert.equal(record.Name, 'Hello');
-    },
+  var accountId, account;
+  /**
+   *
+   */
+  describe("create account", function() {
+    it("should return created obj", function(done) {
+      conn.sobject('Account').create({ Name : 'Hello' }, function(err, ret) {
+        if (err) { throw err; }
+        assert.ok(ret.success);
+        assert.ok(_.isString(ret.id));
+        accountId = ret.id;
+      }.check(done));
+    });
+  });
 
-  ", then update account" : {
-    topic : function(account) {
-      conn.sobject('Account').record(account.Id).update({ Name : "Hello2" }, this.callback);
-    },
-    "should update successfully" : function(ret) {
-      assert.ok(ret.success);
-    },
+  /**
+   *
+   */
+  describe("retrieve account", function() {
+    it("should return a record", function(done) {
+      conn.sobject('Account').retrieve(accountId, function(err, record) {
+        if (err) { throw err; }
+        assert.ok(_.isString(record.Id));
+        assert.ok(_.isObject(record.attributes));
+        assert.ok(record.Name === 'Hello');
+        account = record;
+      }.check(done));
+    });
+  });
 
-  ", then retrieve account" : {
-    topic : function(ret) {
-      conn.sobject('Account').record(ret.id).retrieve(this.callback);
-    },
-    "sholuld return updated account object" : function(record) {
-      assert.equal(record.Name, 'Hello2');
-      assert.isObject(record.attributes);
-    },
+  /**
+   *
+   */
+  describe("update account", function() {
+    it("should update successfully", function(done) {
+      conn.sobject('Account').record(account.Id).update({ Name : "Hello2" }, function(err, ret) {
+        if (err) { throw err; }
+        assert.ok(ret.success);
+      }.check(done));
+    });
 
-  ", then delete account" : {
-    topic : function(account) {
-      conn.sobject('Account').record(account.Id).destroy(this.callback);
-    },
-    "should delete successfully" : function(ret) {
-      assert.ok(ret.success);
-    },
+    describe("then retrieve the account", function() {
+      it("sholuld return updated account object", function(done) {
+        conn.sobject('Account').record(accountId).retrieve(function(err, record) {
+          if (err) { throw err; }
+          assert.ok(record.Name === 'Hello2');
+          assert.ok(_.isObject(record.attributes));
+        }.check(done));
+      });
+    });
+  });
 
-  ", then retrieve account" : {
-    topic : function(ret) {
-      conn.sobject('Account').retrieve(ret.id, this.callback);
-    },
-    "should not return any record" : function(err, record) {
-      assert.isNotNull(err);
-      assert.equal(err.errorCode, 'NOT_FOUND');
-    }
+  /**
+   *
+   */
+  describe("delete account", function() {
+    it("should delete successfully", function(done) {
+      conn.sobject('Account').record(account.Id).destroy(function(err, ret) {
+        if (err) { throw err; }
+        assert.ok(ret.success);
+      }.check(done));
+    });
 
-  }}}}}}
+    describe("then retrieve the account", function() {
+      it("should not return any record for deleted account", function(done) {
+        conn.sobject('Account').retrieve(account.Id, function(err, record) {
+          assert.ok(err instanceof Error);
+          assert.ok(err.errorCode === 'NOT_FOUND');
+        }.check(done));
+      });
+    });
+  });
 
 
-
-}).addBatch({
-
-
-  "create multiple accounts" : {
-    topic : function() {
+  var accountIds, accounts;
+  /**
+   *
+   */
+  describe("create multiple accounts", function() {
+    it("should return created records", function(done) {
       conn.sobject('Account').create([
         { Name : 'Account #1' }, 
         { Name : 'Account #2' }
-      ], this.callback);
-    },
-    "should return created obj" : function(rets) {
-      assert.isArray(rets);
-      rets.forEach(function(ret) {
-        assert.ok(ret.success);
-        assert.isString(ret.id);
-      });
-    },
+      ], function(err, rets) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(rets));
+        rets.forEach(function(ret) {
+          assert.ok(ret.success);
+          assert.ok(_.isString(ret.id));
+        });
+        accountIds = rets.map(function(ret){ return ret.id; });
+      }.check(done));
+    });
+  });
 
-  ", then retrieve accounts" : {
-    topic : function(rets) {
-      conn.sobject('Account').retrieve(
-        rets.map(function(ret){ return ret.id; }), this.callback);
-    },
-    "should return records" : function(records) {
-      assert.isArray(records);
-      records.forEach(function(record, i) {
-        assert.isString(record.Id);
-        assert.isObject(record.attributes);
-        assert.equal(record.Name, 'Account #' + (i+1));
-      });
-    },
+  /**
+   *
+   */
+  describe("retrieve multiple accounts", function() {
+    it("should return specified records", function(done) {
+      conn.sobject('Account').retrieve(accountIds, function(err, records) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(records));
+        records.forEach(function(record, i) {
+          assert.ok(_.isString(record.Id));
+          assert.ok(_.isObject(record.attributes));
+          assert.ok(record.Name === 'Account #' + (i+1));
+        });
+        accounts = records;
+      }.check(done));
+    });
+  });
 
-  ", then update accounts" : {
-    topic : function(accounts) {
+  /**
+   *
+   */
+  describe("update multiple accounts", function() {
+    it("should update records successfully", function(done) {
       conn.sobject('Account').update(
         accounts.map(function(account) {
           return { Id : account.Id, Name : "Updated " + account.Name };
         }),
-        this.callback);
-    },
-    "should update successfully" : function(rets) {
-      assert.isArray(rets);
-      rets.forEach(function(ret){
-        assert.ok(ret.success);
+        function(err, rets) {
+          if (err) { throw err; }
+          assert.ok(_.isArray(rets));
+          rets.forEach(function(ret){
+            assert.ok(ret.success);
+          });
+        }.check(done)
+      );
+    });
+
+    describe("then retrieve the accounts", function() {
+      it("sholuld return updated records", function(done) {
+        conn.sobject('Account').retrieve(accountIds, function(err, records) {
+          if (err) { throw err; }
+          assert.ok(_.isArray(records));
+          records.forEach(function(record, i) {
+            assert.ok(record.Name === 'Updated Account #' + (i+1));
+            assert.ok(_.isObject(record.attributes));
+          });
+        }.check(done));
       });
-    },
+    });
+  });
 
-  ", then retrieve accounts" : {
-    topic : function(rets) {
-      conn.sobject('Account').retrieve(
-        rets.map(function(ret){ return ret.id; }), this.callback);
-    },
-    "sholuld return updated account object" : function(records) {
-      assert.isArray(records);
-      records.forEach(function(record, i) {
-        assert.equal(record.Name, 'Updated Account #' + (i+1));
-        assert.isObject(record.attributes);
+  /**
+   *
+   */
+  describe("delete multiple accounts", function() {
+    it("should delete successfully", function(done) {
+      conn.sobject('Account').destroy(accountIds, function(err, rets) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(rets));
+        rets.forEach(function(ret){
+          assert.ok(ret.success);
+        });
+      }.check(done));
+    });
+
+    describe("then retrieve the accounts", function() {
+      it("should not return any records", function(done) {
+        conn.sobject('Account').retrieve(accountIds, function(err, records) {
+          assert.ok(err instanceof Error);
+          assert.ok(err.errorCode === 'NOT_FOUND');
+        }.check(done));
       });
-    },
+    });
+  });
 
-  ", then delete accounts" : {
-    topic : function(accounts) {
-      conn.sobject('Account').destroy(
-        accounts.map(function(account){ return account.Id; }), this.callback);
-    },
-    "should delete successfully" : function(rets) {
-      assert.isArray(rets);
-      rets.forEach(function(ret){
-        assert.ok(ret.success);
+  /**
+   *
+   */
+  describe("upsert record", function() {
+    var extId = "ID" + Date.now();
+    var recId;
+
+    describe("for not existing record", function() {
+      it("should create record successfully", function(done) {
+        var rec = { Name : 'New Record' };
+        rec[config.upsertField] = extId;
+        conn.sobject(config.upsertTable).upsert(rec, config.upsertField, function(err, ret) {
+          if (err) { throw err; }
+          assert.ok(ret.success);
+          assert.ok(_.isString(ret.id));
+          recId = ret.id;
+        }.check(done));
       });
-    },
+    });
 
-  ", then retrieve account" : {
-    topic : function(rets) {
-      conn.sobject('Account').retrieve(
-        rets.map(function(ret){ return ret.id; }), this.callback);
-    },
-    "should not return any record" : function(err, records) {
-      assert.isNotNull(err);
-      assert.equal(err.errorCode, 'NOT_FOUND');
-    }
+    describe("for already existing record", function() {
+      it("should update record successfully", function(done) {
+        var rec = { Name : 'Updated Record' };
+        rec[config.upsertField] = extId;
+        conn.sobject(config.upsertTable).upsert(rec, config.upsertField, function(err, ret) {
+          if (err) { throw err; }
+          assert.ok(ret.success);
+          assert.ok(_.isUndefined(ret.id));
+        }.check(done));
+      });
 
-  }}}}}}
+      describe("then retrieve the record", function() {
+        it("should return updated record", function(done) {
+          conn.sobject(config.upsertTable).retrieve(recId, function(err, record) {
+            if (err) { throw err; }
+            assert.ok(record.Name === "Updated Record");
+          }.check(done));
+        });
+      });
+    });
+
+    describe("for duplicated external id record", function() {
+      before(function(done) {
+        var rec = { Name : 'Duplicated Record' };
+        rec[config.upsertField] = extId;
+        conn.sobject(config.upsertTable).create(rec, done);
+      });
+
+      it("should throw error and return array of choices", function(done) {
+        var rec = { Name : 'Updated Record, Twice' };
+        rec[config.upsertField] = extId;
+        conn.sobject(config.upsertTable).upsert(rec, config.upsertField, function(err, ret) {
+          assert.ok(err instanceof Error);
+          assert.ok(err.name === "MULTIPLE_CHOICES");
+          assert.ok(_.isArray(err.content));
+          assert.ok(_.isString(err.content[0]));
+        }.check(done));
+      });
+    });
+  });
+
+  /**
+   *
+   */
+  describe("describe Account", function() {
+    it("should return metadata information", function(done) {
+      conn.sobject('Account').describe(function(err, meta) {
+        if (err) { throw err; }
+        assert.ok(meta.name === "Account");
+        assert.ok(_.isArray(meta.fields));
+      }.check(done));
+    });
+
+    describe("then describe cached Account", function() {
+      it("should return metadata information", function(done) {
+        conn.sobject('Account').describe$(function(err, meta) {
+          if (err) { throw err; }
+          assert.ok(meta.name === "Account");
+          assert.ok(_.isArray(meta.fields));
+        }.check(done));
+      });
+    });
+  });
+
+  /**
+   *
+   */
+  describe("describe global sobjects", function() {
+    it("should return whole global sobject list", function(done) {
+      conn.describeGlobal(function(err, res) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(res.sobjects));
+        assert.ok(_.isString(res.sobjects[0].name));
+        assert.ok(_.isString(res.sobjects[0].label));
+        assert.ok(_.isUndefined(res.sobjects[0].fields));
+      }.check(done));
+    });
+
+    describe("then describe cached global sobjects", function() {
+      it("should return whole global sobject list", function(done) {
+        conn.describeGlobal$(function(err, res) {
+          if (err) { throw err; }
+          assert.ok(_.isArray(res.sobjects));
+          assert.ok(_.isString(res.sobjects[0].name));
+          assert.ok(_.isString(res.sobjects[0].label));
+          assert.ok(_.isUndefined(res.sobjects[0].fields));
+        }.check(done));
+      });
+    });
+  });
 
 
-
-}).addBatch({
-
-  "generate unique external id" : {
-    topic : "ID" + Date.now(),
-
-  ", upsert record with the ext id" : {
-    topic : function(extId) {
-      var rec = { Name : 'New Record' };
-      rec[config.upsertField] = extId;
-      conn.sobject(config.upsertTable).upsert(rec, config.upsertField, this.callback);
-    },
-    "should insert new record successfully" : function(ret) {
-      assert.ok(ret.success);
-      assert.isString(ret.id);
-    },
-
-  ", then upsert again with same ext id" : {
-    topic : function(ret, extId) {
-      var rec = { Name : 'Updated Record' };
-      rec[config.upsertField] = extId;
-      conn.sobject(config.upsertTable).upsert(rec, config.upsertField, this.callback);
-    },
-    "should update the record successfully" : function(ret) {
-      assert.ok(ret.success);
-      assert.isUndefined(ret.id);
-    },
-
-  ", then retrieve record by id" : {
-    topic : function(ret2, ret1) {
-      var id = ret1.id;
-      conn.sobject(config.upsertTable).retrieve(id, this.callback);
-    },
-    "should return updated record" : function(record) {
-      assert.equal(record.Name, "Updated Record");
-    },
-
-  ", then insert record with same ext id" : {
-    topic : function(record, ret2, ret1, extId) {
-      var rec = { Name : 'Duplicated Record' };
-      rec[config.upsertField] = extId;
-      conn.sobject(config.upsertTable).create(rec, this.callback);
-    }, 
-
-  "and upsert with the same ext id" : {
-    topic: function(ret3, record, ret2, ret1, extId) {
-      var rec = { Name : 'Updated Record, Twice' };
-      rec[config.upsertField] = extId;
-      conn.sobject(config.upsertTable).upsert(rec, config.upsertField, this.callback);
-    },
-    "should throw error and return array of choices" : function(err, ret) {
-      assert.instanceOf(err, Error);
-      assert.equal(err.name, "MULTIPLE_CHOICES");
-      assert.isArray(err.content);
-      assert.isString(err.content[0]);
-    }
-
-  }}}}}}
-
-
-}).addBatch({
-
-  "describe Account" : {
-    topic : function() {
-      conn.sobject('Account').describe(this.callback);
-    },
-    "should return described metadata information" : function(meta) {
-      assert.equal(meta.name, "Account");
-      assert.isArray(meta.fields);
-    }
-  },
-
-  "describe cached Account" : {
-    topic : function() {
-      conn.sobject('Account').describe$(this.callback);
-    },
-    "should return described metadata information" : function(meta) {
-      assert.equal(meta.name, "Account");
-      assert.isArray(meta.fields);
-    }
-  },
-
-  "describe global sobjects" : {
-    topic : function() {
-      conn.describeGlobal(this.callback);
-    },
-    "should return whole global sobject list" : function(res) {
-      assert.isArray(res.sobjects);
-      assert.isString(res.sobjects[0].name);
-      assert.isString(res.sobjects[0].label);
-      assert.isUndefined(res.sobjects[0].fields);
-    }
-  },
-
-  "describe cached global sobjects" : {
-    topic : function() {
-      var self = this;
-      conn.describeGlobal$(self.callback);
-    },
-    "should return whole global sobject list" : function(res) {
-      assert.isArray(res.sobjects);
-      assert.isString(res.sobjects[0].name);
-      assert.isString(res.sobjects[0].label);
-      assert.isUndefined(res.sobjects[0].fields);
-    }
-  }
-
-}).addBatch({
-
-  "logout by soap api" : {
-    topic : function() {
-      var self = this;
-      context.sessionInfo = {
+  /**
+   *
+   */
+  describe("logout by soap api", function() {
+    var sessionInfo;
+    it("should logout", function(done) {
+      sessionInfo = {
         accessToken : conn.accessToken,
         instanceUrl : conn.instanceUrl
       };
-      conn.logout(this.callback);
-    },
+      conn.logout(function(err) {
+        if (err) { throw err; }
+        assert.ok(_.isNull(conn.accessToken));
+      }.check(done));
+    });
 
-    "should logout" : function() {
-      assert.isNull(conn.accessToken);
-    },
+    describe("then connect with previous session info", function() {
+      it("should raise authentication error", function(done) {
+        conn = new sf.Connection(sessionInfo);
+        setTimeout(function() { // wait a moment
+          conn.query("SELECT Id FROM User", function(err, res) {
+            assert.ok(err instanceof Error);
+          }.check(done));
+        }, 5000);
+      });
+    });
+  });
 
-  "then connect using logouted session" : {
-    topic : function() {
-      conn = new sf.Connection(context.sessionInfo);
-      var self = this;
-      setTimeout(function() { // wait a moment
-        conn.query("SELECT Id FROM User", self.callback);
-      }, 1000);
-    },
-
-    "should raise authentication error" : function(err, res) {
-      assert.instanceOf(err, Error);
-    }
-  }}
-
-}).addBatch({
-
-  "login by oauth2" : {
-    topic : function() {
-      var self = this;
-      conn = new sf.Connection({
+  /**
+   *
+   */
+  describe("login by oauth2", function() {
+    var newConn = new sf.Connection({
+      oauth2: {
         clientId : config.clientId,
         clientSecret : config.clientSecret,
         redirectUri : config.redirectUri,
-        logLevel : config.logLevel
-      });
-      browser.visit(conn.oauth2.getAuthorizationUrl())
-        .then(function() {
-          return browser.wait(2000);
-        })
-        .fail(function(err) {
-          // ignore js errors
-          console.log(err.message);
-        })
-        .then(function() {
-          browser.fill("input[name=un]", config.username);
-          browser.fill("input[name=pw]", config.password);
-          return browser.pressButton("button[name=Login]");
-        })
-        .then(function() {
-          return browser.wait(2000);
-        })
-        .then(function() {
-          return browser.pressButton("#oaapprove");
-        })
-        .then(function() {
-          return browser.wait(1500);
-        })
-        .fail(function(err) {
-          // ignore connection failure
-          console.log(err.message);
-        })
-        .then(function() {
-          var url = browser.location.href;
-          url = require('url').parse(url);
-          var params = querystring.parse(url.query);
-          conn.authorize(params.code, self.callback);
-        })
-        .fail(function(err) {
-          self.callback(err);
-        });
-    },
+      },
+      logLevel : config.logLevel
+    });
 
-    "done" : function(userInfo) {
-      assert.isString(userInfo.id);
-      assert.isString(userInfo.organizationId);
-      assert.isString(userInfo.url);
-      assert.isString(conn.accessToken);
-      assert.isString(conn.refreshToken);
-    },
-
-  ", then query user" : {
-    topic : function() {
-      conn.query("SELECT Id FROM User", this.callback);
-    },
-
-    "should return some records" : function(res) {
-      assert.isArray(res.records);
-    },
-
-  ", then expire access token and query user" : {
-    topic : function() {
-      context.refreshCount = 0;
-      conn.accessToken = "invalid access token";
-      conn.removeAllListeners("refresh");
-      conn.on("refresh", function(at) {
-        context.newAccessToken = at;
-        context.refreshCount++;
-      });
-      conn.query("SELECT Id FROM User", this.callback);
-    },
-    "should return records" : function(res) {
-      assert.equal(context.refreshCount, 1);
-      assert.isString(context.newAccessToken);
-      assert.isArray(res.records);
-    },
-
-  ", then again expire access token and call api in parallel" : {
-    topic : function() {
-      context.refreshCount = 0;
-      conn.accessToken = "invalid access token";
-      conn.removeAllListeners("refresh");
-      conn.on("refresh", function(at) {
-        context.newAccessToken = at;
-        context.refreshCount++;
-      });
-      async.parallel([
+    it("should login and get access tokens", function(done) {
+      async.waterfall([
         function(cb) {
-          conn.query('SELECT Id FROM User', cb);
+          authorize(newConn.oauth2.getAuthorizationUrl(), config.username, config.password, cb);
         },
-        function(cb) {
-          conn.describeGlobal(cb);
-        },
-        function(cb) {
-          conn.sobject('User').describe(cb);
+        function(params, cb) {
+          newConn.authorize(params.code, cb);
         }
-      ], this.callback);
-    },
+      ], function(err, userInfo) {
+        if (err) { return done(err); }
+        assert.ok(_.isString(userInfo.id));
+        assert.ok(_.isString(userInfo.organizationId));
+        assert.ok(_.isString(userInfo.url));
+        assert.ok(_.isString(newConn.accessToken));
+        assert.ok(_.isString(newConn.refreshToken));
+      }.check(done));
+    });
 
-    "should return responces" : function(results) {
-      assert.equal(context.refreshCount, 1);
-      assert.isString(context.newAccessToken);
-      assert.isArray(results);
-      assert.isArray(results[0].records);
-      assert.isArray(results[1].sobjects);
-      assert.isArray(results[2].fields);
-    },
+    describe("then do simple query", function() {
+      it("should return some records", function(done) {
+        newConn.query("SELECT Id FROM User", function(err, res) {
+          assert.ok(_.isArray(res.records));
+        }.check(done));
+      });
+    });
 
-  ", then again expire access token and expire refresh token" : {
-    topic : function() {
-      conn.accessToken = "invalid access token";
-      conn.refreshToken = "invalid refresh token";
-      conn.query("SELECT Id FROM User", this.callback);
-    },
+    describe("then make access token invalid", function() {
+      var newAccessToken, refreshCount = 0;
+      it("should return responses", function(done) {
+        newConn.accessToken = "invalid access token";
+        newConn.removeAllListeners("refresh");
+        newConn.on("refresh", function(at) {
+          newAccessToken = at;
+          refreshCount++;
+        });
+        newConn.query("SELECT Id FROM User", function(err, res) {
+          assert.ok(refreshCount === 1);
+          assert.ok(_.isString(newAccessToken));
+          assert.ok(_.isArray(res.records));
+        }.check(done));
+      });
+    });
 
-    "should return error response" : function(err, user) {
-      assert.instanceOf(err, Error);
-      assert.equal(err.name, "invalid_grant");
-    }
+    describe("then make access token invalid and call api in parallel", function() {
+      var newAccessToken, refreshCount = 0;
+      it("should return responses", function(done) {
+        newConn.accessToken = "invalid access token";
+        newConn.removeAllListeners("refresh");
+        newConn.on("refresh", function(at) {
+          newAccessToken = at;
+          refreshCount++;
+        });
+        async.parallel([
+          function(cb) {
+            newConn.query('SELECT Id FROM User', cb);
+          },
+          function(cb) {
+            newConn.describeGlobal(cb);
+          },
+          function(cb) {
+            newConn.sobject('User').describe(cb);
+          }
+        ], function(err, results) {
+          assert.ok(refreshCount === 1);
+          assert.ok(_.isString(newAccessToken));
+          assert.ok(_.isArray(results));
+          assert.ok(_.isArray(results[0].records));
+          assert.ok(_.isArray(results[1].sobjects));
+          assert.ok(_.isArray(results[2].fields));
+        }.check(done));
+      });
+    });
 
-  }}}}}
+    describe("then expire both access token and refresh token", function() {
+      it("should return error response", function(done) {
+        newConn.accessToken = "invalid access token";
+        newConn.refreshToken = "invalid refresh token";
+        newConn.query("SELECT Id FROM User", function(err) {
+          assert.ok(err instanceof Error);
+          assert.ok(err.name === "invalid_grant");
+        }.check(done));
+      });
+    });
 
+  });
 
-
-}).export(module);
+});
 

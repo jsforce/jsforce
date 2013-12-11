@@ -1,27 +1,36 @@
-var vows   = require('vows'),
-    assert = require('assert'),
+/*global describe, it, before */
+var assert = require('power-assert'),
     async  = require('async'),
+    _      = require('underscore'),
     fs     = require('fs'),
     sf     = require('../lib/salesforce'),
     config = require('./config/salesforce');
 
-var conn = new sf.Connection({ logLevel : config.logLevel });
-var context = {};
+/**
+ *
+ */
+describe("bulk", function() {
 
-vows.describe("bulk").addBatch({
-  "login" : {
-    topic : function() {
-      conn.login(config.username, config.password, this.callback);
-    }, 
-    "done" : function() { 
-      assert.isString(conn.accessToken);
-    }
-  }
+  this.timeout(40000); // set timeout to 40 sec.
 
-}).addBatch({
+  var conn = new sf.Connection({ logLevel : config.logLevel });
 
-  "bulk insert records" : {
-    topic : function() {
+  /**
+   *
+   */
+  before(function(done) {
+    conn.login(config.username, config.password, function(err) {
+      if (err) { throw err; }
+      if (!conn.accessToken) { done(new Error("No access token. Invalid login.")); }
+      done();
+    });
+  });
+
+  /**
+   *
+   */
+  describe("bulk insert records", function() {
+    it("should return result status", function(done) {
       var records = [];
       for (var i=0; i<200; i++) {
         records.push({
@@ -30,24 +39,27 @@ vows.describe("bulk").addBatch({
         });
       }
       records.push({ BillingState: 'CA' }); // should raise error
-      conn.bulk.load("Account", "insert", records, this.callback);
-    },
-    "should return result status" : function (rets) {
-      assert.isArray(rets);
-      var ret;
-      for (var i=0; i<200; i++) {
-        ret = rets[i];
-        assert.isString(ret.id);
-        assert.equal(ret.success, true);
-      }
-      ret = rets[200];
-      assert.isNull(ret.id);
-      assert.equal(ret.success, false);
-    },
+      conn.bulk.load("Account", "insert", records, function(err, rets) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(rets));
+        var ret;
+        for (var i=0; i<200; i++) {
+          ret = rets[i];
+          assert.ok(_.isString(ret.id));
+          assert.ok(ret.success === true);
+        }
+        ret = rets[200];
+        assert.ok(_.isNull(ret.id));
+        assert.ok(ret.success === false);
+      }.check(done));
+    });
+  });
 
-
-  "then bulk update" : {
-    topic: function() {
+  /**
+   *
+   */
+  describe("bulk update", function() {
+    it("should return updated status", function(done) {
       async.waterfall([
         function(next) {
           conn.sobject('Account')
@@ -61,21 +73,24 @@ vows.describe("bulk").addBatch({
           });
           conn.bulk.load('Account', 'update', records, next);
         }
-      ], this.callback);
-    },
+      ], function(err, rets) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(rets));
+        var ret;
+        for (var i=0; i<rets.length; i++) {
+          ret = rets[i];
+          assert.ok(_.isString(ret.id));
+          assert.ok(ret.success === true);
+        }
+      }.check(done));
+    });
+  });
 
-    "should return updated status" : function (rets) {
-      assert.isArray(rets);
-      var ret;
-      for (var i=0; i<rets.length; i++) {
-        ret = rets[i];
-        assert.isString(ret.id);
-        assert.equal(ret.success, true);
-      }
-    },
-
-  "then bulk delete" : {
-    topic: function() {
+  /**
+   *
+   */
+  describe("bulk delete", function() {
+    it("should return deleted status", function(done) {
       async.waterfall([
         function(next) {
           conn.sobject('Account')
@@ -85,43 +100,46 @@ vows.describe("bulk").addBatch({
         function(records, next) {
           conn.bulk.load('Account', 'delete', records, next);
         }
-      ], this.callback);
-    },
-    "should return deleted status" : function (rets) {
-      assert.isArray(rets);
-      for (var i=0; i<rets.length; i++) {
-        var ret = rets[i];
-        assert.isString(ret.id);
-        assert.equal(ret.success, true);
-      }
-    }
+      ], function(err, rets) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(rets));
+        for (var i=0; i<rets.length; i++) {
+          var ret = rets[i];
+          assert.ok(_.isString(ret.id));
+          assert.ok(ret.success === true);
+        }
+      }.check(done));
+    });
+  });
 
-  }}}
-
-
-}).addBatch({
-
-  "bulk insert from file" : {
-    topic: function() {
-      var self = this;
+  /**
+   *
+   */
+  describe("bulk insert from file", function() {
+    it("should return inserted results", function(done) {
       var fstream = fs.createReadStream(__dirname + "/data/Account.csv");
       var batch = conn.bulk.load("Account", "insert");
-      batch.on('response', function(results) { self.callback(null, results); });
-      batch.on('error', function(err) { self.callback(err); });
+      batch.on('response', function(results) { next(null, results); });
+      batch.on('error', function(err) { next(err); });
       fstream.pipe(batch.stream());
-    },
-    "should return inserted results" : function(rets) {
-      assert.isArray(rets);
-      var ret;
-      for (var i=0; i<rets.length; i++) {
-        ret = rets[i];
-        assert.isString(ret.id);
-        assert.equal(ret.success, true);
-      }
-    },
+      var next = function(err, rets) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(rets));
+        var ret;
+        for (var i=0; i<rets.length; i++) {
+          ret = rets[i];
+          assert.ok(_.isString(ret.id));
+          assert.ok(ret.success === true);
+        }
+      }.check(done);
+    });
+  });
 
-  "then bulk delete from file" : {
-    topic: function() {
+  /**
+   *
+   */
+  describe("bulk delete from file", function() {
+    it("should return deleted results", function(done) {
       var batch;
       async.waterfall([
         function(next) {
@@ -150,24 +168,23 @@ vows.describe("bulk").addBatch({
           });
           fstream.pipe(batch.stream());
         }
-      ], this.callback);
-    },
+      ], function(err, rets) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(rets));
+        for (var i=0; i<rets.length; i++) {
+          var ret = rets[i];
+          assert.ok(_.isString(ret.id));
+          assert.ok(ret.success === true);
+        }
+      }.check(done));
+    });
+  });
 
-    "should return deleted results": function(rets) {
-      assert.isArray(rets);
-      for (var i=0; i<rets.length; i++) {
-        var ret = rets[i];
-        assert.isString(ret.id);
-        assert.equal(ret.success, true);
-      }
-    }
-
-  }}
-  
-}).addBatch({
-
-  "bulk insert records" : {
-    topic : function() {
+  /**
+   *
+   */
+  describe("bulk update using Query#update", function() {
+    before(function(done) {
       var records = [];
       for (var i=0; i<200; i++) {
         records.push({
@@ -175,66 +192,60 @@ vows.describe("bulk").addBatch({
           NumberOfEmployees: 300 * (i+1) 
         });
       }
-      conn.bulk.load("Account", "insert", records, this.callback);
-    },
-    "should return result status" : function (rets) {
-      assert.isArray(rets);
-      var ret;
-      for (var i=0; i<200; i++) {
-        ret = rets[i];
-        assert.isString(ret.id);
-        assert.equal(ret.success, true);
-      }
-    },
+      conn.bulk.load("Account", "insert", records, done);
+    });
 
-  "then bulk update using Query#update" : {
-    topic: function() {
+    it("should return updated status", function(done) {
       conn.sobject('Account')
           .find({ Name : { $like : 'New Bulk Account%' }})
-          .update({ Name : '${Name} (Updated)' }, this.callback);
-    },
-    "should return updated status" : function (rets) {
-      assert.isArray(rets);
-      assert.equal(rets.length, 200);
-      for (var i=0; i<rets.length; i++) {
-        var ret = rets[i];
-        assert.isString(ret.id);
-        assert.equal(ret.success, true);
-      }
-    },
+          .update({ Name : '${Name} (Updated)' }, function(err, rets) {
+            if (err) { throw err; }
+            assert.ok(_.isArray(rets));
+            assert.ok(rets.length === 200);
+            for (var i=0; i<rets.length; i++) {
+              var ret = rets[i];
+              assert.ok(_.isString(ret.id));
+              assert.ok(ret.success === true);
+            }
+          }.check(done));
+    });
 
-  "then query updated records" : {
-    topic : function() {
-      conn.sobject('Account')
-          .find({ Name : { $like : 'New Bulk Account%' }}, 'Id, Name', this.callback);
-    },
-    "should return updated records" : function (records) {
-      assert.isArray(records);
-      assert.equal(records.length, 200);
-      var record;
-      for (var i=0; i<200; i++) {
-        record = records[i];
-        assert.isString(record.Id);
-        assert.ok(/\(Updated\)$/.test(record.Name));
-      }
-    },
+    describe("then query updated records", function() {
+      it("should return updated records", function(done) {
+        conn.sobject('Account')
+            .find({ Name : { $like : 'New Bulk Account%' }}, 'Id, Name', function(err, records) {
+              if (err) { throw err; }
+              assert.ok(_.isArray(records));
+              assert.ok(records.length === 200);
+              var record;
+              for (var i=0; i<200; i++) {
+                record = records[i];
+                assert.ok(_.isString(record.Id));
+                assert.ok(/\(Updated\)$/.test(record.Name));
+              }
+            }.check(done));
+      });
+    });
+  });
 
-  "then bulk delete records using Query#destroy" : {
-    topic: function() {
+  /**
+   *
+   */
+  describe("bulk delete using Query#destroy", function() {
+    it("should return deleted status", function(done) {
       conn.sobject('Account')
           .find({ Name : { $like : 'New Bulk Account%' }})
-          .destroy(this.callback);
-    },
-    "should return deleted status" : function (rets) {
-      assert.isArray(rets);
-      assert.equal(rets.length, 200);
-      for (var i=0; i<rets.length; i++) {
-        var ret = rets[i];
-        assert.isString(ret.id);
-        assert.equal(true, ret.success);
-      }
-    }
+          .destroy(function(err, rets) {
+            if (err) { throw err; }
+            assert.ok(_.isArray(rets));
+            assert.ok(rets.length === 200);
+            for (var i=0; i<rets.length; i++) {
+              var ret = rets[i];
+              assert.ok(_.isString(ret.id));
+              assert.ok(ret.success === true);
+            }
+          }.check(done));
+    });
+  });
 
-  }}}}
-
-}).export(module);
+});

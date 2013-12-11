@@ -10,7 +10,7 @@
     "database.com"
   ],
   "homepage": "http://github.com/stomita/node-salesforce",
-  "version": "0.6.4",
+  "version": "0.7.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/stomita/node-salesforce.git"
@@ -23,7 +23,7 @@
   ],
   "main": "./lib/salesforce",
   "scripts": {
-    "test": "vows test/*.test.js --spec"
+    "test": "mocha test/*.test.js --require ./test/helper/assert.js --reporter spec"
   },
   "engines": {
     "node": ">=0.4.0"
@@ -34,15 +34,17 @@
   },
   "dependencies": {
     "async": "0.1.x",
+    "coffee-script": "1.6.x",
+    "faye": "0.8.x",
+    "q": "0.9.x",
     "request": "2.12.x",
     "underscore": "1.4.x",
-    "xml2json": "0.3.2",
-    "faye": "0.8.x",
-    "q": "0.9.x"
+    "xml2js": "0.4.x"
   },
   "devDependencies": {
-    "express": "2.5.x",
-    "vows": "0.7.x",
-    "zombie": "1.4.1"
+    "mocha": "1.15.x",
+    "power-assert": "0.2.x",
+    "espower-loader": "0.1.x",
+    "node-phantom": "0.2.x"
   }
 }

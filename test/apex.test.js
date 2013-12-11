@@ -1,96 +1,122 @@
-var vows   = require('vows'),
-    assert = require('assert'),
+/*global describe, it, before */
+var assert = require('power-assert'),
     async  = require('async'),
+    _      = require('underscore'),
     fs     = require('fs'),
     sf     = require('../lib/salesforce'),
     config = require('./config/salesforce');
 
-var conn = new sf.Connection({ logLevel : config.logLevel });
-var context = {};
+/**
+ *
+ */
+describe("apex", function() {
 
-vows.describe("apex").addBatch({
-  "login" : {
-    topic : function() {
-      conn.login(config.username, config.password, this.callback);
-    },
-    "done" : function() {
-      assert.isString(conn.accessToken);
-    }
-  }
+  this.timeout(40000); // set timeout to 40 sec.
 
-}).addBatch({
+  var conn = new sf.Connection({ logLevel : config.logLevel });
 
-  "post account info by apex rest method" : {
-    topic : function() {
+  /**
+   *
+   */
+  before(function(done) {
+    conn.login(config.username, config.password, function(err) {
+      if (err) { throw err; }
+      if (!conn.accessToken) { done(new Error("No access token. Invalid login.")); }
+      done();
+    });
+  });
+
+  var accountId;
+
+  /**
+   *
+   */
+  describe("post account info", function() {
+    it("should return created account id", function(done) {
       var params = {
         name: 'My Apex Rest Test #1',
         phone: '654-321-0000',
         website: 'http://www.google.com'
       };
-      conn.apex.post('/MyApexRestTest/', params, this.callback);
-    },
-    "should return created account id" : function (id) {
-      assert.isString(id);
-      context.accountId = id;
-    },
+      conn.apex.post('/MyApexRestTest/', params, function(err, id) {
+        if (err) { throw err; }
+        assert.ok(_.isString(id));
+        accountId = id;
+      }.check(done));
+    });
+  });
 
-  "then get account info by apex rest method" : {
-    topic: function() {
-      conn.apex.get('/MyApexRestTest/' + context.accountId, this.callback);
-    },
+  /**
+   *
+   */
+  describe("get account info", function() {
+    it("should return updated account", function(done) {
+      conn.apex.get('/MyApexRestTest/' + accountId, function(err, acc) {
+        if (err) { throw err; }
+        assert.ok(_.isObject(acc));
+        assert.ok(acc.Name ==='My Apex Rest Test #1');
+        assert.ok(acc.Phone === '654-321-0000');
+        assert.ok(acc.Website === 'http://www.google.com');
+      }.check(done));
+    });
+  });
 
-    "should return updated account" : function (acc) {
-      assert.isObject(acc);
-      assert.equal(acc.Name, 'My Apex Rest Test #1');
-      assert.equal(acc.Phone, '654-321-0000');
-      assert.equal(acc.Website, 'http://www.google.com');
-    },
-
-
-  "then put account info by apex rest method" : {
-    topic: function() {
+  /**
+   *
+   */
+  describe("put account info", function() {
+    it("should return updated account", function(done) {
       var params = {
         account: {
           Name : 'My Apex Rest Test #1 (put)',
           Phone : null
         }
       };
-      conn.apex.put('/MyApexRestTest/' + context.accountId, params, this.callback);
-    },
-    "should return updated account" : function (acc) {
-      assert.isObject(acc);
-      assert.equal(acc.Name, 'My Apex Rest Test #1 (put)');
-      assert.equal(acc.Phone, null);
-      assert.equal(acc.Website, 'http://www.google.com');
-    },
+      conn.apex.put('/MyApexRestTest/' + accountId, params, function(err, acc) {
+        if (err) { throw err; }
+        assert.ok(_.isObject(acc));
+        assert.ok(acc.Name === 'My Apex Rest Test #1 (put)');
+        assert.ok(_.isUndefined(acc.Phone));
+        assert.ok(acc.Website === 'http://www.google.com');
+      }.check(done));
+    });
+  });
 
-  "then patch account info by apex rest method" : {
-    topic: function() {
+  /**
+   *
+   */
+  describe("patch account info", function() {
+    it("should return updated account", function(done) {
       var params = {
         name: 'My Apex Rest Test #1 (patch)'
       };
-      conn.apex.patch('/MyApexRestTest/' + context.accountId, params, this.callback);
-    },
-    "should return updated account" : function (acc) {
-      assert.isObject(acc);
-      assert.equal(acc.Name, 'My Apex Rest Test #1 (patch)');
-      assert.equal(acc.Phone, null);
-      assert.equal(acc.Website, 'http://www.google.com');
-    },
+      conn.apex.patch('/MyApexRestTest/' + accountId, params, function(err, acc) {
+        if (err) { throw err; }
+        assert.ok(_.isObject(acc));
+        assert.ok(acc.Name === 'My Apex Rest Test #1 (patch)');
+        assert.ok(_.isUndefined(acc.Phone));
+        assert.ok(acc.Website === 'http://www.google.com');
+      }.check(done));
+    });
+  });
 
-  "then delete account info by apex rest method" : {
-    topic: function() {
-      conn.apex.delete('/MyApexRestTest/' + context.accountId, this.callback);
-    },
+  /**
+   *
+   */
+  describe("delete account info", function() {
+    it("should not get any account for delete account id", function(done) {
+      async.waterfall([
+        function(cb) {
+          conn.apex.delete('/MyApexRestTest/' + accountId, cb);
+        },
+        function(ret, cb) {
+          conn.sobject('Account').find({ Id: accountId }, cb);
+        }
+      ], function(err, records) {
+        if (err) { throw err; }
+        assert.ok(records.length === 0);
+      }.check(done));
+    });
+  });
 
-  "then get account by id" : {
-    topic: function() {
-      conn.sobject('Account').find({ Id: context.accountId }, this.callback);
-    },
-    "should not get any account": function(records) {
-      assert.equal(records.length, 0);
-    }
-
-  }}}}}}
-
-}).export(module);
+});
