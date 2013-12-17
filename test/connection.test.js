@@ -311,6 +311,106 @@ describe("connection", function() {
     });
   });
 
+  /**
+   *
+   */
+  describe("get updated account", function () {
+    it("should update successfully", function (done) {
+      conn.sobject('Account').record(account.Id).update({ Name: "Hello2" }, function (err, ret) {
+        if (err) { throw err; }
+        assert.ok(ret.success);
+      }.check(done));
+    });
+
+    describe("then get updated accounts", function () {
+      it("should return updated account object", function (done) {
+        var start = Date.now();
+        var end = Date.now();
+        var newDate = start.getDate() > 2 ? (start.getDate() - 2) : 0;
+        start.setDate(newDate);
+        conn.sobject('Account').updated(start, end, function (err, result) {
+          if (err) { throw err; }
+          assert.ok(_.isArray(result.ids));
+        }.check(done));
+      });
+    });
+  });
+
+  /**
+   *
+   */
+  describe("get updated account with string input", function () {
+    it("should update successfully", function (done) {
+      conn.sobject('Account').record(account.Id).update({ Name: "Hello2" }, function (err, ret) {
+        if (err) { throw err; }
+        assert.ok(ret.success);
+      }.check(done));
+    });
+
+    describe("then get updated accounts", function () {
+      it("should return updated account object", function (done) {
+        var start = Date.now();
+        var end = Date.now();
+        var newDate = start.getDate() > 2 ? (start.getDate() - 2) : 0;
+        start.setDate(newDate);
+        conn.sobject('Account').updated(start.toString(), end.toString(), function (err, result) {
+          if (err) { throw err; }
+          assert.ok(_.isArray(result.ids));
+        }.check(done));
+      });
+    });
+  });
+
+  /**
+   *
+   */
+  describe("get deleted account", function () {
+    it("should delete successfully", function (done) {
+      conn.sobject('Account').record(account.Id).destroy(function (err, ret) {
+        if (err) { throw err; }
+        assert.ok(ret.success);
+      }.check(done));
+    });
+
+    describe("then get deleted accounts", function () {
+      it("should return deleted account object", function (done) {
+        var start = Date.now();
+        var end = Date.now();
+        var newDate = start.getDate() > 2 ? (start.getDate() - 2) : 0;
+        start.setDate(newDate);
+        conn.sobject('Account').deleted(start, end, function (err, result) {
+          if (err) { throw err; }
+          assert.ok(_.isArray(result.deletedRecords));
+        }.check(done));
+      });
+    });
+  });
+
+  /**
+   *
+   */
+  describe("get deleted account with string input", function () {
+    it("should delete successfully", function (done) {
+      conn.sobject('Account').record(account.Id).destroy(function (err, ret) {
+        if (err) { throw err; }
+        assert.ok(ret.success);
+      }.check(done));
+    });
+
+    describe("then get deleted accounts", function () {
+      it("should return deleted account object", function (done) {
+        var start = Date.now();
+        var end = Date.now();
+        var newDate = start.getDate() > 2 ? (start.getDate() - 2) : 0;
+        start.setDate(newDate);
+        conn.sobject('Account').deleted(start.toString(), end.toString(), function (err, result) {
+          if (err) { throw err; }
+          assert.ok(_.isArray(result.deletedRecords));
+        }.check(done));
+      });
+    });
+  });
+
 
   /**
    *
