@@ -311,6 +311,85 @@ describe("connection", function() {
     });
   });
 
+  /**
+   *
+   */
+  describe("get updated / deleted account", function () {
+    before(function(done) {
+      var accs = [{ Name: 'Hello' }, { Name: 'World' }];
+      conn.sobject('Account').create(accs, function(err, rets) {
+        if (err) { return done(err); }
+        var id1 = rets[0].id, id2 = rets[1].id;
+        async.parallel([
+          function(cb) {
+            conn.sobject('Account').record(id1).update({ Name: "Hello2" }, cb);
+          },
+          function(cb) {
+            conn.sobject('Account').record(id2).destroy(cb);
+          }
+        ], function (err, ret) {
+          if (err) { throw err; }
+        }.check(done));
+      });
+    });
+    
+    /**
+     *
+     */
+    describe("get updated accounts", function () {
+      it("should return updated account object", function (done) {
+        var end = new Date();
+        var start = new Date(end.getTime() - 2 * 24 * 60 * 60 * 1000); // 2 days before
+        conn.sobject('Account').updated(start, end, function (err, result) {
+          if (err) { throw err; }
+          assert.ok(_.isArray(result.ids));
+        }.check(done));
+      });
+    });
+
+    /**
+     *
+     */
+    describe("get updated account with string input", function () {
+      it("should return updated account object", function (done) {
+        var end = new Date();
+        var start = new Date(end.getTime() - 2 * 24 * 60 * 60 * 1000); // 2 days before
+        conn.sobject('Account').updated(start.toString(), end.toString(), function (err, result) {
+          if (err) { throw err; }
+          assert.ok(_.isArray(result.ids));
+        }.check(done));
+      });
+    });
+
+    /**
+     *
+     */
+    describe("get deleted account", function () {
+      it("should return deleted account object", function (done) {
+        var end = new Date();
+        var start = new Date(end.getTime() - 2 * 24 * 60 * 60 * 1000); // 2 days before
+        conn.sobject('Account').deleted(start, end, function (err, result) {
+          if (err) { throw err; }
+          assert.ok(_.isArray(result.deletedRecords));
+        }.check(done));
+      });
+    });
+
+    /**
+     *
+     */
+    describe("get deleted account with string input", function () {
+      it("should return deleted account object", function (done) {
+        var end = new Date();
+        var start = new Date(end.getTime() - 2 * 24 * 60 * 60 * 1000); // 2 days before
+        conn.sobject('Account').deleted(start.toString(), end.toString(), function (err, result) {
+          if (err) { throw err; }
+          assert.ok(_.isArray(result.deletedRecords));
+        }.check(done));
+      });
+    });
+  });
+
 
   /**
    *
