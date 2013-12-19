@@ -1235,6 +1235,11 @@ $ sfjs
 
 ## Change History
 
+v0.7.1 (Dec 19, 2013):
+
+* Support SObject get updated/deleted.
+
+
 v0.7.0 (Dec 11, 2013):
 
 * Support Analytics API and Tooling API.
