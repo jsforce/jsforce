@@ -1235,6 +1235,11 @@ $ sfjs
 
 ## Change History
 
+v0.7.2 (Jan 16, 2014):
+
+* Removed unneeded files in npm-published package.
+
+
 v0.7.1 (Dec 19, 2013):
 
 * Support SObject get updated/deleted.
