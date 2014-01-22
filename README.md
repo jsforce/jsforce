@@ -1235,6 +1235,13 @@ $ sfjs
 
 ## Change History
 
+v0.8.0 (Jan 22, 2014):
+
+* Support Chatter API.
+
+* Support Metadata API.
+
+
 v0.7.2 (Jan 16, 2014):
 
 * Removed unneeded files in npm-published package.
