@@ -10,7 +10,7 @@
     "database.com"
   ],
   "homepage": "http://github.com/stomita/node-salesforce",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/stomita/node-salesforce.git"
@@ -26,7 +26,7 @@
     "test": "mocha test/*.test.js --require ./test/helper/assert.js --reporter spec"
   },
   "engines": {
-    "node": ">=0.4.0"
+    "node": ">=0.8.0"
   },
   "bin": {
     "sfjs": "./bin/sfjs",
