@@ -29,6 +29,7 @@
  * @file Manages Salesforce Bulk API related operations
  * @author Shinichi Tomita &lt;shinichi.tomita@gmail.com>
  */
+
 var util         = require('util'),
     stream       = require('stream'),
     Stream       = stream.Stream,
@@ -46,8 +47,9 @@ var util         = require('util'),
  * Class for Bulk API Job
  *
  * @protected
- * @class
- * @constructor
+ * @class Bulk~Job
+ * @extends events.EventEmitter
+ * 
  * @param {Bulk} bulk - Bulk API object
  * @param {String} [type] - SObject type
  * @param {String} [operation] - Bulk load operation ('insert', 'update', 'upsert', 'delete', or 'hardDelete')
@@ -65,13 +67,14 @@ var Job = function(bulk, type, operation, options, jobId) {
   this._batches = {};
 };
 
-Job.prototype = new events.EventEmitter();
+util.inherits(Job, events.EventEmitter);
 
 /**
  * Open new job and get jobinfo
  *
- * @param {Callback.&lt;JobInfo>} [callback] - Callback function
- * @returns {Promise.&lt;JobInfo>}
+ * @method Bulk~Job#open
+ * @param {Callback.&lt;Bulk~JobInfo>} [callback] - Callback function
+ * @returns {Promise.&lt;Bulk~JobInfo>}
  */
 Job.prototype.open = function(callback) {
   var self = this;
@@ -116,7 +119,8 @@ Job.prototype.open = function(callback) {
 /**
  * Create a new batch instance in the job
  *
- * @returns {Batch}
+ * @method Bulk~Job#createBatch
+ * @returns {Bulk~Batch}
  */
 Job.prototype.createBatch = function() {
   var batch = new Batch(this);
@@ -130,8 +134,9 @@ Job.prototype.createBatch = function() {
 /**
  * Get a batch instance specified by given batch ID
  *
+ * @method Bulk~Job#batch
  * @param {String} batchId - Batch ID
- * @returns {Batch}
+ * @returns {Bulk~Batch}
  */
 Job.prototype.batch = function(batchId) {
   var batch = this._batches[batchId];
@@ -145,8 +150,9 @@ Job.prototype.batch = function(batchId) {
 /**
  * Check the job status from server
  *
- * @param {Callback.&lt;JobInfo>} [callback] - Callback function
- * @returns {Promise.&lt;JobInfo>}
+ * @method Bulk~Job#check
+ * @param {Callback.&lt;Bulk~JobInfo>} [callback] - Callback function
+ * @returns {Promise.&lt;Bulk~JobInfo>}
  */
 Job.prototype.check = function(callback) {
   var self = this;
@@ -170,8 +176,9 @@ Job.prototype.check = function(callback) {
 /**
  * List all registered batch info in job
  *
- * @param {Callback.&lt;Array.&lt;BatchInfo>>} [callback] - Callback function
- * @returns {Promise.&lt;Array.&lt;BatchInfo>>}
+ * @method Bulk~Job#list
+ * @param {Callback.&lt;Array.&lt;Bulk~BatchInfo>>} [callback] - Callback function
+ * @returns {Promise.&lt;Array.&lt;Bulk~BatchInfo>>}
  */
 Job.prototype.list = function(callback) {
   var self = this;
@@ -196,8 +203,9 @@ Job.prototype.list = function(callback) {
 /**
  * Close opened job
  *
- * @param {Callback.&lt;JobInfo>} [callback] - Callback function
- * @returns {Promise.&lt;JobInfo>}
+ * @method Bulk~Job#close
+ * @param {Callback.&lt;Bulk~JobInfo>} [callback] - Callback function
+ * @returns {Promise.&lt;Bulk~JobInfo>}
  */
 Job.prototype.close = function() {
   var self = this;
@@ -214,8 +222,9 @@ Job.prototype.close = function() {
 /**
  * Set the status to abort
  *
- * @param {Callback.&lt;JobInfo>} [callback] - Callback function
- * @returns {Promise.&lt;JobInfo>}
+ * @method Bulk~Job#abort
+ * @param {Callback.&lt;Bulk~JobInfo>} [callback] - Callback function
+ * @returns {Promise.&lt;Bulk~JobInfo>}
  */
 Job.prototype.abort = function() {
   var self = this;
@@ -269,11 +278,10 @@ Job.prototype._changeState = function(state, callback) {
  * Batch (extends RecordStream implements Sendable)
  *
  * @protected
- * @class
- * @constructor
- * @extends RecordStream
- * @implements Promise.&lt;Array.&lt;RecordResult>>
- * @param {Job} job - Bulk job object
+ * @class Bulk~Batch
+ * @extends {RecordStream}
+ * @implements {Promise.&lt;Array.&lt;RecordResult>>}
+ * @param {Bulk~Job} job - Bulk job object
  * @param {String} [batchId] - Batch ID (if already available)
  */
 var Batch = function(job, batchId) {
@@ -292,11 +300,10 @@ util.inherits(Batch, RecordStream);
 /**
  * Execute batch operation
  *
- * @method execute
- * @memberof Batch.prototype
+ * @method Bulk~Batch#execute
  * @param {Array.&lt;Record>|stream.Stream|String} [input] - Input source for batch operation. Accepts array of records, CSv string, and CSV data input stream.
  * @param {Callback.&lt;Array.&lt;RecordResult>>} [callback] - Callback function
- * @returns {Batch}
+ * @returns {Bulk~Batch}
  */
 Batch.prototype.run =
 Batch.prototype.exec =
@@ -350,6 +357,8 @@ Batch.prototype.execute = function(input, callback) {
  * http://promises-aplus.github.io/promises-spec/
  *
  * Delegate to deferred promise, return promise instance for batch result
+ *
+ * @method Bulk~Batch#then
  */
 Batch.prototype.then = function(onResolved, onReject, onProgress) {
   return this._deferred.promise.then(onResolved, onReject, onProgress);
@@ -358,6 +367,8 @@ Batch.prototype.then = function(onResolved, onReject, onProgress) {
 /**
  * Promise/A+ extension
  * Call "then" using given node-style callback function
+ *
+ * @method Bulk~Batch#thenCall
  */
 Batch.prototype.thenCall = function(callback) {
   return _.isFunction(callback) ? this.then(function(res) {
@@ -398,8 +409,9 @@ Batch.prototype.end = function(record) {
 /**
  * Check batch status in server
  *
- * @param {Callback.&lt;BatchInfo>} [callback] - Callback function
- * @returns {Promise.&lt;BatchInfo>}
+ * @method Bulk~Batch#check
+ * @param {Callback.&lt;Bulk~BatchInfo>} [callback] - Callback function
+ * @returns {Promise.&lt;Bulk~BatchInfo>}
  */
 Batch.prototype.check = function(callback) {
   var self = this;
@@ -425,6 +437,7 @@ Batch.prototype.check = function(callback) {
 /**
  * Polling the batch result and retrieve 
  *
+ * @method Bulk~Batch#poll
  * @param {Number} interval - Polling interval in milliseconds
  * @param {Number} timeout - Polling timeout in milliseconds
  */
@@ -465,6 +478,9 @@ Batch.prototype.poll = function(interval, timeout) {
 };
 
 /**
+ * Retrieve batch result
+ *
+ * @method Bulk~Batch#retrieve
  * @param {Callback.&lt;Array.&lt;RecordResult>>} [callback] - Callback function
  * @returns {Promise.&lt;Array.&lt;RecordResult>>}
  */
@@ -512,8 +528,7 @@ Batch.prototype.stream = function() {
  * Batch uploading stream (extends WritableStream)
  *
  * @private
- * @class
- * @constructor
+ * @class Bulk~BatchStream
  * @extends stream.Stream
  */
 var BatchStream = function(batch) {
@@ -613,7 +628,6 @@ BatchStream.prototype._queue = function(data) {
  * Class for Bulk API
  *
  * @class
- * @constructor
  * @param {Connection} conn - Connection object
  */
 var Bulk = function(conn) {
@@ -665,7 +679,7 @@ Bulk.prototype._request = function(params, callback) {
  * @param {String} [options.extIdField] - External ID field name (used when upsert operation).
  * @param {Array.&lt;Record>|stream.Stream|String} [input] - Input source for bulkload. Accepts array of records, CSv string, and CSV data input stream.
  * @param {Callback.&lt;Array.&lt;RecordResult>>} [callback] - Callback function
- * @returns {Batch}
+ * @returns {Bulk~Batch}
  */
 Bulk.prototype.load = function(type, operation, options, input, callback) {
   var self = this;
@@ -693,7 +707,7 @@ Bulk.prototype.load = function(type, operation, options, input, callback) {
  * @param {String} type - SObject type
  * @param {String} operation - Bulk load operation ('insert', 'update', 'upsert', 'delete', or 'hardDelete')
  * @param {Object} [options] - Options for bulk loading operation
- * @returns {Job}
+ * @returns {Bulk~Job}
  */
 Bulk.prototype.createJob = function(type, operation, options) {
   var job = new Job(this, type, operation, options);
@@ -705,7 +719,7 @@ Bulk.prototype.createJob = function(type, operation, options) {
  * Get a job instance specified by given job ID
  *
  * @param {String} jobId - Job ID
- * @returns {Job}
+ * @returns {Bulk~Job}
  */
 Bulk.prototype.job = function(jobId) {
   return new Job(this, null, null, null, jobId);
@@ -724,13 +738,13 @@ module.exports = Bulk;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Batch.html">Batch</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="Job.html">Job</a></li><li><a href="Logger.html">Logger</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query.SubQuery.html">SubQuery</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="Report.html">Report</a></li><li><a href="ReportInstance.html">ReportInstance</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Topic.html">Topic</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a> on Thu Dec 19 2013 14:23:14 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Wed Jan 22 2014 11:43:16 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>

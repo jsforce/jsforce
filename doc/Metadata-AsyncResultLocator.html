@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Cache</title>
+    <title>JSDoc: Class: AsyncResultLocator</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Class: Cache</h1>
+    <h1 class="page-title">Class: AsyncResultLocator</h1>
     
     
 
@@ -27,7 +27,9 @@
     
 <header>
     <h2>
-    Cache
+        <span class="ancestors"><a href="Metadata.html">Metadata</a>~</span>
+    
+    AsyncResultLocator
     </h2>
     
 </header>  
@@ -39,7 +41,7 @@
     
         
 <dt>
-    <h4 class="name" id="Cache"><span class="type-signature"></span>new Cache<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="AsyncResultLocator"><span class="type-signature">&lt;protected> </span>new AsyncResultLocator<span class="signature">(meta, results, <span class="optional">isArray</span>)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -47,7 +49,7 @@
     
     
     <div class="description">
-        Caching manager for async methods
+        The locator class for Metadata API asynchronous call result
     </div>
     
 
@@ -55,6 +57,128 @@
     
     
     
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>meta</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Metadata.html">Metadata</a></span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Metadata API object</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>results</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;(<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>|Array.&lt;<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>>)></span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Promise object for async result info</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>isArray</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Indicates whether the async request is given in array or single object</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
     
     
     
@@ -80,7 +204,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cache.js.html">cache.js</a>, <a href="cache.js.html#line65">line 65</a>
+        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line352">line 352</a>
     </li></ul></dd>
     
     
@@ -108,6 +232,12 @@
     
     </div>
     
+    
+        <h3 class="subsection-title">Extends</h3>
+        
+        <ul>
+            <li>events.EventEmitter</li>
+        </ul>
     
     
     
@@ -126,7 +256,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="clear"><span class="type-signature"></span>clear<span class="signature">(<span class="optional">key</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="check"><span class="type-signature"></span>check<span class="signature">(<span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;(<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>|Array.&lt;<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>>)>}</span></h4>
     
     
 </dt>
@@ -134,7 +264,7 @@
     
     
     <div class="description">
-        clear cache entries prefix matching given key
+        Check the status of async request
     </div>
     
 
@@ -170,13 +300,13 @@
 	
         <tr>
             
-                <td class="name"><code>key</code></td>
+                <td class="name"><code>callback</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;(<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>|Array.&lt;<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>>)></span>
 
 
             
@@ -196,7 +326,7 @@
             
             
             
-            <td class="description last">Key prefix of cache entry to clear</td>
+            <td class="description last">Callback function</td>
         </tr>
 	
 	
@@ -227,136 +357,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cache.js.html">cache.js</a>, <a href="cache.js.html#line89">line 89</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="get"><span class="type-signature"></span>get<span class="signature">(<span class="optional">key</span>)</span><span class="type-signature"> &rarr; {<a href="CacheEntry.html">CacheEntry</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        retrive cache entry, or create if not exists.
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		<th>Argument</th>
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>key</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">Key of cache entry</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cache.js.html">cache.js</a>, <a href="cache.js.html#line75">line 75</a>
+        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line418">line 418</a>
     </li></ul></dd>
     
     
@@ -388,7 +389,7 @@
 	</dt>
 	<dd>
 		
-<span class="param-type"><a href="CacheEntry.html">CacheEntry</a></span>
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;(<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>|Array.&lt;<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>>)></span>
 
 
 	</dd>
@@ -402,7 +403,7 @@
         
             
 <dt>
-    <h4 class="name" id="makeCacheable"><span class="type-signature">&lt;protected> </span>makeCacheable<span class="signature">(fn, <span class="optional">scope</span>, <span class="optional">options</span>)</span><span class="type-signature"> &rarr; {function}</span></h4>
+    <h4 class="name" id="complete"><span class="type-signature"></span>complete<span class="signature">(<span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;(<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>|Array.&lt;<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>>)>}</span></h4>
     
     
 </dt>
@@ -410,7 +411,7 @@
     
     
     <div class="description">
-        Enable caching for async call fn to lookup the response cache first, then invoke original if no cached value.
+        Check and wait until the async requests become in completed status
     </div>
     
 
@@ -446,44 +447,13 @@
 	
         <tr>
             
-                <td class="name"><code>fn</code></td>
+                <td class="name"><code>callback</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">function</span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">Function to covert cacheable</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>scope</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;(<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>|Array.&lt;<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>>)></span>
 
 
             
@@ -503,40 +473,7 @@
             
             
             
-            <td class="description last">Scope of function call</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">Options</td>
+            <td class="description last">Callback function</td>
         </tr>
 	
 	
@@ -567,7 +504,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cache.js.html">cache.js</a>, <a href="cache.js.html#line172">line 172</a>
+        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line471">line 471</a>
     </li></ul></dd>
     
     
@@ -591,10 +528,6 @@
     <h5>Returns:</h5>
     
             
-<div class="param-desc">
-    - Cached version of function
-</div>
-
 
 
 <dl>
@@ -603,7 +536,7 @@
 	</dt>
 	<dd>
 		
-<span class="param-type">function</span>
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;(<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>|Array.&lt;<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>>)></span>
 
 
 	</dd>
@@ -617,7 +550,7 @@
         
             
 <dt>
-    <h4 class="name" id="makeResponseCacheable"><span class="type-signature">&lt;protected> </span>makeResponseCacheable<span class="signature">(fn, <span class="optional">scope</span>, <span class="optional">options</span>)</span><span class="type-signature"> &rarr; {function}</span></h4>
+    <h4 class="name" id="poll"><span class="type-signature"></span>poll<span class="signature">(interval, timeout)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -625,8 +558,7 @@
     
     
     <div class="description">
-        Enable caching for async call fn to intercept the response and store it to cache.
-The original async calll fn is always invoked.
+        Polling until async call status becomes complete or error
     </div>
     
 
@@ -648,8 +580,6 @@ The original async calll fn is always invoked.
 		<th>Type</th>
 		
 		
-		<th>Argument</th>
-		
 		
 		
 		
@@ -662,97 +592,46 @@ The original async calll fn is always invoked.
 	
         <tr>
             
-                <td class="name"><code>fn</code></td>
+                <td class="name"><code>interval</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">function</span>
+<span class="param-type">Number</span>
 
 
             
             </td>
             
             
-                <td class="attributes">
-                
-                    
-                
-                    
-                
-                </td>
             
             
             
-            
-            <td class="description last">Function to covert cacheable</td>
+            <td class="description last">Polling interval in milliseconds</td>
         </tr>
 	
 	
 	
         <tr>
             
-                <td class="name"><code>scope</code></td>
+                <td class="name"><code>timeout</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">Object</span>
+<span class="param-type">Number</span>
 
 
             
             </td>
             
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-                    
-                
-                    
-                
-                </td>
             
             
             
-            
-            <td class="description last">Scope of function call</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">Options</td>
+            <td class="description last">Polling timeout in milliseconds</td>
         </tr>
 	
 	
@@ -783,7 +662,7 @@ The original async calll fn is always invoked.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cache.js.html">cache.js</a>, <a href="cache.js.html#line116">line 116</a>
+        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line434">line 434</a>
     </li></ul></dd>
     
     
@@ -804,28 +683,148 @@ The original async calll fn is always invoked.
     
     
     
-    <h5>Returns:</h5>
     
-            
-<div class="param-desc">
-    - Cached version of function
-</div>
-
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">function</span>
-
-
-	</dd>
-</dl>
+    
+</dd>
 
         
+            
+<dt>
+    <h4 class="name" id="then"><span class="type-signature"></span>then<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Promise/A+ interface
+http://promises-aplus.github.io/promises-spec/
+
+Delegate to deferred promise, return promise instance for batch result
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line378">line 378</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="thenCall"><span class="type-signature"></span>thenCall<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Promise/A+ extension
+Call "then" using given node-style callback function
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line404">line 404</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
     
     
 </dd>

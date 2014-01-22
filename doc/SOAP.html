@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: SfDate</title>
+    <title>JSDoc: Class: SOAP</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Class: SfDate</h1>
+    <h1 class="page-title">Class: SOAP</h1>
     
     
 
@@ -27,7 +27,7 @@
     
 <header>
     <h2>
-    SfDate
+    SOAP
     </h2>
     
 </header>  
@@ -39,7 +39,7 @@
     
         
 <dt>
-    <h4 class="name" id="SfDate"><span class="type-signature"></span>new SfDate<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="SOAP"><span class="type-signature">&lt;protected> </span>new SOAP<span class="signature">(options)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -47,7 +47,7 @@
     
     
     <div class="description">
-        A date object to keep Salesforce date literal
+        Class for SOAP endpoint of Salesforce
     </div>
     
 
@@ -56,94 +56,177 @@
     
     
     
-    
-    
-<dl class="details">
-    
+        <h5>Parameters:</h5>
         
-    
-    
-    
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="date.js.html">date.js</a>, <a href="date.js.html#line10">line 10</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li><a href="http://www.salesforce.com/us/developer/docs/soql_sosl/Content/sforce_api_calls_soql_select_dateformats.htm">http://www.salesforce.com/us/developer/docs/soql_sosl/Content/sforce_api_calls_soql_select_dateformats.htm</a></li>
-        </ul>
-    </dd>
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-    
-    </div>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-        <h3 class="subsection-title">Members</h3>
-        
-        <dl>
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
             
-<dt>
-    <h4 class="name" id="toString"><span class="type-signature"></span>toString<span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Returns literal when converted to string
-    </div>
-    
-    
-    
+                <td class="name"><code>options</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
 
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">SOAP endpoint setting options
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>serverUrl</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">SOAP endpoint URL</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>sessionId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Salesforce session ID</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>xmlns</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">XML namespace for method call (default is "urn:partner.soap.sforce.com")</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+            </td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
     
 <dl class="details">
     
@@ -167,7 +250,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="date.js.html">date.js</a>, <a href="date.js.html#line19">line 19</a>
+        <a href="soap.js.html">soap.js</a>, <a href="soap.js.html#line20">line 20</a>
     </li></ul></dd>
     
     
@@ -180,9 +263,31 @@
 
     
     
+
+    
+
+    
+    
+    
+    
+    
+    
+    
 </dd>
 
-        </dl>
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -191,7 +296,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="parseDate"><span class="type-signature">&lt;static> </span>parseDate<span class="signature">(str)</span><span class="type-signature"> &rarr; {Date}</span></h4>
+    <h4 class="name" id="invoke"><span class="type-signature"></span>invoke<span class="signature">(method, args, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;Object>}</span></h4>
     
     
 </dt>
@@ -199,7 +304,7 @@
     
     
     <div class="description">
-        Parse IS08601 date(time) formatted string and return date instance
+        Invoke SOAP call using method and arguments
     </div>
     
 
@@ -221,6 +326,8 @@
 		<th>Type</th>
 		
 		
+		<th>Argument</th>
+		
 		
 		
 		
@@ -233,7 +340,7 @@
 	
         <tr>
             
-                <td class="name"><code>str</code></td>
+                <td class="name"><code>method</code></td>
             
             
             <td class="type">
@@ -246,10 +353,82 @@
             </td>
             
             
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
             
             
             
-            <td class="description last"></td>
+            
+            <td class="description last">Method name</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>args</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Arguments for the method call</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;Object></span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Callback function</td>
         </tr>
 	
 	
@@ -280,7 +459,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="date.js.html">date.js</a>, <a href="date.js.html#line76">line 76</a>
+        <a href="soap.js.html">soap.js</a>, <a href="soap.js.html#line34">line 34</a>
     </li></ul></dd>
     
     
@@ -312,298 +491,7 @@
 	</dt>
 	<dd>
 		
-<span class="param-type">Date</span>
-
-
-	</dd>
-</dl>
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="toDateLiteral"><span class="type-signature">&lt;static> </span>toDateLiteral<span class="signature">(date)</span><span class="type-signature"> &rarr; {<a href="SfDate.html">SfDate</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Convert JavaScript date object to ISO8601 Date format (e.g. 2012-10-31)
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>date</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-|
-
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Date</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Input date</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="date.js.html">date.js</a>, <a href="date.js.html#line32">line 32</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    - Salesforce date literal with ISO8601 date format
-</div>
-
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="SfDate.html">SfDate</a></span>
-
-
-	</dd>
-</dl>
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="toDateTimeLiteral"><span class="type-signature">&lt;static> </span>toDateTimeLiteral<span class="signature">(date)</span><span class="type-signature"> &rarr; {<a href="SfDate.html">SfDate</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Convert JavaScript date object to ISO8601 DateTime format
-(e.g. 2012-10-31T12:34:56Z)
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>date</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-|
-
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Date</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Input date</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="date.js.html">date.js</a>, <a href="date.js.html#line52">line 52</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    - Salesforce date literal with ISO8601 datetime format
-</div>
-
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="SfDate.html">SfDate</a></span>
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;Object></span>
 
 
 	</dd>

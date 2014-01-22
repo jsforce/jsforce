@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: CSVStream</title>
+    <title>JSDoc: Class: RetrieveResultLocator</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Class: CSVStream</h1>
+    <h1 class="page-title">Class: RetrieveResultLocator</h1>
     
     
 
@@ -27,9 +27,9 @@
     
 <header>
     <h2>
-        <span class="ancestors"><a href="RecordStream.html">RecordStream</a>.</span>
+        <span class="ancestors"><a href="Metadata.html">Metadata</a>~</span>
     
-    CSVStream
+    RetrieveResultLocator
     </h2>
     
 </header>  
@@ -41,7 +41,7 @@
     
         
 <dt>
-    <h4 class="name" id="CSVStream"><span class="type-signature">&lt;protected> </span>new CSVStream<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="RetrieveResultLocator"><span class="type-signature">&lt;protected> </span>new RetrieveResultLocator<span class="signature">(meta, result)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -49,7 +49,7 @@
     
     
     <div class="description">
-        CSVStream (extends RecordStream implements Receivable, Sendable)
+        The locator class to track retreive() Metadata API call result
     </div>
     
 
@@ -57,6 +57,77 @@
     
     
     
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>meta</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Metadata.html">Metadata</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Metadata API object</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>result</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Promise object for async result of retrieve call()</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
     
     
     
@@ -82,7 +153,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record-stream.js.html">record-stream.js</a>, <a href="record-stream.js.html#line293">line 293</a>
+        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line492">line 492</a>
     </li></ul></dd>
     
     
@@ -114,7 +185,7 @@
         <h3 class="subsection-title">Extends</h3>
         
         <ul>
-            <li><a href="RecordStream.html">RecordStream</a></li>
+            <li><a href="Metadata-AsyncResultLocator.html">Metadata~AsyncResultLocator</a></li>
         </ul>
     
     
@@ -134,7 +205,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="destroy"><span class="type-signature"></span>destroy<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="check"><span class="type-signature"></span>check<span class="signature">(<span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;(<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>|Array.&lt;<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>>)>}</span></h4>
     
     
 </dt>
@@ -142,550 +213,7 @@
     
     
     <div class="description">
-        Destroy record stream;
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="RecordStream.html#destroy">RecordStream#destroy</a>
-    </li></dd>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record-stream.js.html">record-stream.js</a>, <a href="record-stream.js.html#line56">line 56</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="destroySoon"><span class="type-signature"></span>destroySoon<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Destroy record stream after all record submission in the queue;
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="RecordStream.html#destroySoon">RecordStream#destroySoon</a>
-    </li></dd>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record-stream.js.html">record-stream.js</a>, <a href="record-stream.js.html#line64">line 64</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="end"><span class="type-signature"></span>end<span class="signature">(record)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>record</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type"><a href="global.html#Record">Record</a></span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Record object</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record-stream.js.html">record-stream.js</a>, <a href="record-stream.js.html#line331">line 331</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="filter"><span class="type-signature"></span>filter<span class="signature">(fn)</span><span class="type-signature"> &rarr; {<a href="RecordStream.html">RecordStream</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Filtering incoming record from upstream, and pass to downstream
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>fn</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type"><a href="global.html#RecordFilterFunction">RecordFilterFunction</a></span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Record filtering function</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="RecordStream.html#filter">RecordStream#filter</a>
-    </li></dd>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record-stream.js.html">record-stream.js</a>, <a href="record-stream.js.html#line187">line 187</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="RecordStream.html">RecordStream</a></span>
-
-
-	</dd>
-</dl>
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="map"><span class="type-signature"></span>map<span class="signature">(fn)</span><span class="type-signature"> &rarr; {<a href="RecordStream.html">RecordStream</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Mapping incoming record from upstream, and pass to downstream
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>fn</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type"><a href="global.html#RecordMapFunction">RecordMapFunction</a></span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Record mapping function</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="RecordStream.html#map">RecordStream#map</a>
-    </li></dd>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record-stream.js.html">record-stream.js</a>, <a href="record-stream.js.html#line177">line 177</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="RecordStream.html">RecordStream</a></span>
-
-
-	</dd>
-</dl>
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="pipe"><span class="type-signature"></span>pipe<span class="signature">(dest, <span class="optional">options</span>)</span><span class="type-signature"> &rarr; {<a href="RecordStream.html">RecordStream</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Streaming pipe for record manipulation
-Originally from Node.js's Stream#pipe 
-https://github.com/joyent/node/blob/master/lib/stream.js
+        Check the status of async request
     </div>
     
 
@@ -721,44 +249,13 @@ https://github.com/joyent/node/blob/master/lib/stream.js
 	
         <tr>
             
-                <td class="name"><code>dest</code></td>
+                <td class="name"><code>callback</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type"><a href="RecordStream.html">RecordStream</a></span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">Destination output stream for records</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;(<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>|Array.&lt;<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>>)></span>
 
 
             
@@ -778,7 +275,7 @@ https://github.com/joyent/node/blob/master/lib/stream.js
             
             
             
-            <td class="description last"></td>
+            <td class="description last">Callback function</td>
         </tr>
 	
 	
@@ -797,7 +294,7 @@ https://github.com/joyent/node/blob/master/lib/stream.js
     
     <dt class="inherited-from">Inherited From:</dt>
     <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="RecordStream.html#pipe">RecordStream#pipe</a>
+        <a href="Metadata-AsyncResultLocator.html#check">Metadata~AsyncResultLocator#check</a>
     </li></dd>
     
     
@@ -814,7 +311,7 @@ https://github.com/joyent/node/blob/master/lib/stream.js
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record-stream.js.html">record-stream.js</a>, <a href="record-stream.js.html#line96">line 96</a>
+        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line418">line 418</a>
     </li></ul></dd>
     
     
@@ -846,7 +343,7 @@ https://github.com/joyent/node/blob/master/lib/stream.js
 	</dt>
 	<dd>
 		
-<span class="param-type"><a href="RecordStream.html">RecordStream</a></span>
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;(<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>|Array.&lt;<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>>)></span>
 
 
 	</dd>
@@ -860,7 +357,7 @@ https://github.com/joyent/node/blob/master/lib/stream.js
         
             
 <dt>
-    <h4 class="name" id="resume"><span class="type-signature">&lt;abstract> </span>resume<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="complete"><span class="type-signature"></span>complete<span class="signature">(<span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;(<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>|Array.&lt;<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>>)>}</span></h4>
     
     
 </dt>
@@ -868,7 +365,7 @@ https://github.com/joyent/node/blob/master/lib/stream.js
     
     
     <div class="description">
-        Resume record fetch and query execution
+        Check and wait until the async requests become in completed status
     </div>
     
 
@@ -876,6 +373,66 @@ https://github.com/joyent/node/blob/master/lib/stream.js
     
     
     
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;(<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>|Array.&lt;<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>>)></span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Callback function</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
     
     
     
@@ -889,7 +446,7 @@ https://github.com/joyent/node/blob/master/lib/stream.js
     
     <dt class="inherited-from">Inherited From:</dt>
     <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="RecordStream.html#resume">RecordStream#resume</a>
+        <a href="Metadata-AsyncResultLocator.html#complete">Metadata~AsyncResultLocator#complete</a>
     </li></dd>
     
     
@@ -906,7 +463,7 @@ https://github.com/joyent/node/blob/master/lib/stream.js
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record-stream.js.html">record-stream.js</a>, <a href="record-stream.js.html#line83">line 83</a>
+        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line471">line 471</a>
     </li></ul></dd>
     
     
@@ -927,6 +484,24 @@ https://github.com/joyent/node/blob/master/lib/stream.js
     
     
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;(<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>|Array.&lt;<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>>)></span>
+
+
+	</dd>
+</dl>
+
+        
     
     
 </dd>
@@ -934,12 +509,16 @@ https://github.com/joyent/node/blob/master/lib/stream.js
         
             
 <dt>
-    <h4 class="name" id="send"><span class="type-signature"></span>send<span class="signature">(record)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="poll"><span class="type-signature"></span>poll<span class="signature">(interval, timeout)</span><span class="type-signature"></span></h4>
     
     
 </dt>
 <dd>
     
+    
+    <div class="description">
+        Polling until async call status becomes complete or error
+    </div>
     
 
     
@@ -972,13 +551,13 @@ https://github.com/joyent/node/blob/master/lib/stream.js
 	
         <tr>
             
-                <td class="name"><code>record</code></td>
+                <td class="name"><code>interval</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Record">Record</a></span>
+<span class="param-type">Number</span>
 
 
             
@@ -988,7 +567,30 @@ https://github.com/joyent/node/blob/master/lib/stream.js
             
             
             
-            <td class="description last">Record object</td>
+            <td class="description last">Polling interval in milliseconds</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>timeout</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Polling timeout in milliseconds</td>
         </tr>
 	
 	
@@ -1005,6 +607,11 @@ https://github.com/joyent/node/blob/master/lib/stream.js
     
 
     
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Metadata-AsyncResultLocator.html#poll">Metadata~AsyncResultLocator#poll</a>
+    </li></dd>
+    
     
     
     
@@ -1019,7 +626,7 @@ https://github.com/joyent/node/blob/master/lib/stream.js
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record-stream.js.html">record-stream.js</a>, <a href="record-stream.js.html#line314">line 314</a>
+        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line434">line 434</a>
     </li></ul></dd>
     
     
@@ -1047,7 +654,7 @@ https://github.com/joyent/node/blob/master/lib/stream.js
         
             
 <dt>
-    <h4 class="name" id="stream"><span class="type-signature"></span>stream<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="stream"><span class="type-signature"></span>stream<span class="signature">()</span><span class="type-signature"> &rarr; {stream.Stream}</span></h4>
     
     
 </dt>
@@ -1055,7 +662,7 @@ https://github.com/joyent/node/blob/master/lib/stream.js
     
     
     <div class="description">
-        Get delegating Node.js stream
+        Change the retrieved result to Node.js readable stream
     </div>
     
 
@@ -1088,7 +695,177 @@ https://github.com/joyent/node/blob/master/lib/stream.js
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record-stream.js.html">record-stream.js</a>, <a href="record-stream.js.html#line369">line 369</a>
+        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line530">line 530</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">stream.Stream</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="then"><span class="type-signature"></span>then<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Promise/A+ interface
+http://promises-aplus.github.io/promises-spec/
+
+Delegate to deferred promise, return promise instance for batch result
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Metadata-AsyncResultLocator.html#then">Metadata~AsyncResultLocator#then</a>
+    </li></dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line378">line 378</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="thenCall"><span class="type-signature"></span>thenCall<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Promise/A+ extension
+Call "then" using given node-style callback function
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Metadata-AsyncResultLocator.html#thenCall">Metadata~AsyncResultLocator#thenCall</a>
+    </li></dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line404">line 404</a>
     </li></ul></dd>
     
     

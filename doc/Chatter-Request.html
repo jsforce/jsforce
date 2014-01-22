@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: SfDate</title>
+    <title>JSDoc: Class: Request</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Class: SfDate</h1>
+    <h1 class="page-title">Class: Request</h1>
     
     
 
@@ -27,7 +27,9 @@
     
 <header>
     <h2>
-    SfDate
+        <span class="ancestors"><a href="Chatter.html">Chatter</a>~</span>
+    
+    Request
     </h2>
     
 </header>  
@@ -39,7 +41,7 @@
     
         
 <dt>
-    <h4 class="name" id="SfDate"><span class="type-signature"></span>new SfDate<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Request"><span class="type-signature">&lt;protected> </span>new Request<span class="signature">(chatter, params)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -47,7 +49,7 @@
     
     
     <div class="description">
-        A date object to keep Salesforce date literal
+        A class representing chatter API request
     </div>
     
 
@@ -56,94 +58,78 @@
     
     
     
-    
-    
-<dl class="details">
-    
+        <h5>Parameters:</h5>
         
-    
-    
-    
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="date.js.html">date.js</a>, <a href="date.js.html#line10">line 10</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li><a href="http://www.salesforce.com/us/developer/docs/soql_sosl/Content/sforce_api_calls_soql_select_dateformats.htm">http://www.salesforce.com/us/developer/docs/soql_sosl/Content/sforce_api_calls_soql_select_dateformats.htm</a></li>
-        </ul>
-    </dd>
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-    
-    </div>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-        <h3 class="subsection-title">Members</h3>
-        
-        <dl>
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
             
-<dt>
-    <h4 class="name" id="toString"><span class="type-signature"></span>toString<span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Returns literal when converted to string
-    </div>
-    
-    
-    
+                <td class="name"><code>chatter</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Chatter.html">Chatter</a></span>
 
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Chatter API object</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>params</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Chatter.html#RequestParams">Chatter~RequestParams</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Paramters representing HTTP request</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
     
 <dl class="details">
     
@@ -167,7 +153,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="date.js.html">date.js</a>, <a href="date.js.html#line19">line 19</a>
+        <a href="chatter.js.html">chatter.js</a>, <a href="chatter.js.html#line129">line 129</a>
     </li></ul></dd>
     
     
@@ -180,9 +166,31 @@
 
     
     
+
+    
+
+    
+    
+    
+    
+    
+    
+    
 </dd>
 
-        </dl>
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -191,7 +199,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="parseDate"><span class="type-signature">&lt;static> </span>parseDate<span class="signature">(str)</span><span class="type-signature"> &rarr; {Date}</span></h4>
+    <h4 class="name" id="batchParams"><span class="type-signature"></span>batchParams<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="Chatter.html#BatchRequestParams">Chatter~BatchRequestParams</a>}</span></h4>
     
     
 </dt>
@@ -199,7 +207,7 @@
     
     
     <div class="description">
-        Parse IS08601 date(time) formatted string and return date instance
+        Retrieve parameters in batch request form
     </div>
     
 
@@ -207,54 +215,6 @@
     
     
     
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>str</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last"></td>
-        </tr>
-	
-	
-	</tbody>
-</table>
     
     
     
@@ -280,7 +240,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="date.js.html">date.js</a>, <a href="date.js.html#line76">line 76</a>
+        <a href="chatter.js.html">chatter.js</a>, <a href="chatter.js.html#line146">line 146</a>
     </li></ul></dd>
     
     
@@ -312,7 +272,7 @@
 	</dt>
 	<dd>
 		
-<span class="param-type">Date</span>
+<span class="param-type"><a href="Chatter.html#BatchRequestParams">Chatter~BatchRequestParams</a></span>
 
 
 	</dd>
@@ -326,7 +286,7 @@
         
             
 <dt>
-    <h4 class="name" id="toDateLiteral"><span class="type-signature">&lt;static> </span>toDateLiteral<span class="signature">(date)</span><span class="type-signature"> &rarr; {<a href="SfDate.html">SfDate</a>}</span></h4>
+    <h4 class="name" id="promise"><span class="type-signature"></span>promise<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;<a href="Chatter.html#RequestResult">Chatter~RequestResult</a>>}</span></h4>
     
     
 </dt>
@@ -334,7 +294,7 @@
     
     
     <div class="description">
-        Convert JavaScript date object to ISO8601 Date format (e.g. 2012-10-31)
+        Retrieve parameters in batch request form
     </div>
     
 
@@ -342,60 +302,6 @@
     
     
     
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>date</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-|
-
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Date</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Input date</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
     
     
     
@@ -421,7 +327,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="date.js.html">date.js</a>, <a href="date.js.html#line32">line 32</a>
+        <a href="chatter.js.html">chatter.js</a>, <a href="chatter.js.html#line169">line 169</a>
     </li></ul></dd>
     
     
@@ -445,10 +351,6 @@
     <h5>Returns:</h5>
     
             
-<div class="param-desc">
-    - Salesforce date literal with ISO8601 date format
-</div>
-
 
 
 <dl>
@@ -457,7 +359,7 @@
 	</dt>
 	<dd>
 		
-<span class="param-type"><a href="SfDate.html">SfDate</a></span>
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;<a href="Chatter.html#RequestResult">Chatter~RequestResult</a>></span>
 
 
 	</dd>
@@ -471,7 +373,7 @@
         
             
 <dt>
-    <h4 class="name" id="toDateTimeLiteral"><span class="type-signature">&lt;static> </span>toDateTimeLiteral<span class="signature">(date)</span><span class="type-signature"> &rarr; {<a href="SfDate.html">SfDate</a>}</span></h4>
+    <h4 class="name" id="stream"><span class="type-signature"></span>stream<span class="signature">()</span><span class="type-signature"> &rarr; {stream.Stream}</span></h4>
     
     
 </dt>
@@ -479,8 +381,7 @@
     
     
     <div class="description">
-        Convert JavaScript date object to ISO8601 DateTime format
-(e.g. 2012-10-31T12:34:56Z)
+        Returns Node.js Stream object for request
     </div>
     
 
@@ -488,60 +389,6 @@
     
     
     
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>date</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-|
-
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Date</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Input date</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
     
     
     
@@ -567,7 +414,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="date.js.html">date.js</a>, <a href="date.js.html#line52">line 52</a>
+        <a href="chatter.js.html">chatter.js</a>, <a href="chatter.js.html#line179">line 179</a>
     </li></ul></dd>
     
     
@@ -591,10 +438,6 @@
     <h5>Returns:</h5>
     
             
-<div class="param-desc">
-    - Salesforce date literal with ISO8601 datetime format
-</div>
-
 
 
 <dl>
@@ -603,13 +446,155 @@
 	</dt>
 	<dd>
 		
-<span class="param-type"><a href="SfDate.html">SfDate</a></span>
+<span class="param-type">stream.Stream</span>
 
 
 	</dd>
 </dl>
 
         
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="then"><span class="type-signature"></span>then<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Promise/A+ interface
+http://promises-aplus.github.io/promises-spec/
+
+Delegate to deferred promise, return promise instance for batch result
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="chatter.js.html">chatter.js</a>, <a href="chatter.js.html#line189">line 189</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="thenCall"><span class="type-signature"></span>thenCall<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Promise/A+ extension
+Call "then" using given node-style callback function
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="chatter.js.html">chatter.js</a>, <a href="chatter.js.html#line201">line 201</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
     
     
 </dd>
@@ -636,7 +621,7 @@
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Wed Jan 22 2014 11:43:19 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Wed Jan 22 2014 11:43:18 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>

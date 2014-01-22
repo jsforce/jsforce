@@ -42,8 +42,9 @@ var util   = require('util'),
  * Query (extends RecordStream implements Receivable)
  *
  * @protected
- * @constructor
- * @extends Promise.&lt;T>
+ * @class
+ * @extends RecordStream
+ * @implements Promise.&lt;T>
  * @template T
  * @param {Connection} conn - Connection object
  * @param {Object|String} config - Query config object or SOQL string
@@ -133,16 +134,14 @@ Query.prototype.limit = function(limit) {
 /**
  * Synonym of Query#skip()
  *
- * @method offset
- * @memberof Query.prorotype
+ * @method Query#offset
  * @param {Number} offset - Offset number where begins returning results.
  * @returns {Query.&lt;T>}
  */
 /**
  * Skip records
  *
- * @method offset
- * @memberof Query.prorotype
+ * @method Query#offset
  * @param {Number} offset - Offset number where begins returning results.
  * @returns {Query.&lt;T>}
  */
@@ -158,8 +157,7 @@ Query.prototype.offset = function(offset) {
 /**
  * Synonym of Query#sort()
  *
- * @method orderby
- * @memberof Query.prorotype
+ * @memthod Query#orderby
  * @param {String|Object} sort - Sorting field or hash object with field name and sord direction
  * @param {String|Number} [dir] - Sorting direction (ASC|DESC|1|-1)
  * @returns {Query.&lt;T>}
@@ -167,8 +165,7 @@ Query.prototype.offset = function(offset) {
 /**
  * Set query sort with direction
  *
- * @method sort
- * @memberof Query.prorotype
+ * @method Query#sort
  * @param {String|Object} sort - Sorting field or hash object with field name and sord direction
  * @param {String|Number} [dir] - Sorting direction (ASC|DESC|1|-1)
  * @returns {Query.&lt;T>}
@@ -195,7 +192,7 @@ Query.prototype.orderby = function(sort, dir) {
  * @param {Number} [options.limit] - Maximum number of records the query will return.
  * @param {Number} [options.offset] - Offset number where begins returning results.
  * @param {Number} [options.skip] - Synonym of options.offset.
- * @returns {SubQuery}
+ * @returns {Query~SubQuery}
  */
 Query.prototype.include = function(childRelName, conditions, fields, options) {
   if (this._soql) {
@@ -336,8 +333,7 @@ Query.prototype.close = function() {
 /**
  * Synonym of Query#execute()
  *
- * @method run
- * @memberof Query.prototype
+ * @method Query#run
  * @param {Object} [options] - Query options
  * @param {Boolean} [options.autoFetch] - Using auto fetch mode or not
  * @param {Number} [options.maxFetch] - Max fetching records in auto fetch mode
@@ -348,8 +344,7 @@ Query.prototype.run =
 /**
  * Synonym of Query#execute()
  *
- * @method exec
- * @memberof Query.prototype
+ * @method Query#exec
  * @param {Object} [options] - Query options
  * @param {Boolean} [options.autoFetch] - Using auto fetch mode or not
  * @param {Number} [options.maxFetch] - Max fetching records in auto fetch mode
@@ -360,8 +355,7 @@ Query.prototype.exec =
 /**
  * Execute query and fetch records from server.
  *
- * @method execute
- * @memberof Query.prototype
+ * @method Query#execute
  * @param {Object} [options] - Query options
  * @param {Boolean} [options.autoFetch] - Using auto fetch mode or not
  * @param {Number} [options.maxFetch] - Max fetching records in auto fetch mode
@@ -600,30 +594,29 @@ Query.prototype.pipe = function() {
 /**
  * Synonym of Query#destroy()
  *
- * @method delete
- * @memberof Query.prototype
+ * @method Query#delete
  * @param {String} [type] - SObject type. Required for SOQL based query object.
  * @param {Callback.&lt;Array.&lt;RecordResult>>} [callback] - Callback function
- * @returns {Batch}
+ * @returns {Bulk~Batch}
  */
-Query.prototype["delete"] =
 /**
  * Synonym of Query#destroy()
  *
- * @method del
- * @memberof Query.prototype
+ * @method Query#del
  * @param {String} [type] - SObject type. Required for SOQL based query object.
  * @param {Callback.&lt;Array.&lt;RecordResult>>} [callback] - Callback function
- * @returns {Batch}
+ * @returns {Bulk~Batch}
  */
-Query.prototype.del =
 /**
  * Bulk delete queried records
  *
+ * @method Query#destroy
  * @param {String} [type] - SObject type. Required for SOQL based query object.
  * @param {Callback.&lt;Array.&lt;RecordResult>>} [callback] - Callback function
- * @returns {Batch}
+ * @returns {Bulk~Batch}
  */
+Query.prototype["delete"] =
+Query.prototype.del =
 Query.prototype.destroy = function(type, callback) {
   if (typeof type === 'function') {
     callback = type;
@@ -642,7 +635,7 @@ Query.prototype.destroy = function(type, callback) {
  * @param {Record|RecordMapFunction} mapping - Mapping record or record mapping function
  * @param {String} [type] - SObject type. Required for SOQL based query object.
  * @param {Callback.&lt;Array.&lt;RecordResult>>} [callback] - Callback function
- * @returns {Batch}
+ * @returns {Bulk~Batch}
  */
 Query.prototype.update = function(mapping, type, callback) {
   if (typeof type === 'function') {
@@ -693,15 +686,13 @@ Query.prototype.thenCall = function(callback) {
  * SubQuery object for representing child relationship query
  *
  * @protected
- * @memberof Query
- * @class
- * @constructor
+ * @class Query~SubQuery
  * @extends Query
  * @param {Connection} conn - Connection object
  * @param {Query} parent - Parent query object
  * @param {Object} config - Sub query configuration
  */
-var SubQuery = Query.SubQuery = function(conn, parent, config) {
+var SubQuery = function(conn, parent, config) {
   SubQuery.super_.call(this, conn, config);
   this._parent = parent;
 };
@@ -709,6 +700,7 @@ var SubQuery = Query.SubQuery = function(conn, parent, config) {
 util.inherits(SubQuery, Query);
 
 /**
+ * @method Query~SubQuery#include
  * @override
  */
 SubQuery.prototype.include = function() {
@@ -716,7 +708,9 @@ SubQuery.prototype.include = function() {
 };
 
 /**
- * back the context to parent query object
+ * Back the context to parent query object
+ *
+ * @method Query~SubQuery#end
  * @returns {Query}
  */
 SubQuery.prototype.end = function() {
@@ -726,9 +720,8 @@ SubQuery.prototype.end = function() {
 /**
  * If execute is called in subquery context, delegate it to parent query object
  *
+ * @method Query~SubQuery#execute
  * @override
- * @method execute
- * @memberof SubQuery.prototype
  */
 SubQuery.prototype.run =
 SubQuery.prototype.exec =
@@ -745,13 +738,13 @@ SubQuery.prototype.execute = function() {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Batch.html">Batch</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="Job.html">Job</a></li><li><a href="Logger.html">Logger</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query.SubQuery.html">SubQuery</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="Report.html">Report</a></li><li><a href="ReportInstance.html">ReportInstance</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Topic.html">Topic</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a> on Thu Dec 19 2013 14:23:14 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Wed Jan 22 2014 11:43:16 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>

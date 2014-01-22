@@ -43,7 +43,9 @@ var events  = require('events'),
     Streaming = require('./streaming'),
     Tooling = require('./tooling'),
     Analytics = require('./analytics'),
+    Chatter = require('./chatter'),
     Apex    = require('./apex'),
+    Metadata = require('./metadata'),
     Cache   = require('./cache');
 
 var defaults = {
@@ -88,8 +90,7 @@ var Connection = module.exports = function(options) {
   if (oauth2) {
     /**
      * OAuth2 object
-     * @memberof Connection.prototype
-     * @member {OAuth2} oauth2
+     * @member {OAuth2} Connection#oauth2
      */
     this.oauth2 = oauth2 instanceof OAuth2 ? oauth2 : new OAuth2(oauth2);
   }
@@ -100,38 +101,42 @@ var Connection = module.exports = function(options) {
 
   /**
    * Streaming API object
-   * @memberof Connection.prototype
-   * @member {Streaming} streaming
+   * @member {Streaming} Connection#streaming
    */
   this.streaming = new Streaming(this);
   /**
    * Bulk API object
-   * @memberof Connection.prototype
-   * @member {Bulk} bulk
+   * @member {Bulk} Connection#bulk
    */
   this.bulk = new Bulk(this);
   /**
    * Tooling API object
-   * @memberof Connection.prototype
-   * @member {Tooling} tooling
+   * @member {Tooling} Connection#tooling
    */
   this.tooling = new Tooling(this);
   /**
    * Analytics API object
-   * @memberof Connection.prototype
-   * @member {Analytics} analytics
+   * @member {Analytics} Connection#analytics
    */
   this.analytics = new Analytics(this);
   /**
+   * Chatter API object
+   * @member {Chatter} Connection#chatter
+   */
+  this.chatter = new Chatter(this);
+  /**
+   * Metadata API object
+   * @member {Metadata} Connection#metadata 
+   */
+  this.metadata = new Metadata(this);
+  /**
    * Apex REST API object
-   * @memberof Connection.prototype
-   * @member {Apex} apex
+   * @member {Apex} Connection#apex
    */
   this.apex = new Apex(this);
   /**
    * Cache object for result
-   * @memberof Connection.prototype
-   * @member {Cache} cache
+   * @member {Cache} Connection#cache
    */
   this.cache = new Cache();
 
@@ -216,6 +221,11 @@ Connection.prototype._request = function(params, callback, options) {
   if (_.isString(params)) {
     params = { method: 'GET', url: params };
   }
+  // if url is given in site root relative path, prepend instance url before.
+  if (params.url[0] === '/') {
+    params.url = this.instanceUrl + params.url;
+  }
+
   var self = this;
   var logger = this._logger;
 
@@ -480,8 +490,7 @@ Connection.prototype.retrieve = function(type, ids, callback) {
 /**
  * Synonym of Connection#create()
  *
- * @method insert
- * @memberof Connection.prototype
+ * @method Connection#insert
  * @param {String} type - SObject Type
  * @param {Object|Array.&lt;Object>} records - A record or array of records to create
  * @param {Callback.&lt;RecordResult|Array.&lt;RecordResult>>} [callback] - Callback function
@@ -490,8 +499,7 @@ Connection.prototype.retrieve = function(type, ids, callback) {
 /**
  * Create records
  *
- * @method create
- * @memberof Connection.prototype
+ * @method Connection#create
  * @param {String} type - SObject Type
  * @param {Record|Array.&lt;Record>} records - A record or array of records to create
  * @param {Callback.&lt;RecordResult|Array.&lt;RecordResult>>} [callback] - Callback function
@@ -643,8 +651,7 @@ Connection.prototype.upsert = function(type, records, extIdField, callback) {
 /**
  * Synonym of Connection#destroy()
  *
- * @method delete
- * @memberof Connection.prototype
+ * @method Connection#delete
  * @param {String} type - SObject Type
  * @param {String|Array.&lt;String>} ids - A ID or array of IDs to delete
  * @param {Callback.&lt;RecordResult|Array.&lt;RecordResult>>} [callback] - Callback
@@ -653,8 +660,7 @@ Connection.prototype.upsert = function(type, records, extIdField, callback) {
 /**
  * Synonym of Connection#destroy()
  *
- * @method del
- * @memberof Connection.prototype
+ * @method Connection#del
  * @param {String} type - SObject Type
  * @param {String|Array.&lt;String>} ids - A ID or array of IDs to delete
  * @param {Callback.&lt;RecordResult|Array.&lt;RecordResult>>} [callback] - Callback
@@ -663,8 +669,7 @@ Connection.prototype.upsert = function(type, records, extIdField, callback) {
 /**
  * Delete records
  *
- * @method destroy
- * @memberof Connection.prototype
+ * @method Connection#destroy
  * @param {String} type - SObject Type
  * @param {String|Array.&lt;String>} ids - A ID or array of IDs to delete
  * @param {Callback.&lt;RecordResult|Array.&lt;RecordResult>>} [callback] - Callback
@@ -733,8 +738,7 @@ Connection.prototype.recent = function(limit, callback) {
 /**
  * Synonym of Connection#describe()
  *
- * @method describeSObject
- * @memberof Connection.prototype
+ * @method Connection#describeSObject
  * @param {String} type - SObject Type
  * @param {Callback.&lt;DescribeSObjectResult>} [callback] - Callback function
  * @returns {Promise.&lt;DescribeSObjectResult>}
@@ -742,8 +746,7 @@ Connection.prototype.recent = function(limit, callback) {
 /**
  * Describe SObject metadata
  *
- * @method describe
- * @memberof Connection.prototype
+ * @method Connection#describe
  * @param {String} type - SObject Type
  * @param {Callback.&lt;DescribeSObjectResult>} [callback] - Callback function
  * @returns {Promise.&lt;DescribeSObjectResult>}
@@ -1011,13 +1014,19 @@ Connection.prototype.logout = function(callback) {
 };
 
 /**
+ * @typedef {Object} UpdatedRecordsInfo
+ * @prop {String} latestDateCovered - The timestamp of the last date covered. 
+ * @prop {Array.&lt;String>} ids - Updated record IDs.
+ */
+
+/**
  * Retrieve updated records
  *
  * @param {String} type - SObject Type
  * @param {String|Date} start - start date or string representing the start of the interval
  * @param {String|Date} end - start date or string representing the end of the interval must be > start
- * @param {Callback.&lt;Object>} [callback] - Callback function
- * @returns {Promise.&lt;Object>}
+ * @param {Callback.&lt;UpdatedRecordsInfo>} [callback] - Callback function
+ * @returns {Promise.&lt;UpdatedRecordsInfo>}
  */
 Connection.prototype.updated = function (type, start, end, callback) {
   var url = [ this._baseUrl(), "sobjects", type, "updated" ].join('/');
@@ -1053,13 +1062,22 @@ Connection.prototype.updated = function (type, start, end, callback) {
 };
 
 /**
+ * @typedef {Object} DeletedRecordsInfo
+ * @prop {String} earliestDateAvailable - The timestamp of the earliest date available
+ * @prop {String} latestDateCovered - The timestamp of the last date covered
+ * @prop {Array.&lt;Object>} deletedRecords - Updated records
+ * @prop {String} deletedRecords.id - Record ID
+ * @prop {String} deletedRecords.deletedDate - The timestamp when this record was deleted
+ */
+
+/**
  * Retrieve deleted records
  *
  * @param {String} type - SObject Type
  * @param {String|Date} start - start date or string representing the start of the interval
  * @param {String|Date} end - start date or string representing the end of the interval
- * @param {Callback.&lt;Object>} [callback] - Callback function
- * @returns {Promise.&lt;Object>}
+ * @param {Callback.&lt;DeletedRecordsInfo>} [callback] - Callback function
+ * @returns {Promise.&lt;DeletedRecordsInfo>}
  */
 Connection.prototype.deleted = function (type, start, end, callback) {
   var url = [ this._baseUrl(), "sobjects", type, "deleted" ].join('/');
@@ -1092,7 +1110,8 @@ Connection.prototype.deleted = function (type, start, end, callback) {
     method: 'GET',
     url: url
   }).thenCall(callback);
-};</code></pre>
+};
+</code></pre>
         </article>
     </section>
 
@@ -1102,13 +1121,13 @@ Connection.prototype.deleted = function (type, start, end, callback) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Batch.html">Batch</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="Job.html">Job</a></li><li><a href="Logger.html">Logger</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query.SubQuery.html">SubQuery</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="Report.html">Report</a></li><li><a href="ReportInstance.html">ReportInstance</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Topic.html">Topic</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a> on Thu Dec 19 2013 14:23:14 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Wed Jan 22 2014 11:43:16 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>
