@@ -14,17 +14,13 @@ describe("metadata", function() {
 
   this.timeout(40000); // set timeout to 40 sec.
 
-  var conn = new sf.Connection({ logLevel : config.logLevel });
+  var conn = testUtils.createConnection(config);
 
   /**
    *
    */
   before(function(done) {
-    conn.login(config.username, config.password, function(err) {
-      if (err) { return done(err); }
-      if (!conn.accessToken) { done(new Error("No access token. Invalid login.")); }
-      done();
-    });
+    testUtils.establishConnection(conn, config, done);
   });
 
   /**
@@ -162,6 +158,8 @@ describe("metadata", function() {
     });
   });
 
+if (testUtils.isNodeJS) {
+
   /**
    *
    */
@@ -179,6 +177,8 @@ describe("metadata", function() {
       }.check(done));
     });
   });
+
+}
 
   /**
    *
@@ -200,5 +200,6 @@ describe("metadata", function() {
                    });
     });
   });
+
 
 });

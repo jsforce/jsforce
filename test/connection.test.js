@@ -409,6 +409,10 @@ describe("connection", function() {
     });
   });
 
+
+/*------------------------------------------------------------------------*/
+if (testUtils.isNodeJS) {
+
   /**
    *
    */
@@ -445,7 +449,7 @@ describe("connection", function() {
       oauth2: {
         clientId : config.clientId,
         clientSecret : config.clientSecret,
-        redirectUri : config.redirectUri,
+        redirectUri : config.redirectUri
       },
       logLevel : config.logLevel
     });
@@ -535,6 +539,9 @@ describe("connection", function() {
     });
 
   });
+
+}
+/*------------------------------------------------------------------------*/
 
 });
 

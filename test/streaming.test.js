@@ -14,6 +14,9 @@ describe("streaming", function() {
 
   this.timeout(40000); // set timeout to 40 sec.
 
+/*------------------------------------------------------------------------*/
+if (testUtils.isNodeJS) {
+  
   var conn = new testUtils.createConnection(config);
 
   /**
@@ -22,7 +25,6 @@ describe("streaming", function() {
   before(function(done) {
     testUtils.establishConnection(conn, config, done);
   });
-
 
   /**
    *
@@ -43,6 +45,8 @@ describe("streaming", function() {
       }, 5000);
     });
   });
+}
+/*------------------------------------------------------------------------*/
 
 });
 

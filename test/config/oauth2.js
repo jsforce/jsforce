@@ -7,6 +7,5 @@ module.exports = {
   redirectUri :   env.SF_OAUTH2_REDIRECT_URI || "http://localhost:4000/oauth2/callback",
   username :      env.SF_USERNAME,
   password :      env.SF_PASSWORD,
-  proxyUrl :      env.SF_AJAX_PROXY_URL || "http://localhost:3123/proxy",
   logLevel :      env.DEBUG
 };

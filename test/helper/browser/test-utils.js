@@ -9,6 +9,8 @@ require('../async-check');
  */
 module.exports = {
 
+  isBrowser: true,
+
   assert: require('assert'),
 
   createConnection: function(config) {

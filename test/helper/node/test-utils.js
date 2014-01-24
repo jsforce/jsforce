@@ -18,6 +18,8 @@ require('../async-check');
  */
 module.exports = {
 
+  isNodeJS: true,
+
   assert: require('power-assert'),
 
   createConnection: function(config) {
