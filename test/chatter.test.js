@@ -238,7 +238,7 @@ describe("chatter", function() {
     var likeUrl;
 
     it("should add like to item post", function(done) {
-      conn.chatter.resource(itemLikesUrl).create(null, function(err, result) {
+      conn.chatter.resource(itemLikesUrl).create("", function(err, result) {
         if (err) { throw err; }
         likeUrl = result.url;
       }.check(done));
@@ -251,7 +251,7 @@ describe("chatter", function() {
     });
 
     it("should add like to comment post", function(done) {
-      conn.chatter.resource(commentLikesUrl).create(null, function(err, result) {
+      conn.chatter.resource(commentLikesUrl).create("", function(err, result) {
         if (err) { throw err; }
         likeUrl = result.url;
       }.check(done));
