@@ -12,8 +12,6 @@ var app = express();
 
 app.configure(function () {
   app.set('port', process.env.PORT || 3123);
-  app.use(express.logger('dev'));
-  app.use(express.bodyParser());
 });
 
 app.configure('development', function () {
@@ -45,7 +43,7 @@ app.all('/proxy/?*', function(req, res) {
   };
   proxyCounter++;
   console.log("(++req++) " + new Array(proxyCounter+1).join('*'));
-  console.log("Endpoint: " + sfEndpoint);
+  console.log("method=" + params.method + ", url=" + params.url);
   req.pipe(request(params))
     .on('response', function() {
       proxyCounter--;

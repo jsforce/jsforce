@@ -1,7 +1,8 @@
-/*global describe, it, before */
-var assert = require('power-assert'),
-    async  = require('async'),
-    _      = require('underscore'),
+/*global describe, it, before, __dirname */
+var testUtils = require('./helper/test-utils'),
+    assert = testUtils.assert;
+
+var _      = require('underscore'),
     fs     = require('fs'),
     sf     = require('../lib/salesforce'),
     config = require('./config/salesforce');

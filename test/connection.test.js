@@ -1,6 +1,8 @@
 /*global describe, it, before */
-var assert = require('power-assert'),
-    async  = require('async'),
+var testUtils = require('./helper/test-utils'),
+    assert = testUtils.assert;
+
+var async  = require('async'),
     _      = require('underscore'),
     authorize = require('./helper/webauth'),
     sf     = require('../lib/salesforce'),
@@ -13,7 +15,7 @@ describe("connection", function() {
 
   this.timeout(40000); // set timeout to 40 sec.
 
-  var conn = new sf.Connection({ logLevel : config.logLevel });
+  var conn = new testUtils.createConnection(config);
 
   /**
    *
