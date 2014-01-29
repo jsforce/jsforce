@@ -390,6 +390,22 @@ describe("connection", function() {
     });
   });
 
+  /**
+   *
+   */
+  describe("get user identity information", function() {
+    it("should return user identity information", function (done) {
+      conn.identity(function(err, res) {
+        assert.ok(_.isString(res.id));
+        assert.ok(res.id.indexOf('https://') === 0);
+        assert.ok(_.isString(res.user_id));
+        assert.ok(_.isString(res.organization_id));
+        assert.ok(_.isString(res.email));
+        assert.ok(_.isObject(res.photos));
+        assert.ok(_.isObject(res.urls));
+      }.check(done));
+    });
+  });
 
   /**
    *
