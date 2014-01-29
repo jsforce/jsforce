@@ -6,7 +6,7 @@
     "test/**/*.test.js"
   ],
   "serve_files" : [
-    "build/test/**/bulk.test.js"
+    "build/test/**/*.test.js"
   ],
   "launch_in_ci" : [ "PhantomJS" ]
 }

@@ -431,10 +431,11 @@ if (testUtils.isNodeJS) {
 
     describe("then connect with previous session info", function() {
       it("should raise authentication error", function(done) {
-        conn = new sf.Connection(sessionInfo);
+        conn = testUtils.createConnection(config);
+        conn.initialize(sessionInfo);
         setTimeout(function() { // wait a moment
           conn.query("SELECT Id FROM User", function(err, res) {
-            assert.ok(err instanceof Error);
+            assert.ok(err && _.isString(err.message));
           }.check(done));
         }, 5000);
       });
