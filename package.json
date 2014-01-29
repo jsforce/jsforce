@@ -23,7 +23,7 @@
   ],
   "main": "./lib/salesforce",
   "scripts": {
-    "test": "mocha test/*.test.js --require ./test/helper/assert.js --reporter spec"
+    "test": "mocha test/*.test.js --reporter spec"
   },
   "engines": {
     "node": ">=0.8.0"
@@ -35,13 +35,20 @@
   "dependencies": {
     "async": "0.1.x",
     "coffee-script": "1.6.x",
-    "faye": "0.8.x",
+    "faye": "1.0.x",
     "q": "0.9.x",
     "request": "2.12.x",
     "underscore": "1.4.x",
     "xml2js": "0.4.x"
   },
   "devDependencies": {
+    "grunt": "0.4.x",
+    "grunt-browserify": "1.3.x",
+    "grunt-contrib-clean": "0.5.x",
+    "grunt-contrib-watch": "0.5.x",
+    "grunt-contrib-uglify": "0.3.x",
+    "grunt-jsdoc": "0.5.x",
+    "envfile": "1.0.x",
     "mocha": "1.15.x",
     "power-assert": "0.2.x",
     "espower-loader": "0.1.x",

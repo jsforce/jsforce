@@ -1,6 +1,8 @@
 /*global describe, it, before */
-var assert = require('power-assert'),
-    _      = require('underscore'),
+var testUtils = require('./helper/test-utils'),
+    assert = testUtils.assert;
+
+var _      = require('underscore'),
     authorize = require('./helper/webauth'),
     OAuth2 = require('../lib/oauth2'),
     config = require('./config/oauth2');
@@ -14,6 +16,8 @@ describe("oauth2", function() {
 
   var oauth2 = new OAuth2(config);
 
+/*------------------------------------------------------------------------*/
+if (testUtils.isNodeJS) {
   /**
    *
    */
@@ -60,5 +64,8 @@ describe("oauth2", function() {
       }.check(done));
     });
   });
+
+}
+/*------------------------------------------------------------------------*/
 
 });
