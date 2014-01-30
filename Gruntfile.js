@@ -27,10 +27,10 @@ module.exports = function(grunt) {
       },
       lib: {
         files: {
-          'build/lib/salesforce.js': [ 'lib/salesforce.js' ]
+          'build/lib/jsforce.js': [ 'lib/salesforce.js' ]
         },
         options: {
-          standalone: 'SF'
+          standalone: 'jsforce'
         }
       },
       test: {
@@ -63,7 +63,7 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          'build/lib/salesforce.min.js': ['build/lib/salesforce.js']
+          'build/lib/jsforce.min.js': ['build/lib/jsforce.js']
         }
       }
     },
@@ -73,8 +73,6 @@ module.exports = function(grunt) {
         src: ['lib/'],
         options: {
           destination: 'doc',
-          template: 'template',
-          configure: 'template/jsdoc.conf.json',
           private: false,
           recurse: true,
           lenient: true
@@ -84,7 +82,7 @@ module.exports = function(grunt) {
 
     clean: {
       lib: {
-        src: [ "build/lib/salesforce.js" ]
+        src: [ "build/lib/*.js" ]
       },
       test: {
         src: [ "build/test/**.test.js" ]
