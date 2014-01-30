@@ -1,0 +1,12 @@
+{
+  "framework" : "mocha",
+  "before_tests": "grunt clean:test && grunt browserify:test",
+  "src_files" : [
+    "lib/**/*.js",
+    "test/**/*.test.js"
+  ],
+  "serve_files" : [
+    "build/test/**/*.test.js"
+  ],
+  "launch_in_ci" : [ "PhantomJS" ]
+}

@@ -1,6 +1,8 @@
 /*global describe, it, before */
-var assert = require('power-assert'),
-    async  = require('async'),
+var testUtils = require('./helper/test-utils'),
+    assert = testUtils.assert;
+
+var async  = require('async'),
     _      = require('underscore'),
     authorize = require('./helper/webauth'),
     sf     = require('../lib/salesforce'),
@@ -13,7 +15,7 @@ describe("connection", function() {
 
   this.timeout(40000); // set timeout to 40 sec.
 
-  var conn = new sf.Connection({ logLevel : config.logLevel });
+  var conn = new testUtils.createConnection(config);
 
   /**
    *
@@ -390,6 +392,26 @@ describe("connection", function() {
     });
   });
 
+  /**
+   *
+   */
+  describe("get user identity information", function() {
+    it("should return user identity information", function (done) {
+      conn.identity(function(err, res) {
+        assert.ok(_.isString(res.id));
+        assert.ok(res.id.indexOf('https://') === 0);
+        assert.ok(_.isString(res.user_id));
+        assert.ok(_.isString(res.organization_id));
+        assert.ok(_.isString(res.email));
+        assert.ok(_.isObject(res.photos));
+        assert.ok(_.isObject(res.urls));
+      }.check(done));
+    });
+  });
+
+
+/*------------------------------------------------------------------------*/
+if (testUtils.isNodeJS) {
 
   /**
    *
@@ -409,10 +431,11 @@ describe("connection", function() {
 
     describe("then connect with previous session info", function() {
       it("should raise authentication error", function(done) {
-        conn = new sf.Connection(sessionInfo);
+        conn = testUtils.createConnection(config);
+        conn.initialize(sessionInfo);
         setTimeout(function() { // wait a moment
           conn.query("SELECT Id FROM User", function(err, res) {
-            assert.ok(err instanceof Error);
+            assert.ok(err && _.isString(err.message));
           }.check(done));
         }, 5000);
       });
@@ -427,7 +450,7 @@ describe("connection", function() {
       oauth2: {
         clientId : config.clientId,
         clientSecret : config.clientSecret,
-        redirectUri : config.redirectUri,
+        redirectUri : config.redirectUri
       },
       logLevel : config.logLevel
     });
@@ -517,6 +540,9 @@ describe("connection", function() {
     });
 
   });
+
+}
+/*------------------------------------------------------------------------*/
 
 });
 

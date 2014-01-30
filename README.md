@@ -1,35 +1,37 @@
-# node-salesforce 
+# jsforce 
 
-Salesforce API Connection Library for Node.js Applications
+Salesforce API Library for JavaScript Applications
 
-[![Build Status](https://secure.travis-ci.org/stomita/node-salesforce.png?branch=travis-ci)](http://travis-ci.org/stomita/node-salesforce)
+[![Build Status](https://secure.travis-ci.org/jsforce/jsforce.png?branch=travis-ci)](http://travis-ci.org/jsforce/jsforce)
 
 ## Abstract
 
-Node-salesforce, which is designed to be a wrapper of Salesforce REST API in Node.js, enables Salesforce application development in event-driven style.
-It capsulates the access to REST API end point in asynchronous JavaScript function call.
+JSforce, which is designed to be a wrapper of Salesforce REST API in JavaScript (both in web browser and Node.js),
+enables Salesforce application development much easier.
+
+It capsulates the access to various APIs provided by Salesforce in asynchronous JavaScript function calls.
 You can use both OAuth2 authorization scheme and SOAP API login for API authentication.
 
 
 ## Install
 
-If you are using node-salesforce as an API library in your Node.js project :
+If you are using jsforce as an API library in your Node.js project :
 
 <pre>
-  $ npm install node-salesforce
+  $ npm install jsforce
 </pre>
 
-If you want to utilize node-salesforce REPL (interactive API console) in tty:
+If you want to utilize jsforce CLI in tty:
 
 <pre>
-  $ npm install node-salesforce -g
+  $ npm install jsforce -g
 </pre>
 
 If you want to get the latest from GitHub :
 
 <pre>
-  $ git clone git://github.com/stomita/node-salesforce.git 
-  $ cd node-salesforce
+  $ git clone git://github.com/jsforce/jsforce.git 
+  $ cd jsforce
   $ npm link
 </pre>
 
@@ -45,8 +47,8 @@ When you have Salesforce username and password (and maybe security token if requ
 By default, it uses SOAP login API (so no OAuth2 client information is required).
 
 ```javascript
-var sf = require('node-salesforce');
-var conn = new sf.Connection({
+var jsforce = require('jsforce');
+var conn = new jsforce.Connection({
   // you can change loginUrl to connect to sandbox or prerelease env.
   // loginUrl : 'https://test.salesforce.com'
 });
@@ -68,8 +70,8 @@ conn.login(username, password, function(err, userInfo) {
 When OAuth2 client information is given, `Connection#login(username, password)` uses OAuth2 Resource Owner Password Credential flow to login to Salesforce.
 
 ```javascript
-var sf = require('node-salesforce');
-var conn = new sf.Connection({
+var jsforce = require('jsforce');
+var conn = new jsforce.Connection({
   oauth2 : {
     // you can change loginUrl to connect to sandbox or prerelease env.
     // loginUrl : 'https://test.salesforce.com',
@@ -97,8 +99,8 @@ If Salesforce session ID and its server URL information is passed from Salesforc
 
 
 ```javascript
-var sf = require('node-salesforce');
-var conn = new sf.Connection({
+var jsforce = require('jsforce');
+var conn = new jsforce.Connection({
   serverUrl : '<your Salesforce server URL (e.g. https://na1.salesforce.com) is here>',
   sessionId : '<your Salesforce session ID is here>'
 });
@@ -109,8 +111,8 @@ var conn = new sf.Connection({
 After the login API call or OAuth2 authorization, you can get Salesforce access token and its instance URL. Next time you can use them to establish connection.
 
 ```javascript
-var sf = require('node-salesforce');
-var conn = new sf.Connection({
+var jsforce = require('jsforce');
+var conn = new jsforce.Connection({
   instanceUrl : '<your Salesforce server URL (e.g. https://na1.salesforce.com) is here>',
   accessToken : '<your Salesforrce OAuth2 access token is here>'
 });
@@ -123,8 +125,8 @@ If refresh token is given in constructor, the connection will automatically refr
 NOTE: Refresh token is only available for OAuth2 authorization code flow.
 
 ```javascript
-var sf = require('node-salesforce');
-var conn = new sf.Connection({
+var jsforce = require('jsforce');
+var conn = new jsforce.Connection({
   oauth2 : {
     clientId : '<your Salesforce OAuth2 client ID is here>',
     clientSecret : '<your Salesforce OAuth2 client secret is here>',
@@ -146,8 +148,8 @@ conn.on("refresh", function(accessToken, res) {
 `Connection#logout()` to logout from server and invalidate current session. Currently this method only works for SOAP API session.
 
 ```javascript
-var sf = require('node-salesforce');
-var conn = new sf.Connection({
+var jsforce = require('jsforce');
+var conn = new jsforce.Connection({
   sessionId : '<session id to logout>',
   serverUrl : '<your Salesforce Server url to logout is here>'
 });
@@ -166,7 +168,7 @@ conn.logout(function(err) {
 First, you should redirect user to Salesforce page to get authorized. You can get Salesforce authorization page URL by `OAuth2#getAuthorizationUrl(options)`.
 
 ```javascript
-var sf = require('node-salesforce');
+var jsforce = require('jsforce');
 //
 // OAuth2 client information can be shared with multiple connections.
 //
@@ -811,7 +813,7 @@ conn.apex.post("/MyTestApexRest/", body, function(res) {
 
 ### Bulk API
 
-Node-salesforce package also supports Bulk API. It is not only mapping each Bulk API endpoint in low level, but also introducing utility interface in bulk load operations.
+JSforce package also supports Bulk API. It is not only mapping each Bulk API endpoint in low level, but also introducing utility interface in bulk load operations.
 
 
 #### Loading From Records
@@ -1185,19 +1187,19 @@ batch.on('queue', function() {
 
 ## API Reference
 
-See API Reference document in https://stomita.github.io/node-salesforce/doc/ .
+See API Reference document in http://jsforce.github.io/doc/ .
 
 
 ## REPL (Interactive API Console) Usage
 
-Node-salesforce is not merely an API library, but gives `sfjs` and `sfcoffee` REPL interface to test and inspect node-salesforce APIs in interactive JavaScript/CoffeeScript shell.
+JSforce is not merely an API library, but gives `jsforce` CLI/REPL interface to run and inspect JSforce APIs in interactive JavaScript/CoffeeScript shell.
 
-It includes buit-in support of node-salesforce package, default connection instance. In the REPL context, package root objects and API methods of default connection are exposed.
+It includes buit-in support of JSforce package, default connection instance. In the REPL context, package root objects and API methods of default connection are exposed.
 
-Because the REPL automatically waits the promised object during its evaluation, no callback required for all async API calls. The `_` variable keeps evaluated result in previous statement (as usual Node.JS REPL).
+Because the REPL automatically waits the promised object during its evaluation, no callback required for all async API calls. The `_` variable keeps evaluated result in previous statement (as same as usual Node.JS REPL).
 
 ```
-$ sfjs
+$ jsforce
 > login("username@example.org", "mypassword123");
 { id: '005xxxxxxxxxxxxxxx',
   organizationId: '00Dyyyyyyyyyyyyyyy' }
@@ -1234,6 +1236,17 @@ $ sfjs
 
 
 ## Change History
+
+v1.0.0 (Jan 30, 2014):
+
+* Renamed the project from "Node-Salesforce" to "JSforce".
+
+* Support running web browser environment.
+
+* Enhanced CLI to allow OAuth2 authorization and keep connection info in local file registry.
+
+* Support retrieving user identity information by `Connection#identity()`.
+
 
 v0.8.0 (Jan 22, 2014):
 

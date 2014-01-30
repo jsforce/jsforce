@@ -1,7 +1,8 @@
 /*global describe, it, before */
-var assert = require('power-assert'),
-    async  = require('async'),
-    _      = require('underscore'),
+var testUtils = require('./helper/test-utils'),
+    assert = testUtils.assert;
+
+var _      = require('underscore'),
     fs     = require('fs'),
     sf     = require('../lib/salesforce'),
     config = require('./config/salesforce');
@@ -13,18 +14,15 @@ describe("tooling", function() {
 
   this.timeout(40000); // set timeout to 40 sec.
 
-  var conn = new sf.Connection({ logLevel : config.logLevel });
+  var conn = new testUtils.createConnection(config);
 
   /**
    *
    */
   before(function(done) {
-    conn.login(config.username, config.password, function(err) {
-      if (err) { return done(err); }
-      if (!conn.accessToken) { done(new Error("No access token. Invalid login.")); }
-      done();
-    });
+    testUtils.establishConnection(conn, config, done);
   });
+
 
   /**
    *
