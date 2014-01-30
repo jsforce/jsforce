@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Analytics</title>
+    <title>JSDoc: Class: ProxyTransport</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Class: Analytics</h1>
+    <h1 class="page-title">Class: ProxyTransport</h1>
     
     
 
@@ -27,7 +27,7 @@
     
 <header>
     <h2>
-    Analytics
+    ProxyTransport
     </h2>
     
 </header>  
@@ -39,7 +39,7 @@
     
         
 <dt>
-    <h4 class="name" id="Analytics"><span class="type-signature"></span>new Analytics<span class="signature">(conn)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="ProxyTransport"><span class="type-signature"></span>new ProxyTransport<span class="signature">(proxyUrl)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -47,7 +47,7 @@
     
     
     <div class="description">
-        API class for Analytics API
+        Class for HTTP request transport using AJAX proxy service
     </div>
     
 
@@ -81,152 +81,7 @@
 	
         <tr>
             
-                <td class="name"><code>conn</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Connection.html">Connection</a></span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Connection</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="analytics.js.html">analytics.js</a>, <a href="analytics.js.html#line149">line 149</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-    
-    </div>
-    
-    
-    
-    
-    
-    
-    
-    
-        <h3 class="subsection-title">Classes</h3>
-        
-        <dl>
-            <dt><a href="Analytics-Report.html">Report</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Analytics-ReportInstance.html">ReportInstance</a></dt>
-            <dd></dd>
-        </dl>
-    
-    
-    
-    
-    
-    
-    
-        <h3 class="subsection-title">Methods</h3>
-        
-        <dl>
-            
-<dt>
-    <h4 class="name" id="report"><span class="type-signature"></span>report<span class="signature">(id)</span><span class="type-signature"> &rarr; {<a href="Analytics-Report.html">Analytics~Report</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Get report object of Analytics API
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>id</code></td>
+                <td class="name"><code>proxyUrl</code></td>
             
             
             <td class="type">
@@ -242,7 +97,7 @@
             
             
             
-            <td class="description last">Report Id</td>
+            <td class="description last">AJAX Proxy server URL</td>
         </tr>
 	
 	
@@ -273,7 +128,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="analytics.js.html">analytics.js</a>, <a href="analytics.js.html#line159">line 159</a>
+        <a href="transport.js.html">transport.js</a>, <a href="transport.js.html#line73">line 73</a>
     </li></ul></dd>
     
     
@@ -294,32 +149,32 @@
     
     
     
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="Analytics-Report.html">Analytics~Report</a></span>
-
-
-	</dd>
-</dl>
-
-        
     
     
 </dd>
 
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        <h3 class="subsection-title">Methods</h3>
         
+        <dl>
             
 <dt>
-    <h4 class="name" id="reports"><span class="type-signature"></span>reports<span class="signature">(<span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;Array.&lt;Analytics~ReportInfo>>}</span></h4>
+    <h4 class="name" id="httpRequest"><span class="type-signature"></span>httpRequest<span class="signature">(params, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;Object>}</span></h4>
     
     
 </dt>
@@ -327,7 +182,7 @@
     
     
     <div class="description">
-        Get recent report list
+        Make HTTP request via AJAX proxy
     </div>
     
 
@@ -363,13 +218,44 @@
 	
         <tr>
             
+                <td class="name"><code>params</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">HTTP request</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
                 <td class="name"><code>callback</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;Array.&lt;Analytics~ReportInfo>></span>
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;Object></span>
 
 
             
@@ -389,7 +275,7 @@
             
             
             
-            <td class="description last">Callback function</td>
+            <td class="description last">Calback Function</td>
         </tr>
 	
 	
@@ -420,7 +306,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="analytics.js.html">analytics.js</a>, <a href="analytics.js.html#line169">line 169</a>
+        <a href="transport.js.html">transport.js</a>, <a href="transport.js.html#line86">line 86</a>
     </li></ul></dd>
     
     
@@ -452,7 +338,7 @@
 	</dt>
 	<dd>
 		
-<span class="param-type"><a href="Promise.html">Promise</a>.&lt;Array.&lt;Analytics~ReportInfo>></span>
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;Object></span>
 
 
 	</dd>
@@ -485,7 +371,7 @@
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Fri Jan 31 2014 02:33:57 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Fri Jan 31 2014 02:33:58 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>

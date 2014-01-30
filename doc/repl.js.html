@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: repl.js</title>
+    <title>JSDoc: Source: cli/repl.js</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Source: repl.js</h1>
+    <h1 class="page-title">Source: cli/repl.js</h1>
     
     
 
@@ -25,33 +25,76 @@
     
     <section>
         <article>
-            <pre class="prettyprint source"><code>/**
+            <pre class="prettyprint source"><code>/*global process, global */
+/**
  * @file Creates REPL interface with built in Salesforce API objects and automatically resolves promise object
  * @author Shinichi Tomita &lt;shinichi.tomita@gmail.com>
  */
-var _    = require('underscore')._,
-    sf   = require('./salesforce');
+var stream = require('stream'),
+    rstream = require('readable-stream'),
+    Readable = stream.Readable || rstream.Readable,
+    Writable = stream.Writable || rstream.Writable,
+    Transform = stream.Transform || rstream.Transform,
+    PassThrough = stream.PassThrough || rstream.PassThrough,
+    _      = require('underscore'),
+    sf     = require('../salesforce');
 
 /**
- * Intercept the evaled value when it is "promise", and resolve its value before sending back to REPL.
+ * Intercept the evaled value returned from repl evaluator, convert and send back to output.
  * @private
  */
-function promisify(repl) {
-  var _eval = repl.eval;
-  repl.eval = function(cmd, context, filename, callback) {
-    _eval.call(repl, cmd, context, filename, function(err, res) {
-      if (isPromiseLike(res)) {
-        res.then(function(ret) {
-          callback(null, ret);
-        }, function(err) {
-          callback(err);
-        });
-      } else {
+function injectBefore(replServer, method, beforeFn) {
+  var _orig = replServer[method];
+  replServer[method] = function() {
+    var args = Array.prototype.slice.call(arguments);
+    var callback = args.pop();
+    beforeFn.apply(null, args.concat(function(err, res) {
+      if (err || res) {
         callback(err, res);
+      } else {
+        _orig.apply(replServer, args.concat(callback));
       }
-    });
+    }));
   };
-  return repl;
+  return replServer;
+}
+
+/**
+ *
+ */
+function injectAfter(replServer, method, afterFn) {
+  var _orig = replServer[method];
+  replServer[method] = function() {
+    var args = Array.prototype.slice.call(arguments);
+    var callback = args.pop();
+    _orig.apply(replServer, args.concat(function() {
+      var args = Array.prototype.slice.call(arguments);
+      try {
+        afterFn.apply(null, args.concat(callback));
+      } catch(e) {
+        callback(e);
+      }
+    }));
+  };
+  return replServer;
+}
+
+
+/**
+ * When the result was "promise", resolve its value
+ * @private
+ */
+function promisify(err, value, callback) {
+  if (err) { throw err; }
+  if (isPromiseLike(value)) {
+    value.then(function(v) {
+      callback(null, v);
+    }, function(err) {
+      callback(err);
+    });
+  } else {
+    callback(null, value);
+  }
 }
 
 /**
@@ -63,22 +106,205 @@ function isPromiseLike(v) {
 }
 
 /**
+ * Output object to stdout in JSON representation
+ * @private
+ */
+function outputToStdout(prettyPrint) {
+  if (prettyPrint && !_.isNumber(prettyPrint)) {
+    prettyPrint = 4;
+  }
+  return function(err, value, callback) {
+    if (err) {
+      console.error(err);
+    } else {
+      var str = JSON.stringify(value, null, prettyPrint);
+      console.log(str);
+    }
+    callback(err, value);
+  };
+}
+
+
+/**
  * define get accessor using Object.defineProperty
  * @private
  */
-function defineProp(target, obj, prop) {
+function defineProp(obj, prop, getter) {
   if (Object.defineProperty) {
-    Object.defineProperty(target, prop, {
-      get: function() { return obj[prop]; }
-    });
+    Object.defineProperty(obj, prop, { get: getter });
   }
 }
+
+
+/**
+ *
+ */
+var Repl = module.exports = function(cli, replModule) {
+  this._cli = cli;
+  this._replModule = replModule;
+  this._in = new Transform();
+  this._out = new Transform();
+  var self = this;
+  this._in._transform = function(chunk, encoding, callback) {
+    if (!self._paused) { this.push(chunk); }
+    callback();
+  };
+  this._out._transform = function(chunk, encoding, callback) {
+    if (!self._paused && self._interactive !== false) { this.push(chunk); }
+    callback();
+  };
+};
+
+/**
+ *
+ */
+Repl.prototype.start = function(options) {
+  var self = this;
+  var cli = this._cli;
+  options = options || {};
+
+  process.stdin.resume();
+  process.stdin.setRawMode(true);
+  process.stdin.pipe(this._in);
+
+  this._interactive = options.interactive;
+
+  this._out.pipe(process.stdout);
+  defineProp(this._out, "columns", function() { return process.stdout.columns; });
+
+  var replServer = this._replModule.start({
+    input: this._in,
+    output: this._out,
+    terminal: true
+  });
+
+  this._defineAdditionalCommands(replServer);
+
+  replServer = injectBefore(replServer, "complete", function() {
+    self.complete.apply(self, arguments);
+  });
+  replServer = injectAfter(replServer, "eval", promisify);
+
+  if (options.interactive === false) { 
+    replServer = injectAfter(replServer, "eval", outputToStdout(options.prettyPrint));
+    replServer = injectAfter(replServer, "eval", function() { process.exit(); });
+  }
+  replServer.on('exit', function() { process.exit(); });
+
+  this._defineBuiltinVars(replServer.context);
+
+  if (options.evalScript) {
+    this._in.write(options.evalScript + "\n", "utf-8");
+  }
+  return this;
+};
+
+/**
+ *
+ */
+Repl.prototype._defineAdditionalCommands = function(replServer) {
+  var cli = this._cli;
+  replServer.defineCommand('connections', {
+    help: 'List currenty registered Salesforce connections',
+    action: function(name) {
+      cli.listConnections();
+      replServer.displayPrompt();
+    }
+  });
+  replServer.defineCommand('connect', {
+    help: 'Connect to Salesforce instance',
+    action: function(name, password) {
+      var options = null;
+      if (password) {
+        options = { username: name, password: password };
+      }
+      cli.connect(name, options, function(err, res) {
+        if (err) { console.error(err.message); }
+        replServer.displayPrompt();
+      });
+    }
+  });
+  replServer.defineCommand('disconnect', {
+    help: 'Disconnect connection and erase it from registry',
+    action: function(name) {
+      cli.disconnect(name);
+      replServer.displayPrompt();
+    }
+  });
+  replServer.defineCommand('authorize', {
+    help: 'Connect to Salesforce using OAuth2 authorization flow',
+    action: function(clientName) {
+      cli.authorize(clientName, function(err, res) {
+        if (err) { console.error(err.message); }
+        replServer.displayPrompt();
+      });
+    }
+  });
+  replServer.defineCommand('register', {
+    help: 'Register OAuth2 client information',
+    action: function(clientName, clientId, clientSecret, redirectUri, loginUrl) {
+      var config = {
+        clientId: clientId,
+        clientSecret: clientSecret,
+        redirectUri: redirectUri,
+        loginUrl: loginUrl
+      };
+      cli.register(clientName, config, function(err, res) {
+        if (err) { console.error(err.message); }
+        replServer.displayPrompt();
+      });
+    }
+  });
+};
+
+/**
+ *
+ */
+Repl.prototype.pause = function() {
+  this._paused = true;
+  process.stdin.setRawMode(false);
+};
+
+/**
+ *
+ */
+Repl.prototype.resume = function() {
+  this._paused = false;
+  process.stdin.resume();
+  process.stdin.setRawMode(true);
+};
+
+/**
+ *
+ */
+Repl.prototype.complete = function(line, callback) {
+  var tokens = line.replace(/^\s+/, '').split(/\s+/);
+  var command = tokens[0];
+  var keyword = tokens[1] || '';
+  if (command[0] === '.' && tokens.length === 2) {
+    var candidates = [];
+    if (command === '.connect' || command === '.disconnect') {
+      candidates = this._cli.getConnectionNames();
+    }
+    if (command === '.authorize') {
+      candidates = this._cli.getClientNames();
+    }
+    candidates = candidates.filter(function(name) {
+      return name.indexOf(keyword) === 0;
+    });
+    callback(null, [ candidates, keyword ]);
+  } else {
+    callback();
+  }
+};
 
 /**
  * Map all node-salesforce object to REPL context
  * @private
  */
-function defineBuiltinVars(context) {
+Repl.prototype._defineBuiltinVars = function(context) {
+  var cli = this._cli;
+
   // define salesforce package root objects
   for (var key in sf) {
     if (sf.hasOwnProperty(key) && !global[key]) {
@@ -88,35 +314,36 @@ function defineBuiltinVars(context) {
   // expose salesforce package root as "$sf" in context.
   context.$sf = sf;
 
-  // create default connection object
-  var conn = new sf.Connection();
+  function createProxyFunc(prop) {
+    return function() {
+      var conn = cli.getCurrentConnection();
+      return conn[prop].apply(conn, arguments);
+    };
+  }
 
+  function createProxyAccessor(prop) {
+    return function() {
+      var conn = cli.getCurrentConnection();
+      return conn[prop];
+    };
+  }
+
+  var conn = cli.getCurrentConnection();
+  // define connection prototype functions as proxy
   for (var prop in conn) {
     if (prop.indexOf('_') === 0) { // ignore private
       continue;
     }
     if (_.isFunction(conn[prop])) {
-      context[prop] = _.bind(conn[prop], conn);
+      context[prop] = createProxyFunc(prop);
     } else if (_.isObject(conn[prop])) {
-      defineProp(context, conn, prop);
+      defineProp(context, prop, createProxyAccessor(prop));
     }
   }
 
   // expose default connection as "$conn"
-  context.$conn = conn;
-}
+  defineProp(context, "$conn", function(){ return cli.getCurrentConnection(); });
 
-/**
- * @protected
- */
-module.exports = function(repl) {
-  return {
-    start: function(options) {
-      var sfrepl = promisify(repl.start(options));
-      defineBuiltinVars(sfrepl.context);
-      return sfrepl;
-    }
-  };
 };
 
 </code></pre>
@@ -129,13 +356,13 @@ module.exports = function(repl) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Promise.html">Promise</a></li><li><a href="ProxyTransport.html">ProxyTransport</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#authorize">authorize</a></li><li><a href="global.html#connect">connect</a></li><li><a href="global.html#disconnect">disconnect</a></li><li><a href="global.html#fs">fs</a></li><li><a href="global.html#getClientNames">getClientNames</a></li><li><a href="global.html#getConnectionNames">getConnectionNames</a></li><li><a href="global.html#getCurrentConnection">getCurrentConnection</a></li><li><a href="global.html#injectAfter">injectAfter</a></li><li><a href="global.html#listConnections">listConnections</a></li><li><a href="global.html#loginByPassword">loginByPassword</a></li><li><a href="global.html#nodeRequest">nodeRequest</a></li><li><a href="global.html#promptConfirm">promptConfirm</a></li><li><a href="global.html#promptMessage">promptMessage</a></li><li><a href="global.html#promptPassword">promptPassword</a></li><li><a href="global.html#register">register</a></li><li><a href="global.html#Repl">Repl</a></li><li><a href="global.html#saveCurrentConnection">saveCurrentConnection</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#waitCallback">waitCallback</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Wed Jan 22 2014 11:43:16 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Fri Jan 31 2014 02:33:57 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>

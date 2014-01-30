@@ -33,12 +33,12 @@ var events  = require('events'),
     util    = require('util'),
     async   = require('async'),
     _       = require('underscore')._,
-    request = require('./request'),
     Promise = require('./promise'),
     Logger  = require('./logger'),
     OAuth2  = require('./oauth2'),
     Query   = require('./query'),
     SObject = require('./sobject'),
+    Transport = require('./transport'),
     Bulk    = require('./bulk'),
     Streaming = require('./streaming'),
     Tooling = require('./tooling'),
@@ -50,7 +50,7 @@ var events  = require('events'),
 
 var defaults = {
   loginUrl: "https://login.salesforce.com",
-  instanceUrl: "https://{instance}.salesforce.com",
+  instanceUrl: "",
   version: "29.0"
 };
 
@@ -70,6 +70,7 @@ var defaults = {
  * @param {String} [options.accessToken] - Salesforce OAuth2 access token
  * @param {String} [options.sessionId] - Salesforce session ID
  * @param {String} [options.refreshToken] - Salesforce OAuth2 refresh token
+ * @param {String} [options.proxyUrl] - Cross-domain proxy server URL, used in browser client, non Visualforce app.
  */
 var Connection = module.exports = function(options) {
   options = options || {};
@@ -98,6 +99,10 @@ var Connection = module.exports = function(options) {
   this.loginUrl = options.loginUrl || (oauth2 && oauth2.loginUrl) || defaults.loginUrl;
   this.version = options.version || defaults.version;
   this.maxRequest = options.maxRequest || this.maxRequest || 10;
+
+  /** @private */
+  this._transport =
+    options.proxyUrl ? new Transport.ProxyTransport(options.proxyUrl) : new Transport();
 
   /**
    * Streaming API object
@@ -140,6 +145,8 @@ var Connection = module.exports = function(options) {
    */
   this.cache = new Cache();
 
+
+
   var cacheOptions = {
     key: function(type) { return type ? "describe." + type : "describe"; }
   };
@@ -170,8 +177,10 @@ util.inherits(Connection, events.EventEmitter);
  * @param {UserInfo} [options.userInfo] - Logged in user information
  */
 Connection.prototype.initialize = function(options) {
-  this.instanceUrl = options.instanceUrl || options.serverUrl || this.instanceUrl || 
-                     defaults.instanceUrl.replace("{instance}", options.instance || "na1");
+  if (!options.instanceUrl && options.serverUrl) {
+    options.instanceUrl = options.serverUrl.split('/').slice(0, 3).join('/');
+  }
+  this.instanceUrl = options.instanceUrl || options.serverUrl || this.instanceUrl || defaults.instanceUrl;
   this.urls = {
     soap : {
       login : [ this.loginUrl, "services/Soap/u", this.version ].join('/'),
@@ -201,6 +210,7 @@ Connection.prototype.initialize = function(options) {
   this.tooling.initialize();
 
   this._initializedAt = Date.now();
+
 };
 
 
@@ -212,7 +222,7 @@ Connection.prototype._baseUrl = function() {
 };
 
 /**
- * Sending request to API endpoint
+ * Sending request using given HTTP request info
  * @private
  */
 Connection.prototype._request = function(params, callback, options) {
@@ -261,7 +271,7 @@ Connection.prototype._request = function(params, callback, options) {
   logger.debug("&lt;request> method=" + params.method + ", url=" + params.url);
   var requestTime = Date.now();
 
-  return request(params, function(err, response) {
+  var onResponse = function(err, response) {
 
     var responseTime = Date.now();
     logger.debug("elappsed time : " + (responseTime - requestTime) + "msec");
@@ -291,7 +301,8 @@ Connection.prototype._request = function(params, callback, options) {
     }
 
     // check response content type to choose parser
-    var contentType = options.responseContentType || response.headers["content-type"];
+    var contentType = options.responseContentType ||
+                      (response.headers && response.headers["content-type"]);
     var parseBody = /^application\/xml(;|$)/.test(contentType) ? parseXML : 
                     /^application\/json(;|$)/.test(contentType) ? parseJSON :
                     /^text\/csv(;|$)/.test(contentType) ? parseCSV :
@@ -321,8 +332,10 @@ Connection.prototype._request = function(params, callback, options) {
       }
       return res;
     }
+  };
 
-  }).thenCall(callback);
+  return this._transport.httpRequest(params, onResponse, options).thenCall(callback);
+
 };
 
 /** @private */
@@ -469,10 +482,7 @@ Connection.prototype.retrieve = function(type, ids, callback) {
   return Promise.all(
     _.map(ids, function(id) {
       var url = [ self._baseUrl(), "sobjects", type, id ].join('/');
-      return self._request({
-        method : 'GET',
-        url : url
-      });
+      return self._request(url);
     })
   ).then(function(results) {
     return !isArray && _.isArray(results) ? results[0] : results;
@@ -754,10 +764,7 @@ Connection.prototype.recent = function(limit, callback) {
 Connection.prototype.describe = 
 Connection.prototype.describeSObject = function(type, callback) {
   var url = [ this._baseUrl(), "sobjects", type, "describe" ].join('/');
-  return this._request({
-    method : 'GET',
-    url : url
-  }).thenCall(callback);
+  return this._request(url).thenCall(callback);
 };
 
 
@@ -774,10 +781,7 @@ Connection.prototype.describeSObject = function(type, callback) {
  */
 Connection.prototype.describeGlobal = function(callback) {
   var url = this._baseUrl() + "/sobjects";
-  return this._request({
-    method : 'GET',
-    url : url
-  }).thenCall(callback);
+  return this._request(url).thenCall(callback);
 };
 
 
@@ -794,6 +798,32 @@ Connection.prototype.sobject = function(type) {
   return sobject;
 };
 
+/**
+ * Get identity information of current user
+ *
+ * @param {Callback.&lt;IdentityInfo>} [callback] - Callback function
+ * @returns {Promise.&lt;IdentityInfo>}
+ */
+Connection.prototype.identity = function(callback) {
+  var self = this;
+  var idUrl = this.userInfo && this.userInfo.url;
+  return new Promise(
+    idUrl ? 
+    { identity: idUrl } :
+    this._request(this._baseUrl())
+  ).then(function(res) {
+    var url = res.identity;
+    url += '?format=json&oauth_token=' + encodeURIComponent(self.accessToken);
+    return self._request(url, null, { jsonp : 'callback' });
+  }).then(function(res) {
+    self.userInfo = {
+      id: res.user_id,
+      organizationId: res.organization_id,
+      url: res.id
+    };
+    return res;
+  }).thenCall(callback);
+};
 
 /**
  * @typedef UserInfo
@@ -918,7 +948,7 @@ Connection.prototype.loginBySoap = function(username, password, callback) {
     '&lt;/se:Envelope>'
   ].join('');
 
-  return request({
+  return this._transport.httpRequest({
     method : 'POST',
     url : this.urls.soap.login,
     body : body,
@@ -984,7 +1014,7 @@ Connection.prototype.logout = function(callback) {
     '&lt;/se:Envelope>'
   ].join('');
 
-  return request({
+  return this._transport.httpRequest({
     method : 'POST',
     url : this.urls.soap.service,
     body : body,
@@ -1055,10 +1085,7 @@ Connection.prototype.updated = function (type, start, end, callback) {
     url += "&end=" + encodeURIComponent(end);
   }
 
-  return this._request({
-    method: 'GET',
-    url: url
-  }).thenCall(callback);
+  return this._request(url).thenCall(callback);
 };
 
 /**
@@ -1106,10 +1133,7 @@ Connection.prototype.deleted = function (type, start, end, callback) {
     url += "&end=" + encodeURIComponent(end);
   }
 
-  return this._request({
-    method: 'GET',
-    url: url
-  }).thenCall(callback);
+  return this._request(url).thenCall(callback);
 };
 </code></pre>
         </article>
@@ -1121,13 +1145,13 @@ Connection.prototype.deleted = function (type, start, end, callback) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Promise.html">Promise</a></li><li><a href="ProxyTransport.html">ProxyTransport</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#authorize">authorize</a></li><li><a href="global.html#connect">connect</a></li><li><a href="global.html#disconnect">disconnect</a></li><li><a href="global.html#fs">fs</a></li><li><a href="global.html#getClientNames">getClientNames</a></li><li><a href="global.html#getConnectionNames">getConnectionNames</a></li><li><a href="global.html#getCurrentConnection">getCurrentConnection</a></li><li><a href="global.html#injectAfter">injectAfter</a></li><li><a href="global.html#listConnections">listConnections</a></li><li><a href="global.html#loginByPassword">loginByPassword</a></li><li><a href="global.html#nodeRequest">nodeRequest</a></li><li><a href="global.html#promptConfirm">promptConfirm</a></li><li><a href="global.html#promptMessage">promptMessage</a></li><li><a href="global.html#promptPassword">promptPassword</a></li><li><a href="global.html#register">register</a></li><li><a href="global.html#Repl">Repl</a></li><li><a href="global.html#saveCurrentConnection">saveCurrentConnection</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#waitCallback">waitCallback</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Wed Jan 22 2014 11:43:16 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Fri Jan 31 2014 02:33:57 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>

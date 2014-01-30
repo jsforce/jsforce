@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: promise.js</title>
+    <title>JSDoc: Source: cli/registry.js</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Source: promise.js</h1>
+    <h1 class="page-title">Source: cli/registry.js</h1>
     
     
 
@@ -25,150 +25,135 @@
     
     <section>
         <article>
-            <pre class="prettyprint source"><code>var Q = require('q'),
-    _ = require('underscore')._;
-
+            <pre class="prettyprint source"><code>/*global process */
 /**
- * Promises/A+ spec compliant class, with a little extension
- * http://promises-aplus.github.io/promises-spec/
  *
- * @class Promise
- * @constructor
- * @param {Promise.&lt;T>|T} o - Object to wrap with promise
- * @template T
  */
-var Promise = function(o) {
-  this._promise = Q(o);
-};
+var fs = require('fs'),
+    _  = require('underscore');
+
+var homeDir = process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'];
+var configDir = homeDir + "/.jsforce";
+var configFile = configDir + "/config.json";
 
 /**
- * @callback FulfilledCallback
- * @param {T} result - Fulfilled value
- * @returns {S}
- * @template T,S
+ * @private
  */
+var registryConfig = {};
+try {
+  var data = fs.readFileSync(configFile, 'utf-8');
+  registryConfig = JSON.parse(data);
+} catch(e) {}
 
 /**
- * @callback RejectedCallback
- * @param {Error} reason - Rejected reason
- * @returns {S}
- * @template S
+ * @private
  */
+function saveConfig() {
+  var data = JSON.stringify(registryConfig, null, 4);
+  try {
+    fs.writeFileSync(configFile, data);
+    fs.chmodSync(configFile, "600");
+  } catch(e) {
+    fs.mkdirSync(configDir);
+    fs.chmodSync(configDir, "700");
+    fs.writeFileSync(configFile, data);
+    fs.chmodSync(configFile, "600");
+  }
+}
 
-/**
- * The "then" method from the Promises/A+ specification
- *
- * @param {FulfilledCallback.&lt;T, S1>} [onFulfilled]
- * @param {RejectedCallback.&lt;S2>} [onRejected]
- * @returns {Promise.&lt;S1|S2>}
- */
-Promise.prototype.then = function() {
-  // Delegate Q promise implementation and wrap by our Promise instance
-  return new Promise(this._promise.then.apply(this._promise, arguments));
-};
+function getClients() {
+  return registryConfig.clients || (registryConfig.clients = {});
+}
 
-/**
- * Call "then" using given node-style callback function
- *
- * @param {Callback.&lt;T>} [callback] - Callback function
- * @returns {Promise.&lt;T>}
- */
-Promise.prototype.thenCall = function(callback) {
-  return _.isFunction(callback) ? this.then(function(res) {
-    return callback(null, res);
-  }, function(err) {
-    return callback(err);
-  }) : this;
-};
+function getConnections() {
+  return registryConfig.connections || (registryConfig.connections = {});
+}
 
-/**
- * A sugar method, equivalent to promise.then(undefined, onRejected).
- *
- * @param {RejectedCallback.&lt;S>} onRejected
- * @returns {Promise.&lt;S>}
- */
-Promise.prototype.fail = function() {
-  return new Promise(this._promise.fail.apply(this._promise, arguments));
-};
+function getConnectionNames() {
+  return Object.keys(getConnections());
+}
 
-/**
- * Alias for completion
- *
- * @param {FulfilledCallback.&lt;T, S>} [onFulfilled]
- * @returns {Promise.&lt;S>}
- */
-Promise.prototype.done = function() {
-  return new Promise(this._promise.done.apply(this._promise, arguments));
-};
+function getConnection(name) {
+  if (!name) { name = registryConfig["default"]; }
+  var connections = getConnections();
+  var connConfig = connections[name];
+  if (connConfig) { 
+    connConfig = _.clone(connConfig);
+    if (connConfig.client) {
+      connConfig.oauth2 = _.clone(getClient(connConfig.client));
+    }
+    delete connConfig.client;
+  }
+  return connConfig;
+}
 
-/**
- * @param {...Promise.&lt;*>} p
- */
-Promise.when = function() {
-  return new Promise(Q.when.apply(Q, arguments));
-};
+function saveConnection(name, connConfig) {
+  var connections = getConnections();
+  connConfig = _.clone(connConfig);
+  if (connConfig.oauth2) {
+    var clientName = findClientName(connConfig.oauth2);
+    if (clientName) {
+      connConfig.client = clientName;
+    }
+    delete connConfig.oauth2;
+  }
+  connections[name] = connConfig;
+  saveConfig();
+}
 
-/**
- * Returns rejecting promise with given reason
- *
- * @param {Error} reason - Rejecting reason
- * @returns {Promise}
- */
-Promise.reject = function(reason) {
-  return new Promise(Q.reject(reason));
-};
+function setDefaultConnection(name) {
+  registryConfig["default"] = name;
+  saveConfig();
+}
 
-/**
- * Returns a promise that is fulfilled with an array containing the fulfillment value of each promise, 
- * or is rejected with the same rejection reason as the first promise to be rejected.
- *
- * @param {Array.&lt;Promise.&lt;*>|*>} promises
- * @returns {Promise.&lt;Array.&lt;*>>}
- */
-Promise.all = function() {
-  return new Promise(Q.all.apply(Q, arguments));
-};
+function removeConnection(name) {
+  var connections = getConnections();
+  delete connections[name];
+  saveConfig();
+}
 
-/**
- * Returns a deferred object
- *
- * @returns {Deferred}
- */
-Promise.defer = function() {
-  return new Deferred();
-};
+function findClientName(clientConfig) {
+  var clients = getClients();
+  for (var name in clients) {
+    var client = clients[name];
+    if (client.clientId === clientConfig.clientId &&
+        (client.loginUrl || 'https://login.salesforce.com') === clientConfig.loginUrl) {
+      return name;
+    }
+  }
+  return null;
+}
 
-/**
- * Deferred object
- *
- * @protected
- * @constructor
- */
-var Deferred = function() {
-  this._deferred = Q.defer();
-  this.promise = new Promise(this._deferred.promise);
-};
+function getClient(name) {
+  var clientConfig = getClients()[name];
+  return clientConfig && _.clone(clientConfig);
+}
 
-/**
- * Resolve promise
- * @param {*} result - Resolving result
- */
-Deferred.prototype.resolve = function() {
-  return this._deferred.resolve.apply(this._promise, arguments);
-};
+function getClientNames() {
+  return Object.keys(getClients());
+}
 
-/**
- * Reject promise
- * @param {Error} error - Rejecting reason
- */
-Deferred.prototype.reject = function() {
-  return this._deferred.reject.apply(this._promise, arguments);
-};
+function registerClient(name, clientConfig) {
+  var clients = getClients();
+  clients[name] = clientConfig;
+  saveConfig();
+}
+
 
 /**
  *
  */
-module.exports = Promise;
+module.exports = {
+  getConnection: getConnection,
+  getConnectionNames: getConnectionNames,
+  saveConnection: saveConnection,
+  removeConnection: removeConnection,
+  setDefaultConnection: setDefaultConnection,
+  getClient: getClient,
+  getClientNames: getClientNames,
+  registerClient: registerClient
+};
+
 </code></pre>
         </article>
     </section>
