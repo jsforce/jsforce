@@ -1,7 +1,7 @@
 {
   "author": "Shinichi Tomita <shinichi.tomita@gmail.com>",
-  "name": "node-salesforce",
-  "description": "Salesforce API Connection Library for Node.js Applications",
+  "name": "jsforce",
+  "description": "Salesforce API Library for JavaScript",
   "keywords": [
     "salesforce",
     "salesforce.com",
@@ -9,39 +9,49 @@
     "force.com",
     "database.com"
   ],
-  "homepage": "http://github.com/stomita/node-salesforce",
-  "version": "0.8.0",
+  "homepage": "http://github.com/jsforce/jsforce",
+  "version": "1.0.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/stomita/node-salesforce.git"
+    "url": "git://github.com/jsforce/jsforce.git"
   },
   "licenses": [
     {
       "type": "MIT",
-      "url": "http://github.com/stomita/node-salesforce/raw/master/LICENSE"
+      "url": "http://github.com/jsforce/jsforce/raw/master/LICENSE"
     }
   ],
   "main": "./lib/salesforce",
   "scripts": {
-    "test": "mocha test/*.test.js --require ./test/helper/assert.js --reporter spec"
+    "test": "mocha test/*.test.js --reporter spec"
   },
   "engines": {
     "node": ">=0.8.0"
   },
   "bin": {
-    "sfjs": "./bin/sfjs",
-    "sfcoffee": "./bin/sfcoffee"
+    "jsforce": "./bin/jsforce"
   },
   "dependencies": {
     "async": "0.1.x",
     "coffee-script": "1.6.x",
-    "faye": "0.8.x",
+    "commander": "2.1.x",
+    "co-prompt": "1.0.x",
+    "faye": "1.0.x",
+    "open": "0.0.4",
     "q": "0.9.x",
+    "readable-stream": "1.1.x",
     "request": "2.12.x",
     "underscore": "1.4.x",
     "xml2js": "0.4.x"
   },
   "devDependencies": {
+    "grunt": "0.4.x",
+    "grunt-browserify": "1.3.x",
+    "grunt-contrib-clean": "0.5.x",
+    "grunt-contrib-watch": "0.5.x",
+    "grunt-contrib-uglify": "0.3.x",
+    "grunt-jsdoc": "0.5.x",
+    "envfile": "1.0.x",
     "mocha": "1.15.x",
     "power-assert": "0.2.x",
     "espower-loader": "0.1.x",

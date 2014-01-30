@@ -1,8 +1,8 @@
 /*global describe, it, before */
-var assert = require('power-assert'),
-    async  = require('async'),
-    _      = require('underscore'),
-    fs     = require('fs'),
+var testUtils = require('./helper/test-utils'),
+    assert = testUtils.assert;
+
+var _      = require('underscore'),
     sf     = require('../lib/salesforce'),
     config = require('./config/salesforce');
 
@@ -13,7 +13,7 @@ describe("analytics", function() {
 
   this.timeout(40000); // set timeout to 40 sec.
 
-  var conn = new sf.Connection({ logLevel : config.logLevel });
+  var conn = testUtils.createConnection(config);
 
   var reportId;
 
@@ -21,16 +21,18 @@ describe("analytics", function() {
    *
    */
   before(function(done) {
-    conn.login(config.username, config.password, function(err) {
-      if (err) { return done(err); }
-      if (!conn.accessToken) { done(new Error("No access token. Invalid login.")); }
-      conn.sobject('Report').findOne({ Name: 'Lead List Report'}, "Id").execute(function(err, res) {
-        if (err) { return done(err); }
-        if (!res) { return done(new Error("No Report Name 'Lead List Report' was found in the org.")); }
-        reportId = res.Id;
-        done();
-      });
-    });
+    testUtils.establishConnection(conn, config, done);
+  });
+
+  /**
+   *
+   */
+  before(function(done) {
+    conn.sobject('Report').findOne({ Name: 'Lead List Report'}, "Id").execute(function(err, res) {
+      if (err) { throw err; }
+      if (!res) { throw new Error("No Report Name 'Lead List Report' was found in the org."); }
+      reportId = res.Id;
+    }.check(done));
   });
 
   /**

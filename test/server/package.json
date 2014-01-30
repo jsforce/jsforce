@@ -1,0 +1,8 @@
+{
+  "name": "node-salesforce-proxy",
+  "private": true,
+  "dependencies": {
+    "express": "*",
+    "request": "*"
+  }
+}

@@ -1,6 +1,8 @@
 /*global describe, it */
-var assert = require('power-assert'),
-    SOQLBuilder = require('../lib/soql-builder'),
+var testUtils = require('./helper/test-utils'),
+    assert = testUtils.assert;
+
+var SOQLBuilder = require('../lib/soql-builder'),
     SfDate = require('../lib/date');
 
 /**
