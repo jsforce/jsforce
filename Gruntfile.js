@@ -58,6 +58,8 @@ module.exports = function(grunt) {
 
     uglify: {
       options: {
+        sourceMap: true,
+        sourceMapIncludeSources: true,
         banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
           '<%= grunt.template.today("yyyy-mm-dd") %> */'
       },
@@ -82,7 +84,7 @@ module.exports = function(grunt) {
 
     clean: {
       lib: {
-        src: [ "build/*.js" ]
+        src: [ "build/*.js", "build/*.map" ]
       },
       test: {
         src: [ "build/test/**.test.js" ]
@@ -94,7 +96,7 @@ module.exports = function(grunt) {
 
   });
 
-  grunt.registerTask('build', ['browserify', 'uglify']);
+  grunt.registerTask('build', ['browserify:lib', 'uglify']);
   grunt.registerTask('default', ['build']);
 
 };
