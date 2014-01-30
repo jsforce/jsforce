@@ -1,4 +1,0 @@
-#!/usr/bin/env node
-var replModule = require('coffee-script/lib/coffee-script/repl');
-var cli = require('../lib/cli/cli.js');
-cli.start(replModule);

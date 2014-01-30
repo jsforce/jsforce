@@ -1,4 +1,3 @@
 #!/usr/bin/env node
-var replModule = require('repl');
 var cli = require('../lib/cli/cli.js');
-cli.start(replModule);
+cli.start();
