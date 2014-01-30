@@ -21,16 +21,16 @@ module.exports = function(grunt) {
       options: {
         ignore: [
           "request",
-          "lib/**/node/*.js",
+          "lib/**/cli/*.js",
           "test/**/node/*.js"
         ]
       },
       lib: {
         files: {
-          'build/lib/salesforce.js': [ 'lib/salesforce.js' ]
+          'build/jsforce.js': [ 'lib/salesforce.js' ]
         },
         options: {
-          standalone: 'SF'
+          standalone: 'jsforce'
         }
       },
       test: {
@@ -61,9 +61,9 @@ module.exports = function(grunt) {
         banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
           '<%= grunt.template.today("yyyy-mm-dd") %> */'
       },
-      dist: {
+      lib: {
         files: {
-          'build/lib/salesforce.min.js': ['build/lib/salesforce.js']
+          'build/jsforce.min.js': ['build/jsforce.js'],
         }
       }
     },
@@ -73,8 +73,6 @@ module.exports = function(grunt) {
         src: ['lib/'],
         options: {
           destination: 'doc',
-          template: 'template',
-          configure: 'template/jsdoc.conf.json',
           private: false,
           recurse: true,
           lenient: true
@@ -84,7 +82,7 @@ module.exports = function(grunt) {
 
     clean: {
       lib: {
-        src: [ "build/lib/salesforce.js" ]
+        src: [ "build/*.js" ]
       },
       test: {
         src: [ "build/test/**.test.js" ]
