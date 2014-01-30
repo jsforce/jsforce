@@ -35,8 +35,12 @@
   "dependencies": {
     "async": "0.1.x",
     "coffee-script": "1.6.x",
+    "commander": "2.1.x",
+    "co-prompt": "1.0.x",
     "faye": "1.0.x",
+    "open": "0.0.4",
     "q": "0.9.x",
+    "readable-stream": "1.1.x",
     "request": "2.12.x",
     "underscore": "1.4.x",
     "xml2js": "0.4.x"
