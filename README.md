@@ -13,7 +13,9 @@ It capsulates the access to various APIs provided by Salesforce in asynchronous 
 You can use both OAuth2 authorization scheme and SOAP API login for API authentication.
 
 
-## Install
+## Setup
+
+### Node.js
 
 If you are using jsforce as an API library in your Node.js project :
 
@@ -21,19 +23,23 @@ If you are using jsforce as an API library in your Node.js project :
   $ npm install jsforce
 </pre>
 
+### CLI
+
 If you want to utilize jsforce CLI in tty:
 
 <pre>
   $ npm install jsforce -g
 </pre>
 
-If you want to get the latest from GitHub :
+### Web Browser
+
+If you want to use JSforce in web browser, download `build/jsforce.js` and put it on the path in your website :
 
 <pre>
-  $ git clone git://github.com/jsforce/jsforce.git 
-  $ cd jsforce
-  $ npm link
+  &lt;script src="/path/to/jsforce.js"&gt;&lt;/script&gt;
 </pre>
+
+When the script is loaded, `jsforce` object will be defined in global root.
 
 
 ## API Usage
