@@ -91,7 +91,7 @@ Logged in as : username@example.org
 > 
 ```
 
-Connection will be kept in `~/.jsforce/config.json` file, so you can use the connection without password while session is valid.
+Connection information will be kept in `~/.jsforce/config.json` file, so you can use the connection without password while session is valid.
 
 ```
 $ jsforce -c user@example.org
@@ -106,13 +106,13 @@ $ jsforce -c user@example.org -e "query('SELECT Id, Name FROM Account LIMIT 1')"
 {"totalSize":1,"done":true,"records":[{"attributes":{"type":"Account","url":"/services/data/v29.0/sobjects/Account/0015000000KBQ5GAAX"},"Id":"0015000000KBQ5GAAX","Name":"United Oil"}]}
 ```
 
-In order to authorize the connection via OAuth2 authorization flow, type `.authorize`.
+In order to authorize the connection via OAuth2 authorization flow, type `.authorize` in REPL mode. It will popup browser and authorize
 
 ```
 > .authorize
 ```
 
-Note that you need to register your OAuth2 client information before calling `.authorize`. The `.register` command will navigate to register information.
+Note that you need to register your OAuth2 client information before calling `.authorize`. In order to register client, `.register` command will navigate. The redirect URL of registering client must be `http://localhost:<port>`.
 
 ```
 > .register
