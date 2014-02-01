@@ -1,12 +1,12 @@
 # jsforce 
 
-Salesforce API Library for JavaScript Applications (both on web browser and Node.js)
+Salesforce API Library for JavaScript applications (both on web browser and Node.js)
 
 [![Build Status](https://secure.travis-ci.org/jsforce/jsforce.png?branch=travis-ci)](http://travis-ci.org/jsforce/jsforce)
 
 ## Abstract
 
-JSforce (f.k.a Node-Salesforce) is a JavaScript Library of Salesforce API, which works both on web browser and Node.js.
+JSforce (f.k.a. Node-Salesforce) is a JavaScript Library of Salesforce API, which works both on web browser and Node.js.
 
 It capsulates the access to various APIs provided by Salesforce in asynchronous JavaScript function calls.
 
@@ -44,6 +44,7 @@ If you want to use JSforce in web browser, download `build/jsforce.js` and put i
 
 When the script is loaded, `jsforce` object will be defined in global root.
 
+NOTE: You may need [jsforce-ajax-proxy](https://github.com/jsforce/jsforce-ajax-proxy) if the app resides outside of Salesforce (that is, non-Visualforce environment).
 
 ## JSforce CLI (Command Line Interface)
 
