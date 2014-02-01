@@ -6,8 +6,7 @@ Salesforce API Library for JavaScript Applications
 
 ## Abstract
 
-JSforce, which is designed to be a wrapper of Salesforce API in JavaScript (both in web browser and Node.js),
-enables Salesforce application development much easier.
+JSforce (f.k.a Node-Salesforce) is a JavaScript Library of Salesforce API, which works both in web browser and Node.js).
 
 It capsulates the access to various APIs provided by Salesforce in asynchronous JavaScript function calls.
 
