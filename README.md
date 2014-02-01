@@ -106,13 +106,13 @@ $ jsforce -c user@example.org -e "query('SELECT Id, Name FROM Account LIMIT 1')"
 {"totalSize":1,"done":true,"records":[{"attributes":{"type":"Account","url":"/services/data/v29.0/sobjects/Account/0015000000KBQ5GAAX"},"Id":"0015000000KBQ5GAAX","Name":"United Oil"}]}
 ```
 
-In order to authorize the connection via OAuth2 authorization flow, type `.authorize` in REPL mode. It will popup browser and authorize
+In order to authorize the connection via OAuth2 authorization flow, type `.authorize` in REPL mode. It will popup browser and start flow for API access authorization.
 
 ```
 > .authorize
 ```
 
-Note that you need to register your OAuth2 client information before calling `.authorize`. In order to register client, `.register` command will navigate. The redirect URL of registering client must be `http://localhost:<port>`.
+Note that you need to register your OAuth2 client information before start OAuth2 authorization. The `.register` command will navigate the registration. In order to accomplish authorization flow successfully, the redirect URL of registering client must be `http://localhost:<port>`.
 
 ```
 > .register
