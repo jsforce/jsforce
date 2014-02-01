@@ -28,7 +28,7 @@ Suported Salesforce APIs are :
 
 ### Node.js
 
-If you are using jsforce as an API library in your Node.js project :
+If you are using JSforce as an API library in your Node.js project :
 
 ```
 $ npm install jsforce
@@ -47,7 +47,7 @@ When the script is loaded, `jsforce` object will be defined in global root.
 
 ## JSforce CLI (Command Line Interface)
 
-If you want to utilize jsforce CLI in tty, you can install the npm package globally.
+If you want to utilize JSforce CLI in tty, you can install the npm package globally.
 
 ```
 $ npm install jsforce -g
