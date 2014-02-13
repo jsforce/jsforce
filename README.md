@@ -1237,6 +1237,11 @@ $ jsforce
 
 ## Change History
 
+v1.0.1 (Feb 13, 2014):
+
+* Enabled HTTP proxy when environment variable 'HTTP_PROXY' is available.
+
+
 v1.0.0 (Jan 30, 2014):
 
 * Renamed the project from "Node-Salesforce" to "JSforce".
