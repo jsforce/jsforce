@@ -2336,25 +2336,6 @@ Connection.prototype.search = function(sosl, callback) {
 };
 
 /**
- * List recently viewed records
- * 
- * @param {Number} [limit] - Callback function
- * @param {Callback.<Array.<RecordResult>>} [callback] - Callback function
- * @returns {Promise.<Array.<RecordResult>>}
- */
-Connection.prototype.recent = function(limit, callback) {
-  if (!_.isNumber(limit)) {
-    callback = limit;
-    limit = undefined;
-  }
-  var url = this._baseUrl() + "/recent";
-  if (limit) { 
-    url += "?limit=" + limit;
-  }
-  return this._request(url).thenCall(callback);
-};
-
-/**
  * Result returned by describeSObject call
  *
  * @typedef {Object} DescribeSObjectResult
@@ -2655,6 +2636,40 @@ Connection.prototype.logout = function(callback) {
     return undefined;
 
   }).thenCall(callback);
+};
+
+/**
+ * List recently viewed records
+ * 
+ * @param {String} [type] - SObject type
+ * @param {Number} [limit] - Limit num to fetch
+ * @param {Callback.<Array.<RecordResult>>} [callback] - Callback function
+ * @returns {Promise.<Array.<RecordResult>>}
+ */
+Connection.prototype.recent = function(type, limit, callback) {
+  if (!_.isString(type)) {
+    callback = limit;
+    limit = type;
+    type = undefined;
+  }
+  if (!_.isNumber(limit)) {
+    callback = limit;
+    limit = undefined;
+  }
+  var url;
+  if (type) {
+    url = [ this._baseUrl(), "sobjects", type ].join('/');
+    return this._request(url).then(function(res) {
+      return limit ? res.recentItems.slice(0, limit) : res.recentItems;
+    }).thenCall(callback);
+  } else {
+    url = this._baseUrl() + "/recent";
+    if (limit) { 
+      url += "?limit=" + limit;
+    }
+    return this._request(url).thenCall(callback);
+  }
+
 };
 
 /**
@@ -5708,6 +5723,16 @@ SObject.prototype.destroyHardBulk = function(input, callback) {
 };
 
 /**
+ * Retrieve recently accessed records
+ *
+ * @param {Callback.<Array.<RecordResult>>} [callback] - Callback function
+ * @returns {Promise.<Array.<RecordResult>>}
+ */
+SObject.prototype.recent = function (callback) {
+  return this._conn.recent(this.type, callback);
+};
+
+/**
  * Retrieve the updated records
  *
  * @param {String|Date} start - start date or string representing the start of the interval
@@ -6336,7 +6361,7 @@ Tooling.prototype.completions = function(type, callback) {
 module.exports = Tooling;
 
 },{"./cache":6,"underscore":50,"util":48}],24:[function(_dereq_,module,exports){
-/*global process */
+var process=_dereq_("__browserify_process");/*global process */
 var util = _dereq_('util'),
     stream = _dereq_('stream'),
     Promise = _dereq_('./promise');
@@ -6348,7 +6373,15 @@ var nodeRequest = _dereq_('request'),
     xhrRequest = _dereq_('./browser/request'),
     jsonp = _dereq_('./browser/jsonp');
 
-var request = typeof window === 'undefined' ? nodeRequest : xhrRequest;
+var request;
+if (typeof window === 'undefined') {
+  request = nodeRequest;
+  if (process.env.HTTP_PROXY) {
+    request = request.defaults({ proxy: process.env.HTTP_PROXY });
+  }
+} else {
+  request = xhrRequest;
+}
 
 /**
  * Add stream() method to promise (and following promise chain), to access original request stream.
@@ -6440,7 +6473,7 @@ ProxyTransport.prototype.httpRequest = function(params, callback) {
   return ProxyTransport.super_.prototype.httpRequest.call(this, proxyParams, callback);
 };
 
-},{"./browser/jsonp":3,"./browser/request":4,"./promise":14,"request":28,"stream":40,"util":48}],25:[function(_dereq_,module,exports){
+},{"./browser/jsonp":3,"./browser/request":4,"./promise":14,"__browserify_process":32,"request":28,"stream":40,"util":48}],25:[function(_dereq_,module,exports){
 // This file is just added for convenience so this repository can be
 // directly checked out into a project's deps folder
 module.exports = _dereq_('./lib/async');
