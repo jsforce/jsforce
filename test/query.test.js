@@ -7,7 +7,7 @@ var _      = require('underscore'),
     stream = require('stream'),
     Stream = stream.Stream,
     querystring = require('querystring'),
-    sf     = require('../lib/salesforce'),
+    sf     = require('../lib/jsforce'),
     RecordStream = require('../lib/record-stream'),
     config = require('./config/salesforce');
 

@@ -1,6 +1,6 @@
 /*global process */
 
-var sf = require('../../../lib/salesforce');
+var sf = require('../../../lib/jsforce');
 /**
  * Supporting power-assert
  */
