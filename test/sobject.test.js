@@ -3,7 +3,7 @@ var testUtils = require('./helper/test-utils'),
     assert = testUtils.assert;
 
 var _      = require('underscore'),
-    sf     = require('../lib/salesforce'),
+    sf     = require('../lib/jsforce'),
     SObject = require("../lib/sobject"),
     config = require('./config/salesforce');
 
