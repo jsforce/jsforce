@@ -27,7 +27,7 @@ module.exports = function(grunt) {
       },
       lib: {
         files: {
-          'build/jsforce.js': [ 'lib/salesforce.js' ]
+          'build/jsforce.js': [ 'lib/jsforce.js' ]
         },
         options: {
           standalone: 'jsforce'

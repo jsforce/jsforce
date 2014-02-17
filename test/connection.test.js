@@ -316,11 +316,48 @@ describe("connection", function() {
   /**
    *
    */
+  describe("get recently accessed records", function() {
+    before(function(done) {
+      conn.query("SELECT Id, Name FROM Account ORDER BY CreatedDate DESC LIMIT 2 FOR VIEW", function(err) {
+        if (err) { throw err; }
+      }.check(done));
+    });
+
+    it("should return recently viewed records in all object", function(done) {
+      conn.recent(2, function(err, records) {
+        if (err) { throw err; }
+        assert(_.isArray(records));
+        records.forEach(function(record) {
+          assert(_.isString(record.Id));
+          assert(_.isString(record.Name));
+          assert(_.isString(record.attributes.type));
+          assert(record.attributes.type === 'Account');
+        });
+      }.check(done));
+    });
+
+    it("should return recently viewed accounts in Account object", function(done) {
+      conn.sobject('Account').recent(function(err, records) {
+        if (err) { throw err; }
+        assert(_.isArray(records));
+        records.forEach(function(record) {
+          assert(_.isString(record.Id));
+          assert(_.isString(record.Name));
+          assert(_.isString(record.attributes.type));
+          assert(record.attributes.type === 'Account');
+        });
+      }.check(done));
+    });
+  });
+
+  /**
+   *
+   */
   describe("get updated / deleted account", function () {
     before(function(done) {
       var accs = [{ Name: 'Hello' }, { Name: 'World' }];
       conn.sobject('Account').create(accs, function(err, rets) {
-        if (err) { return done(err); }
+        if (err) { throw err; }
         var id1 = rets[0].id, id2 = rets[1].id;
         async.parallel([
           function(cb) {
