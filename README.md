@@ -1,42 +1,130 @@
 # jsforce 
 
-Salesforce API Library for JavaScript Applications
+Salesforce API Library for JavaScript applications (both on web browser and Node.js)
 
 [![Build Status](https://secure.travis-ci.org/jsforce/jsforce.png?branch=travis-ci)](http://travis-ci.org/jsforce/jsforce)
 
 ## Abstract
 
-JSforce, which is designed to be a wrapper of Salesforce REST API in JavaScript (both in web browser and Node.js),
-enables Salesforce application development much easier.
+JSforce (f.k.a. Node-Salesforce) is a JavaScript Library of Salesforce API, which works both on web browser and Node.js.
 
 It capsulates the access to various APIs provided by Salesforce in asynchronous JavaScript function calls.
-You can use both OAuth2 authorization scheme and SOAP API login for API authentication.
+
+It also has command line interface (CLI) which gives interactive console (REPL), so you can learn the usage without hassle.
+
+Suported Salesforce APIs are :
+
+- REST API (SOQL, SOSL, describe, etc.)
+- Apex REST
+- Analytics API
+- Bulk API
+- Chatter API
+- Metadata API
+- Streaming API
+- Tooling API
 
 
-## Install
+## Setup
 
-If you are using jsforce as an API library in your Node.js project :
+### Node.js
 
-<pre>
-  $ npm install jsforce
-</pre>
+If you are using JSforce as an API library in your Node.js project :
 
-If you want to utilize jsforce CLI in tty:
+```
+$ npm install jsforce
+```
 
-<pre>
-  $ npm install jsforce -g
-</pre>
+### Web Browser
 
-If you want to get the latest from GitHub :
+If you want to use JSforce in web browser, download `build/jsforce.js` and put it on the path in your website :
 
-<pre>
-  $ git clone git://github.com/jsforce/jsforce.git 
-  $ cd jsforce
-  $ npm link
-</pre>
+```
+<script src="/path/to/jsforce.js"></script>
+```
+
+When the script is loaded, `jsforce` object will be defined in global root.
+
+NOTE: You may need [jsforce-ajax-proxy](https://github.com/jsforce/jsforce-ajax-proxy) if the app resides outside of Salesforce (that is, non-Visualforce environment).
+
+## JSforce CLI (Command Line Interface)
+
+If you want to utilize JSforce CLI in tty, you can install the npm package globally.
+
+```
+$ npm install jsforce -g
+```
+
+After the install, `jsforce` command will be available in your path.
+
+```
+$ jsforce --help
+
+  Usage: jsforce [options]
+
+  Options:
+
+    -h, --help                     output usage information
+    -u, --username [username]      Salesforce username
+    -p, --password [password]      Salesforce password (and security token, if available)
+    -c, --connection [connection]  Connection name stored in connection registry
+    -e, --evalScript [evalScript]  Script to evaluate
+    --coffee                       Using CoffeeScript
+```
+
+When you just type `jsforce`, it enters into REPL mode. In the REPL environment, it exposes default connection object in the context, so no need to instantiate connection object.
+
+```
+$ jsforce
+> login('user@example.org', 'password123');
+{ id: '00550000000vwsFAAQ',
+  organizationId: '00D500000006xKGEAY',
+  url: 'https://login.salesforce.com/id/00D500000006xKGEAY/00550000000vwsFAAQ' }
+> 
+```
+
+To login to Salesforce API, you need to type `.connect` to get API access.
+
+```
+> .connect user@example.org
+Password: ********
+Logged in as : username@example.org
+> 
+```
+
+Connection information will be kept in `~/.jsforce/config.json` file, so you can use the connection without password while session is valid.
+
+```
+$ jsforce -c user@example.org
+Logged in as : user@example.org
+> 
+```
+
+By passing a script in `-e` option, it automatically evaluate and returns the result in JSON.
+
+```
+$ jsforce -c user@example.org -e "query('SELECT Id, Name FROM Account LIMIT 1')"
+{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Account","url":"/services/data/v29.0/sobjects/Account/0015000000KBQ5GAAX"},"Id":"0015000000KBQ5GAAX","Name":"United Oil"}]}
+```
+
+In order to authorize the connection via OAuth2 authorization flow, type `.authorize` in REPL mode. It will popup browser and start flow for API access authorization.
+
+```
+> .authorize
+```
+
+Note that you need to register your OAuth2 client information before start OAuth2 authorization. The `.register` command will navigate the registration. In order to accomplish authorization flow successfully, the redirect URL of registering client must be `http://localhost:<port>`.
+
+```
+> .register
+Input client ID (consumer key) : <your client id>
+Input client secret (consumer secret) : <your client secret>
+Input redirect URI : <your client redirect uri>
+Input login URL (default is https://login.salesforce.com) : 
+Client registered successfully.
+```
 
 
-## API Usage
+## API
 
 ### Connection
 
@@ -1189,50 +1277,6 @@ batch.on('queue', function() {
 
 See API Reference document in http://jsforce.github.io/doc/ .
 
-
-## REPL (Interactive API Console) Usage
-
-JSforce is not merely an API library, but gives `jsforce` CLI/REPL interface to run and inspect JSforce APIs in interactive JavaScript/CoffeeScript shell.
-
-It includes buit-in support of JSforce package, default connection instance. In the REPL context, package root objects and API methods of default connection are exposed.
-
-Because the REPL automatically waits the promised object during its evaluation, no callback required for all async API calls. The `_` variable keeps evaluated result in previous statement (as same as usual Node.JS REPL).
-
-```
-$ jsforce
-> login("username@example.org", "mypassword123");
-{ id: '005xxxxxxxxxxxxxxx',
-  organizationId: '00Dyyyyyyyyyyyyyyy' }
-> sobject('Account').find({}, "Id, Name").sort({ CreatedDate: 1}).limit(5);
-[ { attributes: 
-     { type: 'Account',
-       url: '/services/data/v28.0/sobjects/Account/001i0000009PyDrAAK' },
-    Id: '001i0000009PyDrAAK',
-    Name: 'GenePoint' },
-  { attributes: 
-     { type: 'Account',
-       url: '/services/data/v28.0/sobjects/Account/001i0000009PyDsAAK' },
-    Id: '001i0000009PyDsAAK',
-    Name: 'United Oil & Gas, UK' },
-  { attributes: 
-     { type: 'Account',
-       url: '/services/data/v28.0/sobjects/Account/001i0000009PyDtAAK' },
-    Id: '001i0000009PyDtAAK',
-    Name: 'United Oil & Gas, Singapore' },
-  { attributes: 
-     { type: 'Account',
-       url: '/services/data/v28.0/sobjects/Account/001i0000009PyDuAAK' },
-    Id: '001i0000009PyDuAAK',
-    Name: 'Edge Communications' },
-  { attributes: 
-     { type: 'Account',
-       url: '/services/data/v28.0/sobjects/Account/001i0000009PyDvAAK' },
-    Id: '001i0000009PyDvAAK',
-    Name: 'Burlington Textiles Corp of America' } ]
-> _[0].Name
-'GenePoint'
->
-```
 
 
 ## Change History
