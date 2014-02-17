@@ -174,7 +174,7 @@ Analytics.prototype.reports = function(callback) {
 
 module.exports = Analytics;
 
-},{"./promise":14,"underscore":50}],2:[function(_dereq_,module,exports){
+},{"./promise":16,"underscore":51}],2:[function(_dereq_,module,exports){
 /**
  * @file Manages Salesforce Apex REST endpoint calls
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -307,6 +307,194 @@ Apex.prototype["delete"] = function(path, callback) {
 module.exports = Apex;
 
 },{}],3:[function(_dereq_,module,exports){
+/**
+ *
+ */
+var events = _dereq_('events'),
+    util = _dereq_('util'),
+    qs = _dereq_('querystring'),
+    _ = _dereq_('underscore'),
+    Connection = _dereq_('../connection'),
+    OAuth2 = _dereq_('../oauth2');
+
+/**
+ * @private
+ */
+function popupWin(url, w, h) {
+  var left = (screen.width/2)-(w/2);
+  var top = (screen.height/2)-(h/2);
+  return window.open(url, null, 'toolbar=no,status=no,menubar=no,width='+w+',height='+h+',top='+top+',left='+left);
+}
+
+/**
+ * @private
+ */
+function checkCallbackResponse(w) {
+  var params;
+  if (isSameOrigin(w)) {
+    if (w.location.hash) {
+      params = qs.parse(w.location.hash.substring(1));
+      if (params.access_token) {
+        return { success: true, body: params };
+      }
+    } else if (w.location.search) {
+      params = qs.parse(w.location.search.substring(1));
+      if (params.error) {
+        return { success: false, error: params };
+      }
+    }
+  }
+}
+
+/**
+ * @private
+ */
+function isSameOrigin(w) {
+  return location.origin ? 
+    location.origin === w.location.origin :
+    (location.hostname === w.location.hostname && 
+     location.port === w.location.port &&
+     location.protocol === w.location.protocol);
+}
+
+/** @private **/
+var clientIdx = 0;
+
+
+/**
+ *
+ */
+var Client = function() {
+  this._prefix = 'sf' + clientIdx++;
+  this.connection = null;
+};
+
+util.inherits(Client, events.EventEmitter);
+
+/**
+ *
+ */
+Client.prototype.init = function(config) {
+  this.config = config;
+  this.connection = new Connection(config);
+  var tokens = this._getTokens();
+  if (tokens) {
+    this.connection.initialize(tokens);
+    var self = this;
+    setTimeout(function() {
+      self.emit('connect', self.connection);
+    }, 10);
+  }
+};
+
+/** 
+ *
+ */
+Client.prototype.login = function(options, callback) {
+  if (_.isFunction(options)) {
+    callback = options;
+    options = {};
+  }
+  options = options || {}; 
+  callback = callback || function(){ };
+  _.extend(options, this.config);
+  var self = this;
+  var oauth2 = new OAuth2(options);
+  var state = Math.random().toString(36).substring(2);
+  var authzUrl = oauth2.getAuthorizationUrl({
+    response_type: 'token',
+    scope : options.scope,
+    state: state
+  });
+  var size = options.popup || {};
+  var w = popupWin(authzUrl, size.width || 912, size.height || 513);
+  var pid = setInterval(function() {
+    try {
+      if (w.closed) {
+        clearInterval(pid);
+        callback(null, { status: 'cancel' });
+      } else {
+        var res = checkCallbackResponse(w);
+        w.close();
+        clearInterval(pid);
+        if (res.success && res.body.state === state) {
+          self._storeTokens(res.body);
+          self.connection.initialize({
+            accessToken: res.body.access_token,
+            instanceUrl: res.body.instance_url
+          });
+          self.emit('connect', self.connection);
+          callback(null, { status: 'connect', body: res.body });
+        } else if (!res.success) {
+          var error = new Error(res.error.error + ": " + res.error.error_description);
+          callback(error);
+        }
+      }
+    } catch(e) {}
+  }, 1000);
+};
+
+/**
+ *
+ */
+Client.prototype.isLoggedIn = function() {
+  return !!(this.connection && this.connection.accessToken);
+};
+
+/**
+ * 
+ */
+Client.prototype.logout = function() {
+  this.connection.logout();
+  this._removeTokens();
+  this.emit('disconnect');
+};
+
+/**
+ * @private
+ */
+Client.prototype._getTokens = function() {
+  var regexp = new RegExp("(^|;\\s*)"+this._prefix+"_loggedin=true(;|$)");
+  if (document.cookie.match(regexp)) {
+    var issuedAt = Number(localStorage.getItem(this._prefix+'_issued_at'));
+    if (Date.now() < issuedAt + 2 * 60 * 60 * 1000) { // 2 hours
+      return {
+        accessToken: localStorage.getItem(this._prefix + '_access_token'),
+        instanceUrl: localStorage.getItem(this._prefix + '_instance_url'),
+      };
+    }
+  }
+  return null;
+};
+
+/**
+ * @private
+ */
+Client.prototype._storeTokens = function(params) {
+  localStorage.setItem(this._prefix + '_access_token', params.access_token);
+  localStorage.setItem(this._prefix + '_instance_url', params.instance_url);
+  localStorage.setItem(this._prefix + '_issued_at', params.issued_at);
+  document.cookie = this._prefix + '_loggedin=true;';
+};
+
+/**
+ * @private
+ */
+Client.prototype._removeTokens = function() {
+  localStorage.removeItem(this._prefix + '_access_token');
+  localStorage.removeItem(this._prefix + '_instance_url');
+  localStorage.removeItem(this._prefix + '_issued_at');
+  document.cookie = this._prefix + '_loggedin=';
+};
+
+/**
+ *
+ */
+module.exports = new Client();
+
+module.exports.Client = Client;
+
+},{"../connection":9,"../oauth2":15,"events":30,"querystring":39,"underscore":51,"util":49}],4:[function(_dereq_,module,exports){
 /*global window, document */
 var _index = 0;
 
@@ -357,7 +545,7 @@ module.exports = {
   }
 
 };
-},{}],4:[function(_dereq_,module,exports){
+},{}],5:[function(_dereq_,module,exports){
 var stream = _dereq_('stream');
 
 module.exports = function(params, callback) {
@@ -415,7 +603,7 @@ module.exports = function(params, callback) {
 };
 
 
-},{"stream":40}],5:[function(_dereq_,module,exports){
+},{"stream":41}],6:[function(_dereq_,module,exports){
 /**
  * @file Manages Salesforce Bulk API related operations
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -1121,7 +1309,7 @@ Bulk.prototype.job = function(jobId) {
 /*--------------------------------------------*/
 
 module.exports = Bulk;
-},{"./connection":8,"./csv":9,"./promise":14,"./record-stream":16,"events":29,"stream":40,"underscore":50,"util":48}],6:[function(_dereq_,module,exports){
+},{"./connection":9,"./csv":10,"./promise":16,"./record-stream":18,"events":30,"stream":41,"underscore":51,"util":49}],7:[function(_dereq_,module,exports){
 /**
  * @file Manages asynchronous method response cache
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -1335,7 +1523,7 @@ Cache.prototype.makeCacheable = function(fn, scope, options) {
 
 module.exports = Cache;
 
-},{"events":29,"underscore":50,"util":48}],7:[function(_dereq_,module,exports){
+},{"events":30,"underscore":51,"util":49}],8:[function(_dereq_,module,exports){
 /**
  * @file Manages Salesforce Chatter REST API calls
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -1638,7 +1826,7 @@ Resource.prototype["delete"] = function(callback) {
   }).thenCall(callback);
 };
 
-},{"./promise":14,"underscore":50,"util":48}],8:[function(_dereq_,module,exports){
+},{"./promise":16,"underscore":51,"util":49}],9:[function(_dereq_,module,exports){
 /**
  * @file Connection class to keep the API session information and manage requests
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -2336,25 +2524,6 @@ Connection.prototype.search = function(sosl, callback) {
 };
 
 /**
- * List recently viewed records
- * 
- * @param {Number} [limit] - Callback function
- * @param {Callback.<Array.<RecordResult>>} [callback] - Callback function
- * @returns {Promise.<Array.<RecordResult>>}
- */
-Connection.prototype.recent = function(limit, callback) {
-  if (!_.isNumber(limit)) {
-    callback = limit;
-    limit = undefined;
-  }
-  var url = this._baseUrl() + "/recent";
-  if (limit) { 
-    url += "?limit=" + limit;
-  }
-  return this._request(url).thenCall(callback);
-};
-
-/**
  * Result returned by describeSObject call
  *
  * @typedef {Object} DescribeSObjectResult
@@ -2658,6 +2827,40 @@ Connection.prototype.logout = function(callback) {
 };
 
 /**
+ * List recently viewed records
+ * 
+ * @param {String} [type] - SObject type
+ * @param {Number} [limit] - Limit num to fetch
+ * @param {Callback.<Array.<RecordResult>>} [callback] - Callback function
+ * @returns {Promise.<Array.<RecordResult>>}
+ */
+Connection.prototype.recent = function(type, limit, callback) {
+  if (!_.isString(type)) {
+    callback = limit;
+    limit = type;
+    type = undefined;
+  }
+  if (!_.isNumber(limit)) {
+    callback = limit;
+    limit = undefined;
+  }
+  var url;
+  if (type) {
+    url = [ this._baseUrl(), "sobjects", type ].join('/');
+    return this._request(url).then(function(res) {
+      return limit ? res.recentItems.slice(0, limit) : res.recentItems;
+    }).thenCall(callback);
+  } else {
+    url = this._baseUrl() + "/recent";
+    if (limit) { 
+      url += "?limit=" + limit;
+    }
+    return this._request(url).thenCall(callback);
+  }
+
+};
+
+/**
  * @typedef {Object} UpdatedRecordsInfo
  * @prop {String} latestDateCovered - The timestamp of the last date covered. 
  * @prop {Array.<String>} ids - Updated record IDs.
@@ -2750,7 +2953,7 @@ Connection.prototype.deleted = function (type, start, end, callback) {
   return this._request(url).thenCall(callback);
 };
 
-},{"./analytics":1,"./apex":2,"./bulk":5,"./cache":6,"./chatter":7,"./csv":9,"./logger":11,"./metadata":12,"./oauth2":13,"./promise":14,"./query":15,"./sobject":20,"./streaming":22,"./tooling":23,"./transport":24,"async":25,"events":29,"underscore":50,"util":48,"xml2js":53}],9:[function(_dereq_,module,exports){
+},{"./analytics":1,"./apex":2,"./bulk":6,"./cache":7,"./chatter":8,"./csv":10,"./logger":13,"./metadata":14,"./oauth2":15,"./promise":16,"./query":17,"./sobject":21,"./streaming":23,"./tooling":24,"./transport":25,"async":26,"events":30,"underscore":51,"util":49,"xml2js":54}],10:[function(_dereq_,module,exports){
 var _      = _dereq_('underscore'),
     SfDate = _dereq_('./date');
 
@@ -2928,7 +3131,7 @@ module.exports = {
   parseCSV : parseCSV
 };
   
-},{"./date":10,"underscore":50}],10:[function(_dereq_,module,exports){
+},{"./date":11,"underscore":51}],11:[function(_dereq_,module,exports){
 var _ = _dereq_("underscore")._;
 
 /**
@@ -3087,7 +3290,22 @@ function createLiteralBuilder(literal) {
   return function(num) { return new SfDate(literal + ":" + num); };
 }
 
-},{"underscore":50}],11:[function(_dereq_,module,exports){
+},{"underscore":51}],12:[function(_dereq_,module,exports){
+/**
+ * @file JSforce API root object
+ * @author Shinichi Tomita <shinichi.tomita@gmail.com>
+ */
+exports.Connection = _dereq_('./connection');
+exports.OAuth2 = _dereq_('./oauth2');
+exports.Date = exports.SfDate = _dereq_("./date");
+exports.RecordStream = _dereq_('./record-stream');
+
+// only available in browser environment
+if (typeof window !== 'undefined') {
+  exports.browser = _dereq_('./browser/client');
+}
+
+},{"./browser/client":3,"./connection":9,"./date":11,"./oauth2":15,"./record-stream":18}],13:[function(_dereq_,module,exports){
 /**
  * @protected
  * @class
@@ -3139,7 +3357,7 @@ function createLoggerFunction(level) {
   return function(message) { this.log(level, message); };
 }
 
-},{}],12:[function(_dereq_,module,exports){
+},{}],14:[function(_dereq_,module,exports){
 var Buffer=_dereq_("__browserify_Buffer");/*global Buffer */
 /**
  * @file Manages Salesforce Metadata API
@@ -3748,7 +3966,7 @@ DeployResultLocator.prototype.complete = function(includeDetails, callback) {
   }).thenCall(callback);
 };
 
-},{"./promise":14,"./soap":19,"__browserify_Buffer":31,"events":29,"stream":40,"underscore":50,"util":48}],13:[function(_dereq_,module,exports){
+},{"./promise":16,"./soap":20,"__browserify_Buffer":32,"events":30,"stream":41,"underscore":51,"util":49}],15:[function(_dereq_,module,exports){
 /**
  * @file Manages Salesforce OAuth2 operations
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -3901,7 +4119,7 @@ _.extend(OAuth2.prototype, /** @lends OAuth2.prototype **/ {
 
 });
 
-},{"./transport":24,"querystring":38,"underscore":50}],14:[function(_dereq_,module,exports){
+},{"./transport":25,"querystring":39,"underscore":51}],16:[function(_dereq_,module,exports){
 var Q = _dereq_('q'),
     _ = _dereq_('underscore')._;
 
@@ -4047,7 +4265,7 @@ Deferred.prototype.reject = function() {
  */
 module.exports = Promise;
 
-},{"q":49,"underscore":50}],15:[function(_dereq_,module,exports){
+},{"q":50,"underscore":51}],17:[function(_dereq_,module,exports){
 /**
  * @file Manages query for records in Salesforce 
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -4752,7 +4970,7 @@ SubQuery.prototype.execute = function() {
   return this._parent.execute.apply(this._parent, arguments);
 };
 
-},{"./date":10,"./record-stream":16,"./soql-builder":21,"async":25,"events":29,"q":49,"underscore":50,"util":48}],16:[function(_dereq_,module,exports){
+},{"./date":11,"./record-stream":18,"./soql-builder":22,"async":26,"events":30,"q":50,"underscore":51,"util":49}],18:[function(_dereq_,module,exports){
 /**
  * @file Represents stream that handles Salesforce record as stream data
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -5137,7 +5355,7 @@ CSVStream.prototype.stream = function(record) {
 };
 
 
-},{"./csv":9,"events":29,"stream":40,"underscore":50,"util":48}],17:[function(_dereq_,module,exports){
+},{"./csv":10,"events":30,"stream":41,"underscore":51,"util":49}],19:[function(_dereq_,module,exports){
 /**
  * @file Represents Salesforce record information
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -5228,17 +5446,7 @@ RecordReference.prototype.blob = function(fieldName) {
 };
 
 
-},{"underscore":50}],18:[function(_dereq_,module,exports){
-/**
- * @file Node-salesforce API root object
- * @author Shinichi Tomita <shinichi.tomita@gmail.com>
- */
-exports.Connection = _dereq_('./connection');
-exports.OAuth2 = _dereq_('./oauth2');
-exports.Date = exports.SfDate = _dereq_("./date");
-exports.RecordStream = _dereq_('./record-stream');
-
-},{"./connection":8,"./date":10,"./oauth2":13,"./record-stream":16}],19:[function(_dereq_,module,exports){
+},{"underscore":51}],20:[function(_dereq_,module,exports){
 /**
  * @file Manages method call to SOAP endpoint
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -5375,7 +5583,7 @@ SOAP.prototype._createEnvelope = function(message) {
   ].join('');
 };
 
-},{"./transport":24,"underscore":50,"xml2js":53}],20:[function(_dereq_,module,exports){
+},{"./transport":25,"underscore":51,"xml2js":54}],21:[function(_dereq_,module,exports){
 /**
  * @file Represents Salesforce SObject
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -5708,6 +5916,16 @@ SObject.prototype.destroyHardBulk = function(input, callback) {
 };
 
 /**
+ * Retrieve recently accessed records
+ *
+ * @param {Callback.<Array.<RecordResult>>} [callback] - Callback function
+ * @returns {Promise.<Array.<RecordResult>>}
+ */
+SObject.prototype.recent = function (callback) {
+  return this._conn.recent(this.type, callback);
+};
+
+/**
  * Retrieve the updated records
  *
  * @param {String|Date} start - start date or string representing the start of the interval
@@ -5730,7 +5948,7 @@ SObject.prototype.updated = function (start, end, callback) {
 SObject.prototype.deleted = function (start, end, callback) {
   return this._conn.deleted(this.type, start, end, callback);
 };
-},{"./cache":6,"./query":15,"./record":17,"underscore":50}],21:[function(_dereq_,module,exports){
+},{"./cache":7,"./query":17,"./record":19,"underscore":51}],22:[function(_dereq_,module,exports){
 /**
  * @file Create and build SOQL string from configuration
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -5958,7 +6176,7 @@ function createOrderByClause(sort) {
 exports.createSOQL = createSOQL;
 
 
-},{"./date":10,"underscore":50}],22:[function(_dereq_,module,exports){
+},{"./date":11,"underscore":51}],23:[function(_dereq_,module,exports){
 /**
  * @file Manages Streaming APIs
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -6080,7 +6298,7 @@ Streaming.prototype.unsubscribe = function(name, listener) {
 
 module.exports = Streaming;
 
-},{"events":29,"faye":27,"util":48}],23:[function(_dereq_,module,exports){
+},{"events":30,"faye":28,"util":49}],24:[function(_dereq_,module,exports){
 /**
  * @file Manages Tooling APIs
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -6335,8 +6553,8 @@ Tooling.prototype.completions = function(type, callback) {
 
 module.exports = Tooling;
 
-},{"./cache":6,"underscore":50,"util":48}],24:[function(_dereq_,module,exports){
-/*global process */
+},{"./cache":7,"underscore":51,"util":49}],25:[function(_dereq_,module,exports){
+var process=_dereq_("__browserify_process");/*global process */
 var util = _dereq_('util'),
     stream = _dereq_('stream'),
     Promise = _dereq_('./promise');
@@ -6348,7 +6566,15 @@ var nodeRequest = _dereq_('request'),
     xhrRequest = _dereq_('./browser/request'),
     jsonp = _dereq_('./browser/jsonp');
 
-var request = typeof window === 'undefined' ? nodeRequest : xhrRequest;
+var request;
+if (typeof window === 'undefined') {
+  request = nodeRequest;
+  if (process.env.HTTP_PROXY) {
+    request = request.defaults({ proxy: process.env.HTTP_PROXY });
+  }
+} else {
+  request = xhrRequest;
+}
 
 /**
  * Add stream() method to promise (and following promise chain), to access original request stream.
@@ -6440,12 +6666,12 @@ ProxyTransport.prototype.httpRequest = function(params, callback) {
   return ProxyTransport.super_.prototype.httpRequest.call(this, proxyParams, callback);
 };
 
-},{"./browser/jsonp":3,"./browser/request":4,"./promise":14,"request":28,"stream":40,"util":48}],25:[function(_dereq_,module,exports){
+},{"./browser/jsonp":4,"./browser/request":5,"./promise":16,"__browserify_process":33,"request":29,"stream":41,"util":49}],26:[function(_dereq_,module,exports){
 // This file is just added for convenience so this repository can be
 // directly checked out into a project's deps folder
 module.exports = _dereq_('./lib/async');
 
-},{"./lib/async":26}],26:[function(_dereq_,module,exports){
+},{"./lib/async":27}],27:[function(_dereq_,module,exports){
 var process=_dereq_("__browserify_process");/*global setTimeout: false, console: false */
 (function () {
 
@@ -7139,7 +7365,7 @@ var process=_dereq_("__browserify_process");/*global setTimeout: false, console:
 
 }());
 
-},{"__browserify_process":32}],27:[function(_dereq_,module,exports){
+},{"__browserify_process":33}],28:[function(_dereq_,module,exports){
 var process=_dereq_("__browserify_process"),global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};(function() {
 'use strict';
 
@@ -9681,9 +9907,9 @@ Faye.Transport.JSONP = Faye.extend(Faye.Class(Faye.Transport, {
 Faye.Transport.register('callback-polling', Faye.Transport.JSONP);
 
 })();
-},{"__browserify_process":32}],28:[function(_dereq_,module,exports){
+},{"__browserify_process":33}],29:[function(_dereq_,module,exports){
 
-},{}],29:[function(_dereq_,module,exports){
+},{}],30:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -9985,7 +10211,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],30:[function(_dereq_,module,exports){
+},{}],31:[function(_dereq_,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -10010,7 +10236,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],31:[function(_dereq_,module,exports){
+},{}],32:[function(_dereq_,module,exports){
 _dereq_=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof _dereq_=="function"&&_dereq_;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof _dereq_=="function"&&_dereq_;for(var o=0;o<r.length;o++)s(r[o]);return s})({"PcZj9L":[function(_dereq_,module,exports){
 var base64 = _dereq_('base64-js')
 var ieee754 = _dereq_('ieee754')
@@ -11368,7 +11594,7 @@ exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
 },{}]},{},[])
 ;;module.exports=_dereq_("native-buffer-browserify").Buffer
 
-},{}],32:[function(_dereq_,module,exports){
+},{}],33:[function(_dereq_,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -11423,7 +11649,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],33:[function(_dereq_,module,exports){
+},{}],34:[function(_dereq_,module,exports){
 var base64 = _dereq_('base64-js')
 var ieee754 = _dereq_('ieee754')
 
@@ -12456,7 +12682,7 @@ function assert (test, message) {
   if (!test) throw new Error(message || 'Failed assertion')
 }
 
-},{"base64-js":34,"ieee754":35}],34:[function(_dereq_,module,exports){
+},{"base64-js":35,"ieee754":36}],35:[function(_dereq_,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -12579,7 +12805,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	module.exports.fromByteArray = uint8ToBase64
 }())
 
-},{}],35:[function(_dereq_,module,exports){
+},{}],36:[function(_dereq_,module,exports){
 exports.read = function(buffer, offset, isLE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -12665,7 +12891,7 @@ exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],36:[function(_dereq_,module,exports){
+},{}],37:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12751,7 +12977,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],37:[function(_dereq_,module,exports){
+},{}],38:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12838,13 +13064,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],38:[function(_dereq_,module,exports){
+},{}],39:[function(_dereq_,module,exports){
 'use strict';
 
 exports.decode = exports.parse = _dereq_('./decode');
 exports.encode = exports.stringify = _dereq_('./encode');
 
-},{"./decode":36,"./encode":37}],39:[function(_dereq_,module,exports){
+},{"./decode":37,"./encode":38}],40:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12918,7 +13144,7 @@ function onend() {
   });
 }
 
-},{"./readable.js":43,"./writable.js":45,"inherits":30,"process/browser.js":41}],40:[function(_dereq_,module,exports){
+},{"./readable.js":44,"./writable.js":46,"inherits":31,"process/browser.js":42}],41:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13047,9 +13273,9 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"./duplex.js":39,"./passthrough.js":42,"./readable.js":43,"./transform.js":44,"./writable.js":45,"events":29,"inherits":30}],41:[function(_dereq_,module,exports){
-module.exports=_dereq_(32)
-},{}],42:[function(_dereq_,module,exports){
+},{"./duplex.js":40,"./passthrough.js":43,"./readable.js":44,"./transform.js":45,"./writable.js":46,"events":30,"inherits":31}],42:[function(_dereq_,module,exports){
+module.exports=_dereq_(33)
+},{}],43:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13092,7 +13318,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"./transform.js":44,"inherits":30}],43:[function(_dereq_,module,exports){
+},{"./transform.js":45,"inherits":31}],44:[function(_dereq_,module,exports){
 var process=_dereq_("__browserify_process");// Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -14027,7 +14253,7 @@ function indexOf (xs, x) {
   return -1;
 }
 
-},{"./index.js":40,"__browserify_process":32,"buffer":33,"events":29,"inherits":30,"process/browser.js":41,"string_decoder":46}],44:[function(_dereq_,module,exports){
+},{"./index.js":41,"__browserify_process":33,"buffer":34,"events":30,"inherits":31,"process/browser.js":42,"string_decoder":47}],45:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -14233,7 +14459,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"./duplex.js":39,"inherits":30}],45:[function(_dereq_,module,exports){
+},{"./duplex.js":40,"inherits":31}],46:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -14621,7 +14847,7 @@ function endWritable(stream, state, cb) {
   state.ended = true;
 }
 
-},{"./index.js":40,"buffer":33,"inherits":30,"process/browser.js":41}],46:[function(_dereq_,module,exports){
+},{"./index.js":41,"buffer":34,"inherits":31,"process/browser.js":42}],47:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -14814,14 +15040,14 @@ function base64DetectIncompleteChar(buffer) {
   return incomplete;
 }
 
-},{"buffer":33}],47:[function(_dereq_,module,exports){
+},{"buffer":34}],48:[function(_dereq_,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],48:[function(_dereq_,module,exports){
+},{}],49:[function(_dereq_,module,exports){
 var process=_dereq_("__browserify_process"),global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};// Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -15409,7 +15635,7 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-},{"./support/isBuffer":47,"__browserify_process":32,"inherits":30}],49:[function(_dereq_,module,exports){
+},{"./support/isBuffer":48,"__browserify_process":33,"inherits":31}],50:[function(_dereq_,module,exports){
 var process=_dereq_("__browserify_process");// vim:ts=4:sts=4:sw=4:
 /*!
  *
@@ -17348,7 +17574,7 @@ return Q;
 
 });
 
-},{"__browserify_process":32}],50:[function(_dereq_,module,exports){
+},{"__browserify_process":33}],51:[function(_dereq_,module,exports){
 //     Underscore.js 1.4.4
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -18576,7 +18802,7 @@ return Q;
 
 }).call(this);
 
-},{}],51:[function(_dereq_,module,exports){
+},{}],52:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var xml2js;
@@ -18593,7 +18819,7 @@ return Q;
 
 }).call(this);
 
-},{"../lib/xml2js":53}],52:[function(_dereq_,module,exports){
+},{"../lib/xml2js":54}],53:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var prefixMatch;
@@ -18614,7 +18840,7 @@ return Q;
 
 }).call(this);
 
-},{}],53:[function(_dereq_,module,exports){
+},{}],54:[function(_dereq_,module,exports){
 var process=_dereq_("__browserify_process");// Generated by CoffeeScript 1.6.3
 (function() {
   var bom, builder, events, isEmpty, processName, processors, sax,
@@ -19028,7 +19254,7 @@ var process=_dereq_("__browserify_process");// Generated by CoffeeScript 1.6.3
 
 }).call(this);
 
-},{"./bom":51,"./processors":52,"__browserify_process":32,"events":29,"sax":54,"xmlbuilder":71}],54:[function(_dereq_,module,exports){
+},{"./bom":52,"./processors":53,"__browserify_process":33,"events":30,"sax":55,"xmlbuilder":72}],55:[function(_dereq_,module,exports){
 var Buffer=_dereq_("__browserify_Buffer");// wrapper for non-node envs
 ;(function (sax) {
 
@@ -20385,7 +20611,7 @@ function write (chunk) {
 
 })(typeof exports === "undefined" ? sax = {} : exports)
 
-},{"__browserify_Buffer":31,"stream":40,"string_decoder":46}],55:[function(_dereq_,module,exports){
+},{"__browserify_Buffer":32,"stream":41,"string_decoder":47}],56:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLAttribute, _;
@@ -20416,7 +20642,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"underscore":72}],56:[function(_dereq_,module,exports){
+},{"underscore":73}],57:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLBuilder, XMLDeclaration, XMLDocType, XMLElement, XMLStringifier, _;
@@ -20489,7 +20715,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"./XMLDeclaration":63,"./XMLDocType":64,"./XMLElement":65,"./XMLStringifier":69,"underscore":72}],57:[function(_dereq_,module,exports){
+},{"./XMLDeclaration":64,"./XMLDocType":65,"./XMLElement":66,"./XMLStringifier":70,"underscore":73}],58:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLCData, XMLNode, _,
@@ -20536,7 +20762,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"./XMLNode":66,"underscore":72}],58:[function(_dereq_,module,exports){
+},{"./XMLNode":67,"underscore":73}],59:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLComment, XMLNode, _,
@@ -20583,7 +20809,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"./XMLNode":66,"underscore":72}],59:[function(_dereq_,module,exports){
+},{"./XMLNode":67,"underscore":73}],60:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLDTDAttList, _;
@@ -20653,7 +20879,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"underscore":72}],60:[function(_dereq_,module,exports){
+},{"underscore":73}],61:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLDTDElement, _;
@@ -20701,7 +20927,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"underscore":72}],61:[function(_dereq_,module,exports){
+},{"underscore":73}],62:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLDTDEntity, _;
@@ -20785,7 +21011,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"underscore":72}],62:[function(_dereq_,module,exports){
+},{"underscore":73}],63:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLDTDNotation, _;
@@ -20843,7 +21069,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"underscore":72}],63:[function(_dereq_,module,exports){
+},{"underscore":73}],64:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLDeclaration, XMLNode, _,
@@ -20912,7 +21138,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"./XMLNode":66,"underscore":72}],64:[function(_dereq_,module,exports){
+},{"./XMLNode":67,"underscore":73}],65:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLDocType, _;
@@ -21094,7 +21320,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"./XMLCData":57,"./XMLComment":58,"./XMLDTDAttList":59,"./XMLDTDElement":60,"./XMLDTDEntity":61,"./XMLDTDNotation":62,"./XMLProcessingInstruction":67,"underscore":72}],65:[function(_dereq_,module,exports){
+},{"./XMLCData":58,"./XMLComment":59,"./XMLDTDAttList":60,"./XMLDTDElement":61,"./XMLDTDEntity":62,"./XMLDTDNotation":63,"./XMLProcessingInstruction":68,"underscore":73}],66:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLAttribute, XMLElement, XMLNode, XMLProcessingInstruction, _,
@@ -21289,7 +21515,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"./XMLAttribute":55,"./XMLNode":66,"./XMLProcessingInstruction":67,"underscore":72}],66:[function(_dereq_,module,exports){
+},{"./XMLAttribute":56,"./XMLNode":67,"./XMLProcessingInstruction":68,"underscore":73}],67:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLNode, _,
@@ -21596,7 +21822,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"./XMLCData":57,"./XMLComment":58,"./XMLDeclaration":63,"./XMLDocType":64,"./XMLElement":65,"./XMLRaw":68,"./XMLText":70,"underscore":72}],67:[function(_dereq_,module,exports){
+},{"./XMLCData":58,"./XMLComment":59,"./XMLDeclaration":64,"./XMLDocType":65,"./XMLElement":66,"./XMLRaw":69,"./XMLText":71,"underscore":73}],68:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLProcessingInstruction, _;
@@ -21645,7 +21871,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"underscore":72}],68:[function(_dereq_,module,exports){
+},{"underscore":73}],69:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLNode, XMLRaw, _,
@@ -21692,7 +21918,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"./XMLNode":66,"underscore":72}],69:[function(_dereq_,module,exports){
+},{"./XMLNode":67,"underscore":73}],70:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLStringifier,
@@ -21861,7 +22087,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{}],70:[function(_dereq_,module,exports){
+},{}],71:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLNode, XMLText, _,
@@ -21909,7 +22135,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"./XMLNode":66,"underscore":72}],71:[function(_dereq_,module,exports){
+},{"./XMLNode":67,"underscore":73}],72:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLBuilder, _;
@@ -21925,7 +22151,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"./XMLBuilder":56,"underscore":72}],72:[function(_dereq_,module,exports){
+},{"./XMLBuilder":57,"underscore":73}],73:[function(_dereq_,module,exports){
 //     Underscore.js 1.5.2
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -23203,6 +23429,6 @@ function write (chunk) {
 
 }).call(this);
 
-},{}]},{},[18])
-(18)
+},{}]},{},[12])
+(12)
 });
