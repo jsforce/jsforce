@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: browser/client.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: browser/client.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/**
+ *
+ */
+var events = require('events'),
+    util = require('util'),
+    qs = require('querystring'),
+    _ = require('underscore'),
+    Connection = require('../connection'),
+    OAuth2 = require('../oauth2');
+
+/**
+ * @private
+ */
+function popupWin(url, w, h) {
+  var left = (screen.width/2)-(w/2);
+  var top = (screen.height/2)-(h/2);
+  return window.open(url, null, 'toolbar=no,status=no,menubar=no,width='+w+',height='+h+',top='+top+',left='+left);
+}
+
+/**
+ * @private
+ */
+function checkCallbackResponse(w) {
+  var params;
+  if (isSameOrigin(w)) {
+    if (w.location.hash) {
+      params = qs.parse(w.location.hash.substring(1));
+      if (params.access_token) {
+        return { success: true, body: params };
+      }
+    } else if (w.location.search) {
+      params = qs.parse(w.location.search.substring(1));
+      if (params.error) {
+        return { success: false, error: params };
+      }
+    }
+  }
+}
+
+/**
+ * @private
+ */
+function isSameOrigin(w) {
+  return location.origin ? 
+    location.origin === w.location.origin :
+    (location.hostname === w.location.hostname && 
+     location.port === w.location.port &&
+     location.protocol === w.location.protocol);
+}
+
+/** @private **/
+var clientIdx = 0;
+
+
+/**
+ *
+ */
+var Client = function() {
+  this._prefix = 'sf' + clientIdx++;
+  this.connection = null;
+};
+
+util.inherits(Client, events.EventEmitter);
+
+/**
+ *
+ */
+Client.prototype.init = function(config) {
+  this.config = config;
+  this.connection = new Connection(config);
+  var tokens = this._getTokens();
+  if (tokens) {
+    this.connection.initialize(tokens);
+    var self = this;
+    setTimeout(function() {
+      self.emit('connect', self.connection);
+    }, 10);
+  }
+};
+
+/** 
+ *
+ */
+Client.prototype.login = function(options, callback) {
+  if (_.isFunction(options)) {
+    callback = options;
+    options = {};
+  }
+  options = options || {}; 
+  callback = callback || function(){ };
+  _.extend(options, this.config);
+  var self = this;
+  var oauth2 = new OAuth2(options);
+  var state = Math.random().toString(36).substring(2);
+  var authzUrl = oauth2.getAuthorizationUrl({
+    response_type: 'token',
+    scope : options.scope,
+    state: state
+  });
+  var size = options.popup || {};
+  var w = popupWin(authzUrl, size.width || 912, size.height || 513);
+  var pid = setInterval(function() {
+    try {
+      if (w.closed) {
+        clearInterval(pid);
+        callback(null, { status: 'cancel' });
+      } else {
+        var res = checkCallbackResponse(w);
+        w.close();
+        clearInterval(pid);
+        if (res.success && res.body.state === state) {
+          self._storeTokens(res.body);
+          self.connection.initialize({
+            accessToken: res.body.access_token,
+            instanceUrl: res.body.instance_url
+          });
+          self.emit('connect', self.connection);
+          callback(null, { status: 'connect', body: res.body });
+        } else if (!res.success) {
+          var error = new Error(res.error.error + ": " + res.error.error_description);
+          callback(error);
+        }
+      }
+    } catch(e) {}
+  }, 1000);
+};
+
+/**
+ *
+ */
+Client.prototype.isLoggedIn = function() {
+  return !!(this.connection && this.connection.accessToken);
+};
+
+/**
+ * 
+ */
+Client.prototype.logout = function() {
+  this.connection.logout();
+  this._removeTokens();
+  this.emit('disconnect');
+};
+
+/**
+ * @private
+ */
+Client.prototype._getTokens = function() {
+  var regexp = new RegExp("(^|;\\s*)"+this._prefix+"_loggedin=true(;|$)");
+  if (document.cookie.match(regexp)) {
+    var issuedAt = Number(localStorage.getItem(this._prefix+'_issued_at'));
+    if (Date.now() &lt; issuedAt + 2 * 60 * 60 * 1000) { // 2 hours
+      return {
+        accessToken: localStorage.getItem(this._prefix + '_access_token'),
+        instanceUrl: localStorage.getItem(this._prefix + '_instance_url'),
+      };
+    }
+  }
+  return null;
+};
+
+/**
+ * @private
+ */
+Client.prototype._storeTokens = function(params) {
+  localStorage.setItem(this._prefix + '_access_token', params.access_token);
+  localStorage.setItem(this._prefix + '_instance_url', params.instance_url);
+  localStorage.setItem(this._prefix + '_issued_at', params.issued_at);
+  document.cookie = this._prefix + '_loggedin=true;';
+};
+
+/**
+ * @private
+ */
+Client.prototype._removeTokens = function() {
+  localStorage.removeItem(this._prefix + '_access_token');
+  localStorage.removeItem(this._prefix + '_instance_url');
+  localStorage.removeItem(this._prefix + '_issued_at');
+  document.cookie = this._prefix + '_loggedin=';
+};
+
+/**
+ *
+ */
+module.exports = new Client();
+
+module.exports.Client = Client;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Promise.html">Promise</a></li><li><a href="ProxyTransport.html">ProxyTransport</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#authorize">authorize</a></li><li><a href="global.html#Client">Client</a></li><li><a href="global.html#connect">connect</a></li><li><a href="global.html#disconnect">disconnect</a></li><li><a href="global.html#events">events</a></li><li><a href="global.html#fs">fs</a></li><li><a href="global.html#getClientNames">getClientNames</a></li><li><a href="global.html#getConnectionNames">getConnectionNames</a></li><li><a href="global.html#getCurrentConnection">getCurrentConnection</a></li><li><a href="global.html#injectAfter">injectAfter</a></li><li><a href="global.html#listConnections">listConnections</a></li><li><a href="global.html#loginByPassword">loginByPassword</a></li><li><a href="global.html#nodeRequest">nodeRequest</a></li><li><a href="global.html#promptConfirm">promptConfirm</a></li><li><a href="global.html#promptMessage">promptMessage</a></li><li><a href="global.html#promptPassword">promptPassword</a></li><li><a href="global.html#register">register</a></li><li><a href="global.html#Repl">Repl</a></li><li><a href="global.html#saveCurrentConnection">saveCurrentConnection</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#waitCallback">waitCallback</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Mon Feb 17 2014 23:29:34 GMT+0900 (JST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

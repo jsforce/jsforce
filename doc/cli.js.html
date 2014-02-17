@@ -34,7 +34,7 @@ var http = require('http'),
     coprompt = require('co-prompt'),
     registry = require('./registry'),
     Repl = require('./repl'),
-    sf = require('../salesforce');
+    jsforce = require('../jsforce');
 
 var repl;
 var conn = null;
@@ -117,7 +117,7 @@ function connect(name, options, callback) {
     connConfig = {};
     username = name;
   }
-  conn = new sf.Connection(connConfig);
+  conn = new jsforce.Connection(connConfig);
   username = username || options.username;
   password = options.password;
   var handleLogin = function(err) {
@@ -188,7 +188,7 @@ function disconnect(name) {
     print("Disconnect connection '" + name + "'");
   }
   connName = null;
-  conn = new sf.Connection();
+  conn = new jsforce.Connection();
 }
 
 /**
@@ -200,7 +200,7 @@ function authorize(clientName, callback) {
   if (!oauth2Config || !oauth2Config.clientId || !oauth2Config.clientSecret) {
     return callback(new Error("No OAuth2 client information registered : '"+clientName+"'. Please register client info first."));
   }
-  var oauth2 = new sf.OAuth2(oauth2Config);
+  var oauth2 = new jsforce.OAuth2(oauth2Config);
   var state = Math.random().toString(36).substring(2);
   var authzUrl = oauth2.getAuthorizationUrl({ state: state });
   print('Opening authorization page in browser...');
@@ -208,7 +208,7 @@ function authorize(clientName, callback) {
   openUrl(authzUrl);
   waitCallback(oauth2Config.redirectUri, state, function(err, params) {
     if (err) { return callback(err); }
-    conn = new sf.Connection({ oauth2: oauth2 });
+    conn = new jsforce.Connection({ oauth2: oauth2 });
     if (!params.code) {
       return callback(new Error('No authorization code returned.'));
     }
@@ -390,13 +390,13 @@ module.exports = {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Promise.html">Promise</a></li><li><a href="ProxyTransport.html">ProxyTransport</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#authorize">authorize</a></li><li><a href="global.html#connect">connect</a></li><li><a href="global.html#disconnect">disconnect</a></li><li><a href="global.html#fs">fs</a></li><li><a href="global.html#getClientNames">getClientNames</a></li><li><a href="global.html#getConnectionNames">getConnectionNames</a></li><li><a href="global.html#getCurrentConnection">getCurrentConnection</a></li><li><a href="global.html#injectAfter">injectAfter</a></li><li><a href="global.html#listConnections">listConnections</a></li><li><a href="global.html#loginByPassword">loginByPassword</a></li><li><a href="global.html#nodeRequest">nodeRequest</a></li><li><a href="global.html#promptConfirm">promptConfirm</a></li><li><a href="global.html#promptMessage">promptMessage</a></li><li><a href="global.html#promptPassword">promptPassword</a></li><li><a href="global.html#register">register</a></li><li><a href="global.html#Repl">Repl</a></li><li><a href="global.html#saveCurrentConnection">saveCurrentConnection</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#waitCallback">waitCallback</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Promise.html">Promise</a></li><li><a href="ProxyTransport.html">ProxyTransport</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#authorize">authorize</a></li><li><a href="global.html#Client">Client</a></li><li><a href="global.html#connect">connect</a></li><li><a href="global.html#disconnect">disconnect</a></li><li><a href="global.html#events">events</a></li><li><a href="global.html#fs">fs</a></li><li><a href="global.html#getClientNames">getClientNames</a></li><li><a href="global.html#getConnectionNames">getConnectionNames</a></li><li><a href="global.html#getCurrentConnection">getCurrentConnection</a></li><li><a href="global.html#injectAfter">injectAfter</a></li><li><a href="global.html#listConnections">listConnections</a></li><li><a href="global.html#loginByPassword">loginByPassword</a></li><li><a href="global.html#nodeRequest">nodeRequest</a></li><li><a href="global.html#promptConfirm">promptConfirm</a></li><li><a href="global.html#promptMessage">promptMessage</a></li><li><a href="global.html#promptPassword">promptPassword</a></li><li><a href="global.html#register">register</a></li><li><a href="global.html#Repl">Repl</a></li><li><a href="global.html#saveCurrentConnection">saveCurrentConnection</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#waitCallback">waitCallback</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Sun Feb 02 2014 00:21:54 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Mon Feb 17 2014 23:29:34 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>
