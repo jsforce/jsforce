@@ -21,7 +21,7 @@
       "url": "http://github.com/jsforce/jsforce/raw/master/LICENSE"
     }
   ],
-  "main": "./lib/salesforce",
+  "main": "./lib/jsforce",
   "scripts": {
     "test": "mocha test/*.test.js --reporter spec"
   },
