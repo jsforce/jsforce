@@ -1,0 +1,144 @@
+## v1.0.2 (Feb 13, 2014):
+
+* Added web browser client utility in `jsforce.browser` object.
+
+* Added `SObject#recent()` to get recent record items only in target SObject.
+
+* Moved examples, api docs from README to http://jsforce.github.io/
+
+
+## v1.0.1 (Feb 13, 2014):
+
+* Enabled HTTP proxy when environment variable 'HTTP_PROXY' is available.
+
+
+## v1.0.0 (Jan 30, 2014):
+
+* Renamed the project from "Node-Salesforce" to "JSforce".
+
+* Support running web browser environment.
+
+* Enhanced CLI to allow OAuth2 authorization and keep connection info in local file registry.
+
+* Support retrieving user identity information by `Connection#identity()`.
+
+
+## v0.8.0 (Jan 22, 2014):
+
+* Support Chatter API.
+
+* Support Metadata API.
+
+
+## v0.7.2 (Jan 16, 2014):
+
+* Removed unneeded files in npm-published package.
+
+
+## v0.7.1 (Dec 19, 2013):
+
+* Support SObject get updated/deleted.
+
+
+## v0.7.0 (Dec 11, 2013):
+
+* Support Analytics API and Tooling API.
+
+* Add Connection#queryAll to include deleted/archived records in query.
+
+* Add Connection#recent to fetch recently viewed record information.
+
+* Add RecordReference#blob(fieldName) to access blob in a record field.
+
+* Fix installation issue in Windows environment.
+
+
+## v0.6.4 (Dec 5, 2013):
+
+* Add Topic#unsubscribe for unsubscribing from a topic in Streaming API.
+
+## v0.6.3 (Oct 31, 2013):
+
+* Fix issue in building query using $exists operator in SObject#find()
+
+## v0.6.2 (Oct 15, 2013):
+
+* Change default Salesforce API ver. to 29.0 (Winter '14)
+
+* Fix issue in Connection#queryMore
+
+* Add identity URL information in the callback response of Connection#login/authorize.
+
+
+## v0.6.0 (Aug 23, 2013):
+
+* Change default Salesforce API ver. to 28.0 (Summer '13)
+
+* Add REPL interface for interactive API inspection.
+
+* Return Promises/A+ interface object for all async call. The interface is also added to Query / Batch.
+
+* Accept "*" in fields argument in `SObject#find()` to select all fields defined in SObject.
+
+* Add `Connection#describe$()`, `Connection#describeGlobal$()`, and `SObject#describe$()`, as caching versions of correspondings.
+
+* Changed `SObject#find(conditions, fields)` behavior in fields argument omission.
+
+* Add `SObject#select()` and `Query#where()` methods to construct a query in SQL-like verb.
+
+* Add `Query#update()` and `Query#destroy()` to apply bulk operation for queried records.
+
+* Add child relationship query support in `Query#include()`
+
+* Add Apex REST support.
+
+* Move streaming API methods from connection object to separated object.
+
+## v0.5.1 (Jan 11, 2013):
+
+* Move Query#stream() method to RecordStream#stream() to support stream serialization even in filtered stream.
+
+## v0.5.0 (Jan 11, 2013):
+
+* Support Bulk API for insert/update/upsert/delete/hardDelete operation (except for 'query').
+
+* Refine Query#pipe to pipe to other output record stream (like bulk upload batch).
+
+* Add Query#stream() method to convert record stream to general node.js readable stream (generates CSV data).
+
+
+## v0.4.0 (Nov 05, 2012):
+
+* Support JSON-style query object to query records other than SOQL, inspired by MongoDB query interface.
+
+* Change default API version to 26.0 (Winter '13).
+
+* Return logged-in user info in the callback response of Connection#login() and Connection#authorize().
+
+* Add Connection#logout() method to terminate session explicitly (Note: only useful for SOAP API login session).
+
+
+## v0.3.4 (Oct 19, 2012):
+
+* Fix issue to refresh access token multiple time in concurrent requests.
+
+* Change to use "Bearer", not "OAuth" in HTTP Authorization header to attach access token.
+
+* Separate oauth2 configuration into different hash object in connection constructor option
+ (old style is still supported for backward compatiblity).
+
+
+## v0.3.2 (Oct 18, 2012):
+
+* Fix error handling in access token refresh flow.
+
+
+## v0.3.1 (Jun 26, 2012):
+
+* Add support of Node.js 0.8.x.
+
+
+## v0.3.0 (May 10, 2012):
+
+* Support Salesforce Streaming API.
+
