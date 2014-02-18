@@ -1,4 +1,9 @@
-## v1.0.2 (Feb 13, 2014):
+## v1.1.0 (Feb 19, 2014):
+
+* Added Salesforce Canvas environment support (requires canvas-all.js)
+
+
+## v1.0.2 (Feb 17, 2014):
 
 * Added web browser client utility in `jsforce.browser` object.
 
