@@ -174,7 +174,7 @@ Analytics.prototype.reports = function(callback) {
 
 module.exports = Analytics;
 
-},{"./promise":16,"underscore":51}],2:[function(_dereq_,module,exports){
+},{"./promise":17,"underscore":52}],2:[function(_dereq_,module,exports){
 /**
  * @file Manages Salesforce Apex REST endpoint calls
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -307,6 +307,97 @@ Apex.prototype["delete"] = function(path, callback) {
 module.exports = Apex;
 
 },{}],3:[function(_dereq_,module,exports){
+/*global Sfdc */
+var stream = _dereq_('stream'),
+    _ = _dereq_('underscore');
+
+function parseHeaders(hs) {
+  var headers = {};
+  hs.split(/\n/).forEach(function(line) {
+    var pair = line.split(/\s*:\s*/);
+    var name = pair[0].toLowerCase();
+    var value = pair[1];
+    headers[name] = value;
+  });
+  return headers;
+}
+
+module.exports = {
+  
+  supported: typeof Sfdc === 'object' && typeof Sfdc.canvas !== 'undefined',
+
+  createRequest: function(signedRequest) {
+    return function(params, callback) {
+      var response;
+      var str = new stream.Duplex();
+      str._read = function(size) {
+        if (response) {
+          str.push(response.body);
+        }
+      };
+      var bufs = [];
+      var sent = false;
+      str._write = function(chunk, encoding, callback) {
+        bufs.push(chunk.toString(encoding));
+        callback();
+      };
+      str.on('finish', function() {
+        if (!sent) {
+          send(bufs.join(''));
+          sent = true;
+        }
+      });
+      if (params.body || params.body === "" || !/^(put|post|patch)$/i.test(params.method)) {
+        send(params.body);
+        sent = true;
+      }
+
+      function send(body) {
+        var settings = {
+          client: signedRequest.client,
+          method: params.method,
+          data: body
+        };
+        if (params.headers) {
+          settings.headers = {};
+          for (var name in params.headers) {
+            if (name.toLowerCase() === 'content-type') {
+              settings.contentType = params.headers[name];
+            } else {
+              settings.headers[name] = params.headers[name];
+            }
+          }
+        }
+        settings.success = function(data) {
+          var headers = parseHeaders(data.responseHeaders);
+          var body = data.payload;
+          if (!_.isString(body)) {
+            body = JSON.stringify(body);
+          }
+          response = {
+            statusCode : data.status,
+            headers: headers,
+            body: body
+          };
+          if (callback) {
+            callback(null, response, response.body);
+          }
+          str.end();
+        };
+        settings.failure = function(err) {
+          if (callback) {
+            callback(err);
+          }
+        };
+        Sfdc.canvas.client.ajax(params.url, settings);
+      }
+      return str;
+    };
+  }
+};
+
+
+},{"stream":42,"underscore":52}],4:[function(_dereq_,module,exports){
 /**
  *
  */
@@ -494,7 +585,7 @@ module.exports = new Client();
 
 module.exports.Client = Client;
 
-},{"../connection":9,"../oauth2":15,"events":30,"querystring":39,"underscore":51,"util":49}],4:[function(_dereq_,module,exports){
+},{"../connection":10,"../oauth2":16,"events":31,"querystring":40,"underscore":52,"util":50}],5:[function(_dereq_,module,exports){
 /*global window, document */
 var _index = 0;
 
@@ -545,7 +636,7 @@ module.exports = {
   }
 
 };
-},{}],5:[function(_dereq_,module,exports){
+},{}],6:[function(_dereq_,module,exports){
 var stream = _dereq_('stream');
 
 module.exports = function(params, callback) {
@@ -603,7 +694,7 @@ module.exports = function(params, callback) {
 };
 
 
-},{"stream":41}],6:[function(_dereq_,module,exports){
+},{"stream":42}],7:[function(_dereq_,module,exports){
 /**
  * @file Manages Salesforce Bulk API related operations
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -1309,7 +1400,7 @@ Bulk.prototype.job = function(jobId) {
 /*--------------------------------------------*/
 
 module.exports = Bulk;
-},{"./connection":9,"./csv":10,"./promise":16,"./record-stream":18,"events":30,"stream":41,"underscore":51,"util":49}],7:[function(_dereq_,module,exports){
+},{"./connection":10,"./csv":11,"./promise":17,"./record-stream":19,"events":31,"stream":42,"underscore":52,"util":50}],8:[function(_dereq_,module,exports){
 /**
  * @file Manages asynchronous method response cache
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -1523,7 +1614,7 @@ Cache.prototype.makeCacheable = function(fn, scope, options) {
 
 module.exports = Cache;
 
-},{"events":30,"underscore":51,"util":49}],8:[function(_dereq_,module,exports){
+},{"events":31,"underscore":52,"util":50}],9:[function(_dereq_,module,exports){
 /**
  * @file Manages Salesforce Chatter REST API calls
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -1826,7 +1917,8 @@ Resource.prototype["delete"] = function(callback) {
   }).thenCall(callback);
 };
 
-},{"./promise":16,"underscore":51,"util":49}],9:[function(_dereq_,module,exports){
+},{"./promise":17,"underscore":52,"util":50}],10:[function(_dereq_,module,exports){
+var Buffer=_dereq_("__browserify_Buffer");/*global Buffer */
 /**
  * @file Connection class to keep the API session information and manage requests
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -1872,6 +1964,7 @@ var defaults = {
  * @param {String} [options.accessToken] - Salesforce OAuth2 access token
  * @param {String} [options.sessionId] - Salesforce session ID
  * @param {String} [options.refreshToken] - Salesforce OAuth2 refresh token
+ * @param {String|Object} [options.signedRequest] - Salesforce Canvas signed request (Raw Base64 string, JSON string, or deserialized JSON)
  * @param {String} [options.proxyUrl] - Cross-domain proxy server URL, used in browser client, non Visualforce app.
  */
 var Connection = module.exports = function(options) {
@@ -1976,6 +2069,7 @@ util.inherits(Connection, events.EventEmitter);
  * @param {String} [options.accessToken] - Salesforce OAuth2 access token
  * @param {String} [options.sessionId] - Salesforce session ID
  * @param {String} [options.refreshToken] - Salesforce OAuth2 refresh token
+ * @param {String|Object} [options.signedRequest] - Salesforce Canvas signed request (Raw Base64 string, JSON string, or deserialized JSON)
  * @param {UserInfo} [options.userInfo] - Logged in user information
  */
 Connection.prototype.initialize = function(options) {
@@ -1998,6 +2092,12 @@ Connection.prototype.initialize = function(options) {
   if (this.refreshToken && !this.oauth2) {
     throw new Error("Refersh token is specified without oauth2 client information");
   }
+  
+  this.signedRequest = options.signedRequest && parseSignedRequest(options.signedRequest);
+  if (this.signedRequest) {
+    this.accessToken = this.signedRequest.client.oauthToken;
+  }
+
   this.userInfo = options.userInfo;
 
   this.sobjects = {};
@@ -2014,6 +2114,21 @@ Connection.prototype.initialize = function(options) {
   this._initializedAt = Date.now();
 
 };
+
+/** @private **/
+function parseSignedRequest(sr) {
+  if (_.isString(sr)) {
+    if (sr[0] === '{') { // might be JSON
+      return JSON.parse(sr);
+    } else { // might be original base64-encoded signed request
+      var msg = sr.split('.').pop(); // retrieve latter part
+      var json = new Buffer(msg, 'base64').toString('utf-8');
+      return JSON.parse(json);
+    }
+    return null;
+  }
+  return sr;
+}
 
 
 /**
@@ -2067,6 +2182,9 @@ Connection.prototype._request = function(params, callback, options) {
 
   // hook in sending
   if (options.beforesend) { options.beforesend(this, params); }
+
+  // for connection in canvas with signed request
+  if (this.signedRequest) { options.signedRequest = this.signedRequest; }
 
   self.emit('request', params.method, params.url, params);
 
@@ -2953,7 +3071,7 @@ Connection.prototype.deleted = function (type, start, end, callback) {
   return this._request(url).thenCall(callback);
 };
 
-},{"./analytics":1,"./apex":2,"./bulk":6,"./cache":7,"./chatter":8,"./csv":10,"./logger":13,"./metadata":14,"./oauth2":15,"./promise":16,"./query":17,"./sobject":21,"./streaming":23,"./tooling":24,"./transport":25,"async":26,"events":30,"underscore":51,"util":49,"xml2js":54}],10:[function(_dereq_,module,exports){
+},{"./analytics":1,"./apex":2,"./bulk":7,"./cache":8,"./chatter":9,"./csv":11,"./logger":14,"./metadata":15,"./oauth2":16,"./promise":17,"./query":18,"./sobject":22,"./streaming":24,"./tooling":25,"./transport":26,"__browserify_Buffer":33,"async":27,"events":31,"underscore":52,"util":50,"xml2js":55}],11:[function(_dereq_,module,exports){
 var _      = _dereq_('underscore'),
     SfDate = _dereq_('./date');
 
@@ -3131,7 +3249,7 @@ module.exports = {
   parseCSV : parseCSV
 };
   
-},{"./date":11,"underscore":51}],11:[function(_dereq_,module,exports){
+},{"./date":12,"underscore":52}],12:[function(_dereq_,module,exports){
 var _ = _dereq_("underscore")._;
 
 /**
@@ -3290,7 +3408,7 @@ function createLiteralBuilder(literal) {
   return function(num) { return new SfDate(literal + ":" + num); };
 }
 
-},{"underscore":51}],12:[function(_dereq_,module,exports){
+},{"underscore":52}],13:[function(_dereq_,module,exports){
 /**
  * @file JSforce API root object
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -3305,7 +3423,7 @@ if (typeof window !== 'undefined') {
   exports.browser = _dereq_('./browser/client');
 }
 
-},{"./browser/client":3,"./connection":9,"./date":11,"./oauth2":15,"./record-stream":18}],13:[function(_dereq_,module,exports){
+},{"./browser/client":4,"./connection":10,"./date":12,"./oauth2":16,"./record-stream":19}],14:[function(_dereq_,module,exports){
 /**
  * @protected
  * @class
@@ -3357,7 +3475,7 @@ function createLoggerFunction(level) {
   return function(message) { this.log(level, message); };
 }
 
-},{}],14:[function(_dereq_,module,exports){
+},{}],15:[function(_dereq_,module,exports){
 var Buffer=_dereq_("__browserify_Buffer");/*global Buffer */
 /**
  * @file Manages Salesforce Metadata API
@@ -3966,7 +4084,7 @@ DeployResultLocator.prototype.complete = function(includeDetails, callback) {
   }).thenCall(callback);
 };
 
-},{"./promise":16,"./soap":20,"__browserify_Buffer":32,"events":30,"stream":41,"underscore":51,"util":49}],15:[function(_dereq_,module,exports){
+},{"./promise":17,"./soap":21,"__browserify_Buffer":33,"events":31,"stream":42,"underscore":52,"util":50}],16:[function(_dereq_,module,exports){
 /**
  * @file Manages Salesforce OAuth2 operations
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -4119,7 +4237,7 @@ _.extend(OAuth2.prototype, /** @lends OAuth2.prototype **/ {
 
 });
 
-},{"./transport":25,"querystring":39,"underscore":51}],16:[function(_dereq_,module,exports){
+},{"./transport":26,"querystring":40,"underscore":52}],17:[function(_dereq_,module,exports){
 var Q = _dereq_('q'),
     _ = _dereq_('underscore')._;
 
@@ -4265,7 +4383,7 @@ Deferred.prototype.reject = function() {
  */
 module.exports = Promise;
 
-},{"q":50,"underscore":51}],17:[function(_dereq_,module,exports){
+},{"q":51,"underscore":52}],18:[function(_dereq_,module,exports){
 /**
  * @file Manages query for records in Salesforce 
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -4970,7 +5088,7 @@ SubQuery.prototype.execute = function() {
   return this._parent.execute.apply(this._parent, arguments);
 };
 
-},{"./date":11,"./record-stream":18,"./soql-builder":22,"async":26,"events":30,"q":50,"underscore":51,"util":49}],18:[function(_dereq_,module,exports){
+},{"./date":12,"./record-stream":19,"./soql-builder":23,"async":27,"events":31,"q":51,"underscore":52,"util":50}],19:[function(_dereq_,module,exports){
 /**
  * @file Represents stream that handles Salesforce record as stream data
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -5355,7 +5473,7 @@ CSVStream.prototype.stream = function(record) {
 };
 
 
-},{"./csv":10,"events":30,"stream":41,"underscore":51,"util":49}],19:[function(_dereq_,module,exports){
+},{"./csv":11,"events":31,"stream":42,"underscore":52,"util":50}],20:[function(_dereq_,module,exports){
 /**
  * @file Represents Salesforce record information
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -5446,7 +5564,7 @@ RecordReference.prototype.blob = function(fieldName) {
 };
 
 
-},{"underscore":51}],20:[function(_dereq_,module,exports){
+},{"underscore":52}],21:[function(_dereq_,module,exports){
 /**
  * @file Manages method call to SOAP endpoint
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -5583,7 +5701,7 @@ SOAP.prototype._createEnvelope = function(message) {
   ].join('');
 };
 
-},{"./transport":25,"underscore":51,"xml2js":54}],21:[function(_dereq_,module,exports){
+},{"./transport":26,"underscore":52,"xml2js":55}],22:[function(_dereq_,module,exports){
 /**
  * @file Represents Salesforce SObject
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -5948,7 +6066,7 @@ SObject.prototype.updated = function (start, end, callback) {
 SObject.prototype.deleted = function (start, end, callback) {
   return this._conn.deleted(this.type, start, end, callback);
 };
-},{"./cache":7,"./query":17,"./record":19,"underscore":51}],22:[function(_dereq_,module,exports){
+},{"./cache":8,"./query":18,"./record":20,"underscore":52}],23:[function(_dereq_,module,exports){
 /**
  * @file Create and build SOQL string from configuration
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -6176,7 +6294,7 @@ function createOrderByClause(sort) {
 exports.createSOQL = createSOQL;
 
 
-},{"./date":11,"underscore":51}],23:[function(_dereq_,module,exports){
+},{"./date":12,"underscore":52}],24:[function(_dereq_,module,exports){
 /**
  * @file Manages Streaming APIs
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -6298,7 +6416,7 @@ Streaming.prototype.unsubscribe = function(name, listener) {
 
 module.exports = Streaming;
 
-},{"events":30,"faye":28,"util":49}],24:[function(_dereq_,module,exports){
+},{"events":31,"faye":29,"util":50}],25:[function(_dereq_,module,exports){
 /**
  * @file Manages Tooling APIs
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -6553,8 +6671,8 @@ Tooling.prototype.completions = function(type, callback) {
 
 module.exports = Tooling;
 
-},{"./cache":7,"underscore":51,"util":49}],25:[function(_dereq_,module,exports){
-var process=_dereq_("__browserify_process");/*global process */
+},{"./cache":8,"underscore":52,"util":50}],26:[function(_dereq_,module,exports){
+var process=_dereq_("__browserify_process");/*global process, Sfdc */
 var util = _dereq_('util'),
     stream = _dereq_('stream'),
     Promise = _dereq_('./promise');
@@ -6564,6 +6682,7 @@ var util = _dereq_('util'),
  */
 var nodeRequest = _dereq_('request'),
     xhrRequest = _dereq_('./browser/request'),
+    canvas = _dereq_('./browser/canvas'),
     jsonp = _dereq_('./browser/jsonp');
 
 var request;
@@ -6612,6 +6731,8 @@ Transport.prototype.httpRequest = function(params, callback, options) {
   var httpRequest = request;
   if (options && options.jsonp && jsonp.supported) {
     httpRequest = jsonp.createRequest(options.jsonp);
+  } else if (options && options.signedRequest && canvas.supported) {
+    httpRequest = canvas.createRequest(options.signedRequest);
   }
   var createRequest = function() {
     if (!req) {
@@ -6666,12 +6787,12 @@ ProxyTransport.prototype.httpRequest = function(params, callback) {
   return ProxyTransport.super_.prototype.httpRequest.call(this, proxyParams, callback);
 };
 
-},{"./browser/jsonp":4,"./browser/request":5,"./promise":16,"__browserify_process":33,"request":29,"stream":41,"util":49}],26:[function(_dereq_,module,exports){
+},{"./browser/canvas":3,"./browser/jsonp":5,"./browser/request":6,"./promise":17,"__browserify_process":34,"request":30,"stream":42,"util":50}],27:[function(_dereq_,module,exports){
 // This file is just added for convenience so this repository can be
 // directly checked out into a project's deps folder
 module.exports = _dereq_('./lib/async');
 
-},{"./lib/async":27}],27:[function(_dereq_,module,exports){
+},{"./lib/async":28}],28:[function(_dereq_,module,exports){
 var process=_dereq_("__browserify_process");/*global setTimeout: false, console: false */
 (function () {
 
@@ -7365,7 +7486,7 @@ var process=_dereq_("__browserify_process");/*global setTimeout: false, console:
 
 }());
 
-},{"__browserify_process":33}],28:[function(_dereq_,module,exports){
+},{"__browserify_process":34}],29:[function(_dereq_,module,exports){
 var process=_dereq_("__browserify_process"),global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};(function() {
 'use strict';
 
@@ -9907,9 +10028,9 @@ Faye.Transport.JSONP = Faye.extend(Faye.Class(Faye.Transport, {
 Faye.Transport.register('callback-polling', Faye.Transport.JSONP);
 
 })();
-},{"__browserify_process":33}],29:[function(_dereq_,module,exports){
+},{"__browserify_process":34}],30:[function(_dereq_,module,exports){
 
-},{}],30:[function(_dereq_,module,exports){
+},{}],31:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -10211,7 +10332,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],31:[function(_dereq_,module,exports){
+},{}],32:[function(_dereq_,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -10236,7 +10357,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],32:[function(_dereq_,module,exports){
+},{}],33:[function(_dereq_,module,exports){
 _dereq_=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof _dereq_=="function"&&_dereq_;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof _dereq_=="function"&&_dereq_;for(var o=0;o<r.length;o++)s(r[o]);return s})({"PcZj9L":[function(_dereq_,module,exports){
 var base64 = _dereq_('base64-js')
 var ieee754 = _dereq_('ieee754')
@@ -11594,7 +11715,7 @@ exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
 },{}]},{},[])
 ;;module.exports=_dereq_("native-buffer-browserify").Buffer
 
-},{}],33:[function(_dereq_,module,exports){
+},{}],34:[function(_dereq_,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -11649,7 +11770,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],34:[function(_dereq_,module,exports){
+},{}],35:[function(_dereq_,module,exports){
 var base64 = _dereq_('base64-js')
 var ieee754 = _dereq_('ieee754')
 
@@ -12682,7 +12803,7 @@ function assert (test, message) {
   if (!test) throw new Error(message || 'Failed assertion')
 }
 
-},{"base64-js":35,"ieee754":36}],35:[function(_dereq_,module,exports){
+},{"base64-js":36,"ieee754":37}],36:[function(_dereq_,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -12805,7 +12926,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	module.exports.fromByteArray = uint8ToBase64
 }())
 
-},{}],36:[function(_dereq_,module,exports){
+},{}],37:[function(_dereq_,module,exports){
 exports.read = function(buffer, offset, isLE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -12891,7 +13012,7 @@ exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],37:[function(_dereq_,module,exports){
+},{}],38:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12977,7 +13098,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],38:[function(_dereq_,module,exports){
+},{}],39:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13064,13 +13185,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],39:[function(_dereq_,module,exports){
+},{}],40:[function(_dereq_,module,exports){
 'use strict';
 
 exports.decode = exports.parse = _dereq_('./decode');
 exports.encode = exports.stringify = _dereq_('./encode');
 
-},{"./decode":37,"./encode":38}],40:[function(_dereq_,module,exports){
+},{"./decode":38,"./encode":39}],41:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13144,7 +13265,7 @@ function onend() {
   });
 }
 
-},{"./readable.js":44,"./writable.js":46,"inherits":31,"process/browser.js":42}],41:[function(_dereq_,module,exports){
+},{"./readable.js":45,"./writable.js":47,"inherits":32,"process/browser.js":43}],42:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13273,9 +13394,9 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"./duplex.js":40,"./passthrough.js":43,"./readable.js":44,"./transform.js":45,"./writable.js":46,"events":30,"inherits":31}],42:[function(_dereq_,module,exports){
-module.exports=_dereq_(33)
-},{}],43:[function(_dereq_,module,exports){
+},{"./duplex.js":41,"./passthrough.js":44,"./readable.js":45,"./transform.js":46,"./writable.js":47,"events":31,"inherits":32}],43:[function(_dereq_,module,exports){
+module.exports=_dereq_(34)
+},{}],44:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13318,7 +13439,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"./transform.js":45,"inherits":31}],44:[function(_dereq_,module,exports){
+},{"./transform.js":46,"inherits":32}],45:[function(_dereq_,module,exports){
 var process=_dereq_("__browserify_process");// Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -14253,7 +14374,7 @@ function indexOf (xs, x) {
   return -1;
 }
 
-},{"./index.js":41,"__browserify_process":33,"buffer":34,"events":30,"inherits":31,"process/browser.js":42,"string_decoder":47}],45:[function(_dereq_,module,exports){
+},{"./index.js":42,"__browserify_process":34,"buffer":35,"events":31,"inherits":32,"process/browser.js":43,"string_decoder":48}],46:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -14459,7 +14580,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"./duplex.js":40,"inherits":31}],46:[function(_dereq_,module,exports){
+},{"./duplex.js":41,"inherits":32}],47:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -14847,7 +14968,7 @@ function endWritable(stream, state, cb) {
   state.ended = true;
 }
 
-},{"./index.js":41,"buffer":34,"inherits":31,"process/browser.js":42}],47:[function(_dereq_,module,exports){
+},{"./index.js":42,"buffer":35,"inherits":32,"process/browser.js":43}],48:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -15040,14 +15161,14 @@ function base64DetectIncompleteChar(buffer) {
   return incomplete;
 }
 
-},{"buffer":34}],48:[function(_dereq_,module,exports){
+},{"buffer":35}],49:[function(_dereq_,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],49:[function(_dereq_,module,exports){
+},{}],50:[function(_dereq_,module,exports){
 var process=_dereq_("__browserify_process"),global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};// Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -15635,7 +15756,7 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-},{"./support/isBuffer":48,"__browserify_process":33,"inherits":31}],50:[function(_dereq_,module,exports){
+},{"./support/isBuffer":49,"__browserify_process":34,"inherits":32}],51:[function(_dereq_,module,exports){
 var process=_dereq_("__browserify_process");// vim:ts=4:sts=4:sw=4:
 /*!
  *
@@ -17574,7 +17695,7 @@ return Q;
 
 });
 
-},{"__browserify_process":33}],51:[function(_dereq_,module,exports){
+},{"__browserify_process":34}],52:[function(_dereq_,module,exports){
 //     Underscore.js 1.4.4
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -18802,7 +18923,7 @@ return Q;
 
 }).call(this);
 
-},{}],52:[function(_dereq_,module,exports){
+},{}],53:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var xml2js;
@@ -18819,7 +18940,7 @@ return Q;
 
 }).call(this);
 
-},{"../lib/xml2js":54}],53:[function(_dereq_,module,exports){
+},{"../lib/xml2js":55}],54:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var prefixMatch;
@@ -18840,7 +18961,7 @@ return Q;
 
 }).call(this);
 
-},{}],54:[function(_dereq_,module,exports){
+},{}],55:[function(_dereq_,module,exports){
 var process=_dereq_("__browserify_process");// Generated by CoffeeScript 1.6.3
 (function() {
   var bom, builder, events, isEmpty, processName, processors, sax,
@@ -19254,7 +19375,7 @@ var process=_dereq_("__browserify_process");// Generated by CoffeeScript 1.6.3
 
 }).call(this);
 
-},{"./bom":52,"./processors":53,"__browserify_process":33,"events":30,"sax":55,"xmlbuilder":72}],55:[function(_dereq_,module,exports){
+},{"./bom":53,"./processors":54,"__browserify_process":34,"events":31,"sax":56,"xmlbuilder":73}],56:[function(_dereq_,module,exports){
 var Buffer=_dereq_("__browserify_Buffer");// wrapper for non-node envs
 ;(function (sax) {
 
@@ -20611,7 +20732,7 @@ function write (chunk) {
 
 })(typeof exports === "undefined" ? sax = {} : exports)
 
-},{"__browserify_Buffer":32,"stream":41,"string_decoder":47}],56:[function(_dereq_,module,exports){
+},{"__browserify_Buffer":33,"stream":42,"string_decoder":48}],57:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLAttribute, _;
@@ -20642,7 +20763,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"underscore":73}],57:[function(_dereq_,module,exports){
+},{"underscore":74}],58:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLBuilder, XMLDeclaration, XMLDocType, XMLElement, XMLStringifier, _;
@@ -20715,7 +20836,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"./XMLDeclaration":64,"./XMLDocType":65,"./XMLElement":66,"./XMLStringifier":70,"underscore":73}],58:[function(_dereq_,module,exports){
+},{"./XMLDeclaration":65,"./XMLDocType":66,"./XMLElement":67,"./XMLStringifier":71,"underscore":74}],59:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLCData, XMLNode, _,
@@ -20762,7 +20883,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"./XMLNode":67,"underscore":73}],59:[function(_dereq_,module,exports){
+},{"./XMLNode":68,"underscore":74}],60:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLComment, XMLNode, _,
@@ -20809,7 +20930,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"./XMLNode":67,"underscore":73}],60:[function(_dereq_,module,exports){
+},{"./XMLNode":68,"underscore":74}],61:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLDTDAttList, _;
@@ -20879,7 +21000,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"underscore":73}],61:[function(_dereq_,module,exports){
+},{"underscore":74}],62:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLDTDElement, _;
@@ -20927,7 +21048,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"underscore":73}],62:[function(_dereq_,module,exports){
+},{"underscore":74}],63:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLDTDEntity, _;
@@ -21011,7 +21132,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"underscore":73}],63:[function(_dereq_,module,exports){
+},{"underscore":74}],64:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLDTDNotation, _;
@@ -21069,7 +21190,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"underscore":73}],64:[function(_dereq_,module,exports){
+},{"underscore":74}],65:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLDeclaration, XMLNode, _,
@@ -21138,7 +21259,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"./XMLNode":67,"underscore":73}],65:[function(_dereq_,module,exports){
+},{"./XMLNode":68,"underscore":74}],66:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLDocType, _;
@@ -21320,7 +21441,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"./XMLCData":58,"./XMLComment":59,"./XMLDTDAttList":60,"./XMLDTDElement":61,"./XMLDTDEntity":62,"./XMLDTDNotation":63,"./XMLProcessingInstruction":68,"underscore":73}],66:[function(_dereq_,module,exports){
+},{"./XMLCData":59,"./XMLComment":60,"./XMLDTDAttList":61,"./XMLDTDElement":62,"./XMLDTDEntity":63,"./XMLDTDNotation":64,"./XMLProcessingInstruction":69,"underscore":74}],67:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLAttribute, XMLElement, XMLNode, XMLProcessingInstruction, _,
@@ -21515,7 +21636,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"./XMLAttribute":56,"./XMLNode":67,"./XMLProcessingInstruction":68,"underscore":73}],67:[function(_dereq_,module,exports){
+},{"./XMLAttribute":57,"./XMLNode":68,"./XMLProcessingInstruction":69,"underscore":74}],68:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLNode, _,
@@ -21822,7 +21943,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"./XMLCData":58,"./XMLComment":59,"./XMLDeclaration":64,"./XMLDocType":65,"./XMLElement":66,"./XMLRaw":69,"./XMLText":71,"underscore":73}],68:[function(_dereq_,module,exports){
+},{"./XMLCData":59,"./XMLComment":60,"./XMLDeclaration":65,"./XMLDocType":66,"./XMLElement":67,"./XMLRaw":70,"./XMLText":72,"underscore":74}],69:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLProcessingInstruction, _;
@@ -21871,7 +21992,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"underscore":73}],69:[function(_dereq_,module,exports){
+},{"underscore":74}],70:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLNode, XMLRaw, _,
@@ -21918,7 +22039,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"./XMLNode":67,"underscore":73}],70:[function(_dereq_,module,exports){
+},{"./XMLNode":68,"underscore":74}],71:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLStringifier,
@@ -22087,7 +22208,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{}],71:[function(_dereq_,module,exports){
+},{}],72:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLNode, XMLText, _,
@@ -22135,7 +22256,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"./XMLNode":67,"underscore":73}],72:[function(_dereq_,module,exports){
+},{"./XMLNode":68,"underscore":74}],73:[function(_dereq_,module,exports){
 // Generated by CoffeeScript 1.6.1
 (function() {
   var XMLBuilder, _;
@@ -22151,7 +22272,7 @@ function write (chunk) {
 
 }).call(this);
 
-},{"./XMLBuilder":57,"underscore":73}],73:[function(_dereq_,module,exports){
+},{"./XMLBuilder":58,"underscore":74}],74:[function(_dereq_,module,exports){
 //     Underscore.js 1.5.2
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -23429,6 +23550,6 @@ function write (chunk) {
 
 }).call(this);
 
-},{}]},{},[12])
-(12)
+},{}]},{},[13])
+(13)
 });
