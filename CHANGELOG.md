@@ -1,4 +1,4 @@
-## v1.0.2 (Feb 13, 2014):
+## v1.0.2 (Feb 17, 2014):
 
 * Added web browser client utility in `jsforce.browser` object.
 
