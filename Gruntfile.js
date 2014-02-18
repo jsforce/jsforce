@@ -17,6 +17,13 @@ module.exports = function(grunt) {
 
     pkg: pkg,
 
+    watch: {
+      scripts: {
+        files: ["lib/**/*.js" ],
+        tasks: ['build']
+      }
+    },
+
     browserify: {
       options: {
         ignore: [

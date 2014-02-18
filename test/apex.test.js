@@ -4,7 +4,7 @@ var testUtils = require('./helper/test-utils'),
 
 var async  = require('async'),
     _      = require('underscore'),
-    sf     = require('../lib/salesforce'),
+    sf     = require('../lib/jsforce'),
     config = require('./config/salesforce');
 /**
  *
