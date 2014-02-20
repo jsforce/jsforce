@@ -21,6 +21,10 @@ module.exports = function(grunt) {
       scripts: {
         files: ["lib/**/*.js" ],
         tasks: ['build']
+      },
+      jsdoc: {
+        files: ["lib/**/*.js" ],
+        tasks: ['jsdoc']
       }
     },
 
