@@ -1,3 +1,8 @@
+## v1.1.1 (Mar 10, 2014):
+
+* Fix web browser client login sequence to work in mobile safari
+
+
 ## v1.1.0 (Feb 19, 2014):
 
 * Added Salesforce Canvas environment support (requires canvas-all.js)
