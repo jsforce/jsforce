@@ -2083,7 +2083,12 @@ var Connection = module.exports = function(options) {
    */
   this.cache = new Cache();
 
-
+  // Allow to delegate connection refresh to outer function
+  if (options.refreshFn) {
+    this._refreshDelegate = {
+      refreshToken: options.refreshFn
+    };
+  }
 
   var cacheOptions = {
     key: function(type) { return type ? "describe." + type : "describe"; }
@@ -2249,7 +2254,8 @@ Connection.prototype._request = function(params, callback, options) {
     self.emit('response', response.statusCode, response.body, response);
     // Refresh token if status code requires authentication
     // when oauth2 info and refresh token is available.
-    if (response.statusCode === 401 && self.oauth2 && self.refreshToken) {
+    if (response.statusCode === 401 &&
+        (self._refreshDelegate || (self.oauth2 && self.refreshToken))) {
       // Access token may be refreshed before the response
       if (self._initializedAt > requestTime) {
         onResume();
@@ -2350,7 +2356,8 @@ Connection.prototype._refresh = function() {
   var self = this;
   var logger = this._logger;
   logger.debug("<refresh token>");
-  return this.oauth2.refreshToken(this.refreshToken, function(err, res) {
+  var delegate = this._refreshDelegate || this.oauth2;
+  return delegate.refreshToken(this.refreshToken, function(err, res) {
     if (!err) {
       self.initialize({
         instanceUrl : res.instance_url,
@@ -3817,6 +3824,8 @@ Metadata.prototype.deploy = function(zipInput, options, callback) {
     zipInput.resume();
   } else if (zipInput instanceof Buffer) {
     deferred.resolve(zipInput);
+  } else {
+    throw "Unexpected zipInput type";
   }
 
   var self = this;
@@ -6232,7 +6241,11 @@ var opMap = {
 /** @private **/
 function createFieldExpression(field, value) {
   var op = "$eq";
-  if (_.isObject(value)) {
+
+  // Assume the `$in` operator if value is an array and none was supplied.
+  if (_.isArray(value)) { op = "$in"; }
+  // Otherwise, if an object was passed then process the supplied ops.
+  else if (_.isObject(value)) {
     var _value;
     for (var k in value) {
       if (k[0] === "$") {
