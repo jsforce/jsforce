@@ -1,5 +1,14 @@
 ## v1.1.1 (Mar 10, 2014):
 
+* Check `Metadata#deploy()` zipInput argument type to raise error properly when unexpected input comes.
+
+* Enable switching default login server URL in REPL by ".use" command.
+
+* Enable option to delegate refresh token process to outer function (supposing Salesforce Hybrid SDK)
+
+
+## v1.1.1 (Mar 10, 2014):
+
 * Fix web browser client login sequence to work in mobile safari
 
 
