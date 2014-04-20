@@ -40,7 +40,7 @@
     "open": "0.0.4",
     "q": "0.9.x",
     "readable-stream": "1.1.x",
-    "request": "2.12.x",
+    "request": "2.34.x",
     "underscore": "1.4.x",
     "xml2js": "0.4.x"
   },
