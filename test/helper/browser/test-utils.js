@@ -11,7 +11,7 @@ module.exports = {
 
   isBrowser: true,
 
-  assert: require('assert'),
+  assert: require('power-assert'),
 
   createConnection: function(config) {
     var conn = new sf.Connection({
