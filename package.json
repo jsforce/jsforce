@@ -56,9 +56,9 @@
     "grunt-jsdoc": "0.5.x",
     "envfile": "1.0.x",
     "mocha": "1.15.x",
-    "power-assert": "0.6.x",
-    "espower-loader": "0.6.x",
     "node-phantom": "0.2.x",
-    "intelli-espower-loader": "0.0.7"
+    "power-assert": "0.6.x",
+    "intelli-espower-loader": "0.0.7",
+    "espowerify": "0.6.x"
   }
 }
