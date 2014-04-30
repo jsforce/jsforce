@@ -205,6 +205,10 @@ describe("metadata", function() {
           if (err) { throw err; }
           assert.ok(_.isArray(results));
           assert.ok(results.length === metadata.length);
+          _.forEach(results, function(result) {
+            assert.ok(result.success === true);
+            assert.ok(_.isString(result.fullName));
+          });
         }.check(done));
       });
     });
@@ -231,12 +235,55 @@ describe("metadata", function() {
     /**
      *
      */
+    describe("update metadata synchronously", function() {
+      it("should update custom objects", function(done) {
+        rmetadata[0].label = 'Updated Test Object Sync 2';
+        rmetadata[1].deploymentStatus = 'Deployed';
+        conn.metadata.updateSync('CustomObject', rmetadata, function(err, results) {
+          if (err) { throw err; }
+          assert.ok(_.isArray(results));
+          assert.ok(results.length === fullNames.length);
+          _.forEach(results, function(result) {
+            assert.ok(result.success === true);
+            assert.ok(_.isString(result.fullName));
+          });
+          rmetadata = results;
+        }.check(done));
+      });
+    });
+
+    /**
+     *
+     */
+    describe("rename metadata synchronously", function() {
+      it("should rename a custom object", function(done) {
+        var oldName = fullNames[0], newName = 'Updated' + oldName;
+        conn.metadata.rename('CustomObject', oldName, newName).then(function(result) {
+          assert.ok(result.success === true);
+          assert.ok(_.isString(result.fullName));
+          assert.ok(result.fullName === oldName);
+          return conn.metadata.read('CustomObject', newName);
+        }).then(function(result) {
+          assert.ok(_.isString(result.fullName));
+          assert.ok(result.fullName === newName);
+          fullNames[0] = result.fullName;
+        }).then(done, done);
+      });
+    });
+
+    /**
+     *
+     */
     describe("delete metadata synchronously", function() {
       it("should delete custom objects", function(done) {
         conn.metadata.deleteSync('CustomObject', fullNames, function(err, results) {
           if (err) { throw err; }
           assert.ok(_.isArray(results));
           assert.ok(results.length === fullNames.length);
+          _.forEach(results, function(result) {
+            assert.ok(result.success === true);
+            assert.ok(_.isString(result.fullName));
+          });
         }.check(done));
       });
     });
