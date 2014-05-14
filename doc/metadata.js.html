@@ -25,7 +25,7 @@
     
     <section>
         <article>
-            <pre class="prettyprint source"><code>/*global Buffer */
+            <pre class="prettyprint source"><code>/*global process, Buffer */
 /**
  * @file Manages Salesforce Metadata API
  * @author Shinichi Tomita &lt;shinichi.tomita@gmail.com>
@@ -39,6 +39,17 @@ var util = require('util'),
     Promise = require('./promise'),
     SOAP = require('./soap');
 
+/*--------------------------------------------*/
+
+function warnDeprecatedFunction(oldMethodName, newMethodName) {
+  return function() {
+    console.warn(
+      "WARNING: You're using deprecated method `Metadata#"+oldMethodName+"()`.\n" +
+      " Use `Metadata#" + newMethodName +"()` instead."
+    );
+    return this[newMethodName].apply(this, arguments);
+  };
+}
 
 /*--------------------------------------------*/
 /**
@@ -87,14 +98,14 @@ Metadata.prototype._invoke = function(method, message, callback) {
  */
 
 /**
- * Adds one or more new metadata components to your organization's data.
+ * Asynchronously adds one or more new metadata components to the organization.
  *
  * @param {String} type - The type of metadata to create
  * @param {Metadata~MetadataInfo|Array.&lt;Metadata~MetadataInfo>} metadata - Metadata to create
  * @param {Callback.&lt;Metadata~AsyncResult|Array.&lt;Metadata~AsyncResult>>} [callback] - Callback function
  * @returns {Metadata~AsyncResultLocator}
  */
-Metadata.prototype.create = function(type, metadata, callback) {
+Metadata.prototype.createAsync = function(type, metadata, callback) {
   var convert = function(md) {
     md["@xsi:type"] = type;
     return md;
@@ -106,20 +117,83 @@ Metadata.prototype.create = function(type, metadata, callback) {
 };
 
 /**
+ * Synonym of Metadata#createAsync().
+ *
+ * @deprecated
+ * @param {String} type - The type of metadata to create
+ * @param {Metadata~MetadataInfo|Array.&lt;Metadata~MetadataInfo>} metadata - Metadata to create
+ * @param {Callback.&lt;Metadata~AsyncResult|Array.&lt;Metadata~AsyncResult>>} [callback] - Callback function
+ * @returns {Metadata~AsyncResultLocator}
+ */
+Metadata.prototype.create = warnDeprecatedFunction("create", "createAsync");
+
+/**
+ * @private
+ */
+function convertToSaveResult(result) {
+  var saveResult = _.clone(result);
+  saveResult.success = saveResult.success === 'true';
+  return saveResult;
+}
+
+/**
+ * Synchronously adds one or more new metadata components to the organization.
+ *
+ * @param {String} type - The type of metadata to create
+ * @param {Metadata~MetadataInfo|Array.&lt;Metadata~MetadataInfo>} metadata - Metadata to create
+ * @param {Callback.&lt;Metadata~SaveResult|Array.&lt;Metadata~SaveResult>>} [callback] - Callback function
+ * @returns {Promise.&lt;Metadata~SaveResult|Array.&lt;Metadata~SaveResult>>}
+ */
+Metadata.prototype.createSync = function(type, metadata, callback) {
+  var convert = function(md) {
+    md["@xsi:type"] = type;
+    return md;
+  };
+  var isArray = _.isArray(metadata);
+  metadata = isArray ? _.map(metadata, convert) : convert(metadata);
+  return this._invoke("createMetadata", { metadata: metadata }).then(function(results) {
+    return _.isArray(results) ? _.map(results, convertToSaveResult) : convertToSaveResult(results);
+  }).thenCall(callback);
+};
+
+/**
+ * @private
+ */
+function convertToMetadataInfo(rec) {
+  var metadataInfo = _.clone(rec);
+  delete metadataInfo.$;
+  return metadataInfo;
+}
+
+/**
+ * Synchronously read specified metadata components in the organization.
+ *
+ * @param {String} type - The type of metadata to read
+ * @param {String|Array.&lt;String>} fullNames - full name(s) of metadata objects to read
+ * @param {Callback.&lt;Metadata~ReadResult|Array.&lt;Metadata~ReadResult>>} [callback] - Callback function
+ * @returns {Promise.&lt;Array.&lt;Metadata~MetadataInfo|Array.&lt;Metadata~MetadataInfo>>>}
+ */
+Metadata.prototype.read = function(type, fullNames, callback) {
+  return this._invoke("readMetadata", { type: type, fullNames: fullNames }).then(function(res) {
+    return _.isArray(res.records) ? _.map(res.records, convertToMetadataInfo) : convertToMetadataInfo(res.records);
+  }).thenCall(callback);
+};
+
+/**
  * @typedef {Object} Metadata~UpdateMetadataInfo
  * @prop {String} currentName - The API name of the component or field before the update
  * @prop {Metadata~MetadataInfo} metadata - Full specification of the component or field you wish to update
  */
 
 /**
- * Updates one or more components in your organization's data. 
+ * Asynchronously updates one or more metadata components in the organization.
  *
  * @param {String} type - The type of metadata to update
  * @param {Metadata~UpdateMetadataInfo|Array.&lt;Metadata~UpdateMetadataInfo>} updateMetadata - Updating metadata
  * @param {Callback.&lt;Metadata~AsyncResult|Array.&lt;Metadata~AsyncResult>>} [callback] - Callback function
  * @returns {Metadata~AsyncResultLocator}
  */
-Metadata.prototype.update = function(type, updateMetadata, callback) {
+Metadata.prototype.updateAsync = function(type, updateMetadata, callback) {
   var convert = function(umd) {
     umd.metadata["@xsi:type"] = type;
     return umd;
@@ -131,25 +205,46 @@ Metadata.prototype.update = function(type, updateMetadata, callback) {
 };
 
 /**
- * Synonym of Metadata#delete().
+ * Synonym of Metadata#updateAsync().
  *
- * @method Metadata#del
- * @param {String} [type] - The type of metadata to delete
- * @param {String|Metadata~MetadataInfo|Array.&lt;String>|Array.&lt;Metadata~MetadataInfo>} metadata - The fullName of metadata or metadata info to delete. If it is passed in fullName, the type parameter should not be empty.
+ * @deprecated
+ * @param {String} type - The type of metadata to update
+ * @param {Metadata~UpdateMetadataInfo|Array.&lt;Metadata~UpdateMetadataInfo>} updateMetadata - Updating metadata
  * @param {Callback.&lt;Metadata~AsyncResult|Array.&lt;Metadata~AsyncResult>>} [callback] - Callback function
  * @returns {Metadata~AsyncResultLocator}
  */
+Metadata.prototype.update = warnDeprecatedFunction("update", "updateAsync");
+
+
 /**
- * Deletes one or more components from your organization's data.
+ * Synchronously updates one or more metadata components in the organization.
  *
- * @method Metadata#delete
+ * @param {String} type - The type of metadata to update
+ * @param {Metadata~MetadataInfo|Array.&lt;Metadata~MetadataInfo>} updateMetadata - Updating metadata
+ * @param {Callback.&lt;Metadata~SaveResult|Array.&lt;Metadata~SaveResult>>} [callback] - Callback function
+ * @returns {Promise.&lt;Metadata~SaveResult|Array.&lt;Metadata~SaveResult>>}
+ */
+Metadata.prototype.updateSync = function(type, metadata, callback) {
+  var convert = function(md) {
+    md["@xsi:type"] = type;
+    return md;
+  };
+  var isArray = _.isArray(metadata);
+  metadata = isArray ? _.map(metadata, convert) : convert(metadata);
+  return this._invoke("updateMetadata", { metadata: metadata }).then(function(results) {
+    return _.isArray(results) ? _.map(results, convertToSaveResult) : convertToSaveResult(results);
+  }).thenCall(callback);
+};
+
+/**
+ * Asynchronously deletes specified metadata components in the organization.
+ *
  * @param {String} type - The type of metadata to delete
  * @param {String|Metadata~MetadataInfo|Array.&lt;String>|Array.&lt;Metadata~MetadataInfo>} metadata - The fullName of metadata or metadata info to delete. If it is passed in fullName, the type parameter should not be empty.
  * @param {Callback.&lt;Metadata~AsyncResult|Array.&lt;Metadata~AsyncResult>>} [callback] - Callback function
  * @returns {Metadata~AsyncResultLocator}
  */
-Metadata.prototype.del =
-Metadata.prototype["delete"] = function(type, metadata, callback) {
+Metadata.prototype.deleteAsync = function(type, metadata, callback) {
   var convert = function(md) {
     if (_.isString(md)) {
       md = { fullName : md };
@@ -161,6 +256,58 @@ Metadata.prototype["delete"] = function(type, metadata, callback) {
   metadata = isArray ? _.map(metadata, convert) : convert(metadata);
   var res = this._invoke("delete", { metadata: metadata });
   return new AsyncResultLocator(this, res, isArray).thenCall(callback);
+};
+
+/**
+ * Synonym of Metadata#deleteAsync().
+ *
+ * @deprecated
+ * @method Metadata#del
+ * @param {String} [type] - The type of metadata to delete
+ * @param {String|Metadata~MetadataInfo|Array.&lt;String>|Array.&lt;Metadata~MetadataInfo>} metadata - The fullName of metadata or metadata info to delete. If it is passed in fullName, the type parameter should not be empty.
+ * @param {Callback.&lt;Metadata~AsyncResult|Array.&lt;Metadata~AsyncResult>>} [callback] - Callback function
+ * @returns {Metadata~AsyncResultLocator}
+ */
+Metadata.prototype.del = warnDeprecatedFunction("del", "deleteAsync");
+/**
+ * Synonym of Metadata#deleteAsync().
+ *
+ * @deprecated
+ * @method Metadata#delete
+ * @param {String} type - The type of metadata to delete
+ * @param {String|Metadata~MetadataInfo|Array.&lt;String>|Array.&lt;Metadata~MetadataInfo>} metadata - The fullName of metadata or metadata info to delete. If it is passed in fullName, the type parameter should not be empty.
+ * @param {Callback.&lt;Metadata~AsyncResult|Array.&lt;Metadata~AsyncResult>>} [callback] - Callback function
+ * @returns {Metadata~AsyncResultLocator}
+ */
+Metadata.prototype["delete"] = warnDeprecatedFunction("delete", "deleteAsync");
+
+/**
+ * Synchronously deletes specified metadata components in the organization.
+ *
+ * @param {String} type - The type of metadata to delete
+ * @param {String|Array.&lt;String>} fullNames - The fullName of metadata to delete.
+ * @param {Callback.&lt;Metadata~AsyncResult|Array.&lt;Metadata~AsyncResult>>} [callback] - Callback function
+ * @returns {Promise.&lt;Metadata~SaveResult|Array.&lt;Metadata~SaveResult>>}
+ */
+Metadata.prototype.deleteSync = function(type, fullNames, callback) {
+  return this._invoke("deleteMetadata", { type: type, fullNames: fullNames }).then(function(results) {
+    return _.isArray(results) ? _.map(results, convertToSaveResult) : convertToSaveResult(results);
+  }).thenCall(callback);
+};
+
+/**
+ * Rename fullname of a metadata component in the organization
+ *
+ * @param {String} type - The type of metadata to delete
+ * @param {String} oldFullName - The original fullName of metadata
+ * @param {String} newFullName - The new fullName of metadata
+ * @param {Callback.&lt;Metadata~SaveResult>} [callback] - Callback function
+ * @returns {Promise.&lt;Metadata~SaveResult>}
+ */
+Metadata.prototype.rename = function(type, oldFullName, newFullName, callback) {
+  return this._invoke("renameMetadata", { type: type, oldFullName: oldFullName, newFullName: newFullName }).then(function(result) {
+    return convertToSaveResult(result);
+  }).thenCall(callback);
 };
 
 /**
@@ -323,6 +470,8 @@ Metadata.prototype.deploy = function(zipInput, options, callback) {
     zipInput.resume();
   } else if (zipInput instanceof Buffer) {
     deferred.resolve(zipInput);
+  } else {
+    throw "Unexpected zipInput type";
   }
 
   var self = this;
@@ -436,9 +585,13 @@ AsyncResultLocator.prototype.then = function(onResolve, onReject) {
  */
 AsyncResultLocator.prototype.thenCall = function(callback) {
   return _.isFunction(callback) ? this.then(function(res) {
-    return callback(null, res);
+    process.nextTick(function() {
+      callback(null, res);
+    });
   }, function(err) {
-    return callback(err);
+    process.nextTick(function() {
+      callback(err);
+    });
   }) : this;
 };
 
@@ -648,7 +801,7 @@ DeployResultLocator.prototype.complete = function(includeDetails, callback) {
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Feb 20 2014 13:23:47 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu May 15 2014 02:13:07 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>
