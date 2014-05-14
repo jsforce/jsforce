@@ -10,7 +10,7 @@
     "database.com"
   ],
   "homepage": "http://github.com/jsforce/jsforce",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/jsforce/jsforce.git"
@@ -23,7 +23,10 @@
   ],
   "main": "./lib/jsforce",
   "scripts": {
-    "test": "mocha test/*.test.js --reporter spec"
+    "test": "mocha test/*.test.js --reporter spec --require intelli-espower-loader"
+  },
+  "directories": {
+    "test": "test/"
   },
   "engines": {
     "node": ">=0.8.0"
@@ -53,8 +56,9 @@
     "grunt-jsdoc": "0.5.x",
     "envfile": "1.0.x",
     "mocha": "1.15.x",
-    "power-assert": "0.2.x",
-    "espower-loader": "0.1.x",
-    "node-phantom": "0.2.x"
+    "node-phantom": "0.2.x",
+    "power-assert": "0.6.x",
+    "intelli-espower-loader": "0.0.7",
+    "espowerify": "0.6.x"
   }
 }
