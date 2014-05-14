@@ -399,7 +399,8 @@ module.exports = {
 
 },{"stream":42,"underscore":52}],4:[function(_dereq_,module,exports){
 /**
- *
+ * @file Browser client connection management class
+ * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
 var events = _dereq_('events'),
     util = _dereq_('util'),
@@ -414,38 +415,44 @@ var events = _dereq_('events'),
 function popupWin(url, w, h) {
   var left = (screen.width/2)-(w/2);
   var top = (screen.height/2)-(h/2);
-  return window.open(url, null, 'toolbar=no,status=no,menubar=no,width='+w+',height='+h+',top='+top+',left='+left);
+  return window.open(url, null, 'location=yes,toolbar=no,status=no,menubar=no,width='+w+',height='+h+',top='+top+',left='+left);
 }
 
-/**
- * @private
- */
-function checkCallbackResponse(w) {
-  var params;
-  if (isSameOrigin(w)) {
-    if (w.location.hash) {
-      params = qs.parse(w.location.hash.substring(1));
-      if (params.access_token) {
-        return { success: true, body: params };
-      }
-    } else if (w.location.search) {
-      params = qs.parse(w.location.search.substring(1));
-      if (params.error) {
-        return { success: false, error: params };
-      }
+function handleCallbackResponse() {
+  var res = checkCallbackResponse();
+  var state = localStorage.getItem('jsforce_state');
+  if (res && state && res.body.state === state) {
+    localStorage.removeItem('jsforce_state');
+    var states = state.split('.');
+    var prefix = states[0], promptType = states[1];
+    var cli = new Client(prefix);
+    if (res.success) {
+      cli._storeTokens(res.body);
+      location.hash = '';
+    } else {
+      cli._storeError(res.body);
     }
+    if (promptType === 'popup') { window.close(); }
+    return true;
   }
 }
 
 /**
  * @private
  */
-function isSameOrigin(w) {
-  return location.origin ? 
-    location.origin === w.location.origin :
-    (location.hostname === w.location.hostname && 
-     location.port === w.location.port &&
-     location.protocol === w.location.protocol);
+function checkCallbackResponse() {
+  var params;
+  if (window.location.hash) {
+    params = qs.parse(window.location.hash.substring(1));
+    if (params.access_token) {
+      return { success: true, body: params };
+    }
+  } else if (window.location.search) {
+    params = qs.parse(window.location.search.substring(1));
+    if (params.error) {
+      return { success: false, body: params };
+    }
+  }
 }
 
 /** @private **/
@@ -453,10 +460,11 @@ var clientIdx = 0;
 
 
 /**
- *
+ * @class
+ * @todo add document
  */
-var Client = function() {
-  this._prefix = 'sf' + clientIdx++;
+var Client = function(prefix) {
+  this._prefix = prefix || 'jsforce' + clientIdx++;
   this.connection = null;
 };
 
@@ -466,6 +474,7 @@ util.inherits(Client, events.EventEmitter);
  *
  */
 Client.prototype.init = function(config) {
+  if (handleCallbackResponse()) { return; }
   this.config = config;
   this.connection = new Connection(config);
   var tokens = this._getTokens();
@@ -490,35 +499,51 @@ Client.prototype.login = function(options, callback) {
   callback = callback || function(){ };
   _.extend(options, this.config);
   var self = this;
+  this._prompt(options, callback);
+};
+
+
+Client.prototype._prompt = function(options, callback) {
+  var self = this;
   var oauth2 = new OAuth2(options);
-  var state = Math.random().toString(36).substring(2);
+  var rand = Math.random().toString(36).substring(2);
+  var state = [ this._prefix, "popup", rand ].join('.');
+  localStorage.setItem("jsforce_state", state);
   var authzUrl = oauth2.getAuthorizationUrl({
     response_type: 'token',
     scope : options.scope,
     state: state
   });
-  var size = options.popup || {};
-  var w = popupWin(authzUrl, size.width || 912, size.height || 513);
+  var size = options.size || {};
+  var pw = popupWin(authzUrl, size.width || 912, size.height || 513);
+  if (!pw) {
+    state = [ this._prefix, "redirect", rand ].join('.');
+    localStorage.setItem("jsforce_state", state);
+    authzUrl = oauth2.getAuthorizationUrl({
+      response_type: 'token',
+      scope : options.scope,
+      state: state
+    });
+    location.href = authzUrl;
+    return;
+  }
+  self._removeTokens();
   var pid = setInterval(function() {
     try {
-      if (w.closed) {
+      if (!pw || pw.closed) {
         clearInterval(pid);
-        callback(null, { status: 'cancel' });
-      } else {
-        var res = checkCallbackResponse(w);
-        w.close();
-        clearInterval(pid);
-        if (res.success && res.body.state === state) {
-          self._storeTokens(res.body);
-          self.connection.initialize({
-            accessToken: res.body.access_token,
-            instanceUrl: res.body.instance_url
-          });
+        var tokens = self._getTokens();
+        if (tokens) {
+          self.connection.initialize(tokens);
           self.emit('connect', self.connection);
-          callback(null, { status: 'connect', body: res.body });
-        } else if (!res.success) {
-          var error = new Error(res.error.error + ": " + res.error.error_description);
-          callback(error);
+          callback(null, { status: 'connect' });
+        } else {
+          var err = self._getError();
+          if (err) {
+            callback(new Error(err.error + ": " + err.error_description));
+          } else {
+            callback(null, { status: 'cancel' });
+          }
         }
       }
     } catch(e) {}
@@ -576,6 +601,24 @@ Client.prototype._removeTokens = function() {
   localStorage.removeItem(this._prefix + '_instance_url');
   localStorage.removeItem(this._prefix + '_issued_at');
   document.cookie = this._prefix + '_loggedin=';
+};
+
+/**
+ * @private
+ */
+Client.prototype._getError = function() {
+  try {
+    var err = JSON.parse(localStorage.getItem(this._prefix + '_error'));
+    localStorage.removeItem(this._prefix + '_error');
+    return err;
+  } catch(e) {}
+};
+
+/**
+ * @private
+ */
+Client.prototype._storeError = function(err) {
+  localStorage.setItem(this._prefix + '_error', JSON.stringify(err));
 };
 
 /**
@@ -2040,7 +2083,12 @@ var Connection = module.exports = function(options) {
    */
   this.cache = new Cache();
 
-
+  // Allow to delegate connection refresh to outer function
+  if (options.refreshFn) {
+    this._refreshDelegate = {
+      refreshToken: options.refreshFn
+    };
+  }
 
   var cacheOptions = {
     key: function(type) { return type ? "describe." + type : "describe"; }
@@ -2206,7 +2254,8 @@ Connection.prototype._request = function(params, callback, options) {
     self.emit('response', response.statusCode, response.body, response);
     // Refresh token if status code requires authentication
     // when oauth2 info and refresh token is available.
-    if (response.statusCode === 401 && self.oauth2 && self.refreshToken) {
+    if (response.statusCode === 401 &&
+        (self._refreshDelegate || (self.oauth2 && self.refreshToken))) {
       // Access token may be refreshed before the response
       if (self._initializedAt > requestTime) {
         onResume();
@@ -2307,7 +2356,8 @@ Connection.prototype._refresh = function() {
   var self = this;
   var logger = this._logger;
   logger.debug("<refresh token>");
-  return this.oauth2.refreshToken(this.refreshToken, function(err, res) {
+  var delegate = this._refreshDelegate || this.oauth2;
+  return delegate.refreshToken(this.refreshToken, function(err, res) {
     if (!err) {
       self.initialize({
         instanceUrl : res.instance_url,
@@ -3774,6 +3824,8 @@ Metadata.prototype.deploy = function(zipInput, options, callback) {
     zipInput.resume();
   } else if (zipInput instanceof Buffer) {
     deferred.resolve(zipInput);
+  } else {
+    throw "Unexpected zipInput type";
   }
 
   var self = this;
@@ -6189,7 +6241,11 @@ var opMap = {
 /** @private **/
 function createFieldExpression(field, value) {
   var op = "$eq";
-  if (_.isObject(value)) {
+
+  // Assume the `$in` operator if value is an array and none was supplied.
+  if (_.isArray(value)) { op = "$in"; }
+  // Otherwise, if an object was passed then process the supplied ops.
+  else if (_.isObject(value)) {
     var _value;
     for (var k in value) {
       if (k[0] === "$") {
@@ -6677,9 +6733,8 @@ var util = _dereq_('util'),
     stream = _dereq_('stream'),
     Promise = _dereq_('./promise');
 
-/**
- *
- */
+/* */
+
 var nodeRequest = _dereq_('request'),
     xhrRequest = _dereq_('./browser/request'),
     canvas = _dereq_('./browser/canvas'),
@@ -6714,6 +6769,7 @@ function streamify(promise, factory) {
  * Class for HTTP request transport
  *
  * @class
+ * @protected
  */
 var Transport = module.exports = function() {};
 
@@ -6752,7 +6808,9 @@ Transport.prototype.httpRequest = function(params, callback, options) {
 /**
  * Class for HTTP request transport using AJAX proxy service
  *
- * @class
+ * @class Transport~ProxyTransport
+ * @protected
+ * @extends Transport
  * @param {String} proxyUrl - AJAX Proxy server URL
  */
 var ProxyTransport = Transport.ProxyTransport = function(proxyUrl) {
@@ -6764,6 +6822,7 @@ util.inherits(ProxyTransport, Transport);
 /**
  * Make HTTP request via AJAX proxy 
  *
+ * @method Transport~ProxyTransport#httpRequest
  * @param {Object} params - HTTP request
  * @param {Callback.<Object>} [callback] - Calback Function
  * @returns {Promise.<Object>}
