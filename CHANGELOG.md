@@ -1,3 +1,14 @@
+## v1.2.0 (May 15, 2014):
+
+* Add `Metadata#read()` method to read metadata info in CRUD method
+
+* Change existing asyncronous CRUD method names of Metadata API to `Metadata#createAsync()`, `Metadata#updateAsync()`, `Metadata#deleteAsync()`, as synchronous APIs are introduced in Metadata API in Spring'14
+
+* Change default API ver. to 30.0
+
+* Fix all errors in asynchronous callback function to raise up to top without being catched in promise chain.
+
+
 ## v1.1.1 (Mar 10, 2014):
 
 * Check `Metadata#deploy()` zipInput argument type to raise error properly when unexpected input comes.
