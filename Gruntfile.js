@@ -21,6 +21,10 @@ module.exports = function(grunt) {
       scripts: {
         files: ["lib/**/*.js" ],
         tasks: ['build']
+      },
+      jsdoc: {
+        files: ["lib/**/*.js" ],
+        tasks: ['jsdoc']
       }
     },
 
@@ -50,6 +54,8 @@ module.exports = function(grunt) {
           }
         ],
         options: {
+          debug: true,
+          transform: [ 'espowerify' ],
           preBundleCB: function(b) {
             var filePath = "./test/config/browser/env.js";
             var env = process.env;
