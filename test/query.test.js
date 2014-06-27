@@ -89,7 +89,7 @@ describe("query", function() {
    *
    */
   describe("query big tables without autoFetch", function() {
-    describe("should scan records in one query fetch", function(done) {
+    it("should scan records in one query fetch", function(done) {
       var records = [];
       var query = conn.query("SELECT Id, Name FROM " + (config.bigTable || 'Account'));
       query.on('record', function(record, i, cnt){
