@@ -234,11 +234,10 @@ describe("connection", function() {
     var extId = "ID" + Date.now();
     var recId;
 
-    describe.only("for not existing record", function() {
+    describe("for not existing record", function() {
       it("should create record successfully", function(done) {
         var rec = { Name : 'New Record' };
         rec[config.upsertField] = extId;
-        debugger;
         conn.sobject(config.upsertTable).upsert(rec, config.upsertField, function(err, ret) {
           if (err) { throw err; }
           assert.ok(ret.success);
