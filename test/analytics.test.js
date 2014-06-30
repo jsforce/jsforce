@@ -110,6 +110,7 @@ describe("analytics", function() {
     it("should return report execution result", function(done) {
       var metadata = { 
         reportMetadata : {
+          historicalSnapshotDates : [],
           reportFilters : [{
             column: 'COMPANY',
             operator: 'contains',
