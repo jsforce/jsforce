@@ -74,10 +74,35 @@ describe("connection", function() {
     });
 
     describe("then retrieve the account", function() {
-      it("sholuld return updated account object", function(done) {
+      it("should return updated account object", function(done) {
         conn.sobject('Account').record(accountId).retrieve(function(err, record) {
           if (err) { throw err; }
           assert.ok(record.Name === 'Hello2');
+          assert.ok(_.isObject(record.attributes));
+        }.check(done));
+      });
+    });
+  });
+
+  describe("update account with options headers", function() {
+    var options = {
+      headers: {
+        'SForce-Auto-Assign': 'FALSE'
+      }
+    };
+
+    it("should update with options headers successfully", function(done) {
+      conn.sobject('Account').record(account.Id).update({ Name : "Hello3" }, options, function(err, ret) {
+        if (err) { throw err; }
+        assert.ok(ret.success);
+      }.check(done));
+    });
+
+    describe("then retrieve the account", function() {
+      it("should return updated account object with options headers set", function(done) {
+        conn.sobject('Account').record(accountId).retrieve(options, function(err, record) {
+          if (err) { throw err; }
+          assert.ok(record.Name === 'Hello3');
           assert.ok(_.isObject(record.attributes));
         }.check(done));
       });
