@@ -13,7 +13,7 @@ module.exports = function(grunt) {
     });
   }
 
-  grunt.initConfig({
+  var cfg = {
 
     pkg: pkg,
 
@@ -28,6 +28,28 @@ module.exports = function(grunt) {
       }
     },
 
+    copy: {
+      lib: {
+        files: [{
+          expand: true,
+          cwd: 'lib/',
+          src: '**/*.js',
+          dest: 'build/__tmp__'
+        }]
+      }
+    },
+
+    extract_required: {
+      core: {
+        files: {
+          'build/__tmp__/core-require.js': [ 'build/__tmp__/*.js' ]
+        },
+        options: {
+          ignore: [ './api/**/*' ]
+        }
+      }
+    },
+
     browserify: {
       options: {
         ignore: [
@@ -36,12 +58,33 @@ module.exports = function(grunt) {
           "test/**/node/*.js"
         ]
       },
-      lib: {
+      all: {
         files: {
-          'build/jsforce.js': [ 'lib/jsforce.js' ]
+          'build/jsforce.js': [ 'build/__tmp__/jsforce.js' ]
         },
         options: {
-          standalone: 'jsforce'
+          browserifyOptions: {
+            standalone: 'jsforce'
+          }
+        }
+      },
+      core: {
+        files: {
+          'build/jsforce-core.js': [ 'build/__tmp__/browser/core.js' ]
+        },
+        options: {
+          browserifyOptions: {
+            standalone: 'jsforce'
+          },
+          transform: [
+            [ 'require-swapper',
+              {
+                baseDir: 'build/__tmp__',
+                fn: "jsforce.require",
+                modules: [ "./api/**/*" ]
+              }
+            ]
+          ]
         }
       },
       test: {
@@ -77,9 +120,13 @@ module.exports = function(grunt) {
           '<%= grunt.template.today("yyyy-mm-dd") %> */'
       },
       lib: {
-        files: {
-          'build/jsforce.min.js': ['build/jsforce.js'],
-        }
+        files: [{
+          expand: true,
+          cwd: 'build/',
+          src: [ 'jsforce*.js', '!jsforce*.min.js' ],
+          dest: 'build/',
+          ext: '.min.js'
+        }]
       }
     },
 
@@ -96,20 +143,48 @@ module.exports = function(grunt) {
     },
 
     clean: {
+      tmp: {
+        src: [ "build/__tmp__/" ]
+      },
       lib: {
         src: [ "build/*.js", "build/*.map" ]
       },
       test: {
-        src: [ "build/test/**.test.js" ]
+        src: [ "build/test/" ]
       },
       doc: {
         src: [ "doc/" ]
       }
     }
+  };
 
+  var apiModules = [ "analytics", "apex", "bulk", "chatter", "metadata", "streaming", "tooling" ];
+  apiModules.forEach(function(apiModule) {
+    var apiModuleClass = apiModule[0].toUpperCase() + apiModule.substring(1);
+    cfg.browserify[apiModule] = {
+      files: [{
+        src: [ 'build/__tmp__/api/' + apiModule + '.js' ],
+        dest: 'build/jsforce-api-' + apiModule + '.js'
+      }],
+      options: {
+        browserifyOptions: {
+          standalone: 'jsforce.modules.api.' + apiModuleClass
+        },
+        transform: [
+          [ 'require-swapper', {
+            baseDir: '__tmp__',
+            fn: "jsforce.require",
+            modules: [ "./*", "util", "events", "stream", "underscore" ]
+          }]
+        ]
+      }
+    };
   });
 
-  grunt.registerTask('build', ['browserify:lib', 'uglify']);
+  grunt.initConfig(cfg);
+
+  grunt.registerTask('browserify:lib', [ 'browserify:all', 'browserify:core' ].concat(apiModules.map(function(am){ return 'browserify:'+am; })));
+  grunt.registerTask('build', ['clean:tmp', 'copy', 'extract_required', 'browserify:lib', 'uglify']);
   grunt.registerTask('default', ['build']);
 
 };
