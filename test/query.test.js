@@ -157,7 +157,7 @@ describe("query", function() {
           setTimeout(function() {
             outStream.sendable = true;
             outStream.emit('drain');
-          }, 1000 * Math.random());
+          }, Math.floor(1000 * Math.random()));
         }
         return outStream.sendable;
       };
