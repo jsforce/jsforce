@@ -6,7 +6,14 @@
     "test/**/*.test.js"
   ],
   "serve_files" : [
-    "build/jsforce.js",
+    "build/jsforce-core.js",
+    "build/jsforce-api-analytics.js",
+    "build/jsforce-api-apex.js",
+    "build/jsforce-api-bulk.js",
+    "build/jsforce-api-chatter.js",
+    "build/jsforce-api-metadata.js",
+    "build/jsforce-api-streaming.js",
+    "build/jsforce-api-tooling.js",
     "build/test/**/*.test.js"
   ],
   "launch_in_ci" : [ "PhantomJS" ]

@@ -193,7 +193,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('browserify:lib', [ 'browserify:all', 'browserify:core' ].concat(apiModules.map(function(am){ return 'browserify:'+am; })));
   grunt.registerTask('build', ['clean:tmp', 'copy', 'extract_required', 'browserify:lib', 'uglify']);
-  grunt.registerTask('test:browser', ['clean', 'copy', 'extract_required', 'browserify:all', 'browserify:test']);
+  grunt.registerTask('test:browser', ['clean', 'copy', 'extract_required', 'browserify' ]);
   grunt.registerTask('default', ['build']);
 
 };
