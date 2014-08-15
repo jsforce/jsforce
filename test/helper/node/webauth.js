@@ -9,7 +9,9 @@ module.exports = function(url, username, password, callback) {
     },
     function(_ph, cb) {
       ph = _ph;
-      ph.createPage(cb);
+      setTimeout(function() {
+        ph.createPage(cb);
+      }, 100);
     },
     function(_page, cb) {
       page = _page;
