@@ -60,7 +60,7 @@ module.exports = function(grunt) {
       },
       all: {
         files: {
-          'build/jsforce.js': [ 'build/__tmp__/jsforce.js' ]
+          'build/jsforce.js': [ 'build/__tmp__/browser/jsforce.js' ]
         },
         options: {
           browserifyOptions: {
@@ -70,7 +70,7 @@ module.exports = function(grunt) {
       },
       core: {
         files: {
-          'build/jsforce-core.js': [ 'build/__tmp__/browser/core.js' ]
+          'build/jsforce-core.js': [ 'build/__tmp__/browser/jsforce.js' ]
         },
         options: {
           browserifyOptions: {
@@ -98,7 +98,15 @@ module.exports = function(grunt) {
         ],
         options: {
           debug: true,
-          transform: [ 'espowerify' ],
+          transform: [ 'espowerify', 
+            [ 'require-swapper',
+              {
+                baseDir: 'lib/',
+                fn: "jsforce.require",
+                modules: [ "./*" ]
+              }
+            ]
+          ],
           preBundleCB: function(b) {
             var filePath = "./test/config/browser/env.js";
             var env = process.env;
@@ -185,6 +193,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('browserify:lib', [ 'browserify:all', 'browserify:core' ].concat(apiModules.map(function(am){ return 'browserify:'+am; })));
   grunt.registerTask('build', ['clean:tmp', 'copy', 'extract_required', 'browserify:lib', 'uglify']);
+  grunt.registerTask('test:browser', ['clean', 'copy', 'extract_required', 'browserify' ]);
   grunt.registerTask('default', ['build']);
 
 };
