@@ -20,16 +20,8 @@ describe("connection", function() {
   /**
    *
    */
-  describe("login", function() {
-    it("should login by username and password", function(done) {
-      conn.login(config.username, config.password, function(err, userInfo) {
-        if (err) { throw err; }
-        assert.ok(_.isString(conn.accessToken));
-        assert.ok(_.isString(userInfo.id));
-        assert.ok(_.isString(userInfo.organizationId));
-        assert.ok(_.isString(userInfo.url));
-      }.check(done));
-    });
+  before(function(done) {
+    testUtils.establishConnection(conn, config, done);
   });
 
   var accountId, account;
@@ -396,7 +388,7 @@ describe("connection", function() {
         }.check(done));
       });
     });
-    
+
     /**
      *
      */
@@ -485,140 +477,6 @@ describe("connection", function() {
       assert.ok(limitInfo.apiUsage.limit > limitInfo.apiUsage.used);
     });
   });
-
-/*------------------------------------------------------------------------*/
-if (testUtils.isNodeJS) {
-
-  /**
-   *
-   */
-  describe("logout by soap api", function() {
-    var sessionInfo;
-    it("should logout", function(done) {
-      sessionInfo = {
-        accessToken : conn.accessToken,
-        instanceUrl : conn.instanceUrl
-      };
-      conn.logout(function(err) {
-        if (err) { throw err; }
-        assert.ok(_.isNull(conn.accessToken));
-      }.check(done));
-    });
-
-    describe("then connect with previous session info", function() {
-      it("should raise authentication error", function(done) {
-        conn = testUtils.createConnection(config);
-        conn.initialize(sessionInfo);
-        setTimeout(function() { // wait a moment
-          conn.query("SELECT Id FROM User", function(err, res) {
-            assert.ok(err && _.isString(err.message));
-          }.check(done));
-        }, 10000);
-      });
-    });
-  });
-
-  /**
-   *
-   */
-  describe("login by oauth2", function() {
-    var newConn = new sf.Connection({
-      oauth2: {
-        clientId : config.clientId,
-        clientSecret : config.clientSecret,
-        redirectUri : config.redirectUri
-      },
-      logLevel : config.logLevel
-    });
-
-    it("should login and get access tokens", function(done) {
-      async.waterfall([
-        function(cb) {
-          authorize(newConn.oauth2.getAuthorizationUrl(), config.username, config.password, cb);
-        },
-        function(params, cb) {
-          newConn.authorize(params.code, cb);
-        }
-      ], function(err, userInfo) {
-        if (err) { return done(err); }
-        assert.ok(_.isString(userInfo.id));
-        assert.ok(_.isString(userInfo.organizationId));
-        assert.ok(_.isString(userInfo.url));
-        assert.ok(_.isString(newConn.accessToken));
-        assert.ok(_.isString(newConn.refreshToken));
-      }.check(done));
-    });
-
-    describe("then do simple query", function() {
-      it("should return some records", function(done) {
-        newConn.query("SELECT Id FROM User", function(err, res) {
-          assert.ok(_.isArray(res.records));
-        }.check(done));
-      });
-    });
-
-    describe("then make access token invalid", function() {
-      var newAccessToken, refreshCount = 0;
-      it("should return responses", function(done) {
-        newConn.accessToken = "invalid access token";
-        newConn.removeAllListeners("refresh");
-        newConn.on("refresh", function(at) {
-          newAccessToken = at;
-          refreshCount++;
-        });
-        newConn.query("SELECT Id FROM User", function(err, res) {
-          assert.ok(refreshCount === 1);
-          assert.ok(_.isString(newAccessToken));
-          assert.ok(_.isArray(res.records));
-        }.check(done));
-      });
-    });
-
-    describe("then make access token invalid and call api in parallel", function() {
-      var newAccessToken, refreshCount = 0;
-      it("should return responses", function(done) {
-        newConn.accessToken = "invalid access token";
-        newConn.removeAllListeners("refresh");
-        newConn.on("refresh", function(at) {
-          newAccessToken = at;
-          refreshCount++;
-        });
-        async.parallel([
-          function(cb) {
-            newConn.query('SELECT Id FROM User', cb);
-          },
-          function(cb) {
-            newConn.describeGlobal(cb);
-          },
-          function(cb) {
-            newConn.sobject('User').describe(cb);
-          }
-        ], function(err, results) {
-          assert.ok(refreshCount === 1);
-          assert.ok(_.isString(newAccessToken));
-          assert.ok(_.isArray(results));
-          assert.ok(_.isArray(results[0].records));
-          assert.ok(_.isArray(results[1].sobjects));
-          assert.ok(_.isArray(results[2].fields));
-        }.check(done));
-      });
-    });
-
-    describe("then expire both access token and refresh token", function() {
-      it("should return error response", function(done) {
-        newConn.accessToken = "invalid access token";
-        newConn.refreshToken = "invalid refresh token";
-        newConn.query("SELECT Id FROM User", function(err) {
-          assert.ok(err instanceof Error);
-          assert.ok(err.name === "invalid_grant");
-        }.check(done));
-      });
-    });
-
-  });
-
-}
-/*------------------------------------------------------------------------*/
 
 });
 
