@@ -513,7 +513,7 @@ if (testUtils.isNodeJS) {
           conn.query("SELECT Id FROM User", function(err, res) {
             assert.ok(err && _.isString(err.message));
           }.check(done));
-        }, 5000);
+        }, 10000);
       });
     });
   });
