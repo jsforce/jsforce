@@ -472,6 +472,20 @@ describe("connection", function() {
   });
 
 
+  /**
+   *
+   */
+  describe("get api limit information", function() {
+    it("should get api usage and its limit in the org", function() {
+      var limitInfo = conn.limitInfo;
+      assert.ok(_.isObject(limitInfo.apiUsage));
+      assert.ok(_.isNumber(limitInfo.apiUsage.used));
+      assert.ok(_.isNumber(limitInfo.apiUsage.limit));
+      assert.ok(limitInfo.apiUsage.used > 0);
+      assert.ok(limitInfo.apiUsage.limit > limitInfo.apiUsage.used);
+    });
+  });
+
 /*------------------------------------------------------------------------*/
 if (testUtils.isNodeJS) {
 
