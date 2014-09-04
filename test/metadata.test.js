@@ -255,6 +255,44 @@ describe("metadata", function() {
     /**
      *
      */
+    describe("upsert metadata synchronously", function() {
+      it("should upsert custom objects", function(done) {
+        var umetadata = [{
+          fullName: 'TestObjectSync2__c',
+          label: 'Upserted Object Sync 2',
+          pluralLabel: 'Upserted Object Sync 2',
+          nameField: {
+            type: 'Text',
+            label: 'Test Object Name'
+          },
+          deploymentStatus: 'Deployed',
+          sharingModel: 'ReadWrite'
+        }, {
+          fullName: 'TestObjectSync3__c',
+          label: 'Upserted Object Sync 3',
+          pluralLabel: 'Upserted Object Sync 3',
+          nameField: {
+            type: 'Text',
+            label: 'Test Object Name'
+          },
+          deploymentStatus: 'Deployed',
+          sharingModel: 'ReadWrite'
+        }];
+        conn.metadata.upsert('CustomObject', umetadata, function(err, results) {
+          if (err) { throw err; }
+          assert.ok(_.isArray(results));
+          assert.ok(results.length === umetadata.length);
+          _.forEach(results, function(result, i) {
+            assert.ok(result.success === true);
+            assert.ok(result.fullName === umetadata[i].fullName);
+          });
+        }.check(done));
+      });
+    });
+
+    /**
+     *
+     */
     describe("rename metadata synchronously", function() {
       it("should rename a custom object", function(done) {
         var oldName = fullNames[0], newName = 'Updated' + oldName;
@@ -276,6 +314,7 @@ describe("metadata", function() {
      */
     describe("delete metadata synchronously", function() {
       it("should delete custom objects", function(done) {
+        fullNames.push('TestObjectSync3__c');
         conn.metadata.delete('CustomObject', fullNames, function(err, results) {
           if (err) { throw err; }
           assert.ok(_.isArray(results));
