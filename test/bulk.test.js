@@ -226,7 +226,8 @@ if (testUtils.isNodeJS) {
       for (var i=0; i<200; i++) {
         records.push({
           Name: 'New Bulk Account #'+(i+1),
-          NumberOfEmployees: 300 * (i+1) 
+          BillingState: 'CA',
+          NumberOfEmployees: 300 * (i+1)
         });
       }
       conn.bulk.load("Account", "insert", records, done);
@@ -235,7 +236,10 @@ if (testUtils.isNodeJS) {
     it("should return updated status", function(done) {
       conn.sobject('Account')
           .find({ Name : { $like : 'New Bulk Account%' }})
-          .update({ Name : '${Name} (Updated)' }, function(err, rets) {
+          .update({
+            Name : '${Name} (Updated)',
+            BillingState: null
+          }, function(err, rets) {
             if (err) { throw err; }
             assert.ok(_.isArray(rets));
             assert.ok(rets.length === 200);
@@ -250,7 +254,7 @@ if (testUtils.isNodeJS) {
     describe("then query updated records", function() {
       it("should return updated records", function(done) {
         conn.sobject('Account')
-            .find({ Name : { $like : 'New Bulk Account%' }}, 'Id, Name', function(err, records) {
+            .find({ Name : { $like : 'New Bulk Account%' }}, 'Id, Name, BillingState', function(err, records) {
               if (err) { throw err; }
               assert.ok(_.isArray(records));
               assert.ok(records.length === 200);
@@ -259,6 +263,7 @@ if (testUtils.isNodeJS) {
                 record = records[i];
                 assert.ok(_.isString(record.Id));
                 assert.ok(/\(Updated\)$/.test(record.Name));
+                assert.ok(record.BillingState === null);
               }
             }.check(done));
       });
