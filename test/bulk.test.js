@@ -182,6 +182,38 @@ if (testUtils.isNodeJS) {
     });
   });
 
+  /**
+   *
+   */
+  describe("bulk query and output to file", function() {
+    it("should get a record stream and file output", function(done) {
+      var file = __dirname + "/data/Account_export.csv";
+      var fstream = fs.createWriteStream(file);
+      var records = [];
+      async.waterfall([
+        function(next) {
+          conn.bulk.query("SELECT Id, Name, NumberOfEmployees FROM Account")
+            .on('record', function(rec) { records.push(rec); })
+            .on('error', function(err) { next(err); })
+            .on('end', function() { next(null, records); })
+            .stream().pipe(fstream);
+        }
+      ], function(err, records) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(records) && records.length > 0);
+        for (var i=0; i<records.length; i++) {
+          var rec = records[i];
+          assert.ok(_.isString(rec.Id));
+          assert.ok(_.isString(rec.Name));
+          assert.ok(_.isString(rec.NumberOfEmployees)); // no type conversion from CSV stream to record
+        }
+        var data = fs.readFileSync(file, "utf-8");
+        assert.ok(data);
+        var lines = data.replace(/[\r\n]+$/, '').split(/[\r\n]/);
+        assert.ok(lines.length === records.length + 1);
+      }.check(done));
+    });
+  });
 }
 /*------------------------------------------------------------------------*/
 
