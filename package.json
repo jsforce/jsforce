@@ -35,7 +35,6 @@
     "jsforce": "./bin/jsforce"
   },
   "dependencies": {
-    "async": "0.1.x",
     "coffee-script": "1.6.x",
     "commander": "2.1.x",
     "co-prompt": "1.0.x",
@@ -48,7 +47,11 @@
     "xml2js": "0.4.x"
   },
   "devDependencies": {
+    "async": "^0.9.0",
     "browserify": "^5.11.0",
+    "envfile": "^1.0.0",
+    "espower-loader": "^0.7.1",
+    "espowerify": "^0.7.1",
     "grunt": "^0.4.5",
     "grunt-browserify": "^3.0.1",
     "grunt-contrib-clean": "^0.6.0",
@@ -57,13 +60,10 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-extract-required": "0.0.6",
     "grunt-jsdoc": "^0.5.6",
-    "envfile": "^1.0.0",
+    "intelli-espower-loader": "^0.2.0",
     "mocha": "^1.21.4",
     "node-phantom": "^0.2.5",
     "power-assert": "^0.7.2",
-    "intelli-espower-loader": "^0.2.0",
-    "espowerify": "^0.7.1",
-    "espower-loader": "^0.7.1",
     "require-swapper": "^0.1.2"
   }
 }
