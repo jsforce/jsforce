@@ -89,7 +89,7 @@ module.exports = {
 };
 
 
-},{"stream":34,"underscore":53}],2:[function(require,module,exports){
+},{"stream":35,"underscore":54}],2:[function(require,module,exports){
 /**
  * @file Browser client connection management class
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -329,7 +329,7 @@ module.exports = new Client();
 
 module.exports.Client = Client;
 
-},{"../connection":7,"../oauth2":13,"events":28,"querystring":33,"underscore":53,"util":37}],3:[function(require,module,exports){
+},{"../connection":7,"../oauth2":13,"events":29,"querystring":34,"underscore":54,"util":38}],3:[function(require,module,exports){
 var jsforce = require('../jsforce');
 var crequire;
 
@@ -471,7 +471,7 @@ module.exports = function(params, callback) {
 };
 
 
-},{"stream":34}],6:[function(require,module,exports){
+},{"stream":35}],6:[function(require,module,exports){
 /**
  * @file Manages asynchronous method response cache
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -685,7 +685,7 @@ Cache.prototype.makeCacheable = function(fn, scope, options) {
 
 module.exports = Cache;
 
-},{"events":28,"underscore":53,"util":37}],7:[function(require,module,exports){
+},{"events":29,"underscore":54,"util":38}],7:[function(require,module,exports){
 (function (Buffer){
 /*global Buffer */
 /**
@@ -1961,7 +1961,7 @@ Connection.prototype.deleted = function (type, start, end, callback) {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"./cache":6,"./csv":9,"./logger":12,"./oauth2":13,"./promise":14,"./query":15,"./sobject":18,"./transport":20,"async":21,"buffer":25,"events":28,"underscore":53,"util":37,"xml2js":56}],8:[function(require,module,exports){
+},{"./cache":6,"./csv":9,"./logger":12,"./oauth2":13,"./promise":14,"./query":15,"./sobject":18,"./transport":20,"async":21,"buffer":25,"events":29,"underscore":54,"util":38,"xml2js":57}],8:[function(require,module,exports){
 module.exports = function(name) { return require(name); };
 require("events");
 require("util");
@@ -1988,7 +1988,7 @@ require("request");
 require("./browser/request");
 require("./browser/canvas");
 require("./browser/jsonp");
-},{"./browser/canvas":1,"./browser/jsonp":4,"./browser/request":5,"./cache":6,"./connection":7,"./csv":9,"./date":10,"./logger":12,"./oauth2":13,"./promise":14,"./query":15,"./record":17,"./record-stream":16,"./sobject":18,"./soql-builder":19,"./transport":20,"async":21,"events":28,"q":38,"querystring":33,"request":23,"stream":34,"underscore":53,"util":37,"xml2js":56}],9:[function(require,module,exports){
+},{"./browser/canvas":1,"./browser/jsonp":4,"./browser/request":5,"./cache":6,"./connection":7,"./csv":9,"./date":10,"./logger":12,"./oauth2":13,"./promise":14,"./query":15,"./record":17,"./record-stream":16,"./sobject":18,"./soql-builder":19,"./transport":20,"async":21,"events":29,"q":39,"querystring":34,"request":23,"stream":35,"underscore":54,"util":38,"xml2js":57}],9:[function(require,module,exports){
 var _      = require('underscore'),
     SfDate = require('./date');
 
@@ -2170,7 +2170,7 @@ module.exports = {
   parseCSV : parseCSV
 };
   
-},{"./date":10,"underscore":53}],10:[function(require,module,exports){
+},{"./date":10,"underscore":54}],10:[function(require,module,exports){
 var _ = require("underscore")._;
 
 /**
@@ -2333,7 +2333,7 @@ function createLiteralBuilder(literal) {
   return function(num) { return new SfDate(literal + ":" + num); };
 }
 
-},{"underscore":53}],11:[function(require,module,exports){
+},{"underscore":54}],11:[function(require,module,exports){
 /* global process */
 /**
  * @file JSforce API root object
@@ -2583,7 +2583,7 @@ _.extend(OAuth2.prototype, /** @lends OAuth2.prototype **/ {
 
 });
 
-},{"./transport":20,"querystring":33,"underscore":53}],14:[function(require,module,exports){
+},{"./transport":20,"querystring":34,"underscore":54}],14:[function(require,module,exports){
 (function (process){
 /*global process*/
 var Q = require('q'),
@@ -2739,7 +2739,7 @@ Deferred.prototype.reject = function() {
 module.exports = Promise;
 
 }).call(this,require('_process'))
-},{"_process":30,"q":38,"underscore":53}],15:[function(require,module,exports){
+},{"_process":31,"q":39,"underscore":54}],15:[function(require,module,exports){
 (function (process){
 /*global process*/
 /**
@@ -3467,7 +3467,7 @@ SubQuery.prototype.execute = function() {
 };
 
 }).call(this,require('_process'))
-},{"./date":10,"./promise":14,"./record-stream":16,"./soql-builder":19,"_process":30,"events":28,"q":38,"underscore":53,"util":37}],16:[function(require,module,exports){
+},{"./date":10,"./promise":14,"./record-stream":16,"./soql-builder":19,"_process":31,"events":29,"q":39,"underscore":54,"util":38}],16:[function(require,module,exports){
 /**
  * @file Represents stream that handles Salesforce record as stream data
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -3773,7 +3773,7 @@ RecordStream.filter = function(fn) {
  * @class RecordStream.CSVStream
  * @extends RecordStream
  */
-var CSVStream = RecordStream.CSVStream = function(config) {
+var CSVStream = RecordStream.CSVStream = function(config, stream) {
   config = config || {};
   this.headers = config.headers;
   this.nullValue = config.nullValue;
@@ -3858,7 +3858,7 @@ CSVStream.prototype.stream = function() {
 };
 
 
-},{"./csv":9,"events":28,"stream":34,"underscore":53,"util":37}],17:[function(require,module,exports){
+},{"./csv":9,"events":29,"stream":35,"underscore":54,"util":38}],17:[function(require,module,exports){
 /**
  * @file Represents Salesforce record information
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -3965,7 +3965,7 @@ RecordReference.prototype.blob = function(fieldName) {
 };
 
 
-},{"underscore":53}],18:[function(require,module,exports){
+},{"underscore":54}],18:[function(require,module,exports){
 /**
  * @file Represents Salesforce SObject
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -4355,7 +4355,7 @@ SObject.prototype.updated = function (start, end, callback) {
 SObject.prototype.deleted = function (start, end, callback) {
   return this._conn.deleted(this.type, start, end, callback);
 };
-},{"./cache":6,"./query":15,"./record":17,"underscore":53}],19:[function(require,module,exports){
+},{"./cache":6,"./query":15,"./record":17,"underscore":54}],19:[function(require,module,exports){
 /**
  * @file Create and build SOQL string from configuration
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -4587,7 +4587,7 @@ function createOrderByClause(sort) {
 exports.createSOQL = createSOQL;
 
 
-},{"./date":10,"underscore":53}],20:[function(require,module,exports){
+},{"./date":10,"underscore":54}],20:[function(require,module,exports){
 (function (process){
 /*global process, Sfdc */
 var util = require('util'),
@@ -4733,7 +4733,7 @@ ProxyTransport.prototype.httpRequest = function(params, callback) {
 };
 
 }).call(this,require('_process'))
-},{"./browser/canvas":1,"./browser/jsonp":4,"./browser/request":5,"./promise":14,"_process":30,"request":23,"stream":34,"util":37}],21:[function(require,module,exports){
+},{"./browser/canvas":1,"./browser/jsonp":4,"./browser/request":5,"./promise":14,"_process":31,"request":23,"stream":35,"util":38}],21:[function(require,module,exports){
 // This file is just added for convenience so this repository can be
 // directly checked out into a project's deps folder
 module.exports = require('./lib/async');
@@ -5434,11 +5434,11 @@ module.exports = require('./lib/async');
 }());
 
 }).call(this,require('_process'))
-},{"_process":30}],23:[function(require,module,exports){
+},{"_process":31}],23:[function(require,module,exports){
 
 },{}],24:[function(require,module,exports){
 module.exports=require(23)
-},{"/Users/stomita/Work/Salesforce/jsforce/node_modules/browserify/lib/_empty.js":23}],25:[function(require,module,exports){
+},{"/Users/stomita/Work/Salesforce/jsforce.publish/node_modules/browserify/lib/_empty.js":23}],25:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -5448,14 +5448,17 @@ module.exports=require(23)
 
 var base64 = require('base64-js')
 var ieee754 = require('ieee754')
+var isArray = require('is-array')
 
 exports.Buffer = Buffer
 exports.SlowBuffer = Buffer
 exports.INSPECT_MAX_BYTES = 50
-Buffer.poolSize = 8192
+Buffer.poolSize = 8192 // not used by this implementation
+
+var kMaxLength = 0x3fffffff
 
 /**
- * If `TYPED_ARRAY_SUPPORT`:
+ * If `Buffer.TYPED_ARRAY_SUPPORT`:
  *   === true    Use Uint8Array implementation (fastest)
  *   === false   Use Object implementation (most compatible, even IE6)
  *
@@ -5473,10 +5476,10 @@ Buffer.poolSize = 8192
  *  - IE10 has a broken `TypedArray.prototype.subarray` function which returns arrays of
  *    incorrect length in some situations.
  *
- * We detect these buggy browsers and set `TYPED_ARRAY_SUPPORT` to `false` so they will
+ * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they will
  * get the Object implementation, which is slower but will work correctly.
  */
-var TYPED_ARRAY_SUPPORT = (function () {
+Buffer.TYPED_ARRAY_SUPPORT = (function () {
   try {
     var buf = new ArrayBuffer(0)
     var arr = new Uint8Array(buf)
@@ -5520,10 +5523,14 @@ function Buffer (subject, encoding, noZero) {
       subject = subject.data
     length = +subject.length > 0 ? Math.floor(+subject.length) : 0
   } else
-    throw new Error('First argument needs to be a number, array or string.')
+    throw new TypeError('must start with number, buffer, array or string')
+
+  if (this.length > kMaxLength)
+    throw new RangeError('Attempt to allocate Buffer larger than maximum ' +
+      'size: 0x' + kMaxLength.toString(16) + ' bytes')
 
   var buf
-  if (TYPED_ARRAY_SUPPORT) {
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
     // Preferred: Return an augmented `Uint8Array` instance for best performance
     buf = Buffer._augment(new Uint8Array(length))
   } else {
@@ -5534,7 +5541,7 @@ function Buffer (subject, encoding, noZero) {
   }
 
   var i
-  if (TYPED_ARRAY_SUPPORT && typeof subject.byteLength === 'number') {
+  if (Buffer.TYPED_ARRAY_SUPPORT && typeof subject.byteLength === 'number') {
     // Speed optimization -- use set if we're copying from a typed array
     buf._set(subject)
   } else if (isArrayish(subject)) {
@@ -5548,7 +5555,7 @@ function Buffer (subject, encoding, noZero) {
     }
   } else if (type === 'string') {
     buf.write(subject, 0, encoding)
-  } else if (type === 'number' && !TYPED_ARRAY_SUPPORT && !noZero) {
+  } else if (type === 'number' && !Buffer.TYPED_ARRAY_SUPPORT && !noZero) {
     for (i = 0; i < length; i++) {
       buf[i] = 0
     }
@@ -5557,8 +5564,25 @@ function Buffer (subject, encoding, noZero) {
   return buf
 }
 
-// STATIC METHODS
-// ==============
+Buffer.isBuffer = function (b) {
+  return !!(b != null && b._isBuffer)
+}
+
+Buffer.compare = function (a, b) {
+  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b))
+    throw new TypeError('Arguments must be Buffers')
+
+  var x = a.length
+  var y = b.length
+  for (var i = 0, len = Math.min(x, y); i < len && a[i] === b[i]; i++) {}
+  if (i !== len) {
+    x = a[i]
+    y = b[i]
+  }
+  if (x < y) return -1
+  if (y < x) return 1
+  return 0
+}
 
 Buffer.isEncoding = function (encoding) {
   switch (String(encoding).toLowerCase()) {
@@ -5579,43 +5603,8 @@ Buffer.isEncoding = function (encoding) {
   }
 }
 
-Buffer.isBuffer = function (b) {
-  return !!(b != null && b._isBuffer)
-}
-
-Buffer.byteLength = function (str, encoding) {
-  var ret
-  str = str.toString()
-  switch (encoding || 'utf8') {
-    case 'hex':
-      ret = str.length / 2
-      break
-    case 'utf8':
-    case 'utf-8':
-      ret = utf8ToBytes(str).length
-      break
-    case 'ascii':
-    case 'binary':
-    case 'raw':
-      ret = str.length
-      break
-    case 'base64':
-      ret = base64ToBytes(str).length
-      break
-    case 'ucs2':
-    case 'ucs-2':
-    case 'utf16le':
-    case 'utf-16le':
-      ret = str.length * 2
-      break
-    default:
-      throw new Error('Unknown encoding')
-  }
-  return ret
-}
-
 Buffer.concat = function (list, totalLength) {
-  assert(isArray(list), 'Usage: Buffer.concat(list[, length])')
+  if (!isArray(list)) throw new TypeError('Usage: Buffer.concat(list[, length])')
 
   if (list.length === 0) {
     return new Buffer(0)
@@ -5641,26 +5630,118 @@ Buffer.concat = function (list, totalLength) {
   return buf
 }
 
-Buffer.compare = function (a, b) {
-  assert(Buffer.isBuffer(a) && Buffer.isBuffer(b), 'Arguments must be Buffers')
-  var x = a.length
-  var y = b.length
-  for (var i = 0, len = Math.min(x, y); i < len && a[i] === b[i]; i++) {}
-  if (i !== len) {
-    x = a[i]
-    y = b[i]
+Buffer.byteLength = function (str, encoding) {
+  var ret
+  str = str + ''
+  switch (encoding || 'utf8') {
+    case 'ascii':
+    case 'binary':
+    case 'raw':
+      ret = str.length
+      break
+    case 'ucs2':
+    case 'ucs-2':
+    case 'utf16le':
+    case 'utf-16le':
+      ret = str.length * 2
+      break
+    case 'hex':
+      ret = str.length >>> 1
+      break
+    case 'utf8':
+    case 'utf-8':
+      ret = utf8ToBytes(str).length
+      break
+    case 'base64':
+      ret = base64ToBytes(str).length
+      break
+    default:
+      ret = str.length
   }
-  if (x < y) {
-    return -1
-  }
-  if (y < x) {
-    return 1
-  }
-  return 0
+  return ret
 }
 
-// BUFFER INSTANCE METHODS
-// =======================
+// pre-set for values that may exist in the future
+Buffer.prototype.length = undefined
+Buffer.prototype.parent = undefined
+
+// toString(encoding, start=0, end=buffer.length)
+Buffer.prototype.toString = function (encoding, start, end) {
+  var loweredCase = false
+
+  start = start >>> 0
+  end = end === undefined || end === Infinity ? this.length : end >>> 0
+
+  if (!encoding) encoding = 'utf8'
+  if (start < 0) start = 0
+  if (end > this.length) end = this.length
+  if (end <= start) return ''
+
+  while (true) {
+    switch (encoding) {
+      case 'hex':
+        return hexSlice(this, start, end)
+
+      case 'utf8':
+      case 'utf-8':
+        return utf8Slice(this, start, end)
+
+      case 'ascii':
+        return asciiSlice(this, start, end)
+
+      case 'binary':
+        return binarySlice(this, start, end)
+
+      case 'base64':
+        return base64Slice(this, start, end)
+
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return utf16leSlice(this, start, end)
+
+      default:
+        if (loweredCase)
+          throw new TypeError('Unknown encoding: ' + encoding)
+        encoding = (encoding + '').toLowerCase()
+        loweredCase = true
+    }
+  }
+}
+
+Buffer.prototype.equals = function (b) {
+  if(!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
+  return Buffer.compare(this, b) === 0
+}
+
+Buffer.prototype.inspect = function () {
+  var str = ''
+  var max = exports.INSPECT_MAX_BYTES
+  if (this.length > 0) {
+    str = this.toString('hex', 0, max).match(/.{2}/g).join(' ')
+    if (this.length > max)
+      str += ' ... '
+  }
+  return '<Buffer ' + str + '>'
+}
+
+Buffer.prototype.compare = function (b) {
+  if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
+  return Buffer.compare(this, b)
+}
+
+// `get` will be removed in Node 0.13+
+Buffer.prototype.get = function (offset) {
+  console.log('.get() is deprecated. Access using array indexes instead.')
+  return this.readUInt8(offset)
+}
+
+// `set` will be removed in Node 0.13+
+Buffer.prototype.set = function (v, offset) {
+  console.log('.set() is deprecated. Access using array indexes instead.')
+  return this.writeUInt8(v, offset)
+}
 
 function hexWrite (buf, string, offset, length) {
   offset = Number(offset) || 0
@@ -5676,14 +5757,14 @@ function hexWrite (buf, string, offset, length) {
 
   // must be an even number of digits
   var strLen = string.length
-  assert(strLen % 2 === 0, 'Invalid hex string')
+  if (strLen % 2 !== 0) throw new Error('Invalid hex string')
 
   if (length > strLen / 2) {
     length = strLen / 2
   }
   for (var i = 0; i < length; i++) {
     var byte = parseInt(string.substr(i * 2, 2), 16)
-    assert(!isNaN(byte), 'Invalid hex string')
+    if (isNaN(byte)) throw new Error('Invalid hex string')
     buf[offset + i] = byte
   }
   return i
@@ -5765,48 +5846,7 @@ Buffer.prototype.write = function (string, offset, length, encoding) {
       ret = utf16leWrite(this, string, offset, length)
       break
     default:
-      throw new Error('Unknown encoding')
-  }
-  return ret
-}
-
-Buffer.prototype.toString = function (encoding, start, end) {
-  var self = this
-
-  encoding = String(encoding || 'utf8').toLowerCase()
-  start = Number(start) || 0
-  end = (end === undefined) ? self.length : Number(end)
-
-  // Fastpath empty strings
-  if (end === start)
-    return ''
-
-  var ret
-  switch (encoding) {
-    case 'hex':
-      ret = hexSlice(self, start, end)
-      break
-    case 'utf8':
-    case 'utf-8':
-      ret = utf8Slice(self, start, end)
-      break
-    case 'ascii':
-      ret = asciiSlice(self, start, end)
-      break
-    case 'binary':
-      ret = binarySlice(self, start, end)
-      break
-    case 'base64':
-      ret = base64Slice(self, start, end)
-      break
-    case 'ucs2':
-    case 'ucs-2':
-    case 'utf16le':
-    case 'utf-16le':
-      ret = utf16leSlice(self, start, end)
-      break
-    default:
-      throw new Error('Unknown encoding')
+      throw new TypeError('Unknown encoding: ' + encoding)
   }
   return ret
 }
@@ -5815,52 +5855,6 @@ Buffer.prototype.toJSON = function () {
   return {
     type: 'Buffer',
     data: Array.prototype.slice.call(this._arr || this, 0)
-  }
-}
-
-Buffer.prototype.equals = function (b) {
-  assert(Buffer.isBuffer(b), 'Argument must be a Buffer')
-  return Buffer.compare(this, b) === 0
-}
-
-Buffer.prototype.compare = function (b) {
-  assert(Buffer.isBuffer(b), 'Argument must be a Buffer')
-  return Buffer.compare(this, b)
-}
-
-// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
-Buffer.prototype.copy = function (target, target_start, start, end) {
-  var source = this
-
-  if (!start) start = 0
-  if (!end && end !== 0) end = this.length
-  if (!target_start) target_start = 0
-
-  // Copy 0 bytes; we're done
-  if (end === start) return
-  if (target.length === 0 || source.length === 0) return
-
-  // Fatal error conditions
-  assert(end >= start, 'sourceEnd < sourceStart')
-  assert(target_start >= 0 && target_start < target.length,
-      'targetStart out of bounds')
-  assert(start >= 0 && start < source.length, 'sourceStart out of bounds')
-  assert(end >= 0 && end <= source.length, 'sourceEnd out of bounds')
-
-  // Are we oob?
-  if (end > this.length)
-    end = this.length
-  if (target.length - target_start < end - start)
-    end = target.length - target_start + start
-
-  var len = end - start
-
-  if (len < 100 || !TYPED_ARRAY_SUPPORT) {
-    for (var i = 0; i < len; i++) {
-      target[i + target_start] = this[i + start]
-    }
-  } else {
-    target._set(this.subarray(start, start + len), target_start)
   }
 }
 
@@ -5949,7 +5943,7 @@ Buffer.prototype.slice = function (start, end) {
   if (end < start)
     end = start
 
-  if (TYPED_ARRAY_SUPPORT) {
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
     return Buffer._augment(this.subarray(start, end))
   } else {
     var sliceLen = end - start
@@ -5961,365 +5955,275 @@ Buffer.prototype.slice = function (start, end) {
   }
 }
 
-// `get` will be removed in Node 0.13+
-Buffer.prototype.get = function (offset) {
-  console.log('.get() is deprecated. Access using array indexes instead.')
-  return this.readUInt8(offset)
-}
-
-// `set` will be removed in Node 0.13+
-Buffer.prototype.set = function (v, offset) {
-  console.log('.set() is deprecated. Access using array indexes instead.')
-  return this.writeUInt8(v, offset)
+/*
+ * Need to make sure that buffer isn't trying to write out of bounds.
+ */
+function checkOffset (offset, ext, length) {
+  if ((offset % 1) !== 0 || offset < 0)
+    throw new RangeError('offset is not uint')
+  if (offset + ext > length)
+    throw new RangeError('Trying to access beyond buffer length')
 }
 
 Buffer.prototype.readUInt8 = function (offset, noAssert) {
-  if (!noAssert) {
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset < this.length, 'Trying to read beyond buffer length')
-  }
-
-  if (offset >= this.length)
-    return
-
+  if (!noAssert)
+    checkOffset(offset, 1, this.length)
   return this[offset]
 }
 
-function readUInt16 (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 1 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  var val
-  if (littleEndian) {
-    val = buf[offset]
-    if (offset + 1 < len)
-      val |= buf[offset + 1] << 8
-  } else {
-    val = buf[offset] << 8
-    if (offset + 1 < len)
-      val |= buf[offset + 1]
-  }
-  return val
-}
-
 Buffer.prototype.readUInt16LE = function (offset, noAssert) {
-  return readUInt16(this, offset, true, noAssert)
+  if (!noAssert)
+    checkOffset(offset, 2, this.length)
+  return this[offset] | (this[offset + 1] << 8)
 }
 
 Buffer.prototype.readUInt16BE = function (offset, noAssert) {
-  return readUInt16(this, offset, false, noAssert)
-}
-
-function readUInt32 (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 3 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  var val
-  if (littleEndian) {
-    if (offset + 2 < len)
-      val = buf[offset + 2] << 16
-    if (offset + 1 < len)
-      val |= buf[offset + 1] << 8
-    val |= buf[offset]
-    if (offset + 3 < len)
-      val = val + (buf[offset + 3] << 24 >>> 0)
-  } else {
-    if (offset + 1 < len)
-      val = buf[offset + 1] << 16
-    if (offset + 2 < len)
-      val |= buf[offset + 2] << 8
-    if (offset + 3 < len)
-      val |= buf[offset + 3]
-    val = val + (buf[offset] << 24 >>> 0)
-  }
-  return val
+  if (!noAssert)
+    checkOffset(offset, 2, this.length)
+  return (this[offset] << 8) | this[offset + 1]
 }
 
 Buffer.prototype.readUInt32LE = function (offset, noAssert) {
-  return readUInt32(this, offset, true, noAssert)
+  if (!noAssert)
+    checkOffset(offset, 4, this.length)
+
+  return ((this[offset]) |
+      (this[offset + 1] << 8) |
+      (this[offset + 2] << 16)) +
+      (this[offset + 3] * 0x1000000)
 }
 
 Buffer.prototype.readUInt32BE = function (offset, noAssert) {
-  return readUInt32(this, offset, false, noAssert)
+  if (!noAssert)
+    checkOffset(offset, 4, this.length)
+
+  return (this[offset] * 0x1000000) +
+      ((this[offset + 1] << 16) |
+      (this[offset + 2] << 8) |
+      this[offset + 3])
 }
 
 Buffer.prototype.readInt8 = function (offset, noAssert) {
-  if (!noAssert) {
-    assert(offset !== undefined && offset !== null,
-        'missing offset')
-    assert(offset < this.length, 'Trying to read beyond buffer length')
-  }
-
-  if (offset >= this.length)
-    return
-
-  var neg = this[offset] & 0x80
-  if (neg)
-    return (0xff - this[offset] + 1) * -1
-  else
-    return this[offset]
-}
-
-function readInt16 (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 1 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  var val = readUInt16(buf, offset, littleEndian, true)
-  var neg = val & 0x8000
-  if (neg)
-    return (0xffff - val + 1) * -1
-  else
-    return val
+  if (!noAssert)
+    checkOffset(offset, 1, this.length)
+  if (!(this[offset] & 0x80))
+    return (this[offset])
+  return ((0xff - this[offset] + 1) * -1)
 }
 
 Buffer.prototype.readInt16LE = function (offset, noAssert) {
-  return readInt16(this, offset, true, noAssert)
+  if (!noAssert)
+    checkOffset(offset, 2, this.length)
+  var val = this[offset] | (this[offset + 1] << 8)
+  return (val & 0x8000) ? val | 0xFFFF0000 : val
 }
 
 Buffer.prototype.readInt16BE = function (offset, noAssert) {
-  return readInt16(this, offset, false, noAssert)
-}
-
-function readInt32 (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 3 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  var val = readUInt32(buf, offset, littleEndian, true)
-  var neg = val & 0x80000000
-  if (neg)
-    return (0xffffffff - val + 1) * -1
-  else
-    return val
+  if (!noAssert)
+    checkOffset(offset, 2, this.length)
+  var val = this[offset + 1] | (this[offset] << 8)
+  return (val & 0x8000) ? val | 0xFFFF0000 : val
 }
 
 Buffer.prototype.readInt32LE = function (offset, noAssert) {
-  return readInt32(this, offset, true, noAssert)
+  if (!noAssert)
+    checkOffset(offset, 4, this.length)
+
+  return (this[offset]) |
+      (this[offset + 1] << 8) |
+      (this[offset + 2] << 16) |
+      (this[offset + 3] << 24)
 }
 
 Buffer.prototype.readInt32BE = function (offset, noAssert) {
-  return readInt32(this, offset, false, noAssert)
-}
+  if (!noAssert)
+    checkOffset(offset, 4, this.length)
 
-function readFloat (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset + 3 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  return ieee754.read(buf, offset, littleEndian, 23, 4)
+  return (this[offset] << 24) |
+      (this[offset + 1] << 16) |
+      (this[offset + 2] << 8) |
+      (this[offset + 3])
 }
 
 Buffer.prototype.readFloatLE = function (offset, noAssert) {
-  return readFloat(this, offset, true, noAssert)
+  if (!noAssert)
+    checkOffset(offset, 4, this.length)
+  return ieee754.read(this, offset, true, 23, 4)
 }
 
 Buffer.prototype.readFloatBE = function (offset, noAssert) {
-  return readFloat(this, offset, false, noAssert)
-}
-
-function readDouble (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset + 7 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  return ieee754.read(buf, offset, littleEndian, 52, 8)
+  if (!noAssert)
+    checkOffset(offset, 4, this.length)
+  return ieee754.read(this, offset, false, 23, 4)
 }
 
 Buffer.prototype.readDoubleLE = function (offset, noAssert) {
-  return readDouble(this, offset, true, noAssert)
+  if (!noAssert)
+    checkOffset(offset, 8, this.length)
+  return ieee754.read(this, offset, true, 52, 8)
 }
 
 Buffer.prototype.readDoubleBE = function (offset, noAssert) {
-  return readDouble(this, offset, false, noAssert)
+  if (!noAssert)
+    checkOffset(offset, 8, this.length)
+  return ieee754.read(this, offset, false, 52, 8)
+}
+
+function checkInt (buf, value, offset, ext, max, min) {
+  if (!Buffer.isBuffer(buf)) throw new TypeError('buffer must be a Buffer instance')
+  if (value > max || value < min) throw new TypeError('value is out of bounds')
+  if (offset + ext > buf.length) throw new TypeError('index out of range')
 }
 
 Buffer.prototype.writeUInt8 = function (value, offset, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset < this.length, 'trying to write beyond buffer length')
-    verifuint(value, 0xff)
-  }
-
-  if (offset >= this.length) return
-
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 1, 0xff, 0)
+  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
   this[offset] = value
   return offset + 1
 }
 
-function writeUInt16 (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 1 < buf.length, 'trying to write beyond buffer length')
-    verifuint(value, 0xffff)
+function objectWriteUInt16 (buf, value, offset, littleEndian) {
+  if (value < 0) value = 0xffff + value + 1
+  for (var i = 0, j = Math.min(buf.length - offset, 2); i < j; i++) {
+    buf[offset + i] = (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
+      (littleEndian ? i : 1 - i) * 8
   }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  for (var i = 0, j = Math.min(len - offset, 2); i < j; i++) {
-    buf[offset + i] =
-        (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
-            (littleEndian ? i : 1 - i) * 8
-  }
-  return offset + 2
 }
 
 Buffer.prototype.writeUInt16LE = function (value, offset, noAssert) {
-  return writeUInt16(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeUInt16BE = function (value, offset, noAssert) {
-  return writeUInt16(this, value, offset, false, noAssert)
-}
-
-function writeUInt32 (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 3 < buf.length, 'trying to write beyond buffer length')
-    verifuint(value, 0xffffffff)
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  for (var i = 0, j = Math.min(len - offset, 4); i < j; i++) {
-    buf[offset + i] =
-        (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
-  }
-  return offset + 4
-}
-
-Buffer.prototype.writeUInt32LE = function (value, offset, noAssert) {
-  return writeUInt32(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeUInt32BE = function (value, offset, noAssert) {
-  return writeUInt32(this, value, offset, false, noAssert)
-}
-
-Buffer.prototype.writeInt8 = function (value, offset, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset < this.length, 'Trying to write beyond buffer length')
-    verifsint(value, 0x7f, -0x80)
-  }
-
-  if (offset >= this.length)
-    return
-
-  if (value >= 0)
-    this.writeUInt8(value, offset, noAssert)
-  else
-    this.writeUInt8(0xff + value + 1, offset, noAssert)
-  return offset + 1
-}
-
-function writeInt16 (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 1 < buf.length, 'Trying to write beyond buffer length')
-    verifsint(value, 0x7fff, -0x8000)
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  if (value >= 0)
-    writeUInt16(buf, value, offset, littleEndian, noAssert)
-  else
-    writeUInt16(buf, 0xffff + value + 1, offset, littleEndian, noAssert)
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 2, 0xffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = value
+    this[offset + 1] = (value >>> 8)
+  } else objectWriteUInt16(this, value, offset, true)
   return offset + 2
 }
 
-Buffer.prototype.writeInt16LE = function (value, offset, noAssert) {
-  return writeInt16(this, value, offset, true, noAssert)
+Buffer.prototype.writeUInt16BE = function (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 2, 0xffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 8)
+    this[offset + 1] = value
+  } else objectWriteUInt16(this, value, offset, false)
+  return offset + 2
 }
 
-Buffer.prototype.writeInt16BE = function (value, offset, noAssert) {
-  return writeInt16(this, value, offset, false, noAssert)
-}
-
-function writeInt32 (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 3 < buf.length, 'Trying to write beyond buffer length')
-    verifsint(value, 0x7fffffff, -0x80000000)
+function objectWriteUInt32 (buf, value, offset, littleEndian) {
+  if (value < 0) value = 0xffffffff + value + 1
+  for (var i = 0, j = Math.min(buf.length - offset, 4); i < j; i++) {
+    buf[offset + i] = (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
   }
+}
 
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  if (value >= 0)
-    writeUInt32(buf, value, offset, littleEndian, noAssert)
-  else
-    writeUInt32(buf, 0xffffffff + value + 1, offset, littleEndian, noAssert)
+Buffer.prototype.writeUInt32LE = function (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 4, 0xffffffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset + 3] = (value >>> 24)
+    this[offset + 2] = (value >>> 16)
+    this[offset + 1] = (value >>> 8)
+    this[offset] = value
+  } else objectWriteUInt32(this, value, offset, true)
   return offset + 4
 }
 
+Buffer.prototype.writeUInt32BE = function (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 4, 0xffffffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 24)
+    this[offset + 1] = (value >>> 16)
+    this[offset + 2] = (value >>> 8)
+    this[offset + 3] = value
+  } else objectWriteUInt32(this, value, offset, false)
+  return offset + 4
+}
+
+Buffer.prototype.writeInt8 = function (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 1, 0x7f, -0x80)
+  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
+  if (value < 0) value = 0xff + value + 1
+  this[offset] = value
+  return offset + 1
+}
+
+Buffer.prototype.writeInt16LE = function (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 2, 0x7fff, -0x8000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = value
+    this[offset + 1] = (value >>> 8)
+  } else objectWriteUInt16(this, value, offset, true)
+  return offset + 2
+}
+
+Buffer.prototype.writeInt16BE = function (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 2, 0x7fff, -0x8000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 8)
+    this[offset + 1] = value
+  } else objectWriteUInt16(this, value, offset, false)
+  return offset + 2
+}
+
 Buffer.prototype.writeInt32LE = function (value, offset, noAssert) {
-  return writeInt32(this, value, offset, true, noAssert)
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = value
+    this[offset + 1] = (value >>> 8)
+    this[offset + 2] = (value >>> 16)
+    this[offset + 3] = (value >>> 24)
+  } else objectWriteUInt32(this, value, offset, true)
+  return offset + 4
 }
 
 Buffer.prototype.writeInt32BE = function (value, offset, noAssert) {
-  return writeInt32(this, value, offset, false, noAssert)
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
+  if (value < 0) value = 0xffffffff + value + 1
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 24)
+    this[offset + 1] = (value >>> 16)
+    this[offset + 2] = (value >>> 8)
+    this[offset + 3] = value
+  } else objectWriteUInt32(this, value, offset, false)
+  return offset + 4
+}
+
+function checkIEEE754 (buf, value, offset, ext, max, min) {
+  if (value > max || value < min) throw new TypeError('value is out of bounds')
+  if (offset + ext > buf.length) throw new TypeError('index out of range')
 }
 
 function writeFloat (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 3 < buf.length, 'Trying to write beyond buffer length')
-    verifIEEE754(value, 3.4028234663852886e+38, -3.4028234663852886e+38)
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
+  if (!noAssert)
+    checkIEEE754(buf, value, offset, 4, 3.4028234663852886e+38, -3.4028234663852886e+38)
   ieee754.write(buf, value, offset, littleEndian, 23, 4)
   return offset + 4
 }
@@ -6333,19 +6237,8 @@ Buffer.prototype.writeFloatBE = function (value, offset, noAssert) {
 }
 
 function writeDouble (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 7 < buf.length,
-        'Trying to write beyond buffer length')
-    verifIEEE754(value, 1.7976931348623157E+308, -1.7976931348623157E+308)
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
+  if (!noAssert)
+    checkIEEE754(buf, value, offset, 8, 1.7976931348623157E+308, -1.7976931348623157E+308)
   ieee754.write(buf, value, offset, littleEndian, 52, 8)
   return offset + 8
 }
@@ -6358,20 +6251,56 @@ Buffer.prototype.writeDoubleBE = function (value, offset, noAssert) {
   return writeDouble(this, value, offset, false, noAssert)
 }
 
+// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
+Buffer.prototype.copy = function (target, target_start, start, end) {
+  var source = this
+
+  if (!start) start = 0
+  if (!end && end !== 0) end = this.length
+  if (!target_start) target_start = 0
+
+  // Copy 0 bytes; we're done
+  if (end === start) return
+  if (target.length === 0 || source.length === 0) return
+
+  // Fatal error conditions
+  if (end < start) throw new TypeError('sourceEnd < sourceStart')
+  if (target_start < 0 || target_start >= target.length)
+    throw new TypeError('targetStart out of bounds')
+  if (start < 0 || start >= source.length) throw new TypeError('sourceStart out of bounds')
+  if (end < 0 || end > source.length) throw new TypeError('sourceEnd out of bounds')
+
+  // Are we oob?
+  if (end > this.length)
+    end = this.length
+  if (target.length - target_start < end - start)
+    end = target.length - target_start + start
+
+  var len = end - start
+
+  if (len < 100 || !Buffer.TYPED_ARRAY_SUPPORT) {
+    for (var i = 0; i < len; i++) {
+      target[i + target_start] = this[i + start]
+    }
+  } else {
+    target._set(this.subarray(start, start + len), target_start)
+  }
+}
+
 // fill(value, start=0, end=buffer.length)
 Buffer.prototype.fill = function (value, start, end) {
   if (!value) value = 0
   if (!start) start = 0
   if (!end) end = this.length
 
-  assert(end >= start, 'end < start')
+  if (end < start) throw new TypeError('end < start')
 
   // Fill 0 bytes; we're done
   if (end === start) return
   if (this.length === 0) return
 
-  assert(start >= 0 && start < this.length, 'start out of bounds')
-  assert(end >= 0 && end <= this.length, 'end out of bounds')
+  if (start < 0 || start >= this.length) throw new TypeError('start out of bounds')
+  if (end < 0 || end > this.length) throw new TypeError('end out of bounds')
 
   var i
   if (typeof value === 'number') {
@@ -6389,26 +6318,13 @@ Buffer.prototype.fill = function (value, start, end) {
   return this
 }
 
-Buffer.prototype.inspect = function () {
-  var out = []
-  var len = this.length
-  for (var i = 0; i < len; i++) {
-    out[i] = toHex(this[i])
-    if (i === exports.INSPECT_MAX_BYTES) {
-      out[i + 1] = '...'
-      break
-    }
-  }
-  return '<Buffer ' + out.join(' ') + '>'
-}
-
 /**
  * Creates a new `ArrayBuffer` with the *copied* memory of the buffer instance.
  * Added in Node 0.12. Only available in browsers that support ArrayBuffer.
  */
 Buffer.prototype.toArrayBuffer = function () {
   if (typeof Uint8Array !== 'undefined') {
-    if (TYPED_ARRAY_SUPPORT) {
+    if (Buffer.TYPED_ARRAY_SUPPORT) {
       return (new Buffer(this)).buffer
     } else {
       var buf = new Uint8Array(this.length)
@@ -6418,7 +6334,7 @@ Buffer.prototype.toArrayBuffer = function () {
       return buf.buffer
     }
   } else {
-    throw new Error('Buffer.toArrayBuffer not supported in this browser')
+    throw new TypeError('Buffer.toArrayBuffer not supported in this browser')
   }
 }
 
@@ -6501,12 +6417,6 @@ function stringtrim (str) {
   return str.replace(/^\s+|\s+$/g, '')
 }
 
-function isArray (subject) {
-  return (Array.isArray || function (subject) {
-    return Object.prototype.toString.call(subject) === '[object Array]'
-  })(subject)
-}
-
 function isArrayish (subject) {
   return isArray(subject) || Buffer.isBuffer(subject) ||
       subject && typeof subject === 'object' &&
@@ -6580,36 +6490,7 @@ function decodeUtf8Char (str) {
   }
 }
 
-/*
- * We have to make sure that the value is a valid integer. This means that it
- * is non-negative. It has no fractional component and that it does not
- * exceed the maximum allowed value.
- */
-function verifuint (value, max) {
-  assert(typeof value === 'number', 'cannot write a non-number as a number')
-  assert(value >= 0, 'specified a negative value for writing an unsigned value')
-  assert(value <= max, 'value is larger than maximum value for type')
-  assert(Math.floor(value) === value, 'value has a fractional component')
-}
-
-function verifsint (value, max, min) {
-  assert(typeof value === 'number', 'cannot write a non-number as a number')
-  assert(value <= max, 'value larger than maximum allowed value')
-  assert(value >= min, 'value smaller than minimum allowed value')
-  assert(Math.floor(value) === value, 'value has a fractional component')
-}
-
-function verifIEEE754 (value, max, min) {
-  assert(typeof value === 'number', 'cannot write a non-number as a number')
-  assert(value <= max, 'value larger than maximum allowed value')
-  assert(value >= min, 'value smaller than minimum allowed value')
-}
-
-function assert (test, message) {
-  if (!test) throw new Error(message || 'Failed assertion')
-}
-
-},{"base64-js":26,"ieee754":27}],26:[function(require,module,exports){
+},{"base64-js":26,"ieee754":27,"is-array":28}],26:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -6818,6 +6699,41 @@ exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
 };
 
 },{}],28:[function(require,module,exports){
+
+/**
+ * isArray
+ */
+
+var isArray = Array.isArray;
+
+/**
+ * toString
+ */
+
+var str = Object.prototype.toString;
+
+/**
+ * Whether or not the given `val`
+ * is an array.
+ *
+ * example:
+ *
+ *        isArray([]);
+ *        // > true
+ *        isArray(arguments);
+ *        // > false
+ *        isArray('');
+ *        // > false
+ *
+ * @param {mixed} val
+ * @return {bool}
+ */
+
+module.exports = isArray || function (val) {
+  return !! val && '[object Array]' == str.call(val);
+};
+
+},{}],29:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -7120,7 +7036,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -7145,7 +7061,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -7210,7 +7126,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -7296,7 +7212,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -7383,13 +7299,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":31,"./encode":32}],34:[function(require,module,exports){
+},{"./decode":32,"./encode":33}],35:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -7518,7 +7434,7 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":28,"inherits":29,"readable-stream/duplex.js":39,"readable-stream/passthrough.js":49,"readable-stream/readable.js":50,"readable-stream/transform.js":51,"readable-stream/writable.js":52}],35:[function(require,module,exports){
+},{"events":29,"inherits":30,"readable-stream/duplex.js":40,"readable-stream/passthrough.js":50,"readable-stream/readable.js":51,"readable-stream/transform.js":52,"readable-stream/writable.js":53}],36:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -7711,14 +7627,14 @@ function base64DetectIncompleteChar(buffer) {
   return incomplete;
 }
 
-},{"buffer":25}],36:[function(require,module,exports){
+},{"buffer":25}],37:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -8308,7 +8224,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":36,"_process":30,"inherits":29}],38:[function(require,module,exports){
+},{"./support/isBuffer":37,"_process":31,"inherits":30}],39:[function(require,module,exports){
 (function (process){
 // vim:ts=4:sts=4:sw=4:
 /*!
@@ -10249,10 +10165,10 @@ return Q;
 });
 
 }).call(this,require('_process'))
-},{"_process":30}],39:[function(require,module,exports){
+},{"_process":31}],40:[function(require,module,exports){
 module.exports = require("./lib/_stream_duplex.js")
 
-},{"./lib/_stream_duplex.js":40}],40:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":41}],41:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -10345,7 +10261,7 @@ function forEach (xs, f) {
 }
 
 }).call(this,require('_process'))
-},{"./_stream_readable":42,"./_stream_writable":44,"_process":30,"core-util-is":45,"inherits":46}],41:[function(require,module,exports){
+},{"./_stream_readable":43,"./_stream_writable":45,"_process":31,"core-util-is":46,"inherits":47}],42:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -10393,7 +10309,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"./_stream_transform":43,"core-util-is":45,"inherits":46}],42:[function(require,module,exports){
+},{"./_stream_transform":44,"core-util-is":46,"inherits":47}],43:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -11348,7 +11264,7 @@ function indexOf (xs, x) {
 }
 
 }).call(this,require('_process'))
-},{"./_stream_duplex":40,"_process":30,"buffer":25,"core-util-is":45,"events":28,"inherits":46,"isarray":47,"stream":34,"string_decoder/":48,"util":24}],43:[function(require,module,exports){
+},{"./_stream_duplex":41,"_process":31,"buffer":25,"core-util-is":46,"events":29,"inherits":47,"isarray":48,"stream":35,"string_decoder/":49,"util":24}],44:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -11559,7 +11475,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"./_stream_duplex":40,"core-util-is":45,"inherits":46}],44:[function(require,module,exports){
+},{"./_stream_duplex":41,"core-util-is":46,"inherits":47}],45:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -12040,7 +11956,7 @@ function endWritable(stream, state, cb) {
 }
 
 }).call(this,require('_process'))
-},{"./_stream_duplex":40,"_process":30,"buffer":25,"core-util-is":45,"inherits":46,"stream":34}],45:[function(require,module,exports){
+},{"./_stream_duplex":41,"_process":31,"buffer":25,"core-util-is":46,"inherits":47,"stream":35}],46:[function(require,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -12150,14 +12066,14 @@ function objectToString(o) {
   return Object.prototype.toString.call(o);
 }
 }).call(this,require("buffer").Buffer)
-},{"buffer":25}],46:[function(require,module,exports){
-module.exports=require(29)
-},{"/Users/stomita/Work/Salesforce/jsforce/node_modules/browserify/node_modules/inherits/inherits_browser.js":29}],47:[function(require,module,exports){
+},{"buffer":25}],47:[function(require,module,exports){
+module.exports=require(30)
+},{"/Users/stomita/Work/Salesforce/jsforce.publish/node_modules/browserify/node_modules/inherits/inherits_browser.js":30}],48:[function(require,module,exports){
 module.exports = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]';
 };
 
-},{}],48:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12380,10 +12296,10 @@ function base64DetectIncompleteChar(buffer) {
   this.charLength = this.charReceived ? 3 : 0;
 }
 
-},{"buffer":25}],49:[function(require,module,exports){
+},{"buffer":25}],50:[function(require,module,exports){
 module.exports = require("./lib/_stream_passthrough.js")
 
-},{"./lib/_stream_passthrough.js":41}],50:[function(require,module,exports){
+},{"./lib/_stream_passthrough.js":42}],51:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Stream = require('stream');
 exports.Readable = exports;
@@ -12392,13 +12308,13 @@ exports.Duplex = require('./lib/_stream_duplex.js');
 exports.Transform = require('./lib/_stream_transform.js');
 exports.PassThrough = require('./lib/_stream_passthrough.js');
 
-},{"./lib/_stream_duplex.js":40,"./lib/_stream_passthrough.js":41,"./lib/_stream_readable.js":42,"./lib/_stream_transform.js":43,"./lib/_stream_writable.js":44,"stream":34}],51:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":41,"./lib/_stream_passthrough.js":42,"./lib/_stream_readable.js":43,"./lib/_stream_transform.js":44,"./lib/_stream_writable.js":45,"stream":35}],52:[function(require,module,exports){
 module.exports = require("./lib/_stream_transform.js")
 
-},{"./lib/_stream_transform.js":43}],52:[function(require,module,exports){
+},{"./lib/_stream_transform.js":44}],53:[function(require,module,exports){
 module.exports = require("./lib/_stream_writable.js")
 
-},{"./lib/_stream_writable.js":44}],53:[function(require,module,exports){
+},{"./lib/_stream_writable.js":45}],54:[function(require,module,exports){
 //     Underscore.js 1.4.4
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -13626,7 +13542,7 @@ module.exports = require("./lib/_stream_writable.js")
 
 }).call(this);
 
-},{}],54:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 // Generated by CoffeeScript 1.7.1
 (function() {
   var xml2js;
@@ -13643,7 +13559,7 @@ module.exports = require("./lib/_stream_writable.js")
 
 }).call(this);
 
-},{"../lib/xml2js":56}],55:[function(require,module,exports){
+},{"../lib/xml2js":57}],56:[function(require,module,exports){
 // Generated by CoffeeScript 1.7.1
 (function() {
   var prefixMatch;
@@ -13664,7 +13580,7 @@ module.exports = require("./lib/_stream_writable.js")
 
 }).call(this);
 
-},{}],56:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 (function (process){
 // Generated by CoffeeScript 1.7.1
 (function() {
@@ -14104,7 +14020,7 @@ module.exports = require("./lib/_stream_writable.js")
 }).call(this);
 
 }).call(this,require('_process'))
-},{"./bom":54,"./processors":55,"_process":30,"events":28,"sax":57,"xmlbuilder":74}],57:[function(require,module,exports){
+},{"./bom":55,"./processors":56,"_process":31,"events":29,"sax":58,"xmlbuilder":75}],58:[function(require,module,exports){
 (function (Buffer){
 // wrapper for non-node envs
 ;(function (sax) {
@@ -15518,7 +15434,7 @@ if (!String.fromCodePoint) {
 })(typeof exports === "undefined" ? sax = {} : exports)
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":25,"stream":34,"string_decoder":35}],58:[function(require,module,exports){
+},{"buffer":25,"stream":35,"string_decoder":36}],59:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLAttribute, create;
@@ -15552,7 +15468,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"lodash-node/modern/objects/create":87}],59:[function(require,module,exports){
+},{"lodash-node/modern/objects/create":88}],60:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLBuilder, XMLDeclaration, XMLDocType, XMLElement, XMLStringifier;
@@ -15622,7 +15538,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLDeclaration":66,"./XMLDocType":67,"./XMLElement":68,"./XMLStringifier":72}],60:[function(require,module,exports){
+},{"./XMLDeclaration":67,"./XMLDocType":68,"./XMLElement":69,"./XMLStringifier":73}],61:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLCData, XMLNode, create,
@@ -15672,7 +15588,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLNode":69,"lodash-node/modern/objects/create":87}],61:[function(require,module,exports){
+},{"./XMLNode":70,"lodash-node/modern/objects/create":88}],62:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLComment, XMLNode, create,
@@ -15722,7 +15638,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLNode":69,"lodash-node/modern/objects/create":87}],62:[function(require,module,exports){
+},{"./XMLNode":70,"lodash-node/modern/objects/create":88}],63:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLDTDAttList, create;
@@ -15795,7 +15711,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"lodash-node/modern/objects/create":87}],63:[function(require,module,exports){
+},{"lodash-node/modern/objects/create":88}],64:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLDTDElement, create, isArray;
@@ -15848,7 +15764,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"lodash-node/modern/objects/create":87,"lodash-node/modern/objects/isArray":89}],64:[function(require,module,exports){
+},{"lodash-node/modern/objects/create":88,"lodash-node/modern/objects/isArray":90}],65:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLDTDEntity, create, isObject;
@@ -15937,7 +15853,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"lodash-node/modern/objects/create":87,"lodash-node/modern/objects/isObject":92}],65:[function(require,module,exports){
+},{"lodash-node/modern/objects/create":88,"lodash-node/modern/objects/isObject":93}],66:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLDTDNotation, create;
@@ -15998,7 +15914,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"lodash-node/modern/objects/create":87}],66:[function(require,module,exports){
+},{"lodash-node/modern/objects/create":88}],67:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLDeclaration, XMLNode, create, isObject,
@@ -16072,7 +15988,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLNode":69,"lodash-node/modern/objects/create":87,"lodash-node/modern/objects/isObject":92}],67:[function(require,module,exports){
+},{"./XMLNode":70,"lodash-node/modern/objects/create":88,"lodash-node/modern/objects/isObject":93}],68:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLDocType, create, isObject;
@@ -16259,7 +16175,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLCData":60,"./XMLComment":61,"./XMLDTDAttList":62,"./XMLDTDElement":63,"./XMLDTDEntity":64,"./XMLDTDNotation":65,"./XMLProcessingInstruction":70,"lodash-node/modern/objects/create":87,"lodash-node/modern/objects/isObject":92}],68:[function(require,module,exports){
+},{"./XMLCData":61,"./XMLComment":62,"./XMLDTDAttList":63,"./XMLDTDElement":64,"./XMLDTDEntity":65,"./XMLDTDNotation":66,"./XMLProcessingInstruction":71,"lodash-node/modern/objects/create":88,"lodash-node/modern/objects/isObject":93}],69:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLAttribute, XMLElement, XMLNode, XMLProcessingInstruction, create, isArray, isFunction, isObject,
@@ -16467,7 +16383,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLAttribute":58,"./XMLNode":69,"./XMLProcessingInstruction":70,"lodash-node/modern/objects/create":87,"lodash-node/modern/objects/isArray":89,"lodash-node/modern/objects/isFunction":91,"lodash-node/modern/objects/isObject":92}],69:[function(require,module,exports){
+},{"./XMLAttribute":59,"./XMLNode":70,"./XMLProcessingInstruction":71,"lodash-node/modern/objects/create":88,"lodash-node/modern/objects/isArray":90,"lodash-node/modern/objects/isFunction":92,"lodash-node/modern/objects/isObject":93}],70:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLNode, isArray, isEmpty, isFunction, isObject,
@@ -16787,7 +16703,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLCData":60,"./XMLComment":61,"./XMLDeclaration":66,"./XMLDocType":67,"./XMLElement":68,"./XMLRaw":71,"./XMLText":73,"lodash-node/modern/objects/isArray":89,"lodash-node/modern/objects/isEmpty":90,"lodash-node/modern/objects/isFunction":91,"lodash-node/modern/objects/isObject":92}],70:[function(require,module,exports){
+},{"./XMLCData":61,"./XMLComment":62,"./XMLDeclaration":67,"./XMLDocType":68,"./XMLElement":69,"./XMLRaw":72,"./XMLText":74,"lodash-node/modern/objects/isArray":90,"lodash-node/modern/objects/isEmpty":91,"lodash-node/modern/objects/isFunction":92,"lodash-node/modern/objects/isObject":93}],71:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLProcessingInstruction, create;
@@ -16839,7 +16755,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"lodash-node/modern/objects/create":87}],71:[function(require,module,exports){
+},{"lodash-node/modern/objects/create":88}],72:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLNode, XMLRaw, create,
@@ -16889,7 +16805,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLNode":69,"lodash-node/modern/objects/create":87}],72:[function(require,module,exports){
+},{"./XMLNode":70,"lodash-node/modern/objects/create":88}],73:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLStringifier,
@@ -17058,7 +16974,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{}],73:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLNode, XMLText, create,
@@ -17109,7 +17025,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLNode":69,"lodash-node/modern/objects/create":87}],74:[function(require,module,exports){
+},{"./XMLNode":70,"lodash-node/modern/objects/create":88}],75:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLBuilder, assign;
@@ -17125,7 +17041,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLBuilder":59,"lodash-node/modern/objects/assign":86}],75:[function(require,module,exports){
+},{"./XMLBuilder":60,"lodash-node/modern/objects/assign":87}],76:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -17167,7 +17083,7 @@ function bind(func, thisArg) {
 
 module.exports = bind;
 
-},{"../internals/createWrapper":80,"../internals/slice":85}],76:[function(require,module,exports){
+},{"../internals/createWrapper":81,"../internals/slice":86}],77:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -17231,7 +17147,7 @@ function baseBind(bindData) {
 
 module.exports = baseBind;
 
-},{"../objects/isObject":92,"./baseCreate":77,"./setBindData":83,"./slice":85}],77:[function(require,module,exports){
+},{"../objects/isObject":93,"./baseCreate":78,"./setBindData":84,"./slice":86}],78:[function(require,module,exports){
 (function (global){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
@@ -17277,7 +17193,7 @@ if (!nativeCreate) {
 module.exports = baseCreate;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../objects/isObject":92,"../utilities/noop":96,"./isNative":81}],78:[function(require,module,exports){
+},{"../objects/isObject":93,"../utilities/noop":97,"./isNative":82}],79:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -17359,7 +17275,7 @@ function baseCreateCallback(func, thisArg, argCount) {
 
 module.exports = baseCreateCallback;
 
-},{"../functions/bind":75,"../support":94,"../utilities/identity":95,"./setBindData":83}],79:[function(require,module,exports){
+},{"../functions/bind":76,"../support":95,"../utilities/identity":96,"./setBindData":84}],80:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -17439,7 +17355,7 @@ function baseCreateWrapper(bindData) {
 
 module.exports = baseCreateWrapper;
 
-},{"../objects/isObject":92,"./baseCreate":77,"./setBindData":83,"./slice":85}],80:[function(require,module,exports){
+},{"../objects/isObject":93,"./baseCreate":78,"./setBindData":84,"./slice":86}],81:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -17547,7 +17463,7 @@ function createWrapper(func, bitmask, partialArgs, partialRightArgs, thisArg, ar
 
 module.exports = createWrapper;
 
-},{"../objects/isFunction":91,"./baseBind":76,"./baseCreateWrapper":79,"./slice":85}],81:[function(require,module,exports){
+},{"../objects/isFunction":92,"./baseBind":77,"./baseCreateWrapper":80,"./slice":86}],82:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -17583,7 +17499,7 @@ function isNative(value) {
 
 module.exports = isNative;
 
-},{}],82:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -17605,7 +17521,7 @@ var objectTypes = {
 
 module.exports = objectTypes;
 
-},{}],83:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -17650,7 +17566,7 @@ var setBindData = !defineProperty ? noop : function(func, value) {
 
 module.exports = setBindData;
 
-},{"../utilities/noop":96,"./isNative":81}],84:[function(require,module,exports){
+},{"../utilities/noop":97,"./isNative":82}],85:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -17690,7 +17606,7 @@ var shimKeys = function(object) {
 
 module.exports = shimKeys;
 
-},{"./objectTypes":82}],85:[function(require,module,exports){
+},{"./objectTypes":83}],86:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -17730,7 +17646,7 @@ function slice(array, start, end) {
 
 module.exports = slice;
 
-},{}],86:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -17802,7 +17718,7 @@ var assign = function(object, source, guard) {
 
 module.exports = assign;
 
-},{"../internals/baseCreateCallback":78,"../internals/objectTypes":82,"./keys":93}],87:[function(require,module,exports){
+},{"../internals/baseCreateCallback":79,"../internals/objectTypes":83,"./keys":94}],88:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -17852,7 +17768,7 @@ function create(prototype, properties) {
 
 module.exports = create;
 
-},{"../internals/baseCreate":77,"./assign":86}],88:[function(require,module,exports){
+},{"../internals/baseCreate":78,"./assign":87}],89:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -17904,7 +17820,7 @@ var forOwn = function(collection, callback, thisArg) {
 
 module.exports = forOwn;
 
-},{"../internals/baseCreateCallback":78,"../internals/objectTypes":82,"./keys":93}],89:[function(require,module,exports){
+},{"../internals/baseCreateCallback":79,"../internals/objectTypes":83,"./keys":94}],90:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -17951,7 +17867,7 @@ var isArray = nativeIsArray || function(value) {
 
 module.exports = isArray;
 
-},{"../internals/isNative":81}],90:[function(require,module,exports){
+},{"../internals/isNative":82}],91:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -18016,7 +17932,7 @@ function isEmpty(value) {
 
 module.exports = isEmpty;
 
-},{"./forOwn":88,"./isFunction":91}],91:[function(require,module,exports){
+},{"./forOwn":89,"./isFunction":92}],92:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -18045,7 +17961,7 @@ function isFunction(value) {
 
 module.exports = isFunction;
 
-},{}],92:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -18086,7 +18002,7 @@ function isObject(value) {
 
 module.exports = isObject;
 
-},{"../internals/objectTypes":82}],93:[function(require,module,exports){
+},{"../internals/objectTypes":83}],94:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -18124,7 +18040,7 @@ var keys = !nativeKeys ? shimKeys : function(object) {
 
 module.exports = keys;
 
-},{"../internals/isNative":81,"../internals/shimKeys":84,"./isObject":92}],94:[function(require,module,exports){
+},{"../internals/isNative":82,"../internals/shimKeys":85,"./isObject":93}],95:[function(require,module,exports){
 (function (global){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
@@ -18168,7 +18084,7 @@ support.funcNames = typeof Function.name == 'string';
 module.exports = support;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./internals/isNative":81}],95:[function(require,module,exports){
+},{"./internals/isNative":82}],96:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -18198,7 +18114,7 @@ function identity(value) {
 
 module.exports = identity;
 
-},{}],96:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
