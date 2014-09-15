@@ -27,9 +27,9 @@ Suported Salesforce APIs are :
 
 See document in http://jsforce.github.io/ .
 
-## Change History
+## Releases
 
-See [changelog](CHANGELOG.md).
+See [Releases](https://github.com/jsforce/jsforce/releases).
 
 ## License
 
