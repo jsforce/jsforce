@@ -140,6 +140,7 @@ describe("metadata", function() {
           assert.ok(results.length === umetadata.length);
           _.forEach(results, function(result, i) {
             assert.ok(result.success === true);
+            assert.ok(result.created === (result.fullName === 'TestObjectSync3__c' ? true : false));
             assert.ok(result.fullName === umetadata[i].fullName);
           });
         }.check(done));
