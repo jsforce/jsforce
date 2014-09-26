@@ -286,6 +286,21 @@ if (testUtils.isNodeJS) {
     });
   });
 
+  describe("bulk update using Query#update, for unmatching query", function() {
+    it("should return empty array records", function(done) {
+      conn.sobject('Account')
+          .find({ CreatedDate : { $lt : new sf.Date('1970-01-01T00:00:00Z') }}) // should not match any records
+          .update({
+            Name: '${Name} (Updated)',
+            BillingState: null
+          }, function(err, rets) {
+            if (err) { throw err; }
+            assert.ok(_.isArray(rets));
+            assert.ok(rets.length === 0);
+          }.check(done));
+    });
+  });
+
   /**
    *
    */
@@ -306,7 +321,19 @@ if (testUtils.isNodeJS) {
     });
   });
 
-  // for graceful shutdown remaining jobs to close...
+  describe("bulk delete using Query#destroy, for unmatching query", function() {
+    it("should return empty array records", function(done) {
+      conn.sobject('Account')
+          .find({ CreatedDate : { $lt : new sf.Date('1970-01-01T00:00:00Z') }})
+          .destroy(function(err, rets) {
+            if (err) { throw err; }
+            assert.ok(_.isArray(rets));
+            assert.ok(rets.length === 0);
+          }.check(done));
+    });
+  });
+
+  // graceful shutdown to wait remaining jobs to close...
   after(function(done) {
     setTimeout(function() { done(); }, 2000);
   });
