@@ -13,7 +13,7 @@ var async  = require('async'),
  */
 describe("bulk", function() {
 
-  this.timeout(40000); // set timeout to 40 sec.
+  this.timeout(20000); // set timeout to 20 sec.
 
   var conn = new testUtils.createConnection(config);
 
@@ -83,6 +83,14 @@ describe("bulk", function() {
         }
       }.check(done));
     });
+
+    it("should fail when no input is given", function(done) {
+      conn.bulk.load('Account', 'update', [], function(err, rets) {
+        assert.ok(err);
+        assert.ok(err.name === 'ClientInputError');
+      }.check(done));
+    });
+
   });
 
   /**
@@ -109,6 +117,14 @@ describe("bulk", function() {
         }
       }.check(done));
     });
+
+    it("should fail when no input is given", function(done) {
+      conn.bulk.load('Account', 'delete', [], function(err, rets) {
+        assert.ok(err);
+        assert.ok(err.name === 'ClientInputError');
+      }.check(done));
+    });
+
   });
 
 /*------------------------------------------------------------------------*/
@@ -270,6 +286,21 @@ if (testUtils.isNodeJS) {
     });
   });
 
+  describe("bulk update using Query#update, for unmatching query", function() {
+    it("should return empty array records", function(done) {
+      conn.sobject('Account')
+          .find({ CreatedDate : { $lt : new sf.Date('1970-01-01T00:00:00Z') }}) // should not match any records
+          .update({
+            Name: '${Name} (Updated)',
+            BillingState: null
+          }, function(err, rets) {
+            if (err) { throw err; }
+            assert.ok(_.isArray(rets));
+            assert.ok(rets.length === 0);
+          }.check(done));
+    });
+  });
+
   /**
    *
    */
@@ -288,6 +319,23 @@ if (testUtils.isNodeJS) {
             }
           }.check(done));
     });
+  });
+
+  describe("bulk delete using Query#destroy, for unmatching query", function() {
+    it("should return empty array records", function(done) {
+      conn.sobject('Account')
+          .find({ CreatedDate : { $lt : new sf.Date('1970-01-01T00:00:00Z') }})
+          .destroy(function(err, rets) {
+            if (err) { throw err; }
+            assert.ok(_.isArray(rets));
+            assert.ok(rets.length === 0);
+          }.check(done));
+    });
+  });
+
+  // graceful shutdown to wait remaining jobs to close...
+  after(function(done) {
+    setTimeout(function() { done(); }, 2000);
   });
 
 });
