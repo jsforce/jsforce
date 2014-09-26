@@ -35,10 +35,11 @@
     "jsforce": "./bin/jsforce"
   },
   "dependencies": {
+    "co-prompt": "1.0.x",
     "coffee-script": "1.6.x",
     "commander": "2.1.x",
-    "co-prompt": "1.0.x",
     "faye": "1.0.x",
+    "inherits": "^2.0.1",
     "open": "0.0.4",
     "q": "0.9.x",
     "readable-stream": "1.1.x",
