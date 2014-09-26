@@ -4,7 +4,7 @@
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
 
-var util    = jsforce.require('util'),
+var inherits = require('inherits'),
     _       = jsforce.require('underscore'),
     Promise = require('../promise');
 
@@ -234,7 +234,7 @@ var Resource = function(chatter, url, queryParams) {
   this._url = url;
 };
 
-util.inherits(Resource, Request);
+inherits(Resource, Request);
 
 /**
  * Create a new resource
@@ -301,7 +301,7 @@ Resource.prototype["delete"] = function(callback) {
   }).thenCall(callback);
 };
 
-},{"../promise":2}],2:[function(require,module,exports){
+},{"../promise":2,"inherits":4}],2:[function(require,module,exports){
 (function (process){
 /*global process*/
 var Q = require('q'),
@@ -457,7 +457,7 @@ Deferred.prototype.reject = function() {
 module.exports = Promise;
 
 }).call(this,require('_process'))
-},{"_process":3,"q":4}],3:[function(require,module,exports){
+},{"_process":3,"q":5}],3:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -523,6 +523,31 @@ process.chdir = function (dir) {
 };
 
 },{}],4:[function(require,module,exports){
+if (typeof Object.create === 'function') {
+  // implementation from standard node.js 'util' module
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    ctor.prototype = Object.create(superCtor.prototype, {
+      constructor: {
+        value: ctor,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+  };
+} else {
+  // old school shim for old browsers
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    var TempCtor = function () {}
+    TempCtor.prototype = superCtor.prototype
+    ctor.prototype = new TempCtor()
+    ctor.prototype.constructor = ctor
+  }
+}
+
+},{}],5:[function(require,module,exports){
 (function (process){
 // vim:ts=4:sts=4:sw=4:
 /*!
