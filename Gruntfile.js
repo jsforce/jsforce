@@ -120,6 +120,20 @@ module.exports = function(grunt) {
       }
     },
 
+    "string-replace": {
+      lib: {
+        files: {
+          'build/' : [ 'build/jsforce.js', 'build/jsforce*[!.min].js' ]
+        },
+        options: {
+          replacements: [{
+            pattern: new RegExp(__dirname, 'g'),
+            replacement: '.'
+          }]
+        }
+      }
+    },
+
     uglify: {
       options: {
         sourceMap: true,
@@ -192,7 +206,7 @@ module.exports = function(grunt) {
   grunt.initConfig(cfg);
 
   grunt.registerTask('browserify:lib', [ 'browserify:all', 'browserify:core' ].concat(apiModules.map(function(am){ return 'browserify:'+am; })));
-  grunt.registerTask('build', ['clean:tmp', 'copy', 'extract_required', 'browserify:lib', 'uglify']);
+  grunt.registerTask('build', ['clean:tmp', 'copy', 'extract_required', 'browserify:lib', 'string-replace', 'uglify']);
   grunt.registerTask('test:browser', ['clean', 'copy', 'extract_required', 'browserify' ]);
   grunt.registerTask('default', ['build']);
 
