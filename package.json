@@ -61,6 +61,7 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-extract-required": "0.0.6",
     "grunt-jsdoc": "^0.5.6",
+    "grunt-string-replace": "^1.0.0",
     "intelli-espower-loader": "^0.2.0",
     "mocha": "^1.21.4",
     "node-phantom": "^0.2.5",

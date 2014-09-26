@@ -314,7 +314,7 @@ module.exports = Apex;
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
 
-var util         = jsforce.require('util'),
+var inherits     = require('inherits'),
     stream       = jsforce.require('stream'),
     Stream       = stream.Stream,
     events       = jsforce.require('events'),
@@ -350,7 +350,15 @@ var Job = function(bulk, type, operation, options, jobId) {
   this._batches = {};
 };
 
-util.inherits(Job, events.EventEmitter);
+inherits(Job, events.EventEmitter);
+
+/**
+ * @typedef {Object} Bulk~JobInfo
+ * @prop {String} id - Job ID
+ * @prop {String} object - Object type name
+ * @prop {String} operation - Operation type of the job
+ * @prop {String} state - Job status
+ */
 
 /**
  * Return latest jobInfo from cache
@@ -447,7 +455,7 @@ Job.prototype.batch = function(batchId) {
 };
 
 /**
- * Check the job status from server
+ * Check the latest job status from server
  *
  * @method Bulk~Job#check
  * @param {Callback.<Bulk~JobInfo>} [callback] - Callback function
@@ -609,14 +617,14 @@ var Batch = function(job, batchId) {
   this._deferred = Promise.defer();
 };
 
-util.inherits(Batch, RecordStream);
+inherits(Batch, RecordStream);
 
 /**
  * Execute batch operation
  *
  * @method Bulk~Batch#execute
- * @param {Array.<Record>|stream.Stream|String} [input] - Input source for batch operation. Accepts array of records, CSv string, and CSV data input stream.
- * @param {Callback.<Array.<RecordResult>>} [callback] - Callback function
+ * @param {Array.<Record>|stream.Stream|String} [input] - Input source for batch operation. Accepts array of records, CSV string, and CSV data input stream in insert/update/upsert/delete/hardDelete operation, SOQL string in query operation.
+ * @param {Callback.<Array.<RecordResult>|Array.<BatchResultInfo>>} [callback] - Callback function
  * @returns {Bulk~Batch}
  */
 Batch.prototype.run =
@@ -726,10 +734,16 @@ Batch.prototype.end = function(record) {
   this._csvStream.end();
 };
 
-
+/**
+ * @typedef {Object} Bulk~BatchInfo
+ * @prop {String} id - Batch ID
+ * @prop {String} jobId - Job ID
+ * @prop {String} state - Batch state
+ * @prop {String} stateMessage - Batch state message
+ */
 
 /**
- * Check batch status in server
+ * Check the latest batch status in server
  *
  * @method Bulk~Batch#check
  * @param {Callback.<Bulk~BatchInfo>} [callback] - Callback function
@@ -757,7 +771,7 @@ Batch.prototype.check = function(callback) {
 
 
 /**
- * Polling the batch result and retrieve 
+ * Polling the batch result and retrieve
  *
  * @method Bulk~Batch#poll
  * @param {Number} interval - Polling interval in milliseconds
@@ -801,11 +815,18 @@ Batch.prototype.poll = function(interval, timeout) {
 };
 
 /**
+ * @typedef {Object} Bulk~BatchResultInfo
+ * @prop {String} id - Batch result ID
+ * @prop {String} batchId - Batch ID which includes this batch result.
+ * @prop {String} jobId - Job ID which includes this batch result.
+ */
+
+/**
  * Retrieve batch result
  *
  * @method Bulk~Batch#retrieve
- * @param {Callback.<Array.<RecordResult>>} [callback] - Callback function
- * @returns {Promise.<Array.<RecordResult>|Array.<Bulk~BatchResultReference>>}
+ * @param {Callback.<Array.<RecordResult>|Array.<Bulk~BatchResultInfo>>} [callback] - Callback function
+ * @returns {Promise.<Array.<RecordResult>|Array.<Bulk~BatchResultInfo>>}
  */
 Batch.prototype.retrieve = function(callback) {
   var self = this;
@@ -898,7 +919,7 @@ var BatchStream = function(batch) {
   this.writable = true;
 };
 
-util.inherits(BatchStream, Stream);
+inherits(BatchStream, Stream);
 
 /**
  * @private
@@ -933,54 +954,25 @@ BatchStream.prototype._getRequestStream = function() {
  * @override
  */
 BatchStream.prototype.write = function(data) {
-  var batch = this.batch;
-  if (!batch.job.id) {
-    this._queue(data);
-    return;
-  }
-  return this._getRequestStream().write(data);
+  var self = this;
+  this.batch.job.open().then(function() {
+    self._getRequestStream().write(data);
+  }, function(err) {
+    self.emit('error', err);
+  });
 };
 
 /**
  * @override
  */
 BatchStream.prototype.end = function(data) {
-  var batch = this.batch;
-  if (!batch.job.id) {
-    this._ending = true;
-    if (data) {
-      this._queue(data);
-    }
-    return;
-  }
+  var self = this;
   this.writable = false;
-  this._getRequestStream().end(data);
-};
-
-/**
- * @private
- */
-BatchStream.prototype._queue = function(data) {
-  var bstream = this;
-  var batch = this.batch;
-  var job = batch.job;
-  if (!this._buffer) {
-    this._buffer = [];
-    job.open(function(err) {
-      if (err) {
-        batch.emit("error", err);
-        return;
-      }
-      bstream._buffer.forEach(function(data) {
-        bstream.write(data);
-      });
-      if (bstream._ending) {
-        bstream.end();
-      }
-      bstream._buffer = [];
-    });
-  }
-  this._buffer.push(data);
+  this.batch.job.open().then(function() {
+    self._getRequestStream().end(data);
+  }, function(err) {
+    self.emit('error', err);
+  });
 };
 
 /*--------------------------------------------*/
@@ -1019,11 +1011,10 @@ Bulk.prototype._request = function(params, callback) {
     beforesend: function(conn, params) {
       params.headers["X-SFDC-SESSION"] = conn.accessToken;
     },
-    parseError: function(err) {
-      return {
-        code: err.error.exceptionCode,
-        message: err.error.exceptionMessage
-      };
+    parseError: function(error) {
+      var err = new Error(error.error.exceptionMessage)
+      err.code = err.name = error.error.exceptionCode;
+      return err;
     }
   };
   delete params.path;
@@ -1033,13 +1024,13 @@ Bulk.prototype._request = function(params, callback) {
 
 /**
  * Create and start bulkload job and batch
- * 
+ *
  * @param {String} type - SObject type
  * @param {String} operation - Bulk load operation ('insert', 'update', 'upsert', 'delete', or 'hardDelete')
  * @param {Object} [options] - Options for bulk loading operation
  * @param {String} [options.extIdField] - External ID field name (used when upsert operation).
- * @param {Array.<Record>|stream.Stream|String} [input] - Input source for bulkload. Accepts array of records, CSv string, and CSV data input stream.
- * @param {Callback.<Array.<RecordResult>>} [callback] - Callback function
+ * @param {Array.<Record>|stream.Stream|String} [input] - Input source for bulkload. Accepts array of records, CSV string, and CSV data input stream in insert/update/upsert/delete/hardDelete operation, SOQL string in query operation.
+ * @param {Callback.<Array.<RecordResult>|Array.<Bulk~BatchResultInfo>>} [callback] - Callback function
  * @returns {Bulk~Batch}
  */
 Bulk.prototype.load = function(type, operation, options, input, callback) {
@@ -1090,14 +1081,12 @@ Bulk.prototype.query = function(soql) {
  * Create a new job instance
  *
  * @param {String} type - SObject type
- * @param {String} operation - Bulk load operation ('insert', 'update', 'upsert', 'delete', or 'hardDelete')
+ * @param {String} operation - Bulk load operation ('insert', 'update', 'upsert', 'delete', 'hardDelete', or 'query')
  * @param {Object} [options] - Options for bulk loading operation
  * @returns {Bulk~Job}
  */
 Bulk.prototype.createJob = function(type, operation, options) {
-  var job = new Job(this, type, operation, options);
-  job.open();
-  return job;
+  return new Job(this, type, operation, options);
 };
 
 /**
@@ -1116,13 +1105,13 @@ Bulk.prototype.job = function(jobId) {
 module.exports = Bulk;
 
 }).call(this,require('_process'))
-},{"../connection":12,"../csv":13,"../promise":17,"../record-stream":19,"_process":35}],4:[function(require,module,exports){
+},{"../connection":12,"../csv":13,"../promise":17,"../record-stream":19,"_process":33,"inherits":40}],4:[function(require,module,exports){
 /**
  * @file Manages Salesforce Chatter REST API calls
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
 
-var util    = jsforce.require('util'),
+var inherits = require('inherits'),
     _       = jsforce.require('underscore'),
     Promise = require('../promise');
 
@@ -1352,7 +1341,7 @@ var Resource = function(chatter, url, queryParams) {
   this._url = url;
 };
 
-util.inherits(Resource, Request);
+inherits(Resource, Request);
 
 /**
  * Create a new resource
@@ -1419,7 +1408,7 @@ Resource.prototype["delete"] = function(callback) {
   }).thenCall(callback);
 };
 
-},{"../promise":17}],5:[function(require,module,exports){
+},{"../promise":17,"inherits":40}],5:[function(require,module,exports){
 (function (process,Buffer){
 /*global process, Buffer */
 /**
@@ -1427,7 +1416,7 @@ Resource.prototype["delete"] = function(callback) {
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
 
-var util    = jsforce.require('util'),
+var inherits = require('inherits'),
     events  = jsforce.require('events'),
     stream  = jsforce.require('stream'),
     Stream  = stream.Stream,
@@ -1505,6 +1494,12 @@ Metadata.prototype.createAsync = function(type, metadata, callback) {
 };
 
 /**
+ * @typedef {Object} Metadata~SaveResult
+ * @prop {Boolean} success - True if metadata is successfully saved
+ * @prop {String} fullName - Full name of metadata object
+ */
+
+/**
  * @private
  */
 function convertToSaveResult(result) {
@@ -1514,9 +1509,25 @@ function convertToSaveResult(result) {
 }
 
 /**
+ * @typedef {Object} Metadata~UpsertResult
+ * @prop {Boolean} success - True if metadata is successfully saved
+ * @prop {String} fullName - Full name of metadata object
+ * @prop {Boolean} created - True if metadata is newly created
+ */
+
+/**
+ * @private
+ */
+function convertToUpsertResult(result) {
+  var upsertResult = convertToSaveResult(result)
+  upsertResult.created = upsertResult.created === 'true';
+  return upsertResult;
+}
+
+/**
  * Synonym of Metadata#create().
  *
- * @method createSync
+ * @method Metadata#createSync
  * @param {String} type - The type of metadata to create
  * @param {Metadata~MetadataInfo|Array.<Metadata~MetadataInfo>} metadata - Metadata to create
  * @param {Callback.<Metadata~SaveResult|Array.<Metadata~SaveResult>>} [callback] - Callback function
@@ -1559,7 +1570,7 @@ function convertToMetadataInfo(rec) {
  * @method Metadata#readSync
  * @param {String} type - The type of metadata to read
  * @param {String|Array.<String>} fullNames - full name(s) of metadata objects to read
- * @param {Callback.<Metadata~ReadResult|Array.<Metadata~ReadResult>>} [callback] - Callback function
+ * @param {Callback.<Metadata~MetadataInfo|Array.<Metadata~MetadataInfo>>} [callback] - Callback function
  * @returns {Promise.<Array.<Metadata~MetadataInfo|Array.<Metadata~MetadataInfo>>>}
  */
 /**
@@ -1568,7 +1579,7 @@ function convertToMetadataInfo(rec) {
  * @method Metadata#read
  * @param {String} type - The type of metadata to read
  * @param {String|Array.<String>} fullNames - full name(s) of metadata objects to read
- * @param {Callback.<Metadata~ReadResult|Array.<Metadata~ReadResult>>} [callback] - Callback function
+ * @param {Callback.<Metadata~MetadataInfo|Array.<Metadata~MetadataInfo>>} [callback] - Callback function
  * @returns {Promise.<Array.<Metadata~MetadataInfo|Array.<Metadata~MetadataInfo>>>}
  */
 Metadata.prototype.readSync =
@@ -1642,8 +1653,8 @@ Metadata.prototype.update = function(type, metadata, callback) {
  *
  * @param {String} type - The type of metadata to upsert
  * @param {Metadata~MetadataInfo|Array.<Metadata~MetadataInfo>} metadata - Upserting metadata
- * @param {Callback.<Metadata~SaveResult|Array.<Metadata~SaveResult>>} [callback] - Callback function
- * @returns {Promise.<Metadata~SaveResult|Array.<Metadata~SaveResult>>}
+ * @param {Callback.<Metadata~UpsertResult|Array.<Metadata~UpsertResult>>} [callback] - Callback function
+ * @returns {Promise.<Metadata~UpsertResult|Array.<Metadata~UpsertResult>>}
  */
 Metadata.prototype.upsertSync =
 Metadata.prototype.upsert = function(type, metadata, callback) {
@@ -1654,7 +1665,7 @@ Metadata.prototype.upsert = function(type, metadata, callback) {
   var isArray = _.isArray(metadata);
   metadata = isArray ? _.map(metadata, convert) : convert(metadata);
   return this._invoke("upsertMetadata", { metadata: metadata }).then(function(results) {
-    return _.isArray(results) ? _.map(results, convertToSaveResult) : convertToSaveResult(results);
+    return _.isArray(results) ? _.map(results, convertToUpsertResult) : convertToUpsertResult(results);
   }).thenCall(callback);
 };
 
@@ -1974,7 +1985,7 @@ var AsyncResultLocator = function(meta, results, isArray) {
   this._isArray = isArray;
 };
 
-util.inherits(AsyncResultLocator, events.EventEmitter);
+inherits(AsyncResultLocator, events.EventEmitter);
 
 /**
  * Promise/A+ interface
@@ -2107,7 +2118,7 @@ var RetrieveResultLocator = function(meta, result) {
   RetrieveResultLocator.super_.call(this, meta, result);
 };
 
-util.inherits(RetrieveResultLocator, AsyncResultLocator);
+inherits(RetrieveResultLocator, AsyncResultLocator);
 
 /**
  * @typedef {Object} Metadata~RetrieveResult
@@ -2166,7 +2177,7 @@ var DeployResultLocator = function(meta, result) {
   DeployResultLocator.super_.call(this, meta, result);
 };
 
-util.inherits(DeployResultLocator, AsyncResultLocator);
+inherits(DeployResultLocator, AsyncResultLocator);
 
 /**
  * @typedef {Object} Metadata~DeployResult
@@ -2212,14 +2223,14 @@ DeployResultLocator.prototype.complete = function(includeDetails, callback) {
 };
 
 }).call(this,require('_process'),require("buffer").Buffer)
-},{"../promise":17,"../soap":21,"_process":35,"buffer":29}],6:[function(require,module,exports){
+},{"../promise":17,"../soap":21,"_process":33,"buffer":27,"inherits":40}],6:[function(require,module,exports){
 /**
  * @file Manages Streaming APIs
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
 
 var events = jsforce.require('events'),
-    util   = jsforce.require('util'),
+    inherits = require('inherits'),
     Faye   = require('faye');
 
 /**
@@ -2277,7 +2288,7 @@ var Streaming = function(conn) {
   this._conn = conn;
 };
 
-util.inherits(Streaming, events.EventEmitter);
+inherits(Streaming, events.EventEmitter);
 
 /** @private **/
 Streaming.prototype._createClient = function() {
@@ -2334,7 +2345,7 @@ Streaming.prototype.unsubscribe = function(name, listener) {
 
 module.exports = Streaming;
 
-},{"faye":41}],7:[function(require,module,exports){
+},{"faye":39,"inherits":40}],7:[function(require,module,exports){
 /**
  * @file Manages Tooling APIs
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -2733,6 +2744,7 @@ module.exports = {
 };
 },{}],10:[function(require,module,exports){
 var stream = jsforce.require('stream');
+var _ = jsforce.require('underscore');
 
 module.exports = function(params, callback) {
   var xhr = new XMLHttpRequest();
@@ -2768,9 +2780,13 @@ module.exports = function(params, callback) {
   }
   xhr.onreadystatechange = function() {
     if (xhr.readyState === 4) {
-      var headers = {
-        "content-type": xhr.getResponseHeader("content-type")
-      };
+      var headerNames = getResponseHeaderNames(xhr);
+      var headers = {}
+      _.forEach(headerNames, function(headerName) {
+        if (headerName) {
+          headers[headerName] = xhr.getResponseHeader(headerName);
+        }
+      });
       response = {
         statusCode: xhr.status,
         headers: headers,
@@ -2789,6 +2805,13 @@ module.exports = function(params, callback) {
   return str;
 };
 
+function getResponseHeaderNames(xhr) {
+  var headerLines = (xhr.getAllResponseHeaders() || "").split(/[\r\n]+/);
+  return _.map(headerLines, function(headerLine) {
+    return headerLine.split(/\s*:/)[0].toLowerCase();
+  });
+}
+
 
 },{}],11:[function(require,module,exports){
 /**
@@ -2796,7 +2819,7 @@ module.exports = function(params, callback) {
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
 var events = jsforce.require('events'),
-    util   = jsforce.require('util'),
+    inherits = require('inherits'),
     _      = jsforce.require('underscore')._;
 
 /**
@@ -2811,7 +2834,7 @@ var CacheEntry = function() {
   this.fetching = false;
 };
 
-util.inherits(CacheEntry, events.EventEmitter);
+inherits(CacheEntry, events.EventEmitter);
 
 /**
  * Get value in the cache entry
@@ -3004,7 +3027,7 @@ Cache.prototype.makeCacheable = function(fn, scope, options) {
 
 module.exports = Cache;
 
-},{}],12:[function(require,module,exports){
+},{"inherits":40}],12:[function(require,module,exports){
 (function (Buffer){
 /*global Buffer */
 /**
@@ -3012,8 +3035,7 @@ module.exports = Cache;
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
 var events  = jsforce.require('events'),
-    util    = jsforce.require('util'),
-    async   = require('async'),
+    inherits = require('inherits'),
     _       = jsforce.require('underscore')._,
     Promise = require('./promise'),
     Logger  = require('./logger'),
@@ -3159,7 +3181,7 @@ var Connection = module.exports = function(options) {
   this.initialize(options);
 };
 
-util.inherits(Connection, events.EventEmitter);
+inherits(Connection, events.EventEmitter);
 
 /**
  * Initialize connection.
@@ -3314,8 +3336,6 @@ Connection.prototype._request = function(params, callback, options) {
 
     logger.debug("<response> status=" + response.statusCode + ", url=" + params.url);
 
-    self.emit('response', response.statusCode, response.body, response);
-
     // log api usage and its quota
     if (response.headers && response.headers["sforce-limit-info"]) {
       var apiUsage = response.headers["sforce-limit-info"].match(/api\-usage=(\d+)\/(\d+)/)
@@ -3328,6 +3348,8 @@ Connection.prototype._request = function(params, callback, options) {
         };
       }
     }
+
+    self.emit('response', response.statusCode, response.body, response);
 
     // Refresh token if status code requires authentication
     // when oauth2 info and refresh token is available.
@@ -4280,7 +4302,7 @@ Connection.prototype.deleted = function (type, start, end, callback) {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"./api/analytics":1,"./api/apex":2,"./api/bulk":3,"./api/chatter":4,"./api/metadata":5,"./api/streaming":6,"./api/tooling":7,"./cache":11,"./csv":13,"./logger":15,"./oauth2":16,"./promise":17,"./query":18,"./sobject":22,"./transport":24,"async":25,"buffer":29,"xml2js":59}],13:[function(require,module,exports){
+},{"./api/analytics":1,"./api/apex":2,"./api/bulk":3,"./api/chatter":4,"./api/metadata":5,"./api/streaming":6,"./api/tooling":7,"./cache":11,"./csv":13,"./logger":15,"./oauth2":16,"./promise":17,"./query":18,"./sobject":22,"./transport":24,"buffer":27,"inherits":40,"xml2js":58}],13:[function(require,module,exports){
 var _      = jsforce.require('underscore'),
     SfDate = require('./date');
 
@@ -4864,7 +4886,7 @@ _.extend(OAuth2.prototype, /** @lends OAuth2.prototype **/ {
 
 });
 
-},{"./transport":24,"querystring":38}],17:[function(require,module,exports){
+},{"./transport":24,"querystring":36}],17:[function(require,module,exports){
 (function (process){
 /*global process*/
 var Q = require('q'),
@@ -5020,14 +5042,14 @@ Deferred.prototype.reject = function() {
 module.exports = Promise;
 
 }).call(this,require('_process'))
-},{"_process":35,"q":42}],18:[function(require,module,exports){
+},{"_process":33,"q":41}],18:[function(require,module,exports){
 (function (process){
 /*global process*/
 /**
  * @file Manages query for records in Salesforce 
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
-var util   = jsforce.require('util'),
+var inherits = require('inherits'),
     events = jsforce.require('events'),
     _      = jsforce.require('underscore')._,
     Q      = require('q'),
@@ -5075,7 +5097,7 @@ var Query = module.exports = function(conn, config, locator) {
   this._deferred = Q.defer();
 };
 
-util.inherits(Query, RecordStream);
+inherits(Query, RecordStream);
 
 /**
  * Select fields to include in the returning result
@@ -5623,7 +5645,7 @@ Query.prototype.pipe = function() {
  * @method Query#destroy
  * @param {String} [type] - SObject type. Required for SOQL based query object.
  * @param {Callback.<Array.<RecordResult>>} [callback] - Callback function
- * @returns {Bulk~Batch}
+ * @returns {Promise.<Array.<RecordResult>>}
  */
 Query.prototype["delete"] =
 Query.prototype.del =
@@ -5636,7 +5658,17 @@ Query.prototype.destroy = function(type, callback) {
   if (!type) {
     throw new Error("SOQL based query needs SObject type information to bulk delete.");
   }
-  return this.pipe(this._conn.sobject(type).deleteBulk(callback));
+  var batch = this._conn.sobject(type).deleteBulk();
+  var deferred = Promise.defer();
+  var handleError = function(err) {
+    if (err.name === 'ClientInputError') { deferred.resolve([]); } // if batch input receives no records
+    else { deferred.reject(err); }
+  };
+  this.on('error', handleError)
+    .pipe(batch)
+    .on('response', function(res) { deferred.resolve(res); })
+    .on('error', handleError);
+  return deferred.promise.thenCall(callback);
 };
 
 /**
@@ -5645,7 +5677,7 @@ Query.prototype.destroy = function(type, callback) {
  * @param {Record|RecordMapFunction} mapping - Mapping record or record mapping function
  * @param {String} [type] - SObject type. Required for SOQL based query object.
  * @param {Callback.<Array.<RecordResult>>} [callback] - Callback function
- * @returns {Bulk~Batch}
+ * @returns {Promise.<Array.<RecordResult>>}
  */
 Query.prototype.update = function(mapping, type, callback) {
   if (typeof type === 'function') {
@@ -5657,7 +5689,19 @@ Query.prototype.update = function(mapping, type, callback) {
     throw new Error("SOQL based query needs SObject type information to bulk update.");
   }
   var updateStream = _.isFunction(mapping) ? RecordStream.map(mapping) : RecordStream.recordMapStream(mapping);
-  return this.pipe(updateStream).pipe(this._conn.sobject(type).updateBulk(callback));
+  var batch = this._conn.sobject(type).updateBulk();
+  var deferred = Promise.defer();
+  var handleError = function(err) {
+    if (err.name === 'ClientInputError') { deferred.resolve([]); } // if batch input receives no records
+    else { deferred.reject(err); }
+  };
+  this.on('error', handleError)
+    .pipe(updateStream)
+    .on('error', handleError)
+    .pipe(batch)
+    .on('response', function(res) { deferred.resolve(res); })
+    .on('error', handleError);
+  return deferred.promise.thenCall(callback);
 };
 
 /**
@@ -5715,7 +5759,7 @@ var SubQuery = function(conn, parent, config) {
   this._parent = parent;
 };
 
-util.inherits(SubQuery, Query);
+inherits(SubQuery, Query);
 
 /**
  * @method Query~SubQuery#include
@@ -5748,7 +5792,7 @@ SubQuery.prototype.execute = function() {
 };
 
 }).call(this,require('_process'))
-},{"./date":14,"./promise":17,"./record-stream":19,"./soql-builder":23,"_process":35,"q":42}],19:[function(require,module,exports){
+},{"./date":14,"./promise":17,"./record-stream":19,"./soql-builder":23,"_process":33,"inherits":40,"q":41}],19:[function(require,module,exports){
 /**
  * @file Represents stream that handles Salesforce record as stream data
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -5756,7 +5800,7 @@ SubQuery.prototype.execute = function() {
 var events = jsforce.require('events'),
     Stream = jsforce.require('stream'),
     PassThrough = Stream.PassThrough,
-    util   = jsforce.require('util'),
+    inherits = require('inherits'),
     _      = jsforce.require('underscore'),
     CSV    = require('./csv');
 
@@ -5780,7 +5824,7 @@ var RecordStream = module.exports = function() {
   });
 };
 
-util.inherits(RecordStream, events.EventEmitter);
+inherits(RecordStream, events.EventEmitter);
 
 
 /*--- Output Record Stream methods (Sendable) ---*/
@@ -6068,7 +6112,7 @@ var CSVStream = RecordStream.CSVStream = function(config, stream) {
   this._stream.on('end', function(data) { self._handleEnd(data); });
 };
 
-util.inherits(CSVStream, RecordStream);
+inherits(CSVStream, RecordStream);
 
 /**
  *
@@ -6139,7 +6183,7 @@ CSVStream.prototype.stream = function() {
 };
 
 
-},{"./csv":13}],20:[function(require,module,exports){
+},{"./csv":13,"inherits":40}],20:[function(require,module,exports){
 /**
  * @file Represents Salesforce record information
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -6383,7 +6427,7 @@ SOAP.prototype._createEnvelope = function(message) {
   ].join('');
 };
 
-},{"./transport":24,"xml2js":59}],22:[function(require,module,exports){
+},{"./transport":24,"xml2js":58}],22:[function(require,module,exports){
 /**
  * @file Represents Salesforce SObject
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -7008,7 +7052,7 @@ exports.createSOQL = createSOQL;
 },{"./date":14}],24:[function(require,module,exports){
 (function (process){
 /*global process, Sfdc */
-var util = jsforce.require('util'),
+var inherits = require('inherits'),
     stream = jsforce.require('stream'),
     Promise = require('./promise');
 
@@ -7117,7 +7161,7 @@ var ProxyTransport = Transport.ProxyTransport = function(proxyUrl) {
   this._proxyUrl = proxyUrl;
 };
 
-util.inherits(ProxyTransport, Transport);
+inherits(ProxyTransport, Transport);
 
 /**
  * Make HTTP request via AJAX proxy
@@ -7151,712 +7195,11 @@ ProxyTransport.prototype.httpRequest = function(params, callback) {
 };
 
 }).call(this,require('_process'))
-},{"./browser/canvas":8,"./browser/jsonp":9,"./browser/request":10,"./promise":17,"_process":35,"request":27}],25:[function(require,module,exports){
-// This file is just added for convenience so this repository can be
-// directly checked out into a project's deps folder
-module.exports = require('./lib/async');
+},{"./browser/canvas":8,"./browser/jsonp":9,"./browser/request":10,"./promise":17,"_process":33,"inherits":40,"request":25}],25:[function(require,module,exports){
 
-},{"./lib/async":26}],26:[function(require,module,exports){
-(function (process){
-/*global setTimeout: false, console: false */
-(function () {
-
-    var async = {};
-
-    // global on the server, window in the browser
-    var root = this,
-        previous_async = root.async;
-
-    if (typeof module !== 'undefined' && module.exports) {
-        module.exports = async;
-    }
-    else {
-        root.async = async;
-    }
-
-    async.noConflict = function () {
-        root.async = previous_async;
-        return async;
-    };
-
-    //// cross-browser compatiblity functions ////
-
-    var _forEach = function (arr, iterator) {
-        if (arr.forEach) {
-            return arr.forEach(iterator);
-        }
-        for (var i = 0; i < arr.length; i += 1) {
-            iterator(arr[i], i, arr);
-        }
-    };
-
-    var _map = function (arr, iterator) {
-        if (arr.map) {
-            return arr.map(iterator);
-        }
-        var results = [];
-        _forEach(arr, function (x, i, a) {
-            results.push(iterator(x, i, a));
-        });
-        return results;
-    };
-
-    var _reduce = function (arr, iterator, memo) {
-        if (arr.reduce) {
-            return arr.reduce(iterator, memo);
-        }
-        _forEach(arr, function (x, i, a) {
-            memo = iterator(memo, x, i, a);
-        });
-        return memo;
-    };
-
-    var _keys = function (obj) {
-        if (Object.keys) {
-            return Object.keys(obj);
-        }
-        var keys = [];
-        for (var k in obj) {
-            if (obj.hasOwnProperty(k)) {
-                keys.push(k);
-            }
-        }
-        return keys;
-    };
-
-    //// exported async module functions ////
-
-    //// nextTick implementation with browser-compatible fallback ////
-    if (typeof process === 'undefined' || !(process.nextTick)) {
-        async.nextTick = function (fn) {
-            setTimeout(fn, 0);
-        };
-    }
-    else {
-        async.nextTick = process.nextTick;
-    }
-
-    async.forEach = function (arr, iterator, callback) {
-        callback = callback || function () {};
-        if (!arr.length) {
-            return callback();
-        }
-        var completed = 0;
-        _forEach(arr, function (x) {
-            iterator(x, function (err) {
-                if (err) {
-                    callback(err);
-                    callback = function () {};
-                }
-                else {
-                    completed += 1;
-                    if (completed === arr.length) {
-                        callback(null);
-                    }
-                }
-            });
-        });
-    };
-
-    async.forEachSeries = function (arr, iterator, callback) {
-        callback = callback || function () {};
-        if (!arr.length) {
-            return callback();
-        }
-        var completed = 0;
-        var iterate = function () {
-            iterator(arr[completed], function (err) {
-                if (err) {
-                    callback(err);
-                    callback = function () {};
-                }
-                else {
-                    completed += 1;
-                    if (completed === arr.length) {
-                        callback(null);
-                    }
-                    else {
-                        iterate();
-                    }
-                }
-            });
-        };
-        iterate();
-    };
-
-    async.forEachLimit = function (arr, limit, iterator, callback) {
-        callback = callback || function () {};
-        if (!arr.length || limit <= 0) {
-            return callback();
-        }
-        var completed = 0;
-        var started = 0;
-        var running = 0;
-
-        (function replenish () {
-            if (completed === arr.length) {
-                return callback();
-            }
-
-            while (running < limit && started < arr.length) {
-                started += 1;
-                running += 1;
-                iterator(arr[started - 1], function (err) {
-                    if (err) {
-                        callback(err);
-                        callback = function () {};
-                    }
-                    else {
-                        completed += 1;
-                        running -= 1;
-                        if (completed === arr.length) {
-                            callback();
-                        }
-                        else {
-                            replenish();
-                        }
-                    }
-                });
-            }
-        })();
-    };
-
-
-    var doParallel = function (fn) {
-        return function () {
-            var args = Array.prototype.slice.call(arguments);
-            return fn.apply(null, [async.forEach].concat(args));
-        };
-    };
-    var doSeries = function (fn) {
-        return function () {
-            var args = Array.prototype.slice.call(arguments);
-            return fn.apply(null, [async.forEachSeries].concat(args));
-        };
-    };
-
-
-    var _asyncMap = function (eachfn, arr, iterator, callback) {
-        var results = [];
-        arr = _map(arr, function (x, i) {
-            return {index: i, value: x};
-        });
-        eachfn(arr, function (x, callback) {
-            iterator(x.value, function (err, v) {
-                results[x.index] = v;
-                callback(err);
-            });
-        }, function (err) {
-            callback(err, results);
-        });
-    };
-    async.map = doParallel(_asyncMap);
-    async.mapSeries = doSeries(_asyncMap);
-
-
-    // reduce only has a series version, as doing reduce in parallel won't
-    // work in many situations.
-    async.reduce = function (arr, memo, iterator, callback) {
-        async.forEachSeries(arr, function (x, callback) {
-            iterator(memo, x, function (err, v) {
-                memo = v;
-                callback(err);
-            });
-        }, function (err) {
-            callback(err, memo);
-        });
-    };
-    // inject alias
-    async.inject = async.reduce;
-    // foldl alias
-    async.foldl = async.reduce;
-
-    async.reduceRight = function (arr, memo, iterator, callback) {
-        var reversed = _map(arr, function (x) {
-            return x;
-        }).reverse();
-        async.reduce(reversed, memo, iterator, callback);
-    };
-    // foldr alias
-    async.foldr = async.reduceRight;
-
-    var _filter = function (eachfn, arr, iterator, callback) {
-        var results = [];
-        arr = _map(arr, function (x, i) {
-            return {index: i, value: x};
-        });
-        eachfn(arr, function (x, callback) {
-            iterator(x.value, function (v) {
-                if (v) {
-                    results.push(x);
-                }
-                callback();
-            });
-        }, function (err) {
-            callback(_map(results.sort(function (a, b) {
-                return a.index - b.index;
-            }), function (x) {
-                return x.value;
-            }));
-        });
-    };
-    async.filter = doParallel(_filter);
-    async.filterSeries = doSeries(_filter);
-    // select alias
-    async.select = async.filter;
-    async.selectSeries = async.filterSeries;
-
-    var _reject = function (eachfn, arr, iterator, callback) {
-        var results = [];
-        arr = _map(arr, function (x, i) {
-            return {index: i, value: x};
-        });
-        eachfn(arr, function (x, callback) {
-            iterator(x.value, function (v) {
-                if (!v) {
-                    results.push(x);
-                }
-                callback();
-            });
-        }, function (err) {
-            callback(_map(results.sort(function (a, b) {
-                return a.index - b.index;
-            }), function (x) {
-                return x.value;
-            }));
-        });
-    };
-    async.reject = doParallel(_reject);
-    async.rejectSeries = doSeries(_reject);
-
-    var _detect = function (eachfn, arr, iterator, main_callback) {
-        eachfn(arr, function (x, callback) {
-            iterator(x, function (result) {
-                if (result) {
-                    main_callback(x);
-                    main_callback = function () {};
-                }
-                else {
-                    callback();
-                }
-            });
-        }, function (err) {
-            main_callback();
-        });
-    };
-    async.detect = doParallel(_detect);
-    async.detectSeries = doSeries(_detect);
-
-    async.some = function (arr, iterator, main_callback) {
-        async.forEach(arr, function (x, callback) {
-            iterator(x, function (v) {
-                if (v) {
-                    main_callback(true);
-                    main_callback = function () {};
-                }
-                callback();
-            });
-        }, function (err) {
-            main_callback(false);
-        });
-    };
-    // any alias
-    async.any = async.some;
-
-    async.every = function (arr, iterator, main_callback) {
-        async.forEach(arr, function (x, callback) {
-            iterator(x, function (v) {
-                if (!v) {
-                    main_callback(false);
-                    main_callback = function () {};
-                }
-                callback();
-            });
-        }, function (err) {
-            main_callback(true);
-        });
-    };
-    // all alias
-    async.all = async.every;
-
-    async.sortBy = function (arr, iterator, callback) {
-        async.map(arr, function (x, callback) {
-            iterator(x, function (err, criteria) {
-                if (err) {
-                    callback(err);
-                }
-                else {
-                    callback(null, {value: x, criteria: criteria});
-                }
-            });
-        }, function (err, results) {
-            if (err) {
-                return callback(err);
-            }
-            else {
-                var fn = function (left, right) {
-                    var a = left.criteria, b = right.criteria;
-                    return a < b ? -1 : a > b ? 1 : 0;
-                };
-                callback(null, _map(results.sort(fn), function (x) {
-                    return x.value;
-                }));
-            }
-        });
-    };
-
-    async.auto = function (tasks, callback) {
-        callback = callback || function () {};
-        var keys = _keys(tasks);
-        if (!keys.length) {
-            return callback(null);
-        }
-
-        var results = {};
-
-        var listeners = [];
-        var addListener = function (fn) {
-            listeners.unshift(fn);
-        };
-        var removeListener = function (fn) {
-            for (var i = 0; i < listeners.length; i += 1) {
-                if (listeners[i] === fn) {
-                    listeners.splice(i, 1);
-                    return;
-                }
-            }
-        };
-        var taskComplete = function () {
-            _forEach(listeners.slice(0), function (fn) {
-                fn();
-            });
-        };
-
-        addListener(function () {
-            if (_keys(results).length === keys.length) {
-                callback(null, results);
-                callback = function () {};
-            }
-        });
-
-        _forEach(keys, function (k) {
-            var task = (tasks[k] instanceof Function) ? [tasks[k]]: tasks[k];
-            var taskCallback = function (err) {
-                if (err) {
-                    callback(err);
-                    // stop subsequent errors hitting callback multiple times
-                    callback = function () {};
-                }
-                else {
-                    var args = Array.prototype.slice.call(arguments, 1);
-                    if (args.length <= 1) {
-                        args = args[0];
-                    }
-                    results[k] = args;
-                    taskComplete();
-                }
-            };
-            var requires = task.slice(0, Math.abs(task.length - 1)) || [];
-            var ready = function () {
-                return _reduce(requires, function (a, x) {
-                    return (a && results.hasOwnProperty(x));
-                }, true) && !results.hasOwnProperty(k);
-            };
-            if (ready()) {
-                task[task.length - 1](taskCallback, results);
-            }
-            else {
-                var listener = function () {
-                    if (ready()) {
-                        removeListener(listener);
-                        task[task.length - 1](taskCallback, results);
-                    }
-                };
-                addListener(listener);
-            }
-        });
-    };
-
-    async.waterfall = function (tasks, callback) {
-        callback = callback || function () {};
-        if (!tasks.length) {
-            return callback();
-        }
-        var wrapIterator = function (iterator) {
-            return function (err) {
-                if (err) {
-                    callback(err);
-                    callback = function () {};
-                }
-                else {
-                    var args = Array.prototype.slice.call(arguments, 1);
-                    var next = iterator.next();
-                    if (next) {
-                        args.push(wrapIterator(next));
-                    }
-                    else {
-                        args.push(callback);
-                    }
-                    async.nextTick(function () {
-                        iterator.apply(null, args);
-                    });
-                }
-            };
-        };
-        wrapIterator(async.iterator(tasks))();
-    };
-
-    async.parallel = function (tasks, callback) {
-        callback = callback || function () {};
-        if (tasks.constructor === Array) {
-            async.map(tasks, function (fn, callback) {
-                if (fn) {
-                    fn(function (err) {
-                        var args = Array.prototype.slice.call(arguments, 1);
-                        if (args.length <= 1) {
-                            args = args[0];
-                        }
-                        callback.call(null, err, args);
-                    });
-                }
-            }, callback);
-        }
-        else {
-            var results = {};
-            async.forEach(_keys(tasks), function (k, callback) {
-                tasks[k](function (err) {
-                    var args = Array.prototype.slice.call(arguments, 1);
-                    if (args.length <= 1) {
-                        args = args[0];
-                    }
-                    results[k] = args;
-                    callback(err);
-                });
-            }, function (err) {
-                callback(err, results);
-            });
-        }
-    };
-
-    async.series = function (tasks, callback) {
-        callback = callback || function () {};
-        if (tasks.constructor === Array) {
-            async.mapSeries(tasks, function (fn, callback) {
-                if (fn) {
-                    fn(function (err) {
-                        var args = Array.prototype.slice.call(arguments, 1);
-                        if (args.length <= 1) {
-                            args = args[0];
-                        }
-                        callback.call(null, err, args);
-                    });
-                }
-            }, callback);
-        }
-        else {
-            var results = {};
-            async.forEachSeries(_keys(tasks), function (k, callback) {
-                tasks[k](function (err) {
-                    var args = Array.prototype.slice.call(arguments, 1);
-                    if (args.length <= 1) {
-                        args = args[0];
-                    }
-                    results[k] = args;
-                    callback(err);
-                });
-            }, function (err) {
-                callback(err, results);
-            });
-        }
-    };
-
-    async.iterator = function (tasks) {
-        var makeCallback = function (index) {
-            var fn = function () {
-                if (tasks.length) {
-                    tasks[index].apply(null, arguments);
-                }
-                return fn.next();
-            };
-            fn.next = function () {
-                return (index < tasks.length - 1) ? makeCallback(index + 1): null;
-            };
-            return fn;
-        };
-        return makeCallback(0);
-    };
-
-    async.apply = function (fn) {
-        var args = Array.prototype.slice.call(arguments, 1);
-        return function () {
-            return fn.apply(
-                null, args.concat(Array.prototype.slice.call(arguments))
-            );
-        };
-    };
-
-    var _concat = function (eachfn, arr, fn, callback) {
-        var r = [];
-        eachfn(arr, function (x, cb) {
-            fn(x, function (err, y) {
-                r = r.concat(y || []);
-                cb(err);
-            });
-        }, function (err) {
-            callback(err, r);
-        });
-    };
-    async.concat = doParallel(_concat);
-    async.concatSeries = doSeries(_concat);
-
-    async.whilst = function (test, iterator, callback) {
-        if (test()) {
-            iterator(function (err) {
-                if (err) {
-                    return callback(err);
-                }
-                async.whilst(test, iterator, callback);
-            });
-        }
-        else {
-            callback();
-        }
-    };
-
-    async.until = function (test, iterator, callback) {
-        if (!test()) {
-            iterator(function (err) {
-                if (err) {
-                    return callback(err);
-                }
-                async.until(test, iterator, callback);
-            });
-        }
-        else {
-            callback();
-        }
-    };
-
-    async.queue = function (worker, concurrency) {
-        var workers = 0;
-        var q = {
-            tasks: [],
-            concurrency: concurrency,
-            saturated: null,
-            empty: null,
-            drain: null,
-            push: function (data, callback) {
-                if(data.constructor !== Array) {
-                    data = [data];
-                }
-                _forEach(data, function(task) {
-                    q.tasks.push({
-                        data: task,
-                        callback: typeof callback === 'function' ? callback : null
-                    });
-                    if (q.saturated && q.tasks.length == concurrency) {
-                        q.saturated();
-                    }
-                    async.nextTick(q.process);
-                });
-            },
-            process: function () {
-                if (workers < q.concurrency && q.tasks.length) {
-                    var task = q.tasks.shift();
-                    if(q.empty && q.tasks.length == 0) q.empty();
-                    workers += 1;
-                    worker(task.data, function () {
-                        workers -= 1;
-                        if (task.callback) {
-                            task.callback.apply(task, arguments);
-                        }
-                        if(q.drain && q.tasks.length + workers == 0) q.drain();
-                        q.process();
-                    });
-                }
-            },
-            length: function () {
-                return q.tasks.length;
-            },
-            running: function () {
-                return workers;
-            }
-        };
-        return q;
-    };
-
-    var _console_fn = function (name) {
-        return function (fn) {
-            var args = Array.prototype.slice.call(arguments, 1);
-            fn.apply(null, args.concat([function (err) {
-                var args = Array.prototype.slice.call(arguments, 1);
-                if (typeof console !== 'undefined') {
-                    if (err) {
-                        if (console.error) {
-                            console.error(err);
-                        }
-                    }
-                    else if (console[name]) {
-                        _forEach(args, function (x) {
-                            console[name](x);
-                        });
-                    }
-                }
-            }]));
-        };
-    };
-    async.log = _console_fn('log');
-    async.dir = _console_fn('dir');
-    /*async.info = _console_fn('info');
-    async.warn = _console_fn('warn');
-    async.error = _console_fn('error');*/
-
-    async.memoize = function (fn, hasher) {
-        var memo = {};
-        var queues = {};
-        hasher = hasher || function (x) {
-            return x;
-        };
-        var memoized = function () {
-            var args = Array.prototype.slice.call(arguments);
-            var callback = args.pop();
-            var key = hasher.apply(null, args);
-            if (key in memo) {
-                callback.apply(null, memo[key]);
-            }
-            else if (key in queues) {
-                queues[key].push(callback);
-            }
-            else {
-                queues[key] = [callback];
-                fn.apply(null, args.concat([function () {
-                    memo[key] = arguments;
-                    var q = queues[key];
-                    delete queues[key];
-                    for (var i = 0, l = q.length; i < l; i++) {
-                      q[i].apply(null, arguments);
-                    }
-                }]));
-            }
-        };
-        memoized.unmemoized = fn;
-        return memoized;
-    };
-
-    async.unmemoize = function (fn) {
-      return function () {
-        return (fn.unmemoized || fn).apply(null, arguments);
-      };
-    };
-
-}());
-
-}).call(this,require('_process'))
-},{"_process":35}],27:[function(require,module,exports){
-
-},{}],28:[function(require,module,exports){
-module.exports=require(27)
-},{"/Users/stomita/Work/Salesforce/jsforce.publish/node_modules/browserify/lib/_empty.js":27}],29:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
+module.exports=require(25)
+},{"./node_modules/browserify/lib/_empty.js":25}],27:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -8908,7 +8251,7 @@ function decodeUtf8Char (str) {
   }
 }
 
-},{"base64-js":30,"ieee754":31,"is-array":32}],30:[function(require,module,exports){
+},{"base64-js":28,"ieee754":29,"is-array":30}],28:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -9030,7 +8373,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],31:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 exports.read = function(buffer, offset, isLE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -9116,7 +8459,7 @@ exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],32:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 
 /**
  * isArray
@@ -9151,7 +8494,7 @@ module.exports = isArray || function (val) {
   return !! val && '[object Array]' == str.call(val);
 };
 
-},{}],33:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -9454,7 +8797,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],34:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -9479,7 +8822,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],35:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -9544,7 +8887,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],36:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -9630,7 +8973,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],37:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -9717,13 +9060,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],38:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":36,"./encode":37}],39:[function(require,module,exports){
+},{"./decode":34,"./encode":35}],37:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -9852,7 +9195,7 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":33,"inherits":34,"readable-stream/duplex.js":43,"readable-stream/passthrough.js":53,"readable-stream/readable.js":54,"readable-stream/transform.js":55,"readable-stream/writable.js":56}],40:[function(require,module,exports){
+},{"events":31,"inherits":32,"readable-stream/duplex.js":42,"readable-stream/passthrough.js":52,"readable-stream/readable.js":53,"readable-stream/transform.js":54,"readable-stream/writable.js":55}],38:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -10045,7 +9388,7 @@ function base64DetectIncompleteChar(buffer) {
   return incomplete;
 }
 
-},{"buffer":29}],41:[function(require,module,exports){
+},{"buffer":27}],39:[function(require,module,exports){
 (function (process,global){
 (function() {
 'use strict';
@@ -12589,7 +11932,9 @@ Faye.Transport.register('callback-polling', Faye.Transport.JSONP);
 
 })();
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":35}],42:[function(require,module,exports){
+},{"_process":33}],40:[function(require,module,exports){
+module.exports=require(32)
+},{"./node_modules/browserify/node_modules/inherits/inherits_browser.js":32}],41:[function(require,module,exports){
 (function (process){
 // vim:ts=4:sts=4:sw=4:
 /*!
@@ -14530,10 +13875,10 @@ return Q;
 });
 
 }).call(this,require('_process'))
-},{"_process":35}],43:[function(require,module,exports){
+},{"_process":33}],42:[function(require,module,exports){
 module.exports = require("./lib/_stream_duplex.js")
 
-},{"./lib/_stream_duplex.js":44}],44:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":43}],43:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -14626,7 +13971,7 @@ function forEach (xs, f) {
 }
 
 }).call(this,require('_process'))
-},{"./_stream_readable":46,"./_stream_writable":48,"_process":35,"core-util-is":49,"inherits":50}],45:[function(require,module,exports){
+},{"./_stream_readable":45,"./_stream_writable":47,"_process":33,"core-util-is":48,"inherits":49}],44:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -14674,7 +14019,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"./_stream_transform":47,"core-util-is":49,"inherits":50}],46:[function(require,module,exports){
+},{"./_stream_transform":46,"core-util-is":48,"inherits":49}],45:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -15629,7 +14974,7 @@ function indexOf (xs, x) {
 }
 
 }).call(this,require('_process'))
-},{"./_stream_duplex":44,"_process":35,"buffer":29,"core-util-is":49,"events":33,"inherits":50,"isarray":51,"stream":39,"string_decoder/":52,"util":28}],47:[function(require,module,exports){
+},{"./_stream_duplex":43,"_process":33,"buffer":27,"core-util-is":48,"events":31,"inherits":49,"isarray":50,"stream":37,"string_decoder/":51,"util":26}],46:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -15840,7 +15185,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"./_stream_duplex":44,"core-util-is":49,"inherits":50}],48:[function(require,module,exports){
+},{"./_stream_duplex":43,"core-util-is":48,"inherits":49}],47:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -16321,7 +15666,7 @@ function endWritable(stream, state, cb) {
 }
 
 }).call(this,require('_process'))
-},{"./_stream_duplex":44,"_process":35,"buffer":29,"core-util-is":49,"inherits":50,"stream":39}],49:[function(require,module,exports){
+},{"./_stream_duplex":43,"_process":33,"buffer":27,"core-util-is":48,"inherits":49,"stream":37}],48:[function(require,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -16431,14 +15776,14 @@ function objectToString(o) {
   return Object.prototype.toString.call(o);
 }
 }).call(this,require("buffer").Buffer)
-},{"buffer":29}],50:[function(require,module,exports){
-module.exports=require(34)
-},{"/Users/stomita/Work/Salesforce/jsforce.publish/node_modules/browserify/node_modules/inherits/inherits_browser.js":34}],51:[function(require,module,exports){
+},{"buffer":27}],49:[function(require,module,exports){
+module.exports=require(32)
+},{"./node_modules/browserify/node_modules/inherits/inherits_browser.js":32}],50:[function(require,module,exports){
 module.exports = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]';
 };
 
-},{}],52:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -16661,10 +16006,10 @@ function base64DetectIncompleteChar(buffer) {
   this.charLength = this.charReceived ? 3 : 0;
 }
 
-},{"buffer":29}],53:[function(require,module,exports){
+},{"buffer":27}],52:[function(require,module,exports){
 module.exports = require("./lib/_stream_passthrough.js")
 
-},{"./lib/_stream_passthrough.js":45}],54:[function(require,module,exports){
+},{"./lib/_stream_passthrough.js":44}],53:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Stream = require('stream');
 exports.Readable = exports;
@@ -16673,13 +16018,13 @@ exports.Duplex = require('./lib/_stream_duplex.js');
 exports.Transform = require('./lib/_stream_transform.js');
 exports.PassThrough = require('./lib/_stream_passthrough.js');
 
-},{"./lib/_stream_duplex.js":44,"./lib/_stream_passthrough.js":45,"./lib/_stream_readable.js":46,"./lib/_stream_transform.js":47,"./lib/_stream_writable.js":48,"stream":39}],55:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":43,"./lib/_stream_passthrough.js":44,"./lib/_stream_readable.js":45,"./lib/_stream_transform.js":46,"./lib/_stream_writable.js":47,"stream":37}],54:[function(require,module,exports){
 module.exports = require("./lib/_stream_transform.js")
 
-},{"./lib/_stream_transform.js":47}],56:[function(require,module,exports){
+},{"./lib/_stream_transform.js":46}],55:[function(require,module,exports){
 module.exports = require("./lib/_stream_writable.js")
 
-},{"./lib/_stream_writable.js":48}],57:[function(require,module,exports){
+},{"./lib/_stream_writable.js":47}],56:[function(require,module,exports){
 // Generated by CoffeeScript 1.7.1
 (function() {
   var xml2js;
@@ -16696,7 +16041,7 @@ module.exports = require("./lib/_stream_writable.js")
 
 }).call(this);
 
-},{"../lib/xml2js":59}],58:[function(require,module,exports){
+},{"../lib/xml2js":58}],57:[function(require,module,exports){
 // Generated by CoffeeScript 1.7.1
 (function() {
   var prefixMatch;
@@ -16717,7 +16062,7 @@ module.exports = require("./lib/_stream_writable.js")
 
 }).call(this);
 
-},{}],59:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 (function (process){
 // Generated by CoffeeScript 1.7.1
 (function() {
@@ -17157,7 +16502,7 @@ module.exports = require("./lib/_stream_writable.js")
 }).call(this);
 
 }).call(this,require('_process'))
-},{"./bom":57,"./processors":58,"_process":35,"events":33,"sax":60,"xmlbuilder":77}],60:[function(require,module,exports){
+},{"./bom":56,"./processors":57,"_process":33,"events":31,"sax":59,"xmlbuilder":76}],59:[function(require,module,exports){
 (function (Buffer){
 // wrapper for non-node envs
 ;(function (sax) {
@@ -18571,7 +17916,7 @@ if (!String.fromCodePoint) {
 })(typeof exports === "undefined" ? sax = {} : exports)
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":29,"stream":39,"string_decoder":40}],61:[function(require,module,exports){
+},{"buffer":27,"stream":37,"string_decoder":38}],60:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLAttribute, create;
@@ -18605,7 +17950,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"lodash-node/modern/objects/create":90}],62:[function(require,module,exports){
+},{"lodash-node/modern/objects/create":89}],61:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLBuilder, XMLDeclaration, XMLDocType, XMLElement, XMLStringifier;
@@ -18651,10 +17996,11 @@ if (!String.fromCodePoint) {
     };
 
     XMLBuilder.prototype.toString = function(options) {
-      var indent, newline, pretty, r, _ref, _ref1;
+      var indent, newline, offset, pretty, r, _ref, _ref1, _ref2;
       pretty = (options != null ? options.pretty : void 0) || false;
       indent = (_ref = options != null ? options.indent : void 0) != null ? _ref : '  ';
-      newline = (_ref1 = options != null ? options.newline : void 0) != null ? _ref1 : '\n';
+      offset = (_ref1 = options != null ? options.offset : void 0) != null ? _ref1 : 0;
+      newline = (_ref2 = options != null ? options.newline : void 0) != null ? _ref2 : '\n';
       r = '';
       if (this.xmldec != null) {
         r += this.xmldec.toString(options);
@@ -18675,7 +18021,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLDeclaration":69,"./XMLDocType":70,"./XMLElement":71,"./XMLStringifier":75}],63:[function(require,module,exports){
+},{"./XMLDeclaration":68,"./XMLDocType":69,"./XMLElement":70,"./XMLStringifier":74}],62:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLCData, XMLNode, create,
@@ -18702,12 +18048,13 @@ if (!String.fromCodePoint) {
     };
 
     XMLCData.prototype.toString = function(options, level) {
-      var indent, newline, pretty, r, space, _ref, _ref1;
+      var indent, newline, offset, pretty, r, space, _ref, _ref1, _ref2;
       pretty = (options != null ? options.pretty : void 0) || false;
       indent = (_ref = options != null ? options.indent : void 0) != null ? _ref : '  ';
-      newline = (_ref1 = options != null ? options.newline : void 0) != null ? _ref1 : '\n';
+      offset = (_ref1 = options != null ? options.offset : void 0) != null ? _ref1 : 0;
+      newline = (_ref2 = options != null ? options.newline : void 0) != null ? _ref2 : '\n';
       level || (level = 0);
-      space = new Array(level + 1).join(indent);
+      space = new Array(level + offset + 1).join(indent);
       r = '';
       if (pretty) {
         r += space;
@@ -18725,7 +18072,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLNode":72,"lodash-node/modern/objects/create":90}],64:[function(require,module,exports){
+},{"./XMLNode":71,"lodash-node/modern/objects/create":89}],63:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLComment, XMLNode, create,
@@ -18752,12 +18099,13 @@ if (!String.fromCodePoint) {
     };
 
     XMLComment.prototype.toString = function(options, level) {
-      var indent, newline, pretty, r, space, _ref, _ref1;
+      var indent, newline, offset, pretty, r, space, _ref, _ref1, _ref2;
       pretty = (options != null ? options.pretty : void 0) || false;
       indent = (_ref = options != null ? options.indent : void 0) != null ? _ref : '  ';
-      newline = (_ref1 = options != null ? options.newline : void 0) != null ? _ref1 : '\n';
+      offset = (_ref1 = options != null ? options.offset : void 0) != null ? _ref1 : 0;
+      newline = (_ref2 = options != null ? options.newline : void 0) != null ? _ref2 : '\n';
       level || (level = 0);
-      space = new Array(level + 1).join(indent);
+      space = new Array(level + offset + 1).join(indent);
       r = '';
       if (pretty) {
         r += space;
@@ -18775,7 +18123,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLNode":72,"lodash-node/modern/objects/create":90}],65:[function(require,module,exports){
+},{"./XMLNode":71,"lodash-node/modern/objects/create":89}],64:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLDTDAttList, create;
@@ -18818,12 +18166,13 @@ if (!String.fromCodePoint) {
     };
 
     XMLDTDAttList.prototype.toString = function(options, level) {
-      var indent, newline, pretty, r, space, _ref, _ref1;
+      var indent, newline, offset, pretty, r, space, _ref, _ref1, _ref2;
       pretty = (options != null ? options.pretty : void 0) || false;
       indent = (_ref = options != null ? options.indent : void 0) != null ? _ref : '  ';
-      newline = (_ref1 = options != null ? options.newline : void 0) != null ? _ref1 : '\n';
+      offset = (_ref1 = options != null ? options.offset : void 0) != null ? _ref1 : 0;
+      newline = (_ref2 = options != null ? options.newline : void 0) != null ? _ref2 : '\n';
       level || (level = 0);
-      space = new Array(level + 1).join(indent);
+      space = new Array(level + offset + 1).join(indent);
       r = '';
       if (pretty) {
         r += space;
@@ -18848,7 +18197,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"lodash-node/modern/objects/create":90}],66:[function(require,module,exports){
+},{"lodash-node/modern/objects/create":89}],65:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLDTDElement, create, isArray;
@@ -18878,12 +18227,13 @@ if (!String.fromCodePoint) {
     };
 
     XMLDTDElement.prototype.toString = function(options, level) {
-      var indent, newline, pretty, r, space, _ref, _ref1;
+      var indent, newline, offset, pretty, r, space, _ref, _ref1, _ref2;
       pretty = (options != null ? options.pretty : void 0) || false;
       indent = (_ref = options != null ? options.indent : void 0) != null ? _ref : '  ';
-      newline = (_ref1 = options != null ? options.newline : void 0) != null ? _ref1 : '\n';
+      offset = (_ref1 = options != null ? options.offset : void 0) != null ? _ref1 : 0;
+      newline = (_ref2 = options != null ? options.newline : void 0) != null ? _ref2 : '\n';
       level || (level = 0);
-      space = new Array(level + 1).join(indent);
+      space = new Array(level + offset + 1).join(indent);
       r = '';
       if (pretty) {
         r += space;
@@ -18901,7 +18251,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"lodash-node/modern/objects/create":90,"lodash-node/modern/objects/isArray":92}],67:[function(require,module,exports){
+},{"lodash-node/modern/objects/create":89,"lodash-node/modern/objects/isArray":91}],66:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLDTDEntity, create, isObject;
@@ -18950,12 +18300,13 @@ if (!String.fromCodePoint) {
     };
 
     XMLDTDEntity.prototype.toString = function(options, level) {
-      var indent, newline, pretty, r, space, _ref, _ref1;
+      var indent, newline, offset, pretty, r, space, _ref, _ref1, _ref2;
       pretty = (options != null ? options.pretty : void 0) || false;
       indent = (_ref = options != null ? options.indent : void 0) != null ? _ref : '  ';
-      newline = (_ref1 = options != null ? options.newline : void 0) != null ? _ref1 : '\n';
+      offset = (_ref1 = options != null ? options.offset : void 0) != null ? _ref1 : 0;
+      newline = (_ref2 = options != null ? options.newline : void 0) != null ? _ref2 : '\n';
       level || (level = 0);
-      space = new Array(level + 1).join(indent);
+      space = new Array(level + offset + 1).join(indent);
       r = '';
       if (pretty) {
         r += space;
@@ -18990,7 +18341,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"lodash-node/modern/objects/create":90,"lodash-node/modern/objects/isObject":95}],68:[function(require,module,exports){
+},{"lodash-node/modern/objects/create":89,"lodash-node/modern/objects/isObject":94}],67:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLDTDNotation, create;
@@ -19020,12 +18371,13 @@ if (!String.fromCodePoint) {
     };
 
     XMLDTDNotation.prototype.toString = function(options, level) {
-      var indent, newline, pretty, r, space, _ref, _ref1;
+      var indent, newline, offset, pretty, r, space, _ref, _ref1, _ref2;
       pretty = (options != null ? options.pretty : void 0) || false;
       indent = (_ref = options != null ? options.indent : void 0) != null ? _ref : '  ';
-      newline = (_ref1 = options != null ? options.newline : void 0) != null ? _ref1 : '\n';
+      offset = (_ref1 = options != null ? options.offset : void 0) != null ? _ref1 : 0;
+      newline = (_ref2 = options != null ? options.newline : void 0) != null ? _ref2 : '\n';
       level || (level = 0);
-      space = new Array(level + 1).join(indent);
+      space = new Array(level + offset + 1).join(indent);
       r = '';
       if (pretty) {
         r += space;
@@ -19051,7 +18403,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"lodash-node/modern/objects/create":90}],69:[function(require,module,exports){
+},{"lodash-node/modern/objects/create":89}],68:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLDeclaration, XMLNode, create, isObject,
@@ -19092,12 +18444,13 @@ if (!String.fromCodePoint) {
     };
 
     XMLDeclaration.prototype.toString = function(options, level) {
-      var indent, newline, pretty, r, space, _ref, _ref1;
+      var indent, newline, offset, pretty, r, space, _ref, _ref1, _ref2;
       pretty = (options != null ? options.pretty : void 0) || false;
       indent = (_ref = options != null ? options.indent : void 0) != null ? _ref : '  ';
-      newline = (_ref1 = options != null ? options.newline : void 0) != null ? _ref1 : '\n';
+      offset = (_ref1 = options != null ? options.offset : void 0) != null ? _ref1 : 0;
+      newline = (_ref2 = options != null ? options.newline : void 0) != null ? _ref2 : '\n';
       level || (level = 0);
-      space = new Array(level + 1).join(indent);
+      space = new Array(level + offset + 1).join(indent);
       r = '';
       if (pretty) {
         r += space;
@@ -19125,7 +18478,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLNode":72,"lodash-node/modern/objects/create":90,"lodash-node/modern/objects/isObject":95}],70:[function(require,module,exports){
+},{"./XMLNode":71,"lodash-node/modern/objects/create":89,"lodash-node/modern/objects/isObject":94}],69:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLDocType, create, isObject;
@@ -19231,12 +18584,13 @@ if (!String.fromCodePoint) {
     };
 
     XMLDocType.prototype.toString = function(options, level) {
-      var child, indent, newline, pretty, r, space, _i, _len, _ref, _ref1, _ref2;
+      var child, indent, newline, offset, pretty, r, space, _i, _len, _ref, _ref1, _ref2, _ref3;
       pretty = (options != null ? options.pretty : void 0) || false;
       indent = (_ref = options != null ? options.indent : void 0) != null ? _ref : '  ';
-      newline = (_ref1 = options != null ? options.newline : void 0) != null ? _ref1 : '\n';
+      offset = (_ref1 = options != null ? options.offset : void 0) != null ? _ref1 : 0;
+      newline = (_ref2 = options != null ? options.newline : void 0) != null ? _ref2 : '\n';
       level || (level = 0);
-      space = new Array(level + 1).join(indent);
+      space = new Array(level + offset + 1).join(indent);
       r = '';
       if (pretty) {
         r += space;
@@ -19252,9 +18606,9 @@ if (!String.fromCodePoint) {
         if (pretty) {
           r += newline;
         }
-        _ref2 = this.children;
-        for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-          child = _ref2[_i];
+        _ref3 = this.children;
+        for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
+          child = _ref3[_i];
           r += child.toString(options, level + 1);
         }
         r += ']';
@@ -19312,7 +18666,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLCData":63,"./XMLComment":64,"./XMLDTDAttList":65,"./XMLDTDElement":66,"./XMLDTDEntity":67,"./XMLDTDNotation":68,"./XMLProcessingInstruction":73,"lodash-node/modern/objects/create":90,"lodash-node/modern/objects/isObject":95}],71:[function(require,module,exports){
+},{"./XMLCData":62,"./XMLComment":63,"./XMLDTDAttList":64,"./XMLDTDElement":65,"./XMLDTDEntity":66,"./XMLDTDNotation":67,"./XMLProcessingInstruction":72,"lodash-node/modern/objects/create":89,"lodash-node/modern/objects/isObject":94}],70:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLAttribute, XMLElement, XMLNode, XMLProcessingInstruction, create, isArray, isFunction, isObject,
@@ -19445,26 +18799,27 @@ if (!String.fromCodePoint) {
     };
 
     XMLElement.prototype.toString = function(options, level) {
-      var att, child, indent, instruction, name, newline, pretty, r, space, _i, _j, _len, _len1, _ref, _ref1, _ref2, _ref3, _ref4;
+      var att, child, indent, instruction, name, newline, offset, pretty, r, space, _i, _j, _len, _len1, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
       pretty = (options != null ? options.pretty : void 0) || false;
       indent = (_ref = options != null ? options.indent : void 0) != null ? _ref : '  ';
-      newline = (_ref1 = options != null ? options.newline : void 0) != null ? _ref1 : '\n';
+      offset = (_ref1 = options != null ? options.offset : void 0) != null ? _ref1 : 0;
+      newline = (_ref2 = options != null ? options.newline : void 0) != null ? _ref2 : '\n';
       level || (level = 0);
-      space = new Array(level + 1).join(indent);
+      space = new Array(level + offset + 1).join(indent);
       r = '';
-      _ref2 = this.instructions;
-      for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-        instruction = _ref2[_i];
+      _ref3 = this.instructions;
+      for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
+        instruction = _ref3[_i];
         r += instruction.toString(options, level + 1);
       }
       if (pretty) {
         r += space;
       }
       r += '<' + this.name;
-      _ref3 = this.attributes;
-      for (name in _ref3) {
-        if (!__hasProp.call(_ref3, name)) continue;
-        att = _ref3[name];
+      _ref4 = this.attributes;
+      for (name in _ref4) {
+        if (!__hasProp.call(_ref4, name)) continue;
+        att = _ref4[name];
         r += att.toString(options);
       }
       if (this.children.length === 0) {
@@ -19482,9 +18837,9 @@ if (!String.fromCodePoint) {
         if (pretty) {
           r += newline;
         }
-        _ref4 = this.children;
-        for (_j = 0, _len1 = _ref4.length; _j < _len1; _j++) {
-          child = _ref4[_j];
+        _ref5 = this.children;
+        for (_j = 0, _len1 = _ref5.length; _j < _len1; _j++) {
+          child = _ref5[_j];
           r += child.toString(options, level + 1);
         }
         if (pretty) {
@@ -19520,7 +18875,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLAttribute":61,"./XMLNode":72,"./XMLProcessingInstruction":73,"lodash-node/modern/objects/create":90,"lodash-node/modern/objects/isArray":92,"lodash-node/modern/objects/isFunction":94,"lodash-node/modern/objects/isObject":95}],72:[function(require,module,exports){
+},{"./XMLAttribute":60,"./XMLNode":71,"./XMLProcessingInstruction":72,"lodash-node/modern/objects/create":89,"lodash-node/modern/objects/isArray":91,"lodash-node/modern/objects/isFunction":93,"lodash-node/modern/objects/isObject":94}],71:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLNode, isArray, isEmpty, isFunction, isObject,
@@ -19840,7 +19195,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLCData":63,"./XMLComment":64,"./XMLDeclaration":69,"./XMLDocType":70,"./XMLElement":71,"./XMLRaw":74,"./XMLText":76,"lodash-node/modern/objects/isArray":92,"lodash-node/modern/objects/isEmpty":93,"lodash-node/modern/objects/isFunction":94,"lodash-node/modern/objects/isObject":95}],73:[function(require,module,exports){
+},{"./XMLCData":62,"./XMLComment":63,"./XMLDeclaration":68,"./XMLDocType":69,"./XMLElement":70,"./XMLRaw":73,"./XMLText":75,"lodash-node/modern/objects/isArray":91,"lodash-node/modern/objects/isEmpty":92,"lodash-node/modern/objects/isFunction":93,"lodash-node/modern/objects/isObject":94}],72:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLProcessingInstruction, create;
@@ -19864,12 +19219,13 @@ if (!String.fromCodePoint) {
     };
 
     XMLProcessingInstruction.prototype.toString = function(options, level) {
-      var indent, newline, pretty, r, space, _ref, _ref1;
+      var indent, newline, offset, pretty, r, space, _ref, _ref1, _ref2;
       pretty = (options != null ? options.pretty : void 0) || false;
       indent = (_ref = options != null ? options.indent : void 0) != null ? _ref : '  ';
-      newline = (_ref1 = options != null ? options.newline : void 0) != null ? _ref1 : '\n';
+      offset = (_ref1 = options != null ? options.offset : void 0) != null ? _ref1 : 0;
+      newline = (_ref2 = options != null ? options.newline : void 0) != null ? _ref2 : '\n';
       level || (level = 0);
-      space = new Array(level + 1).join(indent);
+      space = new Array(level + offset + 1).join(indent);
       r = '';
       if (pretty) {
         r += space;
@@ -19892,7 +19248,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"lodash-node/modern/objects/create":90}],74:[function(require,module,exports){
+},{"lodash-node/modern/objects/create":89}],73:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLNode, XMLRaw, create,
@@ -19919,12 +19275,13 @@ if (!String.fromCodePoint) {
     };
 
     XMLRaw.prototype.toString = function(options, level) {
-      var indent, newline, pretty, r, space, _ref, _ref1;
+      var indent, newline, offset, pretty, r, space, _ref, _ref1, _ref2;
       pretty = (options != null ? options.pretty : void 0) || false;
       indent = (_ref = options != null ? options.indent : void 0) != null ? _ref : '  ';
-      newline = (_ref1 = options != null ? options.newline : void 0) != null ? _ref1 : '\n';
+      offset = (_ref1 = options != null ? options.offset : void 0) != null ? _ref1 : 0;
+      newline = (_ref2 = options != null ? options.newline : void 0) != null ? _ref2 : '\n';
       level || (level = 0);
-      space = new Array(level + 1).join(indent);
+      space = new Array(level + offset + 1).join(indent);
       r = '';
       if (pretty) {
         r += space;
@@ -19942,7 +19299,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLNode":72,"lodash-node/modern/objects/create":90}],75:[function(require,module,exports){
+},{"./XMLNode":71,"lodash-node/modern/objects/create":89}],74:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLStringifier,
@@ -20111,7 +19468,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{}],76:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLNode, XMLText, create,
@@ -20139,12 +19496,13 @@ if (!String.fromCodePoint) {
     };
 
     XMLText.prototype.toString = function(options, level) {
-      var indent, newline, pretty, r, space, _ref, _ref1;
+      var indent, newline, offset, pretty, r, space, _ref, _ref1, _ref2;
       pretty = (options != null ? options.pretty : void 0) || false;
       indent = (_ref = options != null ? options.indent : void 0) != null ? _ref : '  ';
-      newline = (_ref1 = options != null ? options.newline : void 0) != null ? _ref1 : '\n';
+      offset = (_ref1 = options != null ? options.offset : void 0) != null ? _ref1 : 0;
+      newline = (_ref2 = options != null ? options.newline : void 0) != null ? _ref2 : '\n';
       level || (level = 0);
-      space = new Array(level + 1).join(indent);
+      space = new Array(level + offset + 1).join(indent);
       r = '';
       if (pretty) {
         r += space;
@@ -20162,7 +19520,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLNode":72,"lodash-node/modern/objects/create":90}],77:[function(require,module,exports){
+},{"./XMLNode":71,"lodash-node/modern/objects/create":89}],76:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLBuilder, assign;
@@ -20178,7 +19536,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLBuilder":62,"lodash-node/modern/objects/assign":89}],78:[function(require,module,exports){
+},{"./XMLBuilder":61,"lodash-node/modern/objects/assign":88}],77:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -20220,7 +19578,7 @@ function bind(func, thisArg) {
 
 module.exports = bind;
 
-},{"../internals/createWrapper":83,"../internals/slice":88}],79:[function(require,module,exports){
+},{"../internals/createWrapper":82,"../internals/slice":87}],78:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -20284,7 +19642,7 @@ function baseBind(bindData) {
 
 module.exports = baseBind;
 
-},{"../objects/isObject":95,"./baseCreate":80,"./setBindData":86,"./slice":88}],80:[function(require,module,exports){
+},{"../objects/isObject":94,"./baseCreate":79,"./setBindData":85,"./slice":87}],79:[function(require,module,exports){
 (function (global){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
@@ -20330,7 +19688,7 @@ if (!nativeCreate) {
 module.exports = baseCreate;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../objects/isObject":95,"../utilities/noop":99,"./isNative":84}],81:[function(require,module,exports){
+},{"../objects/isObject":94,"../utilities/noop":98,"./isNative":83}],80:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -20412,7 +19770,7 @@ function baseCreateCallback(func, thisArg, argCount) {
 
 module.exports = baseCreateCallback;
 
-},{"../functions/bind":78,"../support":97,"../utilities/identity":98,"./setBindData":86}],82:[function(require,module,exports){
+},{"../functions/bind":77,"../support":96,"../utilities/identity":97,"./setBindData":85}],81:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -20492,7 +19850,7 @@ function baseCreateWrapper(bindData) {
 
 module.exports = baseCreateWrapper;
 
-},{"../objects/isObject":95,"./baseCreate":80,"./setBindData":86,"./slice":88}],83:[function(require,module,exports){
+},{"../objects/isObject":94,"./baseCreate":79,"./setBindData":85,"./slice":87}],82:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -20600,7 +19958,7 @@ function createWrapper(func, bitmask, partialArgs, partialRightArgs, thisArg, ar
 
 module.exports = createWrapper;
 
-},{"../objects/isFunction":94,"./baseBind":79,"./baseCreateWrapper":82,"./slice":88}],84:[function(require,module,exports){
+},{"../objects/isFunction":93,"./baseBind":78,"./baseCreateWrapper":81,"./slice":87}],83:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -20636,7 +19994,7 @@ function isNative(value) {
 
 module.exports = isNative;
 
-},{}],85:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -20658,7 +20016,7 @@ var objectTypes = {
 
 module.exports = objectTypes;
 
-},{}],86:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -20703,7 +20061,7 @@ var setBindData = !defineProperty ? noop : function(func, value) {
 
 module.exports = setBindData;
 
-},{"../utilities/noop":99,"./isNative":84}],87:[function(require,module,exports){
+},{"../utilities/noop":98,"./isNative":83}],86:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -20743,7 +20101,7 @@ var shimKeys = function(object) {
 
 module.exports = shimKeys;
 
-},{"./objectTypes":85}],88:[function(require,module,exports){
+},{"./objectTypes":84}],87:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -20783,7 +20141,7 @@ function slice(array, start, end) {
 
 module.exports = slice;
 
-},{}],89:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -20855,7 +20213,7 @@ var assign = function(object, source, guard) {
 
 module.exports = assign;
 
-},{"../internals/baseCreateCallback":81,"../internals/objectTypes":85,"./keys":96}],90:[function(require,module,exports){
+},{"../internals/baseCreateCallback":80,"../internals/objectTypes":84,"./keys":95}],89:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -20905,7 +20263,7 @@ function create(prototype, properties) {
 
 module.exports = create;
 
-},{"../internals/baseCreate":80,"./assign":89}],91:[function(require,module,exports){
+},{"../internals/baseCreate":79,"./assign":88}],90:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -20957,7 +20315,7 @@ var forOwn = function(collection, callback, thisArg) {
 
 module.exports = forOwn;
 
-},{"../internals/baseCreateCallback":81,"../internals/objectTypes":85,"./keys":96}],92:[function(require,module,exports){
+},{"../internals/baseCreateCallback":80,"../internals/objectTypes":84,"./keys":95}],91:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -21004,7 +20362,7 @@ var isArray = nativeIsArray || function(value) {
 
 module.exports = isArray;
 
-},{"../internals/isNative":84}],93:[function(require,module,exports){
+},{"../internals/isNative":83}],92:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -21069,7 +20427,7 @@ function isEmpty(value) {
 
 module.exports = isEmpty;
 
-},{"./forOwn":91,"./isFunction":94}],94:[function(require,module,exports){
+},{"./forOwn":90,"./isFunction":93}],93:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -21098,7 +20456,7 @@ function isFunction(value) {
 
 module.exports = isFunction;
 
-},{}],95:[function(require,module,exports){
+},{}],94:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -21139,7 +20497,7 @@ function isObject(value) {
 
 module.exports = isObject;
 
-},{"../internals/objectTypes":85}],96:[function(require,module,exports){
+},{"../internals/objectTypes":84}],95:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -21177,7 +20535,7 @@ var keys = !nativeKeys ? shimKeys : function(object) {
 
 module.exports = keys;
 
-},{"../internals/isNative":84,"../internals/shimKeys":87,"./isObject":95}],97:[function(require,module,exports){
+},{"../internals/isNative":83,"../internals/shimKeys":86,"./isObject":94}],96:[function(require,module,exports){
 (function (global){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
@@ -21221,7 +20579,7 @@ support.funcNames = typeof Function.name == 'string';
 module.exports = support;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./internals/isNative":84}],98:[function(require,module,exports){
+},{"./internals/isNative":83}],97:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -21251,7 +20609,7 @@ function identity(value) {
 
 module.exports = identity;
 
-},{}],99:[function(require,module,exports){
+},{}],98:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
