@@ -13,7 +13,7 @@ var async  = require('async'),
  */
 describe("bulk", function() {
 
-  this.timeout(40000); // set timeout to 40 sec.
+  this.timeout(20000); // set timeout to 20 sec.
 
   var conn = new testUtils.createConnection(config);
 
@@ -83,6 +83,14 @@ describe("bulk", function() {
         }
       }.check(done));
     });
+
+    it("should fail when no input is given", function(done) {
+      conn.bulk.load('Account', 'update', [], function(err, rets) {
+        assert.ok(err);
+        assert.ok(err.name === 'ClientInputError');
+      }.check(done));
+    });
+
   });
 
   /**
@@ -109,6 +117,14 @@ describe("bulk", function() {
         }
       }.check(done));
     });
+
+    it("should fail when no input is given", function(done) {
+      conn.bulk.load('Account', 'delete', [], function(err, rets) {
+        assert.ok(err);
+        assert.ok(err.name === 'ClientInputError');
+      }.check(done));
+    });
+
   });
 
 /*------------------------------------------------------------------------*/
@@ -288,6 +304,11 @@ if (testUtils.isNodeJS) {
             }
           }.check(done));
     });
+  });
+
+  // for graceful shutdown remaining jobs to close...
+  after(function(done) {
+    setTimeout(function() { done(); }, 2000);
   });
 
 });
