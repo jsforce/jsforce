@@ -6,7 +6,7 @@
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
 
-var util    = jsforce.require('util'),
+var inherits = require('inherits'),
     events  = jsforce.require('events'),
     stream  = jsforce.require('stream'),
     Stream  = stream.Stream,
@@ -84,6 +84,12 @@ Metadata.prototype.createAsync = function(type, metadata, callback) {
 };
 
 /**
+ * @typedef {Object} Metadata~SaveResult
+ * @prop {Boolean} success - True if metadata is successfully saved
+ * @prop {String} fullName - Full name of metadata object
+ */
+
+/**
  * @private
  */
 function convertToSaveResult(result) {
@@ -93,9 +99,25 @@ function convertToSaveResult(result) {
 }
 
 /**
+ * @typedef {Object} Metadata~UpsertResult
+ * @prop {Boolean} success - True if metadata is successfully saved
+ * @prop {String} fullName - Full name of metadata object
+ * @prop {Boolean} created - True if metadata is newly created
+ */
+
+/**
+ * @private
+ */
+function convertToUpsertResult(result) {
+  var upsertResult = convertToSaveResult(result)
+  upsertResult.created = upsertResult.created === 'true';
+  return upsertResult;
+}
+
+/**
  * Synonym of Metadata#create().
  *
- * @method createSync
+ * @method Metadata#createSync
  * @param {String} type - The type of metadata to create
  * @param {Metadata~MetadataInfo|Array.<Metadata~MetadataInfo>} metadata - Metadata to create
  * @param {Callback.<Metadata~SaveResult|Array.<Metadata~SaveResult>>} [callback] - Callback function
@@ -138,7 +160,7 @@ function convertToMetadataInfo(rec) {
  * @method Metadata#readSync
  * @param {String} type - The type of metadata to read
  * @param {String|Array.<String>} fullNames - full name(s) of metadata objects to read
- * @param {Callback.<Metadata~ReadResult|Array.<Metadata~ReadResult>>} [callback] - Callback function
+ * @param {Callback.<Metadata~MetadataInfo|Array.<Metadata~MetadataInfo>>} [callback] - Callback function
  * @returns {Promise.<Array.<Metadata~MetadataInfo|Array.<Metadata~MetadataInfo>>>}
  */
 /**
@@ -147,7 +169,7 @@ function convertToMetadataInfo(rec) {
  * @method Metadata#read
  * @param {String} type - The type of metadata to read
  * @param {String|Array.<String>} fullNames - full name(s) of metadata objects to read
- * @param {Callback.<Metadata~ReadResult|Array.<Metadata~ReadResult>>} [callback] - Callback function
+ * @param {Callback.<Metadata~MetadataInfo|Array.<Metadata~MetadataInfo>>} [callback] - Callback function
  * @returns {Promise.<Array.<Metadata~MetadataInfo|Array.<Metadata~MetadataInfo>>>}
  */
 Metadata.prototype.readSync =
@@ -221,8 +243,8 @@ Metadata.prototype.update = function(type, metadata, callback) {
  *
  * @param {String} type - The type of metadata to upsert
  * @param {Metadata~MetadataInfo|Array.<Metadata~MetadataInfo>} metadata - Upserting metadata
- * @param {Callback.<Metadata~SaveResult|Array.<Metadata~SaveResult>>} [callback] - Callback function
- * @returns {Promise.<Metadata~SaveResult|Array.<Metadata~SaveResult>>}
+ * @param {Callback.<Metadata~UpsertResult|Array.<Metadata~UpsertResult>>} [callback] - Callback function
+ * @returns {Promise.<Metadata~UpsertResult|Array.<Metadata~UpsertResult>>}
  */
 Metadata.prototype.upsertSync =
 Metadata.prototype.upsert = function(type, metadata, callback) {
@@ -233,7 +255,7 @@ Metadata.prototype.upsert = function(type, metadata, callback) {
   var isArray = _.isArray(metadata);
   metadata = isArray ? _.map(metadata, convert) : convert(metadata);
   return this._invoke("upsertMetadata", { metadata: metadata }).then(function(results) {
-    return _.isArray(results) ? _.map(results, convertToSaveResult) : convertToSaveResult(results);
+    return _.isArray(results) ? _.map(results, convertToUpsertResult) : convertToUpsertResult(results);
   }).thenCall(callback);
 };
 
@@ -553,7 +575,7 @@ var AsyncResultLocator = function(meta, results, isArray) {
   this._isArray = isArray;
 };
 
-util.inherits(AsyncResultLocator, events.EventEmitter);
+inherits(AsyncResultLocator, events.EventEmitter);
 
 /**
  * Promise/A+ interface
@@ -686,7 +708,7 @@ var RetrieveResultLocator = function(meta, result) {
   RetrieveResultLocator.super_.call(this, meta, result);
 };
 
-util.inherits(RetrieveResultLocator, AsyncResultLocator);
+inherits(RetrieveResultLocator, AsyncResultLocator);
 
 /**
  * @typedef {Object} Metadata~RetrieveResult
@@ -745,7 +767,7 @@ var DeployResultLocator = function(meta, result) {
   DeployResultLocator.super_.call(this, meta, result);
 };
 
-util.inherits(DeployResultLocator, AsyncResultLocator);
+inherits(DeployResultLocator, AsyncResultLocator);
 
 /**
  * @typedef {Object} Metadata~DeployResult
@@ -791,7 +813,7 @@ DeployResultLocator.prototype.complete = function(includeDetails, callback) {
 };
 
 }).call(this,require('_process'),require("buffer").Buffer)
-},{"../promise":5,"../soap":6,"_process":16,"buffer":10}],2:[function(require,module,exports){
+},{"../promise":5,"../soap":6,"_process":16,"buffer":10,"inherits":19}],2:[function(require,module,exports){
 /*global Sfdc */
 var stream = jsforce.require('stream'),
     _ = jsforce.require('underscore');
@@ -935,6 +957,7 @@ module.exports = {
 };
 },{}],4:[function(require,module,exports){
 var stream = jsforce.require('stream');
+var _ = jsforce.require('underscore');
 
 module.exports = function(params, callback) {
   var xhr = new XMLHttpRequest();
@@ -970,9 +993,13 @@ module.exports = function(params, callback) {
   }
   xhr.onreadystatechange = function() {
     if (xhr.readyState === 4) {
-      var headers = {
-        "content-type": xhr.getResponseHeader("content-type")
-      };
+      var headerNames = getResponseHeaderNames(xhr);
+      var headers = {}
+      _.forEach(headerNames, function(headerName) {
+        if (headerName) {
+          headers[headerName] = xhr.getResponseHeader(headerName);
+        }
+      });
       response = {
         statusCode: xhr.status,
         headers: headers,
@@ -990,6 +1017,13 @@ module.exports = function(params, callback) {
   };
   return str;
 };
+
+function getResponseHeaderNames(xhr) {
+  var headerLines = (xhr.getAllResponseHeaders() || "").split(/[\r\n]+/);
+  return _.map(headerLines, function(headerLine) {
+    return headerLine.split(/\s*:/)[0].toLowerCase();
+  });
+}
 
 
 },{}],5:[function(require,module,exports){
@@ -1148,7 +1182,7 @@ Deferred.prototype.reject = function() {
 module.exports = Promise;
 
 }).call(this,require('_process'))
-},{"_process":16,"q":19}],6:[function(require,module,exports){
+},{"_process":16,"q":20}],6:[function(require,module,exports){
 /**
  * @file Manages method call to SOAP endpoint
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -1285,10 +1319,10 @@ SOAP.prototype._createEnvelope = function(message) {
   ].join('');
 };
 
-},{"./transport":7,"xml2js":36}],7:[function(require,module,exports){
+},{"./transport":7,"xml2js":37}],7:[function(require,module,exports){
 (function (process){
 /*global process, Sfdc */
-var util = jsforce.require('util'),
+var inherits = require('inherits'),
     stream = jsforce.require('stream'),
     Promise = require('./promise');
 
@@ -1397,7 +1431,7 @@ var ProxyTransport = Transport.ProxyTransport = function(proxyUrl) {
   this._proxyUrl = proxyUrl;
 };
 
-util.inherits(ProxyTransport, Transport);
+inherits(ProxyTransport, Transport);
 
 /**
  * Make HTTP request via AJAX proxy
@@ -1431,11 +1465,11 @@ ProxyTransport.prototype.httpRequest = function(params, callback) {
 };
 
 }).call(this,require('_process'))
-},{"./browser/canvas":2,"./browser/jsonp":3,"./browser/request":4,"./promise":5,"_process":16,"request":8}],8:[function(require,module,exports){
+},{"./browser/canvas":2,"./browser/jsonp":3,"./browser/request":4,"./promise":5,"_process":16,"inherits":19,"request":8}],8:[function(require,module,exports){
 
 },{}],9:[function(require,module,exports){
 module.exports=require(8)
-},{"/Users/stomita/Work/Salesforce/jsforce.publish/node_modules/browserify/lib/_empty.js":8}],10:[function(require,module,exports){
+},{"./node_modules/browserify/lib/_empty.js":8}],10:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -3252,7 +3286,7 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":14,"inherits":15,"readable-stream/duplex.js":20,"readable-stream/passthrough.js":30,"readable-stream/readable.js":31,"readable-stream/transform.js":32,"readable-stream/writable.js":33}],18:[function(require,module,exports){
+},{"events":14,"inherits":15,"readable-stream/duplex.js":21,"readable-stream/passthrough.js":31,"readable-stream/readable.js":32,"readable-stream/transform.js":33,"readable-stream/writable.js":34}],18:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -3446,6 +3480,8 @@ function base64DetectIncompleteChar(buffer) {
 }
 
 },{"buffer":10}],19:[function(require,module,exports){
+module.exports=require(15)
+},{"./node_modules/browserify/node_modules/inherits/inherits_browser.js":15}],20:[function(require,module,exports){
 (function (process){
 // vim:ts=4:sts=4:sw=4:
 /*!
@@ -5386,10 +5422,10 @@ return Q;
 });
 
 }).call(this,require('_process'))
-},{"_process":16}],20:[function(require,module,exports){
+},{"_process":16}],21:[function(require,module,exports){
 module.exports = require("./lib/_stream_duplex.js")
 
-},{"./lib/_stream_duplex.js":21}],21:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":22}],22:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -5482,7 +5518,7 @@ function forEach (xs, f) {
 }
 
 }).call(this,require('_process'))
-},{"./_stream_readable":23,"./_stream_writable":25,"_process":16,"core-util-is":26,"inherits":27}],22:[function(require,module,exports){
+},{"./_stream_readable":24,"./_stream_writable":26,"_process":16,"core-util-is":27,"inherits":28}],23:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -5530,7 +5566,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"./_stream_transform":24,"core-util-is":26,"inherits":27}],23:[function(require,module,exports){
+},{"./_stream_transform":25,"core-util-is":27,"inherits":28}],24:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -6485,7 +6521,7 @@ function indexOf (xs, x) {
 }
 
 }).call(this,require('_process'))
-},{"./_stream_duplex":21,"_process":16,"buffer":10,"core-util-is":26,"events":14,"inherits":27,"isarray":28,"stream":17,"string_decoder/":29,"util":9}],24:[function(require,module,exports){
+},{"./_stream_duplex":22,"_process":16,"buffer":10,"core-util-is":27,"events":14,"inherits":28,"isarray":29,"stream":17,"string_decoder/":30,"util":9}],25:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -6696,7 +6732,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"./_stream_duplex":21,"core-util-is":26,"inherits":27}],25:[function(require,module,exports){
+},{"./_stream_duplex":22,"core-util-is":27,"inherits":28}],26:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -7177,7 +7213,7 @@ function endWritable(stream, state, cb) {
 }
 
 }).call(this,require('_process'))
-},{"./_stream_duplex":21,"_process":16,"buffer":10,"core-util-is":26,"inherits":27,"stream":17}],26:[function(require,module,exports){
+},{"./_stream_duplex":22,"_process":16,"buffer":10,"core-util-is":27,"inherits":28,"stream":17}],27:[function(require,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -7287,14 +7323,14 @@ function objectToString(o) {
   return Object.prototype.toString.call(o);
 }
 }).call(this,require("buffer").Buffer)
-},{"buffer":10}],27:[function(require,module,exports){
+},{"buffer":10}],28:[function(require,module,exports){
 module.exports=require(15)
-},{"/Users/stomita/Work/Salesforce/jsforce.publish/node_modules/browserify/node_modules/inherits/inherits_browser.js":15}],28:[function(require,module,exports){
+},{"./node_modules/browserify/node_modules/inherits/inherits_browser.js":15}],29:[function(require,module,exports){
 module.exports = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]';
 };
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -7517,10 +7553,10 @@ function base64DetectIncompleteChar(buffer) {
   this.charLength = this.charReceived ? 3 : 0;
 }
 
-},{"buffer":10}],30:[function(require,module,exports){
+},{"buffer":10}],31:[function(require,module,exports){
 module.exports = require("./lib/_stream_passthrough.js")
 
-},{"./lib/_stream_passthrough.js":22}],31:[function(require,module,exports){
+},{"./lib/_stream_passthrough.js":23}],32:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Stream = require('stream');
 exports.Readable = exports;
@@ -7529,13 +7565,13 @@ exports.Duplex = require('./lib/_stream_duplex.js');
 exports.Transform = require('./lib/_stream_transform.js');
 exports.PassThrough = require('./lib/_stream_passthrough.js');
 
-},{"./lib/_stream_duplex.js":21,"./lib/_stream_passthrough.js":22,"./lib/_stream_readable.js":23,"./lib/_stream_transform.js":24,"./lib/_stream_writable.js":25,"stream":17}],32:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":22,"./lib/_stream_passthrough.js":23,"./lib/_stream_readable.js":24,"./lib/_stream_transform.js":25,"./lib/_stream_writable.js":26,"stream":17}],33:[function(require,module,exports){
 module.exports = require("./lib/_stream_transform.js")
 
-},{"./lib/_stream_transform.js":24}],33:[function(require,module,exports){
+},{"./lib/_stream_transform.js":25}],34:[function(require,module,exports){
 module.exports = require("./lib/_stream_writable.js")
 
-},{"./lib/_stream_writable.js":25}],34:[function(require,module,exports){
+},{"./lib/_stream_writable.js":26}],35:[function(require,module,exports){
 // Generated by CoffeeScript 1.7.1
 (function() {
   var xml2js;
@@ -7552,7 +7588,7 @@ module.exports = require("./lib/_stream_writable.js")
 
 }).call(this);
 
-},{"../lib/xml2js":36}],35:[function(require,module,exports){
+},{"../lib/xml2js":37}],36:[function(require,module,exports){
 // Generated by CoffeeScript 1.7.1
 (function() {
   var prefixMatch;
@@ -7573,7 +7609,7 @@ module.exports = require("./lib/_stream_writable.js")
 
 }).call(this);
 
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 (function (process){
 // Generated by CoffeeScript 1.7.1
 (function() {
@@ -8013,7 +8049,7 @@ module.exports = require("./lib/_stream_writable.js")
 }).call(this);
 
 }).call(this,require('_process'))
-},{"./bom":34,"./processors":35,"_process":16,"events":14,"sax":37,"xmlbuilder":54}],37:[function(require,module,exports){
+},{"./bom":35,"./processors":36,"_process":16,"events":14,"sax":38,"xmlbuilder":55}],38:[function(require,module,exports){
 (function (Buffer){
 // wrapper for non-node envs
 ;(function (sax) {
@@ -9427,7 +9463,7 @@ if (!String.fromCodePoint) {
 })(typeof exports === "undefined" ? sax = {} : exports)
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":10,"stream":17,"string_decoder":18}],38:[function(require,module,exports){
+},{"buffer":10,"stream":17,"string_decoder":18}],39:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLAttribute, create;
@@ -9461,7 +9497,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"lodash-node/modern/objects/create":67}],39:[function(require,module,exports){
+},{"lodash-node/modern/objects/create":68}],40:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLBuilder, XMLDeclaration, XMLDocType, XMLElement, XMLStringifier;
@@ -9507,10 +9543,11 @@ if (!String.fromCodePoint) {
     };
 
     XMLBuilder.prototype.toString = function(options) {
-      var indent, newline, pretty, r, _ref, _ref1;
+      var indent, newline, offset, pretty, r, _ref, _ref1, _ref2;
       pretty = (options != null ? options.pretty : void 0) || false;
       indent = (_ref = options != null ? options.indent : void 0) != null ? _ref : '  ';
-      newline = (_ref1 = options != null ? options.newline : void 0) != null ? _ref1 : '\n';
+      offset = (_ref1 = options != null ? options.offset : void 0) != null ? _ref1 : 0;
+      newline = (_ref2 = options != null ? options.newline : void 0) != null ? _ref2 : '\n';
       r = '';
       if (this.xmldec != null) {
         r += this.xmldec.toString(options);
@@ -9531,7 +9568,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLDeclaration":46,"./XMLDocType":47,"./XMLElement":48,"./XMLStringifier":52}],40:[function(require,module,exports){
+},{"./XMLDeclaration":47,"./XMLDocType":48,"./XMLElement":49,"./XMLStringifier":53}],41:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLCData, XMLNode, create,
@@ -9558,12 +9595,13 @@ if (!String.fromCodePoint) {
     };
 
     XMLCData.prototype.toString = function(options, level) {
-      var indent, newline, pretty, r, space, _ref, _ref1;
+      var indent, newline, offset, pretty, r, space, _ref, _ref1, _ref2;
       pretty = (options != null ? options.pretty : void 0) || false;
       indent = (_ref = options != null ? options.indent : void 0) != null ? _ref : '  ';
-      newline = (_ref1 = options != null ? options.newline : void 0) != null ? _ref1 : '\n';
+      offset = (_ref1 = options != null ? options.offset : void 0) != null ? _ref1 : 0;
+      newline = (_ref2 = options != null ? options.newline : void 0) != null ? _ref2 : '\n';
       level || (level = 0);
-      space = new Array(level + 1).join(indent);
+      space = new Array(level + offset + 1).join(indent);
       r = '';
       if (pretty) {
         r += space;
@@ -9581,7 +9619,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLNode":49,"lodash-node/modern/objects/create":67}],41:[function(require,module,exports){
+},{"./XMLNode":50,"lodash-node/modern/objects/create":68}],42:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLComment, XMLNode, create,
@@ -9608,12 +9646,13 @@ if (!String.fromCodePoint) {
     };
 
     XMLComment.prototype.toString = function(options, level) {
-      var indent, newline, pretty, r, space, _ref, _ref1;
+      var indent, newline, offset, pretty, r, space, _ref, _ref1, _ref2;
       pretty = (options != null ? options.pretty : void 0) || false;
       indent = (_ref = options != null ? options.indent : void 0) != null ? _ref : '  ';
-      newline = (_ref1 = options != null ? options.newline : void 0) != null ? _ref1 : '\n';
+      offset = (_ref1 = options != null ? options.offset : void 0) != null ? _ref1 : 0;
+      newline = (_ref2 = options != null ? options.newline : void 0) != null ? _ref2 : '\n';
       level || (level = 0);
-      space = new Array(level + 1).join(indent);
+      space = new Array(level + offset + 1).join(indent);
       r = '';
       if (pretty) {
         r += space;
@@ -9631,7 +9670,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLNode":49,"lodash-node/modern/objects/create":67}],42:[function(require,module,exports){
+},{"./XMLNode":50,"lodash-node/modern/objects/create":68}],43:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLDTDAttList, create;
@@ -9674,12 +9713,13 @@ if (!String.fromCodePoint) {
     };
 
     XMLDTDAttList.prototype.toString = function(options, level) {
-      var indent, newline, pretty, r, space, _ref, _ref1;
+      var indent, newline, offset, pretty, r, space, _ref, _ref1, _ref2;
       pretty = (options != null ? options.pretty : void 0) || false;
       indent = (_ref = options != null ? options.indent : void 0) != null ? _ref : '  ';
-      newline = (_ref1 = options != null ? options.newline : void 0) != null ? _ref1 : '\n';
+      offset = (_ref1 = options != null ? options.offset : void 0) != null ? _ref1 : 0;
+      newline = (_ref2 = options != null ? options.newline : void 0) != null ? _ref2 : '\n';
       level || (level = 0);
-      space = new Array(level + 1).join(indent);
+      space = new Array(level + offset + 1).join(indent);
       r = '';
       if (pretty) {
         r += space;
@@ -9704,7 +9744,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"lodash-node/modern/objects/create":67}],43:[function(require,module,exports){
+},{"lodash-node/modern/objects/create":68}],44:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLDTDElement, create, isArray;
@@ -9734,12 +9774,13 @@ if (!String.fromCodePoint) {
     };
 
     XMLDTDElement.prototype.toString = function(options, level) {
-      var indent, newline, pretty, r, space, _ref, _ref1;
+      var indent, newline, offset, pretty, r, space, _ref, _ref1, _ref2;
       pretty = (options != null ? options.pretty : void 0) || false;
       indent = (_ref = options != null ? options.indent : void 0) != null ? _ref : '  ';
-      newline = (_ref1 = options != null ? options.newline : void 0) != null ? _ref1 : '\n';
+      offset = (_ref1 = options != null ? options.offset : void 0) != null ? _ref1 : 0;
+      newline = (_ref2 = options != null ? options.newline : void 0) != null ? _ref2 : '\n';
       level || (level = 0);
-      space = new Array(level + 1).join(indent);
+      space = new Array(level + offset + 1).join(indent);
       r = '';
       if (pretty) {
         r += space;
@@ -9757,7 +9798,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"lodash-node/modern/objects/create":67,"lodash-node/modern/objects/isArray":69}],44:[function(require,module,exports){
+},{"lodash-node/modern/objects/create":68,"lodash-node/modern/objects/isArray":70}],45:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLDTDEntity, create, isObject;
@@ -9806,12 +9847,13 @@ if (!String.fromCodePoint) {
     };
 
     XMLDTDEntity.prototype.toString = function(options, level) {
-      var indent, newline, pretty, r, space, _ref, _ref1;
+      var indent, newline, offset, pretty, r, space, _ref, _ref1, _ref2;
       pretty = (options != null ? options.pretty : void 0) || false;
       indent = (_ref = options != null ? options.indent : void 0) != null ? _ref : '  ';
-      newline = (_ref1 = options != null ? options.newline : void 0) != null ? _ref1 : '\n';
+      offset = (_ref1 = options != null ? options.offset : void 0) != null ? _ref1 : 0;
+      newline = (_ref2 = options != null ? options.newline : void 0) != null ? _ref2 : '\n';
       level || (level = 0);
-      space = new Array(level + 1).join(indent);
+      space = new Array(level + offset + 1).join(indent);
       r = '';
       if (pretty) {
         r += space;
@@ -9846,7 +9888,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"lodash-node/modern/objects/create":67,"lodash-node/modern/objects/isObject":72}],45:[function(require,module,exports){
+},{"lodash-node/modern/objects/create":68,"lodash-node/modern/objects/isObject":73}],46:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLDTDNotation, create;
@@ -9876,12 +9918,13 @@ if (!String.fromCodePoint) {
     };
 
     XMLDTDNotation.prototype.toString = function(options, level) {
-      var indent, newline, pretty, r, space, _ref, _ref1;
+      var indent, newline, offset, pretty, r, space, _ref, _ref1, _ref2;
       pretty = (options != null ? options.pretty : void 0) || false;
       indent = (_ref = options != null ? options.indent : void 0) != null ? _ref : '  ';
-      newline = (_ref1 = options != null ? options.newline : void 0) != null ? _ref1 : '\n';
+      offset = (_ref1 = options != null ? options.offset : void 0) != null ? _ref1 : 0;
+      newline = (_ref2 = options != null ? options.newline : void 0) != null ? _ref2 : '\n';
       level || (level = 0);
-      space = new Array(level + 1).join(indent);
+      space = new Array(level + offset + 1).join(indent);
       r = '';
       if (pretty) {
         r += space;
@@ -9907,7 +9950,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"lodash-node/modern/objects/create":67}],46:[function(require,module,exports){
+},{"lodash-node/modern/objects/create":68}],47:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLDeclaration, XMLNode, create, isObject,
@@ -9948,12 +9991,13 @@ if (!String.fromCodePoint) {
     };
 
     XMLDeclaration.prototype.toString = function(options, level) {
-      var indent, newline, pretty, r, space, _ref, _ref1;
+      var indent, newline, offset, pretty, r, space, _ref, _ref1, _ref2;
       pretty = (options != null ? options.pretty : void 0) || false;
       indent = (_ref = options != null ? options.indent : void 0) != null ? _ref : '  ';
-      newline = (_ref1 = options != null ? options.newline : void 0) != null ? _ref1 : '\n';
+      offset = (_ref1 = options != null ? options.offset : void 0) != null ? _ref1 : 0;
+      newline = (_ref2 = options != null ? options.newline : void 0) != null ? _ref2 : '\n';
       level || (level = 0);
-      space = new Array(level + 1).join(indent);
+      space = new Array(level + offset + 1).join(indent);
       r = '';
       if (pretty) {
         r += space;
@@ -9981,7 +10025,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLNode":49,"lodash-node/modern/objects/create":67,"lodash-node/modern/objects/isObject":72}],47:[function(require,module,exports){
+},{"./XMLNode":50,"lodash-node/modern/objects/create":68,"lodash-node/modern/objects/isObject":73}],48:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLDocType, create, isObject;
@@ -10087,12 +10131,13 @@ if (!String.fromCodePoint) {
     };
 
     XMLDocType.prototype.toString = function(options, level) {
-      var child, indent, newline, pretty, r, space, _i, _len, _ref, _ref1, _ref2;
+      var child, indent, newline, offset, pretty, r, space, _i, _len, _ref, _ref1, _ref2, _ref3;
       pretty = (options != null ? options.pretty : void 0) || false;
       indent = (_ref = options != null ? options.indent : void 0) != null ? _ref : '  ';
-      newline = (_ref1 = options != null ? options.newline : void 0) != null ? _ref1 : '\n';
+      offset = (_ref1 = options != null ? options.offset : void 0) != null ? _ref1 : 0;
+      newline = (_ref2 = options != null ? options.newline : void 0) != null ? _ref2 : '\n';
       level || (level = 0);
-      space = new Array(level + 1).join(indent);
+      space = new Array(level + offset + 1).join(indent);
       r = '';
       if (pretty) {
         r += space;
@@ -10108,9 +10153,9 @@ if (!String.fromCodePoint) {
         if (pretty) {
           r += newline;
         }
-        _ref2 = this.children;
-        for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-          child = _ref2[_i];
+        _ref3 = this.children;
+        for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
+          child = _ref3[_i];
           r += child.toString(options, level + 1);
         }
         r += ']';
@@ -10168,7 +10213,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLCData":40,"./XMLComment":41,"./XMLDTDAttList":42,"./XMLDTDElement":43,"./XMLDTDEntity":44,"./XMLDTDNotation":45,"./XMLProcessingInstruction":50,"lodash-node/modern/objects/create":67,"lodash-node/modern/objects/isObject":72}],48:[function(require,module,exports){
+},{"./XMLCData":41,"./XMLComment":42,"./XMLDTDAttList":43,"./XMLDTDElement":44,"./XMLDTDEntity":45,"./XMLDTDNotation":46,"./XMLProcessingInstruction":51,"lodash-node/modern/objects/create":68,"lodash-node/modern/objects/isObject":73}],49:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLAttribute, XMLElement, XMLNode, XMLProcessingInstruction, create, isArray, isFunction, isObject,
@@ -10301,26 +10346,27 @@ if (!String.fromCodePoint) {
     };
 
     XMLElement.prototype.toString = function(options, level) {
-      var att, child, indent, instruction, name, newline, pretty, r, space, _i, _j, _len, _len1, _ref, _ref1, _ref2, _ref3, _ref4;
+      var att, child, indent, instruction, name, newline, offset, pretty, r, space, _i, _j, _len, _len1, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
       pretty = (options != null ? options.pretty : void 0) || false;
       indent = (_ref = options != null ? options.indent : void 0) != null ? _ref : '  ';
-      newline = (_ref1 = options != null ? options.newline : void 0) != null ? _ref1 : '\n';
+      offset = (_ref1 = options != null ? options.offset : void 0) != null ? _ref1 : 0;
+      newline = (_ref2 = options != null ? options.newline : void 0) != null ? _ref2 : '\n';
       level || (level = 0);
-      space = new Array(level + 1).join(indent);
+      space = new Array(level + offset + 1).join(indent);
       r = '';
-      _ref2 = this.instructions;
-      for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-        instruction = _ref2[_i];
+      _ref3 = this.instructions;
+      for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
+        instruction = _ref3[_i];
         r += instruction.toString(options, level + 1);
       }
       if (pretty) {
         r += space;
       }
       r += '<' + this.name;
-      _ref3 = this.attributes;
-      for (name in _ref3) {
-        if (!__hasProp.call(_ref3, name)) continue;
-        att = _ref3[name];
+      _ref4 = this.attributes;
+      for (name in _ref4) {
+        if (!__hasProp.call(_ref4, name)) continue;
+        att = _ref4[name];
         r += att.toString(options);
       }
       if (this.children.length === 0) {
@@ -10338,9 +10384,9 @@ if (!String.fromCodePoint) {
         if (pretty) {
           r += newline;
         }
-        _ref4 = this.children;
-        for (_j = 0, _len1 = _ref4.length; _j < _len1; _j++) {
-          child = _ref4[_j];
+        _ref5 = this.children;
+        for (_j = 0, _len1 = _ref5.length; _j < _len1; _j++) {
+          child = _ref5[_j];
           r += child.toString(options, level + 1);
         }
         if (pretty) {
@@ -10376,7 +10422,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLAttribute":38,"./XMLNode":49,"./XMLProcessingInstruction":50,"lodash-node/modern/objects/create":67,"lodash-node/modern/objects/isArray":69,"lodash-node/modern/objects/isFunction":71,"lodash-node/modern/objects/isObject":72}],49:[function(require,module,exports){
+},{"./XMLAttribute":39,"./XMLNode":50,"./XMLProcessingInstruction":51,"lodash-node/modern/objects/create":68,"lodash-node/modern/objects/isArray":70,"lodash-node/modern/objects/isFunction":72,"lodash-node/modern/objects/isObject":73}],50:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLNode, isArray, isEmpty, isFunction, isObject,
@@ -10696,7 +10742,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLCData":40,"./XMLComment":41,"./XMLDeclaration":46,"./XMLDocType":47,"./XMLElement":48,"./XMLRaw":51,"./XMLText":53,"lodash-node/modern/objects/isArray":69,"lodash-node/modern/objects/isEmpty":70,"lodash-node/modern/objects/isFunction":71,"lodash-node/modern/objects/isObject":72}],50:[function(require,module,exports){
+},{"./XMLCData":41,"./XMLComment":42,"./XMLDeclaration":47,"./XMLDocType":48,"./XMLElement":49,"./XMLRaw":52,"./XMLText":54,"lodash-node/modern/objects/isArray":70,"lodash-node/modern/objects/isEmpty":71,"lodash-node/modern/objects/isFunction":72,"lodash-node/modern/objects/isObject":73}],51:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLProcessingInstruction, create;
@@ -10720,12 +10766,13 @@ if (!String.fromCodePoint) {
     };
 
     XMLProcessingInstruction.prototype.toString = function(options, level) {
-      var indent, newline, pretty, r, space, _ref, _ref1;
+      var indent, newline, offset, pretty, r, space, _ref, _ref1, _ref2;
       pretty = (options != null ? options.pretty : void 0) || false;
       indent = (_ref = options != null ? options.indent : void 0) != null ? _ref : '  ';
-      newline = (_ref1 = options != null ? options.newline : void 0) != null ? _ref1 : '\n';
+      offset = (_ref1 = options != null ? options.offset : void 0) != null ? _ref1 : 0;
+      newline = (_ref2 = options != null ? options.newline : void 0) != null ? _ref2 : '\n';
       level || (level = 0);
-      space = new Array(level + 1).join(indent);
+      space = new Array(level + offset + 1).join(indent);
       r = '';
       if (pretty) {
         r += space;
@@ -10748,7 +10795,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"lodash-node/modern/objects/create":67}],51:[function(require,module,exports){
+},{"lodash-node/modern/objects/create":68}],52:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLNode, XMLRaw, create,
@@ -10775,12 +10822,13 @@ if (!String.fromCodePoint) {
     };
 
     XMLRaw.prototype.toString = function(options, level) {
-      var indent, newline, pretty, r, space, _ref, _ref1;
+      var indent, newline, offset, pretty, r, space, _ref, _ref1, _ref2;
       pretty = (options != null ? options.pretty : void 0) || false;
       indent = (_ref = options != null ? options.indent : void 0) != null ? _ref : '  ';
-      newline = (_ref1 = options != null ? options.newline : void 0) != null ? _ref1 : '\n';
+      offset = (_ref1 = options != null ? options.offset : void 0) != null ? _ref1 : 0;
+      newline = (_ref2 = options != null ? options.newline : void 0) != null ? _ref2 : '\n';
       level || (level = 0);
-      space = new Array(level + 1).join(indent);
+      space = new Array(level + offset + 1).join(indent);
       r = '';
       if (pretty) {
         r += space;
@@ -10798,7 +10846,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLNode":49,"lodash-node/modern/objects/create":67}],52:[function(require,module,exports){
+},{"./XMLNode":50,"lodash-node/modern/objects/create":68}],53:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLStringifier,
@@ -10967,7 +11015,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{}],53:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLNode, XMLText, create,
@@ -10995,12 +11043,13 @@ if (!String.fromCodePoint) {
     };
 
     XMLText.prototype.toString = function(options, level) {
-      var indent, newline, pretty, r, space, _ref, _ref1;
+      var indent, newline, offset, pretty, r, space, _ref, _ref1, _ref2;
       pretty = (options != null ? options.pretty : void 0) || false;
       indent = (_ref = options != null ? options.indent : void 0) != null ? _ref : '  ';
-      newline = (_ref1 = options != null ? options.newline : void 0) != null ? _ref1 : '\n';
+      offset = (_ref1 = options != null ? options.offset : void 0) != null ? _ref1 : 0;
+      newline = (_ref2 = options != null ? options.newline : void 0) != null ? _ref2 : '\n';
       level || (level = 0);
-      space = new Array(level + 1).join(indent);
+      space = new Array(level + offset + 1).join(indent);
       r = '';
       if (pretty) {
         r += space;
@@ -11018,7 +11067,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLNode":49,"lodash-node/modern/objects/create":67}],54:[function(require,module,exports){
+},{"./XMLNode":50,"lodash-node/modern/objects/create":68}],55:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.3
 (function() {
   var XMLBuilder, assign;
@@ -11034,7 +11083,7 @@ if (!String.fromCodePoint) {
 
 }).call(this);
 
-},{"./XMLBuilder":39,"lodash-node/modern/objects/assign":66}],55:[function(require,module,exports){
+},{"./XMLBuilder":40,"lodash-node/modern/objects/assign":67}],56:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -11076,7 +11125,7 @@ function bind(func, thisArg) {
 
 module.exports = bind;
 
-},{"../internals/createWrapper":60,"../internals/slice":65}],56:[function(require,module,exports){
+},{"../internals/createWrapper":61,"../internals/slice":66}],57:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -11140,7 +11189,7 @@ function baseBind(bindData) {
 
 module.exports = baseBind;
 
-},{"../objects/isObject":72,"./baseCreate":57,"./setBindData":63,"./slice":65}],57:[function(require,module,exports){
+},{"../objects/isObject":73,"./baseCreate":58,"./setBindData":64,"./slice":66}],58:[function(require,module,exports){
 (function (global){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
@@ -11186,7 +11235,7 @@ if (!nativeCreate) {
 module.exports = baseCreate;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../objects/isObject":72,"../utilities/noop":76,"./isNative":61}],58:[function(require,module,exports){
+},{"../objects/isObject":73,"../utilities/noop":77,"./isNative":62}],59:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -11268,7 +11317,7 @@ function baseCreateCallback(func, thisArg, argCount) {
 
 module.exports = baseCreateCallback;
 
-},{"../functions/bind":55,"../support":74,"../utilities/identity":75,"./setBindData":63}],59:[function(require,module,exports){
+},{"../functions/bind":56,"../support":75,"../utilities/identity":76,"./setBindData":64}],60:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -11348,7 +11397,7 @@ function baseCreateWrapper(bindData) {
 
 module.exports = baseCreateWrapper;
 
-},{"../objects/isObject":72,"./baseCreate":57,"./setBindData":63,"./slice":65}],60:[function(require,module,exports){
+},{"../objects/isObject":73,"./baseCreate":58,"./setBindData":64,"./slice":66}],61:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -11456,7 +11505,7 @@ function createWrapper(func, bitmask, partialArgs, partialRightArgs, thisArg, ar
 
 module.exports = createWrapper;
 
-},{"../objects/isFunction":71,"./baseBind":56,"./baseCreateWrapper":59,"./slice":65}],61:[function(require,module,exports){
+},{"../objects/isFunction":72,"./baseBind":57,"./baseCreateWrapper":60,"./slice":66}],62:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -11492,7 +11541,7 @@ function isNative(value) {
 
 module.exports = isNative;
 
-},{}],62:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -11514,7 +11563,7 @@ var objectTypes = {
 
 module.exports = objectTypes;
 
-},{}],63:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -11559,7 +11608,7 @@ var setBindData = !defineProperty ? noop : function(func, value) {
 
 module.exports = setBindData;
 
-},{"../utilities/noop":76,"./isNative":61}],64:[function(require,module,exports){
+},{"../utilities/noop":77,"./isNative":62}],65:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -11599,7 +11648,7 @@ var shimKeys = function(object) {
 
 module.exports = shimKeys;
 
-},{"./objectTypes":62}],65:[function(require,module,exports){
+},{"./objectTypes":63}],66:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -11639,7 +11688,7 @@ function slice(array, start, end) {
 
 module.exports = slice;
 
-},{}],66:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -11711,7 +11760,7 @@ var assign = function(object, source, guard) {
 
 module.exports = assign;
 
-},{"../internals/baseCreateCallback":58,"../internals/objectTypes":62,"./keys":73}],67:[function(require,module,exports){
+},{"../internals/baseCreateCallback":59,"../internals/objectTypes":63,"./keys":74}],68:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -11761,7 +11810,7 @@ function create(prototype, properties) {
 
 module.exports = create;
 
-},{"../internals/baseCreate":57,"./assign":66}],68:[function(require,module,exports){
+},{"../internals/baseCreate":58,"./assign":67}],69:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -11813,7 +11862,7 @@ var forOwn = function(collection, callback, thisArg) {
 
 module.exports = forOwn;
 
-},{"../internals/baseCreateCallback":58,"../internals/objectTypes":62,"./keys":73}],69:[function(require,module,exports){
+},{"../internals/baseCreateCallback":59,"../internals/objectTypes":63,"./keys":74}],70:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -11860,7 +11909,7 @@ var isArray = nativeIsArray || function(value) {
 
 module.exports = isArray;
 
-},{"../internals/isNative":61}],70:[function(require,module,exports){
+},{"../internals/isNative":62}],71:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -11925,7 +11974,7 @@ function isEmpty(value) {
 
 module.exports = isEmpty;
 
-},{"./forOwn":68,"./isFunction":71}],71:[function(require,module,exports){
+},{"./forOwn":69,"./isFunction":72}],72:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -11954,7 +12003,7 @@ function isFunction(value) {
 
 module.exports = isFunction;
 
-},{}],72:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -11995,7 +12044,7 @@ function isObject(value) {
 
 module.exports = isObject;
 
-},{"../internals/objectTypes":62}],73:[function(require,module,exports){
+},{"../internals/objectTypes":63}],74:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -12033,7 +12082,7 @@ var keys = !nativeKeys ? shimKeys : function(object) {
 
 module.exports = keys;
 
-},{"../internals/isNative":61,"../internals/shimKeys":64,"./isObject":72}],74:[function(require,module,exports){
+},{"../internals/isNative":62,"../internals/shimKeys":65,"./isObject":73}],75:[function(require,module,exports){
 (function (global){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
@@ -12077,7 +12126,7 @@ support.funcNames = typeof Function.name == 'string';
 module.exports = support;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./internals/isNative":61}],75:[function(require,module,exports){
+},{"./internals/isNative":62}],76:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`
@@ -12107,7 +12156,7 @@ function identity(value) {
 
 module.exports = identity;
 
-},{}],76:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="node" -o ./modern/`

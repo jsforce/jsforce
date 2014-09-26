@@ -259,7 +259,7 @@ module.exports = Tooling;
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
 var events = jsforce.require('events'),
-    util   = jsforce.require('util'),
+    inherits = require('inherits'),
     _      = jsforce.require('underscore')._;
 
 /**
@@ -274,7 +274,7 @@ var CacheEntry = function() {
   this.fetching = false;
 };
 
-util.inherits(CacheEntry, events.EventEmitter);
+inherits(CacheEntry, events.EventEmitter);
 
 /**
  * Get value in the cache entry
@@ -466,6 +466,31 @@ Cache.prototype.makeCacheable = function(fn, scope, options) {
 
 
 module.exports = Cache;
+
+},{"inherits":3}],3:[function(require,module,exports){
+if (typeof Object.create === 'function') {
+  // implementation from standard node.js 'util' module
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    ctor.prototype = Object.create(superCtor.prototype, {
+      constructor: {
+        value: ctor,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+  };
+} else {
+  // old school shim for old browsers
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    var TempCtor = function () {}
+    TempCtor.prototype = superCtor.prototype
+    ctor.prototype = new TempCtor()
+    ctor.prototype.constructor = ctor
+  }
+}
 
 },{}]},{},[1])(1)
 });
