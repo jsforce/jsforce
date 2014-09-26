@@ -39,3 +39,17 @@ See [license](LICENSE) (MIT License).
 
 - Shinichi Tomita <shinichi.tomita@gmail.com>
 
+
+## Notes
+
+If you have any questions, first file it on [issues](https://github.com/jsforce/jsforce/issues) before contacting authors via e-mail.
+
+Your contributions are welcome - both by reporting issues on [GitHub issues](https://github.com/jsforce/jsforce/issues) or pull-requesting patches.
+
+If you want to implement any additinal features to be added to JSforce, which might be or not be merged to our master though, first check current [opening issues](https://github.com/jsforce/jsforce/issues?q=is%3Aopen) with milestones to confirm whether the feature is on road map or not.
+
+If your feature implementation is brand-new or fixing unsupposed bugs in the library's test cases, please include addtional test codes in the `test/` directory.
+
+
+
+
