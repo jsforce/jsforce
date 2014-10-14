@@ -478,5 +478,21 @@ describe("connection", function() {
     });
   });
 
+  /**
+   *
+   */
+  describe("get tabs list information", function() {
+    it("should get tabs info in the org", function(done) {
+      conn.tabs(function(err, tabs) {
+        assert.ok(_.isArray(tabs));
+        tabs.forEach(function(tab) {
+          assert.ok(_.isString(tab.label));
+          assert.ok(_.isString(tab.name));
+          assert.ok(_.isString(tab.url));
+        });
+      }.check(done));
+    });
+  });
+
 });
 
