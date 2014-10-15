@@ -494,5 +494,25 @@ describe("connection", function() {
     });
   });
 
+  /**
+   *
+   */
+  describe("get system limits information", function() {
+    it("should get limit info in the org", function(done) {
+      conn.limits(function(err, limits) {
+        assert.ok(_.isObject(limits));
+        assert.ok(_.isObject(limits.DataStorageMB));
+        assert.ok(limits.DataStorageMB.Remaining > 0);
+        assert.ok(limits.DataStorageMB.Max > 0);
+        assert.ok(_.isObject(limits.FileStorageMB));
+        assert.ok(limits.FileStorageMB.Remaining > 0);
+        assert.ok(limits.FileStorageMB.Max > 0);
+        assert.ok(_.isObject(limits.DailyApiRequests));
+        assert.ok(limits.DailyApiRequests.Remaining > 0);
+        assert.ok(limits.DailyApiRequests.Max > 0);
+      }.check(done));
+    });
+  });
+
 });
 
