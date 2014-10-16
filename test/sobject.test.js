@@ -253,6 +253,82 @@ describe("sobject", function() {
       }.check(done));
     });
   });
+
+
+  var listviewId;
+
+  /**
+   *
+   */
+  describe("listup list views", function() {
+    it("should return list views definitions on the sobject", function(done) {
+      Account.listviews(function(err, result) {
+        if (err) { throw err; }
+        assert.ok(_.isObject(result));
+        assert.ok(_.isArray(result.listviews));
+        for (var i=0, len=result.listviews.length; i<len; i++) {
+          var listview = result.listviews[i];
+          assert.ok(_.isString(listview.id));
+          assert.ok(_.isString(listview.label));
+          assert.ok(_.isString(listview.describeUrl));
+          assert.ok(_.isString(listview.resultsUrl));
+          assert.ok(_.isBoolean(listview.soqlCompatible));
+          if (i===0) { listviewId = listview.id; }
+        }
+      }.check(done));
+    });
+  });
+
+  /**
+   *
+   */
+  describe("describe list view", function() {
+    it("should return described list view info for given list view id", function(done) {
+      Account.listview(listviewId).describe(function(err, result) {
+        if (err) { throw err; }
+        assert.ok(_.isObject(result));
+        assert.ok(_.isString(result.id));
+        assert.ok(_.isString(result.sobjectType));
+        assert.ok(_.isString(result.query) || result.query === null);
+        assert.ok(_.isArray(result.columns));
+        assert.ok(_.isArray(result.orderBy));
+        for (var i=0, len=result.columns.length; i<len; i++) {
+          var column = result.columns[i];
+          assert.ok(_.isString(column.label));
+          assert.ok(_.isString(column.fieldNameOrPath));
+          assert.ok(_.isString(column.selectListItem));
+          assert.ok(_.isNumber(column.sortIndex) || column.sortIndex === null);
+          assert.ok(_.isBoolean(column.sortable));
+        }
+      }.check(done));
+    });
+  });
+ 
+  /**
+   *
+   */
+  describe("get result of list view", function() {
+    it("should return executed result of list view for given list view id", function(done) {
+      Account.listview(listviewId).results(function(err, result) {
+        if (err) { throw err; }
+        assert.ok(_.isObject(result));
+        assert.ok(_.isBoolean(result.done));
+        assert.ok(_.isNumber(result.size));
+        assert.ok(_.isString(result.id));
+        assert.ok(_.isString(result.label));
+        assert.ok(_.isArray(result.columns));
+        for (var i=0, len=result.columns.length; i<len; i++) {
+          var column = result.columns[i];
+          assert.ok(_.isString(column.label));
+          assert.ok(_.isString(column.fieldNameOrPath));
+          assert.ok(_.isString(column.selectListItem));
+          assert.ok(_.isNumber(column.sortIndex) || column.sortIndex === null);
+          assert.ok(_.isBoolean(column.sortable));
+        }
+        assert.ok(_.isArray(result.records));
+      }.check(done));
+    });
+  });
    
 });
 
