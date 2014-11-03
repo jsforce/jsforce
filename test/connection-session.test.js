@@ -19,8 +19,9 @@ describe("connection-session", function() {
    *
    */
   describe("login", function() {
+    var conn;
     it("should login by username and password", function(done) {
-      var conn = new sf.Connection({ logLevel: config.logLevel });
+      conn = new sf.Connection({ logLevel: config.logLevel });
       conn.login(config.username, config.password, function(err, userInfo) {
         if (err) { throw err; }
         assert.ok(_.isString(conn.accessToken));
@@ -28,6 +29,33 @@ describe("connection-session", function() {
         assert.ok(_.isString(userInfo.organizationId));
         assert.ok(_.isString(userInfo.url));
       }.check(done));
+    });
+
+    describe("then do simple query", function() {
+      it("should return some records", function(done) {
+        conn.query("SELECT Id FROM User", function(err, res) {
+          assert.ok(_.isArray(res.records));
+        }.check(done));
+      });
+    });
+
+    describe("then catch/handle bad access token", function() {
+      var newAccessToken, refreshCount = 0;
+      it("should return User records", function(done) {
+        conn.accessToken = "invalid access token";
+        conn.removeAllListeners("refresh");
+        conn.on("refresh", function(at) {
+          newAccessToken = at;
+          refreshCount++;
+        });
+        conn.query("SELECT Id FROM User LIMIT 5", function(err, res) {
+          console.log(err);
+          assert.ok(refreshCount === 1);
+          assert.ok(_.isString(newAccessToken));
+          assert.ok(_.isArray(res.records));
+          accessToken = newAccessToken;
+        }.check(done));
+      });
     });
   });
 
