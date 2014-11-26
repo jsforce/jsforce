@@ -45,6 +45,16 @@ if (testUtils.isNodeJS) {
       }, 5000);
     });
   });
+
+  /**
+   *
+   */
+  describe("subscribe to Logging systemTopic", function() {
+    it("should create topic as system topic", function(done) {
+      conn.streaming.systemTopic('Logging').subscribe(listener);
+      assert.equal(true, conn.streaming.systemTopic('Logging').isSystem);
+    });
+  });
 }
 /*------------------------------------------------------------------------*/
 
