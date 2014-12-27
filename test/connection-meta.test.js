@@ -257,5 +257,33 @@ describe("connection-meta", function() {
     });
   });
 
+  /**
+   *
+   */
+  describe("get theme information", function() {
+    it("should get theme info in the org", function(done) {
+      conn.theme(function(err, theme) {
+        assert.ok(_.isObject(theme));
+        assert.ok(_.isArray(theme.themeItems));
+        theme.themeItems.forEach(function(t) {
+          assert.ok(_.isString(t.name));
+          assert.ok(_.isArray(t.colors) || t.colors === null);
+          (t.colors || []).forEach(function(c) {
+            assert.ok(_.isString(c.color));
+            assert.ok(_.isString(c.context));
+            assert.ok(_.isString(c.theme));
+          });
+          assert.ok(_.isArray(t.icons) || t.icons === null);
+          (t.icons || []).forEach(function(ic) {
+            assert.ok(_.isString(ic.url));
+            assert.ok(_.isNumber(ic.width));
+            assert.ok(_.isNumber(ic.height));
+            assert.ok(_.isString(ic.contentType));
+          });
+        });
+      }.check(done));
+    });
+  });
+
 });
 
