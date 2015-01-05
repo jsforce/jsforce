@@ -18,7 +18,6 @@ module.exports = _.extend({
       if (cnt === 0) { throw new Error('*** Timeout: cannot lock test user session ***'); }
       return conn.apex.post('/JSforceTestSession/').then(function(result) {
         if (result.success) {
-          console.log("+++ locked +++");
           return;
         } else {
           console.log("... waiting test user session lock to be released ...");
