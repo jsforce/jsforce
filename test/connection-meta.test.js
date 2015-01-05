@@ -1,4 +1,4 @@
-/*global describe, it, before */
+/*global describe, it, before, after */
 var testUtils = require('./helper/test-utils'),
     assert = testUtils.assert;
 
@@ -20,6 +20,7 @@ describe("connection-meta", function() {
    *
    */
   before(function(done) {
+    this.timeout(600000); // set timeout to 10 min.
     testUtils.establishConnection(conn, config, done);
   });
 
@@ -283,6 +284,13 @@ describe("connection-meta", function() {
         });
       }.check(done));
     });
+  });
+
+  /**
+   *
+   */
+  after(function(done) {
+    testUtils.closeConnection(conn, done);
   });
 
 });

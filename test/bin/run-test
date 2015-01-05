@@ -1,0 +1,14 @@
+#!/usr/bin/env node
+var spawn = require('child_process').spawn;
+
+var args = "--reporter spec --require intelli-espower-loader".split(/\s+/);
+if (process.argv.length > 2) {
+  args.push("test/" + process.argv[2]+ ".test.js");
+}
+
+var mocha = spawn('mocha', args);
+
+mocha.stdout.pipe(process.stdout);
+mocha.stderr.pipe(process.stderr);
+
+mocha.on('exit', function(code) { process.exit(code); });
