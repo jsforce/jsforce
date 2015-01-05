@@ -8,3 +8,7 @@ env:
   - secure: BASWMc2hHveSznN9RYmfZkfu9MAMF4cTjSKHw/U5OJYHkJjYtkM1RwW6G9Gx3zzEzfxAbo4CXnBa3NQJXewMeIWgF99LdX13EnOzEpeGPABV+tqLmnCZbja1c0sH9XaRmRj+S/BZ6Jg/O0t5EsYfPk/dXPKJN/Bc0gixZwTmrtE=
   - secure: XolxANMczFH3dFhsu5uID7UsO58wj/dfWajt8onwz6NsF+H7vK55bYWgatRtWTFzIAZl0RbgoIhQOoQ1GSN9AliVeHfq57giVDnI/AREfdDMfNcfAYx2KzmzsfNQlgM/qEknqwd3OvA7+lVPM3GR/hPDMYSuKzBSzJvQBOqFQFE=
   - secure: TlH/Omfdv+O/6TPTEoQdQ0E5MAVKYTajSBT2TwePRmSnjTWFB4qhIdEksyGfrR/hUEIcqq8aqj2Gk/RetxkPe9AwKBj92Qfu4r0lIHNhTsNB4gDv1dH7ynXP62zC3exjsLRDqlv4Y7BF3dGgRVu2czSkVN238fOfqx5YgnP6BxQ=
+branches:
+  only:
+    - master
+    - /^ci-.*$/

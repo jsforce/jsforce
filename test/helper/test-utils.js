@@ -7,6 +7,8 @@ var testUtils = typeof window === 'undefined' ?
   require('./node/test-utils') :
   require('./browser/test-utils');
 
+var locked = true;
+
 module.exports = _.extend({
   
   assert: require('power-assert'),
@@ -28,11 +30,17 @@ module.exports = _.extend({
       });
     }
     conn.login(config.username, config.password)
-      .then(function() { return tryLock(20, 30000); }) // polling 30 sec x 20 times = 10 min
+      .then(function() { 
+        if (config.isolateTest) {
+          locked = true;
+          return tryLock(20, 30000);
+        }
+      }) // polling 30 sec x 20 times = 10 min
       .thenCall(done);
   },
 
   closeConnection: function(conn, done) {
+    if (!locked) { return done(); }
     conn.apex.del('/JSforceTestSession/', function (err, result) {
       if (err || !result.success) { throw new Error('Failed to close test session'); }
     }.check(done));

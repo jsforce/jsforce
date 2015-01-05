@@ -10,5 +10,6 @@ module.exports = {
   upsertTable :   "UpsertTable__c",
   upsertField :   "ExtId__c",
   proxyUrl :      env.SF_AJAX_PROXY_URL || "http://localhost:3123/proxy",
-  logLevel :      env.DEBUG
+  logLevel :      env.DEBUG,
+  isolateTest:    env.DISABLE_TEST_ISOLATION !== "true"
 };
