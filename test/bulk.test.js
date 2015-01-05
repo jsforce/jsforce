@@ -231,6 +231,47 @@ if (testUtils.isNodeJS) {
     });
   });
 }
+
+/*------------------------------------------------------------------------*/
+
+  describe("bulk API session refresh", function() {
+    var recs = null;
+
+    before(function(done) {
+      var records = Array(101).join('_').split('').map(function(i) {
+        return { Name: 'Session Expiry Test #'+i };
+      });
+      conn.bulk.load('Account', 'insert', records, function(err, rets) {
+        if (err) { throw err; }
+        recs = rets.map(function(r) { return { Id: r.id }; });
+      }.check(done));
+    });
+
+    it("should delete records even if the session has been expired", function(done) {
+      var conn2 = new sf.Connection({
+        instanceUrl: conn.instanceUrl,
+        accessToken: 'invalid_token',
+        refreshFn: function(rt, callback) {
+          var res = {
+            access_token: conn.accessToken,
+            instance_url: conn.instanceUrl,
+            id: [ conn.loginUrl, conn.userInfo.organizationId, conn.userInfo.id ].join('/')
+          };
+          callback(null, res);
+        }
+      });
+      conn2.bulk.load('Account', 'delete', recs, function(err, rets) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(rets));
+        assert.ok(rets.length === 100);
+        for (var i=0; i<rets.length; i++) {
+          var ret = rets[i];
+          assert.ok(ret.success);
+        }
+      }.check(done));
+    });
+  });
+
 /*------------------------------------------------------------------------*/
 
   /**
