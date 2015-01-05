@@ -21,6 +21,7 @@ describe("bulk", function() {
    *
    */
   before(function(done) {
+    this.timeout(600000); // set timeout to 10 min.
     testUtils.establishConnection(conn, config, done);
   });
 
@@ -376,7 +377,9 @@ if (testUtils.isNodeJS) {
 
   // graceful shutdown to wait remaining jobs to close...
   after(function(done) {
-    setTimeout(function() { done(); }, 2000);
+    setTimeout(function() { 
+      testUtils.closeConnection(conn, done);
+    }, 2000);
   });
 
 });
