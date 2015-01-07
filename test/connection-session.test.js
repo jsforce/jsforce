@@ -49,11 +49,9 @@ describe("connection-session", function() {
           refreshCount++;
         });
         conn.query("SELECT Id FROM User LIMIT 5", function(err, res) {
-          console.log(err);
           assert.ok(refreshCount === 1);
           assert.ok(_.isString(newAccessToken));
           assert.ok(_.isArray(res.records));
-          accessToken = newAccessToken;
         }.check(done));
       });
     });
