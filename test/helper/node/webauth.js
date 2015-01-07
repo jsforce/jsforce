@@ -5,7 +5,7 @@ module.exports = function(url, username, password, callback) {
   var ph, page;
   async.waterfall([
     function(cb) {
-      phantom.create(cb);
+      phantom.create(cb, { parameters: { 'ssl-protocol': 'tlsv1' } });
     },
     function(_ph, cb) {
       ph = _ph;
