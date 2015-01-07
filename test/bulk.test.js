@@ -17,6 +17,9 @@ describe("bulk", function() {
 
   var conn = new testUtils.createConnection(config);
 
+  // adjust poll timeout to test timeout.
+  conn.bulk.pollTimeout = 20*1000;
+
   /**
    *
    */
@@ -252,13 +255,11 @@ if (testUtils.isNodeJS) {
       var conn2 = new sf.Connection({
         instanceUrl: conn.instanceUrl,
         accessToken: 'invalid_token',
-        refreshFn: function(rt, callback) {
-          var res = {
-            access_token: conn.accessToken,
-            instance_url: conn.instanceUrl,
-            id: [ conn.loginUrl, conn.userInfo.organizationId, conn.userInfo.id ].join('/')
-          };
-          callback(null, res);
+        logLevel: config.logLevel,
+        refreshFn: function(c, callback) {
+          setTimeout(function() {
+            callback(null, conn.accessToken);
+          }, 500);
         }
       });
       conn2.bulk.load('Account', 'delete', recs, function(err, rets) {
