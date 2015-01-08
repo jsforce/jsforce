@@ -13,12 +13,12 @@ var async  = require('async'),
  */
 describe("bulk", function() {
 
-  this.timeout(20000); // set timeout to 20 sec.
+  this.timeout(40000); // set timeout to 40 sec.
 
   var conn = new testUtils.createConnection(config);
 
   // adjust poll timeout to test timeout.
-  conn.bulk.pollTimeout = 20*1000;
+  conn.bulk.pollTimeout = 40*1000;
 
   /**
    *

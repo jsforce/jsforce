@@ -16,6 +16,9 @@ describe("metadata", function() {
 
   var conn = testUtils.createConnection(config);
 
+  // adjust poll timeout to test timeout.
+  conn.metadata.pollTimeout = 40*1000;
+
   /**
    *
    */
@@ -30,7 +33,7 @@ describe("metadata", function() {
   describe("synchronous metadata call sequence", function() {
 
     var metadata = [{
-      fullName: 'TestObjectSync1__c',
+      fullName: 'JSforceTestObjectSync1__c',
       label: 'Test Object Sync 1',
       pluralLabel: 'Test Object Sync 1',
       nameField: {
@@ -40,7 +43,7 @@ describe("metadata", function() {
       deploymentStatus: 'Deployed',
       sharingModel: 'ReadWrite'
     }, {
-      fullName: 'TestObjectSync2__c',
+      fullName: 'JSforceTestObjectSync2__c',
       label: 'Test Object Sync 2',
       pluralLabel: 'Test Object 2',
       nameField: {
@@ -115,7 +118,7 @@ describe("metadata", function() {
     describe("upsert metadata synchronously", function() {
       it("should upsert custom objects", function(done) {
         var umetadata = [{
-          fullName: 'TestObjectSync2__c',
+          fullName: 'JSforceTestObjectSync2__c',
           label: 'Upserted Object Sync 2',
           pluralLabel: 'Upserted Object Sync 2',
           nameField: {
@@ -125,7 +128,7 @@ describe("metadata", function() {
           deploymentStatus: 'Deployed',
           sharingModel: 'ReadWrite'
         }, {
-          fullName: 'TestObjectSync3__c',
+          fullName: 'JSforceTestObjectSync3__c',
           label: 'Upserted Object Sync 3',
           pluralLabel: 'Upserted Object Sync 3',
           nameField: {
@@ -141,7 +144,7 @@ describe("metadata", function() {
           assert.ok(results.length === umetadata.length);
           _.forEach(results, function(result, i) {
             assert.ok(result.success === true);
-            assert.ok(result.created === (result.fullName === 'TestObjectSync3__c' ? true : false));
+            assert.ok(result.created === (result.fullName === 'JSforceTestObjectSync3__c' ? true : false));
             assert.ok(result.fullName === umetadata[i].fullName);
           });
         }.check(done));
@@ -153,7 +156,7 @@ describe("metadata", function() {
      */
     describe("rename metadata synchronously", function() {
       it("should rename a custom object", function(done) {
-        var oldName = fullNames[0], newName = 'Updated' + oldName;
+        var oldName = fullNames[0], newName = oldName.replace(/__c$/, 'Updated__c');
         conn.metadata.rename('CustomObject', oldName, newName).then(function(result) {
           assert.ok(result.success === true);
           assert.ok(_.isString(result.fullName));
@@ -162,8 +165,29 @@ describe("metadata", function() {
         }).then(function(result) {
           assert.ok(_.isString(result.fullName));
           assert.ok(result.fullName === newName);
-          fullNames[0] = result.fullName;
         }).then(done, done);
+      });
+    });
+
+    /**
+     *
+     */
+    describe("list metadata synchronously", function() {
+      it("should list custom objects", function(done) {
+        conn.metadata.list({ type: 'CustomObject' }, function(err, results) {
+          if (err) { throw err; }
+          assert.ok(_.isArray(results));
+          _.forEach(results, function(result) {
+            assert.ok(result.type === 'CustomObject');
+            assert.ok(_.isString(result.id));
+            assert.ok(_.isString(result.fullName));
+          });
+          fullNames = results.filter(function(m) {
+            return m.fullName.match(/^JSforceTestObject.+__c$/);
+          }).map(function(m) {
+            return m.fullName;
+          });
+        }.check(done));
       });
     });
 
@@ -172,7 +196,6 @@ describe("metadata", function() {
      */
     describe("delete metadata synchronously", function() {
       it("should delete custom objects", function(done) {
-        fullNames.push('TestObjectSync3__c');
         conn.metadata.delete('CustomObject', fullNames, function(err, results) {
           if (err) { throw err; }
           assert.ok(_.isArray(results));
@@ -231,6 +254,29 @@ if (testUtils.isNodeJS) {
     });
   });
 
+
+/*------------------------------------------------------------------------*/
+
+  describe("metadata API session refresh", function() {
+    it("should list metadata even if the session has been expired", function(done) {
+      var conn2 = new sf.Connection({
+        instanceUrl: conn.instanceUrl,
+        accessToken: 'invalid_token',
+        logLevel: config.logLevel,
+        refreshFn: function(c, callback) {
+          setTimeout(function() {
+            callback(null, conn.accessToken);
+          }, 500);
+        }
+      });
+      conn2.metadata.list({ type: 'CustomObject' }, function(err, results) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(results));
+      }.check(done));
+    });
+  });
+
+/*------------------------------------------------------------------------*/
 
   /**
    *
