@@ -209,6 +209,28 @@ describe("query", function() {
   /**
    *
    */
+  describe("explain query plan of soql query", function() {
+    it("should get explain result", function(done) {
+      var query = conn.query("SELECT Id, Name FROM Account ORDER BY CreatedDate DESC LIMIT 10");
+      query.explain(function(err, result) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(result.plans));
+        for (var i=0; i<result.plans.length; i++) {
+          var plan = result.plans[i];
+          assert.ok(_.isNumber(plan.cardinality));
+          assert.ok(_.isArray(plan.fields));
+          assert.ok(_.isString(plan.leadingOperationType));
+          assert.ok(_.isNumber(plan.relativeCost));
+          assert.ok(_.isNumber(plan.sobjectCardinality));
+          assert.ok(_.isString(plan.sobjectType));
+        }
+      }.check(done));
+    });
+  });
+
+  /**
+   *
+   */
   after(function(done) {
     testUtils.closeConnection(conn, done);
   });
