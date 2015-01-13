@@ -258,13 +258,50 @@ describe("sobject", function() {
   /**
    *
    */
+  describe("list layout for SObject", function() {
+    it("should return Account layout information", function(done) {
+      Account.layouts(function(err, res) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(res.layouts));
+        res.layouts.forEach(function(layout) {
+          assert.ok(layout.id === null || _.isString(layout.id));
+          assert.ok(_.isObject(layout.buttonLayoutSection));
+          assert.ok(_.isArray(layout.detailLayoutSections));
+          assert.ok(_.isArray(layout.editLayoutSections));
+          assert.ok(_.isObject(layout.quickActionList));
+          assert.ok(_.isArray(layout.quickActionList.quickActionListItems));
+          assert.ok(_.isArray(layout.relatedLists));
+        });
+        assert.ok(_.isArray(res.recordTypeMappings));
+      }.check(done));
+    });
+
+    it("should return Account layout information immediately", function() {
+      var res = Account.layouts$();
+      assert.ok(_.isArray(res.layouts));
+      res.layouts.forEach(function(layout) {
+        assert.ok(layout.id === null || _.isString(layout.id));
+        assert.ok(_.isObject(layout.buttonLayoutSection));
+        assert.ok(_.isArray(layout.detailLayoutSections));
+        assert.ok(_.isArray(layout.editLayoutSections));
+        assert.ok(_.isObject(layout.quickActionList));
+        assert.ok(_.isArray(layout.quickActionList.quickActionListItems));
+        assert.ok(_.isArray(layout.relatedLists));
+      });
+      assert.ok(_.isArray(res.recordTypeMappings));
+    });
+  });
+
+  /**
+   *
+   */
   describe("list compact layout for SObject", function() {
-    it("should return comact layout information", function(done) {
+    it("should return Account comact layout information", function(done) {
       Account.compactLayouts(function(err, res) {
         if (err) { throw err; }
         assert.ok(_.isArray(res.compactLayouts));
         res.compactLayouts.forEach(function(clayout) {
-          assert.ok(!res.id || _.isString(res.id));
+          assert.ok(clayout.id === null || _.isString(clayout.id));
           assert.ok(_.isString(clayout.objectType));
           assert.ok(_.isArray(clayout.actions));
           assert.ok(_.isArray(clayout.fieldItems));
@@ -272,6 +309,19 @@ describe("sobject", function() {
         assert.ok(!res.defaultCompactLayoutId || _.isString(res.defaultCompactLayoutId));
         assert.ok(_.isArray(res.recordTypeCompactLayoutMappings));
       }.check(done));
+    });
+
+    it("should return Account comapct layout information immediately", function() {
+      var res = Account.compactLayouts$();
+      assert.ok(_.isArray(res.compactLayouts));
+      res.compactLayouts.forEach(function(clayout) {
+        assert.ok(clayout.id === null || _.isString(clayout.id));
+        assert.ok(_.isString(clayout.objectType));
+        assert.ok(_.isArray(clayout.actions));
+        assert.ok(_.isArray(clayout.fieldItems));
+      });
+      assert.ok(!res.defaultCompactLayoutId || _.isString(res.defaultCompactLayoutId));
+      assert.ok(_.isArray(res.recordTypeCompactLayoutMappings));
     });
   });
 
