@@ -255,6 +255,26 @@ describe("sobject", function() {
     });
   });
 
+  /**
+   *
+   */
+  describe("list compact layout for SObject", function() {
+    it("should return comact layout information", function(done) {
+      Account.compactLayouts(function(err, res) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(res.compactLayouts));
+        res.compactLayouts.forEach(function(clayout) {
+          assert.ok(!res.id || _.isString(res.id));
+          assert.ok(_.isString(clayout.objectType));
+          assert.ok(_.isArray(clayout.actions));
+          assert.ok(_.isArray(clayout.fieldItems));
+        });
+        assert.ok(!res.defaultCompactLayoutId || _.isString(res.defaultCompactLayoutId));
+        assert.ok(_.isArray(res.recordTypeCompactLayoutMappings));
+      }.check(done));
+    });
+  });
+
 
   var listviewId;
 
