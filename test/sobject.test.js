@@ -297,6 +297,45 @@ describe("sobject", function() {
   /**
    *
    */
+  describe("list named layout for SObject", function() {
+    it("should return User named layout information", function(done) {
+      conn.sobject('User').layouts('UserAlt', function(err, res) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(res.layouts));
+        res.layouts.forEach(function(layout) {
+          assert.ok(layout.id === null || _.isString(layout.id));
+          assert.ok(_.isObject(layout.buttonLayoutSection));
+          assert.ok(_.isArray(layout.detailLayoutSections));
+          assert.ok(_.isArray(layout.editLayoutSections));
+          assert.ok(_.isObject(layout.quickActionList));
+          assert.ok(_.isArray(layout.quickActionList.quickActionListItems));
+          assert.ok(_.isArray(layout.relatedLists));
+        });
+        assert.ok(_.isArray(res.recordTypeMappings));
+        assert.ok(_.isArray(res.recordTypeSelectorRequired));
+      }.check(done));
+    });
+
+    it("should return User named layout information immediately", function() {
+      var res = conn.sobject('User').layouts$('UserAlt');
+      assert.ok(_.isArray(res.layouts));
+      res.layouts.forEach(function(layout) {
+        assert.ok(layout.id === null || _.isString(layout.id));
+        assert.ok(_.isObject(layout.buttonLayoutSection));
+        assert.ok(_.isArray(layout.detailLayoutSections));
+        assert.ok(_.isArray(layout.editLayoutSections));
+        assert.ok(_.isObject(layout.quickActionList));
+        assert.ok(_.isArray(layout.quickActionList.quickActionListItems));
+        assert.ok(_.isArray(layout.relatedLists));
+      });
+      assert.ok(_.isArray(res.recordTypeMappings));
+      assert.ok(_.isArray(res.recordTypeSelectorRequired));
+    });
+  });
+
+  /**
+   *
+   */
   describe("list compact layout for SObject", function() {
     it("should return Account comact layout information", function(done) {
       Account.compactLayouts(function(err, res) {
