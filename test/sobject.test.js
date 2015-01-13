@@ -273,6 +273,7 @@ describe("sobject", function() {
           assert.ok(_.isArray(layout.relatedLists));
         });
         assert.ok(_.isArray(res.recordTypeMappings));
+        assert.ok(_.isArray(res.recordTypeSelectorRequired));
       }.check(done));
     });
 
@@ -289,6 +290,7 @@ describe("sobject", function() {
         assert.ok(_.isArray(layout.relatedLists));
       });
       assert.ok(_.isArray(res.recordTypeMappings));
+      assert.ok(_.isArray(res.recordTypeSelectorRequired));
     });
   });
 
