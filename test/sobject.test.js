@@ -367,6 +367,36 @@ describe("sobject", function() {
   });
 
 
+  /**
+   *
+   */
+  describe("list approval layout for SObject", function() {
+    it("should return Account approval layout information", function(done) {
+      Account.approvalLayouts(function(err, res) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(res.approvalLayouts));
+        res.approvalLayouts.forEach(function(alayout) {
+          assert.ok(alayout.id === null || _.isString(alayout.id));
+          assert.ok(_.isString(alayout.name));
+          assert.ok(_.isString(alayout.label));
+          assert.ok(_.isArray(alayout.layoutItems));
+        });
+      }.check(done));
+    });
+
+    it("should return Account approval layout information immediately", function() {
+      var res = Account.approvalLayouts$();
+      assert.ok(_.isArray(res.approvalLayouts));
+      res.approvalLayouts.forEach(function(alayout) {
+        assert.ok(alayout.id === null || _.isString(alayout.id));
+        assert.ok(_.isString(alayout.name));
+        assert.ok(_.isString(alayout.label));
+        assert.ok(_.isArray(alayout.layoutItems));
+      });
+    });
+  });
+
+
   var listviewId;
 
   /**
