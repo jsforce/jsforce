@@ -1,66 +1,63 @@
-var async  = require('async'),
-    phantom = require('node-phantom');
+var webdriverio = require('webdriverio'),
+    Q = require('q');
 
 module.exports = function(url, username, password, callback) {
-  var ph, page;
-  async.waterfall([
-    function(cb) {
-      phantom.create(cb, { parameters: { 'ssl-protocol': 'tlsv1' } });
-    },
-    function(_ph, cb) {
-      ph = _ph;
-      setTimeout(function() {
-        ph.createPage(cb);
-      }, 100);
-    },
-    function(_page, cb) {
-      page = _page;
-      page.open(url, cb);
-    },
-    function(status, cb) {
-      setTimeout(function() {
-        page.evaluate(function(username, password) {
-          document.querySelector('#username').value = username;
-          document.querySelector('#password').value = password;
-          var e = document.createEvent('MouseEvents');
-          e.initEvent("click", false, true);
-          document.querySelector('button[name=Login]').dispatchEvent(e);
-          return true;
-        }, cb, username, password);
-      }, 4000);
-    },
-    function(status, cb) {
-      setTimeout(function() {
-        page.evaluate(function() {
-          if (location.href.indexOf("RemoteAccessAuthorizationPage.apexp") > 0) {
-            var e = document.createEvent('MouseEvents');
-            e.initEvent("click", false, true);
-            document.querySelector('#oaapprove').dispatchEvent(e);
-            return false;
-          }
-          return true;
-        }, cb);
-      }, 4000);
-    },
-    function(loaded, cb) {
-      setTimeout(function() {
-        page.evaluate(function() {
-          var params = {};
-          var m = document.querySelector('head script').innerText.match(/\/callback\?([^'"]+)/);
-          if (m) {
-            var qparams = m[1].split('&');
-            for (var i=0; i<qparams.length; i++) {
-              var qparam = qparams[i];
-              var pair = qparam.split('=');
-              params[pair[0]] = decodeURIComponent(pair[1]);
-            }
-          }
-          return params;
-        }, cb);
-      }, loaded ? 0 : 4000);
-    }
-  ], function(err, params) {
-    ph.exit();
-    callback(err, params);
+  var client = webdriverio.remote({
+    desiredCapabilities: { browserName: 'phantomjs' },
+    port: process.env.WEBDRIVER_PORT || 4444
   });
+  return Q.resolve().then(function() {
+    return client.init();
+  }).then(function() {
+    return client.url(url);
+  })
+  .then(function() {
+    return loginAndApprove();
+  })
+  .then(function() {
+    return retrieveCallbackedParameters();
+  })
+  .finally(function() {
+    client.end();
+  })
+  .nodeify(callback)
+
+  function loginAndApprove() {
+    var approved = false;
+    return Q.resolve().then(function() {
+      return client.url().then(function(ret) { return ret.value; });
+    }).then(function(url) {
+      if (url.indexOf("/setup/secur/RemoteAccessAuthorizationPage.apexp") > 0) { // authorization page
+        approved = true;
+        return client.click('#oaapprove').then(null, function(){});
+      } else if (url.indexOf("/?ec=302") > 0) { // login page
+        return client.setValue("#username", username)
+                     .setValue("#password", password)
+                     .click("button[name=Login]");
+      } else {
+        return client.pause(1000);
+      }
+    }).then(function() {
+      return approved || loginAndApprove();
+    });
+  }
+
+  function retrieveCallbackedParameters() {
+    return client.url().then(function(ret) {
+      return client.getSource();
+    }).then(function(txt) {
+      var params = {};
+      var m = txt.match(/\/callback\?([^'"]+)/);
+      if (m) {
+        var qparams = m[1].split('&');
+        for (var i=0; i<qparams.length; i++) {
+          var qparam = qparams[i];
+          var pair = qparam.split('=');
+          params[pair[0]] = decodeURIComponent(pair[1]);
+        }
+      }
+      return params;
+    });
+  }
+
 };
