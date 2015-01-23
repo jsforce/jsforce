@@ -28,6 +28,17 @@
   "directories": {
     "test": "test/"
   },
+  "files": [
+    "README.md",
+    "bower.json",
+    "Gruntfile.js",
+    "LICENSE",
+    "package.json",
+    "bin",
+    "build",
+    "lib",
+    "test"
+  ],
   "engines": {
     "node": ">=0.10.0"
   },
