@@ -53,7 +53,6 @@ module.exports = function(grunt) {
     browserify: {
       options: {
         ignore: [
-          "request",
           "lib/**/cli/*.js",
           "test/**/node/*.js"
         ]
