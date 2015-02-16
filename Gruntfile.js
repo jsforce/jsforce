@@ -179,7 +179,12 @@ module.exports = function(grunt) {
     }
   };
 
+  var coreModules = [
+    "cache", "connection", "csv", "date", "http-api", "jsforce", "logger", "oauth2", "process", "promise", "query", "quick-action",
+    "record-stream", "record", "sobject", "soql-builder", "transport"
+  ];
   var apiModules = [ "analytics", "apex", "bulk", "chatter", "metadata", "streaming", "tooling" ];
+
   apiModules.forEach(function(apiModule) {
     var apiModuleClass = apiModule[0].toUpperCase() + apiModule.substring(1);
     cfg.browserify[apiModule] = {
@@ -195,7 +200,7 @@ module.exports = function(grunt) {
           [ 'require-swapper', {
             baseDir: 'build/__tmp__',
             fn: "jsforce.require",
-            modules: [ "./*", "inherits", "util", "events", "stream", "underscore" ]
+            modules: coreModules.map(function(m) { return "./" + m; }).concat([ "inherits", "util", "events", "stream", "underscore" ])
           }]
         ]
       }
