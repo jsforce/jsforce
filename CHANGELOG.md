@@ -1,5 +1,34 @@
-## 1.4.0 (2015-02-17)
+## 1.4.0 (Feb 17, 2015)
+* Support explaining query plan for SOQL query
+* Support system limits REST API endpoint
+* Support describing SObject layouts/approval layouts/compact layouts in REST API
+* Support describing and executing SObject listview in REST API
+* Support describing and executing quick actions
+* Support listing and triggering process rules
+* Support submitting/approving/rejecting approvals
+* Support describing themes in REST API
+* Support describing tabs in REST API
+* Open public `request` method in `Connection` class
+* Add `.open` command in REPL to access Salesforce page
+* Call option support
+* Enable Bulk API to refresh session automatically
+* Enable Metadata API to refresh session automatically
+* Fix not to close bulk job when polling timeout occurred
+* Fire progress event when polling async Metadata request status
+* Change default API ver. to 32.0
 
+## 1.3.1 (Sep 15, 2014)
+* Add bower support
+* Support bulk query in bulk API
+* Fix issue that updating field value to null would not work in `Query#update()`
+* Change the behavior of query in `autoFetch` option to return all of records in callback/promise, not only records in first query fetch.
+* Add `-l <loginUrl>` or  `--sandbox` option to specify login server URL in CLI.
+* Enhance bulk API not to use temporary memory in execution.
+* Change metadata async api to obsolete.
+* Support `logout()` even in OAuth2 sessions.
+* Add API limit info in `Connection#limitInfo` object
+* Separate each API object modules into multiple files in browser environment, to reduce the minimum required foot print size.
+* Change default API ver to 31.0.
 
 ## v1.2.0 (May 15, 2014):
 
