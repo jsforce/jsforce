@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: RecordReference</title>
+    <title>JSDoc: Class: QuickAction</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Class: RecordReference</h1>
+    <h1 class="page-title">Class: QuickAction</h1>
     
     
 
@@ -27,7 +27,7 @@
     
 <header>
     <h2>
-    RecordReference
+    QuickAction
     </h2>
     
 </header>  
@@ -39,7 +39,7 @@
     
         
 <dt>
-    <h4 class="name" id="RecordReference"><span class="type-signature">&lt;protected> </span>new RecordReference<span class="signature">(conn, type, id)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="QuickAction"><span class="type-signature">&lt;protected> </span>new QuickAction<span class="signature">()</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -47,7 +47,7 @@
     
     
     <div class="description">
-        Remote reference to record information
+        A class for quick action
     </div>
     
 
@@ -55,100 +55,6 @@
     
     
     
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>conn</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Connection.html">Connection</a></span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Connection object</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>type</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">SObject type</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>id</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Record ID</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
     
     
     
@@ -174,7 +80,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line23">line 23</a>
+        <a href="quick-action.js.html">quick-action.js</a>, <a href="quick-action.js.html#line12">line 12</a>
     </li></ul></dd>
     
     
@@ -220,7 +126,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="blob"><span class="type-signature"></span>blob<span class="signature">(fieldName)</span><span class="type-signature"> &rarr; {stream.Stream}</span></h4>
+    <h4 class="name" id="defaultValues"><span class="type-signature"></span>defaultValues<span class="signature">(<span class="optional">contextId</span>, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;<a href="global.html#Record">Record</a>>}</span></h4>
     
     
 </dt>
@@ -228,7 +134,7 @@
     
     
     <div class="description">
-        Get blob field as stream
+        Retrieve default field values in the action (for given record, if specified)
     </div>
     
 
@@ -250,6 +156,8 @@
 		<th>Type</th>
 		
 		
+		<th>Argument</th>
+		
 		
 		
 		
@@ -262,7 +170,7 @@
 	
         <tr>
             
-                <td class="name"><code>fieldName</code></td>
+                <td class="name"><code>contextId</code></td>
             
             
             <td class="type">
@@ -275,143 +183,6 @@
             </td>
             
             
-            
-            
-            
-            <td class="description last">Blob field name</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line101">line 101</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">stream.Stream</span>
-
-
-	</dd>
-</dl>
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="del"><span class="type-signature"></span>del<span class="signature">(<span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;<a href="global.html#RecordResult">RecordResult</a>>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Synonym of Record#destroy()
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		<th>Argument</th>
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>callback</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;<a href="global.html#RecordResult">RecordResult</a>></span>
-
-
-            
-            </td>
-            
-            
                 <td class="attributes">
                 
                     &lt;optional><br>
@@ -425,514 +196,7 @@
             
             
             
-            <td class="description last">Callback function</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line71">line 71</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="Promise.html">Promise</a>.&lt;<a href="global.html#RecordResult">RecordResult</a>></span>
-
-
-	</dd>
-</dl>
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="delete"><span class="type-signature"></span>delete<span class="signature">(<span class="optional">options</span>, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;<a href="global.html#RecordResult">RecordResult</a>>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Synonym of Record#destroy()
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		<th>Argument</th>
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">Options for rest api.</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>callback</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;<a href="global.html#RecordResult">RecordResult</a>></span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">Callback function</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line62">line 62</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="Promise.html">Promise</a>.&lt;<a href="global.html#RecordResult">RecordResult</a>></span>
-
-
-	</dd>
-</dl>
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="destroy"><span class="type-signature"></span>destroy<span class="signature">(<span class="optional">options</span>, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;<a href="global.html#RecordResult">RecordResult</a>>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Delete record field
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		<th>Argument</th>
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">Options for rest api.</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>callback</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;<a href="global.html#RecordResult">RecordResult</a>></span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">Callback function</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line79">line 79</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="Promise.html">Promise</a>.&lt;<a href="global.html#RecordResult">RecordResult</a>></span>
-
-
-	</dd>
-</dl>
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="retrieve"><span class="type-signature"></span>retrieve<span class="signature">(<span class="optional">options</span>, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;<a href="global.html#Record">Record</a>>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Retrieve record field information
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		<th>Argument</th>
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">Options for rest api.</td>
+            <td class="description last">ID of record to get default values specific to the record</td>
         </tr>
 	
 	
@@ -996,7 +260,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line36">line 36</a>
+        <a href="quick-action.js.html">quick-action.js</a>, <a href="quick-action.js.html#line51">line 51</a>
     </li></ul></dd>
     
     
@@ -1042,7 +306,7 @@
         
             
 <dt>
-    <h4 class="name" id="update"><span class="type-signature"></span>update<span class="signature">(record, <span class="optional">options</span>, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;<a href="global.html#RecordResult">RecordResult</a>>}</span></h4>
+    <h4 class="name" id="describe"><span class="type-signature"></span>describe<span class="signature">(<span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;<a href="QuickAction.html#QuickActionDescriveInfo">QuickAction~QuickActionDescriveInfo</a>>}</span></h4>
     
     
 </dt>
@@ -1050,7 +314,7 @@
     
     
     <div class="description">
-        Update record field information
+        Describe the action's information (including layout, etc.)
     </div>
     
 
@@ -1086,77 +350,13 @@
 	
         <tr>
             
-                <td class="name"><code>record</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type"><a href="global.html#Record">Record</a></span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">A Record which includes fields to update</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">Options for rest api.</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
                 <td class="name"><code>callback</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;<a href="global.html#RecordResult">RecordResult</a>></span>
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;<a href="QuickAction.html#QuickActionDescriveInfo">QuickAction~QuickActionDescriveInfo</a>></span>
 
 
             
@@ -1207,7 +407,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line52">line 52</a>
+        <a href="quick-action.js.html">quick-action.js</a>, <a href="quick-action.js.html#line39">line 39</a>
     </li></ul></dd>
     
     
@@ -1239,7 +439,216 @@
 	</dt>
 	<dd>
 		
-<span class="param-type"><a href="Promise.html">Promise</a>.&lt;<a href="global.html#RecordResult">RecordResult</a>></span>
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;<a href="QuickAction.html#QuickActionDescriveInfo">QuickAction~QuickActionDescriveInfo</a>></span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="execute"><span class="type-signature"></span>execute<span class="signature">(contextId, record, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;<a href="QuickAction.html#QuickActionResult">QuickAction~QuickActionResult</a>>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Execute the action for given context Id and record information
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>contextId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Context record ID of the action</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>record</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#Record">Record</a></span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Input record information for the action</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;<a href="QuickAction.html#QuickActionResult">QuickAction~QuickActionResult</a>></span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Callback function</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="quick-action.js.html">quick-action.js</a>, <a href="quick-action.js.html#line81">line 81</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;<a href="QuickAction.html#QuickActionResult">QuickAction~QuickActionResult</a>></span>
 
 
 	</dd>
@@ -1253,6 +662,453 @@
         </dl>
     
     
+    
+        <h3 class="subsection-title">Type Definitions</h3>
+        
+        <dl>
+                
+<dt>
+    <h4 class="name" id="QuickActionDescriveInfo">QuickActionDescriveInfo</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type"><a href="QuickAction.html#QuickActionInfo">QuickAction~QuickActionInfo</a></span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+        
+        <h5 class="subsection-title">Properties:</h5>
+        
+        <dl>
+
+<table class="props">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>contextSobjectType</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Object type used for the action</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>targetSobjectType</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Object type of the action to target</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>targetParentField</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Field name in the target object which refers parent(context) object record ID.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>targetRecordTypeId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Record type of the targeted record</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>layout</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Layout sections that comprise an action</td>
+        </tr>
+	
+	
+	</tbody>
+</table></dl>
+        
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="quick-action.js.html">quick-action.js</a>, <a href="quick-action.js.html#line18">line 18</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+            
+                
+<dt>
+    <h4 class="name" id="QuickActionInfo">QuickActionInfo</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Object</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+        
+        <h5 class="subsection-title">Properties:</h5>
+        
+        <dl>
+
+<table class="props">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Type of the action (e.g. Create, Update, Post, LogACall)</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Name of the action</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>label</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Label of the action</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>urls</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Endpoint URL information of the action</td>
+        </tr>
+	
+	
+	</tbody>
+</table></dl>
+        
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="quick-action.js.html">quick-action.js</a>, <a href="quick-action.js.html#line17">line 17</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+            
+                
+<dt>
+    <h4 class="name" id="QuickActionResult">QuickActionResult</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Object</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="quick-action.js.html">quick-action.js</a>, <a href="quick-action.js.html#line63">line 63</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+            </dl>
     
     
     

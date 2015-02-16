@@ -30,11 +30,11 @@
  * @file Manages query for records in Salesforce 
  * @author Shinichi Tomita &lt;shinichi.tomita@gmail.com>
  */
-var util   = require('util'),
+var inherits = require('inherits'),
     events = require('events'),
     _      = require('underscore')._,
-    async  = require('async'),
     Q      = require('q'),
+    Promise = require('./promise'),
     SfDate = require("./date"),
     SOQLBuilder = require("./soql-builder"),
     RecordStream = require("./record-stream");
@@ -78,7 +78,7 @@ var Query = module.exports = function(conn, config, locator) {
   this._deferred = Q.defer();
 };
 
-util.inherits(Query, RecordStream);
+inherits(Query, RecordStream);
 
 /**
  * Select fields to include in the returning result
@@ -338,6 +338,7 @@ Query.prototype.close = function() {
  * @param {Object} [options] - Query options
  * @param {Boolean} [options.autoFetch] - Using auto fetch mode or not
  * @param {Number} [options.maxFetch] - Max fetching records in auto fetch mode
+ * @param {Boolean} [options.scanAll] - Including deleted records for query target or not
  * @param {Callback.&lt;T>} [callback] - Callback function
  * @returns {Query.&lt;T>}
  */
@@ -349,6 +350,7 @@ Query.prototype.run =
  * @param {Object} [options] - Query options
  * @param {Boolean} [options.autoFetch] - Using auto fetch mode or not
  * @param {Number} [options.maxFetch] - Max fetching records in auto fetch mode
+ * @param {Boolean} [options.scanAll] - Including deleted records for query target or not
  * @param {Callback.&lt;T>} [callback] - Callback function
  * @returns {Query.&lt;T>}
  */
@@ -360,6 +362,7 @@ Query.prototype.exec =
  * @param {Object} [options] - Query options
  * @param {Boolean} [options.autoFetch] - Using auto fetch mode or not
  * @param {Number} [options.maxFetch] - Max fetching records in auto fetch mode
+ * @param {Boolean} [options.scanAll] - Including deleted records for query target or not
  * @param {Callback.&lt;T>} [callback] - Callback function
  * @returns {Query.&lt;T>}
  */
@@ -374,16 +377,17 @@ Query.prototype.execute = function(options, callback) {
   }
   this._paused = false; // mark pause flag to false
 
-  options = options || {};
   if (typeof options === "function") {
     callback = options;
     options = {};
   }
-
-  var responseTarget = options.responseTarget || self._responseTarget;
-  var autoFetch = options.autoFetch || self._autoFetch;
-  var maxFetch = options.maxFetch || self._maxFetch;
-  var scanAll = options.scanAll || self._scanAll;
+  options = options || {};
+  options = {
+    responseTarget: options.responseTarget || self._responseTarget,
+    autoFetch: options.autoFetch || self._autoFetch,
+    maxFetch: options.maxFetch || self._maxFetch,
+    scanAll: options.scanAll || self._scanAll
+  };
 
   // callback and promise resolution;
   var promiseCallback = function(err, res) {
@@ -408,39 +412,58 @@ Query.prototype.execute = function(options, callback) {
     promiseCallback(err);
   });
 
-  async.waterfall([
-    function(next) {
-      if (self._locator) {
-        var url = self._conn._baseUrl() + "/query/" + self._locator;
-        next(null, url);
-      } else {
-        self.totalFetched = 0;
-        async.waterfall([
-          function(next) {
-            if (self._soql) {
-              next();
-            } else {
-              self._expandFields(next);
-            }
-          },
-          function(next) {
-            var soql = self._soql || SOQLBuilder.createSOQL(self._config);
-            logger.debug("SOQL = " + soql);
-            var url = self._conn._baseUrl() + "/" + (scanAll ? "queryAll" : "query") + "?q=" + encodeURIComponent(soql);
-            next(null, url);
-          }
-        ], next);
-      }
-    },
-    function(url, next) {
-      // SOQL query request
-      self._conn._request(url, next);
+  // collect fetched records in array
+  // only when response target is Records and
+  // either callback or chaining promises are available to this query.
+  this.once('fetch', function() {
+    if (options.responseTarget === ResponseTargets.Records && (self._chaining || callback)) {
+      logger.debug('--- collecting all fetched records ---');
+      var records = [];
+      var onRecord = function(record) { records.push(record); };
+      self.on('record', onRecord);
+      self.once('end', function() {
+        self.removeListener('record', onRecord);
+        self.emit('response', records, self);
+      });
     }
-  ], function(err, data) {
-    if (err) {
-      self.emit("error", err);
-      return;
-    }
+  });
+
+  // start actual query
+  logger.debug('>>> Query start >>>');
+  this._execute(options).then(function() {
+    logger.debug('*** Query finished ***');
+  }).fail(function(err) {
+    logger.debug('--- Query error ---');
+    self.emit('error', err);
+  });
+
+  // return Query instance for chaining
+  return this;
+};
+
+/**
+ * @private
+ */
+Query.prototype._execute = function(options) {
+  var self = this;
+  var logger = this._conn._logger;
+  var responseTarget = options.responseTarget;
+  var autoFetch = options.autoFetch;
+  var maxFetch = options.maxFetch;
+  var scanAll = options.scanAll;
+
+  return new Promise(
+    self._locator ?
+    self._conn._baseUrl() + "/query/" + self._locator :
+    self.toSOQL().then(function(soql) {
+      self.totalFetched = 0;
+      logger.debug("SOQL = " + soql);
+      return self._conn._baseUrl() + "/" + (scanAll ? "queryAll" : "query") + "?q=" + encodeURIComponent(soql);
+    })
+  ).then(function(url) {
+    return self._conn.request(url);
+  }).then(function(data) {
+    self.emit("fetch");
     self.totalSize = data.totalSize;
     var res;
     switch(responseTarget) {
@@ -456,130 +479,149 @@ Query.prototype.execute = function(options, callback) {
       default:
         res = data;
     }
-    self.emit("response", res, self);
+    // only fire response event when it should be notified per fetch
+    if (responseTarget !== ResponseTargets.Records) {
+      self.emit("response", res, self);
+    }
 
     // streaming record instances
     for (var i=0, l=data.records.length; i&lt;l; i++) {
-      if (self.totalFetched >= maxFetch) { break; }
+      if (self.totalFetched >= maxFetch) {
+        self._finished = true;
+        break;
+      }
       var record = data.records[i];
-      if (self._paused) { 
+      if (self._paused) {
         self._buffer.push(record);
       } else {
         self.emit('record', record, self.totalFetched++, self);
       }
     }
-    self._finished = data.done;
+    self._finished = self._finished || data.done;
     if (data.nextRecordsUrl) {
       self._locator = data.nextRecordsUrl.split('/').pop();
     }
     if (autoFetch && !self._finished) {
-      if (!self._paused) { self.execute(options); }
+      if (!self._paused) {
+        return self._execute(options);
+      }
     } else {
       if (!self._paused) { self.close(); }
     }
+    return res;
   });
-
-  // return Query instance for chaining
-  return this;
 };
 
 /**
  * @private
  */
-Query.prototype._expandFields = function(callback) {
+Query.prototype._expandFields = function() {
   if (this._soql) {
-    callback({ message: 'Cannot expand fields for the query which has already built SOQL.' });
+    return Promise.reject(new Error("Cannot expand fields for the query which has already built SOQL."));
   }
   var self = this;
+  var logger = self._conn._logger;
   var conn = this._conn;
   var table = this._config.table;
   var fields = this._config.fields || [];
-  async.parallel([
-    function(cb) {
-      async.waterfall([
-        function(next) {
-          if (self._parent) {
-            findRelationTable(table, next);
-          } else {
-            next(null, table);
-          }
-        },
-        function(table, next) {
-          async.map(fields, function(field, cb) {
-            expandAsteriskField(table, field, cb);
-          }, next);
-        },
-        function(expandedFields, next) {
+
+  logger.debug('_expandFields: table = ' + table + ', fields = ' + fields.join(', '));
+
+  return Promise.all([
+    new Promise(self._parent ? findRelationTable(table) : table)
+      .then(function(table) {
+        return Promise.all(
+          _.map(fields, function(field) { return expandAsteriskField(table, field); })
+        ).then(function(expandedFields) {
           self._config.fields = _.flatten(expandedFields);
-          next();
-        }
-      ], cb);
-    },
-    function(cb) {
-      async.forEach(self._children || [], function(childQuery, cb) {
-        childQuery._expandFields(cb);
-      }, cb);
-    }
-  ], function(err) {
-    callback(err);
-  });
-
-  function findRelationTable(rname, callback) {
-    var ptable = self._parent._config.table;
-    async.waterfall([
-      function(next) {
-        self._conn.describe$(ptable, next);
-      },
-      function(sobject, next) {
-        var childRelation = _.find(sobject.childRelationships, function(cr) {
-          return (cr.relationshipName || '').toUpperCase() === rname.toUpperCase();
         });
-        if (childRelation) {
-          next(null, childRelation.childSObject);
-        } else {
-          next({ message: 'No child relationship found: ' + rname });
-        }
-      }
-    ], callback);
+      }),
+    Promise.all(
+      _.map(self._children || [], function(childQuery) {
+        return childQuery._expandFields();
+      })
+    )
+  ]);
+
+  function findRelationTable(rname) {
+    var ptable = self._parent._config.table;
+    logger.debug('finding table for relation "' + rname + '" in "' + ptable + '"...');
+    return describeCache(ptable).then(function(sobject) {
+      var upperRname = rname.toUpperCase();
+      var childRelation = _.find(sobject.childRelationships, function(cr) {
+        return (cr.relationshipName || '').toUpperCase() === upperRname;
+      });
+      return childRelation ? childRelation.childSObject :
+        Promise.reject(new Error("No child relationship found: " + rname ));
+    });
   }
 
-  function expandAsteriskField(table, field, callback) {
-    var fpath = field.split('.');
-    if (fpath[fpath.length - 1] === '*') {
-      async.waterfall([
-        function(next) {
-          conn.describe$(table, next);
-        },
-        function(sobject, next) {
-          if (fpath.length > 1) {
-            var rname = fpath.shift();
-            var rfield = _.find(sobject.fields, function(f) {
-              return f.relationshipName &&
-                     f.relationshipName.toUpperCase() === rname.toUpperCase();
-            });
-            if (rfield) {
-              var rtable = rfield.referenceTo.length === 1 ? rfield.referenceTo[0] : 'Name';
-              async.waterfall([
-                function(next) {
-                  expandAsteriskField(rtable, fpath.join('.'), next);
-                },
-                function(fpaths, next) {
-                  next(null, _.map(fpaths, function(fpath) { return rname + '.' + fpath; }));
-                }
-              ], next);
-            } else {
-              next(null, []);
-            }
-          } else {
-            var fields = _.map(sobject.fields, function(f) { return f.name; });
-            next(null, fields);
-          }
-        }
-      ], callback);
-    } else {
-      callback(null, [ field ]);
-    }
+  function describeCache(table) {
+    logger.debug('describe cache: '+table);
+    var deferred = Promise.defer();
+    conn.describe$(table, function(err, sobject) {
+      logger.debug('... done.');
+      if (err) { deferred.reject(err); }
+      else { deferred.resolve(sobject); }
+    });
+    return deferred.promise;
   }
+
+  function expandAsteriskField(table, field) {
+    logger.debug('expanding field "'+ field + '" in "' + table + '"...');
+    var fpath = field.split('.');
+    return fpath[fpath.length - 1] === '*' ?
+      describeCache(table).then(function(sobject) {
+        logger.debug('table '+table+'has been described');
+        if (fpath.length > 1) {
+          var rname = fpath.shift();
+          var rfield = _.find(sobject.fields, function(f) {
+            return f.relationshipName &&
+                   f.relationshipName.toUpperCase() === rname.toUpperCase();
+          });
+          if (rfield) {
+            var rtable = rfield.referenceTo.length === 1 ? rfield.referenceTo[0] : 'Name';
+            return expandAsteriskField(rtable, fpath.join('.')).then(function(fpaths) {
+              return _.map(fpaths, function(fpath) { return rname + '.' + fpath; });
+            });
+          } else {
+            return [];
+          }
+        } else {
+          return _.map(sobject.fields, function(f) { return f.name; });
+        }
+      }) :
+      new Promise([ field ]);
+  }
+};
+
+/**
+ * Explain plan for executing query
+ *
+ * @param {Callback.&lt;ExplainInfo>} [callback] - Callback function
+ * @returns {Promise.&lt;ExplainInfo>}
+ */
+Query.prototype.explain = function(callback) {
+  var self = this;
+  var logger = this._conn._logger;
+  return self.toSOQL().then(function(soql) {
+    logger.debug("SOQL = " + soql);
+    var url = "/query/?explain=" + encodeURIComponent(soql);
+    return self._conn.request(url);
+  }).thenCall(callback);
+};
+
+/**
+ * Return SOQL expression for the query
+ *
+ * @param {Callback.&lt;String>} [callback] - Callback function
+ * @returns {Promise.&lt;String>}
+ */
+Query.prototype.toSOQL = function(callback) {
+  var self = this;
+  return new Promise(self._soql ||
+    self._expandFields().then(function() { return SOQLBuilder.createSOQL(self._config); })
+  ).thenCall(callback);
 };
 
 /**
@@ -614,7 +656,7 @@ Query.prototype.pipe = function() {
  * @method Query#destroy
  * @param {String} [type] - SObject type. Required for SOQL based query object.
  * @param {Callback.&lt;Array.&lt;RecordResult>>} [callback] - Callback function
- * @returns {Bulk~Batch}
+ * @returns {Promise.&lt;Array.&lt;RecordResult>>}
  */
 Query.prototype["delete"] =
 Query.prototype.del =
@@ -627,7 +669,17 @@ Query.prototype.destroy = function(type, callback) {
   if (!type) {
     throw new Error("SOQL based query needs SObject type information to bulk delete.");
   }
-  return this.pipe(this._conn.sobject(type).deleteBulk(callback));
+  var batch = this._conn.sobject(type).deleteBulk();
+  var deferred = Promise.defer();
+  var handleError = function(err) {
+    if (err.name === 'ClientInputError') { deferred.resolve([]); } // if batch input receives no records
+    else { deferred.reject(err); }
+  };
+  this.on('error', handleError)
+    .pipe(batch)
+    .on('response', function(res) { deferred.resolve(res); })
+    .on('error', handleError);
+  return deferred.promise.thenCall(callback);
 };
 
 /**
@@ -636,7 +688,7 @@ Query.prototype.destroy = function(type, callback) {
  * @param {Record|RecordMapFunction} mapping - Mapping record or record mapping function
  * @param {String} [type] - SObject type. Required for SOQL based query object.
  * @param {Callback.&lt;Array.&lt;RecordResult>>} [callback] - Callback function
- * @returns {Bulk~Batch}
+ * @returns {Promise.&lt;Array.&lt;RecordResult>>}
  */
 Query.prototype.update = function(mapping, type, callback) {
   if (typeof type === 'function') {
@@ -648,7 +700,19 @@ Query.prototype.update = function(mapping, type, callback) {
     throw new Error("SOQL based query needs SObject type information to bulk update.");
   }
   var updateStream = _.isFunction(mapping) ? RecordStream.map(mapping) : RecordStream.recordMapStream(mapping);
-  return this.pipe(updateStream).pipe(this._conn.sobject(type).updateBulk(callback));
+  var batch = this._conn.sobject(type).updateBulk();
+  var deferred = Promise.defer();
+  var handleError = function(err) {
+    if (err.name === 'ClientInputError') { deferred.resolve([]); } // if batch input receives no records
+    else { deferred.reject(err); }
+  };
+  this.on('error', handleError)
+    .pipe(updateStream)
+    .on('error', handleError)
+    .pipe(batch)
+    .on('response', function(res) { deferred.resolve(res); })
+    .on('error', handleError);
+  return deferred.promise.thenCall(callback);
 };
 
 /**
@@ -662,6 +726,7 @@ Query.prototype.update = function(mapping, type, callback) {
  * @returns {Promise.&lt;S1|S2>}
  */
 Query.prototype.then = function(onResolved, onReject) {
+  this._chaining = true;
   if (!this._closed && this._paused) { this.execute(); }
   return this._deferred.promise.then.apply(this._deferred.promise, arguments);
 };
@@ -705,7 +770,7 @@ var SubQuery = function(conn, parent, config) {
   this._parent = parent;
 };
 
-util.inherits(SubQuery, Query);
+inherits(SubQuery, Query);
 
 /**
  * @method Query~SubQuery#include
@@ -746,13 +811,13 @@ SubQuery.prototype.execute = function() {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="HttpApi.html">HttpApi</a></li><li><a href="ListView.html">ListView</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Process.html">Process</a></li><li><a href="Process-ApprovalProcess.html">ApprovalProcess</a></li><li><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></li><li><a href="Process-ProcessRule.html">ProcessRule</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="QuickAction.html">QuickAction</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SessionRefreshDelegate">SessionRefreshDelegate</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu May 15 2014 02:13:07 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Feb 17 2015 01:39:27 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>

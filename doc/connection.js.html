@@ -31,28 +31,22 @@
  * @author Shinichi Tomita &lt;shinichi.tomita@gmail.com>
  */
 var events  = require('events'),
-    util    = require('util'),
-    async   = require('async'),
+    inherits = require('inherits'),
     _       = require('underscore')._,
     Promise = require('./promise'),
     Logger  = require('./logger'),
     OAuth2  = require('./oauth2'),
     Query   = require('./query'),
     SObject = require('./sobject'),
+    QuickAction = require('./quick-action'),
+    HttpApi = require('./http-api'),
     Transport = require('./transport'),
-    Bulk    = require('./bulk'),
-    Streaming = require('./streaming'),
-    Tooling = require('./tooling'),
-    Analytics = require('./analytics'),
-    Chatter = require('./chatter'),
-    Apex    = require('./apex'),
-    Metadata = require('./metadata'),
     Cache   = require('./cache');
 
 var defaults = {
   loginUrl: "https://login.salesforce.com",
   instanceUrl: "",
-  version: "30.0"
+  version: "33.0"
 };
 
 /**
@@ -73,32 +67,36 @@ var defaults = {
  * @param {String} [options.refreshToken] - Salesforce OAuth2 refresh token
  * @param {String|Object} [options.signedRequest] - Salesforce Canvas signed request (Raw Base64 string, JSON string, or deserialized JSON)
  * @param {String} [options.proxyUrl] - Cross-domain proxy server URL, used in browser client, non Visualforce app.
+ * @param {Object} [options.callOptions] - Call options used in each SOAP/REST API request. See manual.
  */
 var Connection = module.exports = function(options) {
+  var Bulk    = require('./api/bulk'),
+      Streaming = require('./api/streaming'),
+      Tooling = require('./api/tooling'),
+      Analytics = require('./api/analytics'),
+      Chatter = require('./api/chatter'),
+      Apex    = require('./api/apex'),
+      Metadata = require('./api/metadata'),
+      Process = require('./process');
+
   options = options || {};
 
   this._logger = new Logger(options.logLevel);
 
-  var oauth2 = options.oauth2;
-  if (!oauth2 && options.clientId) { // if oauth2 client config is written in flat (for compatibility)
-    oauth2 = {
-      loginUrl : options.loginUrl,
-      clientId : options.clientId,
-      clientSecret : options.clientSecret,
-      redirectUri : options.redirectUri
-    };
-  }
+  var oauth2 = options.oauth2 || {
+    loginUrl : options.loginUrl,
+    clientId : options.clientId,
+    clientSecret : options.clientSecret,
+    redirectUri : options.redirectUri
+  };
 
+  /**
+   * OAuth2 object
+   * @member {OAuth2} Connection#oauth2
+   */
+  this.oauth2 = oauth2 = oauth2 instanceof OAuth2 ? oauth2 : new OAuth2(oauth2);
 
-  if (oauth2) {
-    /**
-     * OAuth2 object
-     * @member {OAuth2} Connection#oauth2
-     */
-    this.oauth2 = oauth2 instanceof OAuth2 ? oauth2 : new OAuth2(oauth2);
-  }
-
-  this.loginUrl = options.loginUrl || (oauth2 && oauth2.loginUrl) || defaults.loginUrl;
+  this.loginUrl = options.loginUrl || oauth2.loginUrl || defaults.loginUrl;
   this.version = options.version || defaults.version;
   this.maxRequest = options.maxRequest || this.maxRequest || 10;
 
@@ -106,41 +104,63 @@ var Connection = module.exports = function(options) {
   this._transport =
     options.proxyUrl ? new Transport.ProxyTransport(options.proxyUrl) : new Transport();
 
+  this.callOptions = options.callOptions;
+
   /**
    * Streaming API object
    * @member {Streaming} Connection#streaming
    */
-  this.streaming = new Streaming(this);
+  if (Streaming) {
+    this.streaming = new Streaming(this);
+  }
   /**
    * Bulk API object
    * @member {Bulk} Connection#bulk
    */
-  this.bulk = new Bulk(this);
+  if (Bulk) {
+    this.bulk = new Bulk(this);
+  }
   /**
    * Tooling API object
    * @member {Tooling} Connection#tooling
    */
-  this.tooling = new Tooling(this);
+  if (Tooling) {
+    this.tooling = new Tooling(this);
+  }
   /**
    * Analytics API object
    * @member {Analytics} Connection#analytics
    */
-  this.analytics = new Analytics(this);
+  if (Analytics) {
+    this.analytics = new Analytics(this);
+  }
   /**
    * Chatter API object
    * @member {Chatter} Connection#chatter
    */
-  this.chatter = new Chatter(this);
+  if (Chatter) {
+    this.chatter = new Chatter(this);
+  }
   /**
    * Metadata API object
    * @member {Metadata} Connection#metadata 
    */
-  this.metadata = new Metadata(this);
+  if (Metadata) {
+    this.metadata = new Metadata(this);
+  }
   /**
    * Apex REST API object
    * @member {Apex} Connection#apex
    */
-  this.apex = new Apex(this);
+  if (Apex) {
+    this.apex = new Apex(this);
+  }
+
+  /**
+   * @member {Process} Connection#process
+   */
+  this.process = new Process(this);
+
   /**
    * Cache object for result
    * @member {Cache} Connection#cache
@@ -148,10 +168,13 @@ var Connection = module.exports = function(options) {
   this.cache = new Cache();
 
   // Allow to delegate connection refresh to outer function
-  if (options.refreshFn) {
-    this._refreshDelegate = {
-      refreshToken: options.refreshFn
-    };
+  var self = this;
+  var refreshFn = options.refreshFn;
+  if (!refreshFn && this.oauth2.clientId && this.oauth2.clientSecret) {
+    refreshFn = oauthRefreshFn;
+  }
+  if (refreshFn) {
+    this._refreshDelegate = new HttpApi.SessionRefreshDelegate(this, refreshFn);
   }
 
   var cacheOptions = {
@@ -169,7 +192,7 @@ var Connection = module.exports = function(options) {
   this.initialize(options);
 };
 
-util.inherits(Connection, events.EventEmitter);
+inherits(Connection, events.EventEmitter);
 
 /**
  * Initialize connection.
@@ -189,22 +212,13 @@ Connection.prototype.initialize = function(options) {
     options.instanceUrl = options.serverUrl.split('/').slice(0, 3).join('/');
   }
   this.instanceUrl = options.instanceUrl || options.serverUrl || this.instanceUrl || defaults.instanceUrl;
-  this.urls = {
-    soap : {
-      login : [ this.loginUrl, "services/Soap/u", this.version ].join('/'),
-      service : [ this.instanceUrl, "services/Soap/u", this.version ].join('/')
-    },
-    rest : {
-      base : [ this.instanceUrl, "services/data", "v" + this.version ].join('/')
-    }
-  };
 
   this.accessToken = options.sessionId || options.accessToken || this.accessToken;
   this.refreshToken = options.refreshToken || this.refreshToken;
-  if (this.refreshToken && !this.oauth2 && !this._refreshDelegate) {
-    throw new Error("Refersh token is specified without oauth2 client information");
+  if (this.refreshToken && !this._refreshDelegate) {
+    throw new Error("Refresh token is specified without oauth2 client information or refresh function");
   }
-  
+
   this.signedRequest = options.signedRequest && parseSignedRequest(options.signedRequest);
   if (this.signedRequest) {
     this.accessToken = this.signedRequest.client.oauthToken;
@@ -213,6 +227,8 @@ Connection.prototype.initialize = function(options) {
   if (options.userInfo) {
     this.userInfo = options.userInfo;
   }
+
+  this.limitInfo = {};
 
   this.sobjects = {};
   this.cache.clear();
@@ -223,11 +239,27 @@ Connection.prototype.initialize = function(options) {
     }
   }, this));
 
-  this.tooling.initialize();
+  if (this.tooling) {
+    this.tooling.initialize();
+  }
 
-  this._initializedAt = Date.now();
+  this._sessionType = options.sessionId ? "soap" : "oauth2";
 
 };
+
+/** @private **/
+function oauthRefreshFn(conn, callback) {
+  conn.oauth2.refreshToken(conn.refreshToken, function(err, res) {
+    if (err) { return callback(err); }
+    var userInfo = parseIdUrl(res.id);
+    conn.initialize({
+      instanceUrl : res.instance_url,
+      accessToken : res.access_token,
+      userInfo : userInfo
+    });
+    callback(null, res.access_token, res);
+  });
+}
 
 /** @private **/
 function parseSignedRequest(sr) {
@@ -245,159 +277,186 @@ function parseSignedRequest(sr) {
 }
 
 
-/**
- * @private
- */
+/** @private **/
 Connection.prototype._baseUrl = function() {
-  return this.urls.rest.base;
+  return [ this.instanceUrl, "services/data", "v" + this.version ].join('/');
 };
 
 /**
- * Sending request using given HTTP request info
+ * Convert path to absolute url
  * @private
  */
-Connection.prototype._request = function(params, callback, options) {
-  options = options || {};
-  // if params is simple string, regard it as url in GET method
-  if (_.isString(params)) {
-    params = { method: 'GET', url: params };
-  }
-  // if url is given in site root relative path, prepend instance url before.
-  if (params.url[0] === '/') {
-    params.url = this.instanceUrl + params.url;
-  }
-
-  var self = this;
-  var logger = this._logger;
-
-  var deferred = Promise.defer();
-
-  var onResume = function(err) {
-    if (err) {
-      deferred.reject(err);
-      return;
-    }
-    self._request(params, null, options).then(function(response) {
-      deferred.resolve(response);
-    }, function(err) {
-      deferred.reject(err);
-    });
-  };
-
-  if (self._suspended) {
-    self.once('resume', onResume);
-    return deferred.promise.thenCall(callback);
-  }
-
-  params.headers = params.headers || {};
-  if (this.accessToken) {
-    params.headers.Authorization = "Bearer " + this.accessToken;
-  }
-
-  // hook in sending
-  if (options.beforesend) { options.beforesend(this, params); }
-
-  // for connection in canvas with signed request
-  if (this.signedRequest) { options.signedRequest = this.signedRequest; }
-
-  self.emit('request', params.method, params.url, params);
-
-  logger.debug("&lt;request> method=" + params.method + ", url=" + params.url);
-  var requestTime = Date.now();
-
-  var onFailure = function(err) {
-    var responseTime = Date.now();
-    logger.debug("elappsed time : " + (responseTime - requestTime) + "msec");
-
-    logger.error(err);
-    throw err;
-  };
-
-  var onResponse = function(response) {
-    var responseTime = Date.now();
-    logger.debug("elappsed time : " + (responseTime - requestTime) + "msec");
-
-    logger.debug("&lt;response> status=" + response.statusCode + ", url=" + params.url);
-
-    self.emit('response', response.statusCode, response.body, response);
-    // Refresh token if status code requires authentication
-    // when oauth2 info and refresh token is available.
-    if (response.statusCode === 401 &&
-        (self._refreshDelegate || (self.oauth2 && self.refreshToken))) {
-      // Access token may be refreshed before the response
-      if (self._initializedAt > requestTime) {
-        onResume();
-      } else {
-        self.once('resume', onResume);
-        if (!self._suspended) {
-          self._suspended = true;
-          self._refresh();
-        }
-      }
-      return deferred.promise;
-    }
-
-    // check response content type to choose parser
-    var contentType = options.responseContentType ||
-                      (response.headers && response.headers["content-type"]);
-    var parseBody = /^application\/xml(;|$)/.test(contentType) ? parseXML : 
-                    /^application\/json(;|$)/.test(contentType) ? parseJSON :
-                    /^text\/csv(;|$)/.test(contentType) ? parseCSV :
-                    parseText;
-
-    var err;
-    if (response.statusCode >= 400) {
-      var error;
-      try {
-        var parseError = options.parseError || function(errs) { return errs[0]; };
-        error = parseError(parseBody(response.body));
-      } catch(e) {
-        error = { message : response.body };
-      }
-      err = new Error(error.message);
-      err.name = error.errorCode;
-      for (var key in error) { err[key] = error[key]; }
-      throw err;
-    } else if (response.statusCode === 204) {
-      return options.noContentResponse;
+Connection.prototype._normalizeUrl = function(url) {
+  if (url[0] === '/') {
+    if (url.indexOf('/services/') === 0) {
+      return this.instanceUrl + url;
     } else {
-      var res = parseBody(response.body);
-      if (response.statusCode === 300) { // Multiple Choices
-        err = new Error('Multiple records found');
-        err.name = "MULTIPLE_CHOICES";
-        err.content = res;
-        throw err;
-      }
-      return res;
+      return this._baseUrl() + url;
     }
-  };
-
-  return this._transport.httpRequest(params, null, options).then(onResponse, onFailure).thenCall(callback);
-
+  } else {
+    return url;
+  }
 };
 
-/** @private */
-function parseJSON(str) {
-  return JSON.parse(str);
-}
+/**
+ * Send REST API request with given HTTP request info, with connected session information.
+ *
+ * Endpoint URL can be absolute URL ('https://na1.salesforce.com/services/data/v32.0/sobjects/Account/describe')
+ * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
+ * , or relative path from version root ('/sobjects/Account/describe').
+ *
+ * @param {String|Object} request - HTTP request object or URL to GET request
+ * @param {String} request.method - HTTP method URL to send HTTP request
+ * @param {String} request.url - URL to send HTTP request
+ * @param {Object} [request.headers] - HTTP request headers in hash object (key-value)
+ * @param {Object} [options] - HTTP API request options
+ * @param {Callback.&lt;Object>} [callback] - Callback function
+ * @returns {Promise.&lt;Object>}
+ */
+Connection.prototype.request = function(request, options, callback) {
+  if (typeof options === 'function') {
+    callback = options;
+    options = null;
+  }
+  options = options || {};
+  var self = this;
 
-/** @private */
-function parseXML(str) {
-  var ret = {};
-  require('xml2js').parseString(str, { explicitArray: false }, function(err, result) {
-    ret = { error: err, result : result };
+  // if request is simple string, regard it as url in GET method
+  if (_.isString(request)) {
+    request = { method: 'GET', url: request };
+  }
+  // if url is given in relative path, prepend base url or instance url before.
+  request.url = this._normalizeUrl(request.url);
+
+  var httpApi = new HttpApi(this, options);
+
+  // log api usage and its quota
+  httpApi.on('response', function(response) {
+    if (response.headers && response.headers["sforce-limit-info"]) {
+      var apiUsage = response.headers["sforce-limit-info"].match(/api\-usage=(\d+)\/(\d+)/);
+      if (apiUsage) {
+        self.limitInfo = {
+          apiUsage: {
+            used: parseInt(apiUsage[1], 10),
+            limit: parseInt(apiUsage[2], 10)
+          }
+        };
+      }
+    }
   });
-  if (ret.error) { throw ret.error; }
-  return ret.result;
-}
+  return httpApi.request(request).thenCall(callback);
+};
 
-/** @private */
-function parseCSV(str) {
-  return require('./csv').parseCSV(str);
-}
+/**
+ * Send HTTP GET request
+ *
+ * Endpoint URL can be absolute URL ('https://na1.salesforce.com/services/data/v32.0/sobjects/Account/describe')
+ * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
+ * , or relative path from version root ('/sobjects/Account/describe').
+ *
+ * @param {String} url - Endpoint URL to request HTTP GET
+ * @param {Object} [options] - HTTP API request options
+ * @param {Callback.&lt;Object>} [callback] - Callback function
+ * @returns {Promise.&lt;Object>}
+ */
+Connection.prototype.requestGet = function(url, options, callback) {
+  var request = {
+    method: "GET",
+    url: url
+  };
+  return this.request(request, options, callback);
+};
 
-/** @private */
-function parseText(str) { return str; }
+
+/**
+ * Send HTTP POST request with JSON body, with connected session information
+ *
+ * Endpoint URL can be absolute URL ('https://na1.salesforce.com/services/data/v32.0/sobjects/Account/describe')
+ * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
+ * , or relative path from version root ('/sobjects/Account/describe').
+ *
+ * @param {String} url - Endpoint URL to request HTTP POST
+ * @param {Object} body - Any JS object which can be serialized to JSON
+ * @param {Object} [options] - HTTP API request options
+ * @param {Callback.&lt;Object>} [callback] - Callback function
+ * @returns {Promise.&lt;Object>}
+ */
+Connection.prototype.requestPost = function(url, body, options, callback) {
+  var request = {
+    method: "POST",
+    url: url,
+    body: JSON.stringify(body),
+    headers: { "content-type": "application/json" }
+  };
+  return this.request(request, options, callback);
+};
+
+/**
+ * Send HTTP PUT request with JSON body, with connected session information
+ *
+ * Endpoint URL can be absolute URL ('https://na1.salesforce.com/services/data/v32.0/sobjects/Account/describe')
+ * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
+ * , or relative path from version root ('/sobjects/Account/describe').
+ *
+ * @param {String} url - Endpoint URL to request HTTP PUT
+ * @param {Object} body - Any JS object which can be serialized to JSON
+ * @param {Object} [options] - HTTP API request options
+ * @param {Callback.&lt;Object>} [callback] - Callback function
+ * @returns {Promise.&lt;Object>}
+ */
+Connection.prototype.requestPut = function(url, body, options, callback) {
+  var request = {
+    method: "PUT",
+    url: url,
+    body: JSON.stringify(body),
+    headers: { "content-type": "application/json" }
+  };
+  return this.request(request, options, callback);
+};
+
+/**
+ * Send HTTP PATCH request with JSON body
+ *
+ * Endpoint URL can be absolute URL ('https://na1.salesforce.com/services/data/v32.0/sobjects/Account/describe')
+ * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
+ * , or relative path from version root ('/sobjects/Account/describe').
+ *
+ * @param {String} url - Endpoint URL to request HTTP PATCH
+ * @param {Object} body - Any JS object which can be serialized to JSON
+ * @param {Object} [options] - HTTP API request options
+ * @param {Callback.&lt;Object>} [callback] - Callback function
+ * @returns {Promise.&lt;Object>}
+ */
+Connection.prototype.requestPatch = function(url, body, options, callback) {
+  var request = {
+    method: "PATCH",
+    url: url,
+    body: JSON.stringify(body),
+    headers: { "content-type": "application/json" }
+  };
+  return this.request(request, options, callback);
+};
+
+/**
+ * Send HTTP DELETE request
+ *
+ * Endpoint URL can be absolute URL ('https://na1.salesforce.com/services/data/v32.0/sobjects/Account/describe')
+ * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
+ * , or relative path from version root ('/sobjects/Account/describe').
+ *
+ * @param {String} url - Endpoint URL to request HTTP DELETE
+ * @param {Object} [options] - HTTP API request options
+ * @param {Callback.&lt;Object>} [callback] - Callback function
+ * @returns {Promise.&lt;Object>}
+ */
+Connection.prototype.requestDelete = function(url, options, callback) {
+  var request = {
+    method: "DELETE",
+    url: url
+  };
+  return this.request(request, options, callback);
+};
+
 
 /** @private */
 function formatDate(date) {
@@ -417,30 +476,6 @@ function formatDate(date) {
     '+00:00';
 }
 
-/**
- * Refresh access token
- * @private
- */
-Connection.prototype._refresh = function() {
-  var self = this;
-  var logger = this._logger;
-  logger.debug("&lt;refresh token>");
-  var delegate = this._refreshDelegate || this.oauth2;
-  return delegate.refreshToken(this.refreshToken, function(err, res) {
-    if (!err) {
-      var userInfo = parseIdUrl(res.id);
-      self.initialize({
-        instanceUrl : res.instance_url,
-        accessToken : res.access_token,
-        userInfo : userInfo
-      });
-      logger.debug("token refresh completed. result = " + JSON.stringify(res));
-      self.emit("refresh", res.access_token, res);
-    }
-    self._suspended = false;
-    self.emit('resume', err);
-  });
-};
 
 /** @private **/
 function parseIdUrl(idUrl) {
@@ -452,7 +487,6 @@ function parseIdUrl(idUrl) {
     url: idUrl
   };
 }
-
 
 /**
  * @callback Callback
@@ -521,10 +555,15 @@ Connection.prototype.queryMore = function(locator, callback) {
  *
  * @param {String} type - SObject Type
  * @param {String|Array.&lt;String>} ids - A record ID or array of record IDs 
+ * @param {Object} [options] - Options for rest api.
  * @param {Callback.&lt;Record|Array.&lt;Record>>} [callback] - Callback function
  * @returns {Promise.&lt;Record|Array.&lt;Record>>}
  */
-Connection.prototype.retrieve = function(type, ids, callback) {
+Connection.prototype.retrieve = function(type, ids, options, callback) {
+  if (typeof options === 'function') {
+    callback = options;
+    options = {};
+  }
   var self = this;
   var isArray = _.isArray(ids);
   ids = isArray ? ids : [ ids ];
@@ -534,7 +573,7 @@ Connection.prototype.retrieve = function(type, ids, callback) {
   return Promise.all(
     _.map(ids, function(id) {
       var url = [ self._baseUrl(), "sobjects", type, id ].join('/');
-      return self._request(url);
+      return self.request(url);
     })
   ).then(function(results) {
     return !isArray && _.isArray(results) ? results[0] : results;
@@ -564,16 +603,24 @@ Connection.prototype.retrieve = function(type, ids, callback) {
  * @method Connection#create
  * @param {String} type - SObject Type
  * @param {Record|Array.&lt;Record>} records - A record or array of records to create
+ * @param {Object} [options] - Options for rest api.
  * @param {Callback.&lt;RecordResult|Array.&lt;RecordResult>>} [callback] - Callback function
  * @returns {Promise.&lt;RecordResult|Array.&lt;RecordResult>>}
  */
 Connection.prototype.insert =
-Connection.prototype.create = function(type, records, callback) {
-  if (arguments.length === 2) {
-    type = null;
+Connection.prototype.create = function(type, records, options, callback) {
+  if (!_.isString(type)) {
+    // reverse order
+    callback = options;
+    options = records;
     records = type;
-    callback = records;
+    type = null;
   }
+  if (typeof options === 'function') {
+    callback = options;
+    options = {};
+  }
+  options = options || {};
   var self = this;
   var isArray = _.isArray(records);
   records = isArray ? records : [ records ];
@@ -592,13 +639,13 @@ Connection.prototype.create = function(type, records, callback) {
       delete record.attributes;
 
       var url = [ self._baseUrl(), "sobjects", sobjectType ].join('/');
-      return self._request({
+      return self.request({
         method : 'POST',
         url : url,
         body : JSON.stringify(record),
-        headers : {
+        headers : _.defaults(options.headers || {}, {
           "Content-Type" : "application/json"
-        }
+        })
       });
     })
   ).then(function(results) {
@@ -611,15 +658,23 @@ Connection.prototype.create = function(type, records, callback) {
  *
  * @param {String} type - SObject Type
  * @param {Record|Array.&lt;Record>} records - A record or array of records to update
+ * @param {Object} [options] - Options for rest api.
  * @param {Callback.&lt;RecordResult|Array.&lt;RecordResult>>} [callback] - Callback function
  * @returns {Promise.&lt;RecordResult|Array.&lt;RecordResult>>}
  */
-Connection.prototype.update = function(type, records, callback) {
-  if (arguments.length === 2) {
-    type = null;
+Connection.prototype.update = function(type, records, options, callback) {
+  if (!_.isString(type)) {
+    // reverse order
+    callback = options;
+    options = records;
     records = type;
-    callback = records;
+    type = null;
   }
+  if (typeof options === 'function') {
+    callback = options;
+    options = {};
+  }
+  options = options || {};
   var self = this;
   var isArray = _.isArray(records);
   records = isArray ? records : [ records ];
@@ -642,14 +697,14 @@ Connection.prototype.update = function(type, records, callback) {
       delete record.attributes;
 
       var url = [ self._baseUrl(), "sobjects", sobjectType, id ].join('/');
-      return self._request({
+      return self.request({
         method : 'PATCH',
         url : url,
         body : JSON.stringify(record),
-        headers : {
+        headers : _.defaults(options.headers || {}, {
           "Content-Type" : "application/json"
-        }
-      }, null, {
+        })
+      }, {
         noContentResponse: { id : id, success : true, errors : [] }
       });
     })
@@ -664,17 +719,25 @@ Connection.prototype.update = function(type, records, callback) {
  * @param {String} type - SObject Type
  * @param {Record|Array.&lt;Record>} records - Record or array of records to upsert
  * @param {String} extIdField - External ID field name
+ * @param {Object} [options] - Options for rest api.
  * @param {Callback.&lt;RecordResult|Array.&lt;RecordResult>>} [callback] - Callback
  * @returns {Promise.&lt;RecordResult|Array.&lt;RecordResult>>}
  */
-Connection.prototype.upsert = function(type, records, extIdField, callback) {
+Connection.prototype.upsert = function(type, records, extIdField, options, callback) {
   // You can omit "type" argument, when the record includes type information.
-  if (arguments.length === 3) {
-    type = null;
-    records = type;
+  if (!_.isString(type)) {
+    // reverse order
+    callback = options;
+    options = extIdField;
     extIdField = records;
-    callback = extIdField;
+    records = type;
+    type = null;
   }
+  if (typeof options === 'function') {
+    callback = options;
+    options = {};
+  }
+  options = options || {};
   var self = this;
   var isArray = _.isArray(records);
   records = isArray ? records : [ records ];
@@ -694,14 +757,14 @@ Connection.prototype.upsert = function(type, records, extIdField, callback) {
       delete record.attributes;
 
       var url = [ self._baseUrl(), "sobjects", sobjectType, extIdField, extId ].join('/');
-      return self._request({
+      return self.request({
         method : 'PATCH',
         url : url,
         body : JSON.stringify(record),
-        headers : {
+        headers : _.defaults(options.headers || {}, {
           "Content-Type" : "application/json"
-        }
-      }, null, {
+        }) 
+      }, {
         noContentResponse: { success : true, errors : [] }
       });
     })
@@ -716,6 +779,7 @@ Connection.prototype.upsert = function(type, records, extIdField, callback) {
  * @method Connection#delete
  * @param {String} type - SObject Type
  * @param {String|Array.&lt;String>} ids - A ID or array of IDs to delete
+ * @param {Object} [options] - Options for rest api.
  * @param {Callback.&lt;RecordResult|Array.&lt;RecordResult>>} [callback] - Callback
  * @returns {Promise.&lt;RecordResult|Array.&lt;RecordResult>>}
  */
@@ -725,6 +789,7 @@ Connection.prototype.upsert = function(type, records, extIdField, callback) {
  * @method Connection#del
  * @param {String} type - SObject Type
  * @param {String|Array.&lt;String>} ids - A ID or array of IDs to delete
+ * @param {Object} [options] - Options for rest api.
  * @param {Callback.&lt;RecordResult|Array.&lt;RecordResult>>} [callback] - Callback
  * @returns {Promise.&lt;RecordResult|Array.&lt;RecordResult>>}
  */
@@ -734,12 +799,18 @@ Connection.prototype.upsert = function(type, records, extIdField, callback) {
  * @method Connection#destroy
  * @param {String} type - SObject Type
  * @param {String|Array.&lt;String>} ids - A ID or array of IDs to delete
+ * @param {Object} [options] - Options for rest api.
  * @param {Callback.&lt;RecordResult|Array.&lt;RecordResult>>} [callback] - Callback
  * @returns {Promise.&lt;RecordResult|Array.&lt;RecordResult>>}
  */
 Connection.prototype["delete"] =
 Connection.prototype.del =
-Connection.prototype.destroy = function(type, ids, callback) {
+Connection.prototype.destroy = function(type, ids, options, callback) {
+  if (typeof options === 'function') {
+    callback = options;
+    options = {};
+  }
+  options = options || {};
   var self = this;
   var isArray = _.isArray(ids);
   ids = isArray ? ids : [ ids ];
@@ -749,10 +820,11 @@ Connection.prototype.destroy = function(type, ids, callback) {
   return Promise.all(
     _.map(ids, function(id) {
       var url = [ self._baseUrl(), "sobjects", type, id ].join('/');
-      return self._request({
+      return self.request({
         method : 'DELETE',
-        url : url
-      }, null, {
+        url : url,
+        headers: options.headers || null
+      }, {
         noContentResponse: { id : id, success : true, errors : [] }
       });
     })
@@ -770,7 +842,7 @@ Connection.prototype.destroy = function(type, ids, callback) {
  */
 Connection.prototype.search = function(sosl, callback) {
   var url = this._baseUrl() + "/search?q=" + encodeURIComponent(sosl);
-  return this._request(url).thenCall(callback);
+  return this.request(url).thenCall(callback);
 };
 
 /**
@@ -797,7 +869,7 @@ Connection.prototype.search = function(sosl, callback) {
 Connection.prototype.describe = 
 Connection.prototype.describeSObject = function(type, callback) {
   var url = [ this._baseUrl(), "sobjects", type, "describe" ].join('/');
-  return this._request(url).thenCall(callback);
+  return this.request(url).thenCall(callback);
 };
 
 
@@ -814,7 +886,7 @@ Connection.prototype.describeSObject = function(type, callback) {
  */
 Connection.prototype.describeGlobal = function(callback) {
   var url = this._baseUrl() + "/sobjects";
-  return this._request(url).thenCall(callback);
+  return this.request(url).thenCall(callback);
 };
 
 
@@ -843,11 +915,11 @@ Connection.prototype.identity = function(callback) {
   return new Promise(
     idUrl ? 
     { identity: idUrl } :
-    this._request(this._baseUrl())
+    this.request(this._baseUrl())
   ).then(function(res) {
     var url = res.identity;
     url += '?format=json&oauth_token=' + encodeURIComponent(self.accessToken);
-    return self._request(url, null, { jsonp : 'callback' });
+    return self.request(url, null, { jsonp : 'callback' });
   }).then(function(res) {
     self.userInfo = {
       id: res.user_id,
@@ -902,13 +974,24 @@ Connection.prototype.authorize = function(code, callback) {
  * @returns {Promise.&lt;UserInfo>}
  */
 Connection.prototype.login = function(username, password, callback) {
-  if (this.oauth2) {
+  // register refreshDelegate for session expiration
+  this._refreshDelegate = new HttpApi.SessionRefreshDelegate(this, createUsernamePasswordRefreshFn(username, password));
+  if (this.oauth2 && this.oauth2.clientId && this.oauth2.clientSecret) {
     return this.loginByOAuth2(username, password, callback);
   } else {
     return this.loginBySoap(username, password, callback);
   }
 };
 
+/** @private **/
+function createUsernamePasswordRefreshFn(username, password) {
+  return function(conn, callback) {
+    conn.login(username, password, function(err) {
+      if (err) { return callback(err); }
+      callback(null, conn.accessToken);
+    });
+  };
+}
 
 /**
  * Login by OAuth2 username & password flow
@@ -921,7 +1004,6 @@ Connection.prototype.login = function(username, password, callback) {
 Connection.prototype.loginByOAuth2 = function(username, password, callback) {
   var self = this;
   var logger = this._logger;
-
   return this.oauth2.authenticate(username, password).then(function(res) {
     logger.debug("OAuth2 token response = " + JSON.stringify(res));
     var userInfo = parseIdUrl(res.id);
@@ -968,9 +1050,11 @@ Connection.prototype.loginBySoap = function(username, password, callback) {
     '&lt;/se:Envelope>'
   ].join('');
 
+  var soapLoginEndpoint = [ this.loginUrl, "services/Soap/u", this.version ].join('/');
+
   return this._transport.httpRequest({
     method : 'POST',
-    url : this.urls.soap.login,
+    url : soapLoginEndpoint,
     body : body,
     headers : {
       "Content-Type" : "text/xml",
@@ -992,7 +1076,7 @@ Connection.prototype.loginBySoap = function(username, password, callback) {
     var userId = m && m[1];
     m = response.body.match(/&lt;organizationId>([^&lt;]+)&lt;\/organizationId>/);
     var orgId = m && m[1];
-    var idUrl = self.urls.soap.login.split('/').slice(0, 3).join('/');
+    var idUrl = soapLoginEndpoint.split('/').slice(0, 3).join('/');
     idUrl += "/id/" + orgId + "/" + userId;
     var userInfo = {
       id: userId,
@@ -1012,12 +1096,50 @@ Connection.prototype.loginBySoap = function(username, password, callback) {
 };
 
 /**
- * Logout the session by using SOAP web service API
+ * Logout the current session
  *
  * @param {Callback.&lt;undefined>} [callback] - Callback function
  * @returns {Promise.&lt;undefined>}
  */
 Connection.prototype.logout = function(callback) {
+  if (this._sessionType === "oauth2") {
+    return this.logoutByOAuth2(callback);
+  } else {
+    return this.logoutBySoap(callback);
+  }
+};
+
+/**
+ * Logout the current session by revoking access token via OAuth2 session revoke
+ *
+ * @param {Callback.&lt;undefined>} [callback] - Callback function
+ * @returns {Promise.&lt;undefined>}
+ */
+Connection.prototype.logoutByOAuth2 = function(callback) {
+  var self = this;
+  var logger = this._logger;
+
+  return this.oauth2.revokeToken(this.accessToken).then(function() {
+    // Destroy the session bound to this connection
+    self.accessToken = null;
+    self.userInfo = null;
+    self.refreshToken = null;
+    self.instanceUrl = null;
+    self.cache.clear();
+
+    // nothing useful returned by logout API, just return
+    return undefined;
+  }).thenCall(callback);
+};
+
+
+/**
+ * Logout the session by using SOAP web service API
+ *
+ * @param {Callback.&lt;undefined>} [callback] - Callback function
+ * @returns {Promise.&lt;undefined>}
+ */
+Connection.prototype.logoutBySoap = function(callback) {
   var self = this;
   var logger = this._logger;
 
@@ -1036,7 +1158,7 @@ Connection.prototype.logout = function(callback) {
 
   return this._transport.httpRequest({
     method : 'POST',
-    url : this.urls.soap.service,
+    url : [ this.instanceUrl, "services/Soap/u", this.version ].join('/'),
     body : body,
     headers : {
       "Content-Type" : "text/xml",
@@ -1084,7 +1206,7 @@ Connection.prototype.recent = function(type, limit, callback) {
   var url;
   if (type) {
     url = [ this._baseUrl(), "sobjects", type ].join('/');
-    return this._request(url).then(function(res) {
+    return this.request(url).then(function(res) {
       return limit ? res.recentItems.slice(0, limit) : res.recentItems;
     }).thenCall(callback);
   } else {
@@ -1092,7 +1214,7 @@ Connection.prototype.recent = function(type, limit, callback) {
     if (limit) { 
       url += "?limit=" + limit;
     }
-    return this._request(url).thenCall(callback);
+    return this.request(url).thenCall(callback);
   }
 
 };
@@ -1139,7 +1261,7 @@ Connection.prototype.updated = function (type, start, end, callback) {
     url += "&end=" + encodeURIComponent(end);
   }
 
-  return this._request(url).thenCall(callback);
+  return this.request(url).thenCall(callback);
 };
 
 /**
@@ -1187,7 +1309,75 @@ Connection.prototype.deleted = function (type, start, end, callback) {
     url += "&end=" + encodeURIComponent(end);
   }
 
-  return this._request(url).thenCall(callback);
+  return this.request(url).thenCall(callback);
+};
+
+
+/**
+ * @typedef {Object} TabsInfo - See the API document for detail structure
+ */
+
+/**
+ * Returns a list of all tabs
+ *
+ * @param {Callback.&lt;TabsInfo>} [callback] - Callback function
+ * @returns {Promise.&lt;TabsInfo>}
+ */
+Connection.prototype.tabs = function(callback) {
+  var url = [ this._baseUrl(), "tabs" ].join('/');
+  return this.request(url).thenCall(callback);
+};
+
+
+/**
+ * @typedef {Object} LimitsInfo - See the API document for detail structure
+ */
+
+/**
+ * Returns curren system limit in the organization
+ *
+ * @param {Callback.&lt;LimitsInfo>} [callback] - Callback function
+ * @returns {Promise.&lt;LimitsInfo>}
+ */
+Connection.prototype.limits = function(callback) {
+  var url = [ this._baseUrl(), "limits" ].join('/');
+  return this.request(url).thenCall(callback);
+};
+
+
+/**
+ * @typedef {Object} ThemeInfo - See the API document for detail structure
+ */
+
+/**
+ * Returns a theme info
+ *
+ * @param {Callback.&lt;ThemeInfo>} [callback] - Callback function
+ * @returns {Promise.&lt;ThemeInfo>}
+ */
+Connection.prototype.theme = function(callback) {
+  var url = [ this._baseUrl(), "theme" ].join('/');
+  return this.request(url).thenCall(callback);
+};
+
+/**
+ * Returns all registered global quick actions 
+ *
+ * @param {Callback.&lt;Array.&lt;QuickAction~QuickActionInfo>>} [callback] - Callback function
+ * @returns {Promise.&lt;Array.&lt;QuickAction~QuickActionInfo>>}
+ */
+Connection.prototype.quickActions = function(callback) {
+  return this.request("/quickActions").thenCall(callback);
+};
+
+/**
+ * Get reference for specified global quick aciton
+ *
+ * @param {String} actionName - Name of the global quick action
+ * @returns {QuickAction}
+ */
+Connection.prototype.quickAction = function(actionName) {
+  return new QuickAction(this, "/quickActions/" + actionName);
 };
 </code></pre>
         </article>
@@ -1199,13 +1389,13 @@ Connection.prototype.deleted = function (type, start, end, callback) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="HttpApi.html">HttpApi</a></li><li><a href="ListView.html">ListView</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Process.html">Process</a></li><li><a href="Process-ApprovalProcess.html">ApprovalProcess</a></li><li><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></li><li><a href="Process-ProcessRule.html">ProcessRule</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="QuickAction.html">QuickAction</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SessionRefreshDelegate">SessionRefreshDelegate</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu May 15 2014 02:13:07 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Feb 17 2015 01:39:27 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>

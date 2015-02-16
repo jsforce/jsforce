@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Chatter</title>
+    <title>JSDoc: Class: Process</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Class: Chatter</h1>
+    <h1 class="page-title">Class: Process</h1>
     
     
 
@@ -27,7 +27,7 @@
     
 <header>
     <h2>
-    Chatter
+    Process
     </h2>
     
 </header>  
@@ -39,7 +39,7 @@
     
         
 <dt>
-    <h4 class="name" id="Chatter"><span class="type-signature"></span>new Chatter<span class="signature">(conn)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Process"><span class="type-signature"></span>new Process<span class="signature">(conn)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -47,7 +47,7 @@
     
     
     <div class="description">
-        API class for Chatter REST API call
+        A class which manages process rules and approval processes
     </div>
     
 
@@ -97,7 +97,7 @@
             
             
             
-            <td class="description last">Connection</td>
+            <td class="description last">Connection object</td>
         </tr>
 	
 	
@@ -128,7 +128,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chatter.js.html">api/chatter.js</a>, <a href="chatter.js.html#line16">line 16</a>
+        <a href="process.js.html">process.js</a>, <a href="process.js.html#line15">line 15</a>
     </li></ul></dd>
     
     
@@ -166,10 +166,13 @@
         <h3 class="subsection-title">Classes</h3>
         
         <dl>
-            <dt><a href="Chatter-Request.html">Request</a></dt>
+            <dt><a href="Process-ApprovalProcess.html">ApprovalProcess</a></dt>
             <dd></dd>
         
-            <dt><a href="Chatter-Resource.html">Resource</a></dt>
+            <dt><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Process-ProcessRule.html">ProcessRule</a></dt>
             <dd></dd>
         </dl>
     
@@ -177,91 +180,34 @@
     
     
     
-    
-    
-        <h3 class="subsection-title">Methods</h3>
+        <h3 class="subsection-title">Members</h3>
         
         <dl>
             
 <dt>
-    <h4 class="name" id="batch"><span class="type-signature"></span>batch<span class="signature">(<span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;<a href="Chatter.html#BatchRequestResult">Chatter~BatchRequestResult</a>>}</span></h4>
+    <h4 class="name" id="approval"><span class="type-signature"></span>approval<span class="type-signature"> :<a href="Process-ApprovalProcess.html">Process~ApprovalProcess</a></span></h4>
     
     
 </dt>
 <dd>
     
-    
     <div class="description">
-        Make a batch request to chatter API
+        Object which mangages approval process
     </div>
     
-
     
     
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		<th>Argument</th>
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>callback</code></td>
-            
-            
-            <td class="type">
-            
+        <h5>Type:</h5>
+        <ul>
+            <li>
                 
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;<a href="Chatter.html#BatchRequestResult">Chatter~BatchRequestResult</a>></span>
+<span class="param-type"><a href="Process-ApprovalProcess.html">Process~ApprovalProcess</a></span>
 
 
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">Callback func</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
+            </li>
+        </ul>
     
-    
+
     
 <dl class="details">
     
@@ -285,7 +231,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chatter.js.html">api/chatter.js</a>, <a href="chatter.js.html#line101">line 101</a>
+        <a href="process.js.html">process.js</a>, <a href="process.js.html#line21">line 21</a>
     </li></ul></dd>
     
     
@@ -296,34 +242,6 @@
     
 </dl>
 
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="Promise.html">Promise</a>.&lt;<a href="Chatter.html#BatchRequestResult">Chatter~BatchRequestResult</a>></span>
-
-
-	</dd>
-</dl>
-
-        
     
     
 </dd>
@@ -331,115 +249,29 @@
         
             
 <dt>
-    <h4 class="name" id="request"><span class="type-signature"></span>request<span class="signature">(params, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Chatter-Request.html">Chatter~Request</a>}</span></h4>
+    <h4 class="name" id="rule"><span class="type-signature"></span>rule<span class="type-signature"> :<a href="Process-ProcessRule.html">Process~ProcessRule</a></span></h4>
     
     
 </dt>
 <dd>
     
-    
     <div class="description">
-        Make a request for chatter API resource
+        Object which mangages process rules
     </div>
     
-
     
     
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		<th>Argument</th>
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>params</code></td>
-            
-            
-            <td class="type">
-            
+        <h5>Type:</h5>
+        <ul>
+            <li>
                 
-<span class="param-type"><a href="Chatter.html#RequestParams">Chatter~RequestParams</a></span>
+<span class="param-type"><a href="Process-ProcessRule.html">Process~ProcessRule</a></span>
 
 
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">Paramters representing HTTP request</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>callback</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;<a href="Chatter.html#RequestResult">Chatter~RequestResult</a>></span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">Callback func</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
+            </li>
+        </ul>
     
-    
+
     
 <dl class="details">
     
@@ -463,7 +295,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chatter.js.html">api/chatter.js</a>, <a href="chatter.js.html#line71">line 71</a>
+        <a href="process.js.html">process.js</a>, <a href="process.js.html#line16">line 16</a>
     </li></ul></dd>
     
     
@@ -474,217 +306,13 @@
     
 </dl>
 
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="Chatter-Request.html">Chatter~Request</a></span>
-
-
-	</dd>
-</dl>
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="resource"><span class="type-signature"></span>resource<span class="signature">(url, <span class="optional">queryParams</span>)</span><span class="type-signature"> &rarr; {<a href="Chatter-Resource.html">Chatter~Resource</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Make a resource request to chatter API
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		<th>Argument</th>
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>url</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">Resource URL</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>queryParams</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">Query parameters (in hash object)</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chatter.js.html">api/chatter.js</a>, <a href="chatter.js.html#line82">line 82</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="Chatter-Resource.html">Chatter~Resource</a></span>
-
-
-	</dd>
-</dl>
-
-        
     
     
 </dd>
 
         </dl>
+    
+    
     
     
     
@@ -693,186 +321,7 @@
         <dl>
                 
 <dt>
-    <h4 class="name" id="BatchRequestParams">BatchRequestParams</h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">Object</span>
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-        
-        <h5 class="subsection-title">Properties:</h5>
-        
-        <dl>
-
-<table class="props">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		<th>Argument</th>
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>method</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">HTTP method</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>url</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">Resource URL</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>richInput</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">HTTP body (in POST/PUT/PATCH methods)</td>
-        </tr>
-	
-	
-	</tbody>
-</table></dl>
-        
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chatter.js.html">api/chatter.js</a>, <a href="chatter.js.html#line146">line 146</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-</dd>
-
-            
-                
-<dt>
-    <h4 class="name" id="BatchRequestResult">BatchRequestResult</h4>
+    <h4 class="name" id="ApprovalProcessDefinition">ApprovalProcessDefinition</h4>
     
     
 </dt>
@@ -921,13 +370,13 @@
 	
         <tr>
             
-                <td class="name"><code>hasError</code></td>
+                <td class="name"><code>id</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">Boolean</span>
+<span class="param-type">String</span>
 
 
             
@@ -937,20 +386,20 @@
             
             
             
-            <td class="description last">Flag if the batch has one or more errors</td>
+            <td class="description last">Id of approval process definition</td>
         </tr>
 	
 	
 	
         <tr>
             
-                <td class="name"><code>results</code></td>
+                <td class="name"><code>name</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;Object></span>
+<span class="param-type">String</span>
 
 
             
@@ -960,32 +409,37 @@
             
             
             
-            <td class="description last">Batch request results in array
-                <h6>Properties</h6>
-
-<table class="props">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
+            <td class="description last">Name of approval process definition</td>
+        </tr>
 	
-	<tbody>
 	
 	
         <tr>
             
-                <td class="name"><code>statusCode</code></td>
+                <td class="name"><code>object</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">SObject name which approval process is defined</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>sortOrder</code></td>
             
             
             <td class="type">
@@ -1001,36 +455,7 @@
             
             
             
-            <td class="description last">HTTP response status code</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>result</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Chatter.html#RequestResult">Chatter~RequestResult</a></span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Parsed HTTP response body</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-            </td>
+            <td class="description last">Processing order of approval in SObject</td>
         </tr>
 	
 	
@@ -1058,7 +483,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chatter.js.html">api/chatter.js</a>, <a href="chatter.js.html#line86">line 86</a>
+        <a href="process.js.html">process.js</a>, <a href="process.js.html#line97">line 97</a>
     </li></ul></dd>
     
     
@@ -1076,7 +501,7 @@
             
                 
 <dt>
-    <h4 class="name" id="RequestParams">RequestParams</h4>
+    <h4 class="name" id="ApprovalProcessRequestResult">ApprovalProcessRequestResult</h4>
     
     
 </dt>
@@ -1113,8 +538,6 @@
 		<th>Type</th>
 		
 		
-		<th>Argument</th>
-		
 		
 		
 		
@@ -1127,65 +550,76 @@
 	
         <tr>
             
-                <td class="name"><code>method</code></td>
+                <td class="name"><code>success</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">Boolean</span>
 
 
             
             </td>
             
             
-                <td class="attributes">
-                
-                    
-                
-                </td>
             
             
             
-            
-            <td class="description last">HTTP method</td>
+            <td class="description last">True if processing or approval completed successfully</td>
         </tr>
 	
 	
 	
         <tr>
             
-                <td class="name"><code>url</code></td>
+                <td class="name"><code>errors</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">Array.&lt;Object></span>
 
 
             
             </td>
             
             
-                <td class="attributes">
-                
-                    
-                
-                </td>
             
             
             
-            
-            <td class="description last">Resource URL</td>
+            <td class="description last">The set of errors returned if the request failed</td>
         </tr>
 	
 	
 	
         <tr>
             
-                <td class="name"><code>body</code></td>
+                <td class="name"><code>actorIds</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;String></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">IDs of the users who are currently assigned to this approval step</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>entityId</code></td>
             
             
             <td class="type">
@@ -1198,18 +632,79 @@
             </td>
             
             
-                <td class="attributes">
+            
+            
+            
+            <td class="description last">Object being processed</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>instanceId</code></td>
+            
+            
+            <td class="type">
+            
                 
-                    &lt;optional><br>
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">ID of the ProcessInstance associated with the object submitted for processing</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>instanceStatus</code></td>
+            
+            
+            <td class="type">
+            
                 
-                    
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Status of the current process instance (not an individual object but the entire process instance)</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>newWorkItemIds</code></td>
+            
+            
+            <td class="type">
+            
                 
-                </td>
+<span class="param-type">Array.&lt;String></span>
+
+
+            
+            </td>
             
             
             
             
-            <td class="description last">HTTP body (in POST/PUT/PATCH methods)</td>
+            
+            <td class="description last">Case-insensitive IDs that point to ProcessInstanceWorkitem items (the set of pending approval requests)</td>
         </tr>
 	
 	
@@ -1237,7 +732,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chatter.js.html">api/chatter.js</a>, <a href="chatter.js.html#line53">line 53</a>
+        <a href="process.js.html">process.js</a>, <a href="process.js.html#line117">line 117</a>
     </li></ul></dd>
     
     
@@ -1255,7 +750,7 @@
             
                 
 <dt>
-    <h4 class="name" id="RequestResult">RequestResult</h4>
+    <h4 class="name" id="ProcessRuleDefinition">ProcessRuleDefinition</h4>
     
     
 </dt>
@@ -1278,6 +773,103 @@
 <dl class="details">
     
         
+        <h5 class="subsection-title">Properties:</h5>
+        
+        <dl>
+
+<table class="props">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>id</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Id of approval process definition</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Name of process rule definition</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>object</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">SObject name which process rule is defined</td>
+        </tr>
+	
+	
+	</tbody>
+</table></dl>
+        
+    
+        
     
     
     
@@ -1297,7 +889,141 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chatter.js.html">api/chatter.js</a>, <a href="chatter.js.html#line55">line 55</a>
+        <a href="process.js.html">process.js</a>, <a href="process.js.html#line38">line 38</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+            
+                
+<dt>
+    <h4 class="name" id="ProcessRuleTriggerResult">ProcessRuleTriggerResult</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Object</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+        
+        <h5 class="subsection-title">Properties:</h5>
+        
+        <dl>
+
+<table class="props">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>success</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Is process rule trigger succeeded or not</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>errors</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Object></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Array of errors returned if the request failed</td>
+        </tr>
+	
+	
+	</tbody>
+</table></dl>
+        
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="process.js.html">process.js</a>, <a href="process.js.html#line59">line 59</a>
     </li></ul></dd>
     
     
@@ -1332,7 +1058,7 @@
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Feb 17 2015 01:39:28 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Feb 17 2015 01:39:29 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>

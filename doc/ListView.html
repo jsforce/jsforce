@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: ProxyTransport</title>
+    <title>JSDoc: Class: ListView</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Class: ProxyTransport</h1>
+    <h1 class="page-title">Class: ListView</h1>
     
     
 
@@ -27,9 +27,7 @@
     
 <header>
     <h2>
-        <span class="ancestors"><a href="Transport.html">Transport</a>~</span>
-    
-    ProxyTransport
+    ListView
     </h2>
     
 </header>  
@@ -41,7 +39,7 @@
     
         
 <dt>
-    <h4 class="name" id="ProxyTransport"><span class="type-signature">&lt;protected> </span>new ProxyTransport<span class="signature">(proxyUrl)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="ListView"><span class="type-signature">&lt;protected> </span>new ListView<span class="signature">(conn, type, id)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -49,7 +47,7 @@
     
     
     <div class="description">
-        Class for HTTP request transport using AJAX proxy service
+        A class for organizing list view information
     </div>
     
 
@@ -83,7 +81,53 @@
 	
         <tr>
             
-                <td class="name"><code>proxyUrl</code></td>
+                <td class="name"><code>conn</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Connection.html">Connection</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Connection instance</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="SObject.html">SObject</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">SObject type</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>id</code></td>
             
             
             <td class="type">
@@ -99,7 +143,7 @@
             
             
             
-            <td class="description last">AJAX Proxy server URL</td>
+            <td class="description last">List view ID</td>
         </tr>
 	
 	
@@ -130,7 +174,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="transport.js.html">transport.js</a>, <a href="transport.js.html#line101">line 101</a>
+        <a href="sobject.js.html">sobject.js</a>, <a href="sobject.js.html#line499">line 499</a>
     </li></ul></dd>
     
     
@@ -159,12 +203,6 @@
     </div>
     
     
-        <h3 class="subsection-title">Extends</h3>
-        
-        <ul>
-            <li><a href="Transport.html">Transport</a></li>
-        </ul>
-    
     
     
     
@@ -182,7 +220,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="httpRequest"><span class="type-signature"></span>httpRequest<span class="signature">(params, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;Object>}</span></h4>
+    <h4 class="name" id="describe"><span class="type-signature"></span>describe<span class="signature">(<span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;ListViewDescribeInfo>}</span></h4>
     
     
 </dt>
@@ -190,7 +228,7 @@
     
     
     <div class="description">
-        Make HTTP request via AJAX proxy
+        Returns detailed information about a list view
     </div>
     
 
@@ -226,44 +264,13 @@
 	
         <tr>
             
-                <td class="name"><code>params</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">HTTP request</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
                 <td class="name"><code>callback</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;Object></span>
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;ListViewDescribeInfo></span>
 
 
             
@@ -283,7 +290,7 @@
             
             
             
-            <td class="description last">Calback Function</td>
+            <td class="description last">Callback function</td>
         </tr>
 	
 	
@@ -314,7 +321,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="transport.js.html">transport.js</a>, <a href="transport.js.html#line115">line 115</a>
+        <a href="sobject.js.html">sobject.js</a>, <a href="sobject.js.html#line532">line 532</a>
     </li></ul></dd>
     
     
@@ -346,7 +353,154 @@
 	</dt>
 	<dd>
 		
-<span class="param-type"><a href="Promise.html">Promise</a>.&lt;Object></span>
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;ListViewDescribeInfo></span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="results"><span class="type-signature"></span>results<span class="signature">(<span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;ListViewResultInfo>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Executes query for the list view and returns the resulting data and presentation information.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;ListViewResultInfo></span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Callback function</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="sobject.js.html">sobject.js</a>, <a href="sobject.js.html#line520">line 520</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;ListViewResultInfo></span>
 
 
 	</dd>
@@ -379,7 +533,7 @@
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Feb 17 2015 01:39:30 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Feb 17 2015 01:39:29 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>

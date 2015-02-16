@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: AsyncResultLocator</title>
+    <title>JSDoc: Class: ApprovalProcessRequest</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Class: AsyncResultLocator</h1>
+    <h1 class="page-title">Class: ApprovalProcessRequest</h1>
     
     
 
@@ -27,9 +27,9 @@
     
 <header>
     <h2>
-        <span class="ancestors"><a href="Metadata.html">Metadata</a>~</span>
+        <span class="ancestors"><a href="Process.html">Process</a>~</span>
     
-    AsyncResultLocator
+    ApprovalProcessRequest
     </h2>
     
 </header>  
@@ -41,7 +41,7 @@
     
         
 <dt>
-    <h4 class="name" id="AsyncResultLocator"><span class="type-signature">&lt;protected> </span>new AsyncResultLocator<span class="signature">(meta, results, <span class="optional">isArray</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="ApprovalProcessRequest"><span class="type-signature">&lt;protected> </span>new ApprovalProcessRequest<span class="signature">(process, request)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -49,7 +49,7 @@
     
     
     <div class="description">
-        The locator class for Metadata API asynchronous call result
+        A class representing approval process request
     </div>
     
 
@@ -60,6 +60,71 @@
     
         <h5>Parameters:</h5>
         
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>process</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Process-ApprovalProcess.html">Process~ApprovalProcess</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">ApprovalProcess</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>request</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Request parameters
+                <h6>Properties</h6>
+                
 
 <table class="params">
     <thead>
@@ -85,13 +150,13 @@
 	
         <tr>
             
-                <td class="name"><code>meta</code></td>
+                <td class="name"><code>actionType</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type"><a href="Metadata.html">Metadata</a></span>
+<span class="param-type">String</span>
 
 
             
@@ -109,20 +174,20 @@
             
             
             
-            <td class="description last">Metadata API object</td>
+            <td class="description last">Represents the kind of action to take: Submit, Approve, or Reject</td>
         </tr>
 	
 	
 	
         <tr>
             
-                <td class="name"><code>results</code></td>
+                <td class="name"><code>contextId</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type"><a href="Promise.html">Promise</a>.&lt;(<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>|Array.&lt;<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>>)></span>
+<span class="param-type">String</span>
 
 
             
@@ -140,14 +205,111 @@
             
             
             
-            <td class="description last">Promise object for async result info</td>
+            <td class="description last">ID of the item that is being acted upon</td>
         </tr>
 	
 	
 	
         <tr>
             
-                <td class="name"><code>isArray</code></td>
+                <td class="name"><code>comments</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Comment to add to the history step associated with this request</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>nextApproverIds</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;String></span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">If the process requires specification of the next approval, the ID of the user to be assigned the next request</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>processDefinitionNameOrId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Developer name or ID of the process definition</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>skipEntryCriteria</code></td>
             
             
             <td class="type">
@@ -173,7 +335,13 @@
             
             
             
-            <td class="description last">Indicates whether the async request is given in array or single object</td>
+            <td class="description last">Determines whether to evaluate the entry criteria for the process (true) or not (false) if the process definition name or ID isn’t null</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+            </td>
         </tr>
 	
 	
@@ -204,7 +372,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line555">line 555</a>
+        <a href="process.js.html">process.js</a>, <a href="process.js.html#line224">line 224</a>
     </li></ul></dd>
     
     
@@ -232,12 +400,6 @@
     
     </div>
     
-    
-        <h3 class="subsection-title">Extends</h3>
-        
-        <ul>
-            <li>events.EventEmitter</li>
-        </ul>
     
     
     
@@ -256,440 +418,6 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="check"><span class="type-signature"></span>check<span class="signature">(<span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;(<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>|Array.&lt;<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>>)>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Check the status of async request
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		<th>Argument</th>
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>callback</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;(<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>|Array.&lt;<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>>)></span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">Callback function</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line625">line 625</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="Promise.html">Promise</a>.&lt;(<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>|Array.&lt;<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>>)></span>
-
-
-	</dd>
-</dl>
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="complete"><span class="type-signature"></span>complete<span class="signature">(<span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;(<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>|Array.&lt;<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>>)>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Check and wait until the async requests become in completed status
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		<th>Argument</th>
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>callback</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;(<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>|Array.&lt;<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>>)></span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">Callback function</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line684">line 684</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="Promise.html">Promise</a>.&lt;(<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>|Array.&lt;<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>>)></span>
-
-
-	</dd>
-</dl>
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="poll"><span class="type-signature"></span>poll<span class="signature">(interval, timeout)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Polling until async call status becomes complete or error
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>interval</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Polling interval in milliseconds</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>timeout</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Polling timeout in milliseconds</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line642">line 642</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
     <h4 class="name" id="then"><span class="type-signature"></span>then<span class="signature">()</span><span class="type-signature"></span></h4>
     
     
@@ -700,8 +428,6 @@
     <div class="description">
         Promise/A+ interface
 http://promises-aplus.github.io/promises-spec/
-
-Delegate to deferred promise, return promise instance for batch result
     </div>
     
 
@@ -734,7 +460,7 @@ Delegate to deferred promise, return promise instance for batch result
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line581">line 581</a>
+        <a href="process.js.html">process.js</a>, <a href="process.js.html#line244">line 244</a>
     </li></ul></dd>
     
     
@@ -804,7 +530,7 @@ Call "then" using given node-style callback function
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line607">line 607</a>
+        <a href="process.js.html">process.js</a>, <a href="process.js.html#line259">line 259</a>
     </li></ul></dd>
     
     

@@ -26,25 +26,36 @@
     <section>
         <article>
             <pre class="prettyprint source"><code>/*global process, Sfdc */
-var util = require('util'),
+var inherits = require('inherits'),
     stream = require('stream'),
     Promise = require('./promise');
 
 /* */
 
-var nodeRequest = require('request'),
-    xhrRequest = require('./browser/request'),
+var request = require('request'),
     canvas = require('./browser/canvas'),
     jsonp = require('./browser/jsonp');
 
-var request;
-if (typeof window === 'undefined') {
-  request = nodeRequest;
+// set options if defaults setting is available in request, which is not available in xhr module.
+if (request.defaults) {
+  var defaults = {
+    followAllRedirects: true
+  };
   if (process.env.HTTP_PROXY) {
-    request = request.defaults({ proxy: process.env.HTTP_PROXY });
+    defaults.proxy = process.env.HTTP_PROXY;
   }
+  if (process.env.HTTP_TIMEOUT) {
+    defaults.timeout = process.env.HTTP_TIMEOUT;
+  }
+  request = request.defaults(defaults);
+}
+
+var baseUrl;
+if (typeof window === 'undefined') {
+  baseUrl = process.env.LOCATION_BASE_URL || "";
 } else {
-  request = xhrRequest;
+  var apiHost = normalizeApiHost(window.location.host);
+  baseUrl = apiHost ? "https://" + apiHost : "";
 }
 
 /**
@@ -60,6 +71,18 @@ function streamify(promise, factory) {
   };
   promise.stream = factory;
   return promise;
+}
+
+/**
+ * Normarize Salesforce API host name
+ * @private
+ */
+function normalizeApiHost(apiHost) {
+  var m = /(\w+)\.(visual\.force|salesforce)\.com$/.exec(apiHost);
+  if (m) {
+    apiHost = m[1] + ".salesforce.com";
+  }
+  return apiHost;
 }
 
 /**
@@ -114,10 +137,10 @@ var ProxyTransport = Transport.ProxyTransport = function(proxyUrl) {
   this._proxyUrl = proxyUrl;
 };
 
-util.inherits(ProxyTransport, Transport);
+inherits(ProxyTransport, Transport);
 
 /**
- * Make HTTP request via AJAX proxy 
+ * Make HTTP request via AJAX proxy
  *
  * @method Transport~ProxyTransport#httpRequest
  * @param {Object} params - HTTP request
@@ -125,11 +148,15 @@ util.inherits(ProxyTransport, Transport);
  * @returns {Promise.&lt;Object>}
  */
 ProxyTransport.prototype.httpRequest = function(params, callback) {
+  var url = params.url;
+  if (url.indexOf("/") === 0) {
+    url = baseUrl + url;
+  }
   var proxyParams = {
     method: params.method,
     url: this._proxyUrl + '?' + Date.now() + "." + ("" + Math.random()).substring(2),
     headers: {
-      'salesforceproxy-endpoint': params.url,
+      'salesforceproxy-endpoint': url
     }
   };
   if (params.body || params.body === "") {
@@ -152,13 +179,13 @@ ProxyTransport.prototype.httpRequest = function(params, callback) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="HttpApi.html">HttpApi</a></li><li><a href="ListView.html">ListView</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Process.html">Process</a></li><li><a href="Process-ApprovalProcess.html">ApprovalProcess</a></li><li><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></li><li><a href="Process-ProcessRule.html">ProcessRule</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="QuickAction.html">QuickAction</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SessionRefreshDelegate">SessionRefreshDelegate</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu May 15 2014 02:13:07 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Feb 17 2015 01:39:27 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -176,7 +176,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="query.js.html">query.js</a>, <a href="query.js.html#line666">line 666</a>
+        <a href="query.js.html">query.js</a>, <a href="query.js.html#line731">line 731</a>
     </li></ul></dd>
     
     
@@ -581,7 +581,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="query.js.html">query.js</a>, <a href="query.js.html#line569">line 569</a>
+        <a href="query.js.html">query.js</a>, <a href="query.js.html#line611">line 611</a>
     </li></ul></dd>
     
     
@@ -766,7 +766,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="query.js.html">query.js</a>, <a href="query.js.html#line568">line 568</a>
+        <a href="query.js.html">query.js</a>, <a href="query.js.html#line610">line 610</a>
     </li></ul></dd>
     
     
@@ -812,7 +812,7 @@
         
             
 <dt>
-    <h4 class="name" id="destroy"><span class="type-signature"></span>destroy<span class="signature">(<span class="optional">type</span>, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Bulk-Batch.html">Bulk~Batch</a>}</span></h4>
+    <h4 class="name" id="destroy"><span class="type-signature"></span>destroy<span class="signature">(<span class="optional">type</span>, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;Array.&lt;<a href="global.html#RecordResult">RecordResult</a>>>}</span></h4>
     
     
 </dt>
@@ -951,7 +951,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="query.js.html">query.js</a>, <a href="query.js.html#line570">line 570</a>
+        <a href="query.js.html">query.js</a>, <a href="query.js.html#line612">line 612</a>
     </li></ul></dd>
     
     
@@ -983,7 +983,7 @@
 	</dt>
 	<dd>
 		
-<span class="param-type"><a href="Bulk-Batch.html">Bulk~Batch</a></span>
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;Array.&lt;<a href="global.html#RecordResult">RecordResult</a>>></span>
 
 
 	</dd>
@@ -1112,7 +1112,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="query.js.html">query.js</a>, <a href="query.js.html#line691">line 691</a>
+        <a href="query.js.html">query.js</a>, <a href="query.js.html#line756">line 756</a>
     </li></ul></dd>
     
     
@@ -1319,6 +1319,39 @@
         </tr>
 	
 	
+	
+        <tr>
+            
+                <td class="name"><code>scanAll</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Including deleted records for query target or not</td>
+        </tr>
+	
+	
 	</tbody>
 </table>
             </td>
@@ -1390,7 +1423,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="query.js.html">query.js</a>, <a href="query.js.html#line318">line 318</a>
+        <a href="query.js.html">query.js</a>, <a href="query.js.html#line319">line 319</a>
     </li></ul></dd>
     
     
@@ -1477,7 +1510,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="query.js.html">query.js</a>, <a href="query.js.html#line701">line 701</a>
+        <a href="query.js.html">query.js</a>, <a href="query.js.html#line766">line 766</a>
     </li></ul></dd>
     
     
@@ -1498,6 +1531,158 @@
     
     
     
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="explain"><span class="type-signature"></span>explain<span class="signature">(<span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;ExplainInfo>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Explain plan for executing query
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;ExplainInfo></span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Callback function</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Query.html#explain">Query#explain</a>
+    </li></dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="query.js.html">query.js</a>, <a href="query.js.html#line577">line 577</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;ExplainInfo></span>
+
+
+	</dd>
+</dl>
+
+        
     
     
 </dd>
@@ -1682,7 +1867,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="query.js.html">query.js</a>, <a href="query.js.html#line683">line 683</a>
+        <a href="query.js.html">query.js</a>, <a href="query.js.html#line748">line 748</a>
     </li></ul></dd>
     
     
@@ -2530,7 +2715,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="query.js.html">query.js</a>, <a href="query.js.html#line562">line 562</a>
+        <a href="query.js.html">query.js</a>, <a href="query.js.html#line604">line 604</a>
     </li></ul></dd>
     
     
@@ -2790,6 +2975,39 @@
             
             
             <td class="description last">Max fetching records in auto fetch mode</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>scanAll</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Including deleted records for query target or not</td>
         </tr>
 	
 	
@@ -3877,7 +4095,7 @@ Delegate to deferred promise, return promise instance for query result
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="query.js.html">query.js</a>, <a href="query.js.html#line637">line 637</a>
+        <a href="query.js.html">query.js</a>, <a href="query.js.html#line701">line 701</a>
     </li></ul></dd>
     
     
@@ -4030,7 +4248,7 @@ Call "then" using given node-style callback function
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="query.js.html">query.js</a>, <a href="query.js.html#line649">line 649</a>
+        <a href="query.js.html">query.js</a>, <a href="query.js.html#line714">line 714</a>
     </li></ul></dd>
     
     
@@ -4076,7 +4294,159 @@ Call "then" using given node-style callback function
         
             
 <dt>
-    <h4 class="name" id="update"><span class="type-signature"></span>update<span class="signature">(mapping, <span class="optional">type</span>, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Bulk-Batch.html">Bulk~Batch</a>}</span></h4>
+    <h4 class="name" id="toSOQL"><span class="type-signature"></span>toSOQL<span class="signature">(<span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;String>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Return SOQL expression for the query
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;String></span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Callback function</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Query.html#toSOQL">Query#toSOQL</a>
+    </li></dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="query.js.html">query.js</a>, <a href="query.js.html#line593">line 593</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;String></span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="update"><span class="type-signature"></span>update<span class="signature">(mapping, <span class="optional">type</span>, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;Array.&lt;<a href="global.html#RecordResult">RecordResult</a>>>}</span></h4>
     
     
 </dt>
@@ -4249,7 +4619,7 @@ Call "then" using given node-style callback function
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="query.js.html">query.js</a>, <a href="query.js.html#line614">line 614</a>
+        <a href="query.js.html">query.js</a>, <a href="query.js.html#line666">line 666</a>
     </li></ul></dd>
     
     
@@ -4281,7 +4651,7 @@ Call "then" using given node-style callback function
 	</dt>
 	<dd>
 		
-<span class="param-type"><a href="Bulk-Batch.html">Bulk~Batch</a></span>
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;Array.&lt;<a href="global.html#RecordResult">RecordResult</a>>></span>
 
 
 	</dd>
@@ -4451,13 +4821,13 @@ Call "then" using given node-style callback function
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="HttpApi.html">HttpApi</a></li><li><a href="ListView.html">ListView</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Process.html">Process</a></li><li><a href="Process-ApprovalProcess.html">ApprovalProcess</a></li><li><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></li><li><a href="Process-ProcessRule.html">ProcessRule</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="QuickAction.html">QuickAction</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SessionRefreshDelegate">SessionRefreshDelegate</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu May 15 2014 02:13:08 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Feb 17 2015 01:39:29 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>

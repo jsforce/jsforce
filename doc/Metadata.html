@@ -128,7 +128,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line34">line 34</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line22">line 22</a>
     </li></ul></dd>
     
     
@@ -185,62 +185,6 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="create"><span class="type-signature"></span>create<span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Synonym of Metadata#createAsync().
-    </div>
-    
-    
-    
-
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-        <dt class="important tag-deprecated">Deprecated:</dt><dd class="yes-def tag-deprecated"><ul class="dummy"><li>Yes</li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line101">line 101</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-</dd>
-
-        
-            
-<dt>
     <h4 class="name" id="pollInterval"><span class="type-signature"></span>pollInterval<span class="type-signature"> :Number</span></h4>
     
     
@@ -287,7 +231,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line43">line 43</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line31">line 31</a>
     </li></ul></dd>
     
     
@@ -351,7 +295,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line49">line 49</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line37">line 37</a>
     </li></ul></dd>
     
     
@@ -369,14 +313,14 @@
         
             
 <dt>
-    <h4 class="name" id="update"><span class="type-signature"></span>update<span class="type-signature"></span></h4>
+    <h4 class="name" id="upsertSync"><span class="type-signature"></span>upsertSync<span class="type-signature"></span></h4>
     
     
 </dt>
 <dd>
     
     <div class="description">
-        Synonym of Metadata#updateAsync().
+        Upserts one or more components in your organization's data.
     </div>
     
     
@@ -393,8 +337,6 @@
     
     
     
-        <dt class="important tag-deprecated">Deprecated:</dt><dd class="yes-def tag-deprecated"><ul class="dummy"><li>Yes</li></ul></dd>
-    
     
     
     
@@ -407,7 +349,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line189">line 189</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line246">line 246</a>
     </li></ul></dd>
     
     
@@ -596,7 +538,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line466">line 466</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line520">line 520</a>
     </li></ul></dd>
     
     
@@ -774,7 +716,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line407">line 407</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line457">line 457</a>
     </li></ul></dd>
     
     
@@ -955,7 +897,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line293">line 293</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line343">line 343</a>
     </li></ul></dd>
     
     
@@ -988,6 +930,218 @@
 	<dd>
 		
 <span class="param-type"><a href="Metadata-AsyncResultLocator.html">Metadata~AsyncResultLocator</a></span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="create"><span class="type-signature"></span>create<span class="signature">(type, metadata, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;(<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>|Array.&lt;<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>>)>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Synchronously adds one or more new metadata components to the organization.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">The type of metadata to create</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>metadata</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Metadata.html#MetadataInfo">Metadata~MetadataInfo</a></span>
+|
+
+<span class="param-type">Array.&lt;<a href="Metadata.html#MetadataInfo">Metadata~MetadataInfo</a>></span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Metadata to create</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;(<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>|Array.&lt;<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>>)></span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Callback function</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line115">line 115</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;(<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>|Array.&lt;<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>>)></span>
 
 
 	</dd>
@@ -1167,7 +1321,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line81">line 81</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line69">line 69</a>
     </li></ul></dd>
     
     
@@ -1213,7 +1367,7 @@
         
             
 <dt>
-    <h4 class="name" id="createSync"><span class="type-signature"></span>createSync<span class="signature">(type, metadata, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;(Metadata~SaveResult|Array.&lt;Metadata~SaveResult>)>}</span></h4>
+    <h4 class="name" id="createSync"><span class="type-signature"></span>createSync<span class="signature">(type, metadata, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;(<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>|Array.&lt;<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>>)>}</span></h4>
     
     
 </dt>
@@ -1221,7 +1375,7 @@
     
     
     <div class="description">
-        Synchronously adds one or more new metadata components to the organization.
+        Synonym of Metadata#create().
     </div>
     
 
@@ -1328,7 +1482,7 @@
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;(Metadata~SaveResult|Array.&lt;Metadata~SaveResult>)></span>
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;(<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>|Array.&lt;<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>>)></span>
 
 
             
@@ -1379,7 +1533,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line120">line 120</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line114">line 114</a>
     </li></ul></dd>
     
     
@@ -1411,7 +1565,7 @@
 	</dt>
 	<dd>
 		
-<span class="param-type"><a href="Promise.html">Promise</a>.&lt;(Metadata~SaveResult|Array.&lt;Metadata~SaveResult>)></span>
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;(<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>|Array.&lt;<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>>)></span>
 
 
 	</dd>
@@ -1433,7 +1587,7 @@
     
     
     <div class="description">
-        Synonym of Metadata#deleteAsync().
+        Synonym of Metadata#delete().
     </div>
     
 
@@ -1601,7 +1755,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line234">line 234</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line284">line 284</a>
     </li></ul></dd>
     
     
@@ -1647,7 +1801,7 @@
         
             
 <dt>
-    <h4 class="name" id="delete"><span class="type-signature"></span>delete<span class="signature">(type, metadata, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Metadata-AsyncResultLocator.html">Metadata~AsyncResultLocator</a>}</span></h4>
+    <h4 class="name" id="delete"><span class="type-signature"></span>delete<span class="signature">(type, fullNames, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;(<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>|Array.&lt;<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>>)>}</span></h4>
     
     
 </dt>
@@ -1655,7 +1809,7 @@
     
     
     <div class="description">
-        Synonym of Metadata#deleteAsync().
+        Synchronously deletes specified metadata components in the organization.
     </div>
     
 
@@ -1722,7 +1876,7 @@
 	
         <tr>
             
-                <td class="name"><code>metadata</code></td>
+                <td class="name"><code>fullNames</code></td>
             
             
             <td class="type">
@@ -1731,13 +1885,7 @@
 <span class="param-type">String</span>
 |
 
-<span class="param-type"><a href="Metadata.html#MetadataInfo">Metadata~MetadataInfo</a></span>
-|
-
 <span class="param-type">Array.&lt;String></span>
-|
-
-<span class="param-type">Array.&lt;<a href="Metadata.html#MetadataInfo">Metadata~MetadataInfo</a>></span>
 
 
             
@@ -1755,7 +1903,7 @@
             
             
             
-            <td class="description last">The fullName of metadata or metadata info to delete. If it is passed in fullName, the type parameter should not be empty.</td>
+            <td class="description last">The fullName of metadata to delete.</td>
         </tr>
 	
 	
@@ -1768,7 +1916,7 @@
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;(<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>|Array.&lt;<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>>)></span>
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;(<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>|Array.&lt;<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>>)></span>
 
 
             
@@ -1807,8 +1955,6 @@
     
     
     
-        <dt class="important tag-deprecated">Deprecated:</dt><dd class="yes-def tag-deprecated"><ul class="dummy"><li>Yes</li></ul></dd>
-    
     
     
     
@@ -1821,7 +1967,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line245">line 245</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line287">line 287</a>
     </li></ul></dd>
     
     
@@ -1853,7 +1999,7 @@
 	</dt>
 	<dd>
 		
-<span class="param-type"><a href="Metadata-AsyncResultLocator.html">Metadata~AsyncResultLocator</a></span>
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;(<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>|Array.&lt;<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>>)></span>
 
 
 	</dd>
@@ -2039,7 +2185,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line220">line 220</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line267">line 267</a>
     </li></ul></dd>
     
     
@@ -2085,7 +2231,7 @@
         
             
 <dt>
-    <h4 class="name" id="deleteSync"><span class="type-signature"></span>deleteSync<span class="signature">(type, fullNames, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;(Metadata~SaveResult|Array.&lt;Metadata~SaveResult>)>}</span></h4>
+    <h4 class="name" id="deleteSync"><span class="type-signature"></span>deleteSync<span class="signature">(type, fullNames, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;(<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>|Array.&lt;<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>>)>}</span></h4>
     
     
 </dt>
@@ -2093,7 +2239,7 @@
     
     
     <div class="description">
-        Synchronously deletes specified metadata components in the organization.
+        Synonym of Metadata#delete().
     </div>
     
 
@@ -2200,7 +2346,7 @@
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;(<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>|Array.&lt;<a href="Metadata.html#AsyncResult">Metadata~AsyncResult</a>>)></span>
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;(<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>|Array.&lt;<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>>)></span>
 
 
             
@@ -2251,7 +2397,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line265">line 265</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line285">line 285</a>
     </li></ul></dd>
     
     
@@ -2283,7 +2429,7 @@
 	</dt>
 	<dd>
 		
-<span class="param-type"><a href="Promise.html">Promise</a>.&lt;(Metadata~SaveResult|Array.&lt;Metadata~SaveResult>)></span>
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;(<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>|Array.&lt;<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>>)></span>
 
 
 	</dd>
@@ -2351,6 +2497,9 @@
 |
 
 <span class="param-type">Buffer</span>
+|
+
+<span class="param-type">String</span>
 
 
             
@@ -2368,7 +2517,7 @@
             
             
             
-            <td class="description last">Zipped file input source in readable stream or binary buffer</td>
+            <td class="description last">Zipped file input source in readable stream, binary buffer or Base64-encoded string</td>
         </tr>
 	
 	
@@ -2822,7 +2971,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line429">line 429</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line479">line 479</a>
     </li></ul></dd>
     
     
@@ -2877,7 +3026,7 @@
     
     <div class="description">
         Retrieves the metadata which describes your organization, including Apex classes and triggers,
-custom objects, custom fields on standard objects, tab sets that define an app, 
+custom objects, custom fields on standard objects, tab sets that define an app,
 and many other components.
     </div>
     
@@ -3004,7 +3153,7 @@ and many other components.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line322">line 322</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line372">line 372</a>
     </li></ul></dd>
     
     
@@ -3218,7 +3367,7 @@ and many other components.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line373">line 373</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line423">line 423</a>
     </li></ul></dd>
     
     
@@ -3379,7 +3528,7 @@ and many other components.
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;(Metadata~ReadResult|Array.&lt;Metadata~ReadResult>)></span>
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;(<a href="Metadata.html#MetadataInfo">Metadata~MetadataInfo</a>|Array.&lt;<a href="Metadata.html#MetadataInfo">Metadata~MetadataInfo</a>>)></span>
 
 
             
@@ -3430,7 +3579,7 @@ and many other components.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line149">line 149</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line155">line 155</a>
     </li></ul></dd>
     
     
@@ -3476,7 +3625,219 @@ and many other components.
         
             
 <dt>
-    <h4 class="name" id="rename"><span class="type-signature"></span>rename<span class="signature">(type, oldFullName, newFullName, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;Metadata~SaveResult>}</span></h4>
+    <h4 class="name" id="readSync"><span class="type-signature"></span>readSync<span class="signature">(type, fullNames, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;Array.&lt;(<a href="Metadata.html#MetadataInfo">Metadata~MetadataInfo</a>|Array.&lt;<a href="Metadata.html#MetadataInfo">Metadata~MetadataInfo</a>>)>>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Synonym of Metadata#read()
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">The type of metadata to read</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>fullNames</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+|
+
+<span class="param-type">Array.&lt;String></span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">full name(s) of metadata objects to read</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;(<a href="Metadata.html#MetadataInfo">Metadata~MetadataInfo</a>|Array.&lt;<a href="Metadata.html#MetadataInfo">Metadata~MetadataInfo</a>>)></span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Callback function</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line154">line 154</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;Array.&lt;(<a href="Metadata.html#MetadataInfo">Metadata~MetadataInfo</a>|Array.&lt;<a href="Metadata.html#MetadataInfo">Metadata~MetadataInfo</a>>)>></span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="rename"><span class="type-signature"></span>rename<span class="signature">(type, oldFullName, newFullName, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>>}</span></h4>
     
     
 </dt>
@@ -3619,7 +3980,7 @@ and many other components.
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;Metadata~SaveResult></span>
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>></span>
 
 
             
@@ -3670,7 +4031,7 @@ and many other components.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line280">line 280</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line330">line 330</a>
     </li></ul></dd>
     
     
@@ -3702,7 +4063,7 @@ and many other components.
 	</dt>
 	<dd>
 		
-<span class="param-type"><a href="Promise.html">Promise</a>.&lt;Metadata~SaveResult></span>
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>></span>
 
 
 	</dd>
@@ -3848,7 +4209,7 @@ and many other components.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line395">line 395</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line445">line 445</a>
     </li></ul></dd>
     
     
@@ -3881,6 +4242,218 @@ and many other components.
 	<dd>
 		
 <span class="param-type"><a href="Metadata-RetrieveResultLocator.html">Metadata~RetrieveResultLocator</a></span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="update"><span class="type-signature"></span>update<span class="signature">(type, updateMetadata, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;(<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>|Array.&lt;<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>>)>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Synchronously updates one or more metadata components in the organization.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">The type of metadata to update</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>updateMetadata</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Metadata.html#MetadataInfo">Metadata~MetadataInfo</a></span>
+|
+
+<span class="param-type">Array.&lt;<a href="Metadata.html#MetadataInfo">Metadata~MetadataInfo</a>></span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Updating metadata</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;(<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>|Array.&lt;<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>>)></span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Callback function</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line208">line 208</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;(<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>|Array.&lt;<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>>)></span>
 
 
 	</dd>
@@ -4060,7 +4633,7 @@ and many other components.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line169">line 169</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line193">line 193</a>
     </li></ul></dd>
     
     
@@ -4106,7 +4679,7 @@ and many other components.
         
             
 <dt>
-    <h4 class="name" id="updateSync"><span class="type-signature"></span>updateSync<span class="signature">(type, updateMetadata, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;(Metadata~SaveResult|Array.&lt;Metadata~SaveResult>)>}</span></h4>
+    <h4 class="name" id="updateSync"><span class="type-signature"></span>updateSync<span class="signature">(type, updateMetadata, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;(<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>|Array.&lt;<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>>)>}</span></h4>
     
     
 </dt>
@@ -4114,7 +4687,7 @@ and many other components.
     
     
     <div class="description">
-        Synchronously updates one or more metadata components in the organization.
+        Synonym of Metadata#update().
     </div>
     
 
@@ -4221,7 +4794,7 @@ and many other components.
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;(Metadata~SaveResult|Array.&lt;Metadata~SaveResult>)></span>
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;(<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>|Array.&lt;<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>>)></span>
 
 
             
@@ -4272,7 +4845,7 @@ and many other components.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line200">line 200</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line207">line 207</a>
     </li></ul></dd>
     
     
@@ -4304,7 +4877,7 @@ and many other components.
 	</dt>
 	<dd>
 		
-<span class="param-type"><a href="Promise.html">Promise</a>.&lt;(Metadata~SaveResult|Array.&lt;Metadata~SaveResult>)></span>
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;(<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>|Array.&lt;<a href="Metadata.html#SaveResult">Metadata~SaveResult</a>>)></span>
 
 
 	</dd>
@@ -4545,7 +5118,7 @@ and many other components.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line499">line 499</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line553">line 553</a>
     </li></ul></dd>
     
     
@@ -5225,7 +5798,7 @@ and many other components.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line719">line 719</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line779">line 779</a>
     </li></ul></dd>
     
     
@@ -5567,7 +6140,7 @@ and many other components.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line299">line 299</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line349">line 349</a>
     </li></ul></dd>
     
     
@@ -6009,7 +6582,7 @@ and many other components.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line345">line 345</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line395">line 395</a>
     </li></ul></dd>
     
     
@@ -6159,7 +6732,7 @@ and many other components.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line343">line 343</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line393">line 393</a>
     </li></ul></dd>
     
     
@@ -6270,7 +6843,7 @@ and many other components.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line68">line 68</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line56">line 56</a>
     </li></ul></dd>
     
     
@@ -6330,7 +6903,7 @@ and many other components.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line384">line 384</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line434">line 434</a>
     </li></ul></dd>
     
     
@@ -6510,7 +7083,141 @@ and many other components.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line660">line 660</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line720">line 720</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+            
+                
+<dt>
+    <h4 class="name" id="SaveResult">SaveResult</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Object</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+        
+        <h5 class="subsection-title">Properties:</h5>
+        
+        <dl>
+
+<table class="props">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>success</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">True if metadata is successfully saved</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>fullName</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Full name of metadata object</td>
+        </tr>
+	
+	
+	</tbody>
+</table></dl>
+        
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line83">line 83</a>
     </li></ul></dd>
     
     
@@ -6644,7 +7351,164 @@ and many other components.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="metadata.js.html">metadata.js</a>, <a href="metadata.js.html#line155">line 155</a>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line179">line 179</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+            
+                
+<dt>
+    <h4 class="name" id="UpsertResult">UpsertResult</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Object</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+        
+        <h5 class="subsection-title">Properties:</h5>
+        
+        <dl>
+
+<table class="props">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>success</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">True if metadata is successfully saved</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>fullName</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Full name of metadata object</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>created</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">True if metadata is newly created</td>
+        </tr>
+	
+	
+	</tbody>
+</table></dl>
+        
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="metadata.js.html">api/metadata.js</a>, <a href="metadata.js.html#line98">line 98</a>
     </li></ul></dd>
     
     
@@ -6673,13 +7537,13 @@ and many other components.
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="HttpApi.html">HttpApi</a></li><li><a href="ListView.html">ListView</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Process.html">Process</a></li><li><a href="Process-ApprovalProcess.html">ApprovalProcess</a></li><li><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></li><li><a href="Process-ProcessRule.html">ProcessRule</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="QuickAction.html">QuickAction</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SessionRefreshDelegate">SessionRefreshDelegate</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu May 15 2014 02:13:08 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Feb 17 2015 01:39:29 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>

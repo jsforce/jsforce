@@ -55,10 +55,12 @@ var OAuth2 = module.exports = function(options) {
     this.loginUrl = options.authzServiceUrl.split('/').slice(0, 3).join('/');
     this.authzServiceUrl = options.authzServiceUrl;
     this.tokenServiceUrl = options.tokenServiceUrl;
+    this.revokeServiceUrl = options.revokeServiceUrl;
   } else {
     this.loginUrl = options.loginUrl || defaults.loginUrl;
     this.authzServiceUrl = this.loginUrl + "/services/oauth2/authorize";
     this.tokenServiceUrl = this.loginUrl + "/services/oauth2/token";
+    this.revokeServiceUrl = this.loginUrl + "/services/oauth2/revoke";
   }
   this.clientId = options.clientId;
   this.clientSecret = options.clientSecret;
@@ -154,6 +156,34 @@ _.extend(OAuth2.prototype, /** @lends OAuth2.prototype **/ {
   },
 
   /**
+   * OAuth2 Revoke Session Token
+   *
+   * @param {String} accessToken - Access token to revoke
+   * @param {Callback.&lt;undefined>} [callback] - Callback function
+   * @returns {Promise.&lt;undefined>}
+   */
+  revokeToken : function(accessToken, callback) {
+    return this._transport.httpRequest({
+      method : 'POST',
+      url : this.revokeServiceUrl,
+      body: querystring.stringify({ token: accessToken }),
+      headers: {
+        "content-type" : "application/x-www-form-urlencoded"
+      }
+    }).then(function(response) {
+      if (response.statusCode >= 400) {
+        var res = querystring.parse(response.body);
+        if (!res || !res.error) {
+          res = { error: "ERROR_HTTP_"+response.statusCode, error_description: response.body };
+        }
+        var err = new Error(res.error_description);
+        err.name = res.error;
+        throw err;
+      }
+    }).thenCall(callback);
+  },
+
+  /**
    * @private
    */
   _postParams : function(params, callback) {
@@ -165,9 +195,13 @@ _.extend(OAuth2.prototype, /** @lends OAuth2.prototype **/ {
         "content-type" : "application/x-www-form-urlencoded"
       }
     }).then(function(response) {
-      var res = JSON.parse(response.body);
+      var res;
+      try {
+        res = JSON.parse(response.body);
+      } catch(e) {}
       if (response.statusCode >= 400) {
-        var err = new Error(res.error + ": " + res.error_description);
+        res = res || { error: "ERROR_HTTP_"+response.statusCode, error_description: response.body };
+        var err = new Error(res.error_description);
         err.name = res.error;
         throw err;
       }
@@ -186,13 +220,13 @@ _.extend(OAuth2.prototype, /** @lends OAuth2.prototype **/ {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="HttpApi.html">HttpApi</a></li><li><a href="ListView.html">ListView</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Process.html">Process</a></li><li><a href="Process-ApprovalProcess.html">ApprovalProcess</a></li><li><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></li><li><a href="Process-ProcessRule.html">ProcessRule</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="QuickAction.html">QuickAction</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SessionRefreshDelegate">SessionRefreshDelegate</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu May 15 2014 02:13:07 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Feb 17 2015 01:39:27 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>

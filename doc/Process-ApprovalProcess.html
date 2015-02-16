@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Bulk</title>
+    <title>JSDoc: Class: ApprovalProcess</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Class: Bulk</h1>
+    <h1 class="page-title">Class: ApprovalProcess</h1>
     
     
 
@@ -27,7 +27,9 @@
     
 <header>
     <h2>
-    Bulk
+        <span class="ancestors"><a href="Process.html">Process</a>~</span>
+    
+    ApprovalProcess
     </h2>
     
 </header>  
@@ -39,7 +41,7 @@
     
         
 <dt>
-    <h4 class="name" id="Bulk"><span class="type-signature"></span>new Bulk<span class="signature">(conn)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="ApprovalProcess"><span class="type-signature"></span>new ApprovalProcess<span class="signature">(conn)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -47,7 +49,7 @@
     
     
     <div class="description">
-        Class for Bulk API
+        A class which manages approval processes
     </div>
     
 
@@ -128,7 +130,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bulk.js.html">api/bulk.js</a>, <a href="bulk.js.html#line709">line 709</a>
+        <a href="process.js.html">process.js</a>, <a href="process.js.html#line87">line 87</a>
     </li></ul></dd>
     
     
@@ -163,151 +165,9 @@
     
     
     
-        <h3 class="subsection-title">Classes</h3>
-        
-        <dl>
-            <dt><a href="Bulk-Batch.html">Batch</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Bulk-Job.html">Job</a></dt>
-            <dd></dd>
-        </dl>
     
     
     
-    
-    
-        <h3 class="subsection-title">Members</h3>
-        
-        <dl>
-            
-<dt>
-    <h4 class="name" id="pollInterval"><span class="type-signature"></span>pollInterval<span class="type-signature"> :Number</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Polling interval in milliseconds
-    </div>
-    
-    
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">Number</span>
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bulk.js.html">api/bulk.js</a>, <a href="bulk.js.html#line718">line 718</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="pollTimeout"><span class="type-signature"></span>pollTimeout<span class="type-signature"> :Number</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Polling timeout in milliseconds
-    </div>
-    
-    
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">Number</span>
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bulk.js.html">api/bulk.js</a>, <a href="bulk.js.html#line724">line 724</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-</dd>
-
-        </dl>
     
     
     
@@ -316,7 +176,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="createJob"><span class="type-signature"></span>createJob<span class="signature">(type, operation, <span class="optional">options</span>)</span><span class="type-signature"> &rarr; {<a href="Bulk-Job.html">Bulk~Job</a>}</span></h4>
+    <h4 class="name" id="approve"><span class="type-signature"></span>approve<span class="signature">(workitemId, <span class="optional">comments</span>, <span class="optional">options</span>, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {ApprovalProcessRequest}</span></h4>
     
     
 </dt>
@@ -324,7 +184,7 @@
     
     
     <div class="description">
-        Create a new job instance
+        Approve approval request for an item
     </div>
     
 
@@ -360,7 +220,7 @@
 	
         <tr>
             
-                <td class="name"><code>type</code></td>
+                <td class="name"><code>workitemId</code></td>
             
             
             <td class="type">
@@ -384,14 +244,14 @@
             
             
             
-            <td class="description last">SObject type</td>
+            <td class="description last">ID of the item that is being acted upon</td>
         </tr>
 	
 	
 	
         <tr>
             
-                <td class="name"><code>operation</code></td>
+                <td class="name"><code>comments</code></td>
             
             
             <td class="type">
@@ -406,6 +266,8 @@
             
                 <td class="attributes">
                 
+                    &lt;optional><br>
+                
                     
                 
                     
@@ -415,7 +277,7 @@
             
             
             
-            <td class="description last">Bulk load operation ('insert', 'update', 'upsert', 'delete', 'hardDelete', or 'query')</td>
+            <td class="description last">Comment to add to the history step associated with this request</td>
         </tr>
 	
 	
@@ -448,351 +310,7 @@
             
             
             
-            <td class="description last">Options for bulk loading operation</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bulk.js.html">api/bulk.js</a>, <a href="bulk.js.html#line814">line 814</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="Bulk-Job.html">Bulk~Job</a></span>
-
-
-	</dd>
-</dl>
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="job"><span class="type-signature"></span>job<span class="signature">(jobId)</span><span class="type-signature"> &rarr; {<a href="Bulk-Job.html">Bulk~Job</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Get a job instance specified by given job ID
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>jobId</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Job ID</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bulk.js.html">api/bulk.js</a>, <a href="bulk.js.html#line824">line 824</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="Bulk-Job.html">Bulk~Job</a></span>
-
-
-	</dd>
-</dl>
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="load"><span class="type-signature"></span>load<span class="signature">(type, operation, <span class="optional">options</span>, <span class="optional">input</span>, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Bulk-Batch.html">Bulk~Batch</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Create and start bulkload job and batch
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		<th>Argument</th>
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>type</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">SObject type</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>operation</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">Bulk load operation ('insert', 'update', 'upsert', 'delete', or 'hardDelete')</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">Options for bulk loading operation
+            <td class="description last">Request parameters
                 <h6>Properties</h6>
                 
 
@@ -820,7 +338,40 @@
 	
         <tr>
             
-                <td class="name"><code>extIdField</code></td>
+                <td class="name"><code>nextApproverIds</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;String></span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">If the process requires specification of the next approval, the ID of the user to be assigned the next request</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>processDefinitionNameOrId</code></td>
             
             
             <td class="type">
@@ -846,7 +397,40 @@
             
             
             
-            <td class="description last">External ID field name (used when upsert operation).</td>
+            <td class="description last">Developer name or ID of the process definition</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>skipEntryCriteria</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Determines whether to evaluate the entry criteria for the process (true) or not (false) if the process definition name or ID isn’t null</td>
         </tr>
 	
 	
@@ -859,52 +443,13 @@
 	
         <tr>
             
-                <td class="name"><code>input</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;<a href="global.html#Record">Record</a>></span>
-|
-
-<span class="param-type">stream.Stream</span>
-|
-
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">Input source for bulkload. Accepts array of records, CSV string, and CSV data input stream in insert/update/upsert/delete/hardDelete operation, SOQL string in query operation.</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
                 <td class="name"><code>callback</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;(Array.&lt;<a href="global.html#RecordResult">RecordResult</a>>|Array.&lt;<a href="Bulk.html#BatchResultInfo">Bulk~BatchResultInfo</a>>)></span>
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;ApprovalProcessRequestResult></span>
 
 
             
@@ -955,7 +500,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bulk.js.html">api/bulk.js</a>, <a href="bulk.js.html#line749">line 749</a>
+        <a href="process.js.html">process.js</a>, <a href="process.js.html#line190">line 190</a>
     </li></ul></dd>
     
     
@@ -987,7 +532,7 @@
 	</dt>
 	<dd>
 		
-<span class="param-type"><a href="Bulk-Batch.html">Bulk~Batch</a></span>
+<span class="param-type">ApprovalProcessRequest</span>
 
 
 	</dd>
@@ -1001,7 +546,7 @@
         
             
 <dt>
-    <h4 class="name" id="query"><span class="type-signature"></span>query<span class="signature">(soql)</span><span class="type-signature"> &rarr; {<a href="RecordStream.CSVStream.html">RecordStream.CSVStream</a>}</span></h4>
+    <h4 class="name" id="list"><span class="type-signature"></span>list<span class="signature">(<span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;Map.&lt;String, Array.&lt;ApprovalProcessDefinition>>>}</span></h4>
     
     
 </dt>
@@ -1009,7 +554,524 @@
     
     
     <div class="description">
-        Execute bulk query and get record stream
+        Get all approval process definitions registered to sobjects
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;Map.&lt;String, Array.&lt;ApprovalProcessDefinition>>></span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Callback function</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="process.js.html">process.js</a>, <a href="process.js.html#line98">line 98</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;Map.&lt;String, Array.&lt;ApprovalProcessDefinition>>></span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="reject"><span class="type-signature"></span>reject<span class="signature">(workitemId, <span class="optional">comments</span>, <span class="optional">options</span>, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {ApprovalProcessRequest}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Reject approval request for an item
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>workitemId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">ID of the item that is being acted upon</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>comments</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Comment to add to the history step associated with this request</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Request parameters
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>nextApproverIds</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;String></span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">If the process requires specification of the next approval, the ID of the user to be assigned the next request</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>processDefinitionNameOrId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Developer name or ID of the process definition</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>skipEntryCriteria</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Determines whether to evaluate the entry criteria for the process (true) or not (false) if the process definition name or ID isn’t null</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+            </td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;ApprovalProcessRequestResult></span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Callback function</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="process.js.html">process.js</a>, <a href="process.js.html#line207">line 207</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">ApprovalProcessRequest</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="request"><span class="type-signature"></span>request<span class="signature">(requests)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Send bulk requests for approval process
     </div>
     
 
@@ -1043,13 +1105,13 @@
 	
         <tr>
             
-                <td class="name"><code>soql</code></td>
+                <td class="name"><code>requests</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">Array.&lt;ApprovalProcessRequest></span>
 
 
             
@@ -1059,7 +1121,53 @@
             
             
             
-            <td class="description last">SOQL to execute in bulk job</td>
+            <td class="description last">Array of approval process request to send</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code></code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;Array.&lt;ApprovalProcessRequestResult>></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Callback function</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code></code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;Array.&lt;ApprovalProcessRequestResult>></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last"></td>
         </tr>
 	
 	
@@ -1090,7 +1198,359 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bulk.js.html">api/bulk.js</a>, <a href="bulk.js.html#line787">line 787</a>
+        <a href="process.js.html">process.js</a>, <a href="process.js.html#line119">line 119</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="submit"><span class="type-signature"></span>submit<span class="signature">(contextId, <span class="optional">comments</span>, <span class="optional">options</span>, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {ApprovalProcessRequest}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Submit approval request for an item
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>contextId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">ID of the item that is being acted upon</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>comments</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Comment to add to the history step associated with this request</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Request parameters
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>nextApproverIds</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;String></span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">If the process requires specification of the next approval, the ID of the user to be assigned the next request</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>processDefinitionNameOrId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Developer name or ID of the process definition</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>skipEntryCriteria</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Determines whether to evaluate the entry criteria for the process (true) or not (false) if the process definition name or ID isn’t null</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+            </td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;ApprovalProcessRequestResult></span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Callback function</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="process.js.html">process.js</a>, <a href="process.js.html#line173">line 173</a>
     </li></ul></dd>
     
     
@@ -1114,10 +1574,6 @@
     <h5>Returns:</h5>
     
             
-<div class="param-desc">
-    - Record stream, convertible to CSV data stream
-</div>
-
 
 
 <dl>
@@ -1126,7 +1582,7 @@
 	</dt>
 	<dd>
 		
-<span class="param-type"><a href="RecordStream.CSVStream.html">RecordStream.CSVStream</a></span>
+<span class="param-type">ApprovalProcessRequest</span>
 
 
 	</dd>
@@ -1140,527 +1596,6 @@
         </dl>
     
     
-    
-        <h3 class="subsection-title">Type Definitions</h3>
-        
-        <dl>
-                
-<dt>
-    <h4 class="name" id="BatchInfo">BatchInfo</h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">Object</span>
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-        
-        <h5 class="subsection-title">Properties:</h5>
-        
-        <dl>
-
-<table class="props">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>id</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Batch ID</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>jobId</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Job ID</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>state</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Batch state</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>stateMessage</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Batch state message</td>
-        </tr>
-	
-	
-	</tbody>
-</table></dl>
-        
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bulk.js.html">api/bulk.js</a>, <a href="bulk.js.html#line427">line 427</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-</dd>
-
-            
-                
-<dt>
-    <h4 class="name" id="BatchResultInfo">BatchResultInfo</h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">Object</span>
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-        
-        <h5 class="subsection-title">Properties:</h5>
-        
-        <dl>
-
-<table class="props">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>id</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Batch result ID</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>batchId</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Batch ID which includes this batch result.</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>jobId</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Job ID which includes this batch result.</td>
-        </tr>
-	
-	
-	</tbody>
-</table></dl>
-        
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bulk.js.html">api/bulk.js</a>, <a href="bulk.js.html#line509">line 509</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-</dd>
-
-            
-                
-<dt>
-    <h4 class="name" id="JobInfo">JobInfo</h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">Object</span>
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-        
-        <h5 class="subsection-title">Properties:</h5>
-        
-        <dl>
-
-<table class="props">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>id</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Job ID</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>object</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Object type name</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>operation</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Operation type of the job</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>state</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Job status</td>
-        </tr>
-	
-	
-	</tbody>
-</table></dl>
-        
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bulk.js.html">api/bulk.js</a>, <a href="bulk.js.html#line45">line 45</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-</dd>
-
-            </dl>
     
     
     
@@ -1680,7 +1615,7 @@
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Feb 17 2015 01:39:28 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Feb 17 2015 01:39:29 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>

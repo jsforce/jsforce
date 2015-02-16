@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: bulk.js</title>
+    <title>JSDoc: Source: api/bulk.js</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Source: bulk.js</h1>
+    <h1 class="page-title">Source: api/bulk.js</h1>
     
     
 
@@ -31,16 +31,15 @@
  * @author Shinichi Tomita &lt;shinichi.tomita@gmail.com>
  */
 
-var util         = require('util'),
+var inherits     = require('inherits'),
     stream       = require('stream'),
     Stream       = stream.Stream,
     events       = require('events'),
-    _            = require('underscore')._,
-    Connection   = require('./connection'),
-    RecordStream = require('./record-stream'),
-    CSV          = require('./csv'),
-    Promise      = require('./promise');
-
+    _            = require('underscore'),
+    RecordStream = require('../record-stream'),
+    CSV          = require('../csv'),
+    Promise      = require('../promise'),
+    HttpApi      = require('../http-api');
 
 /*--------------------------------------------*/
 
@@ -68,7 +67,31 @@ var Job = function(bulk, type, operation, options, jobId) {
   this._batches = {};
 };
 
-util.inherits(Job, events.EventEmitter);
+inherits(Job, events.EventEmitter);
+
+/**
+ * @typedef {Object} Bulk~JobInfo
+ * @prop {String} id - Job ID
+ * @prop {String} object - Object type name
+ * @prop {String} operation - Operation type of the job
+ * @prop {String} state - Job status
+ */
+
+/**
+ * Return latest jobInfo from cache
+ *
+ * @method Bulk~Job#open
+ * @param {Callback.&lt;Bulk~JobInfo>} [callback] - Callback function
+ * @returns {Promise.&lt;Bulk~JobInfo>}
+ */
+Job.prototype.info = function(callback) {
+  var self = this;
+  // if cache is not available, check the latest
+  if (!this._jobInfo) {
+    this._jobInfo = this.check();
+  }
+  return this._jobInfo.thenCall(callback);
+};
 
 /**
  * Open new job and get jobinfo
@@ -149,7 +172,7 @@ Job.prototype.batch = function(batchId) {
 };
 
 /**
- * Check the job status from server
+ * Check the latest job status from server
  *
  * @method Bulk~Job#check
  * @param {Callback.&lt;Bulk~JobInfo>} [callback] - Callback function
@@ -160,7 +183,7 @@ Job.prototype.check = function(callback) {
   var bulk = this._bulk;
   var logger = bulk._logger;
 
-  return this.open().then(function() {
+  this._jobInfo = this._waitAssign().then(function() {
     return bulk._request({
       method : 'GET',
       path : "/job/" + self.id,
@@ -168,11 +191,26 @@ Job.prototype.check = function(callback) {
     });
   }).then(function(res) {
     logger.debug(res.jobInfo);
+    self.id = res.jobInfo.id;
+    self.type = res.jobInfo.object;
+    self.operation = res.jobInfo.operation;
     self.state = res.jobInfo.state;
     return res.jobInfo;
-  }).thenCall(callback);
-
+  });
+  return this._jobInfo.thenCall(callback);
 };
+
+/**
+ * Wait till the job is assigned to server
+ *
+ * @method Bulk~Job#info
+ * @param {Callback.&lt;Bulk~JobInfo>} [callback] - Callback function
+ * @returns {Promise.&lt;Bulk~JobInfo>}
+ */
+Job.prototype._waitAssign = function(callback) {
+  return (this.id ? new Promise({ id: this.id }) : this.open()).thenCall(callback);
+};
+
 
 /**
  * List all registered batch info in job
@@ -186,7 +224,7 @@ Job.prototype.list = function(callback) {
   var bulk = this._bulk;
   var logger = bulk._logger;
 
-  return this.open().then(function() {
+  return this._waitAssign().then(function() {
     return bulk._request({
       method : 'GET',
       path : "/job/" + self.id + "/batch",
@@ -232,7 +270,6 @@ Job.prototype.abort = function() {
   return this._changeState("Aborted").then(function(jobInfo) {
     self.id = null;
     self.emit("abort", jobInfo);
-    self.state = "Aborted";
     return jobInfo;
   }, function(err) {
     self.emit("error", err);
@@ -248,7 +285,7 @@ Job.prototype._changeState = function(state, callback) {
   var bulk = this._bulk;
   var logger = bulk._logger;
 
-  return this.open().then(function() {
+  this._jobInfo = this._waitAssign().then(function() {
     var body = [
       '&lt;?xml version="1.0" encoding="UTF-8"?>',
       '&lt;jobInfo xmlns="http://www.force.com/2009/06/asyncapi/dataload">',
@@ -268,7 +305,8 @@ Job.prototype._changeState = function(state, callback) {
     logger.debug(res.jobInfo);
     self.state = res.jobInfo.state;
     return res.jobInfo;
-  }).thenCall(callback);
+  });
+  return this._jobInfo.thenCall(callback);
 
 };
 
@@ -291,19 +329,19 @@ var Batch = function(job, batchId) {
   this.job = job;
   this.id = batchId;
   this._bulk = job._bulk;
-  this._csvStream = new RecordStream.CSVStream();
+  this._csvStream = new RecordStream.CSVStream({ nullValue: '#N/A' });
   this._csvStream.stream().pipe(this.stream());
   this._deferred = Promise.defer();
 };
 
-util.inherits(Batch, RecordStream);
+inherits(Batch, RecordStream);
 
 /**
  * Execute batch operation
  *
  * @method Bulk~Batch#execute
- * @param {Array.&lt;Record>|stream.Stream|String} [input] - Input source for batch operation. Accepts array of records, CSv string, and CSV data input stream.
- * @param {Callback.&lt;Array.&lt;RecordResult>>} [callback] - Callback function
+ * @param {Array.&lt;Record>|stream.Stream|String} [input] - Input source for batch operation. Accepts array of records, CSV string, and CSV data input stream in insert/update/upsert/delete/hardDelete operation, SOQL string in query operation.
+ * @param {Callback.&lt;Array.&lt;RecordResult>|Array.&lt;BatchResultInfo>>} [callback] - Callback function
  * @returns {Bulk~Batch}
  */
 Batch.prototype.run =
@@ -413,10 +451,16 @@ Batch.prototype.end = function(record) {
   this._csvStream.end();
 };
 
-
+/**
+ * @typedef {Object} Bulk~BatchInfo
+ * @prop {String} id - Batch ID
+ * @prop {String} jobId - Job ID
+ * @prop {String} state - Batch state
+ * @prop {String} stateMessage - Batch state message
+ */
 
 /**
- * Check batch status in server
+ * Check the latest batch status in server
  *
  * @method Bulk~Batch#check
  * @param {Callback.&lt;Bulk~BatchInfo>} [callback] - Callback function
@@ -444,7 +488,7 @@ Batch.prototype.check = function(callback) {
 
 
 /**
- * Polling the batch result and retrieve 
+ * Polling the batch result and retrieve
  *
  * @method Bulk~Batch#poll
  * @param {Number} interval - Polling interval in milliseconds
@@ -462,7 +506,9 @@ Batch.prototype.poll = function(interval, timeout) {
   var poll = function() {
     var now = new Date().getTime();
     if (startTime + timeout &lt; now) {
-      self.emit('error', new Error("polling time out"));
+      var err = new Error("Polling time out. Job Id = " + jobId + " , batch Id = " + batchId);
+      err.name = 'PollingTimeout';
+      self.emit('error', err);
       return;
     }
     self.check(function(err, res) {
@@ -478,6 +524,7 @@ Batch.prototype.poll = function(interval, timeout) {
         } else if (res.state === "Completed") {
           self.retrieve();
         } else {
+          self.emit('progress', res);
           setTimeout(poll, interval);
         }
       }
@@ -487,38 +534,83 @@ Batch.prototype.poll = function(interval, timeout) {
 };
 
 /**
+ * @typedef {Object} Bulk~BatchResultInfo
+ * @prop {String} id - Batch result ID
+ * @prop {String} batchId - Batch ID which includes this batch result.
+ * @prop {String} jobId - Job ID which includes this batch result.
+ */
+
+/**
  * Retrieve batch result
  *
  * @method Bulk~Batch#retrieve
- * @param {Callback.&lt;Array.&lt;RecordResult>>} [callback] - Callback function
- * @returns {Promise.&lt;Array.&lt;RecordResult>>}
+ * @param {Callback.&lt;Array.&lt;RecordResult>|Array.&lt;Bulk~BatchResultInfo>>} [callback] - Callback function
+ * @returns {Promise.&lt;Array.&lt;RecordResult>|Array.&lt;Bulk~BatchResultInfo>>}
  */
 Batch.prototype.retrieve = function(callback) {
   var self = this;
   var bulk = this._bulk;
   var jobId = this.job.id;
+  var job = this.job;
   var batchId = this.id;
 
   if (!jobId || !batchId) {
     throw new Error("Batch not started.");
   }
-  return bulk._request({
-    method : 'GET',
-    path : "/job/" + jobId + "/batch/" + batchId + "/result"
-  }).then(function(results) {
-    results = _.map(results, function(ret) {
-      return {
-        id: ret.Id || null,
-        success: ret.Success === "true",
-        errors: ret.Error ? [ ret.Error ] : []
-      };
+
+  return job.info().then(function(jobInfo) {
+    return bulk._request({
+      method : 'GET',
+      path : "/job/" + jobId + "/batch/" + batchId + "/result"
     });
+  }).then(function(res) {
+    var results;
+    if (job.operation === 'query') {
+      var conn = bulk._conn;
+      var resultIds = res['result-list'].result;
+      results = res['result-list'].result;
+      results = _.map(_.isArray(results) ? results : [ results ], function(id) {
+        return {
+          id: id,
+          batchId: batchId,
+          jobId: jobId
+        };
+      });
+    } else {
+      results = _.map(res, function(ret) {
+        return {
+          id: ret.Id || null,
+          success: ret.Success === "true",
+          errors: ret.Error ? [ ret.Error ] : []
+        };
+      });
+    }
     self.emit('response', results);
     return results;
   }, function(err) {
     self.emit('error', err);
     throw err;
   }).thenCall(callback);
+};
+
+/**
+ * Fetch query result as a record stream
+ * @param {String} resultId - Result id
+ * @returns {RecordStream.CSVStream} - Record stream, convertible to CSV data stream
+ */
+Batch.prototype.result = function(resultId) {
+  var jobId = this.job.id;
+  var batchId = this.id;
+
+  if (!jobId || !batchId) {
+    throw new Error("Batch not started.");
+  }
+  return new RecordStream.CSVStream(null,
+    this._bulk._request({
+      method : 'GET',
+      path : "/job/" + jobId + "/batch/" + batchId + "/result/" + resultId
+    }).stream()
+  );
 };
 
 /**
@@ -546,7 +638,7 @@ var BatchStream = function(batch) {
   this.writable = true;
 };
 
-util.inherits(BatchStream, Stream);
+inherits(BatchStream, Stream);
 
 /**
  * @private
@@ -581,54 +673,56 @@ BatchStream.prototype._getRequestStream = function() {
  * @override
  */
 BatchStream.prototype.write = function(data) {
-  var batch = this.batch;
-  if (!batch.job.id) {
-    this._queue(data);
-    return;
-  }
-  return this._getRequestStream().write(data);
+  var self = this;
+  this.batch.job.open().then(function() {
+    self._getRequestStream().write(data);
+  }, function(err) {
+    self.emit('error', err);
+  });
 };
 
 /**
  * @override
  */
 BatchStream.prototype.end = function(data) {
-  var batch = this.batch;
-  if (!batch.job.id) {
-    this._ending = true;
-    if (data) {
-      this._queue(data);
-    }
-    return;
-  }
+  var self = this;
   this.writable = false;
-  this._getRequestStream().end(data);
+  this.batch.job.open().then(function() {
+    self._getRequestStream().end(data);
+  }, function(err) {
+    self.emit('error', err);
+  });
 };
 
+/*--------------------------------------------*/
 /**
  * @private
  */
-BatchStream.prototype._queue = function(data) {
-  var bstream = this;
-  var batch = this.batch;
-  var job = batch.job;
-  if (!this._buffer) {
-    this._buffer = [];
-    job.open(function(err) {
-      if (err) {
-        batch.emit("error", err);
-        return;
-      }
-      bstream._buffer.forEach(function(data) {
-        bstream.write(data);
-      });
-      if (bstream._ending) {
-        bstream.end();
-      }
-      bstream._buffer = [];
-    });
-  }
-  this._buffer.push(data);
+var BulkApi = function() {
+  BulkApi.super_.apply(this, arguments);
+};
+
+inherits(BulkApi, HttpApi);
+
+BulkApi.prototype.beforeSend = function(request) {
+  request.headers = request.headers || {};
+  request.headers["X-SFDC-SESSION"] = this._conn.accessToken;
+};
+
+BulkApi.prototype.isSessionExpired = function(response) {
+  return response.statusCode === 400 &&
+    /&lt;exceptionCode>InvalidSessionId&lt;\/exceptionCode>/.test(response.body);
+};
+
+BulkApi.prototype.hasErrorInResponseBody = function(body) {
+  return !!body.error;
+};
+
+BulkApi.prototype.parseError = function(body) {
+  return {
+    errorCode: body.error.exceptionCode,
+    message: body.error.exceptionMessage
+  };
 };
 
 /*--------------------------------------------*/
@@ -657,37 +751,26 @@ Bulk.prototype.pollInterval = 1000;
 Bulk.prototype.pollTimeout = 10000;
 
 /** @private **/
-Bulk.prototype._request = function(params, callback) {
+Bulk.prototype._request = function(request, callback) {
   var conn = this._conn;
-  params = _.clone(params);
+  request = _.clone(request);
   var baseUrl = [ conn.instanceUrl, "services/async", conn.version ].join('/');
-  params.url = baseUrl + params.path;
-  var options = {
-    responseContentType: params.responseType,
-    beforesend: function(conn, params) {
-      params.headers["X-SFDC-SESSION"] = conn.accessToken;
-    },
-    parseError: function(err) {
-      return {
-        code: err.error.exceptionCode,
-        message: err.error.exceptionMessage
-      };
-    }
-  };
-  delete params.path;
-  delete params.responseType;
-  return this._conn._request(params, callback, options);
+  request.url = baseUrl + request.path;
+  var options = { responseType: request.responseType };
+  delete request.path;
+  delete request.responseType;
+  return new BulkApi(this._conn, options).request(request).thenCall(callback);
 };
 
 /**
  * Create and start bulkload job and batch
- * 
+ *
  * @param {String} type - SObject type
  * @param {String} operation - Bulk load operation ('insert', 'update', 'upsert', 'delete', or 'hardDelete')
  * @param {Object} [options] - Options for bulk loading operation
  * @param {String} [options.extIdField] - External ID field name (used when upsert operation).
- * @param {Array.&lt;Record>|stream.Stream|String} [input] - Input source for bulkload. Accepts array of records, CSv string, and CSV data input stream.
- * @param {Callback.&lt;Array.&lt;RecordResult>>} [callback] - Callback function
+ * @param {Array.&lt;Record>|stream.Stream|String} [input] - Input source for bulkload. Accepts array of records, CSV string, and CSV data input stream in insert/update/upsert/delete/hardDelete operation, SOQL string in query operation.
+ * @param {Callback.&lt;Array.&lt;RecordResult>|Array.&lt;Bulk~BatchResultInfo>>} [callback] - Callback function
  * @returns {Bulk~Batch}
  */
 Bulk.prototype.load = function(type, operation, options, input, callback) {
@@ -701,12 +784,49 @@ Bulk.prototype.load = function(type, operation, options, input, callback) {
     options = null;
   }
   var job = this.createJob(type, operation, options);
+  job.once('error', function (error) {
+    if (batch) {
+      batch.emit('error', error); // pass job error to batch
+    }
+  });
   var batch = job.createBatch();
-  var cleanup = function() { job.close(); };
+  var cleanup = function() {
+    batch = null;
+    job.close();
+  };
+  var cleanupOnError = function(err) {
+    if (err.name !== 'PollingTimeout') {
+      cleanup();
+    }
+  };
   batch.on('response', cleanup);
-  batch.on('error', cleanup);
+  batch.on('error', cleanupOnError);
   batch.on('queue', function() { batch.poll(self.pollInterval, self.pollTimeout); });
   return batch.execute(input, callback);
+};
+
+/**
+ * Execute bulk query and get record stream
+ *
+ * @param {String} soql - SOQL to execute in bulk job
+ * @returns {RecordStream.CSVStream} - Record stream, convertible to CSV data stream
+ */
+Bulk.prototype.query = function(soql) {
+  var m = soql.replace(/\([\s\S]+\)/g, '').match(/FROM\s+(\w+)/i);
+  if (!m) {
+    throw new Error("No sobject type found in query, maybe caused by invalid SOQL.");
+  }
+  var type = m[1];
+  var self = this;
+  var rstream = new RecordStream.CSVStream();
+  this.load(type, "query", soql).then(function(results) {
+    // Ideally, it should merge result files into one stream.
+    // Currently only first batch result is the target (mostly enough).
+    var r = results[0];
+    var result = self.job(r.jobId).batch(r.batchId).result(r.id);
+    result.stream().pipe(rstream.stream());
+  });
+  return rstream;
 };
 
 
@@ -714,14 +834,12 @@ Bulk.prototype.load = function(type, operation, options, input, callback) {
  * Create a new job instance
  *
  * @param {String} type - SObject type
- * @param {String} operation - Bulk load operation ('insert', 'update', 'upsert', 'delete', or 'hardDelete')
+ * @param {String} operation - Bulk load operation ('insert', 'update', 'upsert', 'delete', 'hardDelete', or 'query')
  * @param {Object} [options] - Options for bulk loading operation
  * @returns {Bulk~Job}
  */
 Bulk.prototype.createJob = function(type, operation, options) {
-  var job = new Job(this, type, operation, options);
-  job.open();
-  return job;
+  return new Job(this, type, operation, options);
 };
 
 /**
@@ -737,7 +855,8 @@ Bulk.prototype.job = function(jobId) {
 
 /*--------------------------------------------*/
 
-module.exports = Bulk;</code></pre>
+module.exports = Bulk;
+</code></pre>
         </article>
     </section>
 
@@ -747,13 +866,13 @@ module.exports = Bulk;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="HttpApi.html">HttpApi</a></li><li><a href="ListView.html">ListView</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Process.html">Process</a></li><li><a href="Process-ApprovalProcess.html">ApprovalProcess</a></li><li><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></li><li><a href="Process-ProcessRule.html">ProcessRule</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="QuickAction.html">QuickAction</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SessionRefreshDelegate">SessionRefreshDelegate</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu May 15 2014 02:13:07 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Feb 17 2015 01:39:27 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>

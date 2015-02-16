@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: api/streaming.js</title>
+    <title>JSDoc: Source: quick-action.js</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Source: api/streaming.js</h1>
+    <h1 class="page-title">Source: quick-action.js</h1>
     
     
 
@@ -26,125 +26,92 @@
     <section>
         <article>
             <pre class="prettyprint source"><code>/**
- * @file Manages Streaming APIs
+ * @file Represents Salesforce QuickAction
  * @author Shinichi Tomita &lt;shinichi.tomita@gmail.com>
  */
 
-var events = require('events'),
-    inherits = require('inherits'),
-    Faye   = require('faye');
-
 /**
- * Streaming API topic class
+ * A class for quick action
  *
- * @class Streaming~Topic
- * @param {Streaming} steaming - Streaming API object
- * @param {String} name - Topic name
+ * @protected
+ * @constructor
  */
-var Topic = module.exports = function(streaming, name) {
-  this._streaming = streaming;
-  this.name = name;
-};
-
-/**
- * @typedef {Object} Streaming~StreamingMessage
- * @prop {Object} event
- * @prop {Object} event.type - Event type
- * @prop {Record} sobject - Record information
- */
-/**
- * Subscribe listener to topic
- *
- * @method Streaming~Topic#subscribe
- * @param {Callback.&lt;Streaming~StreamingMesasge>} listener - Streaming message listener
- * @returns {Streaming~Topic}
- */
-Topic.prototype.subscribe = function(listener) {
-  this._streaming.subscribe(this.name, listener);
-  return this;
-};
-
-/**
- * Unsubscribe listener from topic
- *
- * @method Streaming~Topic#unsubscribe
- * @param {Callback.&lt;Streaming~StreamingMesasge>} listener - Streaming message listener
- * @returns {Streaming~Topic}
- */
-Topic.prototype.unsubscribe = function(listener) {
-  this._streaming.unsubscribe(this.name, listener);
-  return this;
-};
-
-/*--------------------------------------------*/
-
-/**
- * Streaming API class
- *
- * @class
- * @extends events.EventEmitter
- * @param {Connection} conn - Connection object
- */
-var Streaming = function(conn) {
+var QuickAction = module.exports = function(conn, path) {
   this._conn = conn;
-};
-
-inherits(Streaming, events.EventEmitter);
-
-/** @private **/
-Streaming.prototype._createClient = function() {
-  var endpointUrl = [ this._conn.instanceUrl, "cometd", this._conn.version ].join('/');
-  var fayeClient = new Faye.Client(endpointUrl, {});
-  fayeClient.setHeader('Authorization', 'OAuth '+this._conn.accessToken);
-  return fayeClient;
+  this._path = path;
 };
 
 /**
- * Get named topic
- *
- * @param {String} name - Topic name
- * @returns {Streaming~Topic}
+ * @typedef {Object} QuickAction~QuickActionInfo
+ * @prop {String} type - Type of the action (e.g. Create, Update, Post, LogACall)
+ * @prop {String} name - Name of the action
+ * @prop {String} label - Label of the action
+ * @prop {Object} urls - Endpoint URL information of the action
  */
-Streaming.prototype.topic = function(name) {
-  this._topics = this._topics || {};
-  var topic = this._topics[name] = 
-    this._topics[name] || new Topic(this, name);
-  return topic;
+/**
+ * @typedef {QuickAction~QuickActionInfo} QuickAction~QuickActionDescriveInfo
+ * @prop {String} contextSobjectType - Object type used for the action
+ * @prop {String} targetSobjectType - Object type of the action to target
+ * @prop {String} targetParentField - Field name in the target object which refers parent(context) object record ID.
+ * @prop {String} targetRecordTypeId - Record type of the targeted record
+ * @prop {Object} layout - Layout sections that comprise an action
+ */
+
+/**
+ * Describe the action's information (including layout, etc.)
+ *
+ * @param {Callback.&lt;QuickAction~QuickActionDescriveInfo>} [callback] - Callback function
+ * @returns {Promise.&lt;QuickAction~QuickActionDescriveInfo>}
+ */
+QuickAction.prototype.describe = function(callback) {
+  var url = this._path + "/describe"
+  return this._conn.request(url).thenCall(callback);
 };
 
 /**
- * Subscribe topic
+ * Retrieve default field values in the action (for given record, if specified)
  *
- * @param {String} name - Topic name
- * @param {Callback.&lt;Streaming~StreamingMessage>} listener - Streaming message listener
- * @returns {Streaming}
+ * @param {String} [contextId] - ID of record to get default values specific to the record
+ * @param {Callback.&lt;Record>} [callback] - Callback function
+ * @returns {Promise.&lt;Record>}
  */
-Streaming.prototype.subscribe = function(name, listener) {
-  if (!this._fayeClient) {
-    if (Faye.Transport.NodeHttp) {
-      Faye.Transport.NodeHttp.prototype.batching = false; // prevent streaming API server error
-    }
-    this._fayeClient = this._createClient();
+QuickAction.prototype.defaultValues = function(contextId, callback) {
+  if (typeof contextId === 'function') {
+    callback = contextId;
+    contextId = null;
   }
-  this._fayeClient.subscribe("/topic/"+name, listener);
-  return this;
-};
+  var url = this._path + "/defaultValues"
+  if (contextId) {
+    url += "/" + contextId;
+  }
+  return this._conn.request(url).thenCall(callback);
+}
 
 /**
- * Unsubscribe topic
- *
- * @param {String} name - Topic name
- * @param {Callback.&lt;Streaming~StreamingMessage>} listener - Streaming message listener
- * @returns {Streaming}
+ * @typedef {Object} QuickAction~QuickActionResult
+ * @param {String} id - Record id of the action result
+ * @param {Array.&lt;String>} feedItemIds - List of IDs for feed item
+ * @param {Boolean} success - True if the action successfully completed
+ * @param {Boolean} created - True if the action yields a new record
+ * @param {String} contextId - Context record ID of the action
+ * @param {Array.&lt;Object>} errors - Errors if the action failed
  */
-Streaming.prototype.unsubscribe = function(name, listener) {
-  if (this._fayeClient) {
-    this._fayeClient.unsubscribe("/topic/"+name, listener);
-  }
-  return this;
-};
 
-module.exports = Streaming;
+/**
+ * Execute the action for given context Id and record information
+ * 
+ * @param {String} contextId - Context record ID of the action
+ * @param {Record} record - Input record information for the action
+ * @param {Callback.&lt;QuickAction~QuickActionResult>} [callback] - Callback function
+ * @returns {Promise.&lt;QuickAction~QuickActionResult>}
+ */
+QuickAction.prototype.execute = function(contextId, record, callback) {
+  var body = {
+    contextId: contextId,
+    record: record
+  };
+  return this._conn.requestPost(this._path, body).thenCall(callback);
+};
 </code></pre>
         </article>
     </section>

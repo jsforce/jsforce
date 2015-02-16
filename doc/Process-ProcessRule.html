@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: ProxyTransport</title>
+    <title>JSDoc: Class: ProcessRule</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Class: ProxyTransport</h1>
+    <h1 class="page-title">Class: ProcessRule</h1>
     
     
 
@@ -27,9 +27,9 @@
     
 <header>
     <h2>
-        <span class="ancestors"><a href="Transport.html">Transport</a>~</span>
+        <span class="ancestors"><a href="Process.html">Process</a>~</span>
     
-    ProxyTransport
+    ProcessRule
     </h2>
     
 </header>  
@@ -41,7 +41,7 @@
     
         
 <dt>
-    <h4 class="name" id="ProxyTransport"><span class="type-signature">&lt;protected> </span>new ProxyTransport<span class="signature">(proxyUrl)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="ProcessRule"><span class="type-signature"></span>new ProcessRule<span class="signature">(conn)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -49,7 +49,7 @@
     
     
     <div class="description">
-        Class for HTTP request transport using AJAX proxy service
+        A class which manages process (workflow) rules
     </div>
     
 
@@ -83,13 +83,13 @@
 	
         <tr>
             
-                <td class="name"><code>proxyUrl</code></td>
+                <td class="name"><code>conn</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type"><a href="Connection.html">Connection</a></span>
 
 
             
@@ -99,7 +99,7 @@
             
             
             
-            <td class="description last">AJAX Proxy server URL</td>
+            <td class="description last">Connection object</td>
         </tr>
 	
 	
@@ -130,7 +130,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="transport.js.html">transport.js</a>, <a href="transport.js.html#line101">line 101</a>
+        <a href="process.js.html">process.js</a>, <a href="process.js.html#line28">line 28</a>
     </li></ul></dd>
     
     
@@ -159,12 +159,6 @@
     </div>
     
     
-        <h3 class="subsection-title">Extends</h3>
-        
-        <ul>
-            <li><a href="Transport.html">Transport</a></li>
-        </ul>
-    
     
     
     
@@ -182,7 +176,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="httpRequest"><span class="type-signature"></span>httpRequest<span class="signature">(params, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;Object>}</span></h4>
+    <h4 class="name" id="list"><span class="type-signature"></span>list<span class="signature">(<span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;Map.&lt;String, Array.&lt;<a href="Process.html#ProcessRuleDefinition">Process~ProcessRuleDefinition</a>>>>}</span></h4>
     
     
 </dt>
@@ -190,7 +184,7 @@
     
     
     <div class="description">
-        Make HTTP request via AJAX proxy
+        Get all process rule definitions registered to sobjects
     </div>
     
 
@@ -226,44 +220,13 @@
 	
         <tr>
             
-                <td class="name"><code>params</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">HTTP request</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
                 <td class="name"><code>callback</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;Object></span>
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;Map.&lt;String, Array.&lt;<a href="Process.html#ProcessRuleDefinition">Process~ProcessRuleDefinition</a>>>></span>
 
 
             
@@ -283,7 +246,7 @@
             
             
             
-            <td class="description last">Calback Function</td>
+            <td class="description last">Callback function</td>
         </tr>
 	
 	
@@ -314,7 +277,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="transport.js.html">transport.js</a>, <a href="transport.js.html#line115">line 115</a>
+        <a href="process.js.html">process.js</a>, <a href="process.js.html#line40">line 40</a>
     </li></ul></dd>
     
     
@@ -346,7 +309,188 @@
 	</dt>
 	<dd>
 		
-<span class="param-type"><a href="Promise.html">Promise</a>.&lt;Object></span>
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;Map.&lt;String, Array.&lt;<a href="Process.html#ProcessRuleDefinition">Process~ProcessRuleDefinition</a>>>></span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="trigger"><span class="type-signature"></span>trigger<span class="signature">(contextIds, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;<a href="Process.html#ProcessRuleTriggerResult">Process~ProcessRuleTriggerResult</a>>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Trigger process rule for given entities
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>contextIds</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+|
+
+<span class="param-type">Array.&lt;String></span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Entity ID(s) to trigger workflow process</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;<a href="Process.html#ProcessRuleTriggerResult">Process~ProcessRuleTriggerResult</a>></span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">Callback function</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="process.js.html">process.js</a>, <a href="process.js.html#line61">line 61</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;<a href="Process.html#ProcessRuleTriggerResult">Process~ProcessRuleTriggerResult</a>></span>
 
 
 	</dd>
@@ -379,7 +523,7 @@
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Feb 17 2015 01:39:30 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Feb 17 2015 01:39:29 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>

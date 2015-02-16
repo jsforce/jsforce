@@ -173,7 +173,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bulk.js.html">bulk.js</a>, <a href="bulk.js.html#line251">line 251</a>
+        <a href="bulk.js.html">api/bulk.js</a>, <a href="bulk.js.html#line289">line 289</a>
     </li></ul></dd>
     
     
@@ -225,7 +225,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="check"><span class="type-signature"></span>check<span class="signature">(<span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;Bulk~BatchInfo>}</span></h4>
+    <h4 class="name" id="check"><span class="type-signature"></span>check<span class="signature">(<span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;<a href="Bulk.html#BatchInfo">Bulk~BatchInfo</a>>}</span></h4>
     
     
 </dt>
@@ -233,7 +233,7 @@
     
     
     <div class="description">
-        Check batch status in server
+        Check the latest batch status in server
     </div>
     
 
@@ -275,7 +275,7 @@
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;Bulk~BatchInfo></span>
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;<a href="Bulk.html#BatchInfo">Bulk~BatchInfo</a>></span>
 
 
             
@@ -326,7 +326,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bulk.js.html">bulk.js</a>, <a href="bulk.js.html#line391">line 391</a>
+        <a href="bulk.js.html">api/bulk.js</a>, <a href="bulk.js.html#line429">line 429</a>
     </li></ul></dd>
     
     
@@ -358,7 +358,7 @@
 	</dt>
 	<dd>
 		
-<span class="param-type"><a href="Promise.html">Promise</a>.&lt;Bulk~BatchInfo></span>
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;<a href="Bulk.html#BatchInfo">Bulk~BatchInfo</a>></span>
 
 
 	</dd>
@@ -670,7 +670,7 @@
             
             
             
-            <td class="description last">Input source for batch operation. Accepts array of records, CSv string, and CSV data input stream.</td>
+            <td class="description last">Input source for batch operation. Accepts array of records, CSV string, and CSV data input stream in insert/update/upsert/delete/hardDelete operation, SOQL string in query operation.</td>
         </tr>
 	
 	
@@ -683,7 +683,7 @@
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;Array.&lt;<a href="global.html#RecordResult">RecordResult</a>>></span>
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;(Array.&lt;<a href="global.html#RecordResult">RecordResult</a>>|Array.&lt;BatchResultInfo>)></span>
 
 
             
@@ -734,7 +734,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bulk.js.html">bulk.js</a>, <a href="bulk.js.html#line274">line 274</a>
+        <a href="bulk.js.html">api/bulk.js</a>, <a href="bulk.js.html#line312">line 312</a>
     </li></ul></dd>
     
     
@@ -1357,7 +1357,7 @@ https://github.com/joyent/node/blob/master/lib/stream.js
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bulk.js.html">bulk.js</a>, <a href="bulk.js.html#line419">line 419</a>
+        <a href="bulk.js.html">api/bulk.js</a>, <a href="bulk.js.html#line463">line 463</a>
     </li></ul></dd>
     
     
@@ -1459,7 +1459,7 @@ https://github.com/joyent/node/blob/master/lib/stream.js
         
             
 <dt>
-    <h4 class="name" id="retrieve"><span class="type-signature"></span>retrieve<span class="signature">(<span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;Array.&lt;<a href="global.html#RecordResult">RecordResult</a>>>}</span></h4>
+    <h4 class="name" id="retrieve"><span class="type-signature"></span>retrieve<span class="signature">(<span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;(Array.&lt;<a href="global.html#RecordResult">RecordResult</a>>|Array.&lt;<a href="Bulk.html#BatchResultInfo">Bulk~BatchResultInfo</a>>)>}</span></h4>
     
     
 </dt>
@@ -1509,7 +1509,7 @@ https://github.com/joyent/node/blob/master/lib/stream.js
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;Array.&lt;<a href="global.html#RecordResult">RecordResult</a>>></span>
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;(Array.&lt;<a href="global.html#RecordResult">RecordResult</a>>|Array.&lt;<a href="Bulk.html#BatchResultInfo">Bulk~BatchResultInfo</a>>)></span>
 
 
             
@@ -1560,7 +1560,7 @@ https://github.com/joyent/node/blob/master/lib/stream.js
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bulk.js.html">bulk.js</a>, <a href="bulk.js.html#line462">line 462</a>
+        <a href="bulk.js.html">api/bulk.js</a>, <a href="bulk.js.html#line511">line 511</a>
     </li></ul></dd>
     
     
@@ -1592,7 +1592,7 @@ https://github.com/joyent/node/blob/master/lib/stream.js
 	</dt>
 	<dd>
 		
-<span class="param-type"><a href="Promise.html">Promise</a>.&lt;Array.&lt;<a href="global.html#RecordResult">RecordResult</a>>></span>
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;(Array.&lt;<a href="global.html#RecordResult">RecordResult</a>>|Array.&lt;<a href="Bulk.html#BatchResultInfo">Bulk~BatchResultInfo</a>>)></span>
 
 
 	</dd>
@@ -1864,7 +1864,7 @@ Delegate to deferred promise, return promise instance for batch result
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bulk.js.html">bulk.js</a>, <a href="bulk.js.html#line330">line 330</a>
+        <a href="bulk.js.html">api/bulk.js</a>, <a href="bulk.js.html#line368">line 368</a>
     </li></ul></dd>
     
     
@@ -1934,7 +1934,7 @@ Call "then" using given node-style callback function
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="bulk.js.html">bulk.js</a>, <a href="bulk.js.html#line342">line 342</a>
+        <a href="bulk.js.html">api/bulk.js</a>, <a href="bulk.js.html#line380">line 380</a>
     </li></ul></dd>
     
     
@@ -1975,13 +1975,13 @@ Call "then" using given node-style callback function
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="HttpApi.html">HttpApi</a></li><li><a href="ListView.html">ListView</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Process.html">Process</a></li><li><a href="Process-ApprovalProcess.html">ApprovalProcess</a></li><li><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></li><li><a href="Process-ProcessRule.html">ProcessRule</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="QuickAction.html">QuickAction</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SessionRefreshDelegate">SessionRefreshDelegate</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu May 15 2014 02:13:08 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Feb 17 2015 01:39:28 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>
