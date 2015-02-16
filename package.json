@@ -76,9 +76,11 @@
     "grunt-string-replace": "^1.0.0",
     "intelli-espower-loader": "^0.2.0",
     "mocha": "^1.21.4",
-    "node-phantom": "^0.2.5",
     "power-assert": "^0.7.2",
     "require-swapper": "^0.1.2",
     "webdriverio": "^2.4.3"
+  },
+  "browser": {
+    "request": "./lib/browser/request.js"
   }
 }
