@@ -17,10 +17,14 @@ describe("bulk", function() {
 
   var conn = new testUtils.createConnection(config);
 
+  // adjust poll timeout to test timeout.
+  conn.bulk.pollTimeout = 40*1000;
+
   /**
    *
    */
   before(function(done) {
+    this.timeout(600000); // set timeout to 10 min.
     testUtils.establishConnection(conn, config, done);
   });
 
@@ -83,6 +87,14 @@ describe("bulk", function() {
         }
       }.check(done));
     });
+
+    it("should fail when no input is given", function(done) {
+      conn.bulk.load('Account', 'update', [], function(err, rets) {
+        assert.ok(err);
+        assert.ok(err.name === 'ClientInputError');
+      }.check(done));
+    });
+
   });
 
   /**
@@ -109,6 +121,14 @@ describe("bulk", function() {
         }
       }.check(done));
     });
+
+    it("should fail when no input is given", function(done) {
+      conn.bulk.load('Account', 'delete', [], function(err, rets) {
+        assert.ok(err);
+        assert.ok(err.name === 'ClientInputError');
+      }.check(done));
+    });
+
   });
 
 /*------------------------------------------------------------------------*/
@@ -182,7 +202,92 @@ if (testUtils.isNodeJS) {
     });
   });
 
+  /**
+   *
+   */
+  describe("bulk query and output to file", function() {
+    it("should get a record stream and file output", function(done) {
+      var file = __dirname + "/data/Account_export.csv";
+      var fstream = fs.createWriteStream(file);
+      var records = [];
+      async.waterfall([
+        function(next) {
+          conn.bulk.query("SELECT Id, Name, NumberOfEmployees FROM Account")
+            .on('record', function(rec) { records.push(rec); })
+            .on('error', function(err) { next(err); })
+            .on('end', function() { next(null, records); })
+            .stream().pipe(fstream);
+        }
+      ], function(err, records) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(records) && records.length > 0);
+        for (var i=0; i<records.length; i++) {
+          var rec = records[i];
+          assert.ok(_.isString(rec.Id));
+          assert.ok(_.isString(rec.Name));
+          assert.ok(_.isString(rec.NumberOfEmployees)); // no type conversion from CSV stream to record
+        }
+        var data = fs.readFileSync(file, "utf-8");
+        assert.ok(data);
+        var lines = data.replace(/[\r\n]+$/, '').split(/[\r\n]/);
+        assert.ok(lines.length === records.length + 1);
+      }.check(done));
+    });
+  });
 }
+
+/*------------------------------------------------------------------------*/
+
+  describe("bulk API session refresh", function() {
+    var recs = null;
+
+    before(function(done) {
+      var records = Array(101).join('_').split('').map(function(i) {
+        return { Name: 'Session Expiry Test #'+i };
+      });
+      conn.bulk.load('Account', 'insert', records, function(err, rets) {
+        if (err) { throw err; }
+        recs = rets.map(function(r) { return { Id: r.id }; });
+      }.check(done));
+    });
+
+    it("should delete records even if the session has been expired", function(done) {
+      var conn2 = new sf.Connection({
+        instanceUrl: conn.instanceUrl,
+        accessToken: 'invalid_token',
+        logLevel: config.logLevel,
+        proxyUrl: config.proxyUrl,
+        refreshFn: function(c, callback) {
+          setTimeout(function() {
+            callback(null, conn.accessToken);
+          }, 500);
+        }
+      });
+      conn2.bulk.load('Account', 'delete', recs, function(err, rets) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(rets));
+        assert.ok(rets.length === 100);
+        for (var i=0; i<rets.length; i++) {
+          var ret = rets[i];
+          assert.ok(ret.success);
+        }
+      }.check(done));
+    });
+
+    it("should raise error when no refresh fn is found", function(done) {
+      var conn3 = new sf.Connection({
+        instanceUrl: conn.instanceUrl,
+        accessToken: 'invalid_token',
+        logLevel: config.logLevel,
+        proxyUrl: config.proxyUrl
+      });
+      var records = [ { Name: 'Impossible Bulk Account #1' } ];
+      conn3.bulk.load('Account', 'insert', records, function(err, rets) {
+        assert(err && err.name === 'InvalidSessionId');
+      }.check(done));
+    });
+  });
+
 /*------------------------------------------------------------------------*/
 
   /**
@@ -194,7 +299,8 @@ if (testUtils.isNodeJS) {
       for (var i=0; i<200; i++) {
         records.push({
           Name: 'New Bulk Account #'+(i+1),
-          NumberOfEmployees: 300 * (i+1) 
+          BillingState: 'CA',
+          NumberOfEmployees: 300 * (i+1)
         });
       }
       conn.bulk.load("Account", "insert", records, done);
@@ -203,7 +309,10 @@ if (testUtils.isNodeJS) {
     it("should return updated status", function(done) {
       conn.sobject('Account')
           .find({ Name : { $like : 'New Bulk Account%' }})
-          .update({ Name : '${Name} (Updated)' }, function(err, rets) {
+          .update({
+            Name : '${Name} (Updated)',
+            BillingState: null
+          }, function(err, rets) {
             if (err) { throw err; }
             assert.ok(_.isArray(rets));
             assert.ok(rets.length === 200);
@@ -218,7 +327,7 @@ if (testUtils.isNodeJS) {
     describe("then query updated records", function() {
       it("should return updated records", function(done) {
         conn.sobject('Account')
-            .find({ Name : { $like : 'New Bulk Account%' }}, 'Id, Name', function(err, records) {
+            .find({ Name : { $like : 'New Bulk Account%' }}, 'Id, Name, BillingState', function(err, records) {
               if (err) { throw err; }
               assert.ok(_.isArray(records));
               assert.ok(records.length === 200);
@@ -227,9 +336,25 @@ if (testUtils.isNodeJS) {
                 record = records[i];
                 assert.ok(_.isString(record.Id));
                 assert.ok(/\(Updated\)$/.test(record.Name));
+                assert.ok(record.BillingState === null);
               }
             }.check(done));
       });
+    });
+  });
+
+  describe("bulk update using Query#update, for unmatching query", function() {
+    it("should return empty array records", function(done) {
+      conn.sobject('Account')
+          .find({ CreatedDate : { $lt : new sf.Date('1970-01-01T00:00:00Z') }}) // should not match any records
+          .update({
+            Name: '${Name} (Updated)',
+            BillingState: null
+          }, function(err, rets) {
+            if (err) { throw err; }
+            assert.ok(_.isArray(rets));
+            assert.ok(rets.length === 0);
+          }.check(done));
     });
   });
 
@@ -251,6 +376,25 @@ if (testUtils.isNodeJS) {
             }
           }.check(done));
     });
+  });
+
+  describe("bulk delete using Query#destroy, for unmatching query", function() {
+    it("should return empty array records", function(done) {
+      conn.sobject('Account')
+          .find({ CreatedDate : { $lt : new sf.Date('1970-01-01T00:00:00Z') }})
+          .destroy(function(err, rets) {
+            if (err) { throw err; }
+            assert.ok(_.isArray(rets));
+            assert.ok(rets.length === 0);
+          }.check(done));
+    });
+  });
+
+  // graceful shutdown to wait remaining jobs to close...
+  after(function(done) {
+    setTimeout(function() { 
+      testUtils.closeConnection(conn, done);
+    }, 2000);
   });
 
 });

@@ -1,4 +1,4 @@
-/*global describe, it, before */
+/*global describe, it, before, after */
 var testUtils = require('./helper/test-utils'),
     assert = testUtils.assert;
 
@@ -21,6 +21,7 @@ describe("analytics", function() {
    *
    */
   before(function(done) {
+    this.timeout(600000); // set timeout to 10 min.
     testUtils.establishConnection(conn, config, done);
   });
 
@@ -110,6 +111,7 @@ describe("analytics", function() {
     it("should return report execution result", function(done) {
       var metadata = { 
         reportMetadata : {
+          historicalSnapshotDates : [],
           reportFilters : [{
             column: 'COMPANY',
             operator: 'contains',
@@ -182,6 +184,13 @@ describe("analytics", function() {
         assert.ok(result.reportMetadata.id === reportId);
       }.check(done));
     });
+  });
+
+  /**
+   *
+   */
+  after(function(done) {
+    testUtils.closeConnection(conn, done);
   });
 
 });

@@ -1,4 +1,4 @@
-/*global describe, it, before */
+/*global describe, it, before, after */
 var testUtils = require('./helper/test-utils'),
     assert = testUtils.assert;
 
@@ -19,6 +19,7 @@ describe("apex", function() {
    *
    */
   before(function(done) {
+    this.timeout(600000); // set timeout to 10 min.
     testUtils.establishConnection(conn, config, done);
   });
 
@@ -113,6 +114,13 @@ describe("apex", function() {
         assert.ok(records.length === 0);
       }.check(done));
     });
+  });
+
+  /**
+   *
+   */
+  after(function(done) {
+    testUtils.closeConnection(conn, done);
   });
 
 });

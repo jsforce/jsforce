@@ -10,7 +10,7 @@
     "database.com"
   ],
   "homepage": "http://github.com/jsforce/jsforce",
-  "version": "1.2.0",
+  "version": "1.4.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/jsforce/jsforce.git"
@@ -23,42 +23,64 @@
   ],
   "main": "./lib/jsforce",
   "scripts": {
-    "test": "mocha test/*.test.js --reporter spec --require intelli-espower-loader"
+    "test": "./test/bin/run-test"
   },
   "directories": {
     "test": "test/"
   },
+  "files": [
+    "README.md",
+    "bower.json",
+    "Gruntfile.js",
+    "LICENSE",
+    "package.json",
+    "bin",
+    "build",
+    "lib",
+    "test"
+  ],
   "engines": {
-    "node": ">=0.8.0"
+    "node": ">=0.10.0"
   },
   "bin": {
     "jsforce": "./bin/jsforce"
   },
   "dependencies": {
-    "async": "0.1.x",
-    "coffee-script": "1.6.x",
-    "commander": "2.1.x",
-    "co-prompt": "1.0.x",
-    "faye": "1.0.x",
-    "open": "0.0.4",
-    "q": "0.9.x",
-    "readable-stream": "1.1.x",
-    "request": "2.34.x",
-    "underscore": "1.4.x",
-    "xml2js": "0.4.x"
+    "co-prompt": "^1.0.0",
+    "coffee-script": "^1.8.0",
+    "commander": "^2.6.0",
+    "faye": "^1.1.0",
+    "inherits": "^2.0.1",
+    "open": "0.0.5",
+    "q": "^1.1.2",
+    "readable-stream": "^1.0.33",
+    "request": "^2.51.0",
+    "underscore": "^1.7.0",
+    "xml2js": "^0.4.4"
   },
   "devDependencies": {
-    "grunt": "0.4.x",
-    "grunt-browserify": "1.3.x",
-    "grunt-contrib-clean": "0.5.x",
-    "grunt-contrib-watch": "0.5.x",
-    "grunt-contrib-uglify": "0.3.x",
-    "grunt-jsdoc": "0.5.x",
-    "envfile": "1.0.x",
-    "mocha": "1.15.x",
-    "node-phantom": "0.2.x",
-    "power-assert": "0.6.x",
-    "intelli-espower-loader": "0.0.7",
-    "espowerify": "0.6.x"
+    "async": "^0.9.0",
+    "browserify": "^5.11.0",
+    "dotenv": "^0.4.0",
+    "envfile": "^1.0.0",
+    "espower-loader": "^0.7.1",
+    "espowerify": "^0.7.1",
+    "grunt": "^0.4.5",
+    "grunt-browserify": "^3.0.1",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-copy": "^0.5.0",
+    "grunt-contrib-uglify": "^0.5.1",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-extract-required": "0.0.6",
+    "grunt-jsdoc": "^0.5.6",
+    "grunt-string-replace": "^1.0.0",
+    "intelli-espower-loader": "^0.2.0",
+    "mocha": "^1.21.4",
+    "power-assert": "^0.7.2",
+    "require-swapper": "^0.1.2",
+    "webdriverio": "^2.4.3"
+  },
+  "browser": {
+    "request": "./lib/browser/request.js"
   }
 }

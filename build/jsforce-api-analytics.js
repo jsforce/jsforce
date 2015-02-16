@@ -1,10 +1,11 @@
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var o;"undefined"!=typeof window?o=window:"undefined"!=typeof global?o=global:"undefined"!=typeof self&&(o=self);var f=o;f=f.jsforce||(f.jsforce={}),f=f.modules||(f.modules={}),f=f.api||(f.api={}),f.Analytics=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /**
  * @file Manages Salesforce Analytics API
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
 
-var _       = require('underscore')._,
-    Promise = require('./promise');
+var _        = jsforce.require('underscore'),
+    Promise  = jsforce.require('./promise');
 
 /**
  * Report instance to retrieving asynchronously executed result
@@ -31,7 +32,7 @@ ReportInstance.prototype.retrieve = function(callback) {
   var conn = this._conn,
       report = this._report;
   var url = [ conn._baseUrl(), "analytics", "reports", report.id, "instances", this.id ].join('/');
-  return conn._request(url).thenCall(callback);
+  return conn.request(url).thenCall(callback);
 };
 
 /**
@@ -55,7 +56,7 @@ var Report = function(conn, id) {
  */
 Report.prototype.describe = function(callback) {
   var url = [ this._conn._baseUrl(), "analytics", "reports", this.id, "describe" ].join('/');
-  return this._conn._request(url).thenCall(callback);
+  return this._conn.request(url).thenCall(callback);
 };
 
 /**
@@ -85,7 +86,7 @@ Report.prototype.execute = function(options, callback) {
     params.headers = { "Content-Type" : "application/json" };
     params.body = JSON.stringify(options.metadata);
   }
-  return this._conn._request(params).thenCall(callback);
+  return this._conn.request(params).thenCall(callback);
 };
 
 /**
@@ -113,7 +114,7 @@ Report.prototype.executeAsync = function(options, callback) {
     params.headers = { "Content-Type" : "application/json" };
     params.body = JSON.stringify(options.metadata);
   }
-  return this._conn._request(params).thenCall(callback);
+  return this._conn.request(params).thenCall(callback);
 };
 
 /**
@@ -136,7 +137,7 @@ Report.prototype.instance = function(id) {
  */
 Report.prototype.instances = function(callback) {
   var url = [ this._conn._baseUrl(), "analytics", "reports", this.id, "instances" ].join('/');
-  return this._conn._request(url).thenCall(callback);
+  return this._conn.request(url).thenCall(callback);
 };
 
 
@@ -168,7 +169,10 @@ Analytics.prototype.report = function(id) {
  */
 Analytics.prototype.reports = function(callback) {
   var url = [ this._conn._baseUrl(), "analytics", "reports" ].join('/');
-  return this._conn._request(url).thenCall(callback);
+  return this._conn.request(url).thenCall(callback);
 };
 
 module.exports = Analytics;
+
+},{}]},{},[1])(1)
+});

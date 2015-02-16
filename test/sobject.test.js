@@ -1,4 +1,4 @@
-/*global describe, it, before */
+/*global describe, it, before, after */
 var testUtils = require('./helper/test-utils'),
     assert = testUtils.assert;
 
@@ -20,6 +20,7 @@ describe("sobject", function() {
    *
    */
   before(function(done) {
+    this.timeout(600000); // set timeout to 10 min.
     testUtils.establishConnection(conn, config, done);
   });
 
@@ -253,6 +254,230 @@ describe("sobject", function() {
       }.check(done));
     });
   });
+
+  /**
+   *
+   */
+  describe("list layout for SObject", function() {
+    it("should return Account layout information", function(done) {
+      Account.layouts(function(err, res) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(res.layouts));
+        res.layouts.forEach(function(layout) {
+          assert.ok(layout.id === null || _.isString(layout.id));
+          assert.ok(_.isObject(layout.buttonLayoutSection));
+          assert.ok(_.isArray(layout.detailLayoutSections));
+          assert.ok(_.isArray(layout.editLayoutSections));
+          assert.ok(_.isObject(layout.quickActionList));
+          assert.ok(_.isArray(layout.quickActionList.quickActionListItems));
+          assert.ok(_.isArray(layout.relatedLists));
+        });
+        assert.ok(_.isArray(res.recordTypeMappings));
+        assert.ok(_.isArray(res.recordTypeSelectorRequired));
+      }.check(done));
+    });
+
+    it("should return Account layout information immediately", function() {
+      var res = Account.layouts$();
+      assert.ok(_.isArray(res.layouts));
+      res.layouts.forEach(function(layout) {
+        assert.ok(layout.id === null || _.isString(layout.id));
+        assert.ok(_.isObject(layout.buttonLayoutSection));
+        assert.ok(_.isArray(layout.detailLayoutSections));
+        assert.ok(_.isArray(layout.editLayoutSections));
+        assert.ok(_.isObject(layout.quickActionList));
+        assert.ok(_.isArray(layout.quickActionList.quickActionListItems));
+        assert.ok(_.isArray(layout.relatedLists));
+      });
+      assert.ok(_.isArray(res.recordTypeMappings));
+      assert.ok(_.isArray(res.recordTypeSelectorRequired));
+    });
+  });
+
+  /**
+   *
+   */
+  describe("list named layout for SObject", function() {
+    it("should return User named layout information", function(done) {
+      conn.sobject('User').layouts('UserAlt', function(err, res) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(res.layouts));
+        res.layouts.forEach(function(layout) {
+          assert.ok(layout.id === null || _.isString(layout.id));
+          assert.ok(_.isObject(layout.buttonLayoutSection));
+          assert.ok(_.isArray(layout.detailLayoutSections));
+          assert.ok(_.isArray(layout.editLayoutSections));
+          assert.ok(_.isObject(layout.quickActionList));
+          assert.ok(_.isArray(layout.quickActionList.quickActionListItems));
+          assert.ok(_.isArray(layout.relatedLists));
+        });
+        assert.ok(_.isArray(res.recordTypeMappings));
+        assert.ok(_.isArray(res.recordTypeSelectorRequired));
+      }.check(done));
+    });
+
+    it("should return User named layout information immediately", function() {
+      var res = conn.sobject('User').layouts$('UserAlt');
+      assert.ok(_.isArray(res.layouts));
+      res.layouts.forEach(function(layout) {
+        assert.ok(layout.id === null || _.isString(layout.id));
+        assert.ok(_.isObject(layout.buttonLayoutSection));
+        assert.ok(_.isArray(layout.detailLayoutSections));
+        assert.ok(_.isArray(layout.editLayoutSections));
+        assert.ok(_.isObject(layout.quickActionList));
+        assert.ok(_.isArray(layout.quickActionList.quickActionListItems));
+        assert.ok(_.isArray(layout.relatedLists));
+      });
+      assert.ok(_.isArray(res.recordTypeMappings));
+      assert.ok(_.isArray(res.recordTypeSelectorRequired));
+    });
+  });
+
+  /**
+   *
+   */
+  describe("list compact layout for SObject", function() {
+    it("should return Account comact layout information", function(done) {
+      Account.compactLayouts(function(err, res) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(res.compactLayouts));
+        res.compactLayouts.forEach(function(clayout) {
+          assert.ok(clayout.id === null || _.isString(clayout.id));
+          assert.ok(_.isString(clayout.objectType));
+          assert.ok(_.isArray(clayout.actions));
+          assert.ok(_.isArray(clayout.fieldItems));
+        });
+        assert.ok(!res.defaultCompactLayoutId || _.isString(res.defaultCompactLayoutId));
+        assert.ok(_.isArray(res.recordTypeCompactLayoutMappings));
+      }.check(done));
+    });
+
+    it("should return Account comapct layout information immediately", function() {
+      var res = Account.compactLayouts$();
+      assert.ok(_.isArray(res.compactLayouts));
+      res.compactLayouts.forEach(function(clayout) {
+        assert.ok(clayout.id === null || _.isString(clayout.id));
+        assert.ok(_.isString(clayout.objectType));
+        assert.ok(_.isArray(clayout.actions));
+        assert.ok(_.isArray(clayout.fieldItems));
+      });
+      assert.ok(!res.defaultCompactLayoutId || _.isString(res.defaultCompactLayoutId));
+      assert.ok(_.isArray(res.recordTypeCompactLayoutMappings));
+    });
+  });
+
+
+  /**
+   *
+   */
+  describe("list approval layout for SObject", function() {
+    it("should return Account approval layout information", function(done) {
+      Account.approvalLayouts(function(err, res) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(res.approvalLayouts));
+        res.approvalLayouts.forEach(function(alayout) {
+          assert.ok(alayout.id === null || _.isString(alayout.id));
+          assert.ok(_.isString(alayout.name));
+          assert.ok(_.isString(alayout.label));
+          assert.ok(_.isArray(alayout.layoutItems));
+        });
+      }.check(done));
+    });
+
+    it("should return Account approval layout information immediately", function() {
+      var res = Account.approvalLayouts$();
+      assert.ok(_.isArray(res.approvalLayouts));
+      res.approvalLayouts.forEach(function(alayout) {
+        assert.ok(alayout.id === null || _.isString(alayout.id));
+        assert.ok(_.isString(alayout.name));
+        assert.ok(_.isString(alayout.label));
+        assert.ok(_.isArray(alayout.layoutItems));
+      });
+    });
+  });
+
+
+  var listviewId;
+
+  /**
+   *
+   */
+  describe("listup list views", function() {
+    it("should return list views definitions on the sobject", function(done) {
+      Account.listviews(function(err, result) {
+        if (err) { throw err; }
+        assert.ok(_.isObject(result));
+        assert.ok(_.isArray(result.listviews));
+        for (var i=0, len=result.listviews.length; i<len; i++) {
+          var listview = result.listviews[i];
+          assert.ok(_.isString(listview.id));
+          assert.ok(_.isString(listview.label));
+          assert.ok(_.isString(listview.describeUrl));
+          assert.ok(_.isString(listview.resultsUrl));
+          assert.ok(_.isBoolean(listview.soqlCompatible));
+          if (i===0) { listviewId = listview.id; }
+        }
+      }.check(done));
+    });
+  });
+
+  /**
+   *
+   */
+  describe("describe list view", function() {
+    it("should return described list view info for given list view id", function(done) {
+      Account.listview(listviewId).describe(function(err, result) {
+        if (err) { throw err; }
+        assert.ok(_.isObject(result));
+        assert.ok(_.isString(result.id));
+        assert.ok(_.isString(result.sobjectType));
+        assert.ok(_.isString(result.query) || result.query === null);
+        assert.ok(_.isArray(result.columns));
+        assert.ok(_.isArray(result.orderBy));
+        for (var i=0, len=result.columns.length; i<len; i++) {
+          var column = result.columns[i];
+          assert.ok(_.isString(column.label));
+          assert.ok(_.isString(column.fieldNameOrPath));
+          assert.ok(_.isString(column.selectListItem));
+          assert.ok(_.isNumber(column.sortIndex) || column.sortIndex === null);
+          assert.ok(_.isBoolean(column.sortable));
+        }
+      }.check(done));
+    });
+  });
+ 
+  /**
+   *
+   */
+  describe("get result of list view", function() {
+    it("should return executed result of list view for given list view id", function(done) {
+      Account.listview(listviewId).results(function(err, result) {
+        if (err) { throw err; }
+        assert.ok(_.isObject(result));
+        assert.ok(_.isBoolean(result.done));
+        assert.ok(_.isNumber(result.size));
+        assert.ok(_.isString(result.id));
+        assert.ok(_.isString(result.label));
+        assert.ok(_.isArray(result.columns));
+        for (var i=0, len=result.columns.length; i<len; i++) {
+          var column = result.columns[i];
+          assert.ok(_.isString(column.label));
+          assert.ok(_.isString(column.fieldNameOrPath));
+          assert.ok(_.isString(column.selectListItem));
+          assert.ok(_.isNumber(column.sortIndex) || column.sortIndex === null);
+          assert.ok(_.isBoolean(column.sortable));
+        }
+        assert.ok(_.isArray(result.records));
+      }.check(done));
+    });
+  });
    
+  /**
+   *
+   */
+  after(function(done) {
+    testUtils.closeConnection(conn, done);
+  });
+
 });
 

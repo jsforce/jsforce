@@ -1,8 +1,11 @@
 language: node_js
 node_js:
-  - 0.4
-  - 0.6
-  - 0.8
-branches:
-  only:
-    - travis-ci
+- 0.10
+env:
+  global:
+  - secure: VOvv3WYg4ix0qAtU4nN1OAJV4Pk2lItUG87I/OVvRnB+UDkTT520Wo7+GO54dmoJrGKGOU6p6ugBz5zsYEc2INS43LXdj93HMbLJ2VfsRa7X3Ek6LvkLUAyZK+Dr0sEmxKep6fbfMXnsF6x+BEb7rzG98OnAmonJTm6Vt7MkFXM=
+  - secure: TMGefVEi6JXbj/Y7iOctOvKYwxPG/fmn8tV3OJzdEd2V+3ZTOPnU5+tu9ps90DUbTM8bwuE6HuGy+CqzjvbBLYBicBpaqLUoSCdoADIMwPhf6ZNVq7Ym4Cj0mZ3fSTgPezHxUZjp/fOjBNWzmO6drS5Iac7onItsHhzaTvuZoMo=
+  - secure: BASWMc2hHveSznN9RYmfZkfu9MAMF4cTjSKHw/U5OJYHkJjYtkM1RwW6G9Gx3zzEzfxAbo4CXnBa3NQJXewMeIWgF99LdX13EnOzEpeGPABV+tqLmnCZbja1c0sH9XaRmRj+S/BZ6Jg/O0t5EsYfPk/dXPKJN/Bc0gixZwTmrtE=
+  - secure: XolxANMczFH3dFhsu5uID7UsO58wj/dfWajt8onwz6NsF+H7vK55bYWgatRtWTFzIAZl0RbgoIhQOoQ1GSN9AliVeHfq57giVDnI/AREfdDMfNcfAYx2KzmzsfNQlgM/qEknqwd3OvA7+lVPM3GR/hPDMYSuKzBSzJvQBOqFQFE=
+  - secure: TlH/Omfdv+O/6TPTEoQdQ0E5MAVKYTajSBT2TwePRmSnjTWFB4qhIdEksyGfrR/hUEIcqq8aqj2Gk/RetxkPe9AwKBj92Qfu4r0lIHNhTsNB4gDv1dH7ynXP62zC3exjsLRDqlv4Y7BF3dGgRVu2czSkVN238fOfqx5YgnP6BxQ=
+

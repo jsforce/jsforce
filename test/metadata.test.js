@@ -1,4 +1,4 @@
-/*global describe, it, before, __dirname */
+/*global describe, it, before, after, __dirname */
 var testUtils = require('./helper/test-utils'),
     assert = testUtils.assert;
 
@@ -16,164 +16,24 @@ describe("metadata", function() {
 
   var conn = testUtils.createConnection(config);
 
+  // adjust poll timeout to test timeout.
+  conn.metadata.pollTimeout = 40*1000;
+
   /**
    *
    */
   before(function(done) {
+    this.timeout(600000); // set timeout to 10 min.
     testUtils.establishConnection(conn, config, done);
   });
 
   /**
-   *
-   */
-  describe("asynchronous metadata call sequence", function() {
-
-    /**
-     *
-     */
-    describe("create metadata asynchronously", function() {
-      var asyncResults;
-
-      it("should create custom objects", function(done) {
-        var metadata = [{
-          fullName: 'TestObject1__c',
-          label: 'Test Object 1',
-          pluralLabel: 'Test Object 1',
-          nameField: {
-            type: 'Text',
-            label: 'Test Object Name'
-          },
-          deploymentStatus: 'Deployed',
-          sharingModel: 'ReadWrite'
-        }, {
-          fullName: 'TestObject2__c',
-          label: 'Test Object 2',
-          pluralLabel: 'Test Object 2',
-          nameField: {
-            type: 'AutoNumber',
-            label: 'Test Object #'
-          },
-          deploymentStatus: 'InDevelopment',
-          sharingModel: 'Private'
-        }];
-        conn.metadata.create('CustomObject', metadata, function(err, results) {
-          if (err) { throw err; }
-          assert.ok(_.isArray(results));
-          assert.ok(results.length === metadata.length);
-          _.forEach(results, function(result) {
-            assert.ok(_.isString(result.id));
-          });
-          asyncResults = results;
-        }.check(done));
-      });
-
-      it("should get finished status in completion", function(done) {
-        var ids = _.map(asyncResults, function(ar){ return ar.id; });
-        conn.metadata.checkStatus(ids).complete(function(err, results) {
-          if (err) { throw err; }
-          assert.ok(_.isArray(results));
-          assert.ok(results.length === ids.length);
-          _.forEach(results, function(result) {
-            assert.ok(result.done === true);
-            assert.ok(result.state === 'Completed');
-          });
-        }.check(done));
-      });
-
-      it("should create custom fields", function(done) {
-        var metadata = [{
-          type: 'Text',
-          fullName: 'TestObject1__c.TextField__c',
-          label: 'Text #1',
-          length: 50
-        }, {
-          type: 'TextArea',
-          fullName: 'TestObject1__c.TextAreaField__c',
-          label: 'Text Area #1'
-        }, {
-          type: 'Number',
-          fullName: 'TestObject1__c.NumberField__c',
-          label: 'Number #1',
-          precision: 18,
-          scale: 2
-        }, {
-          type: 'AutoNumber',
-          fullName: 'TestObject1__c.AutoNumberField__c',
-          label: 'Auto Number #1'
-        }];
-        conn.metadata.create('CustomField', metadata).complete(function(err, results) {
-          if (err) { throw err; }
-          assert.ok(_.isArray(results));
-          assert.ok(results.length === metadata.length);
-          _.forEach(results, function(result) {
-            assert.ok(_.isString(result.id));
-            assert.ok(result.done === true);
-            assert.ok(result.state === "Completed");
-          });
-        }.check(done));
-      });
-
-    });
-
-
-    /**
-     *
-     */
-    describe("update metadata asynchronously", function() {
-      it("should update custom fields", function(done) {
-        var updateMetadata = [{
-          currentName: 'TestObject1__c.AutoNumberField__c',
-          metadata: {
-            type: 'Text',
-            fullName: 'TestObject2__c.AutoNumberField2__c',
-            label: 'Auto Number #2',
-            length: 50
-          }
-        }];
-        conn.metadata.update('CustomField', updateMetadata).complete(function(err, results) {
-          if (err) { throw err; }
-          assert.ok(_.isArray(results));
-          assert.ok(results.length === updateMetadata.length);
-          _.forEach(results, function(result) {
-            assert.ok(_.isString(result.id));
-            assert.ok(result.done === true);
-            assert.ok(result.state === "Completed");
-          });
-        }.check(done));
-      });
-    });
-
-    /**
-     *
-     */
-    describe("delete metadata asynchronously", function() {
-      it("should delete custom objects", function(done) {
-        var metadata = [{
-          fullName: 'TestObject1__c',
-        }, {
-          fullName: 'TestObject2__c',
-        }];
-        conn.metadata.delete('CustomObject', metadata).complete(function(err, results) {
-          if (err) { throw err; }
-          assert.ok(_.isArray(results));
-          assert.ok(results.length === metadata.length);
-          _.forEach(results, function(result) {
-            assert.ok(_.isString(result.id));
-          });
-        }.check(done));
-      });
-    });
-
-  }); // end of asynchronous call tests
-
-
-  /**
-   * Synchronous call tests (createSync, read, updateSync, rename, deleteSync)
+   * Synchronous CRUD call tests (create, read, update, upsert, rename, delete)
    */
   describe("synchronous metadata call sequence", function() {
 
     var metadata = [{
-      fullName: 'TestObjectSync1__c',
+      fullName: 'JSforceTestObjectSync1__c',
       label: 'Test Object Sync 1',
       pluralLabel: 'Test Object Sync 1',
       nameField: {
@@ -183,7 +43,7 @@ describe("metadata", function() {
       deploymentStatus: 'Deployed',
       sharingModel: 'ReadWrite'
     }, {
-      fullName: 'TestObjectSync2__c',
+      fullName: 'JSforceTestObjectSync2__c',
       label: 'Test Object Sync 2',
       pluralLabel: 'Test Object 2',
       nameField: {
@@ -201,7 +61,7 @@ describe("metadata", function() {
      */
     describe("create metadata synchronously", function() {
       it("should create custom objects", function(done) {
-        conn.metadata.createSync('CustomObject', metadata, function(err, results) {
+        conn.metadata.create('CustomObject', metadata, function(err, results) {
           if (err) { throw err; }
           assert.ok(_.isArray(results));
           assert.ok(results.length === metadata.length);
@@ -239,7 +99,7 @@ describe("metadata", function() {
       it("should update custom objects", function(done) {
         rmetadata[0].label = 'Updated Test Object Sync 2';
         rmetadata[1].deploymentStatus = 'Deployed';
-        conn.metadata.updateSync('CustomObject', rmetadata, function(err, results) {
+        conn.metadata.update('CustomObject', rmetadata, function(err, results) {
           if (err) { throw err; }
           assert.ok(_.isArray(results));
           assert.ok(results.length === fullNames.length);
@@ -255,9 +115,48 @@ describe("metadata", function() {
     /**
      *
      */
+    describe("upsert metadata synchronously", function() {
+      it("should upsert custom objects", function(done) {
+        var umetadata = [{
+          fullName: 'JSforceTestObjectSync2__c',
+          label: 'Upserted Object Sync 2',
+          pluralLabel: 'Upserted Object Sync 2',
+          nameField: {
+            type: 'Text',
+            label: 'Test Object Name'
+          },
+          deploymentStatus: 'Deployed',
+          sharingModel: 'ReadWrite'
+        }, {
+          fullName: 'JSforceTestObjectSync3__c',
+          label: 'Upserted Object Sync 3',
+          pluralLabel: 'Upserted Object Sync 3',
+          nameField: {
+            type: 'Text',
+            label: 'Test Object Name'
+          },
+          deploymentStatus: 'Deployed',
+          sharingModel: 'ReadWrite'
+        }];
+        conn.metadata.upsert('CustomObject', umetadata, function(err, results) {
+          if (err) { throw err; }
+          assert.ok(_.isArray(results));
+          assert.ok(results.length === umetadata.length);
+          _.forEach(results, function(result, i) {
+            assert.ok(result.success === true);
+            assert.ok(result.created === (result.fullName === 'JSforceTestObjectSync3__c' ? true : false));
+            assert.ok(result.fullName === umetadata[i].fullName);
+          });
+        }.check(done));
+      });
+    });
+
+    /**
+     *
+     */
     describe("rename metadata synchronously", function() {
       it("should rename a custom object", function(done) {
-        var oldName = fullNames[0], newName = 'Updated' + oldName;
+        var oldName = fullNames[0], newName = oldName.replace(/__c$/, 'Updated__c');
         conn.metadata.rename('CustomObject', oldName, newName).then(function(result) {
           assert.ok(result.success === true);
           assert.ok(_.isString(result.fullName));
@@ -266,8 +165,29 @@ describe("metadata", function() {
         }).then(function(result) {
           assert.ok(_.isString(result.fullName));
           assert.ok(result.fullName === newName);
-          fullNames[0] = result.fullName;
         }).then(done, done);
+      });
+    });
+
+    /**
+     *
+     */
+    describe("list metadata synchronously", function() {
+      it("should list custom objects", function(done) {
+        conn.metadata.list({ type: 'CustomObject' }, function(err, results) {
+          if (err) { throw err; }
+          assert.ok(_.isArray(results));
+          _.forEach(results, function(result) {
+            assert.ok(result.type === 'CustomObject');
+            assert.ok(_.isString(result.id));
+            assert.ok(_.isString(result.fullName));
+          });
+          fullNames = results.filter(function(m) {
+            return m.fullName.match(/^JSforceTestObject.+__c$/);
+          }).map(function(m) {
+            return m.fullName;
+          });
+        }.check(done));
       });
     });
 
@@ -276,7 +196,7 @@ describe("metadata", function() {
      */
     describe("delete metadata synchronously", function() {
       it("should delete custom objects", function(done) {
-        conn.metadata.deleteSync('CustomObject', fullNames, function(err, results) {
+        conn.metadata.delete('CustomObject', fullNames, function(err, results) {
           if (err) { throw err; }
           assert.ok(_.isArray(results));
           assert.ok(results.length === fullNames.length);
@@ -334,5 +254,36 @@ if (testUtils.isNodeJS) {
     });
   });
 
+
+/*------------------------------------------------------------------------*/
+
+  describe("metadata API session refresh", function() {
+    it("should list metadata even if the session has been expired", function(done) {
+      var conn2 = new sf.Connection({
+        instanceUrl: conn.instanceUrl,
+        accessToken: 'invalid_token',
+        logLevel: config.logLevel,
+        proxyUrl: config.proxyUrl,
+        refreshFn: function(c, callback) {
+          setTimeout(function() {
+            callback(null, conn.accessToken);
+          }, 500);
+        }
+      });
+      conn2.metadata.list({ type: 'CustomObject' }, function(err, results) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(results));
+      }.check(done));
+    });
+  });
+
+/*------------------------------------------------------------------------*/
+
+  /**
+   *
+   */
+  after(function(done) {
+    testUtils.closeConnection(conn, done);
+  });
 
 });

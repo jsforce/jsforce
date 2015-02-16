@@ -1,11 +1,12 @@
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var o;"undefined"!=typeof window?o=window:"undefined"!=typeof global?o=global:"undefined"!=typeof self&&(o=self);var f=o;f=f.jsforce||(f.jsforce={}),f=f.modules||(f.modules={}),f=f.api||(f.api={}),f.Tooling=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /**
  * @file Manages Tooling APIs
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
 
-var util = require('util'),
-    _    = require('underscore')._,
-    Cache = require('./cache');
+var util  = jsforce.require('util'),
+    _     = jsforce.require('underscore'),
+    Cache = jsforce.require('./cache');
 
 /**
  * API class for Tooling API call
@@ -71,14 +72,14 @@ Tooling.prototype.initialize = function() {
  * @private
  */
 Tooling.prototype._baseUrl = function() {
-  return this._conn.urls.rest.base + "/tooling";
+  return this._conn._baseUrl() + "/tooling";
 };
 
 /**
  * @private
  */
-Tooling.prototype._request = function() {
-  return this._conn._request.apply(this._conn, arguments);
+Tooling.prototype.request = function() {
+  return this._conn.request.apply(this._conn, arguments);
 };
 
 /**
@@ -226,7 +227,7 @@ Tooling.prototype._request = function() {
  */
 Tooling.prototype.executeAnonymous = function(body, callback) {
   var url = this._baseUrl() + "/executeAnonymous?anonymousBody=" + encodeURIComponent(body);
-  return this._request(url).thenCall(callback);
+  return this.request(url).thenCall(callback);
 };
 
 /**
@@ -246,8 +247,11 @@ Tooling.prototype.completions = function(type, callback) {
     type = 'apex';
   }
   var url = this._baseUrl() + "/completions?type=" + encodeURIComponent(type);
-  return this._request(url).thenCall(callback);
+  return this.request(url).thenCall(callback);
 };
 
 
 module.exports = Tooling;
+
+},{}]},{},[1])(1)
+});

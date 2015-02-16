@@ -1,0 +1,30 @@
+{
+  "name": "jsforce",
+  "version": "1.3.1",
+  "homepage": "https://github.com/jsforce/jsforce",
+  "authors": [
+    "Shinichi Tomita <shinichi.tomita@gmail.com>"
+  ],
+  "description": "Salesforce API Library for JavaScript",
+  "main": "./build/jsforce.js",
+  "keywords": [
+    "salesforce",
+    "salesforce.com",
+    "sfdc",
+    "force.com",
+    "database.com"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "package.json",
+    "Gruntfile.*",
+    "testem.json",
+    "node_modules",
+    "bower_components",
+    "bin",
+    "examples",
+    "lib",
+    "test"
+  ]
+}
