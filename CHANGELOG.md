@@ -15,7 +15,7 @@
 * Enable Metadata API to refresh session automatically
 * Fix not to close bulk job when polling timeout occurred
 * Fire progress event when polling async Metadata request status
-* Change default API ver. to 32.0
+* Change default API ver. to 33.0
 
 ## 1.3.1 (Sep 15, 2014)
 * Add bower support
