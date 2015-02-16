@@ -96,6 +96,8 @@ describe("connection-session", function() {
       });
     });
 
+if (testUtils.isNodeJS) {
+
     describe("oauth2 session", function() {
       var sessionInfo;
       it("should logout oauth2 session", function(done) {
@@ -105,8 +107,7 @@ describe("connection-session", function() {
             clientSecret : config.clientSecret,
             redirectUri : config.redirectUri
           },
-          logLevel : config.logLevel,
-          proxyUrl: config.proxyUrl
+          logLevel : config.logLevel
         });
         conn1.loginByOAuth2(config.username, config.password, function(err) {
           if (err) { return done(err); }
@@ -126,8 +127,7 @@ describe("connection-session", function() {
           var conn2 = new sf.Connection({
             accessToken: sessionInfo.accessToken,
             instanceUrl: sessionInfo.instanceUrl,
-            logLevel: config.logLevel,
-            proxyUrl: config.proxyUrl
+            logLevel: config.logLevel
           });
           setTimeout(function() { // wait a moment
             conn2.query("SELECT Id FROM User", function(err, res) {
@@ -137,6 +137,8 @@ describe("connection-session", function() {
         });
       });
     });
+
+}
 
 
   });
