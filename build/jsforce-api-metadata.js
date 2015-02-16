@@ -666,7 +666,8 @@ AsyncResultLocator.prototype.poll = function(interval, timeout) {
       var resultArr = _.isArray(results) ? results : [ results ];
       for (var i=0, len=resultArr.length; i<len; i++) {
         var result = resultArr[i];
-        if (result && !result.done) {
+        if (result && !result.done) {	
+          self.emit('progress', result);
           done = false;
         }
       }
