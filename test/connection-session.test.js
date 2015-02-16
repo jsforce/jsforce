@@ -21,7 +21,7 @@ describe("connection-session", function() {
   describe("login", function() {
     var conn;
     it("should login by username and password", function(done) {
-      conn = new sf.Connection({ logLevel: config.logLevel });
+      conn = new sf.Connection({ logLevel: config.logLevel, proxyUrl: config.proxyUrl });
       conn.login(config.username, config.password, function(err, userInfo) {
         if (err) { throw err; }
         assert.ok(_.isString(conn.accessToken));
@@ -65,7 +65,7 @@ describe("connection-session", function() {
     describe("soap session", function() {
       var sessionInfo;
       it("should logout soap session", function(done) {
-        var conn1 = new sf.Connection({ logLevel: config.logLevel });
+        var conn1 = new sf.Connection({ logLevel: config.logLevel, proxyUrl: config.proxyUrl });
         conn1.loginBySoap(config.username, config.password, function(err) {
           if (err) { return done(err); }
           sessionInfo = {
@@ -84,7 +84,8 @@ describe("connection-session", function() {
           var conn2 = new sf.Connection({
             sessionId: sessionInfo.sessionId,
             serverUrl: sessionInfo.serverUrl,
-            logLevel: config.logLevel
+            logLevel: config.logLevel,
+            proxyUrl: config.proxyUrl
           });
           setTimeout(function() { // wait a moment
             conn2.query("SELECT Id FROM User", function(err, res) {
@@ -94,6 +95,8 @@ describe("connection-session", function() {
         });
       });
     });
+
+if (testUtils.isNodeJS) {
 
     describe("oauth2 session", function() {
       var sessionInfo;
@@ -134,6 +137,8 @@ describe("connection-session", function() {
         });
       });
     });
+
+}
 
 
   });
