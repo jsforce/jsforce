@@ -1,3 +1,6 @@
+## 1.4.0 (2015-02-17)
+
+
 ## v1.2.0 (May 15, 2014):
 
 * Add `Metadata#read()` method to read metadata info in CRUD method
