@@ -45,7 +45,6 @@
     "readable-stream": "^1.0.33",
     "request": "^2.51.0",
     "underscore": "^1.7.0",
-    "xhr": "^2.0.1",
     "xml2js": "^0.4.4"
   },
   "devDependencies": {
@@ -71,6 +70,6 @@
     "webdriverio": "^2.4.3"
   },
   "browser": {
-    "request": "xhr"
+    "request": "./lib/browser/request.js"
   }
 }
