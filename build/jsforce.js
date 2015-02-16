@@ -789,7 +789,9 @@ Batch.prototype.poll = function(interval, timeout) {
   var poll = function() {
     var now = new Date().getTime();
     if (startTime + timeout < now) {
-      self.emit('error', new Error("Polling time out. Job Id = " + jobId + " , batch Id = " + batchId));
+      var err = new Error("Polling time out. Job Id = " + jobId + " , batch Id = " + batchId);
+      err.name = 'PollingTimeout';
+      self.emit('error', err);
       return;
     }
     self.check(function(err, res) {
@@ -1065,10 +1067,23 @@ Bulk.prototype.load = function(type, operation, options, input, callback) {
     options = null;
   }
   var job = this.createJob(type, operation, options);
+  job.once('error', function (error) {
+    if (batch) {
+      batch.emit('error', error); // pass job error to batch
+    }
+  });
   var batch = job.createBatch();
-  var cleanup = function() { job.close(); };
+  var cleanup = function() {
+    batch = null;
+    job.close();
+  };
+  var cleanupOnError = function(err) {
+    if (err.name !== 'PollingTimeout') {
+      cleanup();
+    }
+  };
   batch.on('response', cleanup);
-  batch.on('error', cleanup);
+  batch.on('error', cleanupOnError);
   batch.on('queue', function() { batch.poll(self.pollInterval, self.pollTimeout); });
   return batch.execute(input, callback);
 };
@@ -2097,7 +2112,8 @@ AsyncResultLocator.prototype.poll = function(interval, timeout) {
       var resultArr = _.isArray(results) ? results : [ results ];
       for (var i=0, len=resultArr.length; i<len; i++) {
         var result = resultArr[i];
-        if (result && !result.done) {
+        if (result && !result.done) {	
+          self.emit('progress', result);
           done = false;
         }
       }
@@ -3280,7 +3296,7 @@ var events  = require('events'),
 var defaults = {
   loginUrl: "https://login.salesforce.com",
   instanceUrl: "",
-  version: "32.0"
+  version: "33.0"
 };
 
 /**
