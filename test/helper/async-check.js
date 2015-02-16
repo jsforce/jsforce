@@ -6,10 +6,9 @@ Function.prototype.check = function(done) {
   return function() {
     try {
       fn.apply(this, arguments);
-      return done();
     } catch(e) {
-      done(e);
-      throw e;
+      return done(e);
     }
+    done();
   };
 };

@@ -13,14 +13,18 @@ var async  = require('async'),
  */
 describe("bulk", function() {
 
-  this.timeout(20000); // set timeout to 20 sec.
+  this.timeout(40000); // set timeout to 40 sec.
 
   var conn = new testUtils.createConnection(config);
+
+  // adjust poll timeout to test timeout.
+  conn.bulk.pollTimeout = 40*1000;
 
   /**
    *
    */
   before(function(done) {
+    this.timeout(600000); // set timeout to 10 min.
     testUtils.establishConnection(conn, config, done);
   });
 
@@ -231,6 +235,46 @@ if (testUtils.isNodeJS) {
     });
   });
 }
+
+/*------------------------------------------------------------------------*/
+
+  describe("bulk API session refresh", function() {
+    var recs = null;
+
+    before(function(done) {
+      var records = Array(101).join('_').split('').map(function(i) {
+        return { Name: 'Session Expiry Test #'+i };
+      });
+      conn.bulk.load('Account', 'insert', records, function(err, rets) {
+        if (err) { throw err; }
+        recs = rets.map(function(r) { return { Id: r.id }; });
+      }.check(done));
+    });
+
+    it("should delete records even if the session has been expired", function(done) {
+      var conn2 = new sf.Connection({
+        instanceUrl: conn.instanceUrl,
+        accessToken: 'invalid_token',
+        logLevel: config.logLevel,
+        proxyUrl: config.proxyUrl,
+        refreshFn: function(c, callback) {
+          setTimeout(function() {
+            callback(null, conn.accessToken);
+          }, 500);
+        }
+      });
+      conn2.bulk.load('Account', 'delete', recs, function(err, rets) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(rets));
+        assert.ok(rets.length === 100);
+        for (var i=0; i<rets.length; i++) {
+          var ret = rets[i];
+          assert.ok(ret.success);
+        }
+      }.check(done));
+    });
+  });
+
 /*------------------------------------------------------------------------*/
 
   /**
@@ -335,7 +379,9 @@ if (testUtils.isNodeJS) {
 
   // graceful shutdown to wait remaining jobs to close...
   after(function(done) {
-    setTimeout(function() { done(); }, 2000);
+    setTimeout(function() { 
+      testUtils.closeConnection(conn, done);
+    }, 2000);
   });
 
 });
