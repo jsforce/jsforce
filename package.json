@@ -45,6 +45,7 @@
     "readable-stream": "^1.0.33",
     "request": "^2.51.0",
     "underscore": "^1.7.0",
+    "xhr": "^2.0.1",
     "xml2js": "^0.4.4"
   },
   "devDependencies": {
@@ -67,8 +68,7 @@
     "mocha": "^1.21.4",
     "power-assert": "^0.7.2",
     "require-swapper": "^0.1.2",
-    "webdriverio": "^2.4.3",
-    "xhr": "^2.0.1"
+    "webdriverio": "^2.4.3"
   },
   "browser": {
     "request": "xhr"
