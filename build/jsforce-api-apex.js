@@ -48,7 +48,7 @@ Apex.prototype._createRequestParams = function(method, path, body) {
  * @returns {Promise.<Object>}
  */
 Apex.prototype.get = function(path, callback) {
-  return this._conn._request(this._createRequestParams('GET', path)).thenCall(callback);
+  return this._conn.request(this._createRequestParams('GET', path)).thenCall(callback);
 };
 
 /**
@@ -65,7 +65,7 @@ Apex.prototype.post = function(path, body, callback) {
     body = undefined;
   }
   var params = this._createRequestParams('POST', path, body);
-  return this._conn._request(params).thenCall(callback);
+  return this._conn.request(params).thenCall(callback);
 };
 
 /**
@@ -82,7 +82,7 @@ Apex.prototype.put = function(path, body, callback) {
     body = undefined;
   }
   var params = this._createRequestParams('PUT', path, body);
-  return this._conn._request(params).thenCall(callback);
+  return this._conn.request(params).thenCall(callback);
 };
 
 /**
@@ -99,7 +99,7 @@ Apex.prototype.patch = function(path, body, callback) {
     body = undefined;
   }
   var params = this._createRequestParams('PATCH', path, body);
-  return this._conn._request(params).thenCall(callback);
+  return this._conn.request(params).thenCall(callback);
 };
 
 /**
@@ -124,7 +124,7 @@ Apex.prototype.patch = function(path, body, callback) {
  */
 Apex.prototype.del =
 Apex.prototype["delete"] = function(path, callback) {
-  return this._conn._request(this._createRequestParams('DELETE', path)).thenCall(callback);
+  return this._conn.request(this._createRequestParams('DELETE', path)).thenCall(callback);
 };
 
 
