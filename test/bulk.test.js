@@ -273,6 +273,19 @@ if (testUtils.isNodeJS) {
         }
       }.check(done));
     });
+
+    it("should raise error when no refresh fn is found", function(done) {
+      var conn3 = new sf.Connection({
+        instanceUrl: conn.instanceUrl,
+        accessToken: 'invalid_token',
+        logLevel: config.logLevel,
+        proxyUrl: config.proxyUrl
+      });
+      var records = [ { Name: 'Impossible Bulk Account #1' } ];
+      conn3.bulk.load('Account', 'insert', records, function(err, rets) {
+        assert(err && err.name === 'InvalidSessionId');
+      }.check(done));
+    });
   });
 
 /*------------------------------------------------------------------------*/
