@@ -16,7 +16,7 @@ module.exports = _.extend({
   establishConnection: function(conn, config, done) {
     function tryLock(cnt, msec) {
       if (cnt === 0) { throw new Error('*** Timeout: cannot lock test user session ***'); }
-      return conn.apex.post('/JSforceTestSession/').then(function(result) {
+      return conn.apex.post('/JSforceTestSession/', {}).then(function(result) {
         if (result.success) {
           return;
         } else {

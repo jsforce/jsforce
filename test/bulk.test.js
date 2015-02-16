@@ -256,6 +256,7 @@ if (testUtils.isNodeJS) {
         instanceUrl: conn.instanceUrl,
         accessToken: 'invalid_token',
         logLevel: config.logLevel,
+        proxyUrl: config.proxyUrl,
         refreshFn: function(c, callback) {
           setTimeout(function() {
             callback(null, conn.accessToken);
