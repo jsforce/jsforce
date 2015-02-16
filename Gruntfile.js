@@ -193,9 +193,9 @@ module.exports = function(grunt) {
         },
         transform: [
           [ 'require-swapper', {
-            baseDir: '__tmp__',
+            baseDir: 'build/__tmp__',
             fn: "jsforce.require",
-            modules: [ "./*", "util", "events", "stream", "underscore" ]
+            modules: [ "./*", "inherits", "util", "events", "stream", "underscore" ]
           }]
         ]
       }
