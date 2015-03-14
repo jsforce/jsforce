@@ -4,8 +4,8 @@ var testUtils = require('./helper/test-utils'),
 
 var _      = require('underscore'),
     fs     = require('fs'),
-    stream = require('stream'),
-    Stream = stream.Stream,
+    stream = require('readable-stream'),
+    through2 = require('through2'),
     querystring = require('querystring'),
     sf     = require('../lib/jsforce'),
     RecordStream = require('../lib/record-stream'),
@@ -149,22 +149,21 @@ describe("query", function() {
     it("should scan records via stream up to maxFetch num", function(done) {
       var records = [];
       var query = conn.query("SELECT Id, Name FROM " + (config.bigTable || 'Account'));
-      var outStream = new RecordStream();
-      outStream.sendable = true;
-      outStream.send = function(record) {
-        records.push(record);
-        if (records.length % 100 === 0) {
-          outStream.sendable = false;
-          setTimeout(function() {
-            outStream.sendable = true;
-            outStream.emit('drain');
-          }, Math.floor(1000 * Math.random()));
+      var outStream = through2.obj(
+        function transform(record, enc, next) {
+          records.push(record);
+          if (records.length % 100 === 0) {
+            var waitTime = Math.floor(1000 * Math.random());
+            setTimeout(function() { next(); }, waitTime);
+          } else {
+            next();
+          }
+        },
+        function flush(done) {
+          callback(null, { query : query, records : records });
+          done();
         }
-        return outStream.sendable;
-      };
-      outStream.end = function() {
-        callback(null, { query : query, records : records });
-      };
+      );
       query.pipe(outStream);
       query.on("error", function(err) { callback(err); });
 
@@ -185,23 +184,20 @@ describe("query", function() {
   describe("query table and convert to readable stream", function() {
     it("should get CSV text", function(done) {
       var query = conn.query("SELECT Id, Name FROM Account LIMIT 10");
-      var csvOut = new Stream();
-      csvOut.writable = true;
+      var csvOut = new stream.Writable();
       var result = '';
-      csvOut.write = function(data) {
-        result += data;
+      csvOut._write = function(data, enc, next) {
+        result += data.toString('utf8');
+        next();
       };
-      csvOut.end = function(data) {
-        result += data;
-        csvOut.writable = false;
+      query.stream().pipe(csvOut).on('finish', function() {
         callback(null, result);
-      };
-      query.stream().pipe(csvOut);
+      });
       var callback = function(err, csv) {
         if (err) { throw err; }
         assert.ok(_.isString(csv));
-        var header = csv.split("\n")[0];
-        assert.equal(header, "Id,Name");
+        var header = csv.split('\n')[0];
+        assert(header === "Id,Name");
       }.check(done);
     });
   });

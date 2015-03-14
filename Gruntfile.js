@@ -200,7 +200,7 @@ module.exports = function(grunt) {
           [ 'require-swapper', {
             baseDir: 'build/__tmp__',
             fn: "jsforce.require",
-            modules: coreModules.map(function(m) { return "./" + m; }).concat([ "inherits", "util", "events", "stream", "underscore" ])
+            modules: coreModules.map(function(m) { return "./" + m; }).concat([ "inherits", "util", "events", "underscore", "readable-stream" ])
           }]
         ]
       }
