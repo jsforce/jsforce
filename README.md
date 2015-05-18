@@ -1,4 +1,4 @@
-# jsforce 
+# jsforce
 
 Salesforce API Library for JavaScript applications (both on web browser and Node.js)
 
@@ -6,7 +6,7 @@ Salesforce API Library for JavaScript applications (both on web browser and Node
 
 ## Overview
 
-JSforce (f.k.a. Node-Salesforce) is a isomorphic JavaScript Library utilizing Salesforce's API: It works both in  browser and with Node.js.
+JSforce (a.k.a. Node-Salesforce) is a isomorphic JavaScript Library utilizing Salesforce's API: It works both in  browser and with Node.js.
 
 It capsulates the access to various APIs provided by Salesforce in asynchronous JavaScript function calls.
 
@@ -50,8 +50,4 @@ Your contributions are welcome: both by reporting issues on [GitHub issues](http
 
 If you want to implement any additional features, to be added to JSforce to our master branch, which may or may not be merged please first check current [opening issues](https://github.com/jsforce/jsforce/issues?q=is%3Aopen) with milestones and confirm whether the feature is on road map or not.
 
-If your feature implementation is brand-new or fixing unsupposed bugs in the library's test cases, please include addtional test codes in the `test/` directory.
-
-
-
-
+If your feature implementation is brand-new or fixing unsupported bugs in the librarys test cases, please include additional test codes in the `test/` directory.
