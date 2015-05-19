@@ -4993,8 +4993,8 @@ SObject.prototype.bulkload = function(operation, options, input, callback) {
  * @returns {Bulk~Batch}
  */
 SObject.prototype.insertBulk =
-SObject.prototype.createBulk = function(input, callback) {
-  return this.bulkload("insert", input, callback);
+SObject.prototype.createBulk = function(options, input, callback) {
+  return this.bulkload("insert", options, input, callback);
 };
 
 /**
