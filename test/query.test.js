@@ -14,7 +14,7 @@ var _      = require('underscore'),
 /**
  *
  */
-describe("query", function() { 
+describe("query", function() {
 
   this.timeout(40000); // set timeout to 40 sec.
 
@@ -37,6 +37,7 @@ describe("query", function() {
       var query = conn.query("SELECT Id, Name FROM Account");
       query.run(function(err, result) {
         if (err) { throw err; }
+        assert.hasOwnProperty(query, '_url');
         assert.ok(_.isNumber(result.totalSize));
       }.check(done));
     });
@@ -94,7 +95,7 @@ describe("query", function() {
       var records = [];
       var query = conn.query("SELECT Id, Name FROM " + (config.bigTable || 'Account'));
       query.on('record', function(record, i, cnt){
-        records.push(record); 
+        records.push(record);
       });
       query.on('end', function() {
         callback(null, { query : query, records : records });
@@ -106,8 +107,8 @@ describe("query", function() {
       var callback = function(err, result) {
         if (err) { throw err; }
         assert.ok(result.query.totalFetched === result.records.length);
-        assert.ok(result.query.totalSize > 2000 ? 
-                  result.query.totalFetched === 2000 : 
+        assert.ok(result.query.totalSize > 2000 ?
+                  result.query.totalFetched === 2000 :
                   result.query.totalFetched === result.query.totalSize
         );
       }.check(done);
@@ -122,7 +123,7 @@ describe("query", function() {
       var records = [];
       var query = conn.query("SELECT Id, Name FROM " + (config.bigTable || 'Account'));
       query.on('record', function(record) {
-             records.push(record); 
+             records.push(record);
            })
            .on('error', function(err) {
              callback(err);
@@ -134,8 +135,8 @@ describe("query", function() {
       var callback = function(err, result) {
         if (err) { throw err; }
         assert.ok(result.query.totalFetched === result.records.length);
-        assert.ok(result.query.totalSize > 5000 ? 
-                  result.query.totalFetched === 5000 : 
+        assert.ok(result.query.totalSize > 5000 ?
+                  result.query.totalFetched === 5000 :
                   result.query.totalFetched === result.query.totalSize
         );
       }.check(done);
@@ -170,8 +171,8 @@ describe("query", function() {
       var callback = function(err, result) {
         if (err) { throw err; }
         assert.ok(result.query.totalFetched === result.records.length);
-        assert.ok(result.query.totalSize > 5000 ? 
-                  result.query.totalFetched === 5000 : 
+        assert.ok(result.query.totalSize > 5000 ?
+                  result.query.totalFetched === 5000 :
                   result.query.totalFetched === result.query.totalSize
         );
       }.check(done);
