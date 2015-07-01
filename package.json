@@ -15,6 +15,7 @@
     "type": "git",
     "url": "git://github.com/jsforce/jsforce.git"
   },
+  "license": "MIT",
   "licenses": [
     {
       "type": "MIT",
