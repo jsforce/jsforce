@@ -219,7 +219,7 @@ if (testUtils.isNodeJS) {
   describe("deploy metadata in packaged file", function() {
     it("should deploy package", function(done) {
       var zipStream = fs.createReadStream(__dirname + "/data/MyPackage.zip");
-      conn.metadata.deploy(zipStream, { runTests: [ 'MyApexTriggerTest' ] }).complete(function(err, result) {
+      conn.metadata.deploy(zipStream, { testLevel: 'RunSpecifiedTests', runTests: [ 'MyApexTriggerTest' ] }).complete(function(err, result) {
         if (err) { throw err; }
         assert.ok(result.done === true);
         assert.ok(result.success === true);
