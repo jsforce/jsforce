@@ -182,8 +182,10 @@ describe("analytics", function() {
         assert.ok(result.attributes.id === instanceId);
         assert.ok(_.isString(result.attributes.status));
         assert.ok(_.isString(result.attributes.requestDate));
-        assert.ok(_.isObject(result.reportMetadata));
-        assert.ok(result.reportMetadata.id === reportId);
+        if (result.attributes.status == 'Success') {
+          assert.ok(_.isObject(result.reportMetadata));
+          assert.ok(result.reportMetadata.id === reportId);
+        }
       }.check(done));
     });
   });
