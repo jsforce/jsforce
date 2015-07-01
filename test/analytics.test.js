@@ -76,6 +76,7 @@ describe("analytics", function() {
       conn.analytics.report(reportId).execute(function(err, result) {
         if (err) { throw err; }
         assert.ok(_.isObject(result));
+        assert.ok(result.hasDetailRows === false);
         assert.ok(_.isObject(result.reportMetadata));
         assert.ok(result.reportMetadata.id === reportId);
         assert.ok(_.isObject(result.factMap));
@@ -94,6 +95,7 @@ describe("analytics", function() {
       conn.analytics.report(reportId).execute({ details: true }, function(err, result) {
         if (err) { throw err; }
         assert.ok(_.isObject(result));
+        assert.ok(result.hasDetailRows === true);
         assert.ok(_.isObject(result.reportMetadata));
         assert.ok(result.reportMetadata.id === reportId);
         assert.ok(_.isObject(result.factMap));
@@ -109,7 +111,7 @@ describe("analytics", function() {
    */
   describe("execute report synchronously with filters overrided", function() {
     it("should return report execution result", function(done) {
-      var metadata = { 
+      var metadata = {
         reportMetadata : {
           historicalSnapshotDates : [],
           reportFilters : [{
