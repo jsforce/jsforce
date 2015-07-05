@@ -38,7 +38,7 @@ describe("sobject", function() {
       assert.ok(Opportunity instanceof SObject);
     });
   });
-  
+
   var acc;
   /**
    *
@@ -445,7 +445,7 @@ describe("sobject", function() {
       }.check(done));
     });
   });
- 
+
   /**
    *
    */
@@ -471,7 +471,30 @@ describe("sobject", function() {
       }.check(done));
     });
   });
-   
+
+  /**
+   *
+   */
+  describe("explain query plan of list view", function() {
+    it("should get explain result", function(done) {
+      Account.listview(listviewId).explain(function(err, result) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(result.plans));
+        for (var i=0; i<result.plans.length; i++) {
+          var plan = result.plans[i];
+          assert.ok(_.isNumber(plan.cardinality));
+          assert.ok(_.isArray(plan.fields));
+          assert.ok(_.isString(plan.leadingOperationType));
+          assert.ok(_.isNumber(plan.relativeCost));
+          assert.ok(_.isNumber(plan.sobjectCardinality));
+          assert.ok(_.isString(plan.sobjectType));
+        }
+      }.check(done));
+    });
+  });
+
+
+
   /**
    *
    */
@@ -480,4 +503,3 @@ describe("sobject", function() {
   });
 
 });
-
