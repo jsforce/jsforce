@@ -16,7 +16,7 @@ describe("streaming", function() {
 
 /*------------------------------------------------------------------------*/
 if (testUtils.isNodeJS) {
-  
+
   var conn = new testUtils.createConnection(config);
 
   /**
@@ -46,6 +46,39 @@ if (testUtils.isNodeJS) {
       }, 5000);
     });
   });
+
+  /**
+   *
+   */
+  describe("subscribe to generic streaming channel", function() {
+    var channelName = '/u/JSforceTestChannel';
+
+    before(function(done) {
+      conn.sobject('StreamingChannel').create({ Name: channelName }, done);
+    });
+
+    it("should receive custom streaming event", function(done) {
+      var listener = function(msg) {
+        assert(msg.payload === 'hello, world');
+      }.check(done);
+      conn.streaming.channel(channelName).subscribe(listener);
+
+      // wait 5 secs for subscription complete
+      setTimeout(function() {
+        conn.streaming.channel(channelName).push({
+          payload: 'hello, world',
+          userIds: []
+        }, function(err, res) {
+          assert(res.fanoutCount === -1);
+          assert(res.userOnlineStatus);
+        });
+      }, 5000);
+    });
+
+    after(function(done) {
+      conn.sobject('StreamingChannel').find({ Name: channelName }).destroy(done);
+    });
+  });
 }
 /*------------------------------------------------------------------------*/
 
@@ -57,4 +90,3 @@ if (testUtils.isNodeJS) {
   });
 
 });
-
