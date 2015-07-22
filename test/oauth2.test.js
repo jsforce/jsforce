@@ -1,6 +1,6 @@
 /*global describe, it, before */
-var testUtils = require('./helper/test-utils'),
-    assert = testUtils.assert;
+var TestEnv = require('./helper/testenv'),
+    assert = TestEnv.assert;
 
 var _      = require('underscore'),
     authorize = require('./helper/webauth'),
@@ -17,7 +17,7 @@ describe("oauth2", function() {
   var oauth2 = new OAuth2(config);
 
 /*------------------------------------------------------------------------*/
-if (testUtils.isNodeJS) {
+if (TestEnv.isNodeJS) {
   /**
    *
    */

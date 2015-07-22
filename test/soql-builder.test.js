@@ -1,6 +1,6 @@
 /*global describe, it */
-var testUtils = require('./helper/test-utils'),
-    assert = testUtils.assert;
+var TestEnv = require('./helper/testenv'),
+    assert = TestEnv.assert;
 
 var SOQLBuilder = require('../lib/soql-builder'),
     SfDate = require('../lib/date');
@@ -89,7 +89,7 @@ describe("soql-builder", function() {
           { 'Account.Type' : 'Partner' },
           {
             $and : [
-              { Amount: { $gte : 1000 } }, 
+              { Amount: { $gte : 1000 } },
               { Amount: { $lt  : 2000 } }
             ]
           }
@@ -114,7 +114,7 @@ describe("soql-builder", function() {
       conditions: {
         $not : {
           $and : [
-            { Amount: { $gte : 1000 } }, 
+            { Amount: { $gte : 1000 } },
             { Amount: { $lt  : 2000 } },
             { 'Account.Type' : 'Customer' }
           ]
@@ -164,7 +164,7 @@ describe("soql-builder", function() {
           {
             $not : {
               $and : [
-                { Amount: { $gte : 1000 } }, 
+                { Amount: { $gte : 1000 } },
                 { Amount: { $lt  : 2000 } },
                 { 'Account.Type' : 'Customer' }
               ]
@@ -304,7 +304,7 @@ describe("soql-builder", function() {
       assert.ok(soql === "SELECT Id FROM Account");
     });
   });
-  
+
   /**
    *
    */
@@ -349,7 +349,7 @@ describe("soql-builder", function() {
       );
     });
   });
-  
+
   /**
    *
    */
@@ -375,5 +375,5 @@ describe("soql-builder", function() {
       );
     });
   });
-     
+
 });
