@@ -5,7 +5,7 @@ var TestEnv = require('./helper/testenv'),
 var _      = require('underscore'),
     authorize = require('./helper/webauth'),
     OAuth2 = require('../lib/oauth2'),
-    config = require('./config/oauth2');
+    config = require('./config/salesforce');
 
 /**
  *
