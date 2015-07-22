@@ -38,7 +38,7 @@ if (TestEnv.isNodeJS) {
         assert.ok(typeof msg.sobject.Name === 'string');
         assert.ok(typeof msg.sobject.Id === 'string');
       }.check(done);
-      conn.streaming.topic('/JSforceTestAccountUpdates').subscribe(listener);
+      conn.streaming.topic('JSforceTestAccountUpdates').subscribe(listener);
       // wait 5 secs for subscription complete
       setTimeout(function() {
         conn.sobject('Account').create({

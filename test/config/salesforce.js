@@ -12,6 +12,6 @@ module.exports = {
   bigTable :      "BigTable__c",
   upsertTable :   "UpsertTable__c",
   upsertField :   "ExtId__c",
-  proxyUrl :      env.SF_AJAX_PROXY_URL || "http://localhost:3123/proxy",
+  proxyUrl :      env.SF_AJAX_PROXY_URL,
   logLevel :      env.DEBUG,
 };
