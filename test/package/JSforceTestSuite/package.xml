@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>JSforceTestSuite</fullName>
     <types>
         <members>JSforceTestApexRest</members>
         <members>JSforceTestData</members>
@@ -46,6 +45,14 @@
         <members>JSforceTestReports</members>
         <members>JSforceTestReports/Lead_List_Report</members>
         <name>Report</name>
+    </types>
+    <types>
+        <members>Account.JSforceApprovalProcess1</members>
+        <name>ApprovalProcess</name>
+    </types>
+    <types>
+        <members>*</members>
+        <name>Workflow</name>
     </types>
     <version>34.0</version>
 </Package>

@@ -10,17 +10,17 @@ archive.bulk({
 });
 archive.finalize();
 
-var conn = new jsforce.Connection();
+var conn = new jsforce.Connection({ logLevel: process.env.DEBUG });
 conn.login(process.env.SF_USERNAME, process.env.SF_PASSWORD)
   .then(function() {
     console.log('Deploying test suite package...');
-    conn.metadata.pollTimeout = 30*1000;
-    return conn.metadata.deploy(archive).complete({ details: true });
+    conn.metadata.pollTimeout = 60*1000;
+    return conn.metadata.deploy(archive).complete(true);
   })
   .then(function(res) {
     console.log('Package deployment Status: ', res.status);
     if (res.status !== 'Succeeded') {
-      console.log(res);
+      console.log(res.details);
       throw new Error('Deployment Not Successfully Finished: ' +res.status);
     }
   })

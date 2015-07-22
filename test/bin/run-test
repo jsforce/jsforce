@@ -5,7 +5,7 @@ var spawn = require('child_process').spawn;
 var webdriverPort = process.env.WEBDRIVER_PORT || 4444;
 var phantomjs;
 try {
-  phantomjs = spawn('ls', [ "--webdriver=" + webdriverPort, "--ssl-protocol=tlsv1" ]);
+  phantomjs = spawn('phantomjs', [ "--webdriver=" + webdriverPort, "--ssl-protocol=tlsv1" ]);
 } catch(e) {
   console.error(e);
 }
