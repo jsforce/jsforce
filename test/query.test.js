@@ -1,6 +1,6 @@
 /*global describe, it, before, after */
-var testUtils = require('./helper/test-utils'),
-    assert = testUtils.assert;
+var TestEnv = require('./helper/testenv'),
+    assert = TestEnv.assert;
 
 var _      = require('underscore'),
     fs     = require('fs'),
@@ -11,21 +11,23 @@ var _      = require('underscore'),
     RecordStream = require('../lib/record-stream'),
     config = require('./config/salesforce');
 
+var testEnv = new TestEnv(config);
+
 /**
  *
  */
-describe("query", function() { 
+describe("query", function() {
 
   this.timeout(40000); // set timeout to 40 sec.
 
-  var conn = new testUtils.createConnection(config);
+  var conn = testEnv.createConnection();
 
   /**
    *
    */
   before(function(done) {
     this.timeout(600000); // set timeout to 10 min.
-    testUtils.establishConnection(conn, config, done);
+    testEnv.establishConnection(conn, done);
   });
 
 
@@ -94,7 +96,7 @@ describe("query", function() {
       var records = [];
       var query = conn.query("SELECT Id, Name FROM " + (config.bigTable || 'Account'));
       query.on('record', function(record, i, cnt){
-        records.push(record); 
+        records.push(record);
       });
       query.on('end', function() {
         callback(null, { query : query, records : records });
@@ -106,8 +108,8 @@ describe("query", function() {
       var callback = function(err, result) {
         if (err) { throw err; }
         assert.ok(result.query.totalFetched === result.records.length);
-        assert.ok(result.query.totalSize > 2000 ? 
-                  result.query.totalFetched === 2000 : 
+        assert.ok(result.query.totalSize > 2000 ?
+                  result.query.totalFetched === 2000 :
                   result.query.totalFetched === result.query.totalSize
         );
       }.check(done);
@@ -122,7 +124,7 @@ describe("query", function() {
       var records = [];
       var query = conn.query("SELECT Id, Name FROM " + (config.bigTable || 'Account'));
       query.on('record', function(record) {
-             records.push(record); 
+             records.push(record);
            })
            .on('error', function(err) {
              callback(err);
@@ -134,8 +136,8 @@ describe("query", function() {
       var callback = function(err, result) {
         if (err) { throw err; }
         assert.ok(result.query.totalFetched === result.records.length);
-        assert.ok(result.query.totalSize > 5000 ? 
-                  result.query.totalFetched === 5000 : 
+        assert.ok(result.query.totalSize > 5000 ?
+                  result.query.totalFetched === 5000 :
                   result.query.totalFetched === result.query.totalSize
         );
       }.check(done);
@@ -170,8 +172,8 @@ describe("query", function() {
       var callback = function(err, result) {
         if (err) { throw err; }
         assert.ok(result.query.totalFetched === result.records.length);
-        assert.ok(result.query.totalSize > 5000 ? 
-                  result.query.totalFetched === 5000 : 
+        assert.ok(result.query.totalSize > 5000 ?
+                  result.query.totalFetched === 5000 :
                   result.query.totalFetched === result.query.totalSize
         );
       }.check(done);
@@ -228,8 +230,7 @@ describe("query", function() {
    *
    */
   after(function(done) {
-    testUtils.closeConnection(conn, done);
+    testEnv.closeConnection(conn, done);
   });
 
 });
-
