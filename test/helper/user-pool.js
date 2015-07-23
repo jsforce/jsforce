@@ -1,4 +1,4 @@
-var jsforce = require('../../lib/jsforce');
+var jsforce = require('../..');
 
 /**
  *
