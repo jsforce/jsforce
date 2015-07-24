@@ -41,7 +41,6 @@ TestEnv.prototype.establishConnection = function(conn, done) {
     Promise.resolve(this._config.username)
   ).then(function(username) {
     conn.__username = username; // for later checkin
-    console.log('Checked out username:', username);
     return conn.login(username, config.password);
   }).thenCall(done);
 };
