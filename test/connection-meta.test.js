@@ -141,7 +141,7 @@ describe("connection-meta", function() {
     describe("get updated accounts", function () {
       it("should return updated account object", function (done) {
         var end = new Date();
-        var start = new Date(end.getTime() - 2 * 24 * 60 * 60 * 1000); // 2 days before
+        var start = new Date(end.getTime() - 1 * 24 * 60 * 60 * 1000); // 1 day before
         conn.sobject('Account').updated(start, end, function (err, result) {
           if (err) { throw err; }
           assert.ok(_.isArray(result.ids));
@@ -155,7 +155,7 @@ describe("connection-meta", function() {
     describe("get updated account with string input", function () {
       it("should return updated account object", function (done) {
         var end = new Date();
-        var start = new Date(end.getTime() - 2 * 24 * 60 * 60 * 1000); // 2 days before
+        var start = new Date(end.getTime() - 1 * 24 * 60 * 60 * 1000); // 1 day before
         conn.sobject('Account').updated(start.toString(), end.toString(), function (err, result) {
           if (err) { throw err; }
           assert.ok(_.isArray(result.ids));
@@ -169,7 +169,7 @@ describe("connection-meta", function() {
     describe("get deleted account", function () {
       it("should return deleted account object", function (done) {
         var end = new Date();
-        var start = new Date(end.getTime() - 2 * 24 * 60 * 60 * 1000); // 2 days before
+        var start = new Date(end.getTime() - 1 * 24 * 60 * 60 * 1000); // 1 day before
         conn.sobject('Account').deleted(start, end, function (err, result) {
           if (err) { throw err; }
           assert.ok(_.isArray(result.deletedRecords));
@@ -183,7 +183,7 @@ describe("connection-meta", function() {
     describe("get deleted account with string input", function () {
       it("should return deleted account object", function (done) {
         var end = new Date();
-        var start = new Date(end.getTime() - 2 * 24 * 60 * 60 * 1000); // 2 days before
+        var start = new Date(end.getTime() - 1 * 24 * 60 * 60 * 1000); // 1 day before
         conn.sobject('Account').deleted(start.toString(), end.toString(), function (err, result) {
           if (err) { throw err; }
           assert.ok(_.isArray(result.deletedRecords));

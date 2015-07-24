@@ -1,4 +1,11 @@
 var jsforce = require('../..');
+var Promise = jsforce.Promise;
+
+function wait(msec) {
+  return new Promise(function(resolve, reject) {
+    setTimeout(function() { resolve(); }, msec);
+  });
+}
 
 /**
  *
@@ -20,7 +27,15 @@ UserPool.prototype.checkout = function() {
   var conn = this._conn;
   return this._login.then(function() {
     return conn.apex.post('/JSforceTestUserPool/', { clientName: config.poolClient }).then(function(res) {
-      return res.username;
+      if (res.username) {
+        console.log('Username:', res.username);
+        return res.username;
+      } else {
+        console.log('... Waiting users available in UserPool...');
+        return wait(30*1000).then(function() {
+          return _this.checkout();
+        });
+      }
     });
   });
 };
