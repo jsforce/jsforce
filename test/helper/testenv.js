@@ -47,12 +47,13 @@ TestEnv.prototype.establishConnection = function(conn, done) {
 
 TestEnv.prototype.closeConnection = function(conn, done) {
   var userPool = this._userPool;
-  // return conn.apex.delete('/JSforceTestData/').then(function() {
-  return (
-    userPool ?
-    userPool.checkin(conn.__username) :
-    Promise.resolve()
-  ).then(function() {
-    delete conn.__username;
+  return conn.apex.delete('/JSforceTestData/').then(function() {
+    return (
+      userPool ?
+      userPool.checkin(conn.__username) :
+      Promise.resolve()
+    ).then(function() {
+      delete conn.__username;
+      });
   }).thenCall(done);
 };
