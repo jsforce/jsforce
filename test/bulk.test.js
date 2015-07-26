@@ -217,8 +217,8 @@ if (TestEnv.isNodeJS) {
           conn.bulk.query("SELECT Id, Name, NumberOfEmployees FROM Account")
             .on('record', function(rec) { records.push(rec); })
             .on('error', function(err) { next(err); })
-            .on('end', function() { next(null, records); })
-            .stream().pipe(fstream);
+            .stream().pipe(fstream)
+            .on('finish', function() { next(null, records); });
         }
       ], function(err, records) {
         if (err) { throw err; }
