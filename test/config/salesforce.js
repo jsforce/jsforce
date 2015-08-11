@@ -1,6 +1,9 @@
 var env = require('./env');
 module.exports = {
   loginUrl :      env.SF_LOGIN_URL || "https://login.salesforce.com",
+  poolClient :    env.SF_POOL_CLIENT,
+  poolUsername :  env.SF_POOL_USERNAME,
+  poolPassword :  env.SF_POOL_PASSWORD,
   username :      env.SF_USERNAME,
   password :      env.SF_PASSWORD,
   clientId :      env.SF_OAUTH2_CLIENT_ID,
@@ -9,7 +12,6 @@ module.exports = {
   bigTable :      "BigTable__c",
   upsertTable :   "UpsertTable__c",
   upsertField :   "ExtId__c",
-  proxyUrl :      env.SF_AJAX_PROXY_URL || "http://localhost:3123/proxy",
+  proxyUrl :      env.SF_AJAX_PROXY_URL,
   logLevel :      env.DEBUG,
-  isolateTest:    env.DISABLE_TEST_ISOLATION !== "true"
 };

@@ -1,11 +1,14 @@
 /*global describe, it, before, after, __dirname */
-var testUtils = require('./helper/test-utils'),
-    assert = testUtils.assert;
+var TestEnv = require('./helper/testenv'),
+    assert = TestEnv.assert;
 
 var _      = require('underscore'),
     fs     = require('fs'),
     sf     = require('../lib/jsforce'),
     config = require('./config/salesforce');
+
+var testEnv = new TestEnv(config);
+
 
 /**
  *
@@ -14,7 +17,7 @@ describe("metadata", function() {
 
   this.timeout(40000); // set timeout to 40 sec.
 
-  var conn = testUtils.createConnection(config);
+  var conn = testEnv.createConnection();
 
   // adjust poll timeout to test timeout.
   conn.metadata.pollTimeout = 40*1000;
@@ -24,7 +27,7 @@ describe("metadata", function() {
    */
   before(function(done) {
     this.timeout(600000); // set timeout to 10 min.
-    testUtils.establishConnection(conn, config, done);
+    testEnv.establishConnection(conn, done);
   });
 
   /**
@@ -211,7 +214,7 @@ describe("metadata", function() {
   }); // end of synchronous call tests
 
 
-if (testUtils.isNodeJS) {
+if (TestEnv.isNodeJS) {
 
   /**
    *
@@ -283,7 +286,7 @@ if (testUtils.isNodeJS) {
    *
    */
   after(function(done) {
-    testUtils.closeConnection(conn, done);
+    testEnv.closeConnection(conn, done);
   });
 
 });

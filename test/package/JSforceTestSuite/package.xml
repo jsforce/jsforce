@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>JSforceTestApexRest</members>
+        <members>JSforceTestData</members>
+        <members>JSforceTestDataCleaningScheduler</members>
+        <members>JSforceTestUserPool</members>
+        <members>JSforceTestUtil</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>JSforceTestSetting__c.ExecLatch__c</members>
+        <members>JSforceTestSetting__c.ExecUsername__c</members>
+        <members>JSforceTestSetting__c.TargetTableNames__c</members>
+        <members>UpsertTable__c.ExtId__c</members>
+        <members>UserPool__c.CheckedOutAt__c</members>
+        <members>UserPool__c.CheckedOutBy__c</members>
+        <members>UserPool__c.IsPooled__c</members>
+        <members>UserPool__c.LastCheckedOutAt__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>BigTable__c</members>
+        <members>JSforceTestSetting__c</members>
+        <members>UpsertTable__c</members>
+        <members>UserPool__c</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
+        <members>BigTable__c-BigTable Layout</members>
+        <members>UpsertTable__c-UpsertTable Layout</members>
+        <members>UserPool__c-User Pool Layout</members>
+        <name>Layout</name>
+    </types>
+    <types>
+        <members>BigTable__c.All</members>
+        <members>UserPool__c.All</members>
+        <name>ListView</name>
+    </types>
+    <types>
+        <members>JSforceTestPowerUser</members>
+        <name>PermissionSet</name>
+    </types>
+    <types>
+        <members>JSforceTestReports</members>
+        <members>JSforceTestReports/Lead_List_Report</members>
+        <name>Report</name>
+    </types>
+    <types>
+        <members>Account.JSforceApprovalProcess1</members>
+        <name>ApprovalProcess</name>
+    </types>
+    <types>
+        <members>*</members>
+        <name>Workflow</name>
+    </types>
+    <version>34.0</version>
+</Package>

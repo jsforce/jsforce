@@ -1,11 +1,12 @@
 /*global describe, it, before, after */
-var testUtils = require('./helper/test-utils'),
-    assert = testUtils.assert;
+var TestEnv = require('./helper/testenv'),
+    assert = TestEnv.assert;
 
 var _      = require('underscore'),
     sf     = require('../lib/jsforce'),
-    config = require('./config/streaming');
+    config = require('./config/salesforce');
 
+var testEnv = new TestEnv(config);
 
 /**
  *
@@ -15,16 +16,16 @@ describe("streaming", function() {
   this.timeout(40000); // set timeout to 40 sec.
 
 /*------------------------------------------------------------------------*/
-if (testUtils.isNodeJS) {
+if (TestEnv.isNodeJS) {
 
-  var conn = new testUtils.createConnection(config);
+  var conn = testEnv.createConnection();
 
   /**
    *
    */
   before(function(done) {
     this.timeout(600000); // set timeout to 10 min.
-    testUtils.establishConnection(conn, config, done);
+    testEnv.establishConnection(conn, done);
   });
 
   /**
@@ -37,7 +38,7 @@ if (testUtils.isNodeJS) {
         assert.ok(typeof msg.sobject.Name === 'string');
         assert.ok(typeof msg.sobject.Id === 'string');
       }.check(done);
-      conn.streaming.topic(config.pushTopicName).subscribe(listener);
+      conn.streaming.topic('JSforceTestAccountUpdates').subscribe(listener);
       // wait 5 secs for subscription complete
       setTimeout(function() {
         conn.sobject('Account').create({
@@ -86,7 +87,7 @@ if (testUtils.isNodeJS) {
    *
    */
   after(function(done) {
-    testUtils.closeConnection(conn, done);
+    testEnv.closeConnection(conn, done);
   });
 
 });
