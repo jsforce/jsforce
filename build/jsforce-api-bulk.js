@@ -6,9 +6,11 @@
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
 
+'use strict';
+
 var inherits     = jsforce.require('inherits'),
-    stream       = jsforce.require('stream'),
-    Stream       = stream.Stream,
+    stream       = jsforce.require('readable-stream'),
+    Duplex       = stream.Duplex,
     events       = jsforce.require('events'),
     _            = jsforce.require('underscore'),
     RecordStream = jsforce.require('./record-stream'),
@@ -24,12 +26,13 @@ var inherits     = jsforce.require('inherits'),
  * @protected
  * @class Bulk~Job
  * @extends events.EventEmitter
- * 
+ *
  * @param {Bulk} bulk - Bulk API object
  * @param {String} [type] - SObject type
  * @param {String} [operation] - Bulk load operation ('insert', 'update', 'upsert', 'delete', or 'hardDelete')
  * @param {Object} [options] - Options for bulk loading operation
  * @param {String} [options.extIdField] - External ID field name (used when upsert operation).
+ * @param {String} [options.concurrencyMode] - 'Serial' or 'Parallel'. Defaults to Parallel.
  * @param {String} [jobId] - Job ID (if already available)
  */
 var Job = function(bulk, type, operation, options, jobId) {
@@ -92,6 +95,12 @@ Job.prototype.open = function(callback) {
         (this.options.extIdField ?
          '<externalIdFieldName>'+this.options.extIdField+'</externalIdFieldName>' :
          ''),
+        (this.options.concurrencyMode ?
+         '<concurrencyMode>'+this.options.concurrencyMode+'</concurrencyMode>' :
+         ''),
+        (this.options.assignmentRuleId ?
+          '<assignmentRuleId>' + this.options.assignmentRuleId + '</assignmentRuleId>' :
+          ''),
         '<contentType>CSV</contentType>',
       '</jobInfo>'
     ].join('');
@@ -185,7 +194,7 @@ Job.prototype.check = function(callback) {
  * @returns {Promise.<Bulk~JobInfo>}
  */
 Job.prototype._waitAssign = function(callback) {
-  return (this.id ? new Promise({ id: this.id }) : this.open()).thenCall(callback);
+  return (this.id ? Promise.resolve({ id: this.id }) : this.open()).thenCall(callback);
 };
 
 
@@ -291,27 +300,126 @@ Job.prototype._changeState = function(state, callback) {
 /*--------------------------------------------*/
 
 /**
- * Batch (extends RecordStream implements Sendable)
+ * Batch (extends RecordStream)
  *
  * @protected
  * @class Bulk~Batch
- * @extends {RecordStream}
+ * @extends {stream.Writable}
  * @implements {Promise.<Array.<RecordResult>>}
  * @param {Bulk~Job} job - Bulk job object
  * @param {String} [batchId] - Batch ID (if already available)
  */
 var Batch = function(job, batchId) {
-  Batch.super_.apply(this);
-  this.sendable = true;
+  Batch.super_.call(this, { objectMode: true });
   this.job = job;
   this.id = batchId;
   this._bulk = job._bulk;
-  this._csvStream = new RecordStream.CSVStream({ nullValue: '#N/A' });
-  this._csvStream.stream().pipe(this.stream());
   this._deferred = Promise.defer();
+  this._setupDataStreams();
 };
 
-inherits(Batch, RecordStream);
+inherits(Batch, stream.Writable);
+
+
+/**
+ * @private
+ */
+Batch.prototype._setupDataStreams = function() {
+  var batch = this;
+  var converterOptions = { nullValue : '#N/A' };
+  this._uploadStream = new RecordStream.Serializable();
+  this._uploadDataStream = this._uploadStream.stream('csv', converterOptions);
+  this._downloadStream = new RecordStream.Parsable();
+  this._downloadDataStream = this._downloadStream.stream('csv', converterOptions);
+
+  this.on('finish', function() {
+    batch._uploadStream.end();
+  });
+  this._uploadDataStream.once('readable', function() {
+    batch.job.open().then(function() {
+      // pipe upload data to batch API request stream
+      batch._uploadDataStream.pipe(batch._createRequestStream());
+    });
+  });
+
+  // duplex data stream, opened access to API programmers by Batch#stream()
+  var dataStream = this._dataStream = new Duplex();
+  dataStream._write = function(data, enc, cb) {
+    batch._uploadDataStream.write(data, enc, cb);
+  };
+  dataStream.on('finish', function() {
+    batch._uploadDataStream.end();
+  });
+
+  this._downloadDataStream.on('readable', function() {
+    dataStream.read(0);
+  });
+  this._downloadDataStream.on('end', function() {
+    dataStream.push(null);
+  });
+  dataStream._read = function(size) {
+    var chunk;
+    while ((chunk = batch._downloadDataStream.read()) !== null) {
+      dataStream.push(chunk);
+    }
+  };
+};
+
+/**
+ * Connect batch API and create stream instance of request/response
+ *
+ * @private
+ * @returns {stream.Duplex}
+ */
+Batch.prototype._createRequestStream = function() {
+  var batch = this;
+  var bulk = batch._bulk;
+  var logger = bulk._logger;
+
+  return bulk._request({
+    method : 'POST',
+    path : "/job/" + batch.job.id + "/batch",
+    headers: {
+      "Content-Type": "text/csv"
+    },
+    responseType: "application/xml"
+  }, function(err, res) {
+    if (err) {
+      batch.emit('error', err);
+    } else {
+      logger.debug(res.batchInfo);
+      batch.id = res.batchInfo.id;
+      batch.emit('queue', res.batchInfo);
+    }
+  }).stream();
+};
+
+/**
+ * Implementation of Writable
+ *
+ * @override
+ * @private
+ */
+Batch.prototype._write = function(record, enc, cb) {
+  record = _.clone(record);
+  if (this.job.operation === "insert") {
+    delete record.Id;
+  } else if (this.job.operation === "delete") {
+    record = { Id: record.Id };
+  }
+  delete record.type;
+  delete record.attributes;
+  this._uploadStream.write(record, enc, cb);
+};
+
+/**
+ * Returns duplex stream which accepts CSV data input and batch result output
+ *
+ * @returns {stream.Duplex}
+ */
+Batch.prototype.stream = function() {
+  return this._dataStream;
+};
 
 /**
  * Execute batch operation
@@ -350,18 +458,17 @@ Batch.prototype.execute = function(input, callback) {
     rdeferred.reject(err);
   });
 
-  if (input instanceof Stream) {
-    input.pipe(this.stream());
+  if (_.isObject(input) && _.isFunction(input.pipe)) { // if input has stream.Readable interface
+    input.pipe(this._dataStream);
   } else {
     var data;
     if (_.isArray(input)) {
-      _.forEach(input, function(record) { self.send(record); });
+      _.forEach(input, function(record) { self.write(record); });
       self.end();
     } else if (_.isString(input)){
       data = input;
-      var stream = this.stream();
-      stream.write(data);
-      stream.end();
+      this._dataStream.write(data, 'utf8');
+      this._dataStream.end();
     }
   }
 
@@ -400,32 +507,6 @@ Batch.prototype.thenCall = function(callback) {
     });
   }
   return this;
-};
-
-/**
- * @override
- */
-Batch.prototype.send = function(record) {
-  record = _.clone(record);
-  if (this.job.operation === "insert") {
-    delete record.Id;
-  } else if (this.job.operation === "delete") {
-    record = { Id: record.Id };
-  }
-  delete record.type;
-  delete record.attributes;
-  return this._csvStream.send(record);
-};
-
-/**
- * @override
- */
-Batch.prototype.end = function(record) {
-  if (record) {
-    this.send(record);
-  }
-  this.sendable = false;
-  this._csvStream.end();
 };
 
 /**
@@ -564,7 +645,7 @@ Batch.prototype.retrieve = function(callback) {
     }
     self.emit('response', results);
     return results;
-  }, function(err) {
+  }).catch(function(err) {
     self.emit('error', err);
     throw err;
   }).thenCall(callback);
@@ -573,102 +654,21 @@ Batch.prototype.retrieve = function(callback) {
 /**
  * Fetch query result as a record stream
  * @param {String} resultId - Result id
- * @returns {RecordStream.CSVStream} - Record stream, convertible to CSV data stream
+ * @returns {RecordStream} - Record stream, convertible to CSV data stream
  */
 Batch.prototype.result = function(resultId) {
   var jobId = this.job.id;
   var batchId = this.id;
-
   if (!jobId || !batchId) {
     throw new Error("Batch not started.");
   }
-  return new RecordStream.CSVStream(null,
-    this._bulk._request({
-      method : 'GET',
-      path : "/job/" + jobId + "/batch/" + batchId + "/result/" + resultId
-    }).stream()
-  );
-};
-
-/**
- * @override
- */
-Batch.prototype.stream = function() {
-  if (!this._stream) {
-    this._stream = new BatchStream(this);
-  }
-  return this._stream;
-};
-
-/*--------------------------------------------*/
-
-/**
- * Batch uploading stream (extends WritableStream)
- *
- * @private
- * @class Bulk~BatchStream
- * @extends stream.Stream
- */
-var BatchStream = function(batch) {
-  BatchStream.super_.call(this);
-  this.batch = batch;
-  this.writable = true;
-};
-
-inherits(BatchStream, Stream);
-
-/**
- * @private
- */
-BatchStream.prototype._getRequestStream = function() {
-  var batch = this.batch;
-  var bulk = batch._bulk;
-  var logger = bulk._logger;
-
-  if (!this._reqStream) {
-    this._reqStream = bulk._request({
-      method : 'POST',
-      path : "/job/" + batch.job.id + "/batch",
-      headers: {
-        "Content-Type": "text/csv"
-      },
-      responseType: "application/xml"
-    }, function(err, res) {
-      if (err) {
-        batch.emit('error', err);
-      } else {
-        logger.debug(res.batchInfo);
-        batch.id = res.batchInfo.id;
-        batch.emit('queue', res.batchInfo);
-      }
-    }).stream();
-  }
-  return this._reqStream;
-};
-
-/**
- * @override
- */
-BatchStream.prototype.write = function(data) {
-  var self = this;
-  this.batch.job.open().then(function() {
-    self._getRequestStream().write(data);
-  }, function(err) {
-    self.emit('error', err);
-  });
-};
-
-/**
- * @override
- */
-BatchStream.prototype.end = function(data) {
-  var self = this;
-  this.writable = false;
-  this.batch.job.open().then(function() {
-    self._getRequestStream().end(data);
-  }, function(err) {
-    self.emit('error', err);
-  });
+  var resultStream = new RecordStream.Parsable();
+  var resultDataStream = resultStream.stream('csv');
+  var reqStream = this._bulk._request({
+    method : 'GET',
+    path : "/job/" + jobId + "/batch/" + batchId + "/result/" + resultId
+  }).stream().pipe(resultDataStream);
+  return resultStream;
 };
 
 /*--------------------------------------------*/
@@ -715,8 +715,8 @@ var Bulk = function(conn) {
   this._logger = conn._logger;
 };
 
-/** 
- * Polling interval in milliseconds 
+/**
+ * Polling interval in milliseconds
  * @type {Number}
  */
 Bulk.prototype.pollInterval = 1000;
@@ -746,6 +746,7 @@ Bulk.prototype._request = function(request, callback) {
  * @param {String} operation - Bulk load operation ('insert', 'update', 'upsert', 'delete', or 'hardDelete')
  * @param {Object} [options] - Options for bulk loading operation
  * @param {String} [options.extIdField] - External ID field name (used when upsert operation).
+ * @param {String} [options.concurrencyMode] - 'Serial' or 'Parallel'. Defaults to Parallel.
  * @param {Array.<Record>|stream.Stream|String} [input] - Input source for bulkload. Accepts array of records, CSV string, and CSV data input stream in insert/update/upsert/delete/hardDelete operation, SOQL string in query operation.
  * @param {Callback.<Array.<RecordResult>|Array.<Bulk~BatchResultInfo>>} [callback] - Callback function
  * @returns {Bulk~Batch}
@@ -755,7 +756,7 @@ Bulk.prototype.load = function(type, operation, options, input, callback) {
   if (!type || !operation) {
     throw new Error("Insufficient arguments. At least, 'type' and 'operation' are required.");
   }
-  if (operation.toLowerCase() !== 'upsert') { // options is only for upsert operation
+  if (!_.isObject(options) || options.constructor !== Object) { // when options is not plain hash object, it is omitted
     callback = input;
     input = options;
     options = null;
@@ -786,7 +787,7 @@ Bulk.prototype.load = function(type, operation, options, input, callback) {
  * Execute bulk query and get record stream
  *
  * @param {String} soql - SOQL to execute in bulk job
- * @returns {RecordStream.CSVStream} - Record stream, convertible to CSV data stream
+ * @returns {RecordStream.Parsable} - Record stream, convertible to CSV data stream
  */
 Bulk.prototype.query = function(soql) {
   var m = soql.replace(/\([\s\S]+\)/g, '').match(/FROM\s+(\w+)/i);
@@ -795,15 +796,18 @@ Bulk.prototype.query = function(soql) {
   }
   var type = m[1];
   var self = this;
-  var rstream = new RecordStream.CSVStream();
+  var recordStream = new RecordStream.Parsable();
+  var dataStream = recordStream.stream('csv');
   this.load(type, "query", soql).then(function(results) {
     // Ideally, it should merge result files into one stream.
     // Currently only first batch result is the target (mostly enough).
     var r = results[0];
     var result = self.job(r.jobId).batch(r.batchId).result(r.id);
-    result.stream().pipe(rstream.stream());
+    result.stream().pipe(dataStream);
+  }).catch(function(err) {
+    recordStream.emit('error', err);
   });
-  return rstream;
+  return recordStream;
 };
 
 
@@ -841,37 +845,70 @@ module.exports = Bulk;
 var process = module.exports = {};
 var queue = [];
 var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
 
 function drainQueue() {
     if (draining) {
         return;
     }
+    var timeout = setTimeout(cleanUpNextTick);
     draining = true;
-    var currentQueue;
+
     var len = queue.length;
     while(len) {
         currentQueue = queue;
         queue = [];
-        var i = -1;
-        while (++i < len) {
-            currentQueue[i]();
+        while (++queueIndex < len) {
+            currentQueue[queueIndex].run();
         }
+        queueIndex = -1;
         len = queue.length;
     }
+    currentQueue = null;
     draining = false;
+    clearTimeout(timeout);
 }
+
 process.nextTick = function (fun) {
-    queue.push(fun);
-    if (!draining) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
         setTimeout(drainQueue, 0);
     }
 };
 
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
 process.title = 'browser';
 process.browser = true;
 process.env = {};
 process.argv = [];
 process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
 
 function noop() {}
 
