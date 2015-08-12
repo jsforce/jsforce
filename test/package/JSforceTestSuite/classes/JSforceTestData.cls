@@ -12,7 +12,7 @@ global class JSforceTestData {
             String testUsername = setting.ExecUsername__c;
             String targetTableNames = setting.TargetTableNames__c;
             if (targetTableNames == null) {
-              targetTableNames = 'Account,UpsertTable__c';
+              targetTableNames = 'Lead,Opportunity,Contact,Account,UpsertTable__c';
             }
             String[] tableNames = targetTableNames.split(',');
             for (String table : tableNames) {
