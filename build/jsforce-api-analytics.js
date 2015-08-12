@@ -4,6 +4,8 @@
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
 
+'use strict';
+
 var _        = jsforce.require('underscore'),
     Promise  = jsforce.require('./promise');
 
@@ -60,6 +62,19 @@ Report.prototype.describe = function(callback) {
 };
 
 /**
+ * Explain plan for executing report
+ *
+ * @method Analytics~Report#explain
+ * @param {Callback.<ExplainInfo>} [callback] - Callback function
+ * @returns {Promise.<ExplainInfo>}
+ */
+Report.prototype.explain = function(callback) {
+  var url = "/query/?explain=" + this.id;
+  return this._conn.request(url).thenCall(callback);
+};
+
+
+/**
  * Run report synchronously
  *
  * @method Analytics~Report#execute
@@ -69,8 +84,8 @@ Report.prototype.describe = function(callback) {
  * @param {Callback.<Analytics~ReportResult>} [callback] - Callback function
  * @returns {Promise.<Analytics~ReportResult>}
  */
-Report.prototype.run = 
-Report.prototype.exec = 
+Report.prototype.run =
+Report.prototype.exec =
 Report.prototype.execute = function(options, callback) {
   options = options || {};
   if (_.isFunction(options)) {
@@ -78,9 +93,7 @@ Report.prototype.execute = function(options, callback) {
     options = {};
   }
   var url = [ this._conn._baseUrl(), "analytics", "reports", this.id ].join('/');
-  if (options.details) {
-    url += "?includeDetails=true";
-  }
+  url += "?includeDetails=" + (options.details ? "true" : "false");
   var params = { method : options.metadata ? 'POST' : 'GET', url : url };
   if (options.metadata) {
     params.headers = { "Content-Type" : "application/json" };
@@ -88,6 +101,7 @@ Report.prototype.execute = function(options, callback) {
   }
   return this._conn.request(params).thenCall(callback);
 };
+
 
 /**
  * Run report asynchronously

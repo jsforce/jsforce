@@ -2,8 +2,8 @@
 var TestEnv = require('./helper/testenv'),
     assert = TestEnv.assert;
 
-var _      = require('underscore'),
-    jsforce = require('../lib/jsforce'),
+var _ = require('underscore'),
+    sf = require('../lib/jsforce'),
     config = require('./config/salesforce');
 
 var testEnv = new TestEnv(config);
@@ -83,7 +83,7 @@ describe("soap", function() {
     }];
 
     before(function(done) {
-      jsforce.Promise.all([
+      sf.Promise.all([
         conn.sobject('Lead').create(leads),
         conn.metadata.read('CustomField', 'Lead.Status')
       ]).then(function(rrets) {

@@ -4,8 +4,11 @@
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
 
+'use strict';
+
 var events = jsforce.require('events'),
     inherits = jsforce.require('inherits'),
+    _ = jsforce.require('underscore'),
     Faye   = require('faye');
 
 /**
@@ -15,7 +18,7 @@ var events = jsforce.require('events'),
  * @param {Streaming} steaming - Streaming API object
  * @param {String} name - Topic name
  */
-var Topic = module.exports = function(streaming, name) {
+var Topic = function(streaming, name) {
   this._streaming = streaming;
   this.name = name;
 };
@@ -31,11 +34,10 @@ var Topic = module.exports = function(streaming, name) {
  *
  * @method Streaming~Topic#subscribe
  * @param {Callback.<Streaming~StreamingMesasge>} listener - Streaming message listener
- * @returns {Streaming~Topic}
+ * @returns {Subscription} - Faye subscription object
  */
 Topic.prototype.subscribe = function(listener) {
-  this._streaming.subscribe(this.name, listener);
-  return this;
+  return this._streaming.subscribe(this.name, listener);
 };
 
 /**
@@ -48,6 +50,51 @@ Topic.prototype.subscribe = function(listener) {
 Topic.prototype.unsubscribe = function(listener) {
   this._streaming.unsubscribe(this.name, listener);
   return this;
+};
+
+/*--------------------------------------------*/
+
+/**
+ * Streaming API Generic Streaming Channel
+ *
+ * @class Streaming~Channel
+ * @param {Streaming} steaming - Streaming API object
+ * @param {String} name - Channel name (starts with "/u/")
+ */
+var Channel = function(streaming, name) {
+  this._streaming = streaming;
+  this._name = name;
+};
+
+/**
+ * Subscribe to hannel
+ *
+ * @param {Callback.<Streaming~StreamingMessage>} listener - Streaming message listener
+ * @returns {Subscription} - Faye subscription object
+ */
+Channel.prototype.subscribe = function(listener) {
+  return this._streaming.subscribe(this._name, listener);
+};
+
+Channel.prototype.unsubscribe = function(listener) {
+  this._streaming.unsubscribe(this._name, listener);
+  return this;
+};
+
+Channel.prototype.push = function(events, callback) {
+  var isArray = _.isArray(events);
+  events = isArray ? events : [ events ];
+  var conn = this._streaming._conn;
+  if (!this._id) {
+    this._id = conn.sobject('StreamingChannel').findOne({ Name: this._name }, 'Id')
+      .then(function(rec) { return rec.Id });
+  }
+  return this._id.then(function(id) {
+    var channelUrl = '/sobjects/StreamingChannel/' + id + '/push';
+    return conn.requestPost(channelUrl, { pushEvents: events });
+  }).then(function(rets) {
+    return isArray ? rets : rets[0];
+  }).thenCall(callback);
 };
 
 /*--------------------------------------------*/
@@ -81,17 +128,26 @@ Streaming.prototype._createClient = function() {
  */
 Streaming.prototype.topic = function(name) {
   this._topics = this._topics || {};
-  var topic = this._topics[name] = 
+  var topic = this._topics[name] =
     this._topics[name] || new Topic(this, name);
   return topic;
 };
 
 /**
- * Subscribe topic
+ * Get Channel for Id
+ * @param {String} channelId - Id of StreamingChannel object
+ * @returns {Streaming~Channel}
+ */
+Streaming.prototype.channel = function(channelId) {
+  return new Channel(this, channelId);
+};
+
+/**
+ * Subscribe topic/channel
  *
  * @param {String} name - Topic name
  * @param {Callback.<Streaming~StreamingMessage>} listener - Streaming message listener
- * @returns {Streaming}
+ * @returns {Subscription} - Faye subscription object
  */
 Streaming.prototype.subscribe = function(name, listener) {
   if (!this._fayeClient) {
@@ -100,8 +156,8 @@ Streaming.prototype.subscribe = function(name, listener) {
     }
     this._fayeClient = this._createClient();
   }
-  this._fayeClient.subscribe("/topic/"+name, listener);
-  return this;
+  var channelName = name.indexOf('/') === 0 ? name : '/topic/' + name;
+  return this._fayeClient.subscribe(channelName, listener);
 };
 
 /**
@@ -113,20 +169,113 @@ Streaming.prototype.subscribe = function(name, listener) {
  */
 Streaming.prototype.unsubscribe = function(name, listener) {
   if (this._fayeClient) {
-    this._fayeClient.unsubscribe("/topic/"+name, listener);
+    var channelName = name.indexOf('/') === 0 ? name : '/topic/' + name;
+    this._fayeClient.unsubscribe(channelName, listener);
   }
   return this;
 };
 
 module.exports = Streaming;
 
-},{"faye":2}],2:[function(require,module,exports){
+},{"faye":3}],2:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = setTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            currentQueue[queueIndex].run();
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    clearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        setTimeout(drainQueue, 0);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+},{}],3:[function(require,module,exports){
 (function (process,global){
 (function() {
 'use strict';
 
 var Faye = {
-  VERSION:          '1.1.1',
+  VERSION:          '1.1.2',
 
   BAYEUX_VERSION:   '1.0',
   ID_LENGTH:        160,
@@ -1817,8 +1966,8 @@ Faye.Transport = Faye.extend(Faye.Class({
     if (!this.batching) return Faye.Promise.fulfilled(this.request([message]));
 
     this._outbox.push(message);
-    this._flushLargeBatch();
     this._promise = this._promise || new Faye.Promise();
+    this._flushLargeBatch();
 
     if (message.channel === Faye.Channel.HANDSHAKE) {
       this.addTimeout('publish', 0.01, this._flush, this);
@@ -2492,7 +2641,7 @@ Faye.Transport.WebSocket = Faye.extend(Faye.Class(Faye.Transport, {
     var promise = new Faye.Promise();
 
     this.callback(function(socket) {
-      if (!socket) return;
+      if (!socket || socket.readyState !== 1) return;
       socket.send(Faye.toJSON(messages));
       Faye.Promise.fulfill(promise, socket);
     }, this);
@@ -2769,6 +2918,7 @@ Faye.Transport.CORS = Faye.extend(Faye.Class(Faye.Transport, {
   request: function(messages) {
     var xhrClass = Faye.ENV.XDomainRequest ? XDomainRequest : XMLHttpRequest,
         xhr      = new xhrClass(),
+        id       = ++Faye.Transport.CORS._id,
         headers  = this._dispatcher.headers,
         self     = this,
         key;
@@ -2785,6 +2935,7 @@ Faye.Transport.CORS = Faye.extend(Faye.Class(Faye.Transport, {
 
     var cleanUp = function() {
       if (!xhr) return false;
+      Faye.Transport.CORS._pending.remove(id);
       xhr.onload = xhr.onerror = xhr.ontimeout = xhr.onprogress = null;
       xhr = null;
     };
@@ -2809,10 +2960,17 @@ Faye.Transport.CORS = Faye.extend(Faye.Class(Faye.Transport, {
     };
 
     xhr.onprogress = function() {};
+
+    if (xhrClass === Faye.ENV.XDomainRequest)
+      Faye.Transport.CORS._pending.add({id: id, xhr: xhr});
+
     xhr.send(this.encode(messages));
     return xhr;
   }
 }), {
+  _id:      0,
+  _pending: new Faye.Set(),
+
   isUsable: function(dispatcher, endpoint, callback, context) {
     if (Faye.URI.isSameOrigin(endpoint))
       return callback.call(context, false);
@@ -2888,64 +3046,5 @@ Faye.Transport.register('callback-polling', Faye.Transport.JSONP);
 
 })();
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":3}],3:[function(require,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-var queue = [];
-var draining = false;
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    draining = true;
-    var currentQueue;
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        var i = -1;
-        while (++i < len) {
-            currentQueue[i]();
-        }
-        len = queue.length;
-    }
-    draining = false;
-}
-process.nextTick = function (fun) {
-    queue.push(fun);
-    if (!draining) {
-        setTimeout(drainQueue, 0);
-    }
-};
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-},{}]},{},[1])(1)
+},{"_process":2}]},{},[1])(1)
 });

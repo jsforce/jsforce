@@ -4,6 +4,8 @@
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
 
+'use strict';
+
 var inherits = jsforce.require('inherits'),
     _       = jsforce.require('underscore'),
     Promise = jsforce.require('./promise');

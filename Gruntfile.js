@@ -194,7 +194,7 @@ module.exports = function(grunt) {
     "cache", "connection", "csv", "date", "http-api", "jsforce", "logger", "oauth2", "process", "promise", "query", "quick-action",
     "record-stream", "record", "sobject", "soql-builder", "transport"
   ];
-  var apiModules = [ "analytics", "apex", "bulk", "chatter", "metadata", "streaming", "tooling" ];
+  var apiModules = [ "analytics", "apex", "bulk", "chatter", "metadata", "soap", "streaming", "tooling" ];
 
   apiModules.forEach(function(apiModule) {
     var apiModuleClass = apiModule[0].toUpperCase() + apiModule.substring(1);
