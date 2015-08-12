@@ -1,3 +1,25 @@
+## 1.5.0 (Aug 12, 2015)
+* Change API version to 34.0
+* Add version info in jsforce object root (#254)
+* Change to accept options in all type of bulkload operation (#235)
+* Fix to bubble up errors in bulk API execution (#231)
+* Support explain execution plan in report and list view (#156)
+* Support Force.com SOAP API method interface (#201)
+* Streaming API: Generic Streaming Support (#157)
+* Streaming API: Change to return subscription object in topic#subscribe() (#232)
+* Tooling API: Add runTestsAsynchronous support (#191)
+* Open REPL's connection registry to use in custom batch scripts (#190)
+* Change to use stream3 for better stability (#176)
+* Change Promise implementation (#202)
+* Fix error in deploying metadata on Node 0.12 (#246)
+* Refine testing environment (#244)
+
+
+## 1.4.1 (Feb 25, 2015)
+* Fix error in bulk API hard delete (#167) 
+* Fix version num in bower.json
+
+
 ## 1.4.0 (Feb 17, 2015)
 * Support explaining query plan for SOQL query
 * Support system limits REST API endpoint
