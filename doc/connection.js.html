@@ -30,6 +30,9 @@
  * @file Connection class to keep the API session information and manage requests
  * @author Shinichi Tomita &lt;shinichi.tomita@gmail.com>
  */
+
+'use strict';
+
 var events  = require('events'),
     inherits = require('inherits'),
     _       = require('underscore')._,
@@ -46,7 +49,7 @@ var events  = require('events'),
 var defaults = {
   loginUrl: "https://login.salesforce.com",
   instanceUrl: "",
-  version: "33.0"
+  version: "34.0"
 };
 
 /**
@@ -77,6 +80,7 @@ var Connection = module.exports = function(options) {
       Chatter = require('./api/chatter'),
       Apex    = require('./api/apex'),
       Metadata = require('./api/metadata'),
+      SoapApi = require('./api/soap'),
       Process = require('./process');
 
   options = options || {};
@@ -143,11 +147,20 @@ var Connection = module.exports = function(options) {
   }
   /**
    * Metadata API object
-   * @member {Metadata} Connection#metadata 
+   * @member {Metadata} Connection#metadata
    */
   if (Metadata) {
     this.metadata = new Metadata(this);
   }
+  
+  /**
+   * SOAP API object
+   * @member {SoapApi} Connection#soap
+   */
+  if (SoapApi) {
+    this.soap = new SoapApi(this);
+  }
+  
   /**
    * Apex REST API object
    * @member {Apex} Connection#apex
@@ -506,7 +519,7 @@ function parseIdUrl(idUrl) {
 
 /**
  * Execute query by using SOQL
- * 
+ *
  * @param {String} soql - SOQL string
  * @param {Callback.&lt;QueryResult>} [callback] - Callback function
  * @returns {Query.&lt;QueryResult>}
@@ -521,7 +534,7 @@ Connection.prototype.query = function(soql, callback) {
 
 /**
  * Execute query by using SOQL, including deleted records
- * 
+ *
  * @param {String} soql - SOQL string
  * @param {Callback.&lt;QueryResult>} [callback] - Callback function
  * @returns {Query.&lt;QueryResult>}
@@ -537,7 +550,7 @@ Connection.prototype.queryAll = function(soql, callback) {
 
 /**
  * Query next record set by using query locator
- * 
+ *
  * @param {String} locator - Next record set locator
  * @param {Callback.&lt;QueryResult>} [callback] - Callback function
  * @returns {Query.&lt;QueryResult>}
@@ -554,7 +567,7 @@ Connection.prototype.queryMore = function(locator, callback) {
  * Retrieve specified records
  *
  * @param {String} type - SObject Type
- * @param {String|Array.&lt;String>} ids - A record ID or array of record IDs 
+ * @param {String|Array.&lt;String>} ids - A record ID or array of record IDs
  * @param {Object} [options] - Options for rest api.
  * @param {Callback.&lt;Record|Array.&lt;Record>>} [callback] - Callback function
  * @returns {Promise.&lt;Record|Array.&lt;Record>>}
@@ -572,6 +585,7 @@ Connection.prototype.retrieve = function(type, ids, options, callback) {
   }
   return Promise.all(
     _.map(ids, function(id) {
+      if (!id) { return Promise.reject(new Error('Invalid record ID. Specify valid record ID value')).thenCall(callback); }
       var url = [ self._baseUrl(), "sobjects", type, id ].join('/');
       return self.request(url);
     })
@@ -763,7 +777,7 @@ Connection.prototype.upsert = function(type, records, extIdField, options, callb
         body : JSON.stringify(record),
         headers : _.defaults(options.headers || {}, {
           "Content-Type" : "application/json"
-        }) 
+        })
       }, {
         noContentResponse: { success : true, errors : [] }
       });
@@ -835,7 +849,7 @@ Connection.prototype.destroy = function(type, ids, options, callback) {
 
 /**
  * Execute search by SOSL
- * 
+ *
  * @param {String} sosl - SOSL string
  * @param {Callback.&lt;Array.&lt;RecordResult>>} [callback] - Callback function
  * @returns {Promise.&lt;Array.&lt;RecordResult>>}
@@ -866,7 +880,7 @@ Connection.prototype.search = function(sosl, callback) {
  * @param {Callback.&lt;DescribeSObjectResult>} [callback] - Callback function
  * @returns {Promise.&lt;DescribeSObjectResult>}
  */
-Connection.prototype.describe = 
+Connection.prototype.describe =
 Connection.prototype.describeSObject = function(type, callback) {
   var url = [ this._baseUrl(), "sobjects", type, "describe" ].join('/');
   return this.request(url).thenCall(callback);
@@ -898,7 +912,7 @@ Connection.prototype.describeGlobal = function(callback) {
  */
 Connection.prototype.sobject = function(type) {
   this.sobjects = this.sobjects || {};
-  var sobject = this.sobjects[type] = 
+  var sobject = this.sobjects[type] =
     this.sobjects[type] || new SObject(this, type);
   return sobject;
 };
@@ -912,8 +926,8 @@ Connection.prototype.sobject = function(type) {
 Connection.prototype.identity = function(callback) {
   var self = this;
   var idUrl = this.userInfo && this.userInfo.url;
-  return new Promise(
-    idUrl ? 
+  return Promise.resolve(
+    idUrl ?
     { identity: idUrl } :
     this.request(this._baseUrl())
   ).then(function(res) {
@@ -967,7 +981,7 @@ Connection.prototype.authorize = function(code, callback) {
 
 /**
  * Login to Salesforce
- * 
+ *
  * @param {String} username - Salesforce username
  * @param {String} password - Salesforce password (and security token, if required)
  * @param {Callback.&lt;UserInfo>} [callback] - Callback function
@@ -1083,8 +1097,8 @@ Connection.prototype.loginBySoap = function(username, password, callback) {
       organizationId: orgId,
       url: idUrl
     };
-    self.initialize({ 
-      serverUrl: serverUrl.split('/').slice(0, 3).join('/'), 
+    self.initialize({
+      serverUrl: serverUrl.split('/').slice(0, 3).join('/'),
       sessionId: sessionId,
       userInfo: userInfo
     });
@@ -1187,7 +1201,7 @@ Connection.prototype.logoutBySoap = function(callback) {
 
 /**
  * List recently viewed records
- * 
+ *
  * @param {String} [type] - SObject type
  * @param {Number} [limit] - Limit num to fetch
  * @param {Callback.&lt;Array.&lt;RecordResult>>} [callback] - Callback function
@@ -1211,7 +1225,7 @@ Connection.prototype.recent = function(type, limit, callback) {
     }).thenCall(callback);
   } else {
     url = this._baseUrl() + "/recent";
-    if (limit) { 
+    if (limit) {
       url += "?limit=" + limit;
     }
     return this.request(url).thenCall(callback);
@@ -1221,7 +1235,7 @@ Connection.prototype.recent = function(type, limit, callback) {
 
 /**
  * @typedef {Object} UpdatedRecordsInfo
- * @prop {String} latestDateCovered - The timestamp of the last date covered. 
+ * @prop {String} latestDateCovered - The timestamp of the last date covered.
  * @prop {Array.&lt;String>} ids - Updated record IDs.
  */
 
@@ -1361,7 +1375,7 @@ Connection.prototype.theme = function(callback) {
 };
 
 /**
- * Returns all registered global quick actions 
+ * Returns all registered global quick actions
  *
  * @param {Callback.&lt;Array.&lt;QuickAction~QuickActionInfo>>} [callback] - Callback function
  * @returns {Promise.&lt;Array.&lt;QuickAction~QuickActionInfo>>}
@@ -1389,13 +1403,13 @@ Connection.prototype.quickAction = function(actionName) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="HttpApi.html">HttpApi</a></li><li><a href="ListView.html">ListView</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Process.html">Process</a></li><li><a href="Process-ApprovalProcess.html">ApprovalProcess</a></li><li><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></li><li><a href="Process-ProcessRule.html">ProcessRule</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="QuickAction.html">QuickAction</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SessionRefreshDelegate">SessionRefreshDelegate</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="HttpApi.html">HttpApi</a></li><li><a href="ListView.html">ListView</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Process.html">Process</a></li><li><a href="Process-ApprovalProcess.html">ApprovalProcess</a></li><li><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></li><li><a href="Process-ProcessRule.html">ProcessRule</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="QuickAction.html">QuickAction</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.Parsable.html">Parsable</a></li><li><a href="RecordStream.Serializable.html">Serializable</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SoapApi.html">SoapApi</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Channel.html">Channel</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SessionRefreshDelegate">SessionRefreshDelegate</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Feb 17 2015 01:39:27 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Sun Aug 16 2015 15:25:57 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>

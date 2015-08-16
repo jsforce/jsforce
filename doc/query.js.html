@@ -27,24 +27,27 @@
         <article>
             <pre class="prettyprint source"><code>/*global process*/
 /**
- * @file Manages query for records in Salesforce 
+ * @file Manages query for records in Salesforce
  * @author Shinichi Tomita &lt;shinichi.tomita@gmail.com>
  */
+
+'use strict';
+
 var inherits = require('inherits'),
     events = require('events'),
-    _      = require('underscore')._,
-    Q      = require('q'),
+    stream = require('readable-stream'),
+    _      = require('underscore'),
     Promise = require('./promise'),
     SfDate = require("./date"),
     SOQLBuilder = require("./soql-builder"),
     RecordStream = require("./record-stream");
 
 /**
- * Query (extends RecordStream implements Receivable)
+ * Query
  *
  * @protected
  * @class
- * @extends RecordStream
+ * @extends {stream.Readable}
  * @implements Promise.&lt;T>
  * @template T
  * @param {Connection} conn - Connection object
@@ -52,8 +55,7 @@ var inherits = require('inherits'),
  * @param {String} [locator] - Locator string to fetch next record set
  */
 var Query = module.exports = function(conn, config, locator) {
-  Query.super_.apply(this);
-  this.receivable = true;
+  Query.super_.call(this, { objectMode: true });
 
   this._conn = conn;
   if (config) {
@@ -71,18 +73,21 @@ var Query = module.exports = function(conn, config, locator) {
     locator = locator.split("/").pop();
   }
   this._locator = locator;
-  this._buffer = [];
-  this._paused = true;
-  this._closed = false;
 
-  this._deferred = Q.defer();
+  this._executed = false;
+  this._finished = false;
+  this._chaining = false;
+
+  this._deferred = Promise.defer();
+
+  var self = this;
 };
 
-inherits(Query, RecordStream);
+inherits(Query, stream.Readable);
 
 /**
  * Select fields to include in the returning result
- * 
+ *
  * @param {Object|Array.&lt;String>|String} fields - Fields to fetch. Format can be in JSON object (MongoDB-like), array of field names, or comma-separated field names.
  * @returns {Query.&lt;T>}
  */
@@ -286,52 +291,6 @@ Query.prototype.setResponseTarget = function(responseTarget) {
 
 
 /**
- * Pause record fetch
- * @override
- */
-Query.prototype.pause = function() {
-  this._paused = true;
-};
-
-/**
- * Resume record fetch and query execution
- * @override
- */
-Query.prototype.resume = function() {
-  if (this._closed) {
-    throw new Error("resuming already closed stream");
-  }
-  if (!this._paused) { 
-    return;
-  } // do nothing if not paused
-  this._paused = false;
-  while (!this._paused && this._buffer.length > 0) {
-    if (this.totalFetched >= this._maxFetch) {
-      this.close();
-      return;
-    }
-    var record = this._buffer.shift();
-    this.emit('record', record, this.totalFetched++, this);
-  }
-  if (!this._paused) {
-    if (this._finished) {
-      this.close();
-    } else {
-      this.execute({ autoFetch : true });
-    }
-  }
-};
-
-/**
- * Closing query. No operation for query is allowed after closing.
- */
-Query.prototype.close = function() {
-  this.pause();
-  this._closed = true;
-  this.emit('end', this);
-};
-
-/**
  * Synonym of Query#execute()
  *
  * @method Query#run
@@ -342,7 +301,7 @@ Query.prototype.close = function() {
  * @param {Callback.&lt;T>} [callback] - Callback function
  * @returns {Query.&lt;T>}
  */
-Query.prototype.run = 
+Query.prototype.run =
 /**
  * Synonym of Query#execute()
  *
@@ -354,7 +313,7 @@ Query.prototype.run =
  * @param {Callback.&lt;T>} [callback] - Callback function
  * @returns {Query.&lt;T>}
  */
-Query.prototype.exec = 
+Query.prototype.exec =
 /**
  * Execute query and fetch records from server.
  *
@@ -371,11 +330,15 @@ Query.prototype.execute = function(options, callback) {
   var logger = this._conn._logger;
   var deferred = this._deferred;
 
-  if (this._closed) {
+  if (this._executed) {
+    deferred.reject(new Error("re-executing already executed query"));
+    return this;
+  }
+
+  if (this._finished) {
     deferred.reject(new Error("executing already closed query"));
     return this;
   }
-  this._paused = false; // mark pause flag to false
 
   if (typeof options === "function") {
     callback = options;
@@ -419,7 +382,9 @@ Query.prototype.execute = function(options, callback) {
     if (options.responseTarget === ResponseTargets.Records && (self._chaining || callback)) {
       logger.debug('--- collecting all fetched records ---');
       var records = [];
-      var onRecord = function(record) { records.push(record); };
+      var onRecord = function(record) {
+        records.push(record);
+      };
       self.on('record', onRecord);
       self.once('end', function() {
         self.removeListener('record', onRecord);
@@ -427,6 +392,9 @@ Query.prototype.execute = function(options, callback) {
       });
     }
   });
+
+  // flag to prevent re-execution
+  this._executed = true;
 
   // start actual query
   logger.debug('>>> Query start >>>');
@@ -452,7 +420,7 @@ Query.prototype._execute = function(options) {
   var maxFetch = options.maxFetch;
   var scanAll = options.scanAll;
 
-  return new Promise(
+  return Promise.resolve(
     self._locator ?
     self._conn._baseUrl() + "/query/" + self._locator :
     self.toSOQL().then(function(soql) {
@@ -491,26 +459,48 @@ Query.prototype._execute = function(options) {
         break;
       }
       var record = data.records[i];
-      if (self._paused) {
-        self._buffer.push(record);
-      } else {
-        self.emit('record', record, self.totalFetched++, self);
-      }
+      self.push(record);
+      self.emit('record', record, self.totalFetched++, self);
     }
-    self._finished = self._finished || data.done;
     if (data.nextRecordsUrl) {
       self._locator = data.nextRecordsUrl.split('/').pop();
     }
-    if (autoFetch && !self._finished) {
-      if (!self._paused) {
-        return self._execute(options);
-      }
+    self._finished = self._finished || data.done || !autoFetch;
+    if (self._finished) {
+      self.push(null);
     } else {
-      if (!self._paused) { self.close(); }
+      self._execute(options);
     }
     return res;
   });
 };
+
+/**
+ * Readable stream implementation
+ *
+ * @override
+ * @private
+ */
+Query.prototype._read = function(size) {
+  if (!this._finished && !this._executed) {
+    this.execute({ autoFetch: true });
+  }
+};
+
+/** @override **/
+Query.prototype.on = function(e, fn) {
+  if (e === 'record') {
+    var self = this;
+    this.on('readable', function() {
+      while(self.read() !== null) {} // discard buffered records
+    });
+  }
+  return Query.super_.prototype.on.call(this, e, fn);
+};
+
+/** @override **/
+Query.prototype.addListener = Query.prototype.on;
+
 
 /**
  * @private
@@ -528,7 +518,7 @@ Query.prototype._expandFields = function() {
   logger.debug('_expandFields: table = ' + table + ', fields = ' + fields.join(', '));
 
   return Promise.all([
-    new Promise(self._parent ? findRelationTable(table) : table)
+    Promise.resolve(self._parent ? findRelationTable(table) : table)
       .then(function(table) {
         return Promise.all(
           _.map(fields, function(field) { return expandAsteriskField(table, field); })
@@ -591,7 +581,7 @@ Query.prototype._expandFields = function() {
           return _.map(sobject.fields, function(f) { return f.name; });
         }
       }) :
-      new Promise([ field ]);
+      Promise.resolve([ field ]);
   }
 };
 
@@ -619,20 +609,36 @@ Query.prototype.explain = function(callback) {
  */
 Query.prototype.toSOQL = function(callback) {
   var self = this;
-  return new Promise(self._soql ||
+  return Promise.resolve(self._soql ||
     self._expandFields().then(function() { return SOQLBuilder.createSOQL(self._config); })
   ).thenCall(callback);
 };
 
 /**
- * Auto start query when pipe() is called.
- * @override
+ * Create data stream of queried records.
+ * Automatically resume query if paused.
+ *
+ * @param {String} [type] - Type of outgoing data format. Currently 'csv' is default value and the only supported.
+ * @param {Object} [options] - Options passed to converter
+ * @returns {stream.Readable}
  */
-Query.prototype.pipe = function() {
-  var dest = RecordStream.prototype.pipe.apply(this, arguments);
-  this.resume();
-  return dest;
-};
+Query.prototype.stream = RecordStream.Serializable.prototype.stream;
+
+/**
+ * Get record stream of queried records applying the given mapping function
+ *
+ * @param {RecordMapFunction} fn - Record mapping function
+ * @returns {RecordStream.Serializable}
+ */
+Query.prototype.map = RecordStream.prototype.map;
+
+/**
+ * Get record stream of queried records, applying the given filter function
+ *
+ * @param {RecordFilterFunction} fn - Record filtering function
+ * @returns {RecordStream.Serializable}
+ */
+Query.prototype.filter = RecordStream.prototype.map;
 
 /**
  * Synonym of Query#destroy()
@@ -727,7 +733,7 @@ Query.prototype.update = function(mapping, type, callback) {
  */
 Query.prototype.then = function(onResolved, onReject) {
   this._chaining = true;
-  if (!this._closed && this._paused) { this.execute(); }
+  if (!this._finished && !this._executed) { this.execute(); }
   return this._deferred.promise.then.apply(this._deferred.promise, arguments);
 };
 
@@ -811,13 +817,13 @@ SubQuery.prototype.execute = function() {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="HttpApi.html">HttpApi</a></li><li><a href="ListView.html">ListView</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Process.html">Process</a></li><li><a href="Process-ApprovalProcess.html">ApprovalProcess</a></li><li><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></li><li><a href="Process-ProcessRule.html">ProcessRule</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="QuickAction.html">QuickAction</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SessionRefreshDelegate">SessionRefreshDelegate</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="HttpApi.html">HttpApi</a></li><li><a href="ListView.html">ListView</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Process.html">Process</a></li><li><a href="Process-ApprovalProcess.html">ApprovalProcess</a></li><li><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></li><li><a href="Process-ProcessRule.html">ProcessRule</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="QuickAction.html">QuickAction</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.Parsable.html">Parsable</a></li><li><a href="RecordStream.Serializable.html">Serializable</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SoapApi.html">SoapApi</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Channel.html">Channel</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SessionRefreshDelegate">SessionRefreshDelegate</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Feb 17 2015 01:39:27 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Sun Aug 16 2015 15:25:57 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>

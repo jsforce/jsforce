@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: cli/registry.js</title>
+    <title>JSDoc: Source: registry/registry.js</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Source: cli/registry.js</h1>
+    <h1 class="page-title">Source: registry/registry.js</h1>
     
     
 
@@ -30,89 +30,71 @@
  * @file Registry for connection information, cached in local file system
  * @author Shinichi Tomita &lt;shinichi.tomita@gmail.com>
  */
-var fs = require('fs'),
-    _  = require('underscore');
 
-var homeDir = process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'];
-var configDir = homeDir + "/.jsforce";
-var configFile = configDir + "/config.json";
+'use strict';
+
+var _  = require('underscore');
+var Connection = require('../connection');
 
 /*  */
-var registryConfig = {};
-try {
-  var data = fs.readFileSync(configFile, 'utf-8');
-  registryConfig = JSON.parse(data);
-} catch(e) {}
+var Registry = function(configFilePath) {
+  this._registryConfig = {};
+};
 
 /**
  * @private
+ * @override
  */
-function saveConfig() {
-  var data = JSON.stringify(registryConfig, null, 4);
-  try {
-    fs.writeFileSync(configFile, data);
-    fs.chmodSync(configFile, "600");
-  } catch(e) {
-    fs.mkdirSync(configDir);
-    fs.chmodSync(configDir, "700");
-    fs.writeFileSync(configFile, data);
-    fs.chmodSync(configFile, "600");
-  }
-}
+Registry.prototype._saveConfig = function() {
+  throw new Error('_saveConfig must be implemented in subclass');
+};
 
-function getClients() {
-  return registryConfig.clients || (registryConfig.clients = {});
-}
+Registry.prototype._getClients = function() {
+  return this._registryConfig.clients || (this._registryConfig.clients = {});
+};
 
-function getConnections() {
-  return registryConfig.connections || (registryConfig.connections = {});
-}
+Registry.prototype._getConnections = function() {
+  return this._registryConfig.connections || (this._registryConfig.connections = {});
+};
 
-function getConnectionNames() {
-  return Object.keys(getConnections());
-}
+Registry.prototype.getConnectionNames = function() {
+  return Object.keys(this._getConnections());
+};
 
-function getConnection(name) {
-  if (!name) { name = registryConfig["default"]; }
-  var connections = getConnections();
+Registry.prototype.getConnection = function(name) {
+  return new Connection(this.getConnectionConfig(name));
+};
+
+Registry.prototype.getConnectionConfig = function(name) {
+  if (!name) { name = this._registryConfig["default"]; }
+  var connections = this._getConnections();
   var connConfig = connections[name];
-  if (connConfig) { 
+  if (connConfig) {
     connConfig = _.clone(connConfig);
     if (connConfig.client) {
-      connConfig.oauth2 = _.clone(getClient(connConfig.client));
+      connConfig.oauth2 = _.clone(this.getClient(connConfig.client));
     }
     delete connConfig.client;
   }
   return connConfig;
-}
+};
 
-function saveConnection(name, connConfig) {
-  var connections = getConnections();
+Registry.prototype.saveConnectionConfig = function(name, connConfig) {
+  var connections = this._getConnections();
   connConfig = _.clone(connConfig);
   if (connConfig.oauth2) {
-    var clientName = findClientName(connConfig.oauth2);
+    var clientName = this._findClientName(connConfig.oauth2);
     if (clientName) {
       connConfig.client = clientName;
     }
     delete connConfig.oauth2;
   }
   connections[name] = connConfig;
-  saveConfig();
-}
+  this._saveConfig();
+};
 
-function setDefaultConnection(name) {
-  registryConfig["default"] = name;
-  saveConfig();
-}
-
-function removeConnection(name) {
-  var connections = getConnections();
-  delete connections[name];
-  saveConfig();
-}
-
-function findClientName(clientConfig) {
-  var clients = getClients();
+Registry.prototype._findClientName = function(clientConfig) {
+  var clients = this._getClients();
   for (var name in clients) {
     var client = clients[name];
     if (client.clientId === clientConfig.clientId &&
@@ -121,37 +103,39 @@ function findClientName(clientConfig) {
     }
   }
   return null;
-}
+};
 
-function getClient(name) {
-  var clientConfig = getClients()[name];
+Registry.prototype.setDefaultConnection = function(name) {
+  this._registryConfig["default"] = name;
+  this._saveConfig();
+};
+
+Registry.prototype.removeConnectionConfig = function(name) {
+  var connections = this._getConnections();
+  delete connections[name];
+  this._saveConfig();
+};
+
+Registry.prototype.getClient = function(name) {
+  var clientConfig = this._getClients()[name];
   return clientConfig && _.clone(clientConfig);
-}
+};
 
-function getClientNames() {
-  return Object.keys(getClients());
-}
+Registry.prototype.getClientNames = function() {
+  return Object.keys(this._getClients());
+};
 
-function registerClient(name, clientConfig) {
-  var clients = getClients();
+Registry.prototype.registerClient = function(name, clientConfig) {
+  var clients = this._getClients();
   clients[name] = clientConfig;
-  saveConfig();
-}
+  this._saveConfig();
+};
+
 
 
 /* ------------------------------------------------------------------------- */
 
-module.exports = {
-  getConnection: getConnection,
-  getConnectionNames: getConnectionNames,
-  saveConnection: saveConnection,
-  removeConnection: removeConnection,
-  setDefaultConnection: setDefaultConnection,
-  getClient: getClient,
-  getClientNames: getClientNames,
-  registerClient: registerClient
-};
-
+module.exports = Registry;
 </code></pre>
         </article>
     </section>
@@ -162,13 +146,13 @@ module.exports = {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="HttpApi.html">HttpApi</a></li><li><a href="ListView.html">ListView</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Process.html">Process</a></li><li><a href="Process-ApprovalProcess.html">ApprovalProcess</a></li><li><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></li><li><a href="Process-ProcessRule.html">ProcessRule</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="QuickAction.html">QuickAction</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SessionRefreshDelegate">SessionRefreshDelegate</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="HttpApi.html">HttpApi</a></li><li><a href="ListView.html">ListView</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Process.html">Process</a></li><li><a href="Process-ApprovalProcess.html">ApprovalProcess</a></li><li><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></li><li><a href="Process-ProcessRule.html">ProcessRule</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="QuickAction.html">QuickAction</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.Parsable.html">Parsable</a></li><li><a href="RecordStream.Serializable.html">Serializable</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SoapApi.html">SoapApi</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Channel.html">Channel</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SessionRefreshDelegate">SessionRefreshDelegate</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Feb 17 2015 01:39:27 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Sun Aug 16 2015 15:25:57 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>

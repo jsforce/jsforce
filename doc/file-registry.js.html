@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: record.js</title>
+    <title>JSDoc: Source: registry/file-registry.js</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Source: record.js</h1>
+    <h1 class="page-title">Source: registry/file-registry.js</h1>
     
     
 
@@ -25,114 +25,54 @@
     
     <section>
         <article>
-            <pre class="prettyprint source"><code>/**
- * @file Represents Salesforce record information
- * @author Shinichi Tomita &lt;shinichi.tomita@gmail.com>
- */
+            <pre class="prettyprint source"><code>var inherits = require('inherits');
+var fs = require('fs');
+var path = require('path');
+var Registry = require('./registry');
 
-'use strict';
+/* ------------------------------------------------------------------------- */
 
-var _ = require('underscore')._;
+var FileRegistry = function(configFilePath) {
+  FileRegistry.super_.call(this);
+  this._configFilePath = configFilePath || this._getDefaultConfigFilePath();
+  try {
+    var data = fs.readFileSync(this._configFilePath, 'utf-8');
+    this._registryConfig = JSON.parse(data);
+  } catch(e) {}
+};
+
+inherits(FileRegistry, Registry);
 
 /**
- * A simple hash object including record field information
  *
- * @typedef {Object} Record
  */
-
-/**
- * Remote reference to record information
- *
- * @protected
- * @class
- * @constructor
- * @param {Connection} conn - Connection object
- * @param {String} type - SObject type
- * @param {String} id - Record ID
- */
-var RecordReference = module.exports = function(conn, type, id) {
-  this._conn = conn;
-  this.type = type;
-  this.id = id;
+FileRegistry.prototype._getDefaultConfigFilePath = function() {
+  var homeDir = process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'];
+  var configDir = homeDir + "/.jsforce";
+  return configDir + "/config.json";
 };
 
 /**
- * Retrieve record field information
- *
- * @param {Object} [options] - Options for rest api.
- * @param {Callback.&lt;Record>} [callback] - Callback function
- * @returns {Promise.&lt;Record>}
+ * @private
  */
-RecordReference.prototype.retrieve = function(options, callback) {
-  if (typeof options === 'function') {
-    callback = options;
-    options = {};
+FileRegistry.prototype._saveConfig = function() {
+  var data = JSON.stringify(this._registryConfig, null, 4);
+  try {
+    fs.writeFileSync(this._configFilePath, data);
+    fs.chmodSync(this._configFilePath, "600");
+  } catch(e) {
+    var configDir = path.dirname(this._configFilePath);
+    fs.mkdirSync(configDir);
+    fs.chmodSync(configDir, "700");
+    fs.writeFileSync(this._configFilePath, data);
+    fs.chmodSync(this._configFilePath, "600");
   }
-  return this._conn.retrieve(this.type, this.id, options, callback);
 };
 
 /**
- * Update record field information
  *
- * @param {Record} record - A Record which includes fields to update
- * @param {Object} [options] - Options for rest api.
- * @param {Callback.&lt;RecordResult>} [callback] - Callback function
- * @returns {Promise.&lt;RecordResult>}
  */
-RecordReference.prototype.update = function(record, options, callback) {
-  if (typeof options === 'function') {
-    callback = options;
-    options = {};
-  }
-  record = _.clone(record);
-  record.Id = this.id;
-  return this._conn.update(this.type, record, options, callback);
-};
-
-/**
- * Synonym of Record#destroy()
- *
- * @method RecordReference#delete
- * @param {Object} [options] - Options for rest api.
- * @param {Callback.&lt;RecordResult>} [callback] - Callback function
- * @returns {Promise.&lt;RecordResult>}
- */
-RecordReference.prototype["delete"] =
-/**
- * Synonym of Record#destroy()
- *
- * @method RecordReference#del
- * @param {Callback.&lt;RecordResult>} [callback] - Callback function
- * @returns {Promise.&lt;RecordResult>}
- */
-RecordReference.prototype.del =
-/**
- * Delete record field
- *
- * @method RecordReference#destroy
- * @param {Object} [options] - Options for rest api.
- * @param {Callback.&lt;RecordResult>} [callback] - Callback function
- * @returns {Promise.&lt;RecordResult>}
- */
-RecordReference.prototype.destroy = function(options, callback) {
-  if (typeof options === 'function') {
-    callback = options;
-    options = {};
-  }
-  return this._conn.destroy(this.type, this.id, options, callback);
-};
-
-/**
- * Get blob field as stream
- *
- * @param {String} fieldName - Blob field name
- * @returns {stream.Stream}
- */
-RecordReference.prototype.blob = function(fieldName) {
-  var url = [ this._conn._baseUrl(), 'sobjects', this.type, this.id, fieldName ].join('/');
-  return this._conn.request(url).stream();
-};
-
+module.exports = FileRegistry;
 </code></pre>
         </article>
     </section>

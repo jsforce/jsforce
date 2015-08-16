@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: ProcessRule</title>
+    <title>JSDoc: Class: Parsable</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Class: ProcessRule</h1>
+    <h1 class="page-title">Class: Parsable</h1>
     
     
 
@@ -27,9 +27,9 @@
     
 <header>
     <h2>
-        <span class="ancestors"><a href="Process.html">Process</a>~</span>
+        <span class="ancestors"><a href="RecordStream.html">RecordStream</a>.</span>
     
-    ProcessRule
+    Parsable
     </h2>
     
 </header>  
@@ -41,70 +41,18 @@
     
         
 <dt>
-    <h4 class="name" id="ProcessRule"><span class="type-signature"></span>new ProcessRule<span class="signature">(conn)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Parsable"><span class="type-signature"></span>new Parsable<span class="signature">()</span><span class="type-signature"></span></h4>
     
     
 </dt>
 <dd>
     
     
-    <div class="description">
-        A class which manages process (workflow) rules
-    </div>
-    
 
     
     
     
     
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>conn</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Connection.html">Connection</a></span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Connection object</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
     
     
     
@@ -130,7 +78,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="process.js.html">process.js</a>, <a href="process.js.html#line31">line 31</a>
+        <a href="record-stream.js.html">record-stream.js</a>, <a href="record-stream.js.html#line96">line 96</a>
     </li></ul></dd>
     
     
@@ -158,6 +106,12 @@
     
     </div>
     
+    
+        <h3 class="subsection-title">Extends</h3>
+        
+        <ul>
+            <li><a href="RecordStream.html">RecordStream</a></li>
+        </ul>
     
     
     
@@ -176,7 +130,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="list"><span class="type-signature"></span>list<span class="signature">(<span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;Map.&lt;String, Array.&lt;<a href="Process.html#ProcessRuleDefinition">Process~ProcessRuleDefinition</a>>>>}</span></h4>
+    <h4 class="name" id="filter"><span class="type-signature"></span>filter<span class="signature">(fn)</span><span class="type-signature"> &rarr; {<a href="RecordStream.html">RecordStream</a>}</span></h4>
     
     
 </dt>
@@ -184,7 +138,7 @@
     
     
     <div class="description">
-        Get all process rule definitions registered to sobjects
+        Get record stream of queried records, applying the given filter function
     </div>
     
 
@@ -206,8 +160,6 @@
 		<th>Type</th>
 		
 		
-		<th>Argument</th>
-		
 		
 		
 		
@@ -220,33 +172,23 @@
 	
         <tr>
             
-                <td class="name"><code>callback</code></td>
+                <td class="name"><code>fn</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;Map.&lt;String, Array.&lt;<a href="Process.html#ProcessRuleDefinition">Process~ProcessRuleDefinition</a>>>></span>
+<span class="param-type"><a href="global.html#RecordFilterFunction">RecordFilterFunction</a></span>
 
 
             
             </td>
             
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-                    
-                
-                    
-                
-                </td>
             
             
             
-            
-            <td class="description last">Callback function</td>
+            <td class="description last">Record filtering function</td>
         </tr>
 	
 	
@@ -263,6 +205,11 @@
     
 
     
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="RecordStream.html#filter">RecordStream#filter</a>
+    </li></dd>
+    
     
     
     
@@ -277,7 +224,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="process.js.html">process.js</a>, <a href="process.js.html#line43">line 43</a>
+        <a href="record-stream.js.html">record-stream.js</a>, <a href="record-stream.js.html#line58">line 58</a>
     </li></ul></dd>
     
     
@@ -309,7 +256,7 @@
 	</dt>
 	<dd>
 		
-<span class="param-type"><a href="Promise.html">Promise</a>.&lt;Map.&lt;String, Array.&lt;<a href="Process.html#ProcessRuleDefinition">Process~ProcessRuleDefinition</a>>>></span>
+<span class="param-type"><a href="RecordStream.html">RecordStream</a></span>
 
 
 	</dd>
@@ -323,7 +270,7 @@
         
             
 <dt>
-    <h4 class="name" id="trigger"><span class="type-signature"></span>trigger<span class="signature">(contextIds, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;<a href="Process.html#ProcessRuleTriggerResult">Process~ProcessRuleTriggerResult</a>>}</span></h4>
+    <h4 class="name" id="map"><span class="type-signature"></span>map<span class="signature">(fn)</span><span class="type-signature"> &rarr; {<a href="RecordStream.html">RecordStream</a>}</span></h4>
     
     
 </dt>
@@ -331,7 +278,7 @@
     
     
     <div class="description">
-        Trigger process rule for given entities
+        Get record stream of queried records applying the given mapping function
     </div>
     
 
@@ -353,8 +300,6 @@
 		<th>Type</th>
 		
 		
-		<th>Argument</th>
-		
 		
 		
 		
@@ -367,67 +312,23 @@
 	
         <tr>
             
-                <td class="name"><code>contextIds</code></td>
+                <td class="name"><code>fn</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">String</span>
-|
-
-<span class="param-type">Array.&lt;String></span>
+<span class="param-type"><a href="global.html#RecordMapFunction">RecordMapFunction</a></span>
 
 
             
             </td>
             
             
-                <td class="attributes">
-                
-                    
-                
-                    
-                
-                </td>
             
             
             
-            
-            <td class="description last">Entity ID(s) to trigger workflow process</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>callback</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;<a href="Process.html#ProcessRuleTriggerResult">Process~ProcessRuleTriggerResult</a>></span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">Callback function</td>
+            <td class="description last">Record mapping function</td>
         </tr>
 	
 	
@@ -444,6 +345,11 @@
     
 
     
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="RecordStream.html#map">RecordStream#map</a>
+    </li></dd>
+    
     
     
     
@@ -458,7 +364,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="process.js.html">process.js</a>, <a href="process.js.html#line64">line 64</a>
+        <a href="record-stream.js.html">record-stream.js</a>, <a href="record-stream.js.html#line48">line 48</a>
     </li></ul></dd>
     
     
@@ -490,7 +396,7 @@
 	</dt>
 	<dd>
 		
-<span class="param-type"><a href="Promise.html">Promise</a>.&lt;<a href="Process.html#ProcessRuleTriggerResult">Process~ProcessRuleTriggerResult</a>></span>
+<span class="param-type"><a href="RecordStream.html">RecordStream</a></span>
 
 
 	</dd>

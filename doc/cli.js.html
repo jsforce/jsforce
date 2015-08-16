@@ -30,14 +30,17 @@
  * @file Command line interface for JSforce
  * @author Shinichi Tomita &lt;shinichi.tomita@gmail.com>
  */
+
+'use strict';
+
 var http = require('http'),
     url = require('url'),
     openUrl = require('open'),
     commander = require('commander'),
     coprompt = require('co-prompt'),
-    registry = require('./registry'),
     Repl = require('./repl'),
     jsforce = require('../jsforce'),
+    registry = jsforce.registry,
     Promise = require('../promise'),
     pkg = require('../../package.json');
 
@@ -51,7 +54,6 @@ var defaultLoginUrl = null;
  * @private
  */
 function start() {
-  var self = this;
   var program = new commander.Command();
   program.option('-u, --username [username]', 'Salesforce username')
          .option('-p, --password [password]', 'Salesforce password (and security token, if available)')
@@ -63,7 +65,7 @@ function start() {
          .version(pkg.version)
          .parse(process.argv);
   var replModule = program.coffee ? require('coffee-script/lib/coffee-script/repl') : require('repl');
-  repl = new Repl(this, replModule);
+  repl = new Repl(cli, replModule);
   outputEnabled = !program.evalScript;
   var options = { username: program.username, password: program.password };
   var loginUrl = program.loginUrl ? program.loginUrl :
@@ -114,7 +116,7 @@ function saveCurrentConnection() {
       instanceUrl: conn.instanceUrl,
       refreshToken: conn.refreshToken
     };
-    registry.saveConnection(connName, connConfig);
+    registry.saveConnectionConfig(connName, connConfig);
   }
 }
 
@@ -141,7 +143,7 @@ function setLoginServer(loginServer) {
 function connect(name, options, callback) {
   connName = name;
   options = options || {};
-  var connConfig = registry.getConnection(name);
+  var connConfig = registry.getConnectionConfig(name);
   var username, password;
   if (!connConfig) {
     connConfig = {};
@@ -216,8 +218,8 @@ function loginByPassword(username, password, retry, callback) {
  */
 function disconnect(name) {
   name = name || connName;
-  if (registry.getConnection(name)) {
-    registry.removeConnection(name);
+  if (registry.getConnectionConfig(name)) {
+    registry.removeConnectionConfig(name);
     print("Disconnect connection '" + name + "'");
   }
   connName = null;
@@ -304,7 +306,7 @@ function register(clientName, clientConfig, callback) {
     "redirectUri": "Input redirect URI : ",
     "loginUrl": "Input login URL (default is https://login.salesforce.com) : "
   };
-  new Promise().then(function() {
+  Promise.resolve().then(function() {
     var deferred = Promise.defer();
     if (registry.getClient(clientName)) {
       var msg = "Client '"+clientName+"' is already registered. Are you sure you want to override ? [yN] : ";
@@ -336,7 +338,7 @@ function register(clientName, clientConfig, callback) {
         }
         return deferred.promise;
       });
-    }, new Promise());
+    }, Promise.resolve());
   }).then(function() {
     registry.registerClient(clientName, clientConfig);
     print("Client registered successfully.");
@@ -414,7 +416,7 @@ function openUrlUsingSession(url) {
 
 /* ------------------------------------------------------------------------- */
 
-module.exports = {
+var cli = {
   start: start,
   getCurrentConnection: getCurrentConnection,
   saveCurrentConnection: saveCurrentConnection,
@@ -428,6 +430,8 @@ module.exports = {
   register: register,
   openUrl: openUrlUsingSession
 };
+
+module.exports = cli;
 </code></pre>
         </article>
     </section>
@@ -438,13 +442,13 @@ module.exports = {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="HttpApi.html">HttpApi</a></li><li><a href="ListView.html">ListView</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Process.html">Process</a></li><li><a href="Process-ApprovalProcess.html">ApprovalProcess</a></li><li><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></li><li><a href="Process-ProcessRule.html">ProcessRule</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="QuickAction.html">QuickAction</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.CSVStream.html">CSVStream</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SessionRefreshDelegate">SessionRefreshDelegate</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="HttpApi.html">HttpApi</a></li><li><a href="ListView.html">ListView</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Process.html">Process</a></li><li><a href="Process-ApprovalProcess.html">ApprovalProcess</a></li><li><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></li><li><a href="Process-ProcessRule.html">ProcessRule</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="QuickAction.html">QuickAction</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.Parsable.html">Parsable</a></li><li><a href="RecordStream.Serializable.html">Serializable</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SoapApi.html">SoapApi</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Channel.html">Channel</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SessionRefreshDelegate">SessionRefreshDelegate</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Feb 17 2015 01:39:27 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Sun Aug 16 2015 15:25:57 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>

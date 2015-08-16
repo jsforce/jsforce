@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Logger</title>
+    <title>JSDoc: Class: Channel</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Class: Logger</h1>
+    <h1 class="page-title">Class: Channel</h1>
     
     
 
@@ -27,7 +27,9 @@
     
 <header>
     <h2>
-    Logger
+        <span class="ancestors"><a href="Streaming.html">Streaming</a>~</span>
+    
+    Channel
     </h2>
     
 </header>  
@@ -39,195 +41,7 @@
     
         
 <dt>
-    <h4 class="name" id="Logger"><span class="type-signature">&lt;protected> </span>new Logger<span class="signature">(logLevel)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>logLevel</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-|
-
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Log level</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logger.js.html">logger.js</a>, <a href="logger.js.html#line9">line 9</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-    
-    </div>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-        <h3 class="subsection-title">Members</h3>
-        
-        <dl>
-            
-<dt>
-    <h4 class="name" id="LogLevels"><span class="type-signature">&lt;static> </span>LogLevels<span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    
-
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logger.js.html">logger.js</a>, <a href="logger.js.html#line22">line 22</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-</dd>
-
-        </dl>
-    
-    
-    
-        <h3 class="subsection-title">Methods</h3>
-        
-        <dl>
-            
-<dt>
-    <h4 class="name" id="log"><span class="type-signature"></span>log<span class="signature">(level, message)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Channel"><span class="type-signature"></span>new Channel<span class="signature">(steaming, name)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -235,7 +49,7 @@
     
     
     <div class="description">
-        Output log
+        Streaming API Generic Streaming Channel
     </div>
     
 
@@ -269,13 +83,13 @@
 	
         <tr>
             
-                <td class="name"><code>level</code></td>
+                <td class="name"><code>steaming</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type"><a href="Streaming.html">Streaming</a></span>
 
 
             
@@ -285,14 +99,14 @@
             
             
             
-            <td class="description last">Logging target level</td>
+            <td class="description last">Streaming API object</td>
         </tr>
 	
 	
 	
         <tr>
             
-                <td class="name"><code>message</code></td>
+                <td class="name"><code>name</code></td>
             
             
             <td class="type">
@@ -308,7 +122,7 @@
             
             
             
-            <td class="description last">Message to log</td>
+            <td class="description last">Channel name (starts with "/u/")</td>
         </tr>
 	
 	
@@ -339,7 +153,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logger.js.html">logger.js</a>, <a href="logger.js.html#line36">line 36</a>
+        <a href="streaming.js.html">api/streaming.js</a>, <a href="streaming.js.html#line56">line 56</a>
     </li></ul></dd>
     
     
@@ -364,7 +178,21 @@
     
 </dd>
 
-        </dl>
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -386,7 +214,7 @@
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Sun Aug 16 2015 15:25:58 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Sun Aug 16 2015 15:25:59 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>
