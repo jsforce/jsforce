@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>JSforce Browser Client Test</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="../../build/jsforce-core.js"></script>
+    <script src="../../build/jsforce-api-bulk.js"></script>
+    <script>
+jsforce.browser.init({
+  clientId: '3MVG9A2kN3Bn17hv5Z.MnUUfJRXLXdcDmVDCf0nT5o39Au.6.W6n_y_JPoO_d95_9Umam_FS8DXh7EU.lNGJ.',
+  redirectUri: 'http://localhost:4000/test/browser/client.test.html',
+  proxyUrl: 'https://node-salesforce-proxy.herokuapp.com/proxy'
+});
+var conn;
+$(function() {
+  if (jsforce.browser.isLoggedIn()) {
+    console.log('loogged in');
+    $('#loginBtn').hide();
+    conn = jsforce.browser.connection;
+    startQuery();
+  } else {
+    console.log('not loogged in');
+    $('#logoutBtn').hide();
+    jsforce.browser.on('connect', function(_conn) {
+      console.log('connected', _conn);
+      $('#loginBtn').hide();
+      $('#logoutBtn').show();
+      conn = _conn;
+      startQuery();
+    });
+  }
+});
+
+function startQuery() {
+  console.log("start query...");
+  var ul = $('#result');
+  ul.empty();
+  conn.query("SELECT Id, Name FROM Account", function(err, res) {
+    console.log("...done");
+    if (err) { return console.error(err); }
+    console.log(res);
+    res.records.forEach(function(rec) {
+      console.log(rec);
+      $('<li>').text(rec.Name).appendTo(ul);
+    });
+  });
+}
+
+function login(res) {
+  jsforce.browser.login(function(err, res) {
+    alert(err ? err.message : res.status);
+  });
+}
+function logout(res) {
+  jsforce.browser.logout();
+  location.reload();
+}
+    </script>
+  </head>
+  <body>
+    <div>
+      <button id="reloadBtn" onclick="location.reload()">Reload</button>
+      <hr>
+    </div>
+    <div>
+      <button id="loginBtn" onclick="login()">Login</button>
+    </div>
+    <div>
+      <button id="logoutBtn" onclick="logout()">Logout</button>
+    </div>
+    <ul id="result"></ul>
+  </body>
+</html>

@@ -1,31 +1,33 @@
 /*global describe, it, before, after */
-var testUtils = require('./helper/test-utils'),
-    assert = testUtils.assert;
+var TestEnv = require('./helper/testenv'),
+    assert = TestEnv.assert;
 
 var _      = require('underscore'),
     fs     = require('fs'),
-    stream = require('stream'),
-    Stream = stream.Stream,
+    stream = require('readable-stream'),
+    through2 = require('through2'),
     querystring = require('querystring'),
     sf     = require('../lib/jsforce'),
     RecordStream = require('../lib/record-stream'),
     config = require('./config/salesforce');
 
+var testEnv = new TestEnv(config);
+
 /**
  *
  */
-describe("query", function() { 
+describe("query", function() {
 
   this.timeout(40000); // set timeout to 40 sec.
 
-  var conn = new testUtils.createConnection(config);
+  var conn = testEnv.createConnection();
 
   /**
    *
    */
   before(function(done) {
     this.timeout(600000); // set timeout to 10 min.
-    testUtils.establishConnection(conn, config, done);
+    testEnv.establishConnection(conn, done);
   });
 
 
@@ -94,7 +96,7 @@ describe("query", function() {
       var records = [];
       var query = conn.query("SELECT Id, Name FROM " + (config.bigTable || 'Account'));
       query.on('record', function(record, i, cnt){
-        records.push(record); 
+        records.push(record);
       });
       query.on('end', function() {
         callback(null, { query : query, records : records });
@@ -106,8 +108,8 @@ describe("query", function() {
       var callback = function(err, result) {
         if (err) { throw err; }
         assert.ok(result.query.totalFetched === result.records.length);
-        assert.ok(result.query.totalSize > 2000 ? 
-                  result.query.totalFetched === 2000 : 
+        assert.ok(result.query.totalSize > 2000 ?
+                  result.query.totalFetched === 2000 :
                   result.query.totalFetched === result.query.totalSize
         );
       }.check(done);
@@ -122,7 +124,7 @@ describe("query", function() {
       var records = [];
       var query = conn.query("SELECT Id, Name FROM " + (config.bigTable || 'Account'));
       query.on('record', function(record) {
-             records.push(record); 
+             records.push(record);
            })
            .on('error', function(err) {
              callback(err);
@@ -134,8 +136,8 @@ describe("query", function() {
       var callback = function(err, result) {
         if (err) { throw err; }
         assert.ok(result.query.totalFetched === result.records.length);
-        assert.ok(result.query.totalSize > 5000 ? 
-                  result.query.totalFetched === 5000 : 
+        assert.ok(result.query.totalSize > 5000 ?
+                  result.query.totalFetched === 5000 :
                   result.query.totalFetched === result.query.totalSize
         );
       }.check(done);
@@ -149,30 +151,29 @@ describe("query", function() {
     it("should scan records via stream up to maxFetch num", function(done) {
       var records = [];
       var query = conn.query("SELECT Id, Name FROM " + (config.bigTable || 'Account'));
-      var outStream = new RecordStream();
-      outStream.sendable = true;
-      outStream.send = function(record) {
-        records.push(record);
-        if (records.length % 100 === 0) {
-          outStream.sendable = false;
-          setTimeout(function() {
-            outStream.sendable = true;
-            outStream.emit('drain');
-          }, Math.floor(1000 * Math.random()));
+      var outStream = through2.obj(
+        function transform(record, enc, next) {
+          records.push(record);
+          if (records.length % 100 === 0) {
+            var waitTime = Math.floor(1000 * Math.random());
+            setTimeout(function() { next(); }, waitTime);
+          } else {
+            next();
+          }
+        },
+        function flush(done) {
+          callback(null, { query : query, records : records });
+          done();
         }
-        return outStream.sendable;
-      };
-      outStream.end = function() {
-        callback(null, { query : query, records : records });
-      };
+      );
       query.pipe(outStream);
       query.on("error", function(err) { callback(err); });
 
       var callback = function(err, result) {
         if (err) { throw err; }
         assert.ok(result.query.totalFetched === result.records.length);
-        assert.ok(result.query.totalSize > 5000 ? 
-                  result.query.totalFetched === 5000 : 
+        assert.ok(result.query.totalSize > 5000 ?
+                  result.query.totalFetched === 5000 :
                   result.query.totalFetched === result.query.totalSize
         );
       }.check(done);
@@ -185,23 +186,20 @@ describe("query", function() {
   describe("query table and convert to readable stream", function() {
     it("should get CSV text", function(done) {
       var query = conn.query("SELECT Id, Name FROM Account LIMIT 10");
-      var csvOut = new Stream();
-      csvOut.writable = true;
+      var csvOut = new stream.Writable();
       var result = '';
-      csvOut.write = function(data) {
-        result += data;
+      csvOut._write = function(data, enc, next) {
+        result += data.toString('utf8');
+        next();
       };
-      csvOut.end = function(data) {
-        result += data;
-        csvOut.writable = false;
+      query.stream().pipe(csvOut).on('finish', function() {
         callback(null, result);
-      };
-      query.stream().pipe(csvOut);
+      });
       var callback = function(err, csv) {
         if (err) { throw err; }
         assert.ok(_.isString(csv));
-        var header = csv.split("\n")[0];
-        assert.equal(header, "Id,Name");
+        var header = csv.split('\n')[0];
+        assert(header === "Id,Name");
       }.check(done);
     });
   });
@@ -232,8 +230,7 @@ describe("query", function() {
    *
    */
   after(function(done) {
-    testUtils.closeConnection(conn, done);
+    testEnv.closeConnection(conn, done);
   });
 
 });
-

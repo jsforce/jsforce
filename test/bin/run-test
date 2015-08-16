@@ -3,7 +3,12 @@ var spawn = require('child_process').spawn;
 
 // startup phantomjs ghostdriver server before starting test
 var webdriverPort = process.env.WEBDRIVER_PORT || 4444;
-var phantomjs = spawn('phantomjs', [ "--webdriver=" + webdriverPort, "--ssl-protocol=tlsv1" ]);
+var phantomjs;
+try {
+  phantomjs = spawn('phantomjs', [ "--webdriver=" + webdriverPort, "--ssl-protocol=tlsv1" ]);
+} catch(e) {
+  console.error(e);
+}
 
 // wait till the server bootup
 setTimeout(function() {
@@ -19,7 +24,7 @@ setTimeout(function() {
   mocha.stderr.pipe(process.stderr);
 
   mocha.on('exit', function(code) {
-    phantomjs.kill("SIGHUP");
+    if (phantomjs) { phantomjs.kill("SIGHUP"); }
     process.exit(code);
   });
 

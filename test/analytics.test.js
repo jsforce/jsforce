@@ -1,10 +1,12 @@
 /*global describe, it, before, after */
-var testUtils = require('./helper/test-utils'),
-    assert = testUtils.assert;
+var TestEnv = require('./helper/testenv'),
+    assert = TestEnv.assert;
 
 var _      = require('underscore'),
     sf     = require('../lib/jsforce'),
     config = require('./config/salesforce');
+
+var testEnv = new TestEnv(config);
 
 /**
  *
@@ -13,7 +15,7 @@ describe("analytics", function() {
 
   this.timeout(40000); // set timeout to 40 sec.
 
-  var conn = testUtils.createConnection(config);
+  var conn = testEnv.createConnection();
 
   var reportId;
 
@@ -22,7 +24,7 @@ describe("analytics", function() {
    */
   before(function(done) {
     this.timeout(600000); // set timeout to 10 min.
-    testUtils.establishConnection(conn, config, done);
+    testEnv.establishConnection(conn, done);
   });
 
   /**
@@ -76,6 +78,7 @@ describe("analytics", function() {
       conn.analytics.report(reportId).execute(function(err, result) {
         if (err) { throw err; }
         assert.ok(_.isObject(result));
+        assert.ok(result.hasDetailRows === false);
         assert.ok(_.isObject(result.reportMetadata));
         assert.ok(result.reportMetadata.id === reportId);
         assert.ok(_.isObject(result.factMap));
@@ -94,6 +97,7 @@ describe("analytics", function() {
       conn.analytics.report(reportId).execute({ details: true }, function(err, result) {
         if (err) { throw err; }
         assert.ok(_.isObject(result));
+        assert.ok(result.hasDetailRows === true);
         assert.ok(_.isObject(result.reportMetadata));
         assert.ok(result.reportMetadata.id === reportId);
         assert.ok(_.isObject(result.factMap));
@@ -109,7 +113,7 @@ describe("analytics", function() {
    */
   describe("execute report synchronously with filters overrided", function() {
     it("should return report execution result", function(done) {
-      var metadata = { 
+      var metadata = {
         reportMetadata : {
           historicalSnapshotDates : [],
           reportFilters : [{
@@ -180,8 +184,31 @@ describe("analytics", function() {
         assert.ok(result.attributes.id === instanceId);
         assert.ok(_.isString(result.attributes.status));
         assert.ok(_.isString(result.attributes.requestDate));
-        assert.ok(_.isObject(result.reportMetadata));
-        assert.ok(result.reportMetadata.id === reportId);
+        if (result.attributes.status == 'Success') {
+          assert.ok(_.isObject(result.reportMetadata));
+          assert.ok(result.reportMetadata.id === reportId);
+        }
+      }.check(done));
+    });
+  });
+
+  /**
+   *
+   */
+  describe("explain query plan of report", function() {
+    it("should get explain result", function(done) {
+      conn.analytics.report(reportId).explain(function(err, result) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(result.plans));
+        for (var i=0; i<result.plans.length; i++) {
+          var plan = result.plans[i];
+          assert.ok(_.isNumber(plan.cardinality));
+          assert.ok(_.isArray(plan.fields));
+          assert.ok(_.isString(plan.leadingOperationType));
+          assert.ok(_.isNumber(plan.relativeCost));
+          assert.ok(_.isNumber(plan.sobjectCardinality));
+          assert.ok(_.isString(plan.sobjectType));
+        }
       }.check(done));
     });
   });
@@ -190,7 +217,7 @@ describe("analytics", function() {
    *
    */
   after(function(done) {
-    testUtils.closeConnection(conn, done);
+    testEnv.closeConnection(conn, done);
   });
 
 });

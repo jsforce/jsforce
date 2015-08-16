@@ -1,11 +1,14 @@
 /*global describe, it, before, after */
-var testUtils = require('./helper/test-utils'),
-    assert = testUtils.assert;
+var TestEnv = require('./helper/testenv'),
+    assert = TestEnv.assert;
 
 var async  = require('async'),
     _      = require('underscore'),
     sf     = require('../lib/jsforce'),
     config = require('./config/salesforce');
+
+var testEnv = new TestEnv(config);
+
 /**
  *
  */
@@ -13,14 +16,14 @@ describe("apex", function() {
 
   this.timeout(40000); // set timeout to 40 sec.
 
-  var conn = testUtils.createConnection(config);
+  var conn = testEnv.createConnection();
 
   /**
    *
    */
   before(function(done) {
     this.timeout(600000); // set timeout to 10 min.
-    testUtils.establishConnection(conn, config, done);
+    testEnv.establishConnection(conn, done);
   });
 
   var accountId;
@@ -35,7 +38,7 @@ describe("apex", function() {
         phone: '654-321-0000',
         website: 'http://www.google.com'
       };
-      conn.apex.post('/MyApexRestTest/', params, function(err, id) {
+      conn.apex.post('/JSforceTestApexRest/', params, function(err, id) {
         if (err) { throw err; }
         assert.ok(_.isString(id));
         accountId = id;
@@ -48,7 +51,7 @@ describe("apex", function() {
    */
   describe("get account info", function() {
     it("should return updated account", function(done) {
-      conn.apex.get('/MyApexRestTest/' + accountId, function(err, acc) {
+      conn.apex.get('/JSforceTestApexRest/' + accountId, function(err, acc) {
         if (err) { throw err; }
         assert.ok(_.isObject(acc));
         assert.ok(acc.Name ==='My Apex Rest Test #1');
@@ -69,7 +72,7 @@ describe("apex", function() {
           Phone : null
         }
       };
-      conn.apex.put('/MyApexRestTest/' + accountId, params, function(err, acc) {
+      conn.apex.put('/JSforceTestApexRest/' + accountId, params, function(err, acc) {
         if (err) { throw err; }
         assert.ok(_.isObject(acc));
         assert.ok(acc.Name === 'My Apex Rest Test #1 (put)');
@@ -87,7 +90,7 @@ describe("apex", function() {
       var params = {
         name: 'My Apex Rest Test #1 (patch)'
       };
-      conn.apex.patch('/MyApexRestTest/' + accountId, params, function(err, acc) {
+      conn.apex.patch('/JSforceTestApexRest/' + accountId, params, function(err, acc) {
         if (err) { throw err; }
         assert.ok(_.isObject(acc));
         assert.ok(acc.Name === 'My Apex Rest Test #1 (patch)');
@@ -104,7 +107,7 @@ describe("apex", function() {
     it("should not get any account for delete account id", function(done) {
       async.waterfall([
         function(cb) {
-          conn.apex.delete('/MyApexRestTest/' + accountId, cb);
+          conn.apex.delete('/JSforceTestApexRest/' + accountId, cb);
         },
         function(ret, cb) {
           conn.sobject('Account').find({ Id: accountId }, cb);
@@ -120,7 +123,7 @@ describe("apex", function() {
    *
    */
   after(function(done) {
-    testUtils.closeConnection(conn, done);
+    testEnv.closeConnection(conn, done);
   });
 
 });

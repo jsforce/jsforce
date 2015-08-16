@@ -1,12 +1,14 @@
 /*global describe, it, before, __dirname */
-var testUtils = require('./helper/test-utils'),
-    assert = testUtils.assert;
+var TestEnv = require('./helper/testenv'),
+    assert = TestEnv.assert;
 
 var async  = require('async'),
     _      = require('underscore'),
     fs     = require('fs'),
     sf     = require('../lib/jsforce'),
     config = require('./config/salesforce');
+
+var testEnv = new TestEnv(config);
 
 /**
  *
@@ -15,7 +17,7 @@ describe("bulk", function() {
 
   this.timeout(40000); // set timeout to 40 sec.
 
-  var conn = new testUtils.createConnection(config);
+  var conn = testEnv.createConnection();
 
   // adjust poll timeout to test timeout.
   conn.bulk.pollTimeout = 40*1000;
@@ -25,7 +27,7 @@ describe("bulk", function() {
    */
   before(function(done) {
     this.timeout(600000); // set timeout to 10 min.
-    testUtils.establishConnection(conn, config, done);
+    testEnv.establishConnection(conn, done);
   });
 
 
@@ -38,7 +40,7 @@ describe("bulk", function() {
       for (var i=0; i<200; i++) {
         records.push({
           Name: 'Bulk Account #'+(i+1),
-          NumberOfEmployees: 300 * (i+1) 
+          NumberOfEmployees: 300 * (i+1)
         });
       }
       records.push({ BillingState: 'CA' }); // should raise error
@@ -132,7 +134,7 @@ describe("bulk", function() {
   });
 
 /*------------------------------------------------------------------------*/
-if (testUtils.isNodeJS) {
+if (TestEnv.isNodeJS) {
 
   /**
    *
@@ -215,8 +217,8 @@ if (testUtils.isNodeJS) {
           conn.bulk.query("SELECT Id, Name, NumberOfEmployees FROM Account")
             .on('record', function(rec) { records.push(rec); })
             .on('error', function(err) { next(err); })
-            .on('end', function() { next(null, records); })
-            .stream().pipe(fstream);
+            .stream().pipe(fstream)
+            .on('finish', function() { next(null, records); });
         }
       ], function(err, records) {
         if (err) { throw err; }
@@ -392,8 +394,8 @@ if (testUtils.isNodeJS) {
 
   // graceful shutdown to wait remaining jobs to close...
   after(function(done) {
-    setTimeout(function() { 
-      testUtils.closeConnection(conn, done);
+    setTimeout(function() {
+      testEnv.closeConnection(conn, done);
     }, 2000);
   });
 
