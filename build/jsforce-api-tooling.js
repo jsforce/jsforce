@@ -1,11 +1,12 @@
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var o;"undefined"!=typeof window?o=window:"undefined"!=typeof global?o=global:"undefined"!=typeof self&&(o=self);var f=o;f=f.jsforce||(f.jsforce={}),f=f.modules||(f.modules={}),f=f.api||(f.api={}),f.Tooling=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g=(g.jsforce||(g.jsforce = {}));g=(g.modules||(g.modules = {}));g=(g.api||(g.api = {}));g.Tooling = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /**
  * @file Manages Tooling APIs
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
 
-var util  = jsforce.require('util'),
-    _     = jsforce.require('underscore'),
+'use strict';
+
+var _     = jsforce.require('underscore'),
     Cache = jsforce.require('./cache');
 
 /**
@@ -227,6 +228,18 @@ Tooling.prototype.request = function() {
  */
 Tooling.prototype.executeAnonymous = function(body, callback) {
   var url = this._baseUrl() + "/executeAnonymous?anonymousBody=" + encodeURIComponent(body);
+  return this.request(url).thenCall(callback);
+};
+
+/**
+ * Executes Apex tests asynchronously
+ *
+ * @param {Array.<String>} classids - Comma separated list of class IDs
+ * @param {Callback.<Tooling~ExecuteAnonymousResult>} [callback] - Callback function
+ * @returns {Promise.<Tooling~ExecuteAnonymousResult>}
+ */
+Tooling.prototype.runTestsAsynchronous = function(classids, callback) {
+  var url = this._baseUrl() + "/runTestsAsynchronous/?classids=" + classids.join(',');
   return this.request(url).thenCall(callback);
 };
 

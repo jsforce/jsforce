@@ -17,14 +17,24 @@ module.exports = function(grunt) {
 
     pkg: pkg,
 
+    dirs: {
+      src: './lib',
+      build: './build',
+      tmp: './build/__tmp__',
+      tmpLib: './build/__tmp__/lib',
+      test: './test',
+      buildTest: './build/test',
+      doc: './doc'
+    },
+
     watch: {
       scripts: {
-        files: ["lib/**/*.js" ],
-        tasks: ['build']
+        files: [ '<%= dirs.src %>/**/*.js' ],
+        tasks: [ 'build' ]
       },
       jsdoc: {
-        files: ["lib/**/*.js" ],
-        tasks: ['jsdoc']
+        files: [ '<%= dirs.src %>/**/*.js' ],
+        tasks: [ 'jsdoc' ]
       }
     },
 
@@ -32,17 +42,22 @@ module.exports = function(grunt) {
       lib: {
         files: [{
           expand: true,
-          cwd: 'lib/',
+          cwd: '<%= dirs.src %>',
           src: '**/*.js',
-          dest: 'build/__tmp__'
+          dest: '<%= dirs.tmpLib %>'
         }]
+      },
+      package: {
+        files: {
+          '<%= dirs.tmp %>/package.json': [ './package.json' ]
+        }
       }
     },
 
     extract_required: {
       core: {
         files: {
-          'build/__tmp__/core-require.js': [ 'build/__tmp__/*.js' ]
+          '<%= dirs.tmpLib %>/core-require.js': [ '<%= dirs.tmpLib %>/*.js' ]
         },
         options: {
           ignore: [ './api/**/*' ]
@@ -53,13 +68,13 @@ module.exports = function(grunt) {
     browserify: {
       options: {
         ignore: [
-          "lib/**/cli/*.js",
-          "test/**/node/*.js"
+          '<%= dirs.src %>/**/cli/*.js',
+          '<%= dirs.test %>/**/node/*.js'
         ]
       },
       all: {
         files: {
-          'build/jsforce.js': [ 'build/__tmp__/browser/jsforce.js' ]
+          '<%= dirs.build %>/jsforce.js': [ '<%= dirs.tmpLib %>/browser/jsforce.js' ]
         },
         options: {
           browserifyOptions: {
@@ -69,7 +84,7 @@ module.exports = function(grunt) {
       },
       core: {
         files: {
-          'build/jsforce-core.js': [ 'build/__tmp__/browser/jsforce.js' ]
+          '<%= dirs.build %>/jsforce-core.js': [ '<%= dirs.tmpLib %>/browser/jsforce.js' ]
         },
         options: {
           browserifyOptions: {
@@ -78,9 +93,9 @@ module.exports = function(grunt) {
           transform: [
             [ 'require-swapper',
               {
-                baseDir: 'build/__tmp__',
+                baseDir: '<%= dirs.tmpLib %>',
                 fn: "jsforce.require",
-                modules: [ "./api/**/*" ]
+                modules: [ "./lib/api/**/*" ]
               }
             ]
           ]
@@ -90,40 +105,36 @@ module.exports = function(grunt) {
         files: [
           {
             expand: true,
-            cwd: 'test/',
+            cwd: '<%= dirs.test %>',
             src: [ '**/*.test.js' ],
-            dest: 'build/test/'
+            dest: '<%= dirs.buildTest %>'
           }
         ],
         options: {
           debug: true,
-          transform: [ 'espowerify', 
+          transform: [
+            'espowerify',
+            'envify',
             [ 'require-swapper',
               {
-                baseDir: 'lib/',
+                baseDir: '<%= dirs.src %>',
                 fn: "jsforce.require",
                 modules: [ "./*" ]
               }
             ]
-          ],
-          preBundleCB: function(b) {
-            var filePath = "./test/config/browser/env.js";
-            var env = process.env;
-            try {
-              env = envfile.parseFileSync('./.env');
-            } catch(e) {}
-            var data = "module.exports=" + JSON.stringify(env) + ";";
-            fs.writeFileSync(filePath, data);
-          }
+          ]
         }
       }
     },
 
     "string-replace": {
       lib: {
-        files: {
-          'build/' : [ 'build/jsforce.js', 'build/jsforce*[!.min].js' ]
-        },
+        files: [{
+          expand: true,
+          cwd: '<%= dirs.build %>',
+          src: [ 'jsforce.js', 'jsforce*[!.min].js' ],
+          dest: '<%= dirs.build %>'
+        }],
         options: {
           replacements: [{
             pattern: new RegExp(__dirname, 'g'),
@@ -143,9 +154,9 @@ module.exports = function(grunt) {
       lib: {
         files: [{
           expand: true,
-          cwd: 'build/',
+          cwd: '<%= dirs.build %>',
           src: [ 'jsforce*.js', '!jsforce*.min.js' ],
-          dest: 'build/',
+          dest: '<%= dirs.build %>',
           ext: '.min.js'
         }]
       }
@@ -153,9 +164,9 @@ module.exports = function(grunt) {
 
     jsdoc : {
       dist : {
-        src: ['lib/'],
+        src: ['<%= dirs.src %>'],
         options: {
-          destination: 'doc',
+          destination: '<%= dirs.doc %>',
           private: false,
           recurse: true,
           lenient: true
@@ -165,16 +176,16 @@ module.exports = function(grunt) {
 
     clean: {
       tmp: {
-        src: [ "build/__tmp__/" ]
+        src: [ '<%= dirs.tmp %>' ]
       },
       lib: {
-        src: [ "build/*.js", "build/*.map" ]
+        src: [ '<%= dirs.build %>/*.js', '<%= dirs.build %>/*.map' ]
       },
       test: {
-        src: [ "build/test/" ]
+        src: [ '<%= dirs.buildTest %>' ]
       },
       doc: {
-        src: [ "doc/" ]
+        src: [ '<%= dirs.doc %>' ]
       }
     }
   };
@@ -183,14 +194,14 @@ module.exports = function(grunt) {
     "cache", "connection", "csv", "date", "http-api", "jsforce", "logger", "oauth2", "process", "promise", "query", "quick-action",
     "record-stream", "record", "sobject", "soql-builder", "transport"
   ];
-  var apiModules = [ "analytics", "apex", "bulk", "chatter", "metadata", "streaming", "tooling" ];
+  var apiModules = [ "analytics", "apex", "bulk", "chatter", "metadata", "soap", "streaming", "tooling" ];
 
   apiModules.forEach(function(apiModule) {
     var apiModuleClass = apiModule[0].toUpperCase() + apiModule.substring(1);
     cfg.browserify[apiModule] = {
       files: [{
-        src: [ 'build/__tmp__/api/' + apiModule + '.js' ],
-        dest: 'build/jsforce-api-' + apiModule + '.js'
+        src: [ '<%= dirs.tmpLib %>/api/' + apiModule + '.js' ],
+        dest: '<%= dirs.build %>/jsforce-api-' + apiModule + '.js'
       }],
       options: {
         browserifyOptions: {
@@ -198,9 +209,9 @@ module.exports = function(grunt) {
         },
         transform: [
           [ 'require-swapper', {
-            baseDir: 'build/__tmp__',
+            baseDir: '<%= dirs.tmpLib %>',
             fn: "jsforce.require",
-            modules: coreModules.map(function(m) { return "./" + m; }).concat([ "inherits", "util", "events", "stream", "underscore" ])
+            modules: coreModules.map(function(m) { return "./" + m; }).concat([ "inherits", "util", "events", "underscore", "readable-stream" ])
           }]
         ]
       }
@@ -210,7 +221,7 @@ module.exports = function(grunt) {
   grunt.initConfig(cfg);
 
   grunt.registerTask('browserify:lib', [ 'browserify:all', 'browserify:core' ].concat(apiModules.map(function(am){ return 'browserify:'+am; })));
-  grunt.registerTask('build', ['clean:tmp', 'copy', 'extract_required', 'browserify:lib', 'string-replace', 'uglify']);
+  grunt.registerTask('build', [ 'clean:tmp', 'copy', 'extract_required', 'browserify:lib', 'string-replace', 'uglify']);
   grunt.registerTask('test:browser', ['clean', 'copy', 'extract_required', 'browserify' ]);
   grunt.registerTask('default', ['build']);
 

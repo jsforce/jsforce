@@ -1,12 +1,14 @@
+'use strict';
+
 var webdriverio = require('webdriverio'),
-    Q = require('q');
+    Promise = require('promise');
 
 module.exports = function(url, username, password, callback) {
   var client = webdriverio.remote({
     desiredCapabilities: { browserName: 'phantomjs' },
     port: process.env.WEBDRIVER_PORT || 4444
   });
-  return Q.resolve().then(function() {
+  return Promise.resolve().then(function() {
     return client.init();
   }).then(function() {
     return client.url(url);
@@ -17,14 +19,18 @@ module.exports = function(url, username, password, callback) {
   .then(function() {
     return retrieveCallbackedParameters();
   })
-  .finally(function() {
+  .then(function(ret) {
     client.end();
+    return ret;
+  }, function(err) {
+    client.end();
+    throw err;
   })
   .nodeify(callback)
 
   function loginAndApprove() {
     var approved = false;
-    return Q.resolve().then(function() {
+    return Promise.resolve().then(function() {
       return client.url().then(function(ret) { return ret.value; });
     }).then(function(url) {
       if (url.indexOf("/setup/secur/RemoteAccessAuthorizationPage.apexp") > 0) { // authorization page

@@ -10,11 +10,12 @@
     "database.com"
   ],
   "homepage": "http://github.com/jsforce/jsforce",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/jsforce/jsforce.git"
   },
+  "license": "MIT",
   "licenses": [
     {
       "type": "MIT",
@@ -52,21 +53,24 @@
     "faye": "^1.1.0",
     "inherits": "^2.0.1",
     "open": "0.0.5",
-    "q": "^1.1.2",
-    "readable-stream": "^1.0.33",
+    "promise": "^6.1.0",
+    "readable-stream": "^2.0.2",
     "request": "^2.51.0",
+    "through2": "^1.1.1",
     "underscore": "^1.7.0",
     "xml2js": "^0.4.4"
   },
   "devDependencies": {
+    "archiver": "^0.14.4",
     "async": "^0.9.0",
-    "browserify": "^5.11.0",
+    "browserify": "^11.0.1",
     "dotenv": "^0.4.0",
     "envfile": "^1.0.0",
+    "envify": "^3.4.0",
     "espower-loader": "^0.7.1",
-    "espowerify": "^0.7.1",
+    "espowerify": "^0.10.1",
     "grunt": "^0.4.5",
-    "grunt-browserify": "^3.0.1",
+    "grunt-browserify": "^4.0.0",
     "grunt-contrib-clean": "^0.6.0",
     "grunt-contrib-copy": "^0.5.0",
     "grunt-contrib-uglify": "^0.5.1",
@@ -77,7 +81,7 @@
     "intelli-espower-loader": "^0.2.0",
     "mocha": "^1.21.4",
     "power-assert": "^0.7.2",
-    "require-swapper": "^0.1.2",
+    "require-swapper": "^0.1.5",
     "webdriverio": "^2.4.3"
   },
   "browser": {

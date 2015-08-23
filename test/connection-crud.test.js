@@ -1,11 +1,13 @@
 /*global describe, it, before, after */
-var testUtils = require('./helper/test-utils'),
-    assert = testUtils.assert;
+var TestEnv = require('./helper/testenv'),
+    assert = TestEnv.assert;
 
 var async  = require('async'),
     _      = require('underscore'),
     sf     = require('../lib/jsforce'),
     config = require('./config/salesforce');
+
+var testEnv = new TestEnv(config);
 
 /**
  *
@@ -14,14 +16,14 @@ describe("connection-crud", function() {
 
   this.timeout(40000); // set timeout to 40 sec.
 
-  var conn = new testUtils.createConnection(config);
+  var conn = testEnv.createConnection();
 
   /**
    *
    */
   before(function(done) {
     this.timeout(600000); // set timeout to 10 min.
-    testUtils.establishConnection(conn, config, done);
+    testEnv.establishConnection(conn, done);
   });
 
   var accountId, account;
@@ -130,7 +132,7 @@ describe("connection-crud", function() {
   describe("create multiple accounts", function() {
     it("should return created records", function(done) {
       conn.sobject('Account').create([
-        { Name : 'Account #1' }, 
+        { Name : 'Account #1' },
         { Name : 'Account #2' }
       ], function(err, rets) {
         if (err) { throw err; }
@@ -284,8 +286,7 @@ describe("connection-crud", function() {
    *
    */
   after(function(done) {
-    testUtils.closeConnection(conn, done);
+    testEnv.closeConnection(conn, done);
   });
 
 });
-
