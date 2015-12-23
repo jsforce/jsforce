@@ -53,7 +53,7 @@
     "faye": "^1.1.0",
     "inherits": "^2.0.1",
     "open": "0.0.5",
-    "promise": "^6.1.0",
+    "promise": "^7.1.1",
     "readable-stream": "^2.0.2",
     "request": "^2.51.0",
     "through2": "^1.1.1",
