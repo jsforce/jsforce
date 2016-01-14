@@ -63,7 +63,7 @@
   "devDependencies": {
     "archiver": "^0.21.0",
     "async": "^1.5.2",
-    "browserify": "^11.0.1",
+    "browserify": "^13.0.0",
     "dotenv": "^0.4.0",
     "envfile": "^1.0.0",
     "envify": "^3.4.0",
