@@ -997,7 +997,12 @@ function toXML(name, value) {
       }
       value = elems.join('');
     } else {
-      value = String(value);
+      value = String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
     }
     var startTag = name ? '<' + name + (attrs.length > 0 ? ' ' + attrs.join(' ') : '') + '>' : '';
     var endTag = name ? '</' + name + '>' : '';

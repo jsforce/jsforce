@@ -969,7 +969,7 @@ Batch.prototype.retrieve = function(callback) {
     }
     self.emit('response', results);
     return results;
-  }).catch(function(err) {
+  }).fail(function(err) {
     self.emit('error', err);
     throw err;
   }).thenCall(callback);
@@ -1128,7 +1128,7 @@ Bulk.prototype.query = function(soql) {
     var r = results[0];
     var result = self.job(r.jobId).batch(r.batchId).result(r.id);
     result.stream().pipe(dataStream);
-  }).catch(function(err) {
+  }).fail(function(err) {
     recordStream.emit('error', err);
   });
   return recordStream;
@@ -5556,6 +5556,8 @@ HttpApi.prototype.request = function(request, callback) {
   var conn = this._conn;
   var logger = conn._logger;
   var refreshDelegate = this.getRefreshDelegate();
+  // remember previous instance url in case it changes after a refresh
+  var lastInstanceUrl = conn.instanceUrl;
 
   var deferred = Promise.defer();
 
@@ -5564,6 +5566,14 @@ HttpApi.prototype.request = function(request, callback) {
       deferred.reject(err);
       return;
     }
+    // check to see if the token refresh has changed the instance url
+    if(lastInstanceUrl !== conn.instanceUrl){
+      // if the instance url has changed 
+      // then replace the current request urls instance url fragment 
+      // with the updated instance url 
+      request.url = request.url.replace(lastInstanceUrl,conn.instanceUrl);
+    }
+
     self.request(request).then(function(response) {
       deferred.resolve(response);
     }, function(err) {
@@ -6441,7 +6451,7 @@ Promise.prototype.thenCall = function(callback) {
  * @param {RejectedCallback.<S>} onRejected
  * @returns {Promise.<S>}
  */
-Promise.prototype.fail = Promise.prototype.catch;
+Promise.prototype.fail = Promise.prototype['catch'];
 
 /**
  * Alias for completion
@@ -7445,7 +7455,7 @@ RecordStream.prototype._transform = function(record, enc, callback) {
  * @returns {RecordStream}
  */
 RecordStream.prototype.map = function(fn) {
-  return this.pipe(RecordStream.map());
+  return this.pipe(RecordStream.map(fn));
 };
 
 /**
@@ -7455,7 +7465,7 @@ RecordStream.prototype.map = function(fn) {
  * @returns {RecordStream}
  */
 RecordStream.prototype.filter = function(fn) {
-  return this.pipe(RecordStream.filter());
+  return this.pipe(RecordStream.filter(fn));
 };
 
 
@@ -8110,7 +8120,12 @@ function toXML(name, value) {
       }
       value = elems.join('');
     } else {
-      value = String(value);
+      value = String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
     }
     var startTag = name ? '<' + name + (attrs.length > 0 ? ' ' + attrs.join(' ') : '') + '>' : '';
     var endTag = name ? '</' + name + '>' : '';
@@ -8955,8 +8970,8 @@ if (request.defaults) {
   if (process.env.HTTP_PROXY) {
     defaults.proxy = process.env.HTTP_PROXY;
   }
-  if (process.env.HTTP_TIMEOUT) {
-    defaults.timeout = process.env.HTTP_TIMEOUT;
+  if (parseInt(process.env.HTTP_TIMEOUT)) {
+    defaults.timeout = parseInt(process.env.HTTP_TIMEOUT);
   }
   request = request.defaults(defaults);
 }
@@ -9095,7 +9110,7 @@ module.exports={
     "database.com"
   ],
   "homepage": "http://github.com/jsforce/jsforce",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "repository": {
     "type": "git",
     "url": "git://github.com/jsforce/jsforce.git"

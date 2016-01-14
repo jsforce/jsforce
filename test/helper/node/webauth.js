@@ -39,10 +39,13 @@ module.exports = function(url, username, password, callback) {
       } else if (url.indexOf("/?ec=302") > 0) { // login page
         return client.setValue("#username", username)
                      .setValue("#password", password)
-                     .click("button[name=Login]");
+                     .click("[name=Login]");
       } else {
         return client.pause(1000);
       }
+    }).catch(function(err) {
+      console.error(err);
+      throw err;
     }).then(function() {
       return approved || loginAndApprove();
     });
