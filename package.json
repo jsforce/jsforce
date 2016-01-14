@@ -82,7 +82,7 @@
     "mocha": "^1.21.4",
     "power-assert": "^0.7.2",
     "require-swapper": "^0.1.5",
-    "webdriverio": "^2.4.3"
+    "webdriverio": "^3.4.0"
   },
   "browser": {
     "request": "./lib/browser/request.js"
