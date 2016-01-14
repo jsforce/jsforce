@@ -645,7 +645,7 @@ Batch.prototype.retrieve = function(callback) {
     }
     self.emit('response', results);
     return results;
-  }).catch(function(err) {
+  }).fail(function(err) {
     self.emit('error', err);
     throw err;
   }).thenCall(callback);
@@ -804,7 +804,7 @@ Bulk.prototype.query = function(soql) {
     var r = results[0];
     var result = self.job(r.jobId).batch(r.batchId).result(r.id);
     result.stream().pipe(dataStream);
-  }).catch(function(err) {
+  }).fail(function(err) {
     recordStream.emit('error', err);
   });
   return recordStream;
