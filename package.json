@@ -61,7 +61,7 @@
     "xml2js": "^0.4.4"
   },
   "devDependencies": {
-    "archiver": "^0.14.4",
+    "archiver": "^0.21.0",
     "async": "^0.9.0",
     "browserify": "^11.0.1",
     "dotenv": "^0.4.0",
