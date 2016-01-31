@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>JSDoc: Source: query.js</title>
-    
+
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
     <!--[if lt IE 9]>
@@ -16,16 +16,17 @@
 <body>
 
 <div id="main">
-    
+
     <h1 class="page-title">Source: query.js</h1>
+
     
-    
+
 
 
     
     <section>
         <article>
-            <pre class="prettyprint source"><code>/*global process*/
+            <pre class="prettyprint source linenums"><code>/*global process*/
 /**
  * @file Manages query for records in Salesforce
  * @author Shinichi Tomita &lt;shinichi.tomita@gmail.com>
@@ -69,7 +70,7 @@ var Query = module.exports = function(conn, config, locator) {
       }
     }
   }
-  if (locator && locator.indexOf("/") >= 0) { // if locator given in url for next records
+  if (locator &amp;&amp; locator.indexOf("/") >= 0) { // if locator given in url for next records
     locator = locator.split("/").pop();
   }
   this._locator = locator;
@@ -98,7 +99,7 @@ Query.prototype.select = function(fields) {
   fields = fields || '*';
   if (_.isString(fields)) {
     fields = fields.split(/\s*,\s*/);
-  } else if (_.isObject(fields) && !_.isArray(fields)) {
+  } else if (_.isObject(fields) &amp;&amp; !_.isArray(fields)) {
     var _fields =  [];
     for (var k in fields) {
       if (fields[k]) { _fields.push(k); }
@@ -181,7 +182,7 @@ Query.prototype.orderby = function(sort, dir) {
   if (this._soql) {
     throw Error("Cannot set sort for the query which has already built SOQL.");
   }
-  if (_.isString(sort) && _.isString(dir)) {
+  if (_.isString(sort) &amp;&amp; _.isString(dir)) {
     sort = [ [ sort, dir ] ];
   }
   this._config.sort = sort;
@@ -216,8 +217,8 @@ Query.prototype.include = function(childRelName, conditions, fields, options) {
     table: childRelName,
     conditions: conditions,
     fields: fields,
-    limit: options && options.limit,
-    offset: options && (options.offset || options.skip)
+    limit: options &amp;&amp; options.limit,
+    offset: options &amp;&amp; (options.offset || options.skip)
   };
   this._config.includes = this._config.includes || [];
   this._config.includes.push(childConfig);
@@ -379,7 +380,7 @@ Query.prototype.execute = function(options, callback) {
   // only when response target is Records and
   // either callback or chaining promises are available to this query.
   this.once('fetch', function() {
-    if (options.responseTarget === ResponseTargets.Records && (self._chaining || callback)) {
+    if (options.responseTarget === ResponseTargets.Records &amp;&amp; (self._chaining || callback)) {
       logger.debug('--- collecting all fetched records ---');
       var records = [];
       var onRecord = function(record) {
@@ -436,7 +437,7 @@ Query.prototype._execute = function(options) {
     var res;
     switch(responseTarget) {
       case ResponseTargets.SingleRecord:
-        res = data.records && data.records.length > 0 ? data.records[0] : null;
+        res = data.records &amp;&amp; data.records.length > 0 ? data.records[0] : null;
         break;
       case ResponseTargets.Records:
         res = data.records;
@@ -482,7 +483,7 @@ Query.prototype._execute = function(options) {
  * @private
  */
 Query.prototype._read = function(size) {
-  if (!this._finished && !this._executed) {
+  if (!this._finished &amp;&amp; !this._executed) {
     this.execute({ autoFetch: true });
   }
 };
@@ -566,7 +567,7 @@ Query.prototype._expandFields = function() {
         if (fpath.length > 1) {
           var rname = fpath.shift();
           var rfield = _.find(sobject.fields, function(f) {
-            return f.relationshipName &&
+            return f.relationshipName &amp;&amp;
                    f.relationshipName.toUpperCase() === rname.toUpperCase();
           });
           if (rfield) {
@@ -671,7 +672,7 @@ Query.prototype.destroy = function(type, callback) {
     callback = type;
     type = null;
   }
-  type = type || (this._config && this._config.table);
+  type = type || (this._config &amp;&amp; this._config.table);
   if (!type) {
     throw new Error("SOQL based query needs SObject type information to bulk delete.");
   }
@@ -701,7 +702,7 @@ Query.prototype.update = function(mapping, type, callback) {
     callback = type;
     type = null;
   }
-  type = type || (this._config && this._config.table);
+  type = type || (this._config &amp;&amp; this._config.table);
   if (!type) {
     throw new Error("SOQL based query needs SObject type information to bulk update.");
   }
@@ -733,7 +734,7 @@ Query.prototype.update = function(mapping, type, callback) {
  */
 Query.prototype.then = function(onResolved, onReject) {
   this._chaining = true;
-  if (!this._finished && !this._executed) { this.execute(); }
+  if (!this._finished &amp;&amp; !this._executed) { this.execute(); }
   return this._deferred.promise.then.apply(this._deferred.promise, arguments);
 };
 
@@ -817,13 +818,13 @@ SubQuery.prototype.execute = function() {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="HttpApi.html">HttpApi</a></li><li><a href="ListView.html">ListView</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Process.html">Process</a></li><li><a href="Process-ApprovalProcess.html">ApprovalProcess</a></li><li><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></li><li><a href="Process-ProcessRule.html">ProcessRule</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="QuickAction.html">QuickAction</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.Parsable.html">Parsable</a></li><li><a href="RecordStream.Serializable.html">Serializable</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SoapApi.html">SoapApi</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Channel.html">Channel</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SessionRefreshDelegate">SessionRefreshDelegate</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="HttpApi.html">HttpApi</a></li><li><a href="ListView.html">ListView</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Process.html">Process</a></li><li><a href="Process-ApprovalProcess.html">ApprovalProcess</a></li><li><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></li><li><a href="Process-ProcessRule.html">ProcessRule</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="QuickAction.html">QuickAction</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.Parsable.html">Parsable</a></li><li><a href="RecordStream.Serializable.html">Serializable</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SoapApi.html">SoapApi</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Channel.html">Channel</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SessionRefreshDelegate">SessionRefreshDelegate</a></li></ul>
 </nav>
 
-<br clear="both">
+<br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Jan 14 2016 21:17:27 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Feb 01 2016 03:01:26 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>

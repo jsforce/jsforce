@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>JSDoc: Class: Chatter</title>
-    
+
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
     <!--[if lt IE 9]>
@@ -16,74 +16,76 @@
 <body>
 
 <div id="main">
-    
+
     <h1 class="page-title">Class: Chatter</h1>
+
     
-    
+
 
 
 
 <section>
-    
+
 <header>
-    <h2>
-    Chatter
-    </h2>
     
-</header>  
+        <h2>Chatter</h2>
+        
+    
+</header>
 
 <article>
     <div class="container-overview">
     
-    
-    
         
-<dt>
-    <h4 class="name" id="Chatter"><span class="type-signature"></span>new Chatter<span class="signature">(conn)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        API class for Chatter REST API call
-    </div>
-    
 
     
+
+    <h4 class="name" id="Chatter"><span class="type-signature"></span>new Chatter<span class="signature">(conn)</span><span class="type-signature"></span></h4>
+
     
+
+
+
+<div class="description">
+    API class for Chatter REST API call
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-    
-    
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>conn</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -92,79 +94,88 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">Connection</td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chatter.js.html">api/chatter.js</a>, <a href="chatter.js.html#line18">line 18</a>
+        <a href="api_chatter.js.html">api/chatter.js</a>, <a href="api_chatter.js.html#line18">line 18</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    
-    
-</dd>
+
+
+
+
+
+
+
+
+
+
+
+
 
     
     </div>
+
     
+
     
-    
-    
-    
-    
-    
+
     
         <h3 class="subsection-title">Classes</h3>
-        
+
         <dl>
             <dt><a href="Chatter-Request.html">Request</a></dt>
             <dd></dd>
@@ -173,389 +184,422 @@
             <dd></dd>
         </dl>
     
-    
-    
-    
-    
-    
-    
-        <h3 class="subsection-title">Methods</h3>
-        
-        <dl>
-            
-<dt>
-    <h4 class="name" id="batch"><span class="type-signature"></span>batch<span class="signature">(<span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;<a href="Chatter.html#BatchRequestResult">Chatter~BatchRequestResult</a>>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Make a batch request to chatter API
-    </div>
+
+     
+
     
 
     
+
     
-    
-    
-    
-        <h5>Parameters:</h5>
+        <h3 class="subsection-title">Methods</h3>
+
         
+            
+
+    
+
+    <h4 class="name" id="batch"><span class="type-signature"></span>batch<span class="signature">(callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;<a href="Chatter.html#~BatchRequestResult">Chatter~BatchRequestResult</a>>}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Make a batch request to chatter API
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		<th>Argument</th>
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>callback</code></td>
             
-            
+
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;<a href="Chatter.html#BatchRequestResult">Chatter~BatchRequestResult</a>></span>
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;<a href="Chatter.html#~BatchRequestResult">Chatter~BatchRequestResult</a>></span>
 
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
                     &lt;optional><br>
                 
-                    
+
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">Callback func</td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chatter.js.html">api/chatter.js</a>, <a href="chatter.js.html#line103">line 103</a>
+        <a href="api_chatter.js.html">api/chatter.js</a>, <a href="api_chatter.js.html#line103">line 103</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 
 
 <dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="Promise.html">Promise</a>.&lt;<a href="Chatter.html#BatchRequestResult">Chatter~BatchRequestResult</a>></span>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;<a href="Chatter.html#~BatchRequestResult">Chatter~BatchRequestResult</a>></span>
 
 
-	</dd>
+    </dd>
 </dl>
 
-        
     
-    
-</dd>
+
+
 
         
             
-<dt>
-    <h4 class="name" id="request"><span class="type-signature"></span>request<span class="signature">(params, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Chatter-Request.html">Chatter~Request</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Make a request for chatter API resource
-    </div>
-    
 
     
+
+    <h4 class="name" id="request"><span class="type-signature"></span>request<span class="signature">(params, callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="Chatter-Request.html">Chatter~Request</a>}</span></h4>
+
     
+
+
+
+<div class="description">
+    Make a request for chatter API resource
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-    
-    
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		<th>Argument</th>
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>params</code></td>
             
-            
+
             <td class="type">
             
                 
-<span class="param-type"><a href="Chatter.html#RequestParams">Chatter~RequestParams</a></span>
+<span class="param-type"><a href="Chatter.html#~RequestParams">Chatter~RequestParams</a></span>
 
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
-                    
+
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">Paramters representing HTTP request</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>callback</code></td>
             
-            
+
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;<a href="Chatter.html#RequestResult">Chatter~RequestResult</a>></span>
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;<a href="Chatter.html#~RequestResult">Chatter~RequestResult</a>></span>
 
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
                     &lt;optional><br>
                 
-                    
+
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">Callback func</td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chatter.js.html">api/chatter.js</a>, <a href="chatter.js.html#line73">line 73</a>
+        <a href="api_chatter.js.html">api/chatter.js</a>, <a href="api_chatter.js.html#line73">line 73</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 
 
 <dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
 <span class="param-type"><a href="Chatter-Request.html">Chatter~Request</a></span>
 
 
-	</dd>
+    </dd>
 </dl>
 
-        
     
-    
-</dd>
+
+
 
         
             
-<dt>
-    <h4 class="name" id="resource"><span class="type-signature"></span>resource<span class="signature">(url, <span class="optional">queryParams</span>)</span><span class="type-signature"> &rarr; {<a href="Chatter-Resource.html">Chatter~Resource</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Make a resource request to chatter API
-    </div>
-    
 
     
+
+    <h4 class="name" id="resource"><span class="type-signature"></span>resource<span class="signature">(url, queryParams<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="Chatter-Resource.html">Chatter~Resource</a>}</span></h4>
+
     
+
+
+
+<div class="description">
+    Make a resource request to chatter API
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-    
-    
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		<th>Argument</th>
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>url</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -564,29 +608,29 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
-                    
+
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">Resource URL</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>queryParams</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -595,158 +639,166 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
                     &lt;optional><br>
                 
-                    
+
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">Query parameters (in hash object)</td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chatter.js.html">api/chatter.js</a>, <a href="chatter.js.html#line84">line 84</a>
+        <a href="api_chatter.js.html">api/chatter.js</a>, <a href="api_chatter.js.html#line84">line 84</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 
 
 <dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
 <span class="param-type"><a href="Chatter-Resource.html">Chatter~Resource</a></span>
 
 
-	</dd>
+    </dd>
 </dl>
 
+    
+
+
+
         
     
-    
-</dd>
 
-        </dl>
-    
-    
     
         <h3 class="subsection-title">Type Definitions</h3>
+
         
-        <dl>
                 
-<dt>
-    <h4 class="name" id="BatchRequestParams">BatchRequestParams</h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
+<h4 class="name" id="~BatchRequestParams">BatchRequestParams</h4>
+
+
+
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
 <span class="param-type">Object</span>
 
 
-            </li>
-        </ul>
-    
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
 
     
-<dl class="details">
-    
-        
-        <h5 class="subsection-title">Properties:</h5>
-        
-        <dl>
 
 <table class="props">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		<th>Argument</th>
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>method</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -755,27 +807,27 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">HTTP method</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>url</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -784,27 +836,27 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">Resource URL</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>richInput</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -813,117 +865,126 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
                     &lt;optional><br>
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">HTTP body (in POST/PUT/PATCH methods)</td>
         </tr>
-	
-	
-	</tbody>
-</table></dl>
-        
+
     
-        
-    
-    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chatter.js.html">api/chatter.js</a>, <a href="chatter.js.html#line148">line 148</a>
+        <a href="api_chatter.js.html">api/chatter.js</a>, <a href="api_chatter.js.html#line148">line 148</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
-</dd>
+
+
+
+
 
             
                 
-<dt>
-    <h4 class="name" id="BatchRequestResult">BatchRequestResult</h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
+<h4 class="name" id="~BatchRequestResult">BatchRequestResult</h4>
+
+
+
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
 <span class="param-type">Object</span>
 
 
-            </li>
-        </ul>
-    
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
 
     
-<dl class="details">
-    
-        
-        <h5 class="subsection-title">Properties:</h5>
-        
-        <dl>
 
 <table class="props">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>hasError</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -932,21 +993,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">Flag if the batch has one or more errors</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>results</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -955,39 +1016,39 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">Batch request results in array
                 <h6>Properties</h6>
 
 <table class="props">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>statusCode</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -996,140 +1057,150 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">HTTP response status code</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>result</code></td>
             
-            
+
             <td class="type">
             
                 
-<span class="param-type"><a href="Chatter.html#RequestResult">Chatter~RequestResult</a></span>
+<span class="param-type"><a href="Chatter.html#~RequestResult">Chatter~RequestResult</a></span>
 
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">Parsed HTTP response body</td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
+
             </td>
         </tr>
-	
-	
-	</tbody>
-</table></dl>
-        
+
     
-        
-    
-    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chatter.js.html">api/chatter.js</a>, <a href="chatter.js.html#line88">line 88</a>
+        <a href="api_chatter.js.html">api/chatter.js</a>, <a href="api_chatter.js.html#line88">line 88</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
-</dd>
+
+
+
+
 
             
                 
-<dt>
-    <h4 class="name" id="RequestParams">RequestParams</h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
+<h4 class="name" id="~RequestParams">RequestParams</h4>
+
+
+
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
 <span class="param-type">Object</span>
 
 
-            </li>
-        </ul>
-    
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
 
     
-<dl class="details">
-    
-        
-        <h5 class="subsection-title">Properties:</h5>
-        
-        <dl>
 
 <table class="props">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		<th>Argument</th>
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>method</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1138,27 +1209,27 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">HTTP method</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>url</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1167,27 +1238,27 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">Resource URL</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>body</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1196,129 +1267,149 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
                     &lt;optional><br>
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">HTTP body (in POST/PUT/PATCH methods)</td>
         </tr>
-	
-	
-	</tbody>
-</table></dl>
-        
+
     
-        
-    
-    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chatter.js.html">api/chatter.js</a>, <a href="chatter.js.html#line55">line 55</a>
+        <a href="api_chatter.js.html">api/chatter.js</a>, <a href="api_chatter.js.html#line55">line 55</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
-</dd>
+
+
+
+
 
             
                 
-<dt>
-    <h4 class="name" id="RequestResult">RequestResult</h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
+<h4 class="name" id="~RequestResult">RequestResult</h4>
+
+
+
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
 <span class="param-type">Object</span>
 
 
-            </li>
-        </ul>
-    
+        </li>
+    </ul>
 
-    
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="chatter.js.html">api/chatter.js</a>, <a href="chatter.js.html#line57">line 57</a>
+        <a href="api_chatter.js.html">api/chatter.js</a>, <a href="api_chatter.js.html#line62">line 62</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
-</dd>
 
-            </dl>
+
+
+
+
+            
     
-    
+
     
 </article>
 
-</section>  
+</section>
 
 
 
@@ -1326,13 +1417,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="HttpApi.html">HttpApi</a></li><li><a href="ListView.html">ListView</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Process.html">Process</a></li><li><a href="Process-ApprovalProcess.html">ApprovalProcess</a></li><li><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></li><li><a href="Process-ProcessRule.html">ProcessRule</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="QuickAction.html">QuickAction</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.Parsable.html">Parsable</a></li><li><a href="RecordStream.Serializable.html">Serializable</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SoapApi.html">SoapApi</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Channel.html">Channel</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SessionRefreshDelegate">SessionRefreshDelegate</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="HttpApi.html">HttpApi</a></li><li><a href="ListView.html">ListView</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Process.html">Process</a></li><li><a href="Process-ApprovalProcess.html">ApprovalProcess</a></li><li><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></li><li><a href="Process-ProcessRule.html">ProcessRule</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="QuickAction.html">QuickAction</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.Parsable.html">Parsable</a></li><li><a href="RecordStream.Serializable.html">Serializable</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SoapApi.html">SoapApi</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Channel.html">Channel</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SessionRefreshDelegate">SessionRefreshDelegate</a></li></ul>
 </nav>
 
-<br clear="both">
+<br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Jan 14 2016 21:17:28 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Feb 01 2016 03:01:26 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>

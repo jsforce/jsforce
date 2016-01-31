@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>JSDoc: Source: connection.js</title>
-    
+
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
     <!--[if lt IE 9]>
@@ -16,16 +16,17 @@
 <body>
 
 <div id="main">
-    
+
     <h1 class="page-title">Source: connection.js</h1>
+
     
-    
+
 
 
     
     <section>
         <article>
-            <pre class="prettyprint source"><code>/*global Buffer */
+            <pre class="prettyprint source linenums"><code>/*global Buffer */
 /**
  * @file Connection class to keep the API session information and manage requests
  * @author Shinichi Tomita &lt;shinichi.tomita@gmail.com>
@@ -49,7 +50,7 @@ var events  = require('events'),
 var defaults = {
   loginUrl: "https://login.salesforce.com",
   instanceUrl: "",
-  version: "34.0"
+  version: "35.0"
 };
 
 /**
@@ -183,7 +184,7 @@ var Connection = module.exports = function(options) {
   // Allow to delegate connection refresh to outer function
   var self = this;
   var refreshFn = options.refreshFn;
-  if (!refreshFn && this.oauth2.clientId && this.oauth2.clientSecret) {
+  if (!refreshFn &amp;&amp; this.oauth2.clientId &amp;&amp; this.oauth2.clientSecret) {
     refreshFn = oauthRefreshFn;
   }
   if (refreshFn) {
@@ -221,18 +222,18 @@ inherits(Connection, events.EventEmitter);
  * @param {UserInfo} [options.userInfo] - Logged in user information
  */
 Connection.prototype.initialize = function(options) {
-  if (!options.instanceUrl && options.serverUrl) {
+  if (!options.instanceUrl &amp;&amp; options.serverUrl) {
     options.instanceUrl = options.serverUrl.split('/').slice(0, 3).join('/');
   }
   this.instanceUrl = options.instanceUrl || options.serverUrl || this.instanceUrl || defaults.instanceUrl;
 
   this.accessToken = options.sessionId || options.accessToken || this.accessToken;
   this.refreshToken = options.refreshToken || this.refreshToken;
-  if (this.refreshToken && !this._refreshDelegate) {
+  if (this.refreshToken &amp;&amp; !this._refreshDelegate) {
     throw new Error("Refresh token is specified without oauth2 client information or refresh function");
   }
 
-  this.signedRequest = options.signedRequest && parseSignedRequest(options.signedRequest);
+  this.signedRequest = options.signedRequest &amp;&amp; parseSignedRequest(options.signedRequest);
   if (this.signedRequest) {
     this.accessToken = this.signedRequest.client.oauthToken;
   }
@@ -345,7 +346,7 @@ Connection.prototype.request = function(request, options, callback) {
 
   // log api usage and its quota
   httpApi.on('response', function(response) {
-    if (response.headers && response.headers["sforce-limit-info"]) {
+    if (response.headers &amp;&amp; response.headers["sforce-limit-info"]) {
       var apiUsage = response.headers["sforce-limit-info"].match(/api\-usage=(\d+)\/(\d+)/);
       if (apiUsage) {
         self.limitInfo = {
@@ -590,7 +591,7 @@ Connection.prototype.retrieve = function(type, ids, options, callback) {
       return self.request(url);
     })
   ).then(function(results) {
-    return !isArray && _.isArray(results) ? results[0] : results;
+    return !isArray &amp;&amp; _.isArray(results) ? results[0] : results;
   }).thenCall(callback);
 };
 
@@ -643,7 +644,7 @@ Connection.prototype.create = function(type, records, options, callback) {
   }
   return Promise.all(
     _.map(records, function(record) {
-      var sobjectType = type || (record.attributes && record.attributes.type) || record.type;
+      var sobjectType = type || (record.attributes &amp;&amp; record.attributes.type) || record.type;
       if (!sobjectType) {
         throw new Error('No SObject Type defined in record');
       }
@@ -663,7 +664,7 @@ Connection.prototype.create = function(type, records, options, callback) {
       });
     })
   ).then(function(results) {
-    return !isArray && _.isArray(results) ? results[0] : results;
+    return !isArray &amp;&amp; _.isArray(results) ? results[0] : results;
   }).thenCall(callback);
 };
 
@@ -701,7 +702,7 @@ Connection.prototype.update = function(type, records, options, callback) {
       if (!id) {
         throw new Error('Record id is not found in record.');
       }
-      var sobjectType = type || (record.attributes && record.attributes.type) || record.type;
+      var sobjectType = type || (record.attributes &amp;&amp; record.attributes.type) || record.type;
       if (!sobjectType) {
         throw new Error('No SObject Type defined in record');
       }
@@ -723,7 +724,7 @@ Connection.prototype.update = function(type, records, options, callback) {
       });
     })
   ).then(function(results) {
-    return !isArray && _.isArray(results) ? results[0] : results;
+    return !isArray &amp;&amp; _.isArray(results) ? results[0] : results;
   }).thenCall(callback);
 };
 
@@ -760,7 +761,7 @@ Connection.prototype.upsert = function(type, records, extIdField, options, callb
   }
   return Promise.all(
     _.map(records, function(record) {
-      var sobjectType = type || (record.attributes && record.attributes.type) || record.type;
+      var sobjectType = type || (record.attributes &amp;&amp; record.attributes.type) || record.type;
       var extId = record[extIdField];
       if (!extId) {
         return Promise.reject(new Error('External ID is not defined in the record'));
@@ -783,7 +784,7 @@ Connection.prototype.upsert = function(type, records, extIdField, options, callb
       });
     })
   ).then(function(results) {
-    return !isArray && _.isArray(results) ? results[0] : results;
+    return !isArray &amp;&amp; _.isArray(results) ? results[0] : results;
   }).thenCall(callback);
 };
 
@@ -843,7 +844,7 @@ Connection.prototype.destroy = function(type, ids, options, callback) {
       });
     })
   ).then(function(results) {
-    return !isArray && _.isArray(results) ? results[0] : results;
+    return !isArray &amp;&amp; _.isArray(results) ? results[0] : results;
   }).thenCall(callback);
 };
 
@@ -925,14 +926,14 @@ Connection.prototype.sobject = function(type) {
  */
 Connection.prototype.identity = function(callback) {
   var self = this;
-  var idUrl = this.userInfo && this.userInfo.url;
+  var idUrl = this.userInfo &amp;&amp; this.userInfo.url;
   return Promise.resolve(
     idUrl ?
     { identity: idUrl } :
     this.request(this._baseUrl())
   ).then(function(res) {
     var url = res.identity;
-    url += '?format=json&oauth_token=' + encodeURIComponent(self.accessToken);
+    url += '?format=json&amp;oauth_token=' + encodeURIComponent(self.accessToken);
     return self.request(url, null, { jsonp : 'callback' });
   }).then(function(res) {
     self.userInfo = {
@@ -990,7 +991,7 @@ Connection.prototype.authorize = function(code, callback) {
 Connection.prototype.login = function(username, password, callback) {
   // register refreshDelegate for session expiration
   this._refreshDelegate = new HttpApi.SessionRefreshDelegate(this, createUsernamePasswordRefreshFn(username, password));
-  if (this.oauth2 && this.oauth2.clientId && this.oauth2.clientSecret) {
+  if (this.oauth2 &amp;&amp; this.oauth2.clientId &amp;&amp; this.oauth2.clientSecret) {
     return this.loginByOAuth2(username, password, callback);
   } else {
     return this.loginBySoap(username, password, callback);
@@ -1008,7 +1009,7 @@ function createUsernamePasswordRefreshFn(username, password) {
 }
 
 /**
- * Login by OAuth2 username & password flow
+ * Login by OAuth2 username &amp; password flow
  *
  * @param {String} username - Salesforce username
  * @param {String} password - Salesforce password (and security token, if required)
@@ -1037,8 +1038,8 @@ Connection.prototype.loginByOAuth2 = function(username, password, callback) {
  * @private
  */
 function esc(str) {
-  return str && String(str).replace(/&/g, '&amp;').replace(/&lt;/g, '&lt;')
-                           .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  return str &amp;&amp; String(str).replace(/&amp;/g, '&amp;amp;').replace(/&lt;/g, '&amp;lt;')
+                           .replace(/>/g, '&amp;gt;').replace(/"/g, '&amp;quot;');
 }
 
 /**
@@ -1078,18 +1079,18 @@ Connection.prototype.loginBySoap = function(username, password, callback) {
     var m;
     if (response.statusCode >= 400) {
       m = response.body.match(/&lt;faultstring>([^&lt;]+)&lt;\/faultstring>/);
-      var faultstring = m && m[1];
+      var faultstring = m &amp;&amp; m[1];
       throw new Error(faultstring || response.body);
     }
     logger.debug("SOAP response = " + response.body);
     m = response.body.match(/&lt;serverUrl>([^&lt;]+)&lt;\/serverUrl>/);
-    var serverUrl = m && m[1];
+    var serverUrl = m &amp;&amp; m[1];
     m = response.body.match(/&lt;sessionId>([^&lt;]+)&lt;\/sessionId>/);
-    var sessionId = m && m[1];
+    var sessionId = m &amp;&amp; m[1];
     m = response.body.match(/&lt;userId>([^&lt;]+)&lt;\/userId>/);
-    var userId = m && m[1];
+    var userId = m &amp;&amp; m[1];
     m = response.body.match(/&lt;organizationId>([^&lt;]+)&lt;\/organizationId>/);
-    var orgId = m && m[1];
+    var orgId = m &amp;&amp; m[1];
     var idUrl = soapLoginEndpoint.split('/').slice(0, 3).join('/');
     idUrl += "/id/" + orgId + "/" + userId;
     var userInfo = {
@@ -1182,7 +1183,7 @@ Connection.prototype.logoutBySoap = function(callback) {
     logger.debug("SOAP statusCode = " + response.statusCode + ", response = " + response.body);
     if (response.statusCode >= 400) {
       var m = response.body.match(/&lt;faultstring>([^&lt;]+)&lt;\/faultstring>/);
-      var faultstring = m && m[1];
+      var faultstring = m &amp;&amp; m[1];
       throw new Error(faultstring || response.body);
     }
 
@@ -1272,7 +1273,7 @@ Connection.prototype.updated = function (type, start, end, callback) {
   }
 
   if (end) {
-    url += "&end=" + encodeURIComponent(end);
+    url += "&amp;end=" + encodeURIComponent(end);
   }
 
   return this.request(url).thenCall(callback);
@@ -1320,7 +1321,7 @@ Connection.prototype.deleted = function (type, start, end, callback) {
   }
 
   if (end) {
-    url += "&end=" + encodeURIComponent(end);
+    url += "&amp;end=" + encodeURIComponent(end);
   }
 
   return this.request(url).thenCall(callback);
@@ -1403,13 +1404,13 @@ Connection.prototype.quickAction = function(actionName) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="HttpApi.html">HttpApi</a></li><li><a href="ListView.html">ListView</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Process.html">Process</a></li><li><a href="Process-ApprovalProcess.html">ApprovalProcess</a></li><li><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></li><li><a href="Process-ProcessRule.html">ProcessRule</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="QuickAction.html">QuickAction</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.Parsable.html">Parsable</a></li><li><a href="RecordStream.Serializable.html">Serializable</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SoapApi.html">SoapApi</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Channel.html">Channel</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SessionRefreshDelegate">SessionRefreshDelegate</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="HttpApi.html">HttpApi</a></li><li><a href="ListView.html">ListView</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Process.html">Process</a></li><li><a href="Process-ApprovalProcess.html">ApprovalProcess</a></li><li><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></li><li><a href="Process-ProcessRule.html">ProcessRule</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="QuickAction.html">QuickAction</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.Parsable.html">Parsable</a></li><li><a href="RecordStream.Serializable.html">Serializable</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SoapApi.html">SoapApi</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Channel.html">Channel</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SessionRefreshDelegate">SessionRefreshDelegate</a></li></ul>
 </nav>
 
-<br clear="both">
+<br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Jan 14 2016 21:17:27 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Feb 01 2016 03:01:26 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>

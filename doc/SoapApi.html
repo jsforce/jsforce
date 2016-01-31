@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>JSDoc: Class: SoapApi</title>
-    
+
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
     <!--[if lt IE 9]>
@@ -16,74 +16,76 @@
 <body>
 
 <div id="main">
-    
+
     <h1 class="page-title">Class: SoapApi</h1>
+
     
-    
+
 
 
 
 <section>
-    
+
 <header>
-    <h2>
-    SoapApi
-    </h2>
     
-</header>  
+        <h2>SoapApi</h2>
+        
+    
+</header>
 
 <article>
     <div class="container-overview">
     
-    
-    
         
-<dt>
-    <h4 class="name" id="SoapApi"><span class="type-signature"></span>new SoapApi<span class="signature">(conn)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        API class for Partner SOAP call
-    </div>
-    
 
     
+
+    <h4 class="name" id="SoapApi"><span class="type-signature"></span>new SoapApi<span class="signature">(conn)</span><span class="type-signature"></span></h4>
+
     
+
+
+
+<div class="description">
+    API class for Partner SOAP call
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-    
-    
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>conn</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -92,381 +94,505 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">Connection</td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="soap.js.html">api/soap.js</a>, <a href="soap.js.html#line17">line 17</a>
+        <a href="api_soap.js.html">api/soap.js</a>, <a href="api_soap.js.html#line17">line 17</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    
-    
-</dd>
+
+
+
+
+
+
+
+
+
+
+
+
 
     
     </div>
+
     
+
     
+
     
+
+     
+
     
+
     
-    
-    
-    
-    
-    
-    
-    
-    
+
     
         <h3 class="subsection-title">Methods</h3>
+
         
-        <dl>
             
-<dt>
-    <h4 class="name" id="convertLead"><span class="type-signature"></span>convertLead<span class="signature">(leadConverts, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;(<a href="SoapApi.html#LeadConvertResult">SoapApi~LeadConvertResult</a>|Array.&lt;<a href="SoapApi.html#LeadConvertResult">SoapApi~LeadConvertResult</a>>)>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Converts a Lead into an Account, Contact, or (optionally) an Opportunity.
-    </div>
-    
 
     
+
+    <h4 class="name" id="convertLead"><span class="type-signature"></span>convertLead<span class="signature">(leadConverts, callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;(<a href="SoapApi.html#~LeadConvertResult">SoapApi~LeadConvertResult</a>|Array.&lt;<a href="SoapApi.html#~LeadConvertResult">SoapApi~LeadConvertResult</a>>)>}</span></h4>
+
     
+
+
+
+<div class="description">
+    Converts a Lead into an Account, Contact, or (optionally) an Opportunity.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-    
-    
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		<th>Argument</th>
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>leadConverts</code></td>
             
-            
+
             <td class="type">
             
                 
-<span class="param-type"><a href="SoapApi.html#LeadConvert">SoapApi~LeadConvert</a></span>
+<span class="param-type"><a href="SoapApi.html#~LeadConvert">SoapApi~LeadConvert</a></span>
 |
 
-<span class="param-type">Array.&lt;<a href="SoapApi.html#LeadConvert">SoapApi~LeadConvert</a>></span>
+<span class="param-type">Array.&lt;<a href="SoapApi.html#~LeadConvert">SoapApi~LeadConvert</a>></span>
 
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
-                    
+
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>callback</code></td>
             
-            
+
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;(<a href="SoapApi.html#LeadConvertResult">SoapApi~LeadConvertResult</a>|Array.&lt;<a href="SoapApi.html#LeadConvertResult">SoapApi~LeadConvertResult</a>>)></span>
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;(<a href="SoapApi.html#~LeadConvertResult">SoapApi~LeadConvertResult</a>|Array.&lt;<a href="SoapApi.html#~LeadConvertResult">SoapApi~LeadConvertResult</a>>)></span>
 
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
                     &lt;optional><br>
                 
-                    
+
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">Callback function</td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="soap.js.html">api/soap.js</a>, <a href="soap.js.html#line67">line 67</a>
+        <a href="api_soap.js.html">api/soap.js</a>, <a href="api_soap.js.html#line67">line 67</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 
 
 <dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="Promise.html">Promise</a>.&lt;(<a href="SoapApi.html#LeadConvertResult">SoapApi~LeadConvertResult</a>|Array.&lt;<a href="SoapApi.html#LeadConvertResult">SoapApi~LeadConvertResult</a>>)></span>
-
-
-	</dd>
-</dl>
-
+    <dt>
+        Type
+    </dt>
+    <dd>
         
-    
-    
-</dd>
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;(<a href="SoapApi.html#~LeadConvertResult">SoapApi~LeadConvertResult</a>|Array.&lt;<a href="SoapApi.html#~LeadConvertResult">SoapApi~LeadConvertResult</a>>)></span>
 
-        
-            
-<dt>
-    <h4 class="name" id="describeTabs"><span class="type-signature"></span>describeTabs<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
 
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="soap.js.html">api/soap.js</a>, <a href="soap.js.html#line163">line 163</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
+    </dd>
 </dl>
 
     
-    
 
-    
 
-    
-    
-    
-    
-    
-    
-    
-</dd>
 
         
             
-<dt>
-    <h4 class="name" id="emptyRecycleBin"><span class="type-signature"></span>emptyRecycleBin<span class="signature">(ids, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;Array.&lt;<a href="SoapApi.html#EmptyRecycleBinResult">SoapApi~EmptyRecycleBinResult</a>>>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Delete records from the recycle bin immediately
-    </div>
-    
 
     
+
+    <h4 class="name" id="describeTabs"><span class="type-signature"></span>describeTabs<span class="signature">(callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;Array.&lt;<a href="SoapApi.html#~DescribeTabSetResult">SoapApi~DescribeTabSetResult</a>>>}</span></h4>
+
     
+
+
+
+<div class="description">
+    Returns information about the standard and custom apps available to the logged-in user
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-    
-    
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		<th>Argument</th>
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;Array.&lt;<a href="SoapApi.html#~DescribeTabSetResult">SoapApi~DescribeTabSetResult</a>>></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Callback function</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="api_soap.js.html">api/soap.js</a>, <a href="api_soap.js.html#line163">line 163</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;Array.&lt;<a href="SoapApi.html#~DescribeTabSetResult">SoapApi~DescribeTabSetResult</a>>></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="emptyRecycleBin"><span class="type-signature"></span>emptyRecycleBin<span class="signature">(ids, callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;Array.&lt;<a href="SoapApi.html#~EmptyRecycleBinResult">SoapApi~EmptyRecycleBinResult</a>>>}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Delete records from the recycle bin immediately
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>ids</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -475,647 +601,703 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
-                    
+
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">Record ids to empty from recycle bin</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>callback</code></td>
             
-            
+
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;Array.&lt;<a href="SoapApi.html#EmptyRecycleBinResult">SoapApi~EmptyRecycleBinResult</a>>></span>
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;Array.&lt;<a href="SoapApi.html#~EmptyRecycleBinResult">SoapApi~EmptyRecycleBinResult</a>>></span>
 
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
                     &lt;optional><br>
                 
-                    
+
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">Callback function</td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="soap.js.html">api/soap.js</a>, <a href="soap.js.html#line127">line 127</a>
+        <a href="api_soap.js.html">api/soap.js</a>, <a href="api_soap.js.html#line127">line 127</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 
 
 <dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="Promise.html">Promise</a>.&lt;Array.&lt;<a href="SoapApi.html#EmptyRecycleBinResult">SoapApi~EmptyRecycleBinResult</a>>></span>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;Array.&lt;<a href="SoapApi.html#~EmptyRecycleBinResult">SoapApi~EmptyRecycleBinResult</a>>></span>
 
 
-	</dd>
+    </dd>
 </dl>
 
-        
     
-    
-</dd>
+
+
 
         
             
-<dt>
-    <h4 class="name" id="getServerTimestamp"><span class="type-signature"></span>getServerTimestamp<span class="signature">(<span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;<a href="SoapApi.html#ServerTimestampResult">SoapApi~ServerTimestampResult</a>>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
 
     
+
+    <h4 class="name" id="getServerTimestamp"><span class="type-signature"></span>getServerTimestamp<span class="signature">(callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;<a href="SoapApi.html#~ServerTimestampResult">SoapApi~ServerTimestampResult</a>>}</span></h4>
+
     
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-    
-    
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		<th>Argument</th>
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>callback</code></td>
             
-            
+
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;<a href="SoapApi.html#ServerTimestampResult">SoapApi~ServerTimestampResult</a>></span>
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;<a href="SoapApi.html#~ServerTimestampResult">SoapApi~ServerTimestampResult</a>></span>
 
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
                     &lt;optional><br>
                 
-                    
+
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">Callback function</td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="soap.js.html">api/soap.js</a>, <a href="soap.js.html#line204">line 204</a>
+        <a href="api_soap.js.html">api/soap.js</a>, <a href="api_soap.js.html#line204">line 204</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 
 
 <dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="Promise.html">Promise</a>.&lt;<a href="SoapApi.html#ServerTimestampResult">SoapApi~ServerTimestampResult</a>></span>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;<a href="SoapApi.html#~ServerTimestampResult">SoapApi~ServerTimestampResult</a>></span>
 
 
-	</dd>
+    </dd>
 </dl>
 
-        
     
-    
-</dd>
+
+
 
         
             
-<dt>
-    <h4 class="name" id="getUserInfo"><span class="type-signature"></span>getUserInfo<span class="signature">(<span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;<a href="SoapApi.html#UserInfoResult">SoapApi~UserInfoResult</a>>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Retrieves personal information for the user associated with the current session
-    </div>
-    
 
     
+
+    <h4 class="name" id="getUserInfo"><span class="type-signature"></span>getUserInfo<span class="signature">(callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;<a href="SoapApi.html#~UserInfoResult">SoapApi~UserInfoResult</a>>}</span></h4>
+
     
+
+
+
+<div class="description">
+    Retrieves personal information for the user associated with the current session
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-    
-    
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		<th>Argument</th>
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>callback</code></td>
             
-            
+
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;<a href="SoapApi.html#UserInfoResult">SoapApi~UserInfoResult</a>></span>
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;<a href="SoapApi.html#~UserInfoResult">SoapApi~UserInfoResult</a>></span>
 
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
                     &lt;optional><br>
                 
-                    
+
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">Callback function</td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="soap.js.html">api/soap.js</a>, <a href="soap.js.html#line242">line 242</a>
+        <a href="api_soap.js.html">api/soap.js</a>, <a href="api_soap.js.html#line242">line 242</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 
 
 <dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="Promise.html">Promise</a>.&lt;<a href="SoapApi.html#UserInfoResult">SoapApi~UserInfoResult</a>></span>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;<a href="SoapApi.html#~UserInfoResult">SoapApi~UserInfoResult</a>></span>
 
 
-	</dd>
+    </dd>
 </dl>
 
-        
     
-    
-</dd>
+
+
 
         
             
-<dt>
-    <h4 class="name" id="merge"><span class="type-signature"></span>merge<span class="signature">(mergeRequests, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;(<a href="SoapApi.html#MergeResult">SoapApi~MergeResult</a>|Array.&lt;<a href="SoapApi.html#MergeResult">SoapApi~MergeResult</a>>)>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Merge up to three records into one
-    </div>
-    
 
     
+
+    <h4 class="name" id="merge"><span class="type-signature"></span>merge<span class="signature">(mergeRequests, callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;(<a href="SoapApi.html#~MergeResult">SoapApi~MergeResult</a>|Array.&lt;<a href="SoapApi.html#~MergeResult">SoapApi~MergeResult</a>>)>}</span></h4>
+
     
+
+
+
+<div class="description">
+    Merge up to three records into one
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-    
-    
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		<th>Argument</th>
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>mergeRequests</code></td>
             
-            
+
             <td class="type">
             
                 
-<span class="param-type"><a href="SoapApi.html#MergeRequest">SoapApi~MergeRequest</a></span>
+<span class="param-type"><a href="SoapApi.html#~MergeRequest">SoapApi~MergeRequest</a></span>
 |
 
-<span class="param-type">Array.&lt;<a href="SoapApi.html#MergeRequest">SoapApi~MergeRequest</a>></span>
+<span class="param-type">Array.&lt;<a href="SoapApi.html#~MergeRequest">SoapApi~MergeRequest</a>></span>
 
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
-                    
+
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>callback</code></td>
             
-            
+
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;(<a href="SoapApi.html#MergeResult">SoapApi~MergeResult</a>|Array.&lt;<a href="SoapApi.html#MergeResult">SoapApi~MergeResult</a>>)></span>
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;(<a href="SoapApi.html#~MergeResult">SoapApi~MergeResult</a>|Array.&lt;<a href="SoapApi.html#~MergeResult">SoapApi~MergeResult</a>>)></span>
 
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
                     &lt;optional><br>
                 
-                    
+
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">Callback function</td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="soap.js.html">api/soap.js</a>, <a href="soap.js.html#line101">line 101</a>
+        <a href="api_soap.js.html">api/soap.js</a>, <a href="api_soap.js.html#line101">line 101</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 
 
 <dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="Promise.html">Promise</a>.&lt;(<a href="SoapApi.html#MergeResult">SoapApi~MergeResult</a>|Array.&lt;<a href="SoapApi.html#MergeResult">SoapApi~MergeResult</a>>)></span>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;(<a href="SoapApi.html#~MergeResult">SoapApi~MergeResult</a>|Array.&lt;<a href="SoapApi.html#~MergeResult">SoapApi~MergeResult</a>>)></span>
 
 
-	</dd>
+    </dd>
 </dl>
 
-        
     
-    
-</dd>
+
+
 
         
             
-<dt>
-    <h4 class="name" id="resetPassword"><span class="type-signature"></span>resetPassword<span class="signature">(userId, password, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;<a href="SoapApi.html#ResetPasswordResult">SoapApi~ResetPasswordResult</a>>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Resets the specified user’s password
-    </div>
-    
 
     
+
+    <h4 class="name" id="resetPassword"><span class="type-signature"></span>resetPassword<span class="signature">(userId, password, callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;<a href="SoapApi.html#~ResetPasswordResult">SoapApi~ResetPasswordResult</a>>}</span></h4>
+
     
+
+
+
+<div class="description">
+    Resets the specified user’s password
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-    
-    
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		<th>Argument</th>
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>userId</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1124,29 +1306,29 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
-                    
+
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">User Id to set password</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>password</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1155,176 +1337,190 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
-                    
+
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">New password</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>callback</code></td>
             
-            
+
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;<a href="SoapApi.html#ResetPasswordResult">SoapApi~ResetPasswordResult</a>></span>
+<span class="param-type"><a href="global.html#Callback">Callback</a>.&lt;<a href="SoapApi.html#~ResetPasswordResult">SoapApi~ResetPasswordResult</a>></span>
 
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
                     &lt;optional><br>
                 
-                    
+
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">Callback function</td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="soap.js.html">api/soap.js</a>, <a href="soap.js.html#line294">line 294</a>
+        <a href="api_soap.js.html">api/soap.js</a>, <a href="api_soap.js.html#line294">line 294</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 
 
 <dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="Promise.html">Promise</a>.&lt;<a href="SoapApi.html#ResetPasswordResult">SoapApi~ResetPasswordResult</a>></span>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Promise.html">Promise</a>.&lt;<a href="SoapApi.html#~ResetPasswordResult">SoapApi~ResetPasswordResult</a>></span>
 
 
-	</dd>
+    </dd>
 </dl>
 
-        
     
-    
-</dd>
+
+
 
         
             
-<dt>
-    <h4 class="name" id="setPassword"><span class="type-signature"></span>setPassword<span class="signature">(userId, password, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;String>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Sets the specified user’s password to the specified value
-    </div>
-    
 
     
+
+    <h4 class="name" id="setPassword"><span class="type-signature"></span>setPassword<span class="signature">(userId, password, callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="Promise.html">Promise</a>.&lt;String>}</span></h4>
+
     
+
+
+
+<div class="description">
+    Sets the specified user’s password to the specified value
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
     
-    
-    
-        <h5>Parameters:</h5>
-        
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		<th>Argument</th>
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>userId</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1333,29 +1529,29 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
-                    
+
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">User Id to set password</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>password</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1364,29 +1560,29 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
-                    
+
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">New password</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>callback</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1395,146 +1591,154 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
                     &lt;optional><br>
                 
-                    
+
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">Callback function</td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
-    
-    
-    
+
+
+
+
+
+
 <dl class="details">
-    
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="soap.js.html">api/soap.js</a>, <a href="soap.js.html#line278">line 278</a>
+        <a href="api_soap.js.html">api/soap.js</a>, <a href="api_soap.js.html#line278">line 278</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
 
-    
 
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
 
 
 <dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
 <span class="param-type"><a href="Promise.html">Promise</a>.&lt;String></span>
 
 
-	</dd>
+    </dd>
 </dl>
 
+    
+
+
+
         
     
-    
-</dd>
 
-        </dl>
-    
-    
     
         <h3 class="subsection-title">Type Definitions</h3>
+
         
-        <dl>
                 
-<dt>
-    <h4 class="name" id="DescribeTab">DescribeTab</h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    
+<h4 class="name" id="~DescribeTab">DescribeTab</h4>
+
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
 
     
-<dl class="details">
-    
-        
-        <h5 class="subsection-title">Properties:</h5>
-        
-        <dl>
 
 <table class="props">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>colors</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1543,21 +1747,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">Array of color information used for a tab</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>custom</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1566,21 +1770,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">true if this is a custom tab</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>iconUrl</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1589,21 +1793,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">The URL for the main 32 x 32 pixel icon for a tab</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>icons</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1612,21 +1816,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">Array of icon information used for a tab</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>label</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1635,21 +1839,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">The display label for this tab</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>miniIconUrl</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1658,21 +1862,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">The URL for the 16 x 16 pixel icon that represents a tab</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>name</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1681,21 +1885,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">The API name of the tab</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>sobjectName</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1704,21 +1908,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">The name of the sObject that is primarily displayed on this tab</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>url</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1727,99 +1931,108 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">A fully qualified URL for viewing this tab</td>
         </tr>
-	
-	
-	</tbody>
-</table></dl>
-        
+
     
-        
-    
-    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="soap.js.html">api/soap.js</a>, <a href="soap.js.html#line138">line 138</a>
+        <a href="api_soap.js.html">api/soap.js</a>, <a href="api_soap.js.html#line145">line 145</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
-</dd>
+
+
+
+
 
             
                 
-<dt>
-    <h4 class="name" id="DescribeTabSetResult">DescribeTabSetResult</h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    
+<h4 class="name" id="~DescribeTabSetResult">DescribeTabSetResult</h4>
+
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
 
     
-<dl class="details">
-    
-        
-        <h5 class="subsection-title">Properties:</h5>
-        
-        <dl>
 
 <table class="props">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>label</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1828,21 +2041,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">The display label for this standard or custom app</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>logoUrl</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1851,21 +2064,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">A fully qualified URL to the logo image associated with the standard or custom app</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>namespace</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1874,21 +2087,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">Namespace of application package</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>selected</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1897,122 +2110,131 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">If true, then this standard or custom app is the user’s currently selected app</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>tabs</code></td>
             
-            
+
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;<a href="SoapApi.html#DescribeTab">SoapApi~DescribeTab</a>></span>
+<span class="param-type">Array.&lt;<a href="SoapApi.html#~DescribeTab">SoapApi~DescribeTab</a>></span>
 
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">An array of tabs that are displayed for the specified standard app or custom app</td>
         </tr>
-	
-	
-	</tbody>
-</table></dl>
-        
+
     
-        
-    
-    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="soap.js.html">api/soap.js</a>, <a href="soap.js.html#line137">line 137</a>
+        <a href="api_soap.js.html">api/soap.js</a>, <a href="api_soap.js.html#line137">line 137</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
-</dd>
+
+
+
+
 
             
                 
-<dt>
-    <h4 class="name" id="EmptyRecycleBinResult">EmptyRecycleBinResult</h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    
+<h4 class="name" id="~EmptyRecycleBinResult">EmptyRecycleBinResult</h4>
+
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
 
     
-<dl class="details">
-    
-        
-        <h5 class="subsection-title">Properties:</h5>
-        
-        <dl>
 
 <table class="props">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>id</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -2021,21 +2243,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">ID of an sObject that you attempted to delete from the Recycle Bin</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>success</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -2044,21 +2266,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">Whether the call succeeded (true) or not (false) for this record</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>errors</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -2067,101 +2289,110 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">Errors</td>
         </tr>
-	
-	
-	</tbody>
-</table></dl>
-        
+
     
-        
-    
-    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="soap.js.html">api/soap.js</a>, <a href="soap.js.html#line114">line 114</a>
+        <a href="api_soap.js.html">api/soap.js</a>, <a href="api_soap.js.html#line114">line 114</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
-</dd>
+
+
+
+
 
             
                 
-<dt>
-    <h4 class="name" id="LeadConvert">LeadConvert</h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    
+<h4 class="name" id="~LeadConvert">LeadConvert</h4>
+
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
 
     
-<dl class="details">
-    
-        
-        <h5 class="subsection-title">Properties:</h5>
-        
-        <dl>
 
 <table class="props">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		<th>Argument</th>
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>convertedStatus</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -2170,27 +2401,27 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">Status of converted lead</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>leadId</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -2199,27 +2430,27 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">Lead record Id to convert</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>accountId</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -2228,29 +2459,29 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
                     &lt;optional><br>
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">Account record Id to assign the converted record</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>contactId</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -2259,29 +2490,29 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
                     &lt;optional><br>
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">Contact record Id to assign the converted record</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>doNotCreateOpportunity</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -2290,29 +2521,29 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
                     &lt;optional><br>
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">True if you don't want to create a new opportunity</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>opportunityName</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -2321,29 +2552,29 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
                     &lt;optional><br>
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">Name of opportunity to create</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>overwriteLeadSource</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -2352,29 +2583,29 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
                     &lt;optional><br>
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">True if overwriting lead source</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>ownerId</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -2383,29 +2614,29 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
                     &lt;optional><br>
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">Owner Id</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>sendNotificationEmail</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -2414,109 +2645,118 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
                     &lt;optional><br>
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">True if send notification email</td>
         </tr>
-	
-	
-	</tbody>
-</table></dl>
-        
+
     
-        
-    
-    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="soap.js.html">api/soap.js</a>, <a href="soap.js.html#line39">line 39</a>
+        <a href="api_soap.js.html">api/soap.js</a>, <a href="api_soap.js.html#line39">line 39</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
-</dd>
+
+
+
+
 
             
                 
-<dt>
-    <h4 class="name" id="LeadConvertResult">LeadConvertResult</h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    
+<h4 class="name" id="~LeadConvertResult">LeadConvertResult</h4>
+
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
 
     
-<dl class="details">
-    
-        
-        <h5 class="subsection-title">Properties:</h5>
-        
-        <dl>
 
 <table class="props">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		<th>Argument</th>
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>leadId</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -2525,27 +2765,27 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">Lead record Id to convert</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>accountId</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -2554,29 +2794,29 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
                     &lt;optional><br>
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">Account record Id of converted lead</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>contactId</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -2585,29 +2825,29 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
                     &lt;optional><br>
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">Contact record Id of converted lead</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>opportunityId</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -2616,29 +2856,29 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
                     &lt;optional><br>
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">Opportunity record Id created in conversion</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>success</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -2647,27 +2887,27 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">True if successfully converted</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>errors</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -2676,105 +2916,114 @@
 
             
             </td>
-            
+
             
                 <td class="attributes">
                 
-                    
+
                 
                 </td>
             
+
             
-            
-            
+
             <td class="description last">Error</td>
         </tr>
-	
-	
-	</tbody>
-</table></dl>
-        
+
     
-        
-    
-    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="soap.js.html">api/soap.js</a>, <a href="soap.js.html#line40">line 40</a>
+        <a href="api_soap.js.html">api/soap.js</a>, <a href="api_soap.js.html#line51">line 51</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
-</dd>
+
+
+
+
 
             
                 
-<dt>
-    <h4 class="name" id="MergeRequest">MergeRequest</h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    
+<h4 class="name" id="~MergeRequest">MergeRequest</h4>
+
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
 
     
-<dl class="details">
-    
-        
-        <h5 class="subsection-title">Properties:</h5>
-        
-        <dl>
 
 <table class="props">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>masterRecord</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -2783,21 +3032,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">The merge destination record</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>recordToMergeIds</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -2806,99 +3055,108 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">Ids of records to merge</td>
         </tr>
-	
-	
-	</tbody>
-</table></dl>
-        
+
     
-        
-    
-    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="soap.js.html">api/soap.js</a>, <a href="soap.js.html#line80">line 80</a>
+        <a href="api_soap.js.html">api/soap.js</a>, <a href="api_soap.js.html#line80">line 80</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
-</dd>
+
+
+
+
 
             
                 
-<dt>
-    <h4 class="name" id="MergeResult">MergeResult</h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    
+<h4 class="name" id="~MergeResult">MergeResult</h4>
+
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
 
     
-<dl class="details">
-    
-        
-        <h5 class="subsection-title">Properties:</h5>
-        
-        <dl>
 
 <table class="props">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>success</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -2907,21 +3165,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">True if successfully merged</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>errors</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -2930,21 +3188,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">Error</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>id</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -2953,21 +3211,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">ID of the master record</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>mergedRecordIds</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -2976,21 +3234,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">ID of the records that were merged into the master record</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>updatedRelatedIds</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -2999,99 +3257,108 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">ID of all related records that were moved (re-parented) as a result of the merge</td>
         </tr>
-	
-	
-	</tbody>
-</table></dl>
-        
+
     
-        
-    
-    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="soap.js.html">api/soap.js</a>, <a href="soap.js.html#line81">line 81</a>
+        <a href="api_soap.js.html">api/soap.js</a>, <a href="api_soap.js.html#line85">line 85</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
-</dd>
+
+
+
+
 
             
                 
-<dt>
-    <h4 class="name" id="ResetPasswordResult">ResetPasswordResult</h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    
+<h4 class="name" id="~ResetPasswordResult">ResetPasswordResult</h4>
+
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
 
     
-<dl class="details">
-    
-        
-        <h5 class="subsection-title">Properties:</h5>
-        
-        <dl>
 
 <table class="props">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>password</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -3100,103 +3367,112 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	</tbody>
-</table></dl>
-        
+
     
-        
-    
-    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="soap.js.html">api/soap.js</a>, <a href="soap.js.html#line282">line 282</a>
+        <a href="api_soap.js.html">api/soap.js</a>, <a href="api_soap.js.html#line282">line 282</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
-</dd>
+
+
+
+
 
             
                 
-<dt>
-    <h4 class="name" id="ServerTimestampResult">ServerTimestampResult</h4>
-    
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Retrieves the current system timestamp (Coordinated Universal Time (UTC) time zone) from the API
-    </div>
-    
-    
-    
+<h4 class="name" id="~ServerTimestampResult">ServerTimestampResult</h4>
+
+
+
+
+<div class="description">
+    Retrieves the current system timestamp (Coordinated Universal Time (UTC) time zone) from the API
+</div>
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
 
     
-<dl class="details">
-    
-        
-        <h5 class="subsection-title">Properties:</h5>
-        
-        <dl>
 
 <table class="props">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>timestamp</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -3205,99 +3481,108 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">Timestamp</td>
         </tr>
-	
-	
-	</tbody>
-</table></dl>
-        
+
     
-        
-    
-    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="soap.js.html">api/soap.js</a>, <a href="soap.js.html#line194">line 194</a>
+        <a href="api_soap.js.html">api/soap.js</a>, <a href="api_soap.js.html#line194">line 194</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
-</dd>
+
+
+
+
 
             
                 
-<dt>
-    <h4 class="name" id="UserInfoResult">UserInfoResult</h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    
+<h4 class="name" id="~UserInfoResult">UserInfoResult</h4>
+
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
 
     
-<dl class="details">
-    
-        
-        <h5 class="subsection-title">Properties:</h5>
-        
-        <dl>
 
 <table class="props">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>accessibilityMode</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -3306,21 +3591,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>currencySymbol</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -3329,21 +3614,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>orgAttachmentFileSizeLimit</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -3352,21 +3637,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>orgDefaultCurrencyIsoCode</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -3375,21 +3660,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>orgDisallowHtmlAttachments</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -3398,21 +3683,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>orgHasPersonAccounts</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -3421,21 +3706,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>organizationId</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -3444,21 +3729,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>organizationMultiCurrency</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -3467,21 +3752,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>organizationName</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -3490,21 +3775,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>profileId</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -3513,21 +3798,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>roleId</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -3536,21 +3821,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>sessionSecondsValid</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -3559,21 +3844,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>userDefaultCurrencyIsoCode</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -3582,21 +3867,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>userEmail</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -3605,21 +3890,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>userFullName</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -3628,21 +3913,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>userId</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -3651,21 +3936,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>userLanguage</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -3674,21 +3959,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>userLocale</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -3697,21 +3982,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>userName</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -3720,21 +4005,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>userTimeZone</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -3743,21 +4028,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>userType</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -3766,21 +4051,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>userUiSkin</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -3789,61 +4074,73 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
-	
-	</tbody>
-</table></dl>
-        
+
     
-        
-    
-    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="soap.js.html">api/soap.js</a>, <a href="soap.js.html#line211">line 211</a>
+        <a href="api_soap.js.html">api/soap.js</a>, <a href="api_soap.js.html#line211">line 211</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
-    
-    
-</dd>
 
-            </dl>
+
+
+
+
+            
     
-    
+
     
 </article>
 
-</section>  
+</section>
 
 
 
@@ -3851,13 +4148,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="HttpApi.html">HttpApi</a></li><li><a href="ListView.html">ListView</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Process.html">Process</a></li><li><a href="Process-ApprovalProcess.html">ApprovalProcess</a></li><li><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></li><li><a href="Process-ProcessRule.html">ProcessRule</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="QuickAction.html">QuickAction</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.Parsable.html">Parsable</a></li><li><a href="RecordStream.Serializable.html">Serializable</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SoapApi.html">SoapApi</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Channel.html">Channel</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SessionRefreshDelegate">SessionRefreshDelegate</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="HttpApi.html">HttpApi</a></li><li><a href="ListView.html">ListView</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Process.html">Process</a></li><li><a href="Process-ApprovalProcess.html">ApprovalProcess</a></li><li><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></li><li><a href="Process-ProcessRule.html">ProcessRule</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="QuickAction.html">QuickAction</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.Parsable.html">Parsable</a></li><li><a href="RecordStream.Serializable.html">Serializable</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SoapApi.html">SoapApi</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Channel.html">Channel</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SessionRefreshDelegate">SessionRefreshDelegate</a></li></ul>
 </nav>
 
-<br clear="both">
+<br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Jan 14 2016 21:17:29 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Feb 01 2016 03:01:27 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>
