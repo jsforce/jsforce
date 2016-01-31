@@ -209,12 +209,17 @@ if (TestEnv.isNodeJS) {
    */
   describe("bulk query and output to file", function() {
     it("should get a record stream and file output", function(done) {
-      var file = __dirname + "/data/Account_export.csv";
+      var file = __dirname + "/data/BulkQuery_export.csv";
       var fstream = fs.createWriteStream(file);
       var records = [];
+      var count = -1;
       async.waterfall([
         function(next) {
-          conn.bulk.query("SELECT Id, Name, NumberOfEmployees FROM Account")
+          conn.sobject(config.bigTable).count({}, next);
+        },
+        function(_count, next) {
+          count = _count;
+          conn.bulk.query("SELECT Id, Name FROM " + config.bigTable)
             .on('record', function(rec) { records.push(rec); })
             .on('error', function(err) { next(err); })
             .stream().pipe(fstream)
@@ -222,12 +227,11 @@ if (TestEnv.isNodeJS) {
         }
       ], function(err, records) {
         if (err) { throw err; }
-        assert.ok(_.isArray(records) && records.length > 0);
+        assert.ok(_.isArray(records) && records.length === count);
         for (var i=0; i<records.length; i++) {
           var rec = records[i];
           assert.ok(_.isString(rec.Id));
           assert.ok(_.isString(rec.Name));
-          assert.ok(_.isString(rec.NumberOfEmployees)); // no type conversion from CSV stream to record
         }
         var data = fs.readFileSync(file, "utf-8");
         assert.ok(data);
