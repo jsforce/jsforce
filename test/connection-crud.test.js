@@ -3,7 +3,7 @@ var TestEnv = require('./helper/testenv'),
     assert = TestEnv.assert;
 
 var async  = require('async'),
-    _      = require('underscore'),
+    _      = require('lodash/core'),
     sf     = require('../lib/jsforce'),
     config = require('./config/salesforce');
 

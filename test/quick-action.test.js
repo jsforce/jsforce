@@ -2,7 +2,7 @@
 var TestEnv = require('./helper/testenv'),
     assert = TestEnv.assert;
 
-var _      = require('underscore'),
+var _      = require('lodash/core'),
     sf     = require('../lib/jsforce'),
     QuickAction = require("../lib/quick-action"),
     config = require('./config/salesforce');
