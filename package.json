@@ -36,7 +36,6 @@
   "files": [
     "README.md",
     "bower.json",
-    "Gruntfile.js",
     "LICENSE",
     "package.json",
     "bin",
