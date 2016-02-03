@@ -24,7 +24,11 @@
   ],
   "main": "./index",
   "scripts": {
-    "test": "./test/bin/run-test"
+    "build": "gulp build",
+    "test": "npm run test:node",
+    "test:all": "npm run test:node && npm run test:browser",
+    "test:node": "./test/bin/run-test",
+    "test:browser": "testem"
   },
   "directories": {
     "test": "test/"
