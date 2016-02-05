@@ -3,7 +3,7 @@ var TestEnv = require('./helper/testenv'),
     assert = TestEnv.assert;
 
 var async  = require('async'),
-    _      = require('underscore'),
+    _      = require('lodash/core'),
     authorize = require('./helper/webauth'),
     sf     = require('../lib/jsforce'),
     config = require('./config/salesforce');

@@ -2,7 +2,7 @@
 var TestEnv = require('./helper/testenv'),
     assert = TestEnv.assert;
 
-var _      = require('underscore'),
+var _      = require('lodash/core'),
     fs     = require('fs'),
     stream = require('readable-stream'),
     through2 = require('through2'),
