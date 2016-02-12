@@ -69,7 +69,7 @@
     "babel": "^6.3.26",
     "babel-core": "^6.4.5",
     "babel-preset-es2015": "^6.3.13",
-    "babel-register": "^6.4.3",
+    "babel-register": "^6.5.2",
     "browserify": "^13.0.0",
     "dotenv": "^2.0.0",
     "envfile": "^2.0.1",
