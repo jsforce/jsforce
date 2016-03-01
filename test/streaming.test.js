@@ -32,19 +32,25 @@ if (TestEnv.isNodeJS) {
    *
    */
   describe("subscribe to topic and create account", function() {
+    var subscr;
+
     it("should receive event account created", function(done) {
       var listener = function(msg) {
         assert.equal("created", msg.event.type);
         assert.ok(typeof msg.sobject.Name === 'string');
         assert.ok(typeof msg.sobject.Id === 'string');
       }.check(done);
-      conn.streaming.topic('JSforceTestAccountUpdates').subscribe(listener);
+      subscr = conn.streaming.topic('JSforceTestAccountUpdates').subscribe(listener);
       // wait 5 secs for subscription complete
       setTimeout(function() {
         conn.sobject('Account').create({
           Name: 'My New Account #'+Date.now()
         }, function() {});
       }, 5000);
+    });
+
+    after(function() {
+      if (subscr) { subscr.cancel(); }
     });
   });
 
@@ -53,6 +59,7 @@ if (TestEnv.isNodeJS) {
    */
   describe("subscribe to generic streaming channel", function() {
     var channelName = '/u/JSforceTestChannel';
+    var subscr;
 
     before(function(done) {
       conn.sobject('StreamingChannel').create({ Name: channelName }, done);
@@ -62,7 +69,7 @@ if (TestEnv.isNodeJS) {
       var listener = function(msg) {
         assert(msg.payload === 'hello, world');
       }.check(done);
-      conn.streaming.channel(channelName).subscribe(listener);
+      subscr = conn.streaming.channel(channelName).subscribe(listener);
 
       // wait 5 secs for subscription complete
       setTimeout(function() {
@@ -70,13 +77,15 @@ if (TestEnv.isNodeJS) {
           payload: 'hello, world',
           userIds: []
         }, function(err, res) {
-          assert(res.fanoutCount === -1);
+          // THIS is commented out because Spring '16 seems returning invalid fanout count (fanoutCount = 0)
+          // assert(res.fanoutCount === -1);
           assert(res.userOnlineStatus);
         });
       }, 5000);
     });
 
     after(function(done) {
+      if (subscr) { subscr.cancel(); }
       conn.sobject('StreamingChannel').find({ Name: channelName }).destroy(done);
     });
   });
