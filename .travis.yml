@@ -6,4 +6,4 @@ node_js:
 sudo: false
 cache:
   directories:
-    - node-modules
+    - node_modules
