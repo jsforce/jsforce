@@ -88,7 +88,7 @@
     "require-swapper": "^0.1.5",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
-    "webdriverio": "^3.4.0"
+    "webdriverio": "^4.0.1"
   },
   "browser": {
     "./index": "./lib/browser/jsforce",
