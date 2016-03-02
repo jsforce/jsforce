@@ -25,6 +25,8 @@
   "main": "./index",
   "scripts": {
     "build": "gulp build",
+    "build:test": "gulp build:test",
+    "build:all": "gulp build:all",
     "doc": "jsdoc lib -d doc --recurse --lenient",
     "test": "npm run test:node",
     "test:all": "npm run test:node && npm run test:browser",
@@ -85,6 +87,7 @@
     "mocha": "^2.4.5",
     "power-assert": "^1.2.0",
     "require-swapper": "^0.1.5",
+    "testem": "^1.4.2",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "webdriverio": "^3.4.0"

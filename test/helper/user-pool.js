@@ -1,4 +1,4 @@
-var jsforce = require('../..');
+var jsforce = require('../../lib/jsforce');
 var Promise = jsforce.Promise;
 
 function wait(msec) {

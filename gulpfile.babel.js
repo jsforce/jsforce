@@ -1,5 +1,6 @@
 import gulp from 'gulp';
 import fs from 'fs';
+import path from 'path';
 import browserify from 'browserify';
 import source from 'vinyl-source-stream';
 import buffer from 'vinyl-buffer';
@@ -87,6 +88,35 @@ gulp.task('build:required', (cb) => {
 });
 
 gulp.task('build:scripts', gulp.parallel(...scriptTasks.map(({ name }) => name)));
-
 gulp.task('build', gulp.series('build:required', 'build:scripts'));
+
+
+const testScripts =
+  fs.readdirSync('./test')
+    .filter((filename) => /\.test\.js$/.test(filename))
+    .map((filename) => path.join('./test', filename));
+
+gulp.task('build:test', () => {
+  return browserify({
+    entries: testScripts,
+    debug: true,
+    transform: [
+      'espowerify',
+      'envify',
+      [ 'require-swapper',
+        {
+          baseDir: './lib/',
+          fn: 'window.jsforce.require',
+          modules: ['./*'],
+        }
+      ]
+    ],
+  }).bundle()
+    .pipe(source('./test.js'))
+    .pipe(gulp.dest('./build'));
+});
+
+
+gulp.task('build:all', gulp.parallel('build', 'build:test'));
+
 gulp.task('default', gulp.series('build'));

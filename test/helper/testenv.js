@@ -1,5 +1,3 @@
-require('dotenv').load();
-
 var _ = require('lodash/core');
 var Promise = require('../../lib/promise');
 
