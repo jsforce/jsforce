@@ -1,6 +1,6 @@
 /*global process */
 
-var jsforce = require('../../..');
+var jsforce = require('../../../lib/jsforce');
 
 /**
  *

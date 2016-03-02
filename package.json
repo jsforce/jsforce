@@ -25,10 +25,11 @@
   "main": "./index",
   "scripts": {
     "build": "gulp build",
+    "build:test": "gulp build:test",
     "test": "npm run test:node",
     "test:all": "npm run test:node && npm run test:browser",
     "test:node": "./test/bin/run-test",
-    "test:browser": "testem"
+    "test:browser": "npm run build && npm run build:test && testem ci"
   },
   "directories": {
     "test": "test/"
@@ -86,6 +87,7 @@
     "mocha": "^2.4.5",
     "power-assert": "^1.2.0",
     "require-swapper": "^0.1.5",
+    "testem": "^1.4.1",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "webdriverio": "^3.4.0"
