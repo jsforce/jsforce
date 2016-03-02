@@ -9,13 +9,9 @@ matrix:
       env: BROWSER_TEST=true
 sudo: false
 before_install:
-  - mkdir travis-phantomjs
-  - wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 -O $PWD/travis-phantomjs/phantomjs-2.1.1-linux-x86_64.tar.bz2
-  - tar -xvf $PWD/travis-phantomjs/phantomjs-2.1.1-linux-x86_64.tar.bz2 -C $PWD/travis-phantomjs
-  - export PATH=$PWD/travis-phantomjs/phantomjs-2.1.1-linux-x86_64/bin:$PATH
+  - ./travis/setup.sh
 script:
-  - npm test
-  - if [ "${BROWSER_TEST}" = "true" ]; then; npm run build:all && npm run test:browser -- ci; fi
+  - ./travis/test.sh
 cache:
   directories:
     - node_modules
