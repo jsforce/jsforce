@@ -6,6 +6,8 @@ matrix:
     - node_js: "4.2"
       env: BROWSER_TEST=false
     - node_js: "stable"
+      env: BROWSER_TEST=false
+    - node_js: "stable"
       env: BROWSER_TEST=true
 sudo: false
 before_install:
