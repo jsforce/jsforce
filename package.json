@@ -10,7 +10,7 @@
     "database.com"
   ],
   "homepage": "http://github.com/jsforce/jsforce",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "repository": {
     "type": "git",
     "url": "git://github.com/jsforce/jsforce.git"
@@ -44,7 +44,9 @@
     "bin",
     "build",
     "lib",
-    "test"
+    "test",
+    "core.js",
+    "index.js"
   ],
   "engines": {
     "node": ">=0.12.0"
