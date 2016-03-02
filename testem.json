@@ -5,6 +5,7 @@
     "test/**/*.test.js"
   ],
   "serve_files" : [
+    "node_modules/es5-shim/es5-shim.js",
     "build/jsforce-core.js",
     "build/jsforce-api-analytics.js",
     "build/jsforce-api-apex.js",

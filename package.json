@@ -76,6 +76,7 @@
     "dotenv": "^2.0.0",
     "envfile": "^2.0.1",
     "envify": "^3.4.0",
+    "es5-shim": "^4.5.7",
     "espower-loader": "^1.0.0",
     "espowerify": "^1.0.0",
     "exposify": "^0.5.0",
