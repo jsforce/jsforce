@@ -16,5 +16,6 @@
     "build/jsforce-api-tooling.js",
     "build/test.js"
   ],
+  "launch_in_dev" : [ "PhantomJS" ],
   "launch_in_ci" : [ "PhantomJS" ]
 }
