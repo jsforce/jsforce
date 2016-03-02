@@ -116,4 +116,7 @@ gulp.task('build:test', () => {
     .pipe(gulp.dest('./build'));
 });
 
+
+gulp.task('build:all', gulp.parallel('build', 'build:test'));
+
 gulp.task('default', gulp.series('build'));

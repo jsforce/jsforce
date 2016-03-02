@@ -1,15 +1,21 @@
 language: node_js
-node_js:
-- "0.12"
-- "4.2"
-- "stable"
+matrix:
+  include:
+    - node_js: "0.12"
+      env: BROWSER_TEST=false
+    - node_js: "4.2"
+      env: BROWSER_TEST=false
+    - node_js: "stable"
+      env: BROWSER_TEST=true
 sudo: false
 before_install:
   - mkdir travis-phantomjs
   - wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 -O $PWD/travis-phantomjs/phantomjs-2.1.1-linux-x86_64.tar.bz2
   - tar -xvf $PWD/travis-phantomjs/phantomjs-2.1.1-linux-x86_64.tar.bz2 -C $PWD/travis-phantomjs
   - export PATH=$PWD/travis-phantomjs/phantomjs-2.1.1-linux-x86_64/bin:$PATH
-script: npm run test:all
+script:
+  - npm test
+  - if [ "${BROWSER_TEST}" = "true" ]; then; npm run build:all && npm run test:browser -- ci; fi
 cache:
   directories:
     - node_modules

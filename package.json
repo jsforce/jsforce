@@ -26,12 +26,12 @@
   "scripts": {
     "build": "gulp build",
     "build:test": "gulp build:test",
-    "build:all": "npm run build && npm run build:test",
+    "build:all": "gulp build:all",
     "doc": "jsdoc lib -d doc --recurse --lenient",
     "test": "npm run test:node",
-    "test:all": "npm run test:node && npm run build:all && npm run test:browser",
+    "test:all": "npm run test:node && npm run test:browser",
     "test:node": "./test/bin/run-test",
-    "test:browser": "testem ci"
+    "test:browser": "testem"
   },
   "directories": {
     "test": "test/"
