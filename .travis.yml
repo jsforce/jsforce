@@ -4,6 +4,7 @@ node_js:
 - "4.2"
 - "stable"
 sudo: false
+script: npm run test:all
 cache:
   directories:
     - node_modules
