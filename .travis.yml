@@ -9,9 +9,9 @@ matrix:
       env: BROWSER_TEST=true
 sudo: false
 before_install:
-  - ./travis/setup.sh
+  - .travis/setup.sh
 script:
-  - ./travis/test.sh
+  - .travis/test.sh
 cache:
   directories:
     - node_modules
