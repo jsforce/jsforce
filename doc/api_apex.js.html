@@ -33,6 +33,8 @@
 
 'use strict';
 
+var jsforce = require('../core');
+
 /**
  * API class for Apex REST endpoint call
  *
@@ -53,16 +55,19 @@ Apex.prototype._baseUrl = function() {
 /**
  * @private
  */
-Apex.prototype._createRequestParams = function(method, path, body) {
+Apex.prototype._createRequestParams = function(method, path, body, options) {
   var params = {
     method: method,
     url: this._baseUrl() + path
-  };
-  if (!/^(GET|DELETE)$/i.test(method)) {
-    params.headers = {
-      "Content-Type" : "application/json"
-    };
+  },
+  _headers = {};
+  if(options &amp;&amp; 'object' === typeof options['headers']){
+    _headers = options['headers'];
   }
+  if (!/^(GET|DELETE)$/i.test(method)) {
+    _headers["Content-Type"] = "application/json";
+  }
+  params.headers = _headers;
   if (body) {
     params.body = JSON.stringify(body);
   }
@@ -73,11 +78,16 @@ Apex.prototype._createRequestParams = function(method, path, body) {
  * Call Apex REST service in GET request
  *
  * @param {String} path - URL path to Apex REST service
+ * @param {Object} options - Holds headers and other meta data for the request.
  * @param {Callback.&lt;Object>} [callback] - Callback function
  * @returns {Promise.&lt;Object>}
  */
-Apex.prototype.get = function(path, callback) {
-  return this._conn.request(this._createRequestParams('GET', path)).thenCall(callback);
+Apex.prototype.get = function(path, options, callback) {
+  if (typeof options === 'function') {
+    callback = options;
+    options = undefined;
+  }
+  return this._conn.request(this._createRequestParams('GET', path, undefined, options)).thenCall(callback);
 };
 
 /**
@@ -85,15 +95,21 @@ Apex.prototype.get = function(path, callback) {
  *
  * @param {String} path - URL path to Apex REST service
  * @param {Object} [body] - Request body
+ * @param {Object} options - Holds headers and other meta data for the request.
  * @param {Callback.&lt;Object>} [callback] - Callback function
  * @returns {Promise.&lt;Object>}
  */
-Apex.prototype.post = function(path, body, callback) {
+Apex.prototype.post = function(path, body, options, callback) {
   if (typeof body === 'function') {
     callback = body;
     body = undefined;
+    options = undefined;
   }
-  var params = this._createRequestParams('POST', path, body);
+  if (typeof options === 'function') {
+    callback = options;
+    options = undefined;
+  }
+  var params = this._createRequestParams('POST', path, body, options);
   return this._conn.request(params).thenCall(callback);
 };
 
@@ -102,15 +118,21 @@ Apex.prototype.post = function(path, body, callback) {
  *
  * @param {String} path - URL path to Apex REST service
  * @param {Object} [body] - Request body
+ * @param {Object} [options] - Holds headers and other meta data for the request.
  * @param {Callback.&lt;Object>} [callback] - Callback function
  * @returns {Promise.&lt;Object>}
  */
-Apex.prototype.put = function(path, body, callback) {
+Apex.prototype.put = function(path, body, options, callback) {
   if (typeof body === 'function') {
     callback = body;
     body = undefined;
+    options = undefined;
   }
-  var params = this._createRequestParams('PUT', path, body);
+  if (typeof options === 'function') {
+    callback = options;
+    options = undefined;
+  }
+  var params = this._createRequestParams('PUT', path, body, options);
   return this._conn.request(params).thenCall(callback);
 };
 
@@ -119,15 +141,21 @@ Apex.prototype.put = function(path, body, callback) {
  *
  * @param {String} path - URL path to Apex REST service
  * @param {Object} [body] - Request body
+ * @param {Object} [options] - Holds headers and other meta data for the request.
  * @param {Callback.&lt;Object>} [callback] - Callback function
  * @returns {Promise.&lt;Object>}
  */
-Apex.prototype.patch = function(path, body, callback) {
+Apex.prototype.patch = function(path, body, options, callback) {
   if (typeof body === 'function') {
     callback = body;
     body = undefined;
+    options = undefined;
   }
-  var params = this._createRequestParams('PATCH', path, body);
+  if (typeof options === 'function') {
+    callback = options;
+    options = undefined;
+  }
+  var params = this._createRequestParams('PATCH', path, body, options);
   return this._conn.request(params).thenCall(callback);
 };
 
@@ -148,13 +176,27 @@ Apex.prototype.patch = function(path, body, callback) {
  *
  * @param {String} path - URL path to Apex REST service
  * @param {Object} [body] - Request body
+ * @param {Object} [options] - Holds headers and other meta data for the request.
  * @param {Callback.&lt;Object>} [callback] - Callback function
  * @returns {Promise.&lt;Object>}
  */
 Apex.prototype.del =
-Apex.prototype["delete"] = function(path, callback) {
-  return this._conn.request(this._createRequestParams('DELETE', path)).thenCall(callback);
+  Apex.prototype["delete"] = function(path, options, callback) {
+  if (typeof options === 'function') {
+    callback = options;
+    options = undefined;
+  }
+  return this._conn.request(this._createRequestParams('DELETE', path, undefined, options)).thenCall(callback);
 };
+
+
+/*--------------------------------------------*/
+/*
+ * Register hook in connection instantiation for dynamically adding this API module features
+ */
+jsforce.on('connection:new', function(conn) {
+  conn.apex = new Apex(conn);
+});
 
 
 module.exports = Apex;
@@ -174,7 +216,7 @@ module.exports = Apex;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Feb 01 2016 03:01:26 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Mar 30 2016 04:18:43 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>
