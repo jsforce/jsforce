@@ -2,7 +2,7 @@
 var TestEnv = require('./helper/testenv'),
     assert = TestEnv.assert;
 
-var _      = require('underscore'),
+var _      = require('lodash/core'),
     authorize = require('./helper/webauth'),
     OAuth2 = require('../lib/oauth2'),
     config = require('./config/salesforce');

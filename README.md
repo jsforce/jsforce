@@ -6,7 +6,7 @@ Salesforce API Library for JavaScript applications (both on web browser and Node
 
 ## Overview
 
-JSforce (f.k.a. Node-Salesforce) is a isomorphic JavaScript Library utilizing Salesforce's API: It works both in  browser and with Node.js.
+JSforce (f.k.a. Node-Salesforce) is an isomorphic JavaScript Library utilizing Salesforce's API: It works both in the browser and with Node.js.
 
 It capsulates the access to various APIs provided by Salesforce in asynchronous JavaScript function calls.
 
