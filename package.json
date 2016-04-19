@@ -63,7 +63,7 @@
     "lodash": "^4.11.1",
     "open": "0.0.5",
     "promise": "^7.1.1",
-    "readable-stream": "^2.0.6",
+    "readable-stream": "^2.1.0",
     "request": "^2.72.0",
     "through2": "^2.0.1",
     "xml2js": "^0.4.16"
