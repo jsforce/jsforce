@@ -60,7 +60,7 @@
     "commander": "^2.9.0",
     "faye": "^1.1.2",
     "inherits": "^2.0.1",
-    "lodash": "^4.11.1",
+    "lodash": "^4.11.2",
     "multistream": "^2.0.5",
     "open": "0.0.5",
     "promise": "^7.1.1",
