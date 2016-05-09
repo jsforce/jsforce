@@ -73,12 +73,13 @@ gulp.task('build:required', (cb) => {
     coreModules =
       files.filter((f) => /\.js$/.test(f) && !/^(jsforce|require)\.js$/.test(f))
            .map((f) => './' + f.replace(/\.js$/, ''));
-    var requireFile = './lib/require.js';
+    var requireFile = './lib/dynreq/require.js';
     var code = fs.readFileSync(requireFile, 'utf8');
     code = code.replace(/START_REQUIRE([\s\S]+)END_REQUIRE/m, function($0, $1) {
       return [
         'START_REQUIRE',
-        ...commonModules.concat(coreModules).map((module) => `require('${module}');`),
+        ...commonModules.concat(coreModules.map((module) => path.join('..', module)))
+          .map((module) => `require('${module}');`),
         '// END_REQUIRE',
       ].join('\n');
     });
