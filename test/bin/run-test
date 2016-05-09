@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 var spawn = require('child_process').spawn;
-require('dotenv').load();
+require('dotenv').load({ silent: true });
 
 // startup phantomjs ghostdriver server before starting test
 var webdriverPort = process.env.WEBDRIVER_PORT || 4444;
