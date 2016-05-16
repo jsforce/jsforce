@@ -1,6 +1,4 @@
-require('dotenv').load();
-
-var _ = require('underscore');
+var _ = require('lodash/core');
 var Promise = require('../../lib/promise');
 
 var ConnectionFactory = typeof window === 'undefined' ?

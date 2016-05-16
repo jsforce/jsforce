@@ -1,8 +1,19 @@
 language: node_js
-node_js:
-- 0.10
-- 0.12
+matrix:
+  include:
+    - node_js: "0.12"
+      env: BROWSER_TEST=false
+    - node_js: "4.2"
+      env: BROWSER_TEST=false
+    - node_js: "stable"
+      env: BROWSER_TEST=false
+    - node_js: "stable"
+      env: BROWSER_TEST=true
 sudo: false
+before_install:
+  - source .travis/setup.sh
+script:
+  - .travis/test.sh
 cache:
   directories:
-    - node-modules
+    - node_modules

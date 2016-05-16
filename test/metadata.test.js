@@ -2,7 +2,7 @@
 var TestEnv = require('./helper/testenv'),
     assert = TestEnv.assert;
 
-var _      = require('underscore'),
+var _      = require('lodash/core'),
     fs     = require('fs'),
     sf     = require('../lib/jsforce'),
     config = require('./config/salesforce');
@@ -160,6 +160,16 @@ describe("metadata", function() {
     describe("rename metadata synchronously", function() {
       it("should rename a custom object", function(done) {
         var oldName = fullNames[0], newName = oldName.replace(/__c$/, 'Updated__c');
+        // Rename operation is not working before API version 35.0
+        // because of the "enableSearch" property introduced in API 35.0.
+        var origVersion = conn.version;
+        if (parseFloat(conn.version) < 35) {
+          conn.version = '35.0';
+        }
+        var _done = function() {
+          conn.version = origVersion;
+          return done.apply(this, arguments);
+        };
         conn.metadata.rename('CustomObject', oldName, newName).then(function(result) {
           assert.ok(result.success === true);
           assert.ok(_.isString(result.fullName));
@@ -168,7 +178,7 @@ describe("metadata", function() {
         }).then(function(result) {
           assert.ok(_.isString(result.fullName));
           assert.ok(result.fullName === newName);
-        }).then(done, done);
+        }).then(_done, _done);
       });
     });
 
