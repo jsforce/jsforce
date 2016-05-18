@@ -1,21 +1,5 @@
 {
-  "framework" : "mocha",
-  "src_files" : [
-    "lib/**/*.js",
-    "test/**/*.test.js"
-  ],
-  "serve_files" : [
-    "build/jsforce-core.js",
-    "build/jsforce-api-analytics.js",
-    "build/jsforce-api-apex.js",
-    "build/jsforce-api-bulk.js",
-    "build/jsforce-api-chatter.js",
-    "build/jsforce-api-metadata.js",
-    "build/jsforce-api-soap.js",
-    "build/jsforce-api-streaming.js",
-    "build/jsforce-api-tooling.js",
-    "build/test.js"
-  ],
+  "test_page" : "./test/testRunner.html",
   "launch_in_dev" : [ "PhantomJS" ],
   "launch_in_ci" : [ "PhantomJS" ]
 }

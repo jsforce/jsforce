@@ -14,7 +14,7 @@ try {
 // wait till the server bootup
 setTimeout(function() {
 
-  var args = "--reporter spec --require intelli-espower-loader".split(/\s+/);
+  var args = "--retries 2 --reporter spec --require intelli-espower-loader".split(/\s+/);
   if (process.argv.length > 2) {
     args.push("test/" + process.argv[2]+ ".test.js");
   }
