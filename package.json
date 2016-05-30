@@ -31,7 +31,8 @@
     "test": "npm run test:node",
     "test:all": "npm run test:node && npm run test:browser",
     "test:node": "./test/bin/run-test",
-    "test:browser": "testem"
+    "test:browser": "testem",
+    "prepublish": "node -e \"if(process.env.npm_package_version!==require('./lib/VERSION')){console.error('The pacakge.json version is not matching to ./lib/VERSION.js');process.exit(1)}\""
   },
   "directories": {
     "test": "test/"
