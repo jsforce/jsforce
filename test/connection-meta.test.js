@@ -198,6 +198,7 @@ describe("connection-meta", function() {
   describe("get user identity information", function() {
     it("should return user identity information", function (done) {
       conn.identity(function(err, res) {
+        if (err) { throw err; }
         assert.ok(_.isString(res.id));
         assert.ok(res.id.indexOf('https://') === 0);
         assert.ok(_.isString(res.user_id));

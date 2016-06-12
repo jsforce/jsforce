@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<head>
+<title>Test'em</title>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/mocha/2.4.5/mocha.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/mocha/2.4.5/mocha.js"></script>
+<script src="/testem.js"></script>
+<script>mocha.setup('bdd')</script>
+<script src="/build/jsforce-core.js"></script>
+<script src="/build/jsforce-api-analytics.js"></script>
+<script src="/build/jsforce-api-apex.js"></script>
+<script src="/build/jsforce-api-bulk.js"></script>
+<script src="/build/jsforce-api-chatter.js"></script>
+<script src="/build/jsforce-api-metadata.js"></script>
+<script src="/build/jsforce-api-soap.js"></script>
+<script src="/build/jsforce-api-streaming.js"></script>
+<script src="/build/jsforce-api-tooling.js"></script>
+<script src="/build/test.js"></script>
+</head>
+<body>
+<div id="mocha"></div>
+<script>
+mocha.retries(2).run();
+</script>
+</body>
+</html>
