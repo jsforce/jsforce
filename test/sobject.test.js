@@ -191,7 +191,7 @@ describe("sobject", function() {
    */
   describe("select records with asterisk", function() {
     it("should return records", function(done) {
-      Opportunity.select("*, Account.*, Owner.*").exec(function(err, records) {
+      Opportunity.select("*, Account.*, Owner.Name").exec(function(err, records) {
         if (err) { throw err; }
         assert.ok(_.isArray(records));
         for (var i=0; i<records.length - 1; i++) {
