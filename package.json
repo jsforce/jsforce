@@ -59,6 +59,8 @@
     "co-prompt": "^1.0.0",
     "coffee-script": "^1.10.0",
     "commander": "^2.9.0",
+    "csv-parse": "^1.1.1",
+    "csv-stringify": "^1.0.4",
     "faye": "^1.2.0",
     "inherits": "^2.0.1",
     "lodash": "^4.11.1",
@@ -67,7 +69,6 @@
     "promise": "^7.1.1",
     "readable-stream": "^2.1.0",
     "request": "^2.72.0",
-    "through2": "^2.0.1",
     "xml2js": "^0.4.16"
   },
   "devDependencies": {
