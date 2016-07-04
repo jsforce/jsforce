@@ -10,7 +10,7 @@ import uglify from 'gulp-uglify';
 
 let coreModules;
 const commonModules = [
-  'inherits', 'util', 'events', 'lodash/core', 'readable-stream'
+  'inherits', 'util', 'events', 'lodash/core', 'readable-stream', 'multistream'
 ];
 const apiModules = [
   'analytics', 'apex', 'bulk', 'chatter', 'metadata', 'soap', 'streaming', 'tooling'
