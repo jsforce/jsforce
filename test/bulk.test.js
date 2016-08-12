@@ -248,7 +248,7 @@ if (TestEnv.isNodeJS) {
     var recs = null;
 
     before(function(done) {
-      var records = Array(101).join('_').split('').map(function(i) {
+      var records = Array(101).join('_').split('').map(function(a, i) {
         return { Name: 'Session Expiry Test #'+i };
       });
       conn.bulk.load('Account', 'insert', records, function(err, rets) {
