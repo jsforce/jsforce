@@ -2,10 +2,7 @@
 var TestEnv = require('./helper/testenv'),
     assert = TestEnv.assert;
 
-var async  = require('async'),
-    _      = require('lodash/core'),
-    sf     = require('../lib/jsforce'),
-    config = require('./config/salesforce');
+var config = require('./config/salesforce');
 
 var testEnv = new TestEnv(config);
 
@@ -25,8 +22,6 @@ describe("apexsoap", function() {
     this.timeout(600000); // set timeout to 10 min.
     testEnv.establishConnection(conn, done);
   });
-
-  var accountId;
 
   /**
    *
