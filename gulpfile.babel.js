@@ -1,7 +1,7 @@
 import gulp from 'gulp';
 import fs from 'fs';
 import path from 'path';
-import browserify from 'browserify';
+import webpack from 'webpack-stream';
 import source from 'vinyl-source-stream';
 import buffer from 'vinyl-buffer';
 import sourcemaps from 'gulp-sourcemaps';
@@ -32,38 +32,28 @@ const scriptTasks = [{
     name: `build:scripts:api:${api}`,
     entries: `./lib/api/${api}.js`,
     standalone: `jsforce.modules.api.${api[0].toUpperCase() + api.substring(1)}`,
-    output: `jsforce-api-${api}`,
-    transform: () => {
-      const swappingModules = commonModules.concat(coreModules);
-      return [
-        [ 'require-swapper',
-          {
-            baseDir: './lib/',
-            fn: 'window.jsforce.require',
-            modules: swappingModules,
-          }
-        ]
-      ]
-    }
+    output: `jsforce-api-${api}`
   }))
 );
 
 scriptTasks.forEach(({ name, entries, standalone, transform = () => [], output }) => {
   gulp.task(name, () => {
-    return browserify({
-      entries,
-      standalone,
-      transform: transform(),
-      debug: true,
-    }).bundle()
-      .pipe(source(output + '.js'))
+    return gulp.src(entries)
+      .pipe(webpack({
+        output: {
+            library: standalone,
+            libraryTarget: "umd",
+            filename: output + '.js',
+        }
+      }))
       .pipe(gulp.dest('./build'))
       .pipe(buffer())
       .pipe(sourcemaps.init({ loadMaps: true }))
       .pipe(rename(output + '.min.js'))
       .pipe(uglify())
       .pipe(sourcemaps.write('.'))
-      .pipe(gulp.dest('./build'));
+      .pipe(gulp.dest('./build'))
+    ;
   });
 });
 
@@ -98,6 +88,32 @@ const testScripts =
     .map((filename) => path.join('./test', filename));
 
 gulp.task('build:test', () => {
+  return gulp.src(testScripts)
+    .pipe(webpack({
+      node: {
+       fs: "empty",
+       tls: "empty",
+       net: "empty",
+       child_process: "empty"
+      },
+      output: {
+          library: 'test',
+          libraryTarget: "umd",
+          filename: 'test.js',
+      },
+      module: {
+          preLoaders: [
+              { test: /\.json$/, loader: 'json'},
+          ],
+          loaders: [
+              { test: /\.ejs$/, loader: 'raw' },
+              { test: /_test\.js$/, loader: "webpack-espower-loader" }
+          ]
+      }
+    }))
+    .pipe(gulp.dest('./build'))
+  ;
+
   return browserify({
     entries: testScripts,
     debug: true,
