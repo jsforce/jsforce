@@ -19,7 +19,7 @@ setTimeout(function() {
     args.push("test/" + process.argv[2]+ ".test.js");
   }
 
-  var mocha = spawn('mocha', args);
+  var mocha = spawn(__dirname + '/../../node_modules/.bin/mocha', args);
 
   mocha.stdout.pipe(process.stdout);
   mocha.stderr.pipe(process.stderr);
