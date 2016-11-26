@@ -44,6 +44,24 @@ See [license](LICENSE) (MIT License).
 
 If you have any questions first file it on [issues](https://github.com/jsforce/jsforce/issues) before contacting authors via e-mail.
 
+## Tests
+
+In order to run tests you will need:
+- [PhantomJS](http://phantomjs.org)
+- [Salesforce Developer Org](https://developer.salesforce.com/signup)
+
+You will also need to install the JsforceTestSuite package, which can be done by running:
+
+    SF_USERNAME=myusername SF_PASSWORD=password+securityToken ./test/bin/org-setup
+
+/You may need to run this more then once if you encounter timeouts or dropped connections/
+
+Finally, to run the tests simply do:
+
+    SF_USERNAME=myusername SF_PASSWORD=password+securityToken npm run test:node
+
+    SF_USERNAME=myusername SF_PASSWORD=password+securityToken npm run test:browser
+
 ## Contributions
 
 Your contributions are welcome: both by reporting issues on [GitHub issues](https://github.com/jsforce/jsforce/issues) or pull-requesting patches.
