@@ -272,6 +272,27 @@ describe("soql-builder", function() {
   /**
    *
    */
+  describe("Query using $includes/$excludes operator", function() {
+    var soql = SOQLBuilder.createSOQL({
+      table: "Contact",
+      conditions: {
+        Languages__c: { $includes: [ 'English', 'Japanese' ] },
+        Certifications__c: { $excludes: [ 'Oracle' ] }
+      }
+    });
+
+    it("should equal to soql", function() {
+      assert.ok(soql ===
+        "SELECT Id FROM Contact " +
+        "WHERE Languages__c INCLUDES ('English', 'Japanese') "+
+        "AND Certifications__c EXCLUDES ('Oracle')"
+      );
+    });
+  });
+
+  /**
+   *
+   */
   describe("Query for matching null", function() {
     var soql = SOQLBuilder.createSOQL({
       table: "Account",

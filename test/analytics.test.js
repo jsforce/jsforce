@@ -18,6 +18,7 @@ describe("analytics", function() {
   var conn = testEnv.createConnection();
 
   var reportId;
+  var cloneId;
 
   /**
    *
@@ -209,6 +210,36 @@ describe("analytics", function() {
           assert.ok(_.isNumber(plan.sobjectCardinality));
           assert.ok(_.isString(plan.sobjectType));
         }
+      }.check(done));
+    });
+  });
+
+  /**
+   *
+   */
+  describe("clone report", function() {
+    it("should clone the report", function(done) {
+      conn.analytics.report(reportId).clone("Lead List Report Clone", function(err, result) {
+        if (err) { throw err; }
+        assert.ok(_.isObject(result.reportMetadata));
+        cloneId = result.reportMetadata.id;
+        assert.ok(cloneId !== reportId);
+        assert.ok(result.reportMetadata.name === "Lead List Report Clone");
+      }.check(done));
+    });
+  });
+
+  /**
+   *
+   */
+  describe("destroy report", function() {
+    it("should destroy the report", function(done) {
+      conn.analytics.report(cloneId).destroy(function(err, result) {
+        if (err) { throw err; }
+        conn.analytics.report(cloneId).describe(function(desc_err) {
+          assert.ok(_.isObject(desc_err));
+          assert.ok(desc_err.name === "NOT_FOUND");
+        });
       }.check(done));
     });
   });
