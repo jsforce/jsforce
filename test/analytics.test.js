@@ -351,19 +351,6 @@ describe("analytics", function() {
   /**
    *
    */
-  describe("refresh dashboard", function() {
-    it("should refresh dashboard metadata", function(done) {
-      conn.analytics.dashboard(dashboardId).refresh(function(err, meta) {
-        if (err) { throw err; }
-        assert.ok(_.isObject(meta));
-        assert.ok(_.isString(meta.statusUrl));
-      }.check(done));
-    });
-  });
-
-  /**
-   *
-   */
   describe("clone dashboard", function() {
     it("should clone the dashboard", function(done) {
       conn.analytics.dashboard(dashboardId).clone({ name : "Lead List Dashboard Clone", folderId : dashboardFolderId }, function(err, result) {
@@ -372,6 +359,20 @@ describe("analytics", function() {
         cloneDashboardId = result.attributes.dashboardId;
         assert.ok(cloneDashboardId !== dashboardId);
         assert.ok(result.name === "Lead List Dashboard Clone");
+      }.check(done));
+    });
+  });
+
+  /**
+   *
+   */
+  describe("refresh dashboard", function() {
+    it("should refresh dashboard metadata", function(done) {
+      // refresh cloned dashboard, in order to prevent frequent refresh error.
+      conn.analytics.dashboard(cloneDashboardId).refresh(function(err, meta) {
+        if (err) { throw err; }
+        assert.ok(_.isObject(meta));
+        assert.ok(_.isString(meta.statusUrl));
       }.check(done));
     });
   });
