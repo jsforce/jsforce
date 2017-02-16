@@ -1,5 +1,5 @@
 import test from 'ava';
-import { Connection } from '../src/jsforce';
+import { Connection } from '..';
 
 test('create conn instance', (t) => {
   const conn = new Connection();
