@@ -1,0 +1,27 @@
+#!/usr/bin/env node
+var spawn = require('child_process').spawn;
+require('dotenv').load({ silent: true });
+
+// startup phantomjs ghostdriver server before starting test
+var webdriverPort = process.env.WEBDRIVER_PORT || 4444;
+var phantomjs;
+try {
+  phantomjs = spawn('phantomjs', [ "--webdriver=" + webdriverPort, "--ssl-protocol=tlsv1" ]);
+} catch(e) {
+  console.error(e);
+}
+
+// wait till the server bootup
+setTimeout(function() {
+
+  var testRunner = spawn('npm', ['run', 'test:runner']);
+
+  testRunner.stdout.pipe(process.stdout);
+  testRunner.stderr.pipe(process.stderr);
+
+  testRunner.on('exit', function(code) {
+    if (phantomjs) { phantomjs.kill("SIGHUP"); }
+    process.exit(code);
+  });
+
+}, 2000);
