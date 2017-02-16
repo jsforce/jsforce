@@ -1,1 +1,1 @@
-module.exports = require('./lib-es5/jsforce');
+module.exports = require('./lib.es5/jsforce');

@@ -48,11 +48,14 @@
   "bin": {
     "jsforce": "./bin/jsforce"
   },
-  "dependencies": {},
+  "dependencies": {
+    "babel-runtime": "^6.23.0"
+  },
   "devDependencies": {
     "babel-cli": "^6.23.0",
     "babel-core": "^6.23.1",
     "babel-eslint": "^7.1.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-es2015": "^6.22.0",
     "eslint": "^3.15.0",
     "eslint-config-airbnb-base": "^11.1.0",
