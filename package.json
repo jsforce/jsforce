@@ -83,6 +83,9 @@
     "webdriverio": "^4.6.2"
   },
   "ava": {
+    "concurrency": 1,
+    "verbose": true,
+    "failFast": true,
     "require": [
       "babel-register"
     ],
