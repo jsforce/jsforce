@@ -14,7 +14,7 @@ try {
 // wait till the server bootup
 setTimeout(function() {
 
-  var testRunner = spawn('npm', ['run', 'test:runner']);
+  var testRunner = spawn('npm', ['run', 'test:runner', '--'].concat(process.argv.slice(2)));
 
   testRunner.stdout.pipe(process.stdout);
   testRunner.stderr.pipe(process.stderr);

@@ -1,0 +1,10 @@
+{
+  "rules": {
+    "no-shadow": [2, {
+      "allow": ["test"]
+    }],
+    "import/no-extraneous-dependencies": [2, {
+      "devDependencies": true
+    }]
+  }
+}

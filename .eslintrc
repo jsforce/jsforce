@@ -5,6 +5,10 @@
     "node": true
   },
   "rules": {
+    "no-plusplus": [2, {
+      "allowForLoopAfterthoughts": true
+    }],
+    "no-underscore-dangle": 0,
     "import/named": 2,
     "import/prefer-default-export": 0
   }
