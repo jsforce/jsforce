@@ -15,7 +15,7 @@ test.group('cache', (test) => {
 
   const getTimeResCached = cache.makeResponseCacheable(getTime, null, { key: 'getTime' });
 
-  test.serial('call response-cached getTime function and return time', async (t) => (
+  test.serial('call response-cached getTime function and return time', async t => (
     new Promise((resolve, reject) => {
       getTimeResCached((err, time) => {
         if (err) { reject(err); return; }
@@ -26,7 +26,7 @@ test.group('cache', (test) => {
     })
   ));
 
-  test.serial('call response-cached function and get different time', async (t) => (
+  test.serial('call response-cached function and get different time', async t => (
     new Promise((resolve, reject) => {
       getTimeResCached((err, time) => {
         if (err) { reject(err); return; }
@@ -40,7 +40,7 @@ test.group('cache', (test) => {
 
   const getTimeCached = cache.makeCacheable(getTime, null, { key: 'getTime' });
 
-  test.serial('call cacheable getTime function and get time which equals to latest call result', async (t) => (
+  test.serial('call cacheable getTime function and get time which equals to latest call result', async t => (
     new Promise((resolve, reject) => {
       getTimeCached((err, time) => {
         if (err) { reject(err); return; }
