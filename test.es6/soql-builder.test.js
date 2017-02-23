@@ -214,7 +214,7 @@ test.group('soql-builder', (test) => {
   });
 
   //
-  test('buidl query using $includes/$excludes operator', (t) => {
+  test('build query using $includes/$excludes operator', (t) => {
     const soql = SOQLBuilder.createSOQL({
       table: 'Contact',
       conditions: {
