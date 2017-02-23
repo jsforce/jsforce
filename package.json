@@ -26,8 +26,9 @@
   "scripts": {
     "build": "babel src -d lib.es6",
     "lint": "eslint src test.es6",
-    "test": "test.es6/bin/run-test",
-    "test:runner": "ava test.es6/*.test.js"
+    "test": "npm-run-all -r -p test:phantomjs test:ava",
+    "test:phantomjs": "phantomjs --webdriver=4444 --ssl-protocol=tlsv1",
+    "test:ava": "ava test.es6/*.test.js"
   },
   "directories": {
     "test": "test/"
@@ -80,6 +81,7 @@
     "eslint": "3.15.0",
     "eslint-config-airbnb-base": "11.1.0",
     "eslint-plugin-import": "2.2.0",
+    "npm-run-all": "^4.0.2",
     "webdriverio": "^4.6.2"
   },
   "ava": {

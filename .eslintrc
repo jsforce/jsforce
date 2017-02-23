@@ -5,6 +5,7 @@
     "node": true
   },
   "rules": {
+    "comma-dangle": 0,
     "no-plusplus": [2, {
       "allowForLoopAfterthoughts": true
     }],
