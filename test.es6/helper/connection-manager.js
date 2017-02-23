@@ -14,7 +14,8 @@ export default class ConnectionManager {
   constructor(config) {
     this._config = config;
     if (config.poolUsername && config.poolPassword) {
-      this._userPool = new UserPool(config, this._factory);
+      const conn = this.createConnection();
+      this._userPool = new UserPool(config, conn);
     }
     this._idmap = {};
   }

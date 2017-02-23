@@ -4,12 +4,11 @@ import { delay } from '../util';
  *
  */
 export default class UserPool {
-  constructor(config, factory) {
+  constructor(config, conn) {
     this._config = config;
-    this._factory = factory;
+    this._conn = conn;
     const { poolUsername, poolPassword } = config;
     if (poolUsername && poolPassword) {
-      this._conn = factory.createConnection();
       this._login = this._conn.login(poolUsername, poolPassword);
     }
   }
