@@ -299,7 +299,10 @@ describe("chatter", function() {
     before(function(done) {
       chatter.resource('/feeds').retrieve(function(err, result) {
         if (err) { throw err; }
-        feeds = result.feeds;
+        feeds = result.feeds.filter(function(feed) {
+          // Exclude PendingReview feed type, which raise 403 error in feed-elements GET request
+          return feed.feedType !== 'PendingReview';
+        });
       }.check(done));
     });
 
