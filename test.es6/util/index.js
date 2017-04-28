@@ -19,3 +19,7 @@ export function isNumber(o) {
 export function isUndefined(o) {
   return typeof o === 'undefined';
 }
+
+export function clone(o) {
+  return JSON.parse(JSON.stringify(o));
+}
