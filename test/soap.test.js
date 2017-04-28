@@ -83,9 +83,15 @@ describe("soap", function() {
     }];
 
     before(function(done) {
+      // Because ver >= 38.0 metadata API doesn't return picklist values in standard field,
+      // fix the version to 37.0
+      var conn37_0 = testEnv.createConnection();
+      conn37_0.version = '37.0';
+      conn37_0.accessToken = conn.accessToken;
+      conn37_0.instanceUrl = conn.instanceUrl;
       sf.Promise.all([
         conn.sobject('Lead').create(leads),
-        conn.metadata.read('CustomField', 'Lead.Status')
+        conn37_0.metadata.read('CustomField', 'Lead.Status')
       ]).then(function(rrets) {
         var rets = rrets[0], statusField = rrets[1];
         leadIds = rets.map(function(r){ return r.id; });
