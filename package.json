@@ -82,6 +82,7 @@
     "eslint-config-airbnb-base": "11.1.0",
     "eslint-plugin-import": "2.2.0",
     "npm-run-all": "^4.0.2",
+    "through2": "^2.0.3",
     "webdriverio": "^4.6.2"
   },
   "ava": {
