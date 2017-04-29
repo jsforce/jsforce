@@ -16,6 +16,10 @@ export function isNumber(o) {
   return typeof o === 'number';
 }
 
+export function isBoolean(o) {
+  return typeof o === 'boolean';
+}
+
 export function isUndefined(o) {
   return typeof o === 'undefined';
 }
