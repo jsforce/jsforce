@@ -24,9 +24,11 @@
   ],
   "main": "./index",
   "scripts": {
-    "build": "babel src -d lib.es5/",
-    "lint": "eslint src",
-    "test": "ava test.es6"
+    "build": "babel src -d lib.es6",
+    "lint": "eslint src test.es6",
+    "test": "npm-run-all -r -p test:phantomjs test:ava",
+    "test:phantomjs": "phantomjs --webdriver=4444 --ssl-protocol=tlsv1",
+    "test:ava": "ava test.es6/*.test.js"
   },
   "directories": {
     "test": "test/"
@@ -50,7 +52,21 @@
     "jsforce": "./bin/jsforce"
   },
   "dependencies": {
-    "babel-runtime": "^6.23.0"
+    "babel-runtime": "^6.23.0",
+    "co-prompt": "^1.0.0",
+    "coffee-script": "^1.10.0",
+    "commander": "^2.9.0",
+    "csv-parse": "^1.1.1",
+    "csv-stringify": "^1.0.4",
+    "faye": "^1.2.0",
+    "inherits": "^2.0.1",
+    "lodash": "^4.11.1",
+    "multistream": "^2.0.5",
+    "open": "0.0.5",
+    "promise": "^7.1.1",
+    "readable-stream": "^2.1.0",
+    "request": "^2.72.0",
+    "xml2js": "^0.4.16"
   },
   "devDependencies": {
     "ava": "^0.18.1",
@@ -59,14 +75,23 @@
     "babel-eslint": "^7.1.1",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-es2015": "^6.22.0",
+    "babel-preset-es2017": "^6.22.0",
     "babel-register": "^6.23.0",
-    "eslint": "^3.15.0",
-    "eslint-config-airbnb-base": "^11.1.0",
-    "eslint-plugin-import": "^2.2.0"
+    "dotenv": "^4.0.0",
+    "eslint": "3.15.0",
+    "eslint-config-airbnb-base": "11.1.0",
+    "eslint-plugin-import": "2.2.0",
+    "npm-run-all": "^4.0.2",
+    "through2": "^2.0.3",
+    "webdriverio": "^4.6.2"
   },
   "ava": {
+    "concurrency": 1,
+    "verbose": true,
+    "failFast": true,
     "require": [
       "babel-register"
-    ]
+    ],
+    "babel": "inherit"
   }
 }

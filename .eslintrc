@@ -5,6 +5,13 @@
     "node": true
   },
   "rules": {
+    "comma-dangle": 0,
+    "no-await-in-loop": 0,
+    "no-plusplus": [2, {
+      "allowForLoopAfterthoughts": true
+    }],
+    "no-restricted-syntax": [2, "ForInStatement", "LabeledStatement", "WithStatement"],
+    "no-underscore-dangle": 0,
     "import/named": 2,
     "import/prefer-default-export": 0
   }
