@@ -1,4 +1,7 @@
 {
   "presets": ["es2015", "es2017"],
-  "plugins": ["transform-runtime"]
+  "plugins": [
+    "transform-runtime",
+    "transform-flow-strip-types"
+  ]
 }
