@@ -5,7 +5,6 @@ import { isString, isBoolean, isUndefined } from './util';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();
-conn.metadata.pollTimeout = 40 * 1000; // adjust poll timeout to test timeout.
 
 
 /**
