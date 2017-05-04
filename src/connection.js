@@ -1,5 +1,6 @@
 /* @flow */
 import EventEmitter from 'events';
+import Transport, { ProxyTransport, HttpProxyTransport } from './transport';
 import { Logger, getLogger } from './util/logger';
 import type { LogLevelConfig } from './util/logger';
 
@@ -25,7 +26,7 @@ export type UserInfo = {
   url: string,
 };
 
-type ConnectionEstablishOptions = {
+export type ConnectionEstablishOptions = {
   accessToken?: string,
   refreshToken?: string,
   instanceUrl?: string,
@@ -34,6 +35,8 @@ type ConnectionEstablishOptions = {
   signedRequest?: string|Object,
   userInfo?: UserInfo,
 };
+
+
 /**
  *
  */
@@ -104,6 +107,10 @@ export default class Connection extends EventEmitter {
     this.version = config.version || defaultConnectionConfig.version;
     this._logger =
       config.logLevel ? Connection._logger.createInstance(config.logLevel) : Connection._logger;
+    this._transport =
+      config.proxyUrl ? new ProxyTransport(config.proxyUrl) :
+      config.httpProxy ? new HttpProxyTransport(config.httpProxy) :
+      new Transport();
     const { accessToken, refreshToken, instanceUrl, sessionId, serverUrl, signedRequest } = config;
     this._establish({
       accessToken, refreshToken, instanceUrl, sessionId, serverUrl, signedRequest,
@@ -112,6 +119,7 @@ export default class Connection extends EventEmitter {
 
   /* @private */
   _establish(options: ConnectionEstablishOptions) {
+    this._resetInstance();
     this.instanceUrl =
       options.serverUrl ? options.serverUrl.split('/').slice(0, 3).join('/') :
       options.instanceUrl ? options.instanceUrl :
@@ -132,11 +140,14 @@ export default class Connection extends EventEmitter {
     }
     this.userInfo = options.userInfo || this.userInfo;
     this._sessionType = options.sessionId ? 'soap' : 'oauth2';
-    this._resetInstance();
   }
 
   /* @priveate */
   _resetInstance() {
+    this.accessToken = null;
+    this.userInfo = null;
+    this.refreshToken = null;
+    this.instanceUrl = defaultConnectionConfig.instanceUrl;
     this.limitInfo = {};
     this.sobjects = {};
     /*
@@ -250,12 +261,6 @@ export default class Connection extends EventEmitter {
       throw new Error(faultstring || response.body);
     }
     // Destroy the session bound to this connection
-    self.accessToken = null;
-    self.userInfo = null;
-    self.refreshToken = null;
-    self.instanceUrl = null;
-    self.cache.clear();
-    // nothing useful returned by logout API, just return
-    return undefined;
+    this._resetInstance();
   }
 }
