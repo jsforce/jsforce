@@ -17,6 +17,7 @@
     "no-restricted-syntax": [2, "ForInStatement", "LabeledStatement", "WithStatement"],
     "no-underscore-dangle": 0,
     "import/named": 2,
-    "import/prefer-default-export": 0
+    "import/prefer-default-export": 0,
+    "flowtype/define-flow-type": 1
   }
 }
