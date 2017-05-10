@@ -6,6 +6,7 @@ import Transport, { ProxyTransport, HttpProxyTransport } from './transport';
 import { Logger, getLogger } from './util/logger';
 import type { LogLevelConfig } from './util/logger';
 import HttpApi from './http-api';
+import SessionRefreshDelegate from './session-refresh-delegate';
 
 
 /**
@@ -84,6 +85,17 @@ function parseSignedRequest(sr: string | Object): Object {
   return sr;
 }
 
+/**
+ * Session Refresh delegate function for username/password login
+ * @private
+ */
+function createUsernamePasswordRefreshFn(username, password) {
+  return (conn, callback) => {
+    conn.login(username, password, err => (
+      err ? callback(err) : callback(null, conn.accessToken)
+    ));
+  };
+}
 
 /**
  *
@@ -182,6 +194,8 @@ export default class Connection extends EventEmitter {
    *
    */
   async login(username: string, password: string): Promise<UserInfo> {
+    this._refreshDelegate =
+      new SessionRefreshDelegate(this, createUsernamePasswordRefreshFn(username, password));
     // TODO login by oauth2
     return this.loginBySoap(username, password);
   }
