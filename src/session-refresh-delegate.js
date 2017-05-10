@@ -18,8 +18,8 @@ export default class SessionRefreshDelegate {
     this._conn = conn;
     this._logger =
       conn._logLevel ?
-      SessionRefreshDelegate._logger :
-      SessionRefreshDelegate._logger.createInstance(conn._logLevel);
+      SessionRefreshDelegate._logger.createInstance(conn._logLevel) :
+      SessionRefreshDelegate._logger;
     this._refreshFn = refreshFn;
   }
 
