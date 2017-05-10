@@ -51,7 +51,8 @@ export default class HttpApi extends EventEmitter {
   constructor(conn: Connection, options: any) {
     super();
     this._conn = conn;
-    this._logger = HttpApi._logger.createInstance('http-api', conn._logLevel);
+    this._logger =
+      conn._logLevel ? HttpApi._logger.createInstance(conn._logLevel) : HttpApi._logger;
     this._responseType = options.responseType;
     this._transport = options.transport || conn._transport;
     this._noContentResponse = options.noContentResponse;

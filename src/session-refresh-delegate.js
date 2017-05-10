@@ -1,7 +1,13 @@
+/* @flow */
+import { getLogger, Logger } from './util/logger';
+import Connection from './connection';
+
 /**
- * @protected
+ *
  */
 export default class SessionRefreshDelegate {
+  static _logger: Logger = getLogger('session-refresh-delegate');
+
   _conn: Connection;
   _logger: Logger;
   _refreshFn: Function;
@@ -10,7 +16,10 @@ export default class SessionRefreshDelegate {
 
   constructor(conn: Connection, refreshFn: Function) {
     this._conn = conn;
-    this._logger = SessionRefreshDelegate._logger.createInstance('session-refresh-delegate', conn._logLevel);
+    this._logger =
+      conn._logLevel ?
+      SessionRefreshDelegate._logger :
+      SessionRefreshDelegate._logger.createInstance(conn._logLevel);
     this._refreshFn = refreshFn;
   }
 
@@ -18,9 +27,9 @@ export default class SessionRefreshDelegate {
    * Refresh access token
    * @private
    */
-  async refresh(since) {
+  async refresh(since: number) {
     // Callback immediately When refreshed after designated time
-    if (this._lastRefreshedAt > since) { return; }
+    if (this._lastRefreshedAt && this._lastRefreshedAt > since) { return; }
     if (this._refreshPromise) {
       await this._refreshPromise;
       return;
