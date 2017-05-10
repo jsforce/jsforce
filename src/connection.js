@@ -261,6 +261,16 @@ export default class Connection extends EventEmitter {
   /**
    *
    */
+  async logout(): Promise<void> {
+    this._refreshDelegate = undefined;
+    // TODO logout by oauth2
+    return this.logoutBySoap();
+  }
+
+
+  /**
+   *
+   */
   async logoutBySoap(): Promise<void> {
     const body = [
       '<se:Envelope xmlns:se="http://schemas.xmlsoap.org/soap/envelope/">',
@@ -323,6 +333,7 @@ export default class Connection extends EventEmitter {
     _request = Object.assign({}, _request, { url: this._normalizeUrl(_request.url) });
     const httpApi = new HttpApi(this, options);
     // log api usage and its quota
+    // TODO : limitInfo
     /*
     httpApi.on('response', (response: HttpResponse) => {
       if (response.headers && response.headers["sforce-limit-info"]) {
