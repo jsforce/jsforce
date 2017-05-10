@@ -90,10 +90,13 @@ function parseSignedRequest(sr: string | Object): Object {
  * @private
  */
 function createUsernamePasswordRefreshFn(username, password) {
-  return (conn, callback) => {
-    conn.login(username, password, err => (
-      err ? callback(err) : callback(null, conn.accessToken)
-    ));
+  return async (conn, callback) => {
+    try {
+      await conn.login(username, password);
+      callback(null, conn.accessToken);
+    } catch (err) {
+      callback(err);
+    }
   };
 }
 
