@@ -1,4 +1,4 @@
-// import jsforce from './src/jsforce';
-//
-// export default jsforce;
-module.exports = require('./lib/jsforce');
+import jsforce, { Connection, OAuth2 } from './src/jsforce';
+
+export default jsforce;
+export { Connection, OAuth2 };

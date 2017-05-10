@@ -1,0 +1,202 @@
+/* @flow */
+import querystring from 'querystring';
+import Transport, { ProxyTransport, HttpProxyTransport, JsonpTransport } from './transport';
+import type { HttpRequest } from './types';
+
+const defaultOAuth2Config = {
+  loginUrl: 'https://login.salesforce.com'
+};
+
+/**
+ * type defs
+ */
+export type OAuth2Config = {
+  clientId: string,
+  clientSecret: string,
+  redirectUri: string,
+  loginUrl?: string,
+  authzServiceUrl?: string,
+  tokenServiceUrl?: string,
+  revokeServiceUrl?: string,
+  proxyUrl?: string,
+  httpProxy?: string,
+};
+
+export type TokenResponse = {
+  access_token: string,
+  refresh_token: string,
+};
+
+/**
+ * OAuth2 class
+ */
+export default class OAuth2 {
+  loginUrl: string;
+  authzServiceUrl: string;
+  tokenServiceUrl: string;
+  revokeServiceUrl: string;
+  clientId: string;
+  clientSecret: string;
+  redirectUri: string;
+
+  _transport: Transport;
+
+  /**
+   *
+   */
+  constructor(config: OAuth2Config) {
+    const {
+      loginUrl, authzServiceUrl, tokenServiceUrl, revokeServiceUrl,
+      clientId, clientSecret, redirectUri,
+      proxyUrl, httpProxy,
+    } = config;
+    if (authzServiceUrl && tokenServiceUrl) {
+      this.loginUrl = authzServiceUrl.split('/').slice(0, 3).join('/');
+      this.authzServiceUrl = authzServiceUrl;
+      this.tokenServiceUrl = tokenServiceUrl;
+      this.revokeServiceUrl = revokeServiceUrl || `${this.loginUrl}/services/oauth2/revoke`;
+    } else {
+      this.loginUrl = loginUrl || defaultOAuth2Config.loginUrl;
+      this.authzServiceUrl = `${this.loginUrl}/services/oauth2/authorize`;
+      this.tokenServiceUrl = `${this.loginUrl}/services/oauth2/token`;
+      this.revokeServiceUrl = `${this.loginUrl}/services/oauth2/revoke`;
+    }
+    this.clientId = clientId;
+    this.clientSecret = clientSecret;
+    this.redirectUri = redirectUri;
+    if (proxyUrl) {
+      this._transport = new ProxyTransport(proxyUrl);
+    } else if (httpProxy) {
+      this._transport = new HttpProxyTransport(httpProxy);
+    } else {
+      this._transport = new Transport();
+    }
+  }
+
+  /**
+   * Get Salesforce OAuth2 authorization page URL to redirect user agent.
+   */
+  getAuthorizationUrl(params?: { scope?: string, state?: string } = {}) {
+    const _params = Object.assign((params: Object), {
+      response_type: 'code',
+      client_id: this.clientId,
+      redirect_uri: this.redirectUri
+    });
+    return this.authzServiceUrl +
+      (this.authzServiceUrl.indexOf('?') >= 0 ? '&' : '?') +
+      querystring.stringify(_params);
+  }
+
+  /**
+   * OAuth2 Refresh Token Flow
+   */
+  async refreshToken(refreshToken: string): Promise<TokenResponse> {
+    const ret = await this._postParams({
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+      client_id: this.clientId,
+      client_secret: this.clientSecret
+    });
+    return (ret : TokenResponse);
+  }
+
+  /**
+   * OAuth2 Web Server Authentication Flow (Authorization Code)
+   * Access Token Request
+   */
+  async requestToken(code: string): Promise<TokenResponse> {
+    const ret = await this._postParams({
+      grant_type: 'authorization_code',
+      code,
+      client_id: this.clientId,
+      client_secret: this.clientSecret,
+      redirect_uri: this.redirectUri
+    });
+    return (ret : TokenResponse);
+  }
+
+  /**
+   * OAuth2 Username-Password Flow (Resource Owner Password Credentials)
+   *
+   * @param {String} username - Salesforce username
+   * @param {String} password - Salesforce password
+   * @param {Callback.<TokenResponse>} [callback] - Callback function
+   * @returns {Promise.<TokenResponse>}
+   */
+  async authenticate(username: string, password: string): Promise<TokenResponse> {
+    const ret = await this._postParams({
+      grant_type: 'password',
+      username,
+      password,
+      client_id: this.clientId,
+      client_secret: this.clientSecret,
+      redirect_uri: this.redirectUri
+    });
+    return (ret : TokenResponse);
+  }
+
+  /**
+   * OAuth2 Revoke Session Token
+   */
+  async revokeToken(accessToken: string): Promise<void> {
+    let response;
+    if (JsonpTransport.supported) {
+      const jsonpTransport = new JsonpTransport('callback');
+      response = await jsonpTransport.httpRequest({
+        method: 'GET',
+        url: `${this.revokeServiceUrl}?${querystring.stringify({ token: accessToken })}`
+      });
+    } else {
+      response = await this._transport.httpRequest({
+        method: 'POST',
+        url: this.revokeServiceUrl,
+        body: querystring.stringify({ token: accessToken }),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      });
+    }
+    if (response.statusCode >= 400) {
+      let res = querystring.parse(response.body);
+      if (!res || !res.error) {
+        res = { error: `ERROR_HTTP_${response.statusCode}`, error_description: response.body };
+      }
+      throw new (class extends Error {
+        constructor({ error, error_description }) {
+          super(error_description);
+          this.name = error;
+        }
+      })(res);
+    }
+  }
+
+  /**
+   * @private
+   */
+  async _postParams(params: HttpRequest): Promise<any> {
+    const response = await this._transport.httpRequest({
+      method: 'POST',
+      url: this.tokenServiceUrl,
+      body: querystring.stringify(params),
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded'
+      }
+    });
+    let res;
+    try {
+      res = JSON.parse(response.body);
+    } catch (e) {
+      /* eslint-disable no-empty */
+    }
+    if (response.statusCode >= 400) {
+      res = res || { error: `ERROR_HTTP_${response.statusCode}`, error_description: response.body };
+      throw new (class extends Error {
+        constructor({ error, error_description }) {
+          super(error_description);
+          this.name = error;
+        }
+      })(res);
+    }
+    return res;
+  }
+}
