@@ -1,6 +1,7 @@
 /* @flow */
-import type { Duplex } from 'stream';
 import _request from 'request';
+import type { HttpRequest, HttpResponse } from './types';
+import { StreamPromise } from './util/promise';
 import jsonp from './browser/jsonp';
 import canvas from './browser/canvas';
 
@@ -42,64 +43,6 @@ const baseUrl =
     process.env.LOCATION_BASE_URL || '';
 
 
-export type HttpRequest = {
-  url: string;
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'OPTIONS';
-  headers?: {[string]: string },
-  body?: string
-};
-
-export type HttpResponse = {
-  statusCode: number,
-  headers: {[string]: string },
-  body: string,
-};
-
-/* @private */
-class HttpConnection {
-  _params: HttpRequest;
-  _streamFactory: HttpRequest => Duplex;
-  _stream: ?Duplex;
-  _response: ?Promise<HttpResponse>;
-
-  constructor(params: HttpRequest, streamFactory: HttpRequest => Duplex) {
-    this._params = params;
-    this._streamFactory = streamFactory;
-  }
-
-  _invoke() {
-    if (!this._stream || !this._response) {
-      this._response = new Promise((resolve, reject) => {
-        const stream = this._streamFactory(this._params);
-        stream.on('complete', resolve);
-        stream.on('error', reject);
-        this._stream = stream;
-      });
-    }
-    return this._response;
-  }
-
-  then<U>(
-    onFulfill?: HttpResponse => Promise<U> | U,
-    onReject?: any => Promise<U> | U
-  ): Promise<U> {
-    return this._invoke().then(onFulfill, onReject);
-  }
-
-  catch<U>(onReject?: any => Promise<U> | U): Promise<U> {
-    return this.then(undefined, onReject);
-  }
-
-  stream(): Duplex {
-    this._invoke();
-    if (!this._stream) {
-      throw new Error('creating http connection stream failed');
-    }
-    return this._stream;
-  }
-}
-
-
 /**
  * Class for HTTP request transport
  *
@@ -109,8 +52,22 @@ class HttpConnection {
 export default class Transport {
   /**
    */
-  httpRequest(params: HttpRequest) {
-    return new HttpConnection(params, p => request(p, () => {}));
+  httpRequest(params: HttpRequest): StreamPromise<HttpResponse> {
+    return new StreamPromise(async (setStream) => {
+      const createStream = this.getRequestStreamCreator();
+      const stream = createStream(params);
+      setStream(stream);
+      return new Promise((resolve, reject) => {
+        stream.on('complete', resolve).on('error', reject);
+      });
+    });
+  }
+
+  /**
+   * @protected
+   */
+  getRequestStreamCreator(): HttpRequest => Stream {
+    return params => request(params, () => {});
   }
 }
 
@@ -127,8 +84,9 @@ export class JsonpTransport extends Transport {
     this._jsonpParam = jsonpParam;
   }
 
-  httpRequest(params: HttpRequest) {
-    return new HttpConnection(params, jsonp.createRequest(this._jsonpParam));
+  getRequestStreamCreator(): HttpRequest => Stream {
+    const jsonpRequest = jsonp.createRequest(this._jsonpParam);
+    return params => jsonpRequest(params);
   }
 }
 
@@ -144,8 +102,9 @@ export class CanvasTransport extends Transport {
     this._signedRequest = signedRequest;
   }
 
-  httpRequest(params: HttpRequest) {
-    return new HttpConnection(params, canvas.createRequest(this._signedRequest));
+  getRequestStreamCreator(): HttpRequest => Stream {
+    const canvasRequest = canvas.createRequest(this._signedRequest);
+    return params => canvasRequest(params);
   }
 }
 

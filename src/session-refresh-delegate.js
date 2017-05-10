@@ -1,0 +1,56 @@
+/**
+ * @protected
+ */
+export default class SessionRefreshDelegate {
+  _conn: Connection;
+  _logger: Logger;
+  _refreshFn: Function;
+  _lastRefreshedAt: ?number;
+  _refreshPromise: ?Promise<void>;
+
+  constructor(conn: Connection, refreshFn: Function) {
+    this._conn = conn;
+    this._logger = SessionRefreshDelegate._logger.createInstance('session-refresh-delegate', conn._logLevel);
+    this._refreshFn = refreshFn;
+  }
+
+  /**
+   * Refresh access token
+   * @private
+   */
+  async refresh(since) {
+    // Callback immediately When refreshed after designated time
+    if (this._lastRefreshedAt > since) { return; }
+    if (this._refreshPromise) {
+      await this._refreshPromise;
+      return;
+    }
+    try {
+      this._logger.debug('<refresh token>');
+      this._refreshPromise = new Promise((resolve, reject) => {
+        this._refreshFn(this._conn, (err, accessToken, res) => {
+          if (!err) {
+            this._logger.debug('Connection refresh completed.');
+            this._conn.accessToken = accessToken;
+            this._conn.emit('refresh', accessToken, res);
+            resolve();
+          } else {
+            reject(err);
+          }
+        });
+      });
+      await this._refreshPromise;
+    } finally {
+      this._refreshPromise = undefined;
+      this._lastRefreshedAt = Date.now();
+    }
+  }
+
+  isRefreshing(): boolean {
+    return !!this._refreshPromise;
+  }
+
+  async waitRefreshed() {
+    return this._refreshPromise;
+  }
+}

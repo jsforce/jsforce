@@ -1,6 +1,6 @@
 /* @flow */
 import { Transform } from 'stream';
-import type { HttpRequest } from '../transport';
+import type { HttpRequest } from '../types';
 
 declare var Sfdc: any;
 

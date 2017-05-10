@@ -1,8 +1,11 @@
 /* @flow */
 import EventEmitter from 'events';
+import type { HttpRequest } from './types';
+import { StreamPromise } from './util/promise';
 import Transport, { ProxyTransport, HttpProxyTransport } from './transport';
 import { Logger, getLogger } from './util/logger';
 import type { LogLevelConfig } from './util/logger';
+import HttpApi from './http-api';
 
 
 /**
@@ -17,7 +20,10 @@ export type ConnectionConfig = {
   sessionId?: string,
   serverUrl?: string,
   signedRequest?: string,
+  proxyUrl?: string,
+  httpProxy?: string,
   logLevel?: LogLevelConfig,
+  callOptions?: { [string]: string },
 };
 
 export type UserInfo = {
@@ -92,10 +98,13 @@ export default class Connection extends EventEmitter {
   userInfo: ?UserInfo;
   limitInfo: ?Object;
   sobjects: { [string]: any };
+  _callOptions: ?{ [string]: string };
   _cache: any;
   _logger: Logger;
+  _logLevel: ?LogLevelConfig;
   _transport: any;
   _sessionType: ?('soap' | 'oauth2');
+  _refreshDelegate: any; // TODO
 
   /**
    *
@@ -107,10 +116,12 @@ export default class Connection extends EventEmitter {
     this.version = config.version || defaultConnectionConfig.version;
     this._logger =
       config.logLevel ? Connection._logger.createInstance(config.logLevel) : Connection._logger;
+    this._logLevel = config.logLevel;
     this._transport =
       config.proxyUrl ? new ProxyTransport(config.proxyUrl) :
       config.httpProxy ? new HttpProxyTransport(config.httpProxy) :
       new Transport();
+    this._callOptions = config.callOptions;
     const { accessToken, refreshToken, instanceUrl, sessionId, serverUrl, signedRequest } = config;
     this._establish({
       accessToken, refreshToken, instanceUrl, sessionId, serverUrl, signedRequest,
@@ -171,6 +182,7 @@ export default class Connection extends EventEmitter {
    *
    */
   async login(username: string, password: string): Promise<UserInfo> {
+    // TODO login by oauth2
     return this.loginBySoap(username, password);
   }
 
@@ -263,4 +275,73 @@ export default class Connection extends EventEmitter {
     // Destroy the session bound to this connection
     this._resetInstance();
   }
+
+  /**
+   *
+   */
+  query(soql: string /* , options */) {
+    return this.request(`/query?q=${encodeURIComponent(soql)}`);
+  }
+
+  /**
+   * Send REST API request with given HTTP request info, with connected session information.
+   *
+   * Endpoint URL can be absolute URL ('https://na1.salesforce.com/services/data/v32.0/sobjects/Account/describe')
+   * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
+   * , or relative path from version root ('/sobjects/Account/describe').
+   *
+   * @param {String|Object} request - HTTP request object or URL to GET request
+   * @param {String} request.method - HTTP method URL to send HTTP request
+   * @param {String} request.url - URL to send HTTP request
+   * @param {Object} [request.headers] - HTTP request headers in hash object (key-value)
+   * @param {Object} [options] - HTTP API request options
+   * @param {Callback.<Object>} [callback] - Callback function
+   * @returns {Promise.<Object>}
+   */
+  request(request: string | HttpRequest, options: Object = {}): StreamPromise<any> {
+    // if request is simple string, regard it as url in GET method
+    let _request: HttpRequest =
+      typeof request === 'string' ? { method: 'GET', url: request } : request;
+    // if url is given in relative path, prepend base url or instance url before.
+    _request = Object.assign({}, _request, { url: this._normalizeUrl(_request.url) });
+    const httpApi = new HttpApi(this, options);
+    // log api usage and its quota
+    /*
+    httpApi.on('response', (response: HttpResponse) => {
+      if (response.headers && response.headers["sforce-limit-info"]) {
+        var apiUsage = response.headers["sforce-limit-info"].match(/api\-usage=(\d+)\/(\d+)/);
+        if (apiUsage) {
+          self.limitInfo = {
+            apiUsage: {
+              used: parseInt(apiUsage[1], 10),
+              limit: parseInt(apiUsage[2], 10)
+            }
+          };
+        }
+      }
+    });
+    */
+    return httpApi.request(_request);
+  }
+
+
+  /** @private **/
+  _baseUrl() {
+    return [this.instanceUrl, 'services/data', `v${this.version}`].join('/');
+  }
+
+  /**
+   * Convert path to absolute url
+   * @private
+   */
+  _normalizeUrl(url: string) {
+    if (url[0] === '/') {
+      if (url.indexOf('/services/') === 0) {
+        return this.instanceUrl + url;
+      }
+      return this._baseUrl() + url;
+    }
+    return url;
+  }
+
 }
