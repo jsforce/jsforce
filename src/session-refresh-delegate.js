@@ -35,7 +35,7 @@ export default class SessionRefreshDelegate {
       return;
     }
     try {
-      this._logger.debug('<refresh token>');
+      this._logger.info('<refresh token>');
       this._refreshPromise = new Promise((resolve, reject) => {
         this._refreshFn(this._conn, (err, accessToken, res) => {
           if (!err) {
@@ -49,6 +49,7 @@ export default class SessionRefreshDelegate {
         });
       });
       await this._refreshPromise;
+      this._logger.info('<refresh complete>');
     } finally {
       this._refreshPromise = undefined;
       this._lastRefreshedAt = Date.now();
