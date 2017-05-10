@@ -12,6 +12,10 @@ export const LogLevels = {
   NONE: 6,
 };
 
+const LogLevelLabels = [
+  '', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL', 'NONE',
+];
+
 
 const globalLogLevelConfig = (() => {
   const globalLogLevelStr = process.env.JSFORCE_LOG_LEVEL || global.__JSFORCE_LOG_LEVEL__ || 'NONE';
@@ -62,10 +66,11 @@ export class Logger {
 
   log(logLevel: number, ...messages: Array<any>) {
     if (this._logLevel <= logLevel) {
+      const msgs = [`${LogLevelLabels[logLevel]}\t[${this._moduleName}] `, ...messages];
       if (logLevel < LogLevels.ERROR) {
-        console.log(`[${this._moduleName}]`, ...messages); // eslint-disable-line no-console
+        console.log(...msgs); // eslint-disable-line no-console
       } else {
-        console.error(`[${this._moduleName}]`, ...messages); // eslint-disable-line no-console
+        console.error(...msgs); // eslint-disable-line no-console
       }
     }
   }
