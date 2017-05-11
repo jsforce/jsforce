@@ -434,6 +434,81 @@ export default class Connection extends EventEmitter {
     return httpApi.request(_request);
   }
 
+  /**
+   * Send HTTP GET request
+   *
+   * Endpoint URL can be absolute URL ('https://na1.salesforce.com/services/data/v32.0/sobjects/Account/describe')
+   * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
+   * , or relative path from version root ('/sobjects/Account/describe').
+   */
+  requestGet(url: string, options?: Object) {
+    const request = { method: 'GET', url };
+    return this.request(request, options);
+  }
+
+
+  /**
+   * Send HTTP POST request with JSON body, with connected session information
+   *
+   * Endpoint URL can be absolute URL ('https://na1.salesforce.com/services/data/v32.0/sobjects/Account/describe')
+   * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
+   * , or relative path from version root ('/sobjects/Account/describe').
+   */
+  requestPost(url: string, body: Object, options?: Object) {
+    const request = {
+      method: 'POST',
+      url,
+      body: JSON.stringify(body),
+      headers: { 'content-type': 'application/json' }
+    };
+    return this.request(request, options);
+  }
+
+  /**
+   * Send HTTP PUT request with JSON body, with connected session information
+   *
+   * Endpoint URL can be absolute URL ('https://na1.salesforce.com/services/data/v32.0/sobjects/Account/describe')
+   * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
+   * , or relative path from version root ('/sobjects/Account/describe').
+   */
+  requestPut(url: string, body: Object, options?: Object) {
+    const request = {
+      method: 'PUT',
+      url,
+      body: JSON.stringify(body),
+      headers: { 'content-type': 'application/json' }
+    };
+    return this.request(request, options);
+  }
+
+  /**
+   * Send HTTP PATCH request with JSON body
+   *
+   * Endpoint URL can be absolute URL ('https://na1.salesforce.com/services/data/v32.0/sobjects/Account/describe')
+   * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
+   * , or relative path from version root ('/sobjects/Account/describe').
+   */
+  requestPatch(url: string, body: Object, options?: Object) {
+    const request = {
+      method: 'PATCH',
+      url,
+      body: JSON.stringify(body),
+      headers: { 'content-type': 'application/json' }
+    };
+    return this.request(request, options);
+  }
+
+  /**
+   * Send HTTP DELETE request
+   *
+   * Endpoint URL can be absolute URL ('https://na1.salesforce.com/services/data/v32.0/sobjects/Account/describe')
+   * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
+   * , or relative path from version root ('/sobjects/Account/describe').
+   */
+  requestDelete(url: string, options?: Object) {
+    const request = { method: 'DELETE', url };
+    return this.request(request, options);
+  }
 
   /** @private **/
   _baseUrl() {
