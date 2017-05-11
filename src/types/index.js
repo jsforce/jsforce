@@ -13,3 +13,5 @@ export type HttpResponse = {
   headers: {[string]: string },
   body: string,
 };
+
+export type Callback<T> = (Error, T) => any;

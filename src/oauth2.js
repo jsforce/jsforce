@@ -11,9 +11,9 @@ const defaultOAuth2Config = {
  * type defs
  */
 export type OAuth2Config = {
-  clientId: string,
-  clientSecret: string,
-  redirectUri: string,
+  clientId?: string,
+  clientSecret?: string,
+  redirectUri?: string,
   loginUrl?: string,
   authzServiceUrl?: string,
   tokenServiceUrl?: string,
@@ -23,8 +23,10 @@ export type OAuth2Config = {
 };
 
 export type TokenResponse = {
+  id: string,
   access_token: string,
   refresh_token: string,
+  instance_url: string,
 };
 
 /**
@@ -35,9 +37,9 @@ export default class OAuth2 {
   authzServiceUrl: string;
   tokenServiceUrl: string;
   revokeServiceUrl: string;
-  clientId: string;
-  clientSecret: string;
-  redirectUri: string;
+  clientId: ?string;
+  clientSecret: ?string;
+  redirectUri: ?string;
 
   _transport: Transport;
 
@@ -91,6 +93,9 @@ export default class OAuth2 {
    * OAuth2 Refresh Token Flow
    */
   async refreshToken(refreshToken: string): Promise<TokenResponse> {
+    if (!this.clientId || !this.clientSecret) {
+      throw new Error('No valid OAuth2 client configuration set');
+    }
     const ret = await this._postParams({
       grant_type: 'refresh_token',
       refresh_token: refreshToken,
@@ -105,6 +110,9 @@ export default class OAuth2 {
    * Access Token Request
    */
   async requestToken(code: string): Promise<TokenResponse> {
+    if (!this.clientId || !this.clientSecret || !this.redirectUri) {
+      throw new Error('No valid OAuth2 client configuration set');
+    }
     const ret = await this._postParams({
       grant_type: 'authorization_code',
       code,
@@ -117,13 +125,11 @@ export default class OAuth2 {
 
   /**
    * OAuth2 Username-Password Flow (Resource Owner Password Credentials)
-   *
-   * @param {String} username - Salesforce username
-   * @param {String} password - Salesforce password
-   * @param {Callback.<TokenResponse>} [callback] - Callback function
-   * @returns {Promise.<TokenResponse>}
    */
   async authenticate(username: string, password: string): Promise<TokenResponse> {
+    if (!this.clientId || !this.clientSecret || !this.redirectUri) {
+      throw new Error('No valid OAuth2 client configuration set');
+    }
     const ret = await this._postParams({
       grant_type: 'password',
       username,

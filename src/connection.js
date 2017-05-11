@@ -1,10 +1,12 @@
 /* @flow */
 import EventEmitter from 'events';
-import type { HttpRequest } from './types';
+import type { HttpRequest, Callback } from './types';
 import { StreamPromise } from './util/promise';
-import Transport, { ProxyTransport, HttpProxyTransport } from './transport';
+import Transport, { CanvasTransport, ProxyTransport, HttpProxyTransport } from './transport';
 import { Logger, getLogger } from './util/logger';
 import type { LogLevelConfig } from './util/logger';
+import OAuth2 from './oauth2';
+import type { OAuth2Config } from './oauth2';
 import HttpApi from './http-api';
 import SessionRefreshDelegate from './session-refresh-delegate';
 
@@ -21,10 +23,12 @@ export type ConnectionConfig = {
   sessionId?: string,
   serverUrl?: string,
   signedRequest?: string,
+  oauth2?: OAuth2 | OAuth2Config,
   proxyUrl?: string,
   httpProxy?: string,
   logLevel?: LogLevelConfig,
   callOptions?: { [string]: string },
+  refreshFn?: (Connection, Callback<string>) => any, // eslint-disable-line no-use-before-define
 };
 
 export type UserInfo = {
@@ -85,6 +89,32 @@ function parseSignedRequest(sr: string | Object): Object {
   return sr;
 }
 
+/** @private **/
+function parseIdUrl(url: string) {
+  const [organizationId, id] = url.split('/').slice(-2);
+  return { id, organizationId, url };
+}
+
+/**
+ * Session Refresh delegate function for OAuth2 authz code flow
+ * @private
+ */
+async function oauthRefreshFn(conn, callback) {
+  try {
+    if (!conn.refreshToken) { throw new Error('No refresh token found in the connection'); }
+    const res = await conn.oauth2.refreshToken(conn.refreshToken);
+    const userInfo = parseIdUrl(res.id);
+    conn._establish({
+      instanceUrl: res.instance_url,
+      accessToken: res.access_token,
+      userInfo
+    });
+    callback(null, res.access_token, res);
+  } catch (err) {
+    callback(err);
+  }
+}
+
 /**
  * Session Refresh delegate function for username/password login
  * @private
@@ -112,32 +142,47 @@ export default class Connection extends EventEmitter {
   refreshToken: ?string;
   userInfo: ?UserInfo;
   limitInfo: ?Object;
+  oauth2: OAuth2;
   sobjects: { [string]: any };
   _callOptions: ?{ [string]: string };
   _cache: any;
   _logger: Logger;
   _logLevel: ?LogLevelConfig;
-  _transport: any;
+  _transport: Transport;
   _sessionType: ?('soap' | 'oauth2');
-  _refreshDelegate: any; // TODO
+  _refreshDelegate: ?SessionRefreshDelegate;
 
   /**
    *
    */
   constructor(config?: ConnectionConfig = {}) {
     super();
-    this.loginUrl = config.loginUrl || defaultConnectionConfig.loginUrl;
-    this.instanceUrl = config.instanceUrl || defaultConnectionConfig.instanceUrl;
-    this.version = config.version || defaultConnectionConfig.version;
+    const {
+      loginUrl, instanceUrl, version, oauth2, logLevel, proxyUrl, httpProxy,
+    } = config;
+    this.loginUrl = loginUrl || defaultConnectionConfig.loginUrl;
+    this.instanceUrl = instanceUrl || defaultConnectionConfig.instanceUrl;
+    this.version = version || defaultConnectionConfig.version;
+    this.oauth2 =
+      oauth2 ?
+        (oauth2 instanceof OAuth2 ? oauth2 : new OAuth2(oauth2)) :
+        new OAuth2({ loginUrl: this.loginUrl });
+    let refreshFn = config.refreshFn;
+    if (!refreshFn && this.oauth2.clientId && this.oauth2.clientSecret) {
+      refreshFn = oauthRefreshFn;
+    }
+    if (refreshFn) {
+      this._refreshDelegate = new SessionRefreshDelegate(this, refreshFn);
+    }
     this._logger =
-      config.logLevel ? Connection._logger.createInstance(config.logLevel) : Connection._logger;
-    this._logLevel = config.logLevel;
+      logLevel ? Connection._logger.createInstance(logLevel) : Connection._logger;
+    this._logLevel = logLevel;
     this._transport =
-      config.proxyUrl ? new ProxyTransport(config.proxyUrl) :
-      config.httpProxy ? new HttpProxyTransport(config.httpProxy) :
+      proxyUrl ? new ProxyTransport(proxyUrl) :
+      httpProxy ? new HttpProxyTransport(httpProxy) :
       new Transport();
     this._callOptions = config.callOptions;
-    const { accessToken, refreshToken, instanceUrl, sessionId, serverUrl, signedRequest } = config;
+    const { accessToken, refreshToken, sessionId, serverUrl, signedRequest } = config;
     this._establish({
       accessToken, refreshToken, instanceUrl, sessionId, serverUrl, signedRequest,
     });
@@ -145,27 +190,26 @@ export default class Connection extends EventEmitter {
 
   /* @private */
   _establish(options: ConnectionEstablishOptions) {
+    const {
+      accessToken, refreshToken, instanceUrl, sessionId, serverUrl, signedRequest, userInfo,
+    } = options;
     this._resetInstance();
     this.instanceUrl =
-      options.serverUrl ? options.serverUrl.split('/').slice(0, 3).join('/') :
-      options.instanceUrl ? options.instanceUrl :
-      this.instanceUrl;
-    this.accessToken = options.sessionId || options.accessToken || this.accessToken;
-    this.refreshToken = options.refreshToken || this.refreshToken;
+      serverUrl ? serverUrl.split('/').slice(0, 3).join('/') : instanceUrl || this.instanceUrl;
+    this.accessToken = sessionId || accessToken || this.accessToken;
+    this.refreshToken = refreshToken || this.refreshToken;
     if (this.refreshToken && !this._refreshDelegate) {
       throw new Error('Refresh token is specified without oauth2 client information or refresh function');
     }
-    const signedRequest = options.signedRequest && parseSignedRequest(options.signedRequest);
-    if (signedRequest) {
-      this.accessToken = signedRequest.client.oauthToken;
-    /*
-      if (Transport.CanvasTransport.supported) {
-        this._transport = new Transport.CanvasTransport(this.signedRequest);
+    const signedRequestObject = signedRequest && parseSignedRequest(signedRequest);
+    if (signedRequestObject) {
+      this.accessToken = signedRequestObject.client.oauthToken;
+      if (CanvasTransport.supported) {
+        this._transport = new CanvasTransport(signedRequestObject);
       }
-    */
     }
-    this.userInfo = options.userInfo || this.userInfo;
-    this._sessionType = options.sessionId ? 'soap' : 'oauth2';
+    this.userInfo = userInfo || this.userInfo;
+    this._sessionType = sessionId ? 'soap' : 'oauth2';
   }
 
   /* @priveate */
@@ -176,6 +220,7 @@ export default class Connection extends EventEmitter {
     this.instanceUrl = defaultConnectionConfig.instanceUrl;
     this.limitInfo = {};
     this.sobjects = {};
+    // TODO impl cache
     /*
     this._cache.clear();
     this._cache.get('describeGlobal').on('value', (res) => {
@@ -194,13 +239,46 @@ export default class Connection extends EventEmitter {
   }
 
   /**
+   * Authorize (using oauth2 web server flow)
+   */
+  async authorize(code: string): Promise<UserInfo> {
+    const res = await this.oauth2.requestToken(code);
+    const userInfo = parseIdUrl(res.id);
+    this._establish({
+      instanceUrl: res.instance_url,
+      accessToken: res.access_token,
+      refreshToken: res.refresh_token,
+      userInfo,
+    });
+    this._logger.debug(`<login> completed. user id = ${userInfo.id}, org id = ${userInfo.organizationId}`);
+    return userInfo;
+  }
+
+  /**
    *
    */
   async login(username: string, password: string): Promise<UserInfo> {
     this._refreshDelegate =
       new SessionRefreshDelegate(this, createUsernamePasswordRefreshFn(username, password));
-    // TODO login by oauth2
+    if (this.oauth2 && this.oauth2.clientId && this.oauth2.clientSecret) {
+      return this.loginByOAuth2(username, password);
+    }
     return this.loginBySoap(username, password);
+  }
+
+  /**
+   * Login by OAuth2 username & password flow
+   */
+  async loginByOAuth2(username: string, password: string): Promise<UserInfo> {
+    const res = await this.oauth2.authenticate(username, password);
+    const userInfo = parseIdUrl(res.id);
+    this._establish({
+      instanceUrl: res.instance_url,
+      accessToken: res.access_token,
+      userInfo,
+    });
+    this._logger.info(`<login> completed. user id = ${userInfo.id}, org id = ${userInfo.organizationId}`);
+    return userInfo;
   }
 
   /**
@@ -254,22 +332,34 @@ export default class Connection extends EventEmitter {
       sessionId,
       userInfo
     });
-    this._logger.debug(`<login> completed. user id = ${userId}, org id = ${organizationId}`);
+    this._logger.info(`<login> completed. user id = ${userId}, org id = ${organizationId}`);
     return userInfo;
   }
 
   /**
-   *
+   * Logout the current session
    */
   async logout(): Promise<void> {
     this._refreshDelegate = undefined;
-    // TODO logout by oauth2
+    if (this._sessionType === 'oauth2') {
+      return this.logoutByOAuth2();
+    }
     return this.logoutBySoap();
   }
 
+  /**
+   * Logout the current session by revoking access token via OAuth2 session revoke
+   */
+  async logoutByOAuth2(): Promise<void> {
+    if (this.accessToken) {
+      await this.oauth2.revokeToken(this.accessToken);
+    }
+    // Destroy the session bound to this connection
+    this._resetInstance();
+  }
 
   /**
-   *
+   * Logout the session by using SOAP web service API
    */
   async logoutBySoap(): Promise<void> {
     const body = [
@@ -316,14 +406,6 @@ export default class Connection extends EventEmitter {
    * Endpoint URL can be absolute URL ('https://na1.salesforce.com/services/data/v32.0/sobjects/Account/describe')
    * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
    * , or relative path from version root ('/sobjects/Account/describe').
-   *
-   * @param {String|Object} request - HTTP request object or URL to GET request
-   * @param {String} request.method - HTTP method URL to send HTTP request
-   * @param {String} request.url - URL to send HTTP request
-   * @param {Object} [request.headers] - HTTP request headers in hash object (key-value)
-   * @param {Object} [options] - HTTP API request options
-   * @param {Callback.<Object>} [callback] - Callback function
-   * @returns {Promise.<Object>}
    */
   request(request: string | HttpRequest, options: Object = {}): StreamPromise<any> {
     // if request is simple string, regard it as url in GET method
@@ -371,5 +453,4 @@ export default class Connection extends EventEmitter {
     }
     return url;
   }
-
 }

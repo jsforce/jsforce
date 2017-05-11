@@ -1,5 +1,6 @@
 /* @flow */
 import { getLogger, Logger } from './util/logger';
+import type { Callback } from './types';
 import Connection from './connection';
 
 /**
@@ -8,13 +9,13 @@ import Connection from './connection';
 export default class SessionRefreshDelegate {
   static _logger: Logger = getLogger('session-refresh-delegate');
 
+  _refreshFn: (Connection, Callback<string>) => any;
   _conn: Connection;
   _logger: Logger;
-  _refreshFn: Function;
   _lastRefreshedAt: ?number;
   _refreshPromise: ?Promise<void>;
 
-  constructor(conn: Connection, refreshFn: Function) {
+  constructor(conn: Connection, refreshFn: (Connection, Callback<string>) => any) {
     this._conn = conn;
     this._logger =
       conn._logLevel ?
@@ -60,7 +61,7 @@ export default class SessionRefreshDelegate {
     return !!this._refreshPromise;
   }
 
-  async waitRefreshed() {
+  async waitRefresh() {
     return this._refreshPromise;
   }
 }
