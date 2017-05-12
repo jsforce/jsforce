@@ -247,9 +247,11 @@ export default class HttpApi extends EventEmitter {
       error :
       { errorCode: `ERROR_HTTP_${response.statusCode}`, message: response.body };
     return new (class extends Error {
+      errorCode: string;
       constructor({ message, errorCode }) {
         super(message);
         this.name = errorCode || this.name;
+        this.errorCode = this.name;
       }
     })(error);
   }

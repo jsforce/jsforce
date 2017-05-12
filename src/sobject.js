@@ -2,6 +2,7 @@
 import { Logger, getLogger } from './util/logger';
 import type { Record, UnsavedRecord } from './types';
 import Connection from './connection';
+import RecordReference from './record-reference';
 
 /**
  * A class for organizing all SObject access
@@ -97,6 +98,13 @@ export default class SObject {
    */
   describe() {
     return this._conn.describe(this.type);
+  }
+
+  /**
+   * Get record representation instance by given id
+   */
+  record(id: string) {
+    return new RecordReference(this._conn, this.type, id);
   }
 }
 

@@ -9,6 +9,7 @@ import OAuth2 from './oauth2';
 import type { OAuth2Config } from './oauth2';
 import HttpApi from './http-api';
 import SessionRefreshDelegate from './session-refresh-delegate';
+import SObject from './sobject';
 
 
 /**
@@ -553,7 +554,7 @@ export default class Connection extends EventEmitter {
           throw new Error('Invalid record ID. Specify valid record ID value');
         }
         const url = [this._baseUrl(), 'sobjects', type, id].join('/');
-        const record = await self.request({ method: 'GET', url, headers: options.headers });
+        const record = await this.request({ method: 'GET', url, headers: options.headers });
         return (record : Record);
       })
     );
@@ -582,7 +583,7 @@ export default class Connection extends EventEmitter {
         return this.request({
           method: 'POST',
           url,
-          body: JSON.stringify(record),
+          body: JSON.stringify(_record),
           headers: Object.assign({
             'content-type': 'application/json'
           }, options.headers),
@@ -617,11 +618,11 @@ export default class Connection extends EventEmitter {
         delete _record.Id;
         delete _record.type;
         delete _record.attributes;
-        const url = [self._baseUrl(), 'sobjects', type, id].join('/');
-        return self.request({
+        const url = [this._baseUrl(), 'sobjects', type, id].join('/');
+        return this.request({
           method: 'PATCH',
           url,
-          body: JSON.stringify(record),
+          body: JSON.stringify(_record),
           headers: Object.assign({
             'content-type': 'application/json'
           }, options.headers),
@@ -654,10 +655,10 @@ export default class Connection extends EventEmitter {
         delete _record.type;
         delete _record.attributes;
         const url = [this._baseUrl(), 'sobjects', type, extIdField, extId].join('/');
-        return self.request({
+        return this.request({
           method: 'PATCH',
           url,
-          body: JSON.stringify(record),
+          body: JSON.stringify(_record),
           headers: Object.assign({
             'content-type': 'application/json'
           }, options.headers),
@@ -711,7 +712,7 @@ export default class Connection extends EventEmitter {
     const results = await Promise.all(
       _ids.map((id) => {
         const url = [this._baseUrl(), 'sobjects', type, id].join('/');
-        return self.request({
+        return this.request({
           method: 'DELETE',
           url,
           headers: options.headers || {}
@@ -752,5 +753,13 @@ export default class Connection extends EventEmitter {
   describeGlobal() {
     const url = `${this._baseUrl()}/sobjects`;
     return this.request(url);
+  }
+
+  /**
+   * Get SObject instance
+   */
+  sobject(type: string): SObject {
+    this.sobjects[type] = this.sobjects[type] || new SObject(this, type);
+    return this.sobjects[type];
   }
 }
