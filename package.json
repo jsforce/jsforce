@@ -63,7 +63,7 @@
     "csv-stringify": "^1.0.4",
     "faye": "^1.2.0",
     "inherits": "^2.0.1",
-    "lodash": "^4.11.1",
+    "lodash": "^4.12.0",
     "multistream": "^2.0.5",
     "open": "0.0.5",
     "promise": "^7.1.1",
