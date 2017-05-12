@@ -1,6 +1,6 @@
 /* @flow */
 import EventEmitter from 'events';
-import type { HttpRequest, Callback } from './types';
+import type { HttpRequest, Callback, Record, UnsavedRecord, SaveResult } from './types';
 import { StreamPromise } from './util/promise';
 import Transport, { CanvasTransport, ProxyTransport, HttpProxyTransport } from './transport';
 import { Logger, getLogger } from './util/logger';
@@ -24,6 +24,7 @@ export type ConnectionConfig = {
   serverUrl?: string,
   signedRequest?: string,
   oauth2?: OAuth2 | OAuth2Config,
+  maxRequest?: number,
   proxyUrl?: string,
   httpProxy?: string,
   logLevel?: LogLevelConfig,
@@ -56,11 +57,13 @@ const defaultConnectionConfig: {
   instanceUrl: string,
   version: string,
   logLevel: LogLevelConfig,
+  maxRequest: number,
 } = {
   loginUrl: 'https://login.salesforce.com',
   instanceUrl: '',
   version: '39.0',
   logLevel: 'NONE',
+  maxRequest: 10,
 };
 
 /**
@@ -146,6 +149,7 @@ export default class Connection extends EventEmitter {
   sobjects: { [string]: any };
   _callOptions: ?{ [string]: string };
   _cache: any;
+  _maxRequest: number;
   _logger: Logger;
   _logLevel: ?LogLevelConfig;
   _transport: Transport;
@@ -158,7 +162,7 @@ export default class Connection extends EventEmitter {
   constructor(config?: ConnectionConfig = {}) {
     super();
     const {
-      loginUrl, instanceUrl, version, oauth2, logLevel, proxyUrl, httpProxy,
+      loginUrl, instanceUrl, version, oauth2, maxRequest, logLevel, proxyUrl, httpProxy,
     } = config;
     this.loginUrl = loginUrl || defaultConnectionConfig.loginUrl;
     this.instanceUrl = instanceUrl || defaultConnectionConfig.instanceUrl;
@@ -174,6 +178,7 @@ export default class Connection extends EventEmitter {
     if (refreshFn) {
       this._refreshDelegate = new SessionRefreshDelegate(this, refreshFn);
     }
+    this._maxRequest = maxRequest || defaultConnectionConfig.maxRequest;
     this._logger =
       logLevel ? Connection._logger.createInstance(logLevel) : Connection._logger;
     this._logLevel = logLevel;
@@ -527,5 +532,225 @@ export default class Connection extends EventEmitter {
       return this._baseUrl() + url;
     }
     return url;
+  }
+
+
+  /**
+   * Retrieve specified records
+   */
+  async retrieve(
+    type: string,
+    ids: string | string[],
+    options?: Object = {}
+  ): Promise<Record | Record[]> {
+    const _ids: string[] = Array.isArray(ids) ? ids : [ids];
+    if (_ids.length > this._maxRequest) {
+      throw new Error('Exceeded max limit of concurrent call');
+    }
+    const records = await Promise.all(
+      _ids.map(async (id) => {
+        if (!id) {
+          throw new Error('Invalid record ID. Specify valid record ID value');
+        }
+        const url = [this._baseUrl(), 'sobjects', type, id].join('/');
+        const record = await self.request({ method: 'GET', url, headers: options.headers });
+        return (record : Record);
+      })
+    );
+    return Array.isArray(ids) ? records : records[0];
+  }
+
+  /**
+   * Create records
+   */
+  async create(
+    type: string,
+    records: UnsavedRecord | UnsavedRecord[],
+    options?: Object = {}
+  ): Promise<SaveResult | SaveResult[]> {
+    const _records = Array.isArray(records) ? records : [records];
+    if (records.length > this._maxRequest) {
+      throw new Error('Exceeded max limit of concurrent call');
+    }
+    const results = await Promise.all(
+      _records.map(async (record) => {
+        const _record = Object.assign({}, record);
+        delete _record.Id;
+        delete _record.type;
+        delete _record.attributes;
+        const url = [this._baseUrl(), 'sobjects', type].join('/');
+        return this.request({
+          method: 'POST',
+          url,
+          body: JSON.stringify(record),
+          headers: Object.assign({
+            'content-type': 'application/json'
+          }, options.headers),
+        });
+      })
+    );
+    return Array.isArray(records) ? results : results[0];
+  }
+
+  /**
+   * Synonym of Connection#create()
+   */
+  insert = this.create;
+
+
+  /**
+   * Update records
+   */
+  async update(
+    type: string,
+    records: Record | Record[],
+    options?: Object = {}
+  ): Promise<SaveResult | SaveResult[]> {
+    const _records = Array.isArray(records) ? records : [records];
+    if (records.length > this._maxRequest) {
+      throw new Error('Exceeded max limit of concurrent call');
+    }
+    const results = await Promise.all(
+      _records.map((record) => {
+        const id = record.Id;
+        const _record = Object.assign({}, record);
+        delete _record.Id;
+        delete _record.type;
+        delete _record.attributes;
+        const url = [self._baseUrl(), 'sobjects', type, id].join('/');
+        return self.request({
+          method: 'PATCH',
+          url,
+          body: JSON.stringify(record),
+          headers: Object.assign({
+            'content-type': 'application/json'
+          }, options.headers),
+        }, {
+          noContentResponse: { id, success: true, errors: [] }
+        });
+      })
+    );
+    return Array.isArray(records) ? results : results[0];
+  }
+
+  /**
+   * Upsert records
+   */
+  async upsert(
+    type: string,
+    records: Record | Record[],
+    extIdField: string,
+    options?: Object = {}
+  ): Promise<SaveResult | SaveResult[]> {
+    const _records = Array.isArray(records) ? records : [records];
+    if (records.length > this._maxRequest) {
+      throw new Error('Exceeded max limit of concurrent call');
+    }
+    const results = await Promise.all(
+      _records.map((record) => {
+        const extId = record[extIdField];
+        const _record = Object.assign({}, record);
+        delete _record[extIdField];
+        delete _record.type;
+        delete _record.attributes;
+        const url = [this._baseUrl(), 'sobjects', type, extIdField, extId].join('/');
+        return self.request({
+          method: 'PATCH',
+          url,
+          body: JSON.stringify(record),
+          headers: Object.assign({
+            'content-type': 'application/json'
+          }, options.headers),
+        }, {
+          noContentResponse: { success: true, errors: [] }
+        });
+      })
+    );
+    return Array.isArray(records) ? results : results[0];
+  }
+
+  /**
+   * Synonym of Connection#destroy()
+   *
+   * @method Connection#delete
+   * @param {String} type - SObject Type
+   * @param {String|Array.<String>} ids - A ID or array of IDs to delete
+   * @param {Object} [options] - Options for rest api.
+   * @param {Callback.<RecordResult|Array.<RecordResult>>} [callback] - Callback
+   * @returns {Promise.<RecordResult|Array.<RecordResult>>}
+   */
+  /**
+   * Synonym of Connection#destroy()
+   *
+   * @method Connection#del
+   * @param {String} type - SObject Type
+   * @param {String|Array.<String>} ids - A ID or array of IDs to delete
+   * @param {Object} [options] - Options for rest api.
+   * @param {Callback.<RecordResult|Array.<RecordResult>>} [callback] - Callback
+   * @returns {Promise.<RecordResult|Array.<RecordResult>>}
+   */
+  /**
+   * Delete records
+   *
+   * @method Connection#destroy
+   * @param {String} type - SObject Type
+   * @param {String|Array.<String>} ids - A ID or array of IDs to delete
+   * @param {Object} [options] - Options for rest api.
+   * @param {Callback.<RecordResult|Array.<RecordResult>>} [callback] - Callback
+   * @returns {Promise.<RecordResult|Array.<RecordResult>>}
+   */
+  async destroy(
+    type: string,
+    ids: string | string[],
+    options?: Object = {}
+  ): Promise<SaveResult | SaveResult[]> {
+    const _ids = Array.isArray(ids) ? ids : [ids];
+    if (ids.length > this._maxRequest) {
+      throw new Error('Exceeded max limit of concurrent call');
+    }
+    const results = await Promise.all(
+      _ids.map((id) => {
+        const url = [this._baseUrl(), 'sobjects', type, id].join('/');
+        return self.request({
+          method: 'DELETE',
+          url,
+          headers: options.headers || {}
+        }, {
+          noContentResponse: { id, success: true, errors: [] }
+        });
+      })
+    );
+    return Array.isArray(ids) ? results : results[0];
+  }
+
+  /**
+   * Synonym of Connection#destroy()
+   */
+  delete = this.destroy;
+
+  /**
+   * Synonym of Connection#destroy()
+   */
+  del = this.destroy;
+
+  /**
+   * Describe SObject metadata
+   */
+  describe(type: string) {
+    const url = [this._baseUrl(), 'sobjects', type, 'describe'].join('/');
+    return this.request(url);
+  }
+
+  /**
+   * Synonym of Connection#describe()
+   */
+  describeSObject = this.describe;
+
+  /**
+   * Describe global SObjects
+   */
+  describeGlobal() {
+    const url = `${this._baseUrl()}/sobjects`;
+    return this.request(url);
   }
 }

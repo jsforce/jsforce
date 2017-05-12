@@ -15,3 +15,19 @@ export type HttpResponse = {
 };
 
 export type Callback<T> = (Error, T) => any;
+
+export type Record = { Id: string };
+
+export type UnsavedRecord = {};
+
+export type SaveError = {
+  errorCode: string,
+  message: string,
+  fields?: string[],
+};
+
+export type SaveResult = {
+  id: string,
+  sucess: boolean,
+  errors: SaveError[],
+};
