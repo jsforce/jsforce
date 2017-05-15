@@ -31,3 +31,23 @@ export type SaveResult = {
   sucess: boolean,
   errors: SaveError[],
 };
+
+export type DescribeSObjectResult = {
+
+};
+
+export type DescribeGlobalResult = {
+
+};
+
+export type DescribeLayoutResult = {
+
+};
+
+export type DescribeCompactLayoutsResult = {
+
+};
+
+export type DescribeApprovalLayoutsResult = {
+
+};

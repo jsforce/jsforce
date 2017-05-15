@@ -1,6 +1,9 @@
 /* @flow */
 import { Logger, getLogger } from './util/logger';
-import type { Record, UnsavedRecord } from './types';
+import type {
+  Record, UnsavedRecord,
+  DescribeLayoutResult, DescribeCompactLayoutsResult, DescribeApprovalLayoutsResult,
+} from './types';
 import Connection from './connection';
 import RecordReference from './record-reference';
 
@@ -14,6 +17,16 @@ export default class SObject {
   _conn: Connection;
   _logger: Logger;
 
+  layouts: (ln?: string) => Promise<DescribeLayoutResult>;
+  layouts$: (ln?: string) => Promise<DescribeLayoutResult>;
+  layouts$$: (ln?: string) => DescribeLayoutResult;
+  compactLayouts: () => Promise<DescribeCompactLayoutsResult>;
+  compactLayouts$: () => Promise<DescribeCompactLayoutsResult>;
+  compactLayouts$$: () => DescribeCompactLayoutsResult;
+  approvalLayouts: () => Promise<DescribeApprovalLayoutsResult>;
+  approvalLayouts$: () => Promise<DescribeApprovalLayoutsResult>;
+  approvalLayouts$$: () => DescribeCompactLayoutsResult;
+
   /**
    *
    */
@@ -22,30 +35,46 @@ export default class SObject {
     this._conn = conn;
     this._logger =
       conn._logLevel ? SObject._logger.createInstance(conn._logLevel) : SObject._logger;
-    /* TODO
-    let cacheOptions = { key: "describe." + this.type };
-    this.describe$ = conn.cache.makeCacheable(this.describe, this, cacheOptions);
-    this.describe = conn.cache.makeResponseCacheable(this.describe, this, cacheOptions);
-
-    cacheOptions = { key: "layouts." + this.type };
-    this.layouts$ = conn.cache.makeCacheable(this.layouts, this, cacheOptions);
-    this.layouts = conn.cache.makeResponseCacheable(this.layouts, this, cacheOptions);
-
-    cacheOptions = { key: "compactLayouts." + this.type };
-    this.compactLayouts$ = conn.cache.makeCacheable(this.compactLayouts, this, cacheOptions);
-    this.compactLayouts = conn.cache.makeResponseCacheable(this.compactLayouts, this, cacheOptions);
-
-    cacheOptions = { key: "approvalLayouts." + this.type };
-    this.approvalLayouts$ = conn.cache.makeCacheable(this.approvalLayouts, this, cacheOptions);
-    this.approvalLayouts =
-      conn.cache.makeResponseCacheable(this.approvalLayouts, this, cacheOptions);
-    */
+    const cache = this._conn.cache;
+    const layoutCacheKey = layoutName => (layoutName ? `layouts.namedLayouts.${layoutName}` : `layouts.${this.type}`);
+    const layouts = this.layouts;
+    this.layouts = (
+      cache.createCachedFunction(layouts, this, { key: layoutCacheKey, strategy: 'NOCACHE' }) : any
+    );
+    this.layouts$ = (
+      cache.createCachedFunction(layouts, this, { key: layoutCacheKey, strategy: 'HIT' }) : any
+    );
+    this.layouts$$ = (
+      cache.createCachedFunction(layouts, this, { key: layoutCacheKey, strategy: 'IMMEDIATE' }) : any
+    );
+    const compactLayoutCacheKey = `compactLayouts.${this.type}`;
+    const compactLayouts = this.compactLayouts;
+    this.compactLayouts = (
+      cache.createCachedFunction(compactLayouts, this, { key: compactLayoutCacheKey, strategy: 'NOCACHE' }) : any
+    );
+    this.compactLayouts$ = (
+      cache.createCachedFunction(compactLayouts, this, { key: compactLayoutCacheKey, strategy: 'HIT' }) : any
+    );
+    this.compactLayouts$$ = (
+      cache.createCachedFunction(compactLayouts, this, { key: compactLayoutCacheKey, strategy: 'IMMEDIATE' }) : any
+    );
+    const approvalLayoutCacheKey = `approvalLayouts.${this.type}`;
+    const approvalLayouts = this.approvalLayouts;
+    this.approvalLayouts = (
+      cache.createCachedFunction(approvalLayouts, this, { key: approvalLayoutCacheKey, strategy: 'NOCACHE' }) : any
+    );
+    this.approvalLayouts$ = (
+      cache.createCachedFunction(approvalLayouts, this, { key: approvalLayoutCacheKey, strategy: 'HIT' }) : any
+    );
+    this.approvalLayouts$$ = (
+      cache.createCachedFunction(approvalLayouts, this, { key: approvalLayoutCacheKey, strategy: 'IMMEDIATE' }) : any
+    );
   }
 
   /**
    * Create records
    */
-  async create(records: UnsavedRecord | UnsavedRecord[], options?: Object) {
+  create(records: UnsavedRecord | UnsavedRecord[], options?: Object) {
     return this._conn.create(this.type, records, options);
   }
 
@@ -101,10 +130,64 @@ export default class SObject {
   }
 
   /**
+   *
+   */
+  describe$() {
+    return this._conn.describe$(this.type);
+  }
+
+  /**
+   *
+   */
+  describe$$() {
+    return this._conn.describe$$(this.type);
+  }
+
+  /**
    * Get record representation instance by given id
    */
   record(id: string) {
     return new RecordReference(this._conn, this.type, id);
+  }
+
+
+  /**
+   * Describe layout information for SObject
+   */
+  async layouts(layoutName?: string): Promise<DescribeLayoutResult> {
+    const url = `/sobjects/${this.type}/describe/${layoutName ? `namedLayouts/${layoutName}` : 'layouts'}`;
+    const body: any = await this._conn.request(url);
+    return (body : DescribeLayoutResult);
+  }
+
+  /**
+   * @typedef {Object} CompactLayoutInfo
+   * @prop {Array.<Object>} compactLayouts - Array of compact layouts
+   * @prop {String} defaultCompactLayoutId - ID of default compact layout
+   * @prop {Array.<Object>} recordTypeCompactLayoutMappings - Array of record type mappings
+   */
+  /**
+   * Describe compact layout information defined for SObject
+   *
+   * @param {Callback.<CompactLayoutInfo>} [callback] - Callback function
+   * @returns {Promise.<CompactLayoutInfo>}
+   */
+  async compactLayouts(): Promise<DescribeCompactLayoutsResult> {
+    const url = `/sobjects/${this.type}/describe/compactLayouts`;
+    const body: any = await this._conn.request(url);
+    return (body : DescribeCompactLayoutsResult);
+  }
+
+  /**
+   * Describe compact layout information defined for SObject
+   *
+   * @param {Callback.<ApprovalLayoutInfo>} [callback] - Callback function
+   * @returns {Promise.<ApprovalLayoutInfo>}
+   */
+  async approvalLayouts(): Promise<DescribeApprovalLayoutsResult> {
+    const url = `/sobjects/${this.type}/describe/approvalLayouts`;
+    const body: any = await this._conn.request(url);
+    return (body : DescribeApprovalLayoutsResult);
   }
 }
 

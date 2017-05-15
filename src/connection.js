@@ -1,12 +1,13 @@
 /* @flow */
 import EventEmitter from 'events';
-import type { HttpRequest, Callback, Record, UnsavedRecord, SaveResult } from './types';
+import type { HttpRequest, Callback, Record, UnsavedRecord, SaveResult, DescribeGlobalResult, DescribeSObjectResult } from './types';
 import { StreamPromise } from './util/promise';
 import Transport, { CanvasTransport, ProxyTransport, HttpProxyTransport } from './transport';
 import { Logger, getLogger } from './util/logger';
 import type { LogLevelConfig } from './util/logger';
 import OAuth2 from './oauth2';
 import type { OAuth2Config } from './oauth2';
+import Cache from './cache';
 import HttpApi from './http-api';
 import SessionRefreshDelegate from './session-refresh-delegate';
 import SObject from './sobject';
@@ -139,6 +140,7 @@ function createUsernamePasswordRefreshFn(username, password) {
  */
 export default class Connection extends EventEmitter {
   static _logger = getLogger('connection');
+
   version: string;
   loginUrl: string;
   instanceUrl: string;
@@ -148,14 +150,24 @@ export default class Connection extends EventEmitter {
   limitInfo: ?Object;
   oauth2: OAuth2;
   sobjects: { [string]: any };
+  cache: Cache;
   _callOptions: ?{ [string]: string };
-  _cache: any;
   _maxRequest: number;
   _logger: Logger;
   _logLevel: ?LogLevelConfig;
   _transport: Transport;
   _sessionType: ?('soap' | 'oauth2');
   _refreshDelegate: ?SessionRefreshDelegate;
+
+  describe: (string) => Promise<DescribeSObjectResult>;
+  describe$: (string) => Promise<DescribeGlobalResult>;
+  describe$$: (string) => DescribeSObjectResult;
+  describeSObject: (string) => Promise<DescribeSObjectResult>;
+  describeSObject$: (string) => Promise<DescribeSObjectResult>;
+  describeSObject$$: (string) => DescribeSObjectResult;
+  describeGlobal: () => Promise<DescribeGlobalResult>;
+  describeGlobal$: () => Promise<DescribeGlobalResult>;
+  describeGlobal$$: () => DescribeGlobalResult;
 
   /**
    *
@@ -188,6 +200,31 @@ export default class Connection extends EventEmitter {
       httpProxy ? new HttpProxyTransport(httpProxy) :
       new Transport();
     this._callOptions = config.callOptions;
+    this.cache = new Cache();
+    const describeCacheKey = type => (type ? `describe.${type}` : 'describe');
+    const describe = this.describe;
+    this.describe = (
+      this.cache.createCachedFunction(describe, this, { key: describeCacheKey, strategy: 'NOCACHE' }) : any
+    );
+    this.describe$ = (
+      this.cache.createCachedFunction(describe, this, { key: describeCacheKey, strategy: 'HIT' }) : any
+    );
+    this.describe$$ = (
+      this.cache.createCachedFunction(describe, this, { key: describeCacheKey, strategy: 'IMMEDIATE' }) : any
+    );
+    this.describeSObject = this.describe;
+    this.describeSObject$ = this.describe$;
+    this.describeSObject$$ = this.describe$$;
+    const describeGlobal = this.describeGlobal;
+    this.describeGlobal = (
+      this.cache.createCachedFunction(describeGlobal, this, { key: 'describeGlobal', strategy: 'NOCACHE' }) : any
+    );
+    this.describeGlobal$ = (
+      this.cache.createCachedFunction(describeGlobal, this, { key: 'describeGlobal', strategy: 'HIT' }) : any
+    );
+    this.describeGlobal$$ = (
+      this.cache.createCachedFunction(describeGlobal, this, { key: 'describeGlobal', strategy: 'IMMEDIATE' }) : any
+    );
     const { accessToken, refreshToken, sessionId, serverUrl, signedRequest } = config;
     this._establish({
       accessToken, refreshToken, instanceUrl, sessionId, serverUrl, signedRequest,
@@ -737,22 +774,19 @@ export default class Connection extends EventEmitter {
   /**
    * Describe SObject metadata
    */
-  describe(type: string) {
+  async describe(type: string): Promise<DescribeSObjectResult> {
     const url = [this._baseUrl(), 'sobjects', type, 'describe'].join('/');
-    return this.request(url);
+    const body: any = await this.request(url);
+    return (body : DescribeSObjectResult);
   }
-
-  /**
-   * Synonym of Connection#describe()
-   */
-  describeSObject = this.describe;
 
   /**
    * Describe global SObjects
    */
-  describeGlobal() {
+  async describeGlobal() {
     const url = `${this._baseUrl()}/sobjects`;
-    return this.request(url);
+    const body: any = await this.request(url);
+    return (body : DescribeGlobalResult);
   }
 
   /**
