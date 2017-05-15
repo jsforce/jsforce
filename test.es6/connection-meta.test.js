@@ -22,9 +22,14 @@ test.group('describe sobject', (test) => {
     const so = await conn.sobject('Account').describe();
     t.true(so.name === 'Account');
     t.true(Array.isArray(so.fields));
-    const so2 = conn.sobject('Account').describe$();
-    t.true(so2.name === 'Account');
-    t.true(Array.isArray(so2.fields));
+    const so2 = await conn.sobject('Account').describe$();
+    t.true(so === so2);
+    const so3 = conn.sobject('Account').describe$$();
+    t.true(so === so3);
+    const so4 = await conn.sobject('Account').describe();
+    t.true(so !== so4);
+    t.true(so4.name === 'Account');
+    t.true(Array.isArray(so4.fields));
   });
 
   //
@@ -35,12 +40,17 @@ test.group('describe sobject', (test) => {
     t.true(isString(res.sobjects[0].name));
     t.true(isString(res.sobjects[0].label));
     t.true(isUndefined(res.sobjects[0].fields));
-    const res2 = conn.describeGlobal$();
-    t.true(Array.isArray(res2.sobjects));
-    t.true(isObject(res2.sobjects[0]));
-    t.true(isString(res2.sobjects[0].name));
-    t.true(isString(res2.sobjects[0].label));
-    t.true(isUndefined(res2.sobjects[0].fields));
+    const res2 = await conn.describeGlobal$();
+    t.true(res === res2);
+    const res3 = conn.describeGlobal$$();
+    t.true(res === res3);
+    const res4 = await conn.describeGlobal();
+    t.true(res !== res4);
+    t.true(Array.isArray(res4.sobjects));
+    t.true(isObject(res4.sobjects[0]));
+    t.true(isString(res4.sobjects[0].name));
+    t.true(isString(res4.sobjects[0].label));
+    t.true(isUndefined(res4.sobjects[0].fields));
   });
 });
 
