@@ -1,4 +1,4 @@
-import jsforce from '../..';
+import { Connection } from '../..';
 import UserPool from './user-pool';
 import { getConnectionConfig as getNodeConnectionConfig } from './node/connection';
 import { getConnectionConfig as getBrowserConnectionConfig } from './browser/connection';
@@ -21,7 +21,7 @@ export default class ConnectionManager {
   }
 
   createConnection() {
-    return new jsforce.Connection(getConnectionConfig(this._config));
+    return new Connection(getConnectionConfig(this._config));
   }
 
   async establishConnection(conn) {
@@ -35,9 +35,13 @@ export default class ConnectionManager {
 
   async closeConnection(conn) {
     const userPool = this._userPool;
-    await conn.apex.delete('/JSforceTestData/');
-    await (userPool ? userPool.checkin(conn.__username) : null);
-    // eslint-disable-next-line no-param-reassign
-    delete conn.__username;
+    try {
+      await conn.apex.delete('/JSforceTestData/');
+      await (userPool ? userPool.checkin(conn.__username) : null);
+      // eslint-disable-next-line no-param-reassign
+      delete conn.__username;
+    } catch (e) {
+      //
+    }
   }
 }
