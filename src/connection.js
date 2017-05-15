@@ -2,7 +2,7 @@
 import EventEmitter from 'events';
 import type { HttpRequest, Callback, Record, UnsavedRecord, SaveResult, DescribeGlobalResult, DescribeSObjectResult } from './types';
 import { StreamPromise } from './util/promise';
-import Transport, { CanvasTransport, ProxyTransport, HttpProxyTransport } from './transport';
+import Transport, { JsonpTransport, CanvasTransport, ProxyTransport, HttpProxyTransport } from './transport';
 import { Logger, getLogger } from './util/logger';
 import type { LogLevelConfig } from './util/logger';
 import OAuth2 from './oauth2';
@@ -11,6 +11,7 @@ import Cache from './cache';
 import HttpApi from './http-api';
 import SessionRefreshDelegate from './session-refresh-delegate';
 import SObject from './sobject';
+import { formatDate } from './util/formatter';
 
 
 /**
@@ -437,6 +438,67 @@ export default class Connection extends EventEmitter {
   }
 
   /**
+   * List recently viewed records
+   */
+  async recent(type?: string | number, limit?: number) {
+    /* eslint-disable no-param-reassign */
+    if (typeof type === 'number') {
+      limit = type;
+      type = undefined;
+    }
+    let url;
+    if (type) {
+      url = [this._baseUrl(), 'sobjects', type].join('/');
+      const { recentItems } = await this.request(url);
+      return limit ? recentItems.slice(0, limit) : recentItems;
+    }
+    url = `${this._baseUrl()}/recent`;
+    if (limit) {
+      url += `?limit=${limit}`;
+    }
+    return this.request(url);
+  }
+
+  /**
+   * Retrieve updated records
+   */
+  updated(type: string, start: string | Date, end: string | Date) {
+    /* eslint-disable no-param-reassign */
+    let url = [this._baseUrl(), 'sobjects', type, 'updated'].join('/');
+    if (typeof start === 'string') {
+      start = new Date(start);
+    }
+    start = formatDate(start);
+    url += `?start=${encodeURIComponent(start)}`;
+    if (typeof end === 'string') {
+      end = new Date(end);
+    }
+    end = formatDate(end);
+    url += `&end=${encodeURIComponent(end)}`;
+    return this.request(url);
+  }
+
+  /**
+   * Retrieve deleted records
+   */
+  deleted(type: string, start: string | Date, end: string | Date) {
+    /* eslint-disable no-param-reassign */
+    let url = [this._baseUrl(), 'sobjects', type, 'deleted'].join('/');
+    if (typeof start === 'string') {
+      start = new Date(start);
+    }
+    start = formatDate(start);
+    url += `?start=${encodeURIComponent(start)}`;
+
+    if (typeof end === 'string') {
+      end = new Date(end);
+    }
+    end = formatDate(end);
+    url += `&end=${encodeURIComponent(end)}`;
+    return this.request(url);
+  }
+
+  /**
    *
    */
   query(soql: string /* , options */) {
@@ -607,7 +669,7 @@ export default class Connection extends EventEmitter {
     options?: Object = {}
   ): Promise<SaveResult | SaveResult[]> {
     const _records = Array.isArray(records) ? records : [records];
-    if (records.length > this._maxRequest) {
+    if (_records.length > this._maxRequest) {
       throw new Error('Exceeded max limit of concurrent call');
     }
     const results = await Promise.all(
@@ -645,7 +707,7 @@ export default class Connection extends EventEmitter {
     options?: Object = {}
   ): Promise<SaveResult | SaveResult[]> {
     const _records = Array.isArray(records) ? records : [records];
-    if (records.length > this._maxRequest) {
+    if (_records.length > this._maxRequest) {
       throw new Error('Exceeded max limit of concurrent call');
     }
     const results = await Promise.all(
@@ -681,7 +743,7 @@ export default class Connection extends EventEmitter {
     options?: Object = {}
   ): Promise<SaveResult | SaveResult[]> {
     const _records = Array.isArray(records) ? records : [records];
-    if (records.length > this._maxRequest) {
+    if (_records.length > this._maxRequest) {
       throw new Error('Exceeded max limit of concurrent call');
     }
     const results = await Promise.all(
@@ -743,7 +805,7 @@ export default class Connection extends EventEmitter {
     options?: Object = {}
   ): Promise<SaveResult | SaveResult[]> {
     const _ids = Array.isArray(ids) ? ids : [ids];
-    if (ids.length > this._maxRequest) {
+    if (_ids.length > this._maxRequest) {
       throw new Error('Exceeded max limit of concurrent call');
     }
     const results = await Promise.all(
@@ -796,4 +858,28 @@ export default class Connection extends EventEmitter {
     this.sobjects[type] = this.sobjects[type] || new SObject(this, type);
     return this.sobjects[type];
   }
+
+  /**
+   * Get identity information of current user
+   */
+  async identity(options?: Object = {}) {
+    let url = this.userInfo && this.userInfo.url;
+    if (!url) {
+      const res = await this.request({ method: 'GET', url: this._baseUrl(), headers: options.headers });
+      url = (res.identity : string);
+    }
+    url += '?format=json';
+    if (this.accessToken) {
+      url += `&oauth_token=${encodeURIComponent(this.accessToken)}`;
+    }
+    const transport = JsonpTransport.supported ? new JsonpTransport('callback') : undefined;
+    const res = await this.request({ method: 'GET', url }, { transport });
+    this.userInfo = {
+      id: res.user_id,
+      organizationId: res.organization_id,
+      url: res.id
+    };
+    return res;
+  }
+
 }

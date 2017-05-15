@@ -152,6 +152,27 @@ export default class SObject {
 
 
   /**
+   * Retrieve recently accessed records
+   */
+  recent() {
+    return this._conn.recent(this.type);
+  }
+
+  /**
+   * Retrieve the updated records
+   */
+  updated(start: string | Date, end: string | Date) {
+    return this._conn.updated(this.type, start, end);
+  }
+
+  /**
+   * Retrieve the deleted records
+   */
+  deleted(start: string | Date, end: string | Date) {
+    return this._conn.deleted(this.type, start, end);
+  }
+
+  /**
    * Describe layout information for SObject
    */
   async layouts(layoutName?: string): Promise<DescribeLayoutResult> {
