@@ -154,9 +154,9 @@ export default class Connection extends EventEmitter {
   accessToken: ?string;
   refreshToken: ?string;
   userInfo: ?UserInfo;
-  limitInfo: ?Object;
+  limitInfo: Object = {};
   oauth2: OAuth2;
-  sobjects: { [string]: any };
+  sobjects: { [string]: any } = {};
   cache: Cache;
   _callOptions: ?{ [string]: string };
   _maxRequest: number;
@@ -243,7 +243,6 @@ export default class Connection extends EventEmitter {
     const {
       accessToken, refreshToken, instanceUrl, sessionId, serverUrl, signedRequest, userInfo,
     } = options;
-    this._resetInstance();
     this.instanceUrl =
       serverUrl ? serverUrl.split('/').slice(0, 3).join('/') : instanceUrl || this.instanceUrl;
     this.accessToken = sessionId || accessToken || this.accessToken;
@@ -260,14 +259,20 @@ export default class Connection extends EventEmitter {
     }
     this.userInfo = userInfo || this.userInfo;
     this._sessionType = sessionId ? 'soap' : 'oauth2';
+    this._resetInstance();
+  }
+
+  /* @priveate */
+  _clearSession() {
+    this.accessToken = null;
+    this.refreshToken = null;
+    this.instanceUrl = defaultConnectionConfig.instanceUrl;
+    this.userInfo = null;
+    this._sessionType = null;
   }
 
   /* @priveate */
   _resetInstance() {
-    this.accessToken = null;
-    this.userInfo = null;
-    this.refreshToken = null;
-    this.instanceUrl = defaultConnectionConfig.instanceUrl;
     this.limitInfo = {};
     this.sobjects = {};
     // TODO impl cache
@@ -403,6 +408,7 @@ export default class Connection extends EventEmitter {
       await this.oauth2.revokeToken(this.accessToken);
     }
     // Destroy the session bound to this connection
+    this._clearSession();
     this._resetInstance();
   }
 
@@ -438,16 +444,10 @@ export default class Connection extends EventEmitter {
       throw new Error(faultstring || response.body);
     }
     // Destroy the session bound to this connection
+    this._clearSession();
     this._resetInstance();
   }
 
-
-  /**
-   *
-   */
-  query(soql: string /* , options */) {
-    return this.request(`/query?q=${encodeURIComponent(soql)}`);
-  }
 
   /**
    * Send REST API request with given HTTP request info, with connected session information.
@@ -575,6 +575,12 @@ export default class Connection extends EventEmitter {
     return url;
   }
 
+  /**
+   *
+   */
+  query(soql: string /* , options */) {
+    return this.request(`/query?q=${encodeURIComponent(soql)}`);
+  }
 
   /**
    * Retrieve specified records
@@ -711,34 +717,7 @@ export default class Connection extends EventEmitter {
   }
 
   /**
-   * Synonym of Connection#destroy()
-   *
-   * @method Connection#delete
-   * @param {String} type - SObject Type
-   * @param {String|Array.<String>} ids - A ID or array of IDs to delete
-   * @param {Object} [options] - Options for rest api.
-   * @param {Callback.<RecordResult|Array.<RecordResult>>} [callback] - Callback
-   * @returns {Promise.<RecordResult|Array.<RecordResult>>}
-   */
-  /**
-   * Synonym of Connection#destroy()
-   *
-   * @method Connection#del
-   * @param {String} type - SObject Type
-   * @param {String|Array.<String>} ids - A ID or array of IDs to delete
-   * @param {Object} [options] - Options for rest api.
-   * @param {Callback.<RecordResult|Array.<RecordResult>>} [callback] - Callback
-   * @returns {Promise.<RecordResult|Array.<RecordResult>>}
-   */
-  /**
    * Delete records
-   *
-   * @method Connection#destroy
-   * @param {String} type - SObject Type
-   * @param {String|Array.<String>} ids - A ID or array of IDs to delete
-   * @param {Object} [options] - Options for rest api.
-   * @param {Callback.<RecordResult|Array.<RecordResult>>} [callback] - Callback
-   * @returns {Promise.<RecordResult|Array.<RecordResult>>}
    */
   async destroy(
     type: string,
@@ -905,14 +884,7 @@ export default class Connection extends EventEmitter {
   }
 
   /**
-   * @typedef {Object} ThemeInfo - See the API document for detail structure
-   */
-
-  /**
    * Returns a theme info
-   *
-   * @param {Callback.<ThemeInfo>} [callback] - Callback function
-   * @returns {Promise.<ThemeInfo>}
    */
   async theme(): Promise<DescribeTheme> {
     const url = [this._baseUrl(), 'theme'].join('/');
@@ -922,9 +894,6 @@ export default class Connection extends EventEmitter {
 
   /**
    * Returns all registered global quick actions
-   *
-   * @param {Callback.<Array.<QuickAction~QuickActionInfo>>} [callback] - Callback function
-   * @returns {Promise.<Array.<QuickAction~QuickActionInfo>>}
    */
   async quickActions(): Promise<DescribeQuickActionResult[]> {
     const body = await this.request('/quickActions');
