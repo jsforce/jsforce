@@ -53,7 +53,7 @@ export default class Transport {
   /**
    */
   httpRequest(params: HttpRequest): StreamPromise<HttpResponse> {
-    return new StreamPromise(async (setStream) => {
+    return StreamPromise.create(async (setStream) => {
       const createStream = this.getRequestStreamCreator();
       const stream = createStream(params);
       setStream(stream);

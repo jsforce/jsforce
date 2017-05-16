@@ -7,12 +7,16 @@ import { Duplex, Transform } from 'stream';
 export class StreamPromise<T> extends Promise<T> {
   stream: () => Duplex;
 
-  constructor(asyncFn: (Duplex => void) => Promise<T>) {
+  stream() { return new Duplex(); } // dummy
+
+  static create(asyncFn: (Duplex => void) => Promise<T>) {
     let streamCallback = () => {};
     const streamReady = new Promise((resolve) => { streamCallback = resolve; });
     const promise = asyncFn(streamCallback);
-    super((resolve, reject) => promise.then(resolve, reject));
-    this.stream = () => new Transform({
+    const streamPromise = new StreamPromise((resolve, reject) => {
+      promise.then(resolve, reject);
+    });
+    streamPromise.stream = () => new Transform({
       tranform(data, encoding, cb) {
         (async () => {
           const stream = await streamReady;
@@ -33,5 +37,6 @@ export class StreamPromise<T> extends Promise<T> {
         })();
       }
     });
+    return streamPromise;
   }
 }

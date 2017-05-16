@@ -62,7 +62,7 @@ export default class HttpApi extends EventEmitter {
    * Callout to API endpoint using http
    */
   request(request: HttpRequest): StreamPromise<any> {
-    return new StreamPromise(async (setStream) => {
+    return StreamPromise.create(async (setStream) => {
       const refreshDelegate = this.getRefreshDelegate();
       /* TODO decide remove or not this section */
       /*
