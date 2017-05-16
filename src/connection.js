@@ -1,6 +1,11 @@
 /* @flow */
 import EventEmitter from 'events';
-import type { HttpRequest, Callback, Record, UnsavedRecord, SaveResult, DescribeGlobalResult, DescribeSObjectResult } from './types';
+import type {
+  HttpRequest, HttpResponse, Callback, Record, UnsavedRecord, SaveResult,
+  DescribeGlobalResult, DescribeSObjectResult, DescribeTab, DescribeTheme,
+  DescribeQuickActionResult,
+  UpdatedResult, DeletedResult, LimitsInfo,
+} from './types';
 import { StreamPromise } from './util/promise';
 import Transport, { JsonpTransport, CanvasTransport, ProxyTransport, HttpProxyTransport } from './transport';
 import { Logger, getLogger } from './util/logger';
@@ -11,6 +16,7 @@ import Cache from './cache';
 import HttpApi from './http-api';
 import SessionRefreshDelegate from './session-refresh-delegate';
 import SObject from './sobject';
+import QuickAction from './quick-action';
 import { formatDate } from './util/formatter';
 
 
@@ -265,16 +271,14 @@ export default class Connection extends EventEmitter {
     this.limitInfo = {};
     this.sobjects = {};
     // TODO impl cache
-    /*
-    this._cache.clear();
-    this._cache.get('describeGlobal').on('value', (res) => {
-      if (res.result) {
-        for (const so of res.result.sobjects) {
+    this.cache.clear();
+    this.cache.get('describeGlobal').on('value', ({ result }) => {
+      if (result) {
+        for (const so of result.sobjects) {
           this.sobject(so.name);
         }
       }
     });
-    */
     /*
     if (this.tooling) {
       this.tooling._resetInstance();
@@ -437,66 +441,6 @@ export default class Connection extends EventEmitter {
     this._resetInstance();
   }
 
-  /**
-   * List recently viewed records
-   */
-  async recent(type?: string | number, limit?: number) {
-    /* eslint-disable no-param-reassign */
-    if (typeof type === 'number') {
-      limit = type;
-      type = undefined;
-    }
-    let url;
-    if (type) {
-      url = [this._baseUrl(), 'sobjects', type].join('/');
-      const { recentItems } = await this.request(url);
-      return limit ? recentItems.slice(0, limit) : recentItems;
-    }
-    url = `${this._baseUrl()}/recent`;
-    if (limit) {
-      url += `?limit=${limit}`;
-    }
-    return this.request(url);
-  }
-
-  /**
-   * Retrieve updated records
-   */
-  updated(type: string, start: string | Date, end: string | Date) {
-    /* eslint-disable no-param-reassign */
-    let url = [this._baseUrl(), 'sobjects', type, 'updated'].join('/');
-    if (typeof start === 'string') {
-      start = new Date(start);
-    }
-    start = formatDate(start);
-    url += `?start=${encodeURIComponent(start)}`;
-    if (typeof end === 'string') {
-      end = new Date(end);
-    }
-    end = formatDate(end);
-    url += `&end=${encodeURIComponent(end)}`;
-    return this.request(url);
-  }
-
-  /**
-   * Retrieve deleted records
-   */
-  deleted(type: string, start: string | Date, end: string | Date) {
-    /* eslint-disable no-param-reassign */
-    let url = [this._baseUrl(), 'sobjects', type, 'deleted'].join('/');
-    if (typeof start === 'string') {
-      start = new Date(start);
-    }
-    start = formatDate(start);
-    url += `?start=${encodeURIComponent(start)}`;
-
-    if (typeof end === 'string') {
-      end = new Date(end);
-    }
-    end = formatDate(end);
-    url += `&end=${encodeURIComponent(end)}`;
-    return this.request(url);
-  }
 
   /**
    *
@@ -520,22 +464,19 @@ export default class Connection extends EventEmitter {
     _request = Object.assign({}, _request, { url: this._normalizeUrl(_request.url) });
     const httpApi = new HttpApi(this, options);
     // log api usage and its quota
-    // TODO : limitInfo
-    /*
     httpApi.on('response', (response: HttpResponse) => {
-      if (response.headers && response.headers["sforce-limit-info"]) {
-        var apiUsage = response.headers["sforce-limit-info"].match(/api\-usage=(\d+)\/(\d+)/);
+      if (response.headers && response.headers['sforce-limit-info']) {
+        const apiUsage = response.headers['sforce-limit-info'].match(/api-usage=(\d+)\/(\d+)/);
         if (apiUsage) {
-          self.limitInfo = {
+          this.limitInfo = {
             apiUsage: {
               used: parseInt(apiUsage[1], 10),
-              limit: parseInt(apiUsage[2], 10)
-            }
+              limit: parseInt(apiUsage[2], 10),
+            },
           };
         }
       }
     });
-    */
     return httpApi.request(_request);
   }
 
@@ -880,6 +821,121 @@ export default class Connection extends EventEmitter {
       url: res.id
     };
     return res;
+  }
+
+  /**
+   * List recently viewed records
+   */
+  async recent(type?: string | number, limit?: number) {
+    /* eslint-disable no-param-reassign */
+    if (typeof type === 'number') {
+      limit = type;
+      type = undefined;
+    }
+    let url;
+    if (type) {
+      url = [this._baseUrl(), 'sobjects', type].join('/');
+      const { recentItems } = await this.request(url);
+      return limit ? recentItems.slice(0, limit) : recentItems;
+    }
+    url = `${this._baseUrl()}/recent`;
+    if (limit) {
+      url += `?limit=${limit}`;
+    }
+    return this.request(url);
+  }
+
+  /**
+   * Retrieve updated records
+   */
+  async updated(type: string, start: string | Date, end: string | Date): Promise<UpdatedResult> {
+    /* eslint-disable no-param-reassign */
+    let url = [this._baseUrl(), 'sobjects', type, 'updated'].join('/');
+    if (typeof start === 'string') {
+      start = new Date(start);
+    }
+    start = formatDate(start);
+    url += `?start=${encodeURIComponent(start)}`;
+    if (typeof end === 'string') {
+      end = new Date(end);
+    }
+    end = formatDate(end);
+    url += `&end=${encodeURIComponent(end)}`;
+    const body = await this.request(url);
+    return (body : UpdatedResult);
+  }
+
+  /**
+   * Retrieve deleted records
+   */
+  async deleted(type: string, start: string | Date, end: string | Date): Promise<DeletedResult> {
+    /* eslint-disable no-param-reassign */
+    let url = [this._baseUrl(), 'sobjects', type, 'deleted'].join('/');
+    if (typeof start === 'string') {
+      start = new Date(start);
+    }
+    start = formatDate(start);
+    url += `?start=${encodeURIComponent(start)}`;
+
+    if (typeof end === 'string') {
+      end = new Date(end);
+    }
+    end = formatDate(end);
+    url += `&end=${encodeURIComponent(end)}`;
+    const body = await this.request(url);
+    return (body : DeletedResult);
+  }
+
+  /**
+   * Returns a list of all tabs
+   */
+  async tabs(): Promise<DescribeTab[]> {
+    const url = [this._baseUrl(), 'tabs'].join('/');
+    const body = await this.request(url);
+    return (body : DescribeTab[]);
+  }
+
+  /**
+   * Returns curren system limit in the organization
+   */
+  async limits(): Promise<LimitsInfo> {
+    const url = [this._baseUrl(), 'limits'].join('/');
+    const body = await this.request(url);
+    return (body : LimitsInfo);
+  }
+
+  /**
+   * @typedef {Object} ThemeInfo - See the API document for detail structure
+   */
+
+  /**
+   * Returns a theme info
+   *
+   * @param {Callback.<ThemeInfo>} [callback] - Callback function
+   * @returns {Promise.<ThemeInfo>}
+   */
+  async theme(): Promise<DescribeTheme> {
+    const url = [this._baseUrl(), 'theme'].join('/');
+    const body = await this.request(url);
+    return (body : DescribeTheme);
+  }
+
+  /**
+   * Returns all registered global quick actions
+   *
+   * @param {Callback.<Array.<QuickAction~QuickActionInfo>>} [callback] - Callback function
+   * @returns {Promise.<Array.<QuickAction~QuickActionInfo>>}
+   */
+  async quickActions(): Promise<DescribeQuickActionResult[]> {
+    const body = await this.request('/quickActions');
+    return (body : DescribeQuickActionResult[]);
+  }
+
+  /**
+   * Get reference for specified global quick aciton
+   */
+  quickAction(actionName: string): QuickAction {
+    return new QuickAction(this, `/quickActions/${actionName}`);
   }
 
 }
