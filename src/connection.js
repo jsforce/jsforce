@@ -581,14 +581,14 @@ export default class Connection extends EventEmitter {
    *
    */
   query(soql: string, options?: QueryOptions): Query {
-    return new Query(this, soql, options);
+    return new Query(this, soql, null, options);
   }
 
   /**
    *
    */
   queryMore(locator: string, options?: QueryOptions): Query {
-    return new Query(this, { locator }, options);
+    return new Query(this, { locator }, null, options);
   }
 
   /**

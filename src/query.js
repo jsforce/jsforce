@@ -3,8 +3,8 @@
  * @file Manages query for records in Salesforce
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
-import { Readable } from 'stream';
 import { Logger, getLogger } from './util/logger';
+import { Serializable } from './record-stream';
 import type Connection from './connection';
 import { createSOQL } from './soql-builder';
 import type { QueryConfig, QueryCondition, SortConfig, SortDir } from './soql-builder';
@@ -47,7 +47,7 @@ export const ResponseTargets: { [QueryResponseTarget]: QueryResponseTarget } = {
 /**
  * Query
  */
-export default class Query extends Readable {
+export default class Query extends Serializable {
   static _logger = getLogger('query');
 
   _conn: Connection;
@@ -55,12 +55,13 @@ export default class Query extends Readable {
   _soql: ?string;
   _locator: ?string;
   _config: QueryConfig;
-  _children: SubQuery[];
+  _children: SubQuery[] = [];
   _options: QueryOptions;
   _executed: boolean = false;
   _finished: boolean = false;
   _chaining: boolean = false;
   _promise: ?Promise<QueryResponse>;
+  _parent: ?Query;
 
   totalSize: ?number;
   totalFetched: ?number;
@@ -71,9 +72,10 @@ export default class Query extends Readable {
   constructor(
     conn: Connection,
     config: string | QueryConfig | { locator: string },
+    parent?: ?Query,
     options?: $Shape<QueryOptions>
   ) {
-    super({ objectMode: true });
+    super();
     this._conn = conn;
     this._logger =
       conn._logLevel ? Query._logger.createInstance(conn._logLevel) : Query._logger;
@@ -91,6 +93,7 @@ export default class Query extends Readable {
       //  this.include(config.includes);
       }
     }
+    this._parent = parent;
     this._options = Object.assign(({
       headers: {},
       maxFetch: 10000,
@@ -108,15 +111,18 @@ export default class Query extends Readable {
     if (this._soql) {
       throw Error('Cannot set select fields for the query which has already built SOQL.');
     }
-    if (typeof fields === 'string') {
-      this._config.fields = fields.split(/\s*,\s*/);
-    } else if (Array.isArray(fields)) {
-      this._config.fields = fields;
-    } else {
-      // eslint-disable-next-line no-unused-vars
-      this._config.fields = Object.entries(fields).filter(([f, v]) => v).map(([f]) => f);
-    }
+    this._config.fields = this._toQueryConfigFields(fields);
     return this;
+  }
+
+  /* @private */
+  _toQueryConfigFields(fields?: QueryFieldsParam = '*') {
+    return (
+      typeof fields === 'string' ? fields.split(/\s*,\s*/) :
+      Array.isArray(fields) ? fields :
+      // eslint-disable-next-line no-unused-vars
+      Object.entries(fields).filter(([f, v]) => v).map(([f]) => f)
+    );
   }
 
   /**
@@ -159,11 +165,6 @@ export default class Query extends Readable {
 
   /**
    * Set query sort with direction
-   *
-   * @method Query#sort
-   * @param {String|Object} sort - Sorting field or hash object with field name and sord direction
-   * @param {String|Number} [dir] - Sorting direction (ASC|DESC|1|-1)
-   * @returns {Query.<T>}
    */
   sort(sort: SortConfig, dir?: SortDir) {
     if (this._soql) {
@@ -183,20 +184,36 @@ export default class Query extends Readable {
   orderby = this.sort;
 
   /**
-   * Include child relationship query
-  include(
+   * Include child relationship query and move down to the child query context
+   */
+  include(childRelName: string): SubQuery {
+    if (this._soql) {
+      throw Error('Cannot include child relationship into the query which has already built SOQL.');
+    }
+    this.includeChildren(childRelName);
+    return this._children[this._children.length - 1];
+  }
+
+  /**
+   * Include child relationship query(ies), but not moving down to the children context
+   */
+  includeChildren(
     includes: string | { [string]: QueryConfig },
     conditions?: QueryCondition,
     fields?: QueryFieldsParam = '*',
-    options?: { limit?: number, offset?: number, skip?: number, sort?: SortConfig } = {}
+    options?: { limit?: number, offset?: number, sort?: SortConfig } = {}
   ) {
     if (this._soql) {
       throw Error('Cannot include child relationship into the query which has already built SOQL.');
     }
     if (typeof includes === 'object') {
       for (const crname of Object.keys(includes)) {
-        const { conditions: cconditions, fileds: cfields, ...coptions } = includes[crname];
-        this.include(crname, cconditions, cfields, coptions);
+        const {
+          conditions: cconditions, fields: cfields,
+          limit, offset, sort,
+        } = includes[crname];
+        const coptions = { limit, offset, sort };
+        this.includeChildren(crname, cconditions, cfields, coptions);
       }
       return this;
     }
@@ -204,22 +221,16 @@ export default class Query extends Readable {
     const childConfig: QueryConfig = {
       table: childRelName,
       conditions,
-      fields,
+      fields: this._toQueryConfigFields(fields),
       limit: options.limit,
-      offset: options.offset || options.skip,
+      offset: options.offset,
       sort: options.sort,
     };
-    if (!Array.isArray(this._config.includes)) {
-      this._config.includes = [];
-    }
-    this._config.includes.push(childConfig);
     // eslint-disable-next-line no-use-before-define
     const childQuery = new SubQuery(this._conn, this, childConfig);
-    this._children = this._children || [];
     this._children.push(childQuery);
-    return childQuery;
+    return this;
   }
-   */
 
   /**
    * Setting maxFetch query option
@@ -307,7 +318,7 @@ export default class Query extends Readable {
         await this._execute(options);
         this._logger.debug('*** Query finished ***');
       } catch (error) {
-        this._logger.debug('--- Query error ---');
+        this._logger.debug('--- Query error ---', error);
         this.emit('error', error);
       }
     })();
@@ -390,18 +401,16 @@ export default class Query extends Readable {
 
   /**
    * Readable stream implementation
-   *
    * @override
    * @private
+   */
   _read() {
     if (!this._finished && !this._executed) {
       this.execute({ autoFetch: true });
     }
   }
-   */
 
   /** @override **/
-  /*
   on(e: string, fn: Function): this {
     if (e === 'record') {
       this.on('readable', () => {
@@ -410,16 +419,13 @@ export default class Query extends Readable {
     }
     return super.on(e, fn);
   }
-  */
 
   /** @override **/
-  /*
   addListener: ((e: string, fn: Function) => any) = this.on;
-  */
 
 
   /**
-   * @private
+   * @protected
    */
   async _expandFields(): Promise<void> {
     if (this._soql) {
@@ -429,7 +435,7 @@ export default class Query extends Readable {
     this._logger.debug(`_expandFields: table = ${table}, fields = ${fields.join(', ')}`);
     const [efields] = await Promise.all([
       this._expandAsteriskFields(table, fields),
-      ...(this._children || []).map(childQuery => childQuery._expandFields()),
+      ...this._children.map(childQuery => childQuery._expandFields()),
     ]);
     this._config.fields = efields;
   }
@@ -453,7 +459,7 @@ export default class Query extends Readable {
    *
    */
   async _getSObjectName(table: string): Promise<string> {
-    return table;
+    return this._parent ? this._parent._findRelationObject(table) : table;
   }
 
   /**
@@ -519,32 +525,6 @@ export default class Query extends Readable {
     await this._expandFields();
     return createSOQL(this._config);
   }
-
-  /**
-   * Create data stream of queried records.
-   * Automatically resume query if paused.
-   *
-   * @param {String} [type] - Type of outgoing data format. Currently 'csv' is default value and the only supported.
-   * @param {Object} [options] - Options passed to converter
-   * @returns {stream.Readable}
-  Query.prototype.stream = RecordStream.Serializable.prototype.stream;
-   */
-
-  /**
-   * Get record stream of queried records applying the given mapping function
-   *
-   * @param {RecordMapFunction} fn - Record mapping function
-   * @returns {RecordStream.Serializable}
-  Query.prototype.map = RecordStream.prototype.map;
-   */
-
-  /**
-   * Get record stream of queried records, applying the given filter function
-   *
-   * @param {RecordFilterFunction} fn - ecord filtering function
-   * @returns {RecordStream.Serializable}
-  Query.prototype.filter = RecordStream.prototype.map;
-   */
 
   /**
    * Promise/A+ interface
@@ -654,56 +634,93 @@ Query.prototype.update = function (mapping, type, callback) {
 
 /**
  * SubQuery object for representing child relationship query
- *
- * @protected
- * @class Query~SubQuery
- * @extends Query
- * @param {Connection} conn - Connection object
- * @param {Query} parent - Parent query object
- * @param {Object} config - Sub query configuration
  */
-export class SubQuery extends Query {
+export class SubQuery {
+  _query: Query;
   _parent: Query;
 
+  /**
+   *
+   */
   constructor(conn: Connection, parent: Query, config: QueryConfig) {
-    super(conn, config);
-    this._parent = parent;
+    this._query = new Query(conn, config, parent);
   }
 
   /**
-   * @method Query~SubQuery#include
-   * @override
-  SubQuery.prototype.include = function () {
-    throw new Error('Not allowed to include another subquery in subquery.');
-  };
+   *
    */
+  select(fields?: QueryFieldsParam): this {
+    this._query.select(fields);
+    return this;
+  }
+
+  /**
+   *
+   */
+  where(conditions: QueryCondition): this {
+    this._query.where(conditions);
+    return this;
+  }
+
+  /**
+   * Limit the returning result
+   */
+  limit(limit: number) {
+    this._query.limit(limit);
+    return this;
+  }
+
+  /**
+   * Skip records
+   */
+  skip(offset: number) {
+    this._query.skip(offset);
+    return this;
+  }
+
+  /**
+   * Synonym of SubQuery#skip()
+   */
+  offset = this.skip;
+
+  /**
+   * Set query sort with direction
+   */
+  sort(sort: SortConfig, dir?: SortDir) {
+    this._query.sort(sort, dir);
+    return this;
+  }
+
+  /**
+   * Synonym of SubQuery#sort()
+   */
+  orderby = this.sort;
+
+  /**
+   *
+   */
+  include() {
+    throw new Error('Not allowed to include another subquery in subquery.');
+  }
+
+  /**
+   *
+   */
+  _expandFields() {
+    return this._query._expandFields();
+  }
+
+  /**
+   *
+   */
+  toSOQL() {
+    return this._query.toSOQL();
+  }
 
   /**
    * Back the context to parent query object
-   *
-   * @method Query~SubQuery#end
-   * @returns {Query}
    */
   end() {
     return this._parent;
   }
-
-  /**
-   * @override
-   */
-  async _getSObjectName(table: string): Promise<string> {
-    return this._parent._findRelationObject(table);
-  }
-
-  /**
-   * If execute is called in subquery context, delegate it to parent query object
-   */
-  execute(options?: $Shape<QueryOptions>): Query {
-    return this._parent.execute(options);
-  }
-
-  run = this.execute;
-
-  exec = this.execute;
-
 }
