@@ -1,5 +1,5 @@
 import test from './util/ava/ext';
-import SOQLBuilder from '../lib/soql-builder';
+import { createSOQL } from '../src/soql-builder';
 import { SfDate } from '..';
 
 
@@ -9,7 +9,7 @@ import { SfDate } from '..';
 test.group('soql-builder', (test) => {
   //
   test('build simple query', (t) => {
-    const soql = SOQLBuilder.createSOQL({
+    const soql = createSOQL({
       fields: ['Id', 'Name'],
       table: 'Account',
       conditions: { Id: '0011000000NPNrW' },
@@ -26,7 +26,7 @@ test.group('soql-builder', (test) => {
    *
    */
   test('build query with OR operator', (t) => {
-    const soql = SOQLBuilder.createSOQL({
+    const soql = createSOQL({
       fields: ['Id', 'Name'],
       table: 'Account',
       conditions: {
@@ -44,7 +44,7 @@ test.group('soql-builder', (test) => {
 
   //
   test('build query with nested OR operator', (t) => {
-    const soql = SOQLBuilder.createSOQL({
+    const soql = createSOQL({
       fields: ['Id', 'Name'],
       table: 'Account',
       conditions: {
@@ -64,7 +64,7 @@ test.group('soql-builder', (test) => {
 
   //
   test('build query with nested OR/AND operator', (t) => {
-    const soql = SOQLBuilder.createSOQL({
+    const soql = createSOQL({
       table: 'Opportunity',
       conditions: {
         $or: [
@@ -86,7 +86,7 @@ test.group('soql-builder', (test) => {
 
   //
   test('build query with nested NOT/AND operator', (t) => {
-    const soql = SOQLBuilder.createSOQL({
+    const soql = createSOQL({
       table: 'Opportunity',
       conditions: {
         $not: {
@@ -106,7 +106,7 @@ test.group('soql-builder', (test) => {
 
   //
   test('build query with nested NOT operator', (t) => {
-    const soql = SOQLBuilder.createSOQL({
+    const soql = createSOQL({
       table: 'Opportunity',
       conditions: {
         $not: {
@@ -123,7 +123,7 @@ test.group('soql-builder', (test) => {
 
   //
   test('build query with nested OR/NOT/AND operator', (t) => {
-    const soql = SOQLBuilder.createSOQL({
+    const soql = createSOQL({
       table: 'Opportunity',
       conditions: {
         $or: [
@@ -148,7 +148,7 @@ test.group('soql-builder', (test) => {
 
   //
   test('build query with Date field for date literal', (t) => {
-    const soql = SOQLBuilder.createSOQL({
+    const soql = createSOQL({
       table: 'Opportunity',
       conditions: {
         $and: [
@@ -168,7 +168,7 @@ test.group('soql-builder', (test) => {
 
   //
   test('build query with String field using $like/$nlike operator', (t) => {
-    const soql = SOQLBuilder.createSOQL({
+    const soql = createSOQL({
       table: 'Account',
       conditions: {
         Name: { $like: "John's%" },
@@ -183,7 +183,7 @@ test.group('soql-builder', (test) => {
 
   //
   test('build query using $in/$nin operator', (t) => {
-    const soql = SOQLBuilder.createSOQL({
+    const soql = createSOQL({
       table: 'Contact',
       conditions: {
         Id: { $in: [] },
@@ -200,7 +200,7 @@ test.group('soql-builder', (test) => {
 
   //
   test('build query using $exists operator', (t) => {
-    const soql = SOQLBuilder.createSOQL({
+    const soql = createSOQL({
       table: 'Task',
       conditions: {
         WhatId: { $exists: true },
@@ -215,7 +215,7 @@ test.group('soql-builder', (test) => {
 
   //
   test('build query using $includes/$excludes operator', (t) => {
-    const soql = SOQLBuilder.createSOQL({
+    const soql = createSOQL({
       table: 'Contact',
       conditions: {
         Languages__c: { $includes: ['English', 'Japanese'] },
@@ -231,7 +231,7 @@ test.group('soql-builder', (test) => {
 
   //
   test('build query for matching null', (t) => {
-    const soql = SOQLBuilder.createSOQL({
+    const soql = createSOQL({
       table: 'Account',
       conditions: {
         Type: { $ne: null },
@@ -246,7 +246,7 @@ test.group('soql-builder', (test) => {
 
   //
   test('build query with undefined condition', (t) => {
-    const soql = SOQLBuilder.createSOQL({
+    const soql = createSOQL({
       table: 'Account',
       conditions: {
         Type: undefined
@@ -257,7 +257,7 @@ test.group('soql-builder', (test) => {
 
   //
   test('build query with sort option', (t) => {
-    const soql = SOQLBuilder.createSOQL({
+    const soql = createSOQL({
       table: 'Opportunity',
       sort: '-CreatedDate',
       limit: 10
@@ -271,7 +271,7 @@ test.group('soql-builder', (test) => {
 
   //
   test('build query with multiple sort option in array', (t) => {
-    const soql = SOQLBuilder.createSOQL({
+    const soql = createSOQL({
       table: 'Opportunity',
       conditions: {
         'Owner.Name': { $like: 'A%' }
@@ -292,7 +292,7 @@ test.group('soql-builder', (test) => {
 
   //
   test('build query with multiple sort option in hash', (t) => {
-    const soql = SOQLBuilder.createSOQL({
+    const soql = createSOQL({
       table: 'Opportunity',
       conditions: {
         'Owner.Name': { $like: 'A%' }

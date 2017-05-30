@@ -15,6 +15,8 @@ import type { OAuth2Config } from './oauth2';
 import Cache from './cache';
 import HttpApi from './http-api';
 import SessionRefreshDelegate from './session-refresh-delegate';
+import Query from './query';
+import type { QueryOptions } from './query';
 import SObject from './sobject';
 import QuickAction from './quick-action';
 import { formatDate } from './util/formatter';
@@ -578,8 +580,15 @@ export default class Connection extends EventEmitter {
   /**
    *
    */
-  query(soql: string /* , options */) {
-    return this.request(`/query?q=${encodeURIComponent(soql)}`);
+  query(soql: string, options?: QueryOptions): Query {
+    return new Query(this, soql, null, options);
+  }
+
+  /**
+   *
+   */
+  queryMore(locator: string, options?: QueryOptions): Query {
+    return new Query(this, { locator }, null, options);
   }
 
   /**
