@@ -598,7 +598,8 @@ Query.prototype.destroy = function (type, callback) {
   const batch = this._conn.sobject(type).deleteBulk();
   const deferred = Promise.defer();
   const handleError = function (err) {
-    if (err.name === 'ClientInputError') { deferred.resolve([]); } // if batch input receives no records
+    // if batch input receives no records
+    if (err.name === 'ClientInputError') { deferred.resolve([]); }
     else { deferred.reject(err); }
   };
   this.on('error', handleError)
@@ -625,11 +626,15 @@ Query.prototype.update = function (mapping, type, callback) {
   if (!type) {
     throw new Error('SOQL based query needs SObject type information to bulk update.');
   }
-  const updateStream = _.isFunction(mapping) ? RecordStream.map(mapping) : RecordStream.recordMapStream(mapping);
+  const updateStream =
+   _.isFunction(mapping) ?
+    RecordStream.map(mapping) :
+    RecordStream.recordMapStream(mapping);
   const batch = this._conn.sobject(type).updateBulk();
   const deferred = Promise.defer();
   const handleError = function (err) {
-    if (err.name === 'ClientInputError') { deferred.resolve([]); } // if batch input receives no records
+    // if batch input receives no records
+    if (err.name === 'ClientInputError') { deferred.resolve([]); }
     else { deferred.reject(err); }
   };
   this.on('error', handleError)
