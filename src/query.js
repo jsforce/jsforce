@@ -15,6 +15,16 @@ import type { Record } from './types';
  */
 export type QueryFieldsParam = string | string[] | { [string]: boolean|number };
 
+export type QueryConfigInput = {
+  fields?: QueryFieldsParam,
+  includes?: { [string]: QueryConfigInput },
+  table: string,
+  conditions?: QueryCondition,
+  sort?: SortConfig,
+  limit?: number,
+  offset?: number,
+};
+
 export type QueryResponseTarget =
   'QueryResult' | 'Records' | 'SingleRecord' | 'Count';
 
@@ -71,7 +81,7 @@ export default class Query extends Serializable {
    */
   constructor(
     conn: Connection,
-    config: string | QueryConfig | { locator: string },
+    config: string | QueryConfigInput | { locator: string },
     parent?: ?Query,
     options?: $Shape<QueryOptions>
   ) {
@@ -87,10 +97,11 @@ export default class Query extends Serializable {
         this._locator = locator.split('/').pop();
       }
     } else {
-      this._config = ((config : any) : QueryConfig);
-      this.select(this._config.fields);
-      if (config.includes) {
-      //  this.include(config.includes);
+      const { fields, includes, ..._config } = ((config : any) : QueryConfigInput);
+      this._config = _config;
+      this.select(fields);
+      if (includes) {
+        this.includeChildren(includes);
       }
     }
     this._parent = parent;
@@ -111,18 +122,13 @@ export default class Query extends Serializable {
     if (this._soql) {
       throw Error('Cannot set select fields for the query which has already built SOQL.');
     }
-    this._config.fields = this._toQueryConfigFields(fields);
-    return this;
-  }
-
-  /* @private */
-  _toQueryConfigFields(fields?: QueryFieldsParam = '*') {
-    return (
+    this._config.fields = (
       typeof fields === 'string' ? fields.split(/\s*,\s*/) :
       Array.isArray(fields) ? fields :
       // eslint-disable-next-line no-unused-vars
       Object.entries(fields).filter(([f, v]) => v).map(([f]) => f)
     );
+    return this;
   }
 
   /**
@@ -198,7 +204,7 @@ export default class Query extends Serializable {
    * Include child relationship query(ies), but not moving down to the children context
    */
   includeChildren(
-    includes: string | { [string]: QueryConfig },
+    includes: string | { [string]: QueryConfigInput },
     conditions?: QueryCondition,
     fields?: QueryFieldsParam = '*',
     options?: { limit?: number, offset?: number, sort?: SortConfig } = {}
@@ -218,16 +224,16 @@ export default class Query extends Serializable {
       return this;
     }
     const childRelName: string = includes;
-    const childConfig: QueryConfig = {
+    const childConfig: QueryConfigInput = {
       table: childRelName,
       conditions,
-      fields: this._toQueryConfigFields(fields),
+      fields,
       limit: options.limit,
       offset: options.offset,
       sort: options.sort,
     };
     // eslint-disable-next-line no-use-before-define
-    const childQuery = new SubQuery(this._conn, this, childConfig);
+    const childQuery = new SubQuery(this._conn, childConfig, this);
     this._children.push(childQuery);
     return this;
   }
@@ -642,7 +648,7 @@ export class SubQuery {
   /**
    *
    */
-  constructor(conn: Connection, parent: Query, config: QueryConfig) {
+  constructor(conn: Connection, config: QueryConfigInput, parent: Query) {
     this._query = new Query(conn, config, parent);
   }
 
