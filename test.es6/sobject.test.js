@@ -228,8 +228,27 @@ test.serial('list layout for SObject and return Account layout information', asy
 /**
  *
  */
+test.serial('list layouts (cache-first) and return Account layout information', async (t) => {
+  const res = await Account.layouts$();
+  t.true(Array.isArray(res.layouts));
+  for (const layout of res.layouts) {
+    t.true(layout.id === null || isString(layout.id));
+    t.true(isObject(layout.buttonLayoutSection));
+    t.true(Array.isArray(layout.detailLayoutSections));
+    t.true(Array.isArray(layout.editLayoutSections));
+    t.true(isObject(layout.quickActionList));
+    t.true(Array.isArray(layout.quickActionList.quickActionListItems));
+    t.true(Array.isArray(layout.relatedLists));
+  }
+  t.true(Array.isArray(res.recordTypeMappings));
+  t.true(Array.isArray(res.recordTypeSelectorRequired));
+});
+
+/**
+ *
+ */
 test.serial('get cached layouts and return Account layout information immediately', (t) => {
-  const res = Account.layouts$();
+  const res = Account.layouts$$();
   t.true(Array.isArray(res.layouts));
   for (const layout of res.layouts) {
     t.true(layout.id === null || isString(layout.id));
@@ -263,8 +282,24 @@ test.serial('list named layout for SObject and return User named layout informat
   t.true(Array.isArray(res.recordTypeSelectorRequired));
 });
 
+test.serial('list named layouts (cache-first) and return User named layout information', async (t) => {
+  const res = await conn.sobject('User').layouts$('UserAlt');
+  t.true(Array.isArray(res.layouts));
+  for (const layout of res.layouts) {
+    t.true(layout.id === null || isString(layout.id));
+    t.true(isObject(layout.buttonLayoutSection));
+    t.true(Array.isArray(layout.detailLayoutSections));
+    t.true(Array.isArray(layout.editLayoutSections));
+    t.true(isObject(layout.quickActionList));
+    t.true(Array.isArray(layout.quickActionList.quickActionListItems));
+    t.true(Array.isArray(layout.relatedLists));
+  }
+  t.true(Array.isArray(res.recordTypeMappings));
+  t.true(Array.isArray(res.recordTypeSelectorRequired));
+});
+
 test.serial('get cached named layouts and return User named layout information immediately', (t) => {
-  const res = conn.sobject('User').layouts$('UserAlt');
+  const res = conn.sobject('User').layouts$$('UserAlt');
   t.true(Array.isArray(res.layouts));
   for (const layout of res.layouts) {
     t.true(layout.id === null || isString(layout.id));
@@ -298,8 +333,24 @@ test.serial('list compact layout for SObject and return Account comact layout in
 /**
  *
  */
-test.serial('get cached compact layouts and  return Account comapct layout information immediately', (t) => {
-  const res = Account.compactLayouts$();
+test.serial('list compact layouts (cache-first) and return Account comact layout information', async (t) => {
+  const res = await Account.compactLayouts$();
+  t.true(Array.isArray(res.compactLayouts));
+  for (const clayout of res.compactLayouts) {
+    t.true(clayout.id === null || isString(clayout.id));
+    t.true(isString(clayout.objectType));
+    t.true(Array.isArray(clayout.actions));
+    t.true(Array.isArray(clayout.fieldItems));
+  }
+  t.true(!res.defaultCompactLayoutId || isString(res.defaultCompactLayoutId));
+  t.true(Array.isArray(res.recordTypeCompactLayoutMappings));
+});
+
+/**
+ *
+ */
+test.serial('get cached compact layouts and return Account comapct layout information immediately', (t) => {
+  const res = Account.compactLayouts$$();
   t.true(Array.isArray(res.compactLayouts));
   for (const clayout of res.compactLayouts) {
     t.true(clayout.id === null || isString(clayout.id));
@@ -329,8 +380,22 @@ test.serial('list approval layout for SObject and return Account approval layout
 /**
  *
  */
-test.serial('get cached approval layotus and return Account approval layout information immediately', (t) => {
-  const res = Account.approvalLayouts$();
+test.serial('list approval layouts (cache-first) and return Account approval layout information', async (t) => {
+  const res = await Account.approvalLayouts$();
+  t.true(Array.isArray(res.approvalLayouts));
+  for (const alayout of res.approvalLayouts) {
+    t.true(alayout.id === null || isString(alayout.id));
+    t.true(isString(alayout.name));
+    t.true(isString(alayout.label));
+    t.true(Array.isArray(alayout.layoutItems));
+  }
+});
+
+/**
+ *
+ */
+test.serial('get cached approval layouts and return Account approval layout information immediately', (t) => {
+  const res = Account.approvalLayouts$$();
   t.true(Array.isArray(res.approvalLayouts));
   for (const alayout of res.approvalLayouts) {
     t.true(alayout.id === null || isString(alayout.id));

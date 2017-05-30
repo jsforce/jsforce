@@ -15,9 +15,9 @@ import type { Record } from './types';
  */
 export type QueryFieldsParam = string | string[] | { [string]: boolean|number };
 
-export type QueryConfigInput = {
+export type QueryConfigParam = {
   fields?: QueryFieldsParam,
-  includes?: { [string]: QueryConfigInput },
+  includes?: { [string]: QueryConfigParam },
   table: string,
   conditions?: QueryCondition,
   sort?: SortConfig,
@@ -81,7 +81,7 @@ export default class Query extends Serializable {
    */
   constructor(
     conn: Connection,
-    config: string | QueryConfigInput | { locator: string },
+    config: string | QueryConfigParam | { locator: string },
     parent?: ?Query,
     options?: $Shape<QueryOptions>
   ) {
@@ -97,7 +97,7 @@ export default class Query extends Serializable {
         this._locator = locator.split('/').pop();
       }
     } else {
-      const { fields, includes, ..._config } = ((config : any) : QueryConfigInput);
+      const { fields, includes, ..._config } = ((config : any) : QueryConfigParam);
       this._config = _config;
       this.select(fields);
       if (includes) {
@@ -192,42 +192,19 @@ export default class Query extends Serializable {
   /**
    * Include child relationship query and move down to the child query context
    */
-  include(childRelName: string): SubQuery {
-    if (this._soql) {
-      throw Error('Cannot include child relationship into the query which has already built SOQL.');
-    }
-    this.includeChildren(childRelName);
-    return this._children[this._children.length - 1];
-  }
-
-  /**
-   * Include child relationship query(ies), but not moving down to the children context
-   */
-  includeChildren(
-    includes: string | { [string]: QueryConfigInput },
-    conditions?: QueryCondition,
-    fields?: QueryFieldsParam = '*',
+  include(
+    childRelName: string,
+    conditions?: ?QueryCondition,
+    fields?: ?QueryFieldsParam,
     options?: { limit?: number, offset?: number, sort?: SortConfig } = {}
-  ) {
+  ): SubQuery {
     if (this._soql) {
       throw Error('Cannot include child relationship into the query which has already built SOQL.');
     }
-    if (typeof includes === 'object') {
-      for (const crname of Object.keys(includes)) {
-        const {
-          conditions: cconditions, fields: cfields,
-          limit, offset, sort,
-        } = includes[crname];
-        const coptions = { limit, offset, sort };
-        this.includeChildren(crname, cconditions, cfields, coptions);
-      }
-      return this;
-    }
-    const childRelName: string = includes;
-    const childConfig: QueryConfigInput = {
+    const childConfig: QueryConfigParam = {
+      fields: fields === null ? undefined : fields,
       table: childRelName,
-      conditions,
-      fields,
+      conditions: conditions === null ? undefined : conditions,
       limit: options.limit,
       offset: options.offset,
       sort: options.sort,
@@ -235,6 +212,24 @@ export default class Query extends Serializable {
     // eslint-disable-next-line no-use-before-define
     const childQuery = new SubQuery(this._conn, childConfig, this);
     this._children.push(childQuery);
+    return childQuery;
+  }
+
+  /**
+   * Include child relationship queryies, but not moving down to the children context
+   */
+  includeChildren(includes: { [string]: QueryConfigParam }) {
+    if (this._soql) {
+      throw Error('Cannot include child relationship into the query which has already built SOQL.');
+    }
+    for (const crname of Object.keys(includes)) {
+      const {
+        conditions: cconditions, fields: cfields,
+        limit, offset, sort,
+      } = includes[crname];
+      const coptions = { limit, offset, sort };
+      this.include(crname, cconditions, cfields, coptions);
+    }
     return this;
   }
 
@@ -648,8 +643,9 @@ export class SubQuery {
   /**
    *
    */
-  constructor(conn: Connection, config: QueryConfigInput, parent: Query) {
+  constructor(conn: Connection, config: QueryConfigParam, parent: Query) {
     this._query = new Query(conn, config, parent);
+    this._parent = parent;
   }
 
   /**

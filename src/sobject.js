@@ -6,6 +6,15 @@ import type {
 } from './types';
 import Connection from './connection';
 import RecordReference from './record-reference';
+import Query, { ResponseTargets } from './query';
+import type { QueryFieldsParam, QueryOptions, QueryConfigParam } from './query';
+import type { QueryCondition } from './soql-builder';
+
+export type FindOptions = $Shape<QueryOptions & {
+  limit: number,
+  offset: number,
+  includes: {[string]: QueryConfigParam },
+}>;
 
 /**
  * A class for organizing all SObject access
@@ -210,6 +219,57 @@ export default class SObject {
     const body: any = await this._conn.request(url);
     return (body : DescribeApprovalLayoutsResult);
   }
+
+
+  /**
+   * Find and fetch records which matches given conditions
+   */
+  find(
+    conditions?: ?QueryCondition,
+    fields?: ?QueryFieldsParam,
+    options?: FindOptions = {}
+  ): Query {
+    const config: QueryConfigParam = {
+      fields: fields === null ? undefined : fields,
+      includes: options.includes,
+      table: this.type,
+      conditions: conditions === null ? undefined : conditions,
+      limit: options.limit,
+      offset: options.offset,
+    };
+    const query = new Query(this._conn, config, null, options);
+    query.setResponseTarget(ResponseTargets.Records);
+    return query;
+  }
+
+  /**
+   * Fetch one record which matches given conditions
+   */
+  findOne(
+    conditions?: QueryCondition,
+    fields?: QueryFieldsParam,
+    options?: $Shape<QueryOptions> = {}
+  ): Query {
+    const query = this.find(conditions, fields, Object.assign({}, options, { limit: 1 }));
+    query.setResponseTarget(ResponseTargets.SingleRecord);
+    return query;
+  }
+
+  /**
+   * Find and fetch records only by specifying fields to fetch.
+   */
+  select(fields: QueryFieldsParam) {
+    return this.find(null, fields);
+  }
+
+  /**
+   * Count num of records which matches given conditions
+   */
+  count(conditions?: ?QueryCondition) {
+    const query = this.find(conditions, { 'count()': true });
+    query.setResponseTarget(ResponseTargets.Count);
+    return query;
+  }
 }
 
-// TODO: find, recent, listview....
+// TODO: recent, listview....
