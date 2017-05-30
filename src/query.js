@@ -15,9 +15,17 @@ import type { Record } from './types';
  */
 export type QueryFieldsParam = string | string[] | { [string]: boolean|number };
 
+export type SubQueryConfigParam = {
+  fields?: QueryFieldsParam,
+  conditions?: QueryCondition,
+  sort?: SortConfig,
+  limit?: number,
+  offset?: number,
+}
+
 export type QueryConfigParam = {
   fields?: QueryFieldsParam,
-  includes?: { [string]: QueryConfigParam },
+  includes?: { [string]: SubQueryConfigParam },
   table: string,
   conditions?: QueryCondition,
   sort?: SortConfig,
@@ -218,17 +226,13 @@ export default class Query extends Serializable {
   /**
    * Include child relationship queryies, but not moving down to the children context
    */
-  includeChildren(includes: { [string]: QueryConfigParam }) {
+  includeChildren(includes: { [string]: SubQueryConfigParam }) {
     if (this._soql) {
       throw Error('Cannot include child relationship into the query which has already built SOQL.');
     }
     for (const crname of Object.keys(includes)) {
-      const {
-        conditions: cconditions, fields: cfields,
-        limit, offset, sort,
-      } = includes[crname];
-      const coptions = { limit, offset, sort };
-      this.include(crname, cconditions, cfields, coptions);
+      const { conditions, fields, ...options } = includes[crname];
+      this.include(crname, conditions, fields, options);
     }
     return this;
   }
@@ -439,6 +443,14 @@ export default class Query extends Serializable {
       ...this._children.map(childQuery => childQuery._expandFields()),
     ]);
     this._config.fields = efields;
+    this._config.includes = this._children.map((cquery) => {
+      const cconfig = cquery._query._config;
+      return [cconfig.table, cconfig];
+    })
+    .reduce((includes: { [string]: QueryConfig }, [ctable, cconfig]) => {
+      includes[ctable] = cconfig; // eslint-disable-line no-param-reassign
+      return includes;
+    }, {});
   }
 
   /**
@@ -701,22 +713,8 @@ export class SubQuery {
   /**
    *
    */
-  include() {
-    throw new Error('Not allowed to include another subquery in subquery.');
-  }
-
-  /**
-   *
-   */
   _expandFields() {
     return this._query._expandFields();
-  }
-
-  /**
-   *
-   */
-  toSOQL() {
-    return this._query.toSOQL();
   }
 
   /**
