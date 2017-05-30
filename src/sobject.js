@@ -7,6 +7,7 @@ import type {
 import Connection from './connection';
 import RecordReference from './record-reference';
 import Query, { ResponseTargets } from './query';
+import QuickAction from './quick-action';
 import type { QueryFieldsParam, QueryOptions, QueryConfigParam } from './query';
 import type { QueryCondition } from './soql-builder';
 
@@ -270,6 +271,96 @@ export default class SObject {
     query.setResponseTarget(ResponseTargets.Count);
     return query;
   }
+
+  /**
+   * Returns the list of list views for the SObject
+   *
+   * @param {Callback.<ListViewsInfo>} [callback] - Callback function
+   * @returns {Promise.<ListViewsInfo>}
+   */
+  listviews() {
+    const url = `${this._conn._baseUrl()}/sobjects/${this.type}/listviews`;
+    return this._conn.request(url);
+  }
+
+  /**
+   * Returns the list view info in specifed view id
+   *
+   * @param {String} id - List view ID
+   * @returns {ListView}
+   */
+  listview(id: string) {
+    return new ListView(this._conn, this.type, id); // eslint-disable-line no-use-before-define
+  }
+
+  /**
+   * Returns all registered quick actions for the SObject
+   *
+   * @param {Callback.<Array.<QuickAction~QuickActionInfo>>} [callback] - Callback function
+   * @returns {Promise.<Array.<QuickAction~QuickActionInfo>>}
+   */
+  quickActions() {
+    return this._conn.request(`/sobjects/${this.type}/quickActions`);
+  }
+
+  /**
+   * Get reference for specified quick aciton in the SObject
+   *
+   * @param {String} actionName - Name of the quick action
+   * @returns {QuickAction}
+   */
+  quickAction(actionName: string) {
+    return new QuickAction(this._conn, `/sobjects/${this.type}/quickActions/${actionName}`);
+  }
 }
 
-// TODO: recent, listview....
+/**
+ * A class for organizing list view information
+ *
+ * @protected
+ * @class ListView
+ * @param {Connection} conn - Connection instance
+ * @param {SObject} type - SObject type
+ * @param {String} id - List view ID
+ */
+class ListView {
+  _conn: Connection;
+  type: string;
+  id: string;
+
+  /**
+   *
+   */
+  constructor(conn: Connection, type: string, id: string) {
+    this._conn = conn;
+    this.type = type;
+    this.id = id;
+  }
+
+  /**
+   * Executes query for the list view and returns the resulting data and presentation information.
+   */
+  results() {
+    const url = `${this._conn._baseUrl()}/sobjects/${this.type}/listviews/${this.id}/results`;
+    return this._conn.request(url);
+  }
+
+
+  /**
+   * Returns detailed information about a list view
+   */
+  describe(options?: Object = {}) {
+    const url = `${this._conn._baseUrl()}/sobjects/${this.type}/listviews/${this.id}/describe`;
+    return this._conn.request({ method: 'GET', url, headers: options.headers });
+  }
+
+  /**
+   * Explain plan for executing list view
+   */
+  explain() {
+    const url = `/query/?explain=${this.id}`;
+    return this._conn.request(url);
+  }
+}
+
+// TODO Bulk

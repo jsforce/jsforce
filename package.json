@@ -29,7 +29,7 @@
     "flow": "flow",
     "test": "npm-run-all -r -p test:phantomjs test:ava",
     "test:phantomjs": "phantomjs --webdriver=4444 --ssl-protocol=tlsv1",
-    "test:ava": "ava test.es6/{connection-*,query}.test.js"
+    "test:ava": "ava test.es6/{connection-*,query,sobject}.test.js"
   },
   "directories": {
     "test": "test/"
