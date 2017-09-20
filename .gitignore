@@ -5,10 +5,14 @@ lib-cov
 *.out
 *.pid
 *.gz
+.idea
+.DS_Store
 
 pids
 logs
 results
+test/data/Attachments/request.txt
+test/data/Attachments.zip
 
 node_modules
 npm-debug.log

@@ -2,11 +2,14 @@
 var TestEnv = require('./helper/testenv'),
     assert = TestEnv.assert;
 
-var async  = require('async'),
-    _      = require('lodash/core'),
-    fs     = require('fs'),
-    sf     = require('../lib/jsforce'),
-    config = require('./config/salesforce');
+var AdmZip  = require('adm-zip'),
+    async   = require('async'),
+    _       = require('lodash/core'),
+    fs      = require('fs'),
+    fsExtra = require('fs-extra'),
+    replace = require('replace'),
+    sf      = require('../lib/jsforce'),
+    config  = require('./config/salesforce');
 
 var testEnv = new TestEnv(config);
 
@@ -30,6 +33,25 @@ describe("bulk", function() {
     testEnv.establishConnection(conn, done);
   });
 
+  /**
+   *
+   */
+  describe('bulk insert invalid contentType', function() {
+    it('should throw error for invalid contentType', function(done) {
+      var records = [];
+
+      try {
+        conn.bulk.load('Account', 'insert', {contentType: 'INVALID'}, records, function() {
+          assert(false, 'Should have thrown error');
+        });
+      } catch (err) {
+        assert.ok(err);
+        assert.ok(err.name === 'Error');
+        assert.ok(err.message === 'Not valid contentType. Values CSV, XML, JSON, ZIP_CSV, ZIP_XML, ZIP_JSON');
+        done();
+      }
+    });
+  });
 
   /**
    *
@@ -94,6 +116,110 @@ describe("bulk", function() {
       conn.bulk.load('Account', 'update', [], function(err, rets) {
         assert.ok(err);
         assert.ok(err.name === 'ClientInputError');
+      }.check(done));
+    });
+
+  });
+
+  /**
+   *
+   */
+  describe('bulk insert binary data', function() {
+    it('should insert and return updated status', function(done) {
+      async.waterfall([
+        function(next) {
+          conn.sobject('Account')
+            .find({ Name : { $like : 'Bulk Account%' }}, { Id: 1, Name : 1 })
+            .execute(next);
+        },
+        function(records, next) {
+          // get one Account to attach to
+          var accountSfId = (records[0] || {}).Id,
+            zip = new AdmZip(),
+            zipReadStream;
+
+          if (!accountSfId) {
+            throw new Error('No account to test bulk attachments');
+          }
+
+          // Need to copy over the requestTemplate to Attachments dir and replace with valid Id.
+          // We want a fresh copy every time.
+          fsExtra.copySync(__dirname + '/data/requestTemplate.txt', __dirname + '/data/Attachments/request.txt');
+          replace({
+            regex: /<--REPLACE_ID-->/g,
+            replacement: accountSfId,
+            paths: [__dirname + '/data/Attachments/request.txt'],
+            recursive: false,
+            silent: true,
+          });
+
+          zip.addLocalFolder(__dirname + '/data/Attachments');
+          zip.writeZip(__dirname + '/data/Attachments.zip');
+          zipReadStream = fs.createReadStream(__dirname + '/data/Attachments.zip');
+
+          conn.bulk.load('Attachment', 'insert', { contentType: 'ZIP_CSV' }, zipReadStream, next);
+        }
+      ], function(err, rets) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(rets));
+        var ret;
+        for (var i=0; i<rets.length; i++) {
+          ret = rets[i];
+          assert.ok(_.isString(ret.id));
+          assert.ok(ret.success === true);
+        }
+      }.check(done));
+    });
+
+    it('should fail when bad data in request.txt', function(done) {
+      async.waterfall([
+        function(next) {
+          var zip = new AdmZip(),
+            zipReadStream;
+
+          // Need to copy over the requestTemplate to Attachments dir and replace with valid Id.
+          // We want a fresh copy every time.
+          // Dont replace Ids in this case to get errors
+          fsExtra.copySync(__dirname + '/data/requestTemplate.txt', __dirname + '/data/Attachments/request.txt');
+
+          zip.addLocalFolder(__dirname + '/data/Attachments');
+          zip.writeZip(__dirname + '/data/Attachments.zip');
+          zipReadStream = fs.createReadStream(__dirname + '/data/Attachments.zip');
+
+          conn.bulk.load('Attachment', 'insert', { contentType: 'ZIP_CSV' }, zipReadStream, next);
+        }
+      ], function(err, rets) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(rets));
+        var ret;
+        for (var i=0; i<rets.length; i++) {
+          ret = rets[i];
+          assert.ok(ret.errors.length > 0);
+          assert.ok(ret.success === false);
+        }
+      }.check(done));
+    });
+
+    it("should fail when no request.txt file", function(done) {
+      async.waterfall([
+        function(next) {
+          var zip = new AdmZip(),
+            zipReadStream;
+
+          if (fs.existsSync(__dirname + '/data/Attachments/request.txt')) {
+            fsExtra.removeSync(__dirname + '/data/Attachments/request.txt');
+          }
+
+          zip.addLocalFolder(__dirname + '/data/Attachments');
+          zip.writeZip(__dirname + '/data/Attachments.zip');
+          zipReadStream = fs.createReadStream(__dirname + '/data/Attachments.zip');
+
+          conn.bulk.load('Attachment', 'insert', { contentType: 'ZIP_CSV' }, zipReadStream, next);
+        }
+      ], function(err) {
+        assert.ok(err);
+        assert.ok(err.name === 'Error');
+        assert.ok(err.message.indexOf('"request.txt" is missing or is a directory') > -1);
       }.check(done));
     });
 
