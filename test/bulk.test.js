@@ -33,6 +33,25 @@ describe("bulk", function() {
     testEnv.establishConnection(conn, done);
   });
 
+  /**
+   *
+   */
+  describe('bulk insert invalid contentType', function() {
+    it('should throw error for invalid contentType', function(done) {
+      var records = [];
+
+      try {
+        conn.bulk.load('Account', 'insert', {contentType: 'INVALID'}, records, function() {
+          assert(false, 'Should have thrown error');
+        });
+      } catch (err) {
+        assert.ok(err);
+        assert.ok(err.name === 'Error');
+        assert.ok(err.message === 'Not valid contentType. Values CSV, XML, JSON, ZIP_CSV, ZIP_XML, ZIP_JSON');
+        done();
+      }
+    });
+  });
 
   /**
    *
