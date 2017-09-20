@@ -1,0 +1,4 @@
+Name,ParentId,Body
+attachment1.jpg,<--REPLACE_ID-->,#attachment1.jpg
+attachment2.jpg,<--REPLACE_ID-->,#attachment2.jpg
+attachment3.jpg,<--REPLACE_ID-->,#attachment3.jpg
