@@ -16,7 +16,7 @@ var testEnv = new TestEnv(config);
 /**
  *
  */
-describe("query", function() {
+describe.only("query", function() {
 
   this.timeout(40000); // set timeout to 40 sec.
 
@@ -37,6 +37,19 @@ describe("query", function() {
   describe("query accounts", function() {
     it("should return records", function(done) {
       var query = conn.query("SELECT Id, Name FROM Account");
+      query.run(function(err, result) {
+        if (err) { throw err; }
+        assert.ok(_.isNumber(result.totalSize));
+      }.check(done));
+    });
+  });
+
+  /**
+   *
+   */
+  describe("query assignment rules", function() {
+    it("should return records", function(done) {
+      var query = conn.query("SELECT Id, Name, SobjectType FROM AssignmentRule");
       query.run(function(err, result) {
         if (err) { throw err; }
         assert.ok(_.isNumber(result.totalSize));

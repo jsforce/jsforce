@@ -248,6 +248,62 @@ describe("soap", function() {
   
   });
 
+  describe("leads with SOAP API", function() {
+    it("upsert lead with lead assignment rule header", function(done) {
+      var sObjects = [
+        {
+          type: 'Lead',
+          FirstName: 'Stefan',
+          LastName: 'Koenig',
+          ExtId__c: 'hull1234',
+          Company: "Hull Inc",
+          Email: "skoenig@hull.io"
+        }
+      ];
+
+      var ruleId = '01Q1I000000XrfiUAC';
+      var config = { AssignmentRuleHeader: { assignmentRuleId: ruleId }};
+
+      conn.soap.upsert('ExtId__c', sObjects, function(err, rets) {
+        if (err) { throw err; }
+        for(var i=0; i<rets.length; i++) {
+          var ret = rets[i];
+          assert(ret.created === false);
+          assert(ret.success === true);
+          assert(_.isString(ret.id));
+        }
+      }.check(done), config);
+    });
+
+    it("upsert lead with lead assignment rule header should create a new one", function(done) {
+
+      var number = new Date().getTime()
+      var sObjects = [
+        {
+          type: 'Lead',
+          FirstName: 'Stefan' ,
+          LastName: 'JSForce #' + number,
+          ExtId__c: 'hull' + number,
+          Company: "Hull Inc",
+          Email: "stefan" + number + "@hull.io"
+        }
+      ];
+
+      var ruleId = '01Q1I000000XrfiUAC';
+      var config = { AssignmentRuleHeader: { assignmentRuleId: ruleId }};
+
+      conn.soap.upsert('ExtId__c', sObjects, function(err, rets) {
+        if (err) { throw err; }
+        for(var i=0; i<rets.length; i++) {
+          var ret = rets[i];
+          assert(ret.created === true);
+          assert(ret.success === true);
+          assert(_.isString(ret.id));
+        }
+      }.check(done), config);
+    });
+  });
+
 /*------------------------------------------------------------------------*/
 
   /**
