@@ -66,7 +66,7 @@
     "lodash": "^4.11.1",
     "multistream": "^2.0.5",
     "open": "0.0.5",
-    "promise": "^7.1.1",
+    "bluebird": "^3.5.1",
     "readable-stream": "^2.1.0",
     "request": "^2.72.0",
     "xml2js": "^0.4.16"
