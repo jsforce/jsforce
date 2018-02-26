@@ -1,5 +1,3 @@
-os:
-  - linux
 language: node_js
 matrix:
   include:

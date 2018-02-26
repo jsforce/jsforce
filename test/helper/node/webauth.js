@@ -5,7 +5,10 @@ var puppeteer = require('puppeteer');
 module.exports = function(url, username, password, callback) {
   var browser, page;
 
-  return puppeteer.launch({ headless: true, timeout: 200000 }).then(function(_browser) {
+  return puppeteer.launch({
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
+  })
+  .then(function(_browser) {
     browser = _browser;
     return browser.newPage();
   })
