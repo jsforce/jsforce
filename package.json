@@ -57,7 +57,7 @@
   },
   "dependencies": {
     "co-prompt": "^1.0.0",
-    "coffee-script": "^1.10.0",
+    "coffeescript": "^1.10.0",
     "commander": "^2.9.0",
     "csv-parse": "^1.1.1",
     "csv-stringify": "^1.0.4",
