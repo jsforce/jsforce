@@ -10,8 +10,6 @@ matrix:
     - node_js: "stable"
       env: BROWSER_TEST=true
 sudo: false
-before_install:
-  - source .travis/setup.sh
 script:
   - .travis/test.sh
 cache:
