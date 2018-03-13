@@ -63,6 +63,7 @@
     "csv-stringify": "^1.0.4",
     "faye": "^1.2.0",
     "inherits": "^2.0.1",
+    "js-cookie": "^2.2.0",
     "lodash": "^4.11.1",
     "multistream": "^2.0.5",
     "open": "0.0.5",
