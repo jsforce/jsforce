@@ -6,7 +6,7 @@ Salesforce API Library for JavaScript applications (both on web browser and Node
 
 ## Overview
 
-JSforce (f.k.a. Node-Salesforce) is a isomorphic JavaScript Library utilizing Salesforce's API: It works both in  browser and with Node.js.
+JSforce (f.k.a. Node-Salesforce) is an isomorphic JavaScript Library utilizing Salesforce's API: It works both in the browser and with Node.js.
 
 It capsulates the access to various APIs provided by Salesforce in asynchronous JavaScript function calls.
 
@@ -23,9 +23,9 @@ Supported Salesforce APIs are the following:
 - Streaming API
 - Tooling API
 
-## Document
+## Documentation
 
-See document in http://jsforce.github.io/ .
+See documentation in http://jsforce.github.io/ .
 
 ## Releases
 
@@ -43,6 +43,24 @@ See [license](LICENSE) (MIT License).
 ## Notes
 
 If you have any questions first file it on [issues](https://github.com/jsforce/jsforce/issues) before contacting authors via e-mail.
+
+## Tests
+
+In order to run tests you will need:
+- [PhantomJS](http://phantomjs.org)
+- [Salesforce Developer Org](https://developer.salesforce.com/signup)
+
+You will also need to install the JsforceTestSuite package, which can be done by running:
+
+    SF_USERNAME=myusername SF_PASSWORD=password+securityToken ./test/bin/org-setup
+
+/You may need to run this more then once if you encounter timeouts or dropped connections/
+
+Finally, to run the tests simply do:
+
+    SF_USERNAME=myusername SF_PASSWORD=password+securityToken npm run test:node
+
+    SF_USERNAME=myusername SF_PASSWORD=password+securityToken npm run test:browser
 
 ## Contributions
 

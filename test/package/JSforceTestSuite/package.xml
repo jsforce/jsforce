@@ -27,6 +27,11 @@
         <name>CustomObject</name>
     </types>
     <types>
+        <members>JSforceTestDashboards</members>
+        <members>JSforceTestDashboards/Lead_List_Dashboard</members>
+        <name>Dashboard</name>
+    </types>
+    <types>
         <members>BigTable__c-BigTable Layout</members>
         <members>UpsertTable__c-UpsertTable Layout</members>
         <members>UserPool__c-User Pool Layout</members>

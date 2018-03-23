@@ -18,6 +18,11 @@ describe("analytics", function() {
   var conn = testEnv.createConnection();
 
   var reportId;
+  var cloneId;
+  var dashboardMetadata;
+  var dashboardId;
+  var dashboardFolderId;
+  var cloneDashboardId;
 
   /**
    *
@@ -35,6 +40,17 @@ describe("analytics", function() {
       if (err) { throw err; }
       if (!res) { throw new Error("No Report Name 'Lead List Report' was found in the org."); }
       reportId = res.Id;
+    }.check(done));
+  });
+
+  /**
+   *
+   */
+  before(function(done) {
+    conn.sobject('Dashboard').findOne({ Title: 'Lead List Dashboard'}, "Id").execute(function(err, res) {
+      if (err) { throw err; }
+      if (!res) { throw new Error("No Dashboard Named 'Lead List Dashboard' was found in the org."); }
+      dashboardId = res.Id;
     }.check(done));
   });
 
@@ -209,6 +225,169 @@ describe("analytics", function() {
           assert.ok(_.isNumber(plan.sobjectCardinality));
           assert.ok(_.isString(plan.sobjectType));
         }
+      }.check(done));
+    });
+  });
+
+  /**
+   *
+   */
+  describe("clone report", function() {
+    it("should clone the report", function(done) {
+      conn.analytics.report(reportId).clone("Lead List Report Clone", function(err, result) {
+        if (err) { throw err; }
+        assert.ok(_.isObject(result.reportMetadata));
+        cloneId = result.reportMetadata.id;
+        assert.ok(cloneId !== reportId);
+        assert.ok(result.reportMetadata.name === "Lead List Report Clone");
+      }.check(done));
+    });
+  });
+
+  /**
+   *
+   */
+  describe("destroy report", function() {
+    it("should destroy the report", function(done) {
+      conn.analytics.report(cloneId).destroy(function(err, result) {
+        if (err) { throw err; }
+        conn.analytics.report(cloneId).describe(function(desc_err) {
+          assert.ok(_.isObject(desc_err));
+          assert.ok(desc_err.name === "NOT_FOUND");
+        });
+      }.check(done));
+    });
+  });
+
+  /**
+   *
+   */
+  describe("list recent dashboards", function() {
+    it("should return dashboard infomation list", function(done) {
+      conn.analytics.reports(function(err, dashboards) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(dashboards));
+        dashboards.forEach(function(dashboard) {
+          assert.ok(_.isString(dashboard.id));
+          assert.ok(_.isString(dashboard.name));
+          assert.ok(_.isString(dashboard.url));
+        });
+      }.check(done));
+    });
+  });
+
+
+  /**
+   *
+   */
+  describe("describe dashboard", function() {
+    it("should return dashboard metadata", function(done) {
+      conn.analytics.dashboard(dashboardId).describe(function(err, meta) {
+        if (err) { throw err; }
+        assert.ok(_.isObject(meta));
+        assert.ok(_.isArray(meta.components));
+        assert.ok(_.isObject(meta.layout));
+        dashboardMetadata = _.clone(meta);
+        dashboardFolderId = meta.folderId;
+      }.check(done));
+    });
+  });
+
+  /**
+   *
+   */
+  describe("getting all dashboard components", function () {
+    it("should return all components", function (done) {
+      conn.analytics.dashboard(dashboardId).components(function (err, meta) {
+        if (err) { throw err; }
+        assert.equal(_.size(dashboardMetadata.components), _.size(meta.componentData));
+      }.check(done));
+    });
+  });
+
+  /**
+   *
+   */
+  describe("getting one dashboard component", function() {
+    it("should return one component", function(done) {
+      conn.analytics.dashboard(dashboardId).components(dashboardMetadata.components[0].id, function (err, meta) {
+        if (err) { throw err; }
+        assert.equal(1, _.size(meta.componentData));
+      }.check(done));
+    });
+  });
+
+  /**
+   *
+   */
+  describe("getting three dashboard components", function () {
+    it("should return three components", function (done) {
+      var ids = [
+        dashboardMetadata.components[0].id,
+        dashboardMetadata.components[1].id,
+        dashboardMetadata.components[2].id,
+      ];
+      assert.equal(3, _.size(ids));
+      conn.analytics.dashboard(dashboardId).components(ids, function (err, meta) {
+        if (err) { throw err; }
+        assert.equal(3, _.size(meta.componentData));
+      }.check(done));
+    });
+  });
+
+  /**
+   *
+   */
+  describe("status dashboard", function() {
+    it("should return dashboard metadata", function(done) {
+      conn.analytics.dashboard(dashboardId).status(function(err, meta) {
+        if (err) { throw err; }
+        assert.ok(_.isObject(meta));
+        assert.ok(_.isArray(meta.componentStatus));
+      }.check(done));
+    });
+  });
+
+  /**
+   *
+   */
+  describe("clone dashboard", function() {
+    it("should clone the dashboard", function(done) {
+      conn.analytics.dashboard(dashboardId).clone({ name : "Lead List Dashboard Clone", folderId : dashboardFolderId }, function(err, result) {
+        if (err) { throw err; }
+        assert.ok(_.isObject(result.attributes));
+        cloneDashboardId = result.attributes.dashboardId;
+        assert.ok(cloneDashboardId !== dashboardId);
+        assert.ok(result.name === "Lead List Dashboard Clone");
+      }.check(done));
+    });
+  });
+
+  /**
+   *
+   */
+  describe("refresh dashboard", function() {
+    it("should refresh dashboard metadata", function(done) {
+      // refresh cloned dashboard, in order to prevent frequent refresh error.
+      conn.analytics.dashboard(cloneDashboardId).refresh(function(err, meta) {
+        if (err) { throw err; }
+        assert.ok(_.isObject(meta));
+        assert.ok(_.isString(meta.statusUrl));
+      }.check(done));
+    });
+  });
+
+  /**
+   *
+   */
+  describe("destroy dashboard", function() {
+    it("should destroy the dashboard", function(done) {
+      conn.analytics.dashboard(cloneDashboardId).destroy(function(err, result) {
+        if (err) { throw err; }
+        conn.analytics.dashboard(cloneDashboardId).describe(function(desc_err) {
+          assert.ok(_.isObject(desc_err));
+          assert.ok(desc_err.name === "ENTITY_IS_DELETED");
+        });
       }.check(done));
     });
   });

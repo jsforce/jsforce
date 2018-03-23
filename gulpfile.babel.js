@@ -10,7 +10,7 @@ import uglify from 'gulp-uglify';
 
 let coreModules;
 const commonModules = [
-  'inherits', 'util', 'events', 'lodash/core', 'readable-stream'
+  'inherits', 'util', 'events', 'lodash/core', 'readable-stream', 'multistream'
 ];
 const apiModules = [
   'analytics', 'apex', 'bulk', 'chatter', 'metadata', 'soap', 'streaming', 'tooling'
@@ -71,17 +71,18 @@ gulp.task('build:required', (cb) => {
   fs.readdir('./lib', function(err, files) {
     if (err) { return cb(err); }
     coreModules =
-      files.filter((f) => /\.js$/.test(f) && !/^(jsforce|require)\.js$/.test(f))
+      files.filter((f) => /\.js$/.test(f) && !/^(jsforce|require|_required)\.js$/.test(f))
            .map((f) => './' + f.replace(/\.js$/, ''));
-    var requireFile = './lib/require.js';
-    var code = fs.readFileSync(requireFile, 'utf8');
-    code = code.replace(/START_REQUIRE([\s\S]+)END_REQUIRE/m, function($0, $1) {
-      return [
-        'START_REQUIRE',
-        ...commonModules.concat(coreModules).map((module) => `require('${module}');`),
-        '// END_REQUIRE',
-      ].join('\n');
-    });
+    var requireFile = './lib/_required.js';
+    var code = [
+      '// This file content is dynamically created in build script',
+      '"use strict";',
+      'module.exports = {',
+      commonModules.concat(coreModules)
+        .map((module) => `  '${module}': require('${module}')`)
+        .join(',\n'),
+      '};'
+    ].join('\n');
     fs.writeFileSync(requireFile, code, 'utf8');
     cb();
   });

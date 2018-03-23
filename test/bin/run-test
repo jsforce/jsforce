@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 var spawn = require('child_process').spawn;
-require('dotenv').load();
+require('dotenv').load({ silent: true });
 
 // startup phantomjs ghostdriver server before starting test
 var webdriverPort = process.env.WEBDRIVER_PORT || 4444;
@@ -14,12 +14,12 @@ try {
 // wait till the server bootup
 setTimeout(function() {
 
-  var args = "--reporter spec --require intelli-espower-loader".split(/\s+/);
+  var args = "--retries 2 --reporter spec --require intelli-espower-loader".split(/\s+/);
   if (process.argv.length > 2) {
     args.push("test/" + process.argv[2]+ ".test.js");
   }
 
-  var mocha = spawn('mocha', args);
+  var mocha = spawn(__dirname + '/../../node_modules/.bin/mocha', args);
 
   mocha.stdout.pipe(process.stdout);
   mocha.stderr.pipe(process.stderr);
