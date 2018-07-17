@@ -214,8 +214,9 @@ describe("connection-crud", function() {
     describe("then retrieve the accounts", function() {
       it("should not return any records", function(done) {
         conn.sobject('Account').retrieve(accountIds, function(err, records) {
-          assert.ok(err instanceof Error);
-          assert.ok(err.errorCode === 'NOT_FOUND');
+          records.forEach(function(record) {
+            assert.ok(record === null);
+          });
         }.check(done));
       });
     });
