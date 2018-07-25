@@ -295,6 +295,8 @@ if (TestEnv.isNodeJS) {
   });
 
 /*------------------------------------------------------------------------*/
+  // The num should be more than 200 which fallback from SObject collection API
+  var bulkAccountNum = 250;
 
   /**
    *
@@ -302,7 +304,7 @@ if (TestEnv.isNodeJS) {
   describe("bulk update using Query#update", function() {
     before(function(done) {
       var records = [];
-      for (var i=0; i<200; i++) {
+      for (var i=0; i<bulkAccountNum; i++) {
         records.push({
           Name: 'New Bulk Account #'+(i+1),
           BillingState: 'CA',
@@ -321,7 +323,7 @@ if (TestEnv.isNodeJS) {
           }, function(err, rets) {
             if (err) { throw err; }
             assert.ok(_.isArray(rets));
-            assert.ok(rets.length === 200);
+            assert.ok(rets.length === bulkAccountNum);
             for (var i=0; i<rets.length; i++) {
               var ret = rets[i];
               assert.ok(_.isString(ret.id));
@@ -336,9 +338,9 @@ if (TestEnv.isNodeJS) {
             .find({ Name : { $like : 'New Bulk Account%' }}, 'Id, Name, BillingState', function(err, records) {
               if (err) { throw err; }
               assert.ok(_.isArray(records));
-              assert.ok(records.length === 200);
+              assert.ok(records.length === bulkAccountNum);
               var record;
-              for (var i=0; i<200; i++) {
+              for (var i=0; i<records.length; i++) {
                 record = records[i];
                 assert.ok(_.isString(record.Id));
                 assert.ok(/\(Updated\)$/.test(record.Name));
@@ -374,7 +376,7 @@ if (TestEnv.isNodeJS) {
           .destroy(function(err, rets) {
             if (err) { throw err; }
             assert.ok(_.isArray(rets));
-            assert.ok(rets.length === 200);
+            assert.ok(rets.length === bulkAccountNum);
             for (var i=0; i<rets.length; i++) {
               var ret = rets[i];
               assert.ok(_.isString(ret.id));
