@@ -20,6 +20,7 @@ Supported Salesforce APIs are the following:
 - Bulk API
 - Chatter API
 - Metadata API
+- SOAP API
 - Streaming API
 - Tooling API
 
