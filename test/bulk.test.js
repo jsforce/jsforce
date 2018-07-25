@@ -398,6 +398,84 @@ if (TestEnv.isNodeJS) {
     });
   });
 
+
+/*------------------------------------------------------------------------*/
+  // This is usually small num to use Bulk API, but forcely use it by modifying bulkThreshold num
+  var smallAccountNum = 20;
+
+  /**
+   *
+   */
+  describe("bulk update using Query#update, with bulkThreshold modified", function() {
+    before(function(done) {
+      var records = [];
+      for (var i=0; i<smallAccountNum; i++) {
+        records.push({
+          Name: 'New Bulk Account #'+(i+1),
+          BillingState: 'CA',
+          NumberOfEmployees: 300 * (i+1)
+        });
+      }
+      conn.bulk.load("Account", "insert", records, done);
+    });
+
+    it("should return updated status", function(done) {
+      conn.sobject('Account')
+          .find({ Name : { $like : 'New Bulk Account%' }})
+          .update({
+            Name : '${Name} (Updated)',
+            BillingState: null
+          }, { bulkThreshold: 0 }, function(err, rets) {
+            if (err) { throw err; }
+            assert.ok(_.isArray(rets));
+            assert.ok(rets.length === smallAccountNum);
+            for (var i=0; i<rets.length; i++) {
+              var ret = rets[i];
+              assert.ok(_.isString(ret.id));
+              assert.ok(ret.success === true);
+            }
+          }.check(done));
+    });
+
+    describe("then query updated records", function() {
+      it("should return updated records", function(done) {
+        conn.sobject('Account')
+            .find({ Name : { $like : 'New Bulk Account%' }}, 'Id, Name, BillingState', function(err, records) {
+              if (err) { throw err; }
+              assert.ok(_.isArray(records));
+              assert.ok(records.length === smallAccountNum);
+              var record;
+              for (var i=0; i<records.length; i++) {
+                record = records[i];
+                assert.ok(_.isString(record.Id));
+                assert.ok(/\(Updated\)$/.test(record.Name));
+                assert.ok(record.BillingState === null);
+              }
+            }.check(done));
+      });
+    });
+  });
+
+  /**
+   *
+   */
+  describe("bulk delete using Query#destroy, with bulkThreshold modified", function() {
+    it("should return deleted status", function(done) {
+      conn.sobject('Account')
+          .find({ Name : { $like : 'New Bulk Account%' }})
+          .destroy({ bulkThreshold: 0 }, function(err, rets) {
+            if (err) { throw err; }
+            assert.ok(_.isArray(rets));
+            assert.ok(rets.length === smallAccountNum);
+            for (var i=0; i<rets.length; i++) {
+              var ret = rets[i];
+              assert.ok(_.isString(ret.id));
+              assert.ok(ret.success === true);
+            }
+          }.check(done));
+    });
+  });
+ 
   // graceful shutdown to wait remaining jobs to close...
   after(function(done) {
     setTimeout(function() {
