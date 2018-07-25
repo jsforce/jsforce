@@ -330,6 +330,83 @@ describe("query", function() {
     });
   });
 
+/*------------------------------------------------------------------------*/
+  // The num is over 200, but not falling back to bulk API because `allowBulk` option is set to false.
+  var massiveAccountNum = 300;
+
+  /**
+   *
+   */
+  describe("update queried records using Query#update, with allowBulk = false", function() {
+    before(function(done) {
+      var records = [];
+      for (var i=0; i<massiveAccountNum; i++) {
+        records.push({
+          Name: 'New Bulk Account #'+(i+1),
+          BillingState: 'CA',
+          NumberOfEmployees: 300 * (i+1)
+        });
+      }
+      conn.sobject("Account").create(records, { allowRecursive: true }, done);
+    });
+
+    it("should return updated status", function(done) {
+      conn.sobject('Account')
+          .find({ Name : { $like : 'New Bulk Account%' }})
+          .update({
+            Name : '${Name} (Updated)',
+            BillingState: null
+          }, { allowBulk: false }, function(err, rets) {
+            if (err) { throw err; }
+            assert.ok(_.isArray(rets));
+            assert.ok(rets.length === massiveAccountNum);
+            for (var i=0; i<rets.length; i++) {
+              var ret = rets[i];
+              assert.ok(_.isString(ret.id));
+              assert.ok(ret.success === true);
+            }
+          }.check(done));
+    });
+
+    describe("then query updated records", function() {
+      it("should return updated records", function(done) {
+        conn.sobject('Account')
+            .find({ Name : { $like : 'New Bulk Account%' }}, 'Id, Name, BillingState', function(err, records) {
+              if (err) { throw err; }
+              assert.ok(_.isArray(records));
+              assert.ok(records.length === massiveAccountNum);
+              var record;
+              for (var i=0; i<records.length; i++) {
+                record = records[i];
+                assert.ok(_.isString(record.Id));
+                assert.ok(/\(Updated\)$/.test(record.Name));
+                assert.ok(record.BillingState === null);
+              }
+            }.check(done));
+      });
+    });
+  });
+
+  /**
+   *
+   */
+  describe("delete queried records using Query#destroy, with allowBulk = false", function() {
+    it("should return deleted status", function(done) {
+      conn.sobject('Account')
+          .find({ Name : { $like : 'New Bulk Account%' }})
+          .destroy(function(err, rets) {
+            if (err) { throw err; }
+            assert.ok(_.isArray(rets));
+            assert.ok(rets.length === massiveAccountNum);
+            for (var i=0; i<rets.length; i++) {
+              var ret = rets[i];
+              assert.ok(_.isString(ret.id));
+              assert.ok(ret.success === true);
+            }
+          }.check(done));
+    });
+  });
+
   /**
    *
    */
