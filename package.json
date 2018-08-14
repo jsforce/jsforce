@@ -59,7 +59,7 @@
     "co-prompt": "^1.0.0",
     "coffeescript": "^1.10.0",
     "commander": "^2.9.0",
-    "csv-parse": "^1.1.1",
+    "csv-parse": "^2.5.0",
     "csv-stringify": "^1.0.4",
     "faye": "^1.2.0",
     "inherits": "^2.0.1",
