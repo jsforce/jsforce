@@ -1,6 +1,8 @@
 language: node_js
 matrix:
   include:
+    - node_js: "6"
+      env: BROWSER_TEST=false
     - node_js: "8"
       env: BROWSER_TEST=false
     - node_js: "stable"
@@ -13,3 +15,5 @@ script:
 cache:
   directories:
     - node_modules
+before_install:
+  - dpkg --compare-versions `npm -v` ge 5 || npm i -g npm@^5
