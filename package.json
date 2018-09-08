@@ -92,7 +92,7 @@
     "jsdoc": "^3.5.5",
     "mocha": "^5.2.0",
     "power-assert": "^1.6.0",
-    "puppeteer": "^1.6.1",
+    "puppeteer": "^1.8.0",
     "require-swapper": "^0.1.6",
     "testem": "^2.8.2",
     "through2": "^2.0.3",
