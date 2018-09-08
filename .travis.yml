@@ -15,3 +15,5 @@ script:
 cache:
   directories:
     - node_modules
+before_install:
+  - dpkg --compare-versions `npm -v` ge 5 || npm i -g npm@^5
