@@ -93,7 +93,7 @@
     "mocha": "^5.2.0",
     "power-assert": "^1.6.0",
     "puppeteer": "^1.6.1",
-    "require-swapper": "^0.1.6",
+    "require-swapper": "^0.1.7",
     "testem": "^2.8.2",
     "through2": "^2.0.3",
     "utf-8-validate": "^5.0.1",
