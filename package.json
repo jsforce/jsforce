@@ -77,25 +77,17 @@
     "@babel/preset-env": "^7.0.0",
     "@babel/preset-flow": "^7.0.0",
     "@babel/register": "^7.0.0",
-    "ava": "^0.18.1",
+    "ava": "^1.0.0-beta.8",
     "babel-eslint": "^7.1.1",
     "dotenv": "^4.0.0",
     "eslint": "3.15.0",
     "eslint-config-airbnb-base": "11.1.0",
     "eslint-plugin-flowtype": "^2.32.1",
     "eslint-plugin-import": "2.2.0",
+    "esm": "^3.0.82",
     "flow-bin": "^0.45.0",
     "npm-run-all": "^4.0.2",
     "through2": "^2.0.3",
     "webdriverio": "^4.6.2"
-  },
-  "ava": {
-    "concurrency": 1,
-    "verbose": true,
-    "failFast": true,
-    "require": [
-      "babel-register"
-    ],
-    "babel": "inherit"
   }
 }
