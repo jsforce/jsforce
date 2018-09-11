@@ -1,9 +1,24 @@
 {
-  "presets": ["es2015", "es2017"],
+  "presets": [
+    ["@babel/preset-env", {
+      "useBuiltIns": "usage"
+    }],
+    "@babel/preset-flow"
+  ],
   "plugins": [
-    "transform-object-rest-spread",
-    "transform-class-properties",
-    "transform-runtime",
-    "transform-flow-strip-types"
-  ]
+    "@babel/plugin-proposal-class-properties",
+    ["@babel/plugin-transform-runtime", {
+      "corejs": 2
+    }]
+  ],
+  "env": {
+    "test": {
+      "presets": [
+        ["@babel/preset-env", {
+          "useBuiltIns": "usage",
+          "targets": { "node": true }
+        }]
+      ]
+    }
+  }
 }
