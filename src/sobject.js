@@ -47,7 +47,7 @@ export default class SObject {
       conn._logLevel ? SObject._logger.createInstance(conn._logLevel) : SObject._logger;
     const cache = this._conn.cache;
     const layoutCacheKey = layoutName => (layoutName ? `layouts.namedLayouts.${layoutName}` : `layouts.${this.type}`);
-    const layouts = this.layouts;
+    const layouts = SObject.prototype.layouts;
     this.layouts = (
       cache.createCachedFunction(layouts, this, { key: layoutCacheKey, strategy: 'NOCACHE' }) : any
     );
@@ -58,7 +58,7 @@ export default class SObject {
       cache.createCachedFunction(layouts, this, { key: layoutCacheKey, strategy: 'IMMEDIATE' }) : any
     );
     const compactLayoutCacheKey = `compactLayouts.${this.type}`;
-    const compactLayouts = this.compactLayouts;
+    const compactLayouts = SObject.prototype.compactLayouts;
     this.compactLayouts = (
       cache.createCachedFunction(compactLayouts, this, { key: compactLayoutCacheKey, strategy: 'NOCACHE' }) : any
     );
@@ -69,7 +69,7 @@ export default class SObject {
       cache.createCachedFunction(compactLayouts, this, { key: compactLayoutCacheKey, strategy: 'IMMEDIATE' }) : any
     );
     const approvalLayoutCacheKey = `approvalLayouts.${this.type}`;
-    const approvalLayouts = this.approvalLayouts;
+    const approvalLayouts = SObject.prototype.approvalLayouts;
     this.approvalLayouts = (
       cache.createCachedFunction(approvalLayouts, this, { key: approvalLayoutCacheKey, strategy: 'NOCACHE' }) : any
     );

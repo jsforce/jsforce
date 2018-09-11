@@ -10,5 +10,15 @@
     ["@babel/plugin-transform-runtime", {
       "corejs": 2
     }]
-  ]
+  ],
+  "env": {
+    "test": {
+      "presets": [
+        ["@babel/preset-env", {
+          "useBuiltIns": "usage",
+          "targets": { "node": true }
+        }]
+      ]
+    }
+  }
 }

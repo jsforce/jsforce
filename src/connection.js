@@ -211,7 +211,7 @@ export default class Connection extends EventEmitter {
     this._callOptions = config.callOptions;
     this.cache = new Cache();
     const describeCacheKey = type => (type ? `describe.${type}` : 'describe');
-    const describe = this.describe;
+    const describe = Connection.prototype.describe;
     this.describe = (
       this.cache.createCachedFunction(describe, this, { key: describeCacheKey, strategy: 'NOCACHE' }) : any
     );
