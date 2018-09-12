@@ -27,7 +27,7 @@
     "build": "babel src -d lib.es6",
     "lint": "eslint src test.es6",
     "flow": "flow",
-    "test": "ava test.es6/*.test.js"
+    "test": "ava test.es6/{connection-*,query,sobject}.test.js"
   },
   "directories": {
     "test": "test/"
