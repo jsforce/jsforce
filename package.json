@@ -27,9 +27,7 @@
     "build": "babel src -d lib.es6",
     "lint": "eslint src test.es6",
     "flow": "flow",
-    "test": "npm-run-all -r -p test:phantomjs test:ava",
-    "test:phantomjs": "phantomjs --webdriver=4444 --ssl-protocol=tlsv1",
-    "test:ava": "ava test.es6/{connection-*,query,sobject}.test.js"
+    "test": "ava test.es6/*.test.js"
   },
   "directories": {
     "test": "test/"
