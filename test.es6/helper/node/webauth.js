@@ -12,7 +12,7 @@ function retrieveCallbackedParameters(url) {
 
 async function loginAndApprove(page, username, password) {
   const url = page.url();
-  if (url.indexOf("/setup/secur/RemoteAccessAuthorizationPage.apexp") > 0) { // authorization page
+  if (url.indexOf('/setup/secur/RemoteAccessAuthorizationPage.apexp') > 0) { // authorization page
     await page.click('#oaapprove');
     await page.waitForNavigation({ waitUntil: 'networkidle2' });
     await page.waitFor(1000);
@@ -24,9 +24,9 @@ async function loginAndApprove(page, username, password) {
     await page.click('[name=Login]');
     await page.waitForNavigation({ waitUntil: 'networkidle2' });
     return loginAndApprove(page, username, password);
-  } else if (url.indexOf("http://localhost") === 0) { // callback response
+  } else if (url.indexOf('http://localhost') === 0) { // callback response
     return retrieveCallbackedParameters(url);
-  } else if (url.indexOf("/setup/secur/RemoteAccessErrorPage.apexp") > 0) { // authorization error
+  } else if (url.indexOf('/setup/secur/RemoteAccessErrorPage.apexp') > 0) { // authorization error
     throw new Error('invalid authorization error');
   } else {
     await page.waitFor(1000);
