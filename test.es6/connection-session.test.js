@@ -12,7 +12,7 @@ test.group('login', (test) => {
   let conn;
 
   //
-  test.serial('login by username and password', async (t) => {
+  test('login by username and password', async (t) => {
     conn = new Connection({ logLevel: config.logLevel, proxyUrl: config.proxyUrl });
     const userInfo = await conn.login(config.username, config.password);
     t.true(typeof conn.accessToken === 'string');
@@ -22,13 +22,13 @@ test.group('login', (test) => {
   });
 
   //
-  test.serial('execute query and return some records', async (t) => {
+  test('execute query and return some records', async (t) => {
     const res = await conn.query('SELECT Id FROM User');
     t.true(Array.isArray(res.records));
   });
 
   //
-  test.serial('catch/handle bad access token', async (t) => {
+  test('catch/handle bad access token', async (t) => {
     let newAccessToken;
     let refreshCount = 0;
     conn.accessToken = 'invalid access token';
@@ -51,7 +51,7 @@ test.group('logout', (test) => {
   let sessionInfo;
 
   //
-  test.serial('logout from soap session', async (t) => {
+  test('logout from soap session', async (t) => {
     const conn1 = new Connection({ logLevel: config.logLevel, proxyUrl: config.proxyUrl });
     await conn1.loginBySoap(config.username, config.password);
     sessionInfo = {
@@ -63,7 +63,7 @@ test.group('logout', (test) => {
   });
 
   //
-  test.serial('connect with previous session info to raise auth error', async (t) => {
+  test('connect with previous session info to raise auth error', async (t) => {
     const conn2 = new Connection({
       sessionId: sessionInfo.sessionId,
       serverUrl: sessionInfo.serverUrl,
@@ -87,7 +87,7 @@ test.group('oauth2 session', (test) => {
   let sessionInfo;
 
   //
-  test.serial('logout oauth2 session', async (t) => {
+  test('logout oauth2 session', async (t) => {
     const conn = new Connection({
       oauth2: {
         clientId: config.clientId,
@@ -106,7 +106,7 @@ test.group('oauth2 session', (test) => {
   });
 
   //
-  test.serial('connect with previous session info and raise auth error', async (t) => {
+  test('connect with previous session info and raise auth error', async (t) => {
     const conn = new Connection({
       accessToken: sessionInfo.accessToken,
       instanceUrl: sessionInfo.instanceUrl,
@@ -129,7 +129,7 @@ test.group('oauth2 refresh', (test) => {
   let conn;
 
   //
-  test.serial('authorize web server flow to get access tokens', async (t) => {
+  test('authorize web server flow to get access tokens', async (t) => {
     conn = new Connection({
       oauth2: {
         clientId: config.clientId,
@@ -151,7 +151,7 @@ test.group('oauth2 refresh', (test) => {
   });
 
   //
-  test.serial('make access token invalid and return responses', async (t) => {
+  test('make access token invalid and return responses', async (t) => {
     let accessToken;
     let refreshCount = 0;
     conn.accessToken = 'invalid access token';
@@ -167,7 +167,7 @@ test.group('oauth2 refresh', (test) => {
   });
 
   //
-  test.serial('make access token invalid and call in parallel and return responses', async (t) => {
+  test('make access token invalid and call in parallel and return responses', async (t) => {
     let accessToken;
     let refreshCount = 0;
     conn.accessToken = 'invalid access token';
@@ -190,7 +190,7 @@ test.group('oauth2 refresh', (test) => {
   });
 
   //
-  test.serial('expire both access token and refresh token and return error', async (t) => {
+  test('expire both access token and refresh token and return error', async (t) => {
     conn.accessToken = 'invalid access token';
     conn.refreshToken = 'invalid refresh token';
     try {

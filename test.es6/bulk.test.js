@@ -23,7 +23,7 @@ test.before('establish connection', async () => {
 /**
  *
  */
-test.serial('bulk insert records and return result status', async (t) => {
+test('bulk insert records and return result status', async (t) => {
   const records = [
     ...Array.from(Array(200), (a, i) => ({
       Name: `Bulk Account #${i + 1}`,
@@ -48,7 +48,7 @@ test.serial('bulk insert records and return result status', async (t) => {
 /**
  *
  */
-test.serial('bulk update and return updated status', async (t) => {
+test('bulk update and return updated status', async (t) => {
   let records = await conn.sobject('Account')
     .find({ Name: { $like: 'Bulk Account%' } }, { Id: 1, Name: 1 })
     .execute();
@@ -64,7 +64,7 @@ test.serial('bulk update and return updated status', async (t) => {
 /**
  *
  */
-test.serial('bulk update with empty input and raise client input error', async (t) => {
+test('bulk update with empty input and raise client input error', async (t) => {
   try {
     await conn.bulk.load('Account', 'update', []);
     t.fail();
@@ -77,7 +77,7 @@ test.serial('bulk update with empty input and raise client input error', async (
 /**
  *
  */
-test.serial('bulk delete and return deleted status', async (t) => {
+test('bulk delete and return deleted status', async (t) => {
   const records = await conn.sobject('Account')
     .find({ Name: { $like: 'Bulk Account%' } })
     .execute();
@@ -92,7 +92,7 @@ test.serial('bulk delete and return deleted status', async (t) => {
 /**
  *
  */
-test.serial('bulk delete with empty input and raise client input error', async (t) => {
+test('bulk delete with empty input and raise client input error', async (t) => {
   try {
     await conn.bulk.load('Account', 'delete', []);
   } catch (err) {
@@ -106,7 +106,7 @@ if (isNodeJS()) {
   /**
    *
    */
-  test.serial('bulk insert from file and return inserted results', async (t) => {
+  test('bulk insert from file and return inserted results', async (t) => {
     const fstream = fs.createReadStream(path.join(__dirname, 'data/Account.csv'));
     const batch = conn.bulk.load('Account', 'insert');
     fstream.pipe(batch.stream());
@@ -124,7 +124,7 @@ if (isNodeJS()) {
   /**
    *
    */
-  test.serial('bulk delete from file and return deleted results', async (t) => {
+  test('bulk delete from file and return deleted results', async (t) => {
     const records = await conn.sobject('Account').find({ Name: { $like: 'Bulk Account%' } });
     const data = `Id\n${records.map(r => r.Id).join('\n')}\n`;
     const deleteFileName = path.join(__dirname, 'data/Account_delete.csv');
@@ -153,7 +153,7 @@ if (isNodeJS()) {
   /**
    *
    */
-  test.serial('bulk query and get records with yielding file output', async (t) => {
+  test('bulk query and get records with yielding file output', async (t) => {
     const file = path.join(__dirname, '/data/BulkQuery_export.csv');
     const fstream = fs.createWriteStream(file);
     const count = await conn.sobject(config.bigTable).count({});
@@ -183,7 +183,7 @@ if (isNodeJS()) {
 /**
  *
  */
-test.serial('call bulk api from invalid session conn with refresh fn, and return result', async (t) => {
+test('call bulk api from invalid session conn with refresh fn, and return result', async (t) => {
   const accounts = Array.from(Array(100), (a, i) => ({ Name: `Session Expiry Test #${i}` }));
   const insRets = await conn.bulk.load('Account', 'insert', accounts);
   const deleteRecords = insRets.map(r => ({ Id: r.id }));
@@ -210,7 +210,7 @@ test.serial('call bulk api from invalid session conn with refresh fn, and return
 /**
  *
  */
-test.serial('call bulk api from invalid session conn without refresh fn, and raise error', async (t) => {
+test('call bulk api from invalid session conn without refresh fn, and raise error', async (t) => {
   const conn3 = new Connection({
     instanceUrl: conn.instanceUrl,
     accessToken: 'invalid_token',
@@ -232,7 +232,7 @@ test.serial('call bulk api from invalid session conn without refresh fn, and rai
 /**
  *
  */
-test.serial('bulk update using Query#update and return updated status', async (t) => {
+test('bulk update using Query#update and return updated status', async (t) => {
   const accounts = Array.from(Array(200), (a, i) => ({
     Name: `New Bulk Account #${i + 1}`,
     BillingState: 'CA',
@@ -266,7 +266,7 @@ test.serial('bulk update using Query#update and return updated status', async (t
 /**
  *
  */
-test.serial('bulk update using Query#update with unmatching query and return empty array records', async (t) => {
+test('bulk update using Query#update with unmatching query and return empty array records', async (t) => {
   const rets = await conn.sobject('Account')
     .find({ CreatedDate: { $lt: new SfDate('1970-01-01T00:00:00Z') } }) // should not match any records
     .update({
@@ -280,7 +280,7 @@ test.serial('bulk update using Query#update with unmatching query and return emp
 /**
  *
  */
-test.serial('bulk delete using Query#destroy and return deleted status', async (t) => {
+test('bulk delete using Query#destroy and return deleted status', async (t) => {
   const rets = await conn.sobject('Account')
     .find({ Name: { $like: 'New Bulk Account%' } })
     .destroy();
@@ -295,7 +295,7 @@ test.serial('bulk delete using Query#destroy and return deleted status', async (
 /**
  *
  */
-test.serial('bulk delete using Query#destroy with unmatching query and return empty array records', async (t) => {
+test('bulk delete using Query#destroy with unmatching query and return empty array records', async (t) => {
   const rets = await conn.sobject('Account')
     .find({ CreatedDate: { $lt: new SfDate('1970-01-01T00:00:00Z') } })
     .destroy();

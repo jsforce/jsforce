@@ -18,7 +18,7 @@ test.before('establish connection', async () => {
 /**
  *
  */
-test.serial('subscribe to topic, create account, and receive event of account has been created', async (t) => {
+test('subscribe to topic, create account, and receive event of account has been created', async (t) => {
   let subscr = null;
   const msgArrived = new Promise((resolve) => {
     subscr = conn.streaming.topic('JSforceTestAccountUpdates').subscribe(resolve);
@@ -38,7 +38,7 @@ test.serial('subscribe to topic, create account, and receive event of account ha
 /**
  *
  */
-test.serial('subscribe to generic streaming channel and recieve custom streaming event', async (t) => {
+test('subscribe to generic streaming channel and recieve custom streaming event', async (t) => {
   const channelName = '/u/JSforceTestChannel';
   await conn.sobject('StreamingChannel').create({ Name: channelName });
 

@@ -16,7 +16,7 @@ if (isNodeJS()) {
     let code, refreshToken; // eslint-disable-line one-var, one-var-declaration-per-line
 
     //
-    test.serial('start OAuth2 web server flow and receive authz code', async (t) => {
+    test('start OAuth2 web server flow and receive authz code', async (t) => {
       const url = oauth2.getAuthorizationUrl({ state: 'hello' });
       const params = await authorize(url, config.username, config.password);
       t.true(isString(params.code));
@@ -25,7 +25,7 @@ if (isNodeJS()) {
     });
 
     //
-    test.serial('request token from code and receive access/refresh token', async (t) => {
+    test('request token from code and receive access/refresh token', async (t) => {
       const res = await oauth2.requestToken(code);
       t.true(isString(res.access_token));
       t.true(isString(res.refresh_token));
@@ -33,7 +33,7 @@ if (isNodeJS()) {
     });
 
     //
-    test.serial('refresh access token and get new access token', async (t) => {
+    test('refresh access token and get new access token', async (t) => {
       const res = await oauth2.refreshToken(refreshToken);
       t.true(isString(res.access_token));
     });
@@ -45,7 +45,7 @@ if (isNodeJS()) {
  */
 test.group('username password flow', (test) => {
   //
-  test.serial('start authenticate and receive access token', async (t) => {
+  test('start authenticate and receive access token', async (t) => {
     const res = await oauth2.authenticate(config.username, config.password);
     t.true(isString(res.access_token));
   });

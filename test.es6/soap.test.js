@@ -20,7 +20,7 @@ test.before('establish connection', async () => {
 /**
  *
  */
-test.serial('describe tabs and return app and its including tabs', async (t) => {
+test('describe tabs and return app and its including tabs', async (t) => {
   const apps = await conn.soap.describeTabs();
   t.true(apps.length > 0);
   for (const app of apps) {
@@ -93,7 +93,7 @@ test.group('convert and merge', (test) => {
   /**
    *
    */
-  test.serial('convert leads and return converted account/contact/opp information', async (t) => {
+  test('convert leads and return converted account/contact/opp information', async (t) => {
     const ret = await conn.soap.convertLead({ leadId: leadIds[0], convertedStatus });
     t.true(ret.success === true);
     t.true(isString(ret.accountId));
@@ -107,7 +107,7 @@ test.group('convert and merge', (test) => {
   /**
    *
    */
-  test.serial('convert lead by specifying accountId and without creating opportunity', async (t) => {
+  test('convert lead by specifying accountId and without creating opportunity', async (t) => {
     const ret = await conn.soap.convertLead({
       leadId: leadIds[1],
       accountId: accountIds[0],
@@ -124,7 +124,7 @@ test.group('convert and merge', (test) => {
   /**
    *
    */
-  test.serial('merge records', async (t) => {
+  test('merge records', async (t) => {
     const masterRecord = Object.assign({ type: 'Lead' }, { Id: leadIds[2] }, leads[2]);
     const recordToMergeIds = [leadIds[3], leadIds[4]];
     const ret = await conn.soap.merge({ masterRecord, recordToMergeIds });

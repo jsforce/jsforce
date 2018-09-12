@@ -16,7 +16,7 @@ test.before('establish connection', async () => {
 /**
  *
  */
-test.serial('list global actions and return global actions', async (t) => {
+test('list global actions and return global actions', async (t) => {
   const results = await conn.quickActions();
   t.true(Array.isArray(results));
   for (const result of results) {
@@ -30,7 +30,7 @@ test.serial('list global actions and return global actions', async (t) => {
 /**
  *
  */
-test.serial('list sobject actions and return global actions', async (t) => {
+test('list sobject actions and return global actions', async (t) => {
   const results = await conn.sobject('Account').quickActions();
   t.true(Array.isArray(results));
   for (const result of results) {
@@ -46,7 +46,7 @@ let action;
 /**
  *
  */
-test.serial('describe global action info and return global actions', async (t) => {
+test('describe global action info and return global actions', async (t) => {
   action = conn.quickAction('LogACall');
   const res = await action.describe();
   t.true(isObject(res));
@@ -61,7 +61,7 @@ test.serial('describe global action info and return global actions', async (t) =
 /**
  *
  */
-test.serial('get default values of the action and return default field values', async (t) => {
+test('get default values of the action and return default field values', async (t) => {
   const res = await action.defaultValues();
   t.true(isObject(res));
   // t.true(res.Subject === null);
@@ -73,7 +73,7 @@ test.serial('get default values of the action and return default field values', 
 /**
  *
  */
-test.serial('get default values of the action for an account record and return default values', async (t) => {
+test('get default values of the action for an account record and return default values', async (t) => {
   const ret = await conn.sobject('Account').create({ Name: 'JSforce QuickAction Test' });
   const accId = ret.id;
   try {
@@ -91,7 +91,7 @@ test.serial('get default values of the action for an account record and return d
 /**
  *
  */
-test.serial('execute action for record', async (t) => {
+test('execute action for record', async (t) => {
   const ret = await conn.sobject('Account').create({ Name: 'JSforce QuickAction Test' });
   const accId = ret.id;
   const record = {

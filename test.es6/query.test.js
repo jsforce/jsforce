@@ -18,7 +18,7 @@ test.before('establish connection', async () => {
 /**
  *
  */
-test.serial('query accounts and return records', async (t) => {
+test('query accounts and return records', async (t) => {
   const query = conn.query('SELECT Id, Name FROM Account');
   const result = await query.run();
   t.true(isNumber(result.totalSize));
@@ -27,7 +27,7 @@ test.serial('query accounts and return records', async (t) => {
 /**
  *
  */
-test.serial('query accounts with scanAll option and return all records', async (t) => {
+test('query accounts with scanAll option and return all records', async (t) => {
   // create and delete record
   const ret = await conn.sobject('Account').create({ Name: 'Deleting Account #1' });
   await conn.sobject('Account').record(ret.id).destroy();
@@ -40,7 +40,7 @@ test.serial('query accounts with scanAll option and return all records', async (
 /**
  *
  */
-test.serial('query big table and execute queryMore and fetch all records', async (t) => {
+test('query big table and execute queryMore and fetch all records', async (t) => {
   let result = await conn.query(`SELECT Id, Name FROM ${config.bigTable || 'Account'}`);
   let records = result.records;
   while (!result.done) {
@@ -53,7 +53,7 @@ test.serial('query big table and execute queryMore and fetch all records', async
 /**
  *
  */
-test.serial('query big tables without autoFetch and scan records in one query fetch', async (t) => {
+test('query big tables without autoFetch and scan records in one query fetch', async (t) => {
   const records = [];
   let query;
   await new Promise((resolve, reject) => {
@@ -72,7 +72,7 @@ test.serial('query big tables without autoFetch and scan records in one query fe
 /**
  *
  */
-test.serial('query big tables with autoFetch and scan records up to maxFetch num', async (t) => {
+test('query big tables with autoFetch and scan records up to maxFetch num', async (t) => {
   const records = [];
   let query;
   await new Promise((resolve, reject) => {
@@ -91,7 +91,7 @@ test.serial('query big tables with autoFetch and scan records up to maxFetch num
 /**
  *
  */
-test.serial('query big tables by piping randomly-waiting output record stream object and scan records via stream up to maxFetch num', async (t) => {
+test('query big tables by piping randomly-waiting output record stream object and scan records via stream up to maxFetch num', async (t) => {
   const records = [];
   let query;
   await new Promise((resolve, reject) => {
@@ -122,7 +122,7 @@ test.serial('query big tables by piping randomly-waiting output record stream ob
 /**
  *
  */
-test.serial('query table and convert to readable stream and get CSV text', async (t) => {
+test('query table and convert to readable stream and get CSV text', async (t) => {
   const query = conn.query('SELECT Id, Name FROM Account LIMIT 10');
   const csvOut = new stream.Writable();
   let result = '';
@@ -143,7 +143,7 @@ test.serial('query table and convert to readable stream and get CSV text', async
 /**
  *
  */
-test.serial('explain query plan of soql query and get explain result', async (t) => {
+test('explain query plan of soql query and get explain result', async (t) => {
   const query = conn.query('SELECT Id, Name FROM Account ORDER BY CreatedDate DESC LIMIT 10');
   const result = await query.explain();
   t.true(Array.isArray(result.plans));
