@@ -10,10 +10,10 @@ matrix:
     - node_js: "stable"
       env: BROWSER_TEST=true
 sudo: false
-before_install:
-  - source .travis/setup.sh
 script:
   - .travis/test.sh
 cache:
   directories:
     - node_modules
+before_install:
+  - dpkg --compare-versions `npm -v` ge 5 || npm i -g npm@^5
