@@ -35,11 +35,11 @@ async function loginAndApprove(page, username, password) {
 }
 
 export default async function authorize(url, username, password) {
-  let browser;
+  const browser = await puppeteer.launch({
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
+  });
+  let ret;
   try {
-    browser = await puppeteer.launch({
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
     const page = await browser.newPage();
     await page.setRequestInterception(true);
     page.on('request', (request) => {
@@ -55,9 +55,9 @@ export default async function authorize(url, username, password) {
       }
     });
     await page.goto(url, { waitUntil: 'networkidle2' });
-    return loginAndApprove(page, username, password);
+    ret = await loginAndApprove(page, username, password);
   } finally {
     if (browser) { browser.close(); }
   }
+  return ret;
 }
-
