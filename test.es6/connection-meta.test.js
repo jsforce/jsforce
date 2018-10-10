@@ -22,10 +22,12 @@ test.group('describe sobject', (test) => {
     const so = await conn.sobject('Account').describe();
     t.true(so.name === 'Account');
     t.true(Array.isArray(so.fields));
-    const so2 = await conn.sobject('Account').describe$();
+    // TODO: comment in "await" keyword when $() to return cache-first promise result
+    const so2 = /* await */ conn.sobject('Account').describe$();
     t.true(so === so2);
-    const so3 = conn.sobject('Account').describe$$();
-    t.true(so === so3);
+    // TODO: comment in when $$() variant is introduced for accessing immediate result
+    // const so3 = conn.sobject('Account').describe$$();
+    // t.true(so === so3);
     const so4 = await conn.sobject('Account').describe();
     t.true(so !== so4);
     t.true(so4.name === 'Account');
@@ -40,10 +42,12 @@ test.group('describe sobject', (test) => {
     t.true(isString(res.sobjects[0].name));
     t.true(isString(res.sobjects[0].label));
     t.true(isUndefined(res.sobjects[0].fields));
-    const res2 = await conn.describeGlobal$();
+    // TODO: comment in "await" keyword when $() to return cache-first promise result
+    const res2 = /* await */ conn.describeGlobal$();
     t.true(res === res2);
-    const res3 = conn.describeGlobal$$();
-    t.true(res === res3);
+    // TODO: comment in when $$() variant is introduced for accessing immediate result
+    // const res3 = conn.describeGlobal$$();
+    // t.true(res === res3);
     const res4 = await conn.describeGlobal();
     t.true(res !== res4);
     t.true(Array.isArray(res4.sobjects));
@@ -59,8 +63,9 @@ test.group('describe sobject', (test) => {
  */
 test.group('recent records', (test) => {
   //
-  test('access account records for view', async () => {
+  test('access account records for view', async (t) => {
     await conn.query('SELECT Id, Name FROM Account ORDER BY CreatedDate DESC LIMIT 2 FOR VIEW');
+    t.pass();
   });
 
   //
@@ -86,7 +91,7 @@ test.group('recent records', (test) => {
   });
 
   //
-  test('create, update, delete account records', async () => {
+  test('create, update, delete account records', async (t) => {
     const accs = [{ Name: 'Hello' }, { Name: 'World' }];
     const rets = await conn.sobject('Account').create(accs);
     const id1 = rets[0].id;
@@ -95,6 +100,7 @@ test.group('recent records', (test) => {
       conn.sobject('Account').record(id1).update({ Name: 'Hello2' }),
       conn.sobject('Account').record(id2).destroy(),
     ]);
+    t.pass();
   });
 
   //
