@@ -117,12 +117,9 @@ test.group('multiple records crud', (test) => {
     rets.forEach((ret) => {
       t.true(ret.success);
     });
-    try {
-      await conn.sobject('Account').retrieve(accountIds);
-      t.fail();
-    } catch (err) {
-      t.true(err instanceof Error);
-      t.true(err.errorCode === 'NOT_FOUND');
+    const records = await conn.sobject('Account').retrieve(accountIds);
+    for (const record of records) {
+      t.true(record === null);
     }
   });
 });

@@ -72,7 +72,7 @@ const defaultConnectionConfig: {
 } = {
   loginUrl: 'https://login.salesforce.com',
   instanceUrl: '',
-  version: '39.0',
+  version: '43.0',
   logLevel: 'NONE',
   maxRequest: 10,
 };
@@ -97,7 +97,7 @@ function parseSignedRequest(sr: string | Object): Object {
       return JSON.parse(sr);
     }  // might be original base64-encoded signed request
     const msg = sr.split('.').pop(); // retrieve latter part
-    const json = new Buffer(msg, 'base64').toString('utf-8');
+    const json = Buffer.from(msg, 'base64').toString('utf-8');
     return JSON.parse(json);
   }
   return sr;
@@ -143,6 +143,11 @@ function createUsernamePasswordRefreshFn(username, password) {
     }
   };
 }
+
+/*
+ * Constant of maximum records num in DML operation (update/delete)
+ */
+const MAX_DML_COUNT = 200;
 
 /**
  *
@@ -194,7 +199,7 @@ export default class Connection extends EventEmitter {
         (oauth2 instanceof OAuth2 ? oauth2 : new OAuth2(oauth2)) :
         new OAuth2({ loginUrl: this.loginUrl });
     let refreshFn = config.refreshFn;
-    if (!refreshFn && this.oauth2.clientId && this.oauth2.clientSecret) {
+    if (!refreshFn && this.oauth2.clientId) {
       refreshFn = oauthRefreshFn;
     }
     if (refreshFn) {
@@ -279,6 +284,7 @@ export default class Connection extends EventEmitter {
     this.sobjects = {};
     // TODO impl cache
     this.cache.clear();
+    this.cache.get('describeGlobal').removeAllListeners('value');
     this.cache.get('describeGlobal').on('value', ({ result }) => {
       if (result) {
         for (const so of result.sobjects) {
@@ -296,8 +302,11 @@ export default class Connection extends EventEmitter {
   /**
    * Authorize (using oauth2 web server flow)
    */
-  async authorize(code: string): Promise<UserInfo> {
-    const res = await this.oauth2.requestToken(code);
+  async authorize(
+    code: string,
+    params?: Object = {}
+  ): Promise<UserInfo> {
+    const res = await this.oauth2.requestToken(code, params);
     const userInfo = parseIdUrl(res.id);
     this._establish({
       instanceUrl: res.instance_url,
@@ -394,20 +403,20 @@ export default class Connection extends EventEmitter {
   /**
    * Logout the current session
    */
-  async logout(): Promise<void> {
+  async logout(revoke?: boolean): Promise<void> {
     this._refreshDelegate = undefined;
     if (this._sessionType === 'oauth2') {
-      return this.logoutByOAuth2();
+      return this.logoutByOAuth2(revoke);
     }
-    return this.logoutBySoap();
+    return this.logoutBySoap(revoke);
   }
 
   /**
    * Logout the current session by revoking access token via OAuth2 session revoke
    */
-  async logoutByOAuth2(): Promise<void> {
+  async logoutByOAuth2(revoke?: boolean): Promise<void> {
     if (this.accessToken) {
-      await this.oauth2.revokeToken(this.accessToken);
+      await this.oauth2.revokeToken(revoke ? this.refreshToken : this.accessToken);
     }
     // Destroy the session bound to this connection
     this._clearSession();
@@ -417,12 +426,12 @@ export default class Connection extends EventEmitter {
   /**
    * Logout the session by using SOAP web service API
    */
-  async logoutBySoap(): Promise<void> {
+  async logoutBySoap(revoke?: boolean): Promise<void> {
     const body = [
       '<se:Envelope xmlns:se="http://schemas.xmlsoap.org/soap/envelope/">',
       '<se:Header>',
       '<SessionHeader xmlns="urn:partner.soap.sforce.com">',
-      `<sessionId>${esc(this.accessToken)}</sessionId>`,
+      `<sessionId>${esc(revoke ? this.refreshToken : this.accessToken)}</sessionId>`,
       '</SessionHeader>',
       '</se:Header>',
       '<se:Body>',
@@ -591,29 +600,106 @@ export default class Connection extends EventEmitter {
     return new Query(this, { locator }, null, options);
   }
 
+  /** @private */
+  _ensureVersion(majorVersion) {
+    const versions = this.version.split('.');
+    return parseInt(versions[0], 10) >= majorVersion;
+  }
+
+  /** @private */
+  _supports(feature) {
+    switch (feature) {
+      case 'sobject-collection': // sobject collection is available only in API ver 42.0+
+        return this._ensureVersion(42);
+      default:
+        return false;
+    }
+  }
+
   /**
    * Retrieve specified records
    */
   async retrieve(
     type: string,
     ids: string | string[],
-    options?: Object = {}
+    options?: {
+      fields?: string[],
+      headers?: Object,
+    } = {}
   ): Promise<Record | Record[]> {
-    const _ids: string[] = Array.isArray(ids) ? ids : [ids];
-    if (_ids.length > this._maxRequest) {
+    return (
+      Array.isArray(ids) ?
+        // check the version whether SObject collection API is supported (42.0)
+        (this._ensureVersion(42) ?
+          this._retrieveMany(type, ids, options) :
+          this._retrieveParallel(type, ids, options)) :
+        this._retrieveSingle(type, ids, options)
+    );
+  }
+
+  /** @private */
+  async _retrieveSingle(type, id, options) {
+    if (!id) {
+      throw new Error('Invalid record ID. Specify valid record ID value');
+    }
+    let url = [this._baseUrl(), 'sobjects', type, id].join('/');
+    const { fields, headers } = options;
+    if (fields) {
+      url += `?fields=${fields.join(',')}`;
+    }
+    return this.request({ method: 'GET', url, headers });
+  }
+
+  /** @private */
+  async _retrieveParallel(type, ids, options) {
+    if (ids.length > this.maxRequest) {
       throw new Error('Exceeded max limit of concurrent call');
     }
-    const records = await Promise.all(
-      _ids.map(async (id) => {
-        if (!id) {
-          throw new Error('Invalid record ID. Specify valid record ID value');
-        }
-        const url = [this._baseUrl(), 'sobjects', type, id].join('/');
-        const record = await this.request({ method: 'GET', url, headers: options.headers });
-        return (record : Record);
-      })
+    return Promise.all(
+      ids.map(id =>
+        this._retrieveSingle(type, id, options).catch((err) => {
+          if (options.allOrNone || err.errorCode !== 'NOT_FOUND') {
+            throw err;
+          }
+          return null;
+        })
+      )
     );
-    return Array.isArray(ids) ? records : records[0];
+  }
+
+  /** @private */
+  async _retrieveMany(type, ids, options) {
+    if (ids.length === 0) {
+      return [];
+    }
+    const url = [this._baseUrl(), 'composite', 'sobjects', type].join('/');
+    const fields = options.fields ||
+      (await this.describe$(type)).fields.map(field => field.name);
+    return this.request({
+      method: 'POST',
+      url,
+      body: JSON.stringify({ ids, fields }),
+      headers: {
+        ...(options.headers || {}),
+        'content-type': 'application/json'
+      },
+    });
+  }
+
+  /** @private */
+  _toSaveResult(id, err) {
+    const error = {
+      statusCode: err.errorCode,
+      message: err.message
+    };
+    if (err.content) { error.content = err.content; } // preserve External id duplication message
+    if (err.fields) { error.fields = err.fields; } // preserve DML exception occurred fields
+    const result = {
+      success: false,
+      errors: [error]
+    };
+    if (id) { result.id = id; }
+    return result;
   }
 
   /**
@@ -622,30 +708,92 @@ export default class Connection extends EventEmitter {
   async create(
     type: string,
     records: UnsavedRecord | UnsavedRecord[],
-    options?: Object = {}
+    options?: {
+      allOrNone?: boolean,
+      allowRecursive?: boolean,
+      headers?: Object,
+    } = {}
   ): Promise<SaveResult | SaveResult[]> {
-    const _records = Array.isArray(records) ? records : [records];
-    if (_records.length > this._maxRequest) {
+    return (
+      Array.isArray(records) ?
+        // check the version whether SObject collection API is supported (42.0)
+        (this._ensureVersion(42) ?
+          this._createMany(type, records, options) :
+          this._createParallel(type, records, options)) :
+        this._createSingle(type, records, options)
+    );
+  }
+
+  /** @private */
+  async _createSingle(type, record, options) {
+    const { Id, type: rtype, attributes, ...rec } = record; // eslint-disable-line no-unused-vars
+    const sobjectType = type || (attributes && attributes.type) || rtype;
+    if (!sobjectType) {
+      throw new Error('No SObject Type defined in record');
+    }
+    const url = [this._baseUrl(), 'sobjects', sobjectType].join('/');
+    return this.request({
+      method: 'POST',
+      url,
+      body: JSON.stringify(rec),
+      headers: {
+        ...(options.headers || {}),
+        'content-type': 'application/json'
+      },
+    });
+  }
+
+  /** @private */
+  async _createParallel(type, records, options) {
+    if (records.length > this.maxRequest) {
       throw new Error('Exceeded max limit of concurrent call');
     }
-    const results = await Promise.all(
-      _records.map(async (record) => {
-        const _record = Object.assign({}, record);
-        delete _record.Id;
-        delete _record.type;
-        delete _record.attributes;
-        const url = [this._baseUrl(), 'sobjects', type].join('/');
-        return this.request({
-          method: 'POST',
-          url,
-          body: JSON.stringify(_record),
-          headers: Object.assign({
-            'content-type': 'application/json'
-          }, options.headers),
-        });
-      })
+    return Promise.all(
+      records.map(record =>
+        this._createSingle(type, record, options).catch((err) => {
+          // be aware that allOrNone in parallel mode will not revert the other successful requests
+          // it only raises error when met at least one failed request.
+          if (options.allOrNone || !err.errorCode) {
+            throw err;
+          }
+          return this._toSaveResult(null, err);
+        })
+      )
     );
-    return Array.isArray(records) ? results : results[0];
+  }
+
+  /** @private */
+  async _createMany(type, records, options) {
+    if (records.length === 0) {
+      return Promise.resolve([]);
+    }
+    if (records.length > MAX_DML_COUNT && options.allowRecursive) {
+      return [
+        ...(await this._createMany(type, records.slice(0, MAX_DML_COUNT), options)),
+        ...(await this._createMany(type, records.slice(MAX_DML_COUNT), options)),
+      ];
+    }
+    const _records = records.map((record) => {
+      const { Id, type: rtype, attributes, ...rec } = record; // eslint-disable-line no-unused-vars
+      const sobjectType = type || (attributes && attributes.type) || rtype;
+      if (!sobjectType) {
+        throw new Error('No SObject Type defined in record');
+      }
+      return { attributes: { type: sobjectType }, ...rec };
+    });
+    const url = [this._baseUrl(), 'composite', 'sobjects'].join('/');
+    return this.request({
+      method: 'POST',
+      url,
+      body: JSON.stringify({
+        allOrNone: options.allOrNone || false,
+        records: _records,
+      }),
+      headers: {
+        ...(options.headers || {}),
+        'content-type': 'application/json'
+      },
+    });
   }
 
   /**
@@ -660,33 +808,102 @@ export default class Connection extends EventEmitter {
   async update(
     type: string,
     records: Record | Record[],
-    options?: Object = {}
+    options?: {
+      allOrNone?: boolean,
+      allowRecursive?: boolean,
+      headers?: Object,
+    } = {}
   ): Promise<SaveResult | SaveResult[]> {
-    const _records = Array.isArray(records) ? records : [records];
-    if (_records.length > this._maxRequest) {
+    return (
+      Array.isArray(records) ?
+        // check the version whether SObject collection API is supported (42.0)
+        (this._ensureVersion(42) ?
+          this._updateMany(type, records, options) :
+          this._updateParallel(type, records, options)) :
+        this._updateSingle(type, records, options)
+    );
+  }
+
+  /** @private */
+  async _updateSingle(type, record, options) {
+    // eslint-disable-next-line no-unused-vars
+    const { Id: id, type: rtype, attributes, ...rec } = record;
+    if (!id) {
+      throw new Error('Record id is not found in record.');
+    }
+    const sobjectType = type || (attributes && attributes.type) || rtype;
+    if (!sobjectType) {
+      throw new Error('No SObject Type defined in record');
+    }
+    const url = [this._baseUrl(), 'sobjects', sobjectType, id].join('/');
+    return this.request({
+      method: 'PATCH',
+      url,
+      body: JSON.stringify(rec),
+      headers: {
+        ...(options.headers || {}),
+        'content-type': 'application/json'
+      },
+    }, {
+      noContentResponse: { id, success: true, errors: [] }
+    });
+  }
+
+  /** @private */
+  async _updateParallel(type, records, options) {
+    if (records.length > this.maxRequest) {
       throw new Error('Exceeded max limit of concurrent call');
     }
-    const results = await Promise.all(
-      _records.map((record) => {
-        const id = record.Id;
-        const _record = Object.assign({}, record);
-        delete _record.Id;
-        delete _record.type;
-        delete _record.attributes;
-        const url = [this._baseUrl(), 'sobjects', type, id].join('/');
-        return this.request({
-          method: 'PATCH',
-          url,
-          body: JSON.stringify(_record),
-          headers: Object.assign({
-            'content-type': 'application/json'
-          }, options.headers),
-        }, {
-          noContentResponse: { id, success: true, errors: [] }
-        });
-      })
+    return Promise.all(
+      records.map(record =>
+        this._updateSingle(type, record, options).catch((err) => {
+          // be aware that allOrNone in parallel mode will not revert the other successful requests
+          // it only raises error when met at least one failed request.
+          if (options.allOrNone || !err.errorCode) {
+            throw err;
+          }
+          return this._toSaveResult(record.Id, err);
+        })
+      )
     );
-    return Array.isArray(records) ? results : results[0];
+  }
+
+  /** @private */
+  async _updateMany(type, records, options) {
+    if (records.length === 0) {
+      return [];
+    }
+    if (records.length > MAX_DML_COUNT && options.allowRecursive) {
+      return [
+        ...(await this._updateMany(type, records.slice(0, MAX_DML_COUNT), options)),
+        ...(await this._updateMany(type, records.slice(MAX_DML_COUNT), options)),
+      ];
+    }
+    const _records = records.map((record) => {
+      // eslint-disable-line no-unused-vars
+      const { Id: id, type: rtype, attributes, ...rec } = record;
+      if (!id) {
+        throw new Error('Record id is not found in record.');
+      }
+      const sobjectType = type || (attributes && attributes.type) || rtype;
+      if (!sobjectType) {
+        throw new Error('No SObject Type defined in record');
+      }
+      return { id, attributes: { type: sobjectType }, ...rec };
+    });
+    const url = [this._baseUrl(), 'composite', 'sobjects'].join('/');
+    return this.request({
+      method: 'PATCH',
+      url,
+      body: JSON.stringify({
+        allOrNone: options.allOrNone || false,
+        records: _records,
+      }),
+      headers: {
+        ...(options.headers || {}),
+        'content-type': 'application/json'
+      },
+    });
   }
 
   /**
@@ -696,33 +913,41 @@ export default class Connection extends EventEmitter {
     type: string,
     records: Record | Record[],
     extIdField: string,
-    options?: Object = {}
+    options?: {
+      allOrNone?: boolean,
+      headers?: Object,
+    } = {}
   ): Promise<SaveResult | SaveResult[]> {
-    const _records = Array.isArray(records) ? records : [records];
+    const isArray = Array.isArray(records);
+    const _records = isArray ? records : [records];
     if (_records.length > this._maxRequest) {
       throw new Error('Exceeded max limit of concurrent call');
     }
     const results = await Promise.all(
       _records.map((record) => {
-        const extId = record[extIdField];
-        const _record = Object.assign({}, record);
-        delete _record[extIdField];
-        delete _record.type;
-        delete _record.attributes;
+        // eslint-disable-next-line no-unused-vars
+        const { [extIdField]: extId, type: rtype, attributes, ...rec } = record;
         const url = [this._baseUrl(), 'sobjects', type, extIdField, extId].join('/');
         return this.request({
           method: 'PATCH',
           url,
-          body: JSON.stringify(_record),
-          headers: Object.assign({
+          body: JSON.stringify(rec),
+          headers: {
+            ...(options.headers || {}),
             'content-type': 'application/json'
-          }, options.headers),
+          },
         }, {
           noContentResponse: { success: true, errors: [] }
+        })
+        .catch((err) => {
+          // be aware that `allOrNone` option in upsert method will not revert the other successful requests
+          // it only raises error when met at least one failed request.
+          if (!isArray || options.allOrNone || !err.errorCode) { throw err; }
+          return this._toSaveResult(null, err);
         });
       })
     );
-    return Array.isArray(records) ? results : results[0];
+    return isArray ? results : results[0];
   }
 
   /**
@@ -731,25 +956,73 @@ export default class Connection extends EventEmitter {
   async destroy(
     type: string,
     ids: string | string[],
-    options?: Object = {}
+    options?: {
+      allOrNone?: boolean,
+      allowRecursive?: boolean,
+      headers?: Object,
+    } = {}
   ): Promise<SaveResult | SaveResult[]> {
-    const _ids = Array.isArray(ids) ? ids : [ids];
-    if (_ids.length > this._maxRequest) {
+    return (
+      Array.isArray(ids) ?
+        // check the version whether SObject collection API is supported (42.0)
+        (this._ensureVersion(42) ?
+          this._destroyMany(type, ids, options) :
+          this._destroyParallel(type, ids, options)) :
+        this._destroySingle(type, ids, options)
+    );
+  }
+
+  /** @private */
+  async _destroySingle(type, id, options) {
+    const url = [this._baseUrl(), 'sobjects', type, id].join('/');
+    return this.request({
+      method: 'DELETE',
+      url,
+      headers: options.headers || null
+    }, {
+      noContentResponse: { id, success: true, errors: [] }
+    });
+  }
+
+  /** @private */
+  async _destroyParallel(type, ids, options) {
+    if (ids.length > this.maxRequest) {
       throw new Error('Exceeded max limit of concurrent call');
     }
-    const results = await Promise.all(
-      _ids.map((id) => {
-        const url = [this._baseUrl(), 'sobjects', type, id].join('/');
-        return this.request({
-          method: 'DELETE',
-          url,
-          headers: options.headers || {}
-        }, {
-          noContentResponse: { id, success: true, errors: [] }
-        });
-      })
+    return Promise.all(
+      ids.map(id =>
+        self._destroySingle(type, id, options).catch((err) => {
+          // be aware that `allOrNone` option in parallel mode will not revert the other successful requests
+          // it only raises error when met at least one failed request.
+          if (options.allOrNone || !err.errorCode) {
+            throw err;
+          }
+          return this._toRecordResult(id, err);
+        })
+      )
     );
-    return Array.isArray(ids) ? results : results[0];
+  }
+
+  /** @private */
+  async _destroyMany(type, ids, options) {
+    if (ids.length === 0) {
+      return [];
+    }
+    if (ids.length > MAX_DML_COUNT && options.allowRecursive) {
+      return [
+        ...(await this._destroyMany(type, ids.slice(0, MAX_DML_COUNT), options)),
+        ...(await this._destroyMany(type, ids.slice(MAX_DML_COUNT), options)),
+      ];
+    }
+    let url = [this._baseUrl(), 'composite', 'sobjects?ids='].join('/') + ids.join(',');
+    if (options.allOrNone) {
+      url += '&allOrNone=true';
+    }
+    return this.request({
+      method: 'DELETE',
+      url,
+      headers: options.headers || null
+    });
   }
 
   /**
@@ -801,8 +1074,7 @@ export default class Connection extends EventEmitter {
     if (this.accessToken) {
       url += `&oauth_token=${encodeURIComponent(this.accessToken)}`;
     }
-    const transport = JsonpTransport.supported ? new JsonpTransport('callback') : undefined;
-    const res = await this.request({ method: 'GET', url }, { transport });
+    const res = await this.request({ method: 'GET', url });
     this.userInfo = {
       id: res.user_id,
       organizationId: res.organization_id,

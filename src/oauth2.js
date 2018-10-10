@@ -93,15 +93,18 @@ export default class OAuth2 {
    * OAuth2 Refresh Token Flow
    */
   async refreshToken(refreshToken: string): Promise<TokenResponse> {
-    if (!this.clientId || !this.clientSecret) {
-      throw new Error('No valid OAuth2 client configuration set');
+    if (!this.clientId) {
+      throw new Error('No OAuth2 client id information is specified');
     }
-    const ret = await this._postParams({
+    const params = {
       grant_type: 'refresh_token',
       refresh_token: refreshToken,
       client_id: this.clientId,
-      client_secret: this.clientSecret
-    });
+    };
+    if (this.clientSecret) {
+      params.client_secret = this.clientSecret;
+    }
+    const ret = await this._postParams(params);
     return (ret : TokenResponse);
   }
 
@@ -109,17 +112,24 @@ export default class OAuth2 {
    * OAuth2 Web Server Authentication Flow (Authorization Code)
    * Access Token Request
    */
-  async requestToken(code: string): Promise<TokenResponse> {
-    if (!this.clientId || !this.clientSecret || !this.redirectUri) {
-      throw new Error('No valid OAuth2 client configuration set');
+  async requestToken(
+    code: string,
+    params?: Object = {}
+  ): Promise<TokenResponse> {
+    if (!this.clientId || !this.redirectUri) {
+      throw new Error('No OAuth2 client id or redirect uri configuration is specified');
     }
-    const ret = await this._postParams({
+    const _params = {
+      ...params,
       grant_type: 'authorization_code',
       code,
       client_id: this.clientId,
-      client_secret: this.clientSecret,
-      redirect_uri: this.redirectUri
-    });
+      redirect_uri: this.redirectUri,
+    };
+    if (this.clientSecret) {
+      _params.client_secret = this.clientSecret;
+    }
+    const ret = await this._postParams(_params);
     return (ret : TokenResponse);
   }
 
@@ -144,24 +154,15 @@ export default class OAuth2 {
   /**
    * OAuth2 Revoke Session Token
    */
-  async revokeToken(accessToken: string): Promise<void> {
-    let response;
-    if (JsonpTransport.supported) {
-      const jsonpTransport = new JsonpTransport('callback');
-      response = await jsonpTransport.httpRequest({
-        method: 'GET',
-        url: `${this.revokeServiceUrl}?${querystring.stringify({ token: accessToken })}`
-      });
-    } else {
-      response = await this._transport.httpRequest({
-        method: 'POST',
-        url: this.revokeServiceUrl,
-        body: querystring.stringify({ token: accessToken }),
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        }
-      });
-    }
+  async revokeToken(token: string): Promise<void> {
+    const response = await this._transport.httpRequest({
+      method: 'POST',
+      url: this.revokeServiceUrl,
+      body: querystring.stringify({ token }),
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded'
+      }
+    });
     if (response.statusCode >= 400) {
       let res = querystring.parse(response.body);
       if (!res || !res.error) {

@@ -228,12 +228,14 @@ test('call bulk api from invalid session conn without refresh fn, and raise erro
 });
 
 /*------------------------------------------------------------------------*/
+// The num should be more than 200 which fallback from SObject collection API
+const bulkAccountNum = 250;
 
 /**
  *
  */
 test('bulk update using Query#update and return updated status', async (t) => {
-  const accounts = Array.from(Array(200), (a, i) => ({
+  const accounts = Array.from(Array(bulkAccountNum), (a, i) => ({
     Name: `New Bulk Account #${i + 1}`,
     BillingState: 'CA',
     NumberOfEmployees: 300 * (i + 1),
@@ -246,7 +248,7 @@ test('bulk update using Query#update and return updated status', async (t) => {
       BillingState: null
     });
   t.true(Array.isArray(rets));
-  t.true(rets.length === 200);
+  t.true(rets.length === bulkAccountNum);
   for (const ret of rets) {
     t.true(isString(ret.id));
     t.true(ret.success === true);
@@ -255,7 +257,7 @@ test('bulk update using Query#update and return updated status', async (t) => {
   const records = await conn.sobject('Account')
     .find({ Name: { $like: 'New Bulk Account%' } }, 'Id, Name, BillingState');
   t.true(Array.isArray(records));
-  t.true(records.length === 200);
+  t.true(records.length === bulkAccountNum);
   for (const record of records) {
     t.true(isString(record.Id));
     t.true(/\(Updated\)$/.test(record.Name));
@@ -285,7 +287,7 @@ test('bulk delete using Query#destroy and return deleted status', async (t) => {
     .find({ Name: { $like: 'New Bulk Account%' } })
     .destroy();
   t.true(Array.isArray(rets));
-  t.true(rets.length === 200);
+  t.true(rets.length === bulkAccountNum);
   for (const ret of rets) {
     t.true(isString(ret.id));
     t.true(ret.success === true);
@@ -303,6 +305,58 @@ test('bulk delete using Query#destroy with unmatching query and return empty arr
   t.true(rets.length === 0);
 });
 
+/*------------------------------------------------------------------------*/
+// This is usually small num to use Bulk API, but forcely use it by modifying bulkThreshold num
+const smallAccountNum = 20;
+
+/**
+ *
+ */
+test('bulk update using Query#update with bulkThreshold modified and return updated status', async (t) => {
+  const records = Array.from({ length: smallAccountNum }).map((_, i) => ({
+    Name: `New Bulk Account #${i + 1}`,
+    BillingState: 'CA',
+    NumberOfEmployees: 300 * (i + 1),
+  }));
+  await conn.bulk.load('Account', 'insert', records);
+
+  const rets = await conn.sobject('Account')
+    .find({ Name : { $like : 'New Bulk Account%' }})
+    .update({
+      Name : '${Name} (Updated)',
+      BillingState: null
+    }, { bulkThreshold: 0 });
+  t.true(Array.isArray(rets));
+  t.true(rets.length === smallAccountNum);
+  for (const ret of rets) {
+    t.true(isString(ret.id));
+    t.true(ret.success === true);
+  }
+  const urecords = await conn.sobject('Account')
+    .find({ Name: { $like: 'New Bulk Account%' } }, 'Id, Name, BillingState');
+  t.true(Array.isArray(urecords));
+  t.true(records.length === smallAccountNum);
+  for (const record of urecords) {
+    t.true(isString(record.Id));
+    t.true(/\(Updated\)$/.test(record.Name));
+    t.true(record.BillingState === null);
+  }
+});
+
+/**
+ *
+ */
+test('bulk delete using Query#destroy with bulkThreshold modified and return deleted status', async (t) => {
+  const rets = await conn.sobject('Account')
+    .find({ Name: { $like: 'New Bulk Account%' } })
+    .destroy({ bulkThreshold: 0 });
+  t.true(Array.isArray(rets));
+  t.true(rets.length === smallAccountNum);
+  for (const ret of rets) {
+    t.true(isString(ret.id));
+    t.true(ret.success === true);
+  }
+});
 
 /**
  *

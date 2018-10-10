@@ -105,21 +105,25 @@ export default class Query extends Serializable {
         this._locator = locator.split('/').pop();
       }
     } else {
-      const { fields, includes, ..._config } = ((config : any) : QueryConfigParam);
+      const { fields, includes, sort, ..._config } = ((config : any) : QueryConfigParam);
       this._config = _config;
       this.select(fields);
       if (includes) {
         this.includeChildren(includes);
       }
+      if (sort) {
+        this.sort(sort);
+      }
     }
     this._parent = parent;
-    this._options = Object.assign(({
+    this._options = ({
+      ...(options || {}),
       headers: {},
       maxFetch: 10000,
       autoFetch: false,
       scanAll: false,
       responseTarget: 'QueryResult',
-    }: QueryOptions), options);
+    } : QueryOptions);
   }
 
 

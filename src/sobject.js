@@ -235,6 +235,7 @@ export default class SObject {
       includes: options.includes,
       table: this.type,
       conditions: conditions === null ? undefined : conditions,
+      sort: options.sort,
       limit: options.limit,
       offset: options.offset,
     };
