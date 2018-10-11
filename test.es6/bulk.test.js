@@ -321,9 +321,9 @@ test('bulk update using Query#update with bulkThreshold modified and return upda
   await conn.bulk.load('Account', 'insert', records);
 
   const rets = await conn.sobject('Account')
-    .find({ Name : { $like : 'New Bulk Account%' }})
+    .find({ Name: { $like: 'New Bulk Account%' } })
     .update({
-      Name : '${Name} (Updated)',
+      Name: '${Name} (Updated)', // eslint-disable-line no-template-curly-in-string
       BillingState: null
     }, { bulkThreshold: 0 });
   t.true(Array.isArray(rets));

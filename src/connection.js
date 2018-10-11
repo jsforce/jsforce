@@ -7,7 +7,7 @@ import type {
   UpdatedResult, DeletedResult, LimitsInfo,
 } from './types';
 import { StreamPromise } from './util/promise';
-import Transport, { JsonpTransport, CanvasTransport, ProxyTransport, HttpProxyTransport } from './transport';
+import Transport, { CanvasTransport, ProxyTransport, HttpProxyTransport } from './transport';
 import { Logger, getLogger } from './util/logger';
 import type { LogLevelConfig } from './util/logger';
 import OAuth2 from './oauth2';
@@ -940,8 +940,9 @@ export default class Connection extends EventEmitter {
           noContentResponse: { success: true, errors: [] }
         })
         .catch((err) => {
-          // be aware that `allOrNone` option in upsert method will not revert the other successful requests
-          // it only raises error when met at least one failed request.
+          // Be aware that `allOrNone` option in upsert method
+          // will not revert the other successful requests.
+          // It only raises error when met at least one failed request.
           if (!isArray || options.allOrNone || !err.errorCode) { throw err; }
           return this._toSaveResult(null, err);
         });
@@ -992,8 +993,9 @@ export default class Connection extends EventEmitter {
     return Promise.all(
       ids.map(id =>
         self._destroySingle(type, id, options).catch((err) => {
-          // be aware that `allOrNone` option in parallel mode will not revert the other successful requests
-          // it only raises error when met at least one failed request.
+          // Be aware that `allOrNone` option in parallel mode
+          // will not revert the other successful requests.
+          // It only raises error when met at least one failed request.
           if (options.allOrNone || !err.errorCode) {
             throw err;
           }
