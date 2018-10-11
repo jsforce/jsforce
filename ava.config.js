@@ -1,6 +1,6 @@
 export default {
   files: [
-    'test/**/*.test.js',
+    'test.es6/{connection-*,query,sobject}.test.js',
   ],
   concurrency: 1,
   verbose: true,

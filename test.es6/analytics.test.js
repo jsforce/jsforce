@@ -34,7 +34,7 @@ test.group('report', (test) => {
   /**
    *
    */
-  test.serial('list recent reports and return report infomation list', async (t) => {
+  test('list recent reports and return report infomation list', async (t) => {
     const reports = await conn.analytics.reports();
     t.true(Array.isArray(reports));
     for (const report of reports) {
@@ -47,7 +47,7 @@ test.group('report', (test) => {
   /**
    *
    */
-  test.serial('describe report and return report metadata', async (t) => {
+  test('describe report and return report metadata', async (t) => {
     const meta = await conn.analytics.report(reportId).describe();
     t.true(isObject(meta));
     t.true(isObject(meta.reportMetadata));
@@ -58,7 +58,7 @@ test.group('report', (test) => {
   /**
    *
    */
-  test.serial('execute report synchronously and return report execution result', async (t) => {
+  test('execute report synchronously and return report execution result', async (t) => {
     const result = await conn.analytics.report(reportId).execute();
     t.true(isObject(result));
     t.true(result.hasDetailRows === false);
@@ -73,7 +73,7 @@ test.group('report', (test) => {
   /**
    *
    */
-  test.serial('execute report synchronously with details and return report execution result', async (t) => {
+  test('execute report synchronously with details and return report execution result', async (t) => {
     const result = await conn.analytics.report(reportId).execute({ details: true });
     t.true(isObject(result));
     t.true(result.hasDetailRows === true);
@@ -89,7 +89,7 @@ test.group('report', (test) => {
   /**
    *
    */
-  test.serial('execute report synchronously with filters overrided and return report execution result', async (t) => {
+  test('execute report synchronously with filters overrided and return report execution result', async (t) => {
     const metadata = {
       reportMetadata: {
         historicalSnapshotDates: [],
@@ -116,7 +116,7 @@ test.group('report', (test) => {
   /**
    *
    */
-  test.serial('execute report asynchronously and return report instance info', async (t) => {
+  test('execute report asynchronously and return report instance info', async (t) => {
     const instance = await conn.analytics.report(reportId).executeAsync();
     t.true(isObject(instance));
     t.true(isString(instance.id));
@@ -129,7 +129,7 @@ test.group('report', (test) => {
   /**
    *
    */
-  test.serial('list asynchronously executed report instances and return report instance list', async (t) => {
+  test('list asynchronously executed report instances and return report instance list', async (t) => {
     const instances = await conn.analytics.report(reportId).instances();
     t.true(Array.isArray(instances));
     for (const instance of instances) {
@@ -142,7 +142,7 @@ test.group('report', (test) => {
   /**
    *
    */
-  test.serial('retrieve asynchronously executed report result and return report execution result', async (t) => {
+  test('retrieve asynchronously executed report result and return report execution result', async (t) => {
     const result = await conn.analytics.report(reportId).instance(instanceId).retrieve();
     t.true(isObject(result));
     t.true(isObject(result.attributes));
@@ -158,7 +158,7 @@ test.group('report', (test) => {
   /**
    *
    */
-  test.serial('explain query plan of report and get explain result', async (t) => {
+  test('explain query plan of report and get explain result', async (t) => {
     const result = await conn.analytics.report(reportId).explain();
     t.true(Array.isArray(result.plans));
     for (const plan of result.plans) {
@@ -174,7 +174,7 @@ test.group('report', (test) => {
   /**
    *
    */
-  test.serial('clone report and get the cloned report', async (t) => {
+  test('clone report and get the cloned report', async (t) => {
     const result = await conn.analytics.report(reportId).clone('Lead List Report Clone');
     t.true(isObject(result.reportMetadata));
     cloneId = result.reportMetadata.id;
@@ -186,7 +186,7 @@ test.group('report', (test) => {
   /**
    *
    */
-  test.serial('destroy report and confirm the report destroyed', async (t) => {
+  test('destroy report and confirm the report destroyed', async (t) => {
     await conn.analytics.report(cloneId).destroy();
     try {
       await conn.analytics.report(cloneId).describe();
@@ -221,7 +221,7 @@ test.group('dashboard', (test) => {
   /**
    *
    */
-  test.serial('list recent dashboards and return dashboard infomation list', async (t) => {
+  test('list recent dashboards and return dashboard infomation list', async (t) => {
     const dashboards = await conn.analytics.dashboards();
     t.true(Array.isArray(dashboards));
     for (const dashboard of dashboards) {
@@ -235,7 +235,7 @@ test.group('dashboard', (test) => {
   /**
    *
    */
-  test.serial('describe dashboard and return dashboard metadata', async (t) => {
+  test('describe dashboard and return dashboard metadata', async (t) => {
     const meta = await conn.analytics.dashboard(dashboardId).describe();
     t.true(isObject(meta));
     t.true(Array.isArray(meta.components));
@@ -247,7 +247,7 @@ test.group('dashboard', (test) => {
   /**
    *
    */
-  test.serial('get all dashboard components and return all components', async (t) => {
+  test('get all dashboard components and return all components', async (t) => {
     const meta = await conn.analytics.dashboard(dashboardId).components();
     t.true(dashboardMetadata.components.length === meta.componentData.length);
   });
@@ -255,7 +255,7 @@ test.group('dashboard', (test) => {
   /**
    *
    */
-  test.serial('get one dashboard component and return one component', async (t) => {
+  test('get one dashboard component and return one component', async (t) => {
     const meta =
       await conn.analytics.dashboard(dashboardId).components(dashboardMetadata.components[0].id);
     t.true(meta.componentData.length === 1);
@@ -264,7 +264,7 @@ test.group('dashboard', (test) => {
   /**
    *
    */
-  test.serial('get three dashboard components and return three components', async (t) => {
+  test('get three dashboard components and return three components', async (t) => {
     const ids = [
       dashboardMetadata.components[0].id,
       dashboardMetadata.components[1].id,
@@ -277,7 +277,7 @@ test.group('dashboard', (test) => {
   /**
    *
    */
-  test.serial('get status of dashboard and return dashboard status metadata', async (t) => {
+  test('get status of dashboard and return dashboard status metadata', async (t) => {
     const meta = await conn.analytics.dashboard(dashboardId).status();
     t.true(isObject(meta));
     t.true(Array.isArray(meta.componentStatus));
@@ -286,7 +286,7 @@ test.group('dashboard', (test) => {
   /**
    *
    */
-  test.serial('clone dashboard and return cloned dashboard', async (t) => {
+  test('clone dashboard and return cloned dashboard', async (t) => {
     const result = await conn.analytics.dashboard(dashboardId).clone({
       name: 'Lead List Dashboard Clone',
       folderId: dashboardFolderId,
@@ -300,7 +300,7 @@ test.group('dashboard', (test) => {
   /**
    *
    */
-  test.serial('refresh dashboard and return refreshed dashboard metadata', async (t) => {
+  test('refresh dashboard and return refreshed dashboard metadata', async (t) => {
     // refresh cloned dashboard, in order to prevent frequent refresh error.
     const meta = await conn.analytics.dashboard(cloneDashboardId).refresh();
     t.true(isObject(meta));
@@ -310,7 +310,7 @@ test.group('dashboard', (test) => {
   /**
    *
    */
-  test.serial('destroy dashboard and confirm the dashboard destroyed', async (t) => {
+  test('destroy dashboard and confirm the dashboard destroyed', async (t) => {
     await conn.analytics.dashboard(cloneDashboardId).destroy();
     try {
       await conn.analytics.dashboard(cloneDashboardId).describe();

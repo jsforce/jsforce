@@ -211,6 +211,7 @@ export class Parsable extends RecordStream {
     }
     const dataStream = new PassThrough();
     const parserStream = converter.parse(options);
+    parserStream.on('error', err => this.emit('error', err));
     parserStream.pipe(this).pipe(
       new PassThrough({ objectMode: true, highWaterMark: (500 * 1000) })
     );

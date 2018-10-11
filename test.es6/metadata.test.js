@@ -50,7 +50,7 @@ test.group('CRUD based call', (test) => {
   /**
    *
    */
-  test.serial('create metadata synchronously and create custom objects', async (t) => {
+  test('create metadata synchronously and create custom objects', async (t) => {
     const results = await conn.metadata.create('CustomObject', metadata);
     t.true(Array.isArray(results));
     t.true(results.length === metadata.length);
@@ -65,7 +65,7 @@ test.group('CRUD based call', (test) => {
   /**
    *
    */
-  test.serial('read metadata synchronously and return custom objects metadata', async (t) => {
+  test('read metadata synchronously and return custom objects metadata', async (t) => {
     const results = await conn.metadata.read('CustomObject', fullNames);
     t.true(Array.isArray(results));
     t.true(results.length === fullNames.length);
@@ -80,7 +80,7 @@ test.group('CRUD based call', (test) => {
   /**
    *
    */
-  test.serial('update metadata synchronously return updated custom object metadata', async (t) => {
+  test('update metadata synchronously return updated custom object metadata', async (t) => {
     rmetadata[0].label = 'Updated Test Object Sync 2';
     rmetadata[1].deploymentStatus = 'Deployed';
     const results = await conn.metadata.update('CustomObject', rmetadata);
@@ -96,7 +96,7 @@ test.group('CRUD based call', (test) => {
   /**
    *
    */
-  test.serial('upsert metadata synchronously and upsert custom objects', async (t) => {
+  test('upsert metadata synchronously and upsert custom objects', async (t) => {
     const umetadata = [{
       fullName: 'JSforceTestObjectSync2__c',
       label: 'Upserted Object Sync 2',
@@ -131,7 +131,7 @@ test.group('CRUD based call', (test) => {
   /**
    *
    */
-  test.serial('rename metadata synchronously and rename a custom object', async (t) => {
+  test('rename metadata synchronously and rename a custom object', async (t) => {
     const oldName = fullNames[0];
     const newName = oldName.replace(/__c$/, 'Updated__c');
     // Rename operation is not working before API version 35.0
@@ -156,7 +156,7 @@ test.group('CRUD based call', (test) => {
   /**
    *
    */
-  test.serial('list metadata synchronously and list custom objects', async (t) => {
+  test('list metadata synchronously and list custom objects', async (t) => {
     const results = await conn.metadata.list({ type: 'CustomObject' });
     t.true(Array.isArray(results));
     for (const result of results) {
@@ -172,7 +172,7 @@ test.group('CRUD based call', (test) => {
   /**
    *
    */
-  test.serial('delete metadata synchronously and delete custom objects', async (t) => {
+  test('delete metadata synchronously and delete custom objects', async (t) => {
     const results = await conn.metadata.delete('CustomObject', fullNames);
     t.true(Array.isArray(results));
     t.true(results.length === fullNames.length);
@@ -193,7 +193,7 @@ test.group('file based call', (test) => {
    *
    */
   if (isNodeJS()) {
-    test.serial('deploy metadata in packaged file and deploy package', async (t) => {
+    test('deploy metadata in packaged file and deploy package', async (t) => {
       const zipStream = fs.createReadStream(path.join(__dirname, '/data/MyPackage.zip'));
       const result =
         await conn.metadata.deploy(zipStream, {
@@ -213,7 +213,7 @@ test.group('file based call', (test) => {
   /**
    *
    */
-  test.serial('retrieve metadata in packaged file and retrieve package', async (t) => {
+  test('retrieve metadata in packaged file and retrieve package', async (t) => {
     const bufs = [];
     await new Promise((resolve, reject) => {
       conn.metadata.retrieve({ packageNames: ['My Test Package'] })
@@ -236,7 +236,7 @@ test.group('session refresh', (test) => {
   /**
    *
    */
-  test.serial('refresh metadata API session and list metadata even if the session has been expired', async (t) => {
+  test('refresh metadata API session and list metadata even if the session has been expired', async (t) => {
     let refreshCalled = false;
     const conn2 = new Connection({
       instanceUrl: conn.instanceUrl,

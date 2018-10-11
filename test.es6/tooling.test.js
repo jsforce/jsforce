@@ -17,7 +17,7 @@ test.before('establish connection', async () => {
 /**
  *
  */
-test.serial('execute anonymous apex and execute successfully', async (t) => {
+test('execute anonymous apex and execute successfully', async (t) => {
   const body = [
     "System.debug('Hello, World');"
   ].join('\n');
@@ -32,7 +32,7 @@ test.serial('execute anonymous apex and execute successfully', async (t) => {
 /**
  * exclude this test till Tooling API service can correctly handle w/o content-type request header
  *
-test.serial('get completions and return completions', async (t) => {
+test('get completions and return completions', async (t) => {
   const res = await conn.tooling.completions('apex');
   t.true(isObject(res));
   t.true(isObject(res.publicDeclarations));

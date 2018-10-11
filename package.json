@@ -27,12 +27,10 @@
     "build": "babel src -d lib.es6",
     "lint": "eslint src test.es6",
     "flow": "flow",
-    "test": "npm-run-all -r -p test:phantomjs test:ava",
-    "test:phantomjs": "phantomjs --webdriver=4444 --ssl-protocol=tlsv1",
-    "test:ava": "ava test.es6/{connection-*,query,sobject}.test.js"
+    "test": "ava"
   },
   "directories": {
-    "test": "test/"
+    "test": "test.es6/"
   },
   "files": [
     "README.md",
@@ -81,13 +79,13 @@
     "ava": "^1.0.0-beta.8",
     "babel-eslint": "^7.1.1",
     "eslint": "3.15.0",
-    "eslint-plugin-flowtype": "^2.32.1",
     "eslint-config-airbnb-base": "11.1.0",
+    "eslint-plugin-flowtype": "^2.32.1",
     "eslint-plugin-import": "2.2.0",
     "esm": "^3.0.82",
     "flow-bin": "^0.45.0",
     "npm-run-all": "^4.0.2",
-    "puppeteer": "^1.6.1",
+    "puppeteer": "^1.6.2",
     "through2": "^2.0.3"
   }
 }

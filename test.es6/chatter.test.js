@@ -16,7 +16,7 @@ test.before('establish connection', async () => {
 /**
  *
  */
-test.serial('get chatter api info', async (t) => {
+test('get chatter api info', async (t) => {
   const result = await conn.chatter.resource('/').retrieve();
   t.true(isString(result.users));
   t.true(isString(result.groups));
@@ -30,7 +30,7 @@ test.group('users and groups', (test) => {
   /**
    *
    */
-  test.serial('get users list', async (t) => {
+  test('get users list', async (t) => {
     const result = await conn.chatter.resource('/users').retrieve();
     t.true(isString(result.currentPageUrl));
     t.true(Array.isArray(result.users));
@@ -44,7 +44,7 @@ test.group('users and groups', (test) => {
   /**
    *
    */
-  test.serial('get current user info', async (t) => {
+  test('get current user info', async (t) => {
     const result = await conn.chatter.resource('/users/me').retrieve();
     t.true(isString(result.id));
     t.true(isString(result.url) && result.url[0] === '/');
@@ -54,7 +54,7 @@ test.group('users and groups', (test) => {
   /**
    *
    */
-  test.serial('get groups list', async (t) => {
+  test('get groups list', async (t) => {
     const result = await conn.chatter.resource('/groups').retrieve();
     t.true(isString(result.currentPageUrl));
     t.true(Array.isArray(result.groups));
@@ -74,7 +74,7 @@ test.group('feeds', (test) => {
   /**
    *
    */
-  test.serial('get feeds list', async (t) => {
+  test('get feeds list', async (t) => {
     const result = await conn.chatter.resource('/feeds').retrieve();
     t.true(Array.isArray(result.feeds));
     t.true(Array.isArray(result.favorites));
@@ -94,7 +94,7 @@ test.group('feed item', (test) => {
   /**
    *
    */
-  test.serial('get items from feed items', async (t) => {
+  test('get items from feed items', async (t) => {
     const result = await conn.chatter.resource('/feeds/company/feed-elements').retrieve();
     t.true(Array.isArray(result.elements));
     for (const element of result.elements) {
@@ -137,7 +137,7 @@ test.group('feed item', (test) => {
   /**
    *
    */
-  test.serial('create new feed item', async (t) => {
+  test('create new feed item', async (t) => {
     const result = await conn.chatter.resource('/feed-elements').create({
       body: {
         messageSegments: [{
@@ -158,7 +158,7 @@ test.group('feed item', (test) => {
   /**
    *
    */
-  test.serial('delete feed item', async (t) => {
+  test('delete feed item', async (t) => {
     const result = await conn.chatter.resource(feedElementUrl).delete();
     t.true(isUndefined(result));
   });
@@ -193,7 +193,7 @@ test.group('feed comment', (test) => {
   /**
    *
    */
-  test.serial('create feed comment', async (t) => {
+  test('create feed comment', async (t) => {
     const ret = await conn.chatter.resource(commentsUrl).create({
       body: {
         messageSegments: [{
@@ -256,7 +256,7 @@ test.group('like', (test) => {
   /**
    *
    */
-  test.serial('add like to feed item and return result', async (t) => {
+  test('add like to feed item and return result', async (t) => {
     const result = await conn.chatter.resource(itemLikesUrl).create('');
     t.true(isObject(result));
     t.true(isString(result.url));
@@ -266,7 +266,7 @@ test.group('like', (test) => {
   /**
    *
    */
-  test.serial('remove like from item post', async (t) => {
+  test('remove like from item post', async (t) => {
     const ret = await conn.chatter.resource(itemLikeUrl).delete();
     t.true(isUndefined(ret));
   });
@@ -276,7 +276,7 @@ test.group('like', (test) => {
   /**
    *
    */
-  test.serial('add like to comment post and return result', async (t) => {
+  test('add like to comment post and return result', async (t) => {
     const result = await conn.chatter.resource(commentLikesUrl).create('');
     t.true(isObject(result));
     t.true(isString(result.url));
@@ -286,7 +286,7 @@ test.group('like', (test) => {
   /**
    *
    */
-  test.serial('remove like from comment post', async (t) => {
+  test('remove like from comment post', async (t) => {
     const ret = await conn.chatter.resource(commentLikeUrl).delete();
     t.true(isUndefined(ret));
   });
@@ -315,7 +315,7 @@ test.group('batch', (test) => {
   /**
    *
    */
-  test.serial('get all feed items', async (t) => {
+  test('get all feed items', async (t) => {
     const resources = feeds.map(feed => conn.chatter.resource(feed.feedElementsUrl));
     const ret = await conn.chatter.batch(resources);
     t.true(ret.hasErrors === false);
@@ -332,7 +332,7 @@ test.group('batch', (test) => {
   /**
    *
    */
-  test.serial('create new item post and get feed items', async (t) => {
+  test('create new item post and get feed items', async (t) => {
     const result = await conn.chatter.batch([
       conn.chatter.resource('/feed-elements').create({
         body: {

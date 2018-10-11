@@ -21,7 +21,7 @@ test.group('single record crud', (test) => {
   let account;
 
   //
-  test.serial('create account and get created obj', async (t) => {
+  test('create account and get created obj', async (t) => {
     const ret = await conn.sobject('Account').create({ Name: 'Hello' });
     t.true(ret.success);
     t.true(typeof ret.id === 'string');
@@ -29,7 +29,7 @@ test.group('single record crud', (test) => {
   });
 
   //
-  test.serial('retrieve account and return a record', async (t) => {
+  test('retrieve account and return a record', async (t) => {
     const record = await conn.sobject('Account').retrieve(accountId);
     t.true(typeof record.Id === 'string');
     t.true(isObject(record.attributes));
@@ -37,7 +37,7 @@ test.group('single record crud', (test) => {
   });
 
   //
-  test.serial('update account, get successful result, and retrieve the updated record', async (t) => {
+  test('update account, get successful result, and retrieve the updated record', async (t) => {
     const ret = await conn.sobject('Account').record(account.Id).update({ Name: 'Hello2' });
     t.true(ret.success);
     const record = await conn.sobject('Account').record(accountId).retrieve();
@@ -46,7 +46,7 @@ test.group('single record crud', (test) => {
   });
 
   //
-  test.serial('update account with options headers, get successfull result, and retrieve the updated record', async (t) => {
+  test('update account with options headers, get successfull result, and retrieve the updated record', async (t) => {
     const options = {
       headers: {
         'SForce-Auto-Assign': 'FALSE',
@@ -68,7 +68,7 @@ test.group('multiple records crud', (test) => {
   let accounts;
 
   //
-  test.serial('create multiple accounts and get successfull results', async (t) => {
+  test('create multiple accounts and get successfull results', async (t) => {
     const rets = await conn.sobject('Account').create([
       { Name: 'Account #1' },
       { Name: 'Account #2' },
@@ -82,7 +82,7 @@ test.group('multiple records crud', (test) => {
   });
 
   //
-  test.serial('retrieve multiple accounts and get specified records', async (t) => {
+  test('retrieve multiple accounts and get specified records', async (t) => {
     const records = await conn.sobject('Account').retrieve(accountIds);
     t.true(Array.isArray(records));
     records.forEach((record, i) => {
@@ -94,7 +94,7 @@ test.group('multiple records crud', (test) => {
   });
 
   //
-  test.serial('update multiple accounts, get successfull results, and get updated records', async (t) => {
+  test('update multiple accounts, get successfull results, and get updated records', async (t) => {
     const rets = await conn.sobject('Account').update(
       accounts.map(({ Id, Name }) => ({ Id, Name: `Updated ${Name}` })),
     );
@@ -111,18 +111,15 @@ test.group('multiple records crud', (test) => {
   });
 
   //
-  test.serial('delete multiple accounts, get successfull results, and not get any records', async (t) => {
+  test('delete multiple accounts, get successfull results, and not get any records', async (t) => {
     const rets = await conn.sobject('Account').destroy(accountIds);
     t.true(Array.isArray(rets));
     rets.forEach((ret) => {
       t.true(ret.success);
     });
-    try {
-      await conn.sobject('Account').retrieve(accountIds);
-      t.fail();
-    } catch (err) {
-      t.true(err instanceof Error);
-      t.true(err.errorCode === 'NOT_FOUND');
+    const records = await conn.sobject('Account').retrieve(accountIds);
+    for (const record of records) {
+      t.true(record === null);
     }
   });
 });
@@ -135,7 +132,7 @@ test.group('upsert', (test) => {
   const extId = `ID${Date.now()}`;
   let recId;
   //
-  test.serial('upsert not exisiting record and get successfull result', async (t) => {
+  test('upsert not exisiting record and get successfull result', async (t) => {
     const rec = { Name: 'New Record', [config.upsertField]: extId };
     const ret = await conn.sobject(config.upsertTable).upsert(rec, config.upsertField);
     t.true(ret.success);
@@ -143,7 +140,7 @@ test.group('upsert', (test) => {
     recId = ret.id;
   });
 
-  test.serial('upsert already existing record, get successfull result, and get updated record', async (t) => {
+  test('upsert already existing record, get successfull result, and get updated record', async (t) => {
     const rec = { Name: 'Updated Record', [config.upsertField]: extId };
     const ret = await conn.sobject(config.upsertTable).upsert(rec, config.upsertField);
     t.true(ret.success);
@@ -152,7 +149,7 @@ test.group('upsert', (test) => {
     t.true(record.Name === 'Updated Record');
   });
 
-  test.serial('upsert duplicated external id record and get multiple choise error', async (t) => {
+  test('upsert duplicated external id record and get multiple choise error', async (t) => {
     const rec1 = { Name: 'Duplicated Record', [config.upsertField]: extId };
     await conn.sobject(config.upsertTable).create(rec1);
     try {

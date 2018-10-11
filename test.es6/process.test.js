@@ -31,7 +31,7 @@ test.group('process rule', (test) => {
   /**
    *
    */
-  test.serial('retrieve all process rules and list process rules', async (t) => {
+  test('retrieve all process rules and list process rules', async (t) => {
     const ruleSet = await conn.process.rule.list();
     for (const rules of Object.values(ruleSet)) {
       for (const rule of rules) {
@@ -45,7 +45,7 @@ test.group('process rule', (test) => {
   /**
    *
    */
-  test.serial('trigger process rule and trigger process rules', async (t) => {
+  test('trigger process rule and trigger process rules', async (t) => {
     const result = await conn.process.rule.trigger(accountId);
     t.true(result.success);
     t.true(result.errors === null);
@@ -59,7 +59,7 @@ test.group('approval process', (test) => {
   /**
    *
    */
-  test.serial('retrieve all approval process definitions and list approval process definitions', async (t) => {
+  test('retrieve all approval process definitions and list approval process definitions', async (t) => {
     const defsSet = await conn.process.rule.list();
     for (const approvals of Object.values(defsSet)) {
       for (const approval of approvals) {
@@ -76,7 +76,7 @@ test.group('approval process', (test) => {
   /**
    *
    */
-  test.serial('submit approval process and confirm approval request submitted', async (t) => {
+  test('submit approval process and confirm approval request submitted', async (t) => {
     const result = await conn.process.approval.submit(accountId, 'This is test approval request submission.');
     t.true(result.success);
     t.true(result.errors === null);
@@ -91,7 +91,7 @@ test.group('approval process', (test) => {
   /**
    *
    */
-  test.serial('approve requested approval request', async (t) => {
+  test('approve requested approval request', async (t) => {
     const result = await conn.process.approval.approve(workitemId, 'Approved.');
     t.true(result.success);
     t.true(result.errors === null);
@@ -106,7 +106,7 @@ test.group('approval process', (test) => {
   /**
    *
    */
-  test.serial('reject approval request', async (t) => {
+  test('reject approval request', async (t) => {
     const result = await conn.process.approval.reject(workitemId, 'Rejected.');
     t.true(result.success);
     t.true(result.errors === null);

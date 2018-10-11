@@ -1,28 +1,29 @@
 import test from 'ava';
 
+const testFnNames = [
+  'cb', 'only', 'skip', 'todo', 'failing',
+  'before', 'after', 'beforeEach', 'afterEach',
+];
 
-function makeGroupedFn(origFn, scope, groupTitle) {
-  return (title, ...args) => (
+function makeGroupedFn(origFn, scope, groupTitle, level = 1) {
+  if (level === 0) { return origFn; }
+  const groupedFn = (title, ...args) => (
     typeof title === 'string' && groupTitle ?
     origFn.call(scope, `${groupTitle} : ${title}`, ...args) :
     origFn.call(scope, title, ...args)
   );
+  testFnNames.forEach((fname) => {
+    groupedFn[fname] = makeGroupedFn(origFn[fname], origFn, groupTitle, level - 1);
+  });
+  return groupedFn;
 }
-
-const testFnNames = [
-  'serial', 'cb', 'only', 'skip', 'todo', 'failing',
-  'before', 'after', 'beforeEach', 'afterEach',
-];
 
 function createGroupedTest(origTest, groupTitle = null) {
   const extTest = makeGroupedFn(origTest, null, groupTitle);
-  testFnNames.forEach((fname) => {
-    extTest[fname] = makeGroupedFn(origTest[fname], origTest, groupTitle);
-  });
   extTest.group = (nextGroupTitle, callback) => {
     callback(createGroupedTest(extTest, nextGroupTitle));
   };
   return extTest;
 }
 
-export default createGroupedTest(test);
+export default createGroupedTest(test.serial);

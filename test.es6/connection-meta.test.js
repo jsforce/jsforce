@@ -18,14 +18,16 @@ test.before('establish connection', async () => {
  */
 test.group('describe sobject', (test) => {
   //
-  test.serial('describe Account, get metadata information, and check the result is cached', async (t) => {
+  test('describe Account, get metadata information, and check the result is cached', async (t) => {
     const so = await conn.sobject('Account').describe();
     t.true(so.name === 'Account');
     t.true(Array.isArray(so.fields));
-    const so2 = await conn.sobject('Account').describe$();
+    // TODO: comment in "await" keyword when $() to return cache-first promise result
+    const so2 = /* await */ conn.sobject('Account').describe$();
     t.true(so === so2);
-    const so3 = conn.sobject('Account').describe$$();
-    t.true(so === so3);
+    // TODO: comment in when $$() variant is introduced for accessing immediate result
+    // const so3 = conn.sobject('Account').describe$$();
+    // t.true(so === so3);
     const so4 = await conn.sobject('Account').describe();
     t.true(so !== so4);
     t.true(so4.name === 'Account');
@@ -33,17 +35,19 @@ test.group('describe sobject', (test) => {
   });
 
   //
-  test.serial('describe global, get information, and check the result is cached', async (t) => {
+  test('describe global, get information, and check the result is cached', async (t) => {
     const res = await conn.describeGlobal();
     t.true(Array.isArray(res.sobjects));
     t.true(isObject(res.sobjects[0]));
     t.true(isString(res.sobjects[0].name));
     t.true(isString(res.sobjects[0].label));
     t.true(isUndefined(res.sobjects[0].fields));
-    const res2 = await conn.describeGlobal$();
+    // TODO: comment in "await" keyword when $() to return cache-first promise result
+    const res2 = /* await */ conn.describeGlobal$();
     t.true(res === res2);
-    const res3 = conn.describeGlobal$$();
-    t.true(res === res3);
+    // TODO: comment in when $$() variant is introduced for accessing immediate result
+    // const res3 = conn.describeGlobal$$();
+    // t.true(res === res3);
     const res4 = await conn.describeGlobal();
     t.true(res !== res4);
     t.true(Array.isArray(res4.sobjects));
@@ -59,12 +63,13 @@ test.group('describe sobject', (test) => {
  */
 test.group('recent records', (test) => {
   //
-  test.serial('access account records for view', async () => {
+  test('access account records for view', async (t) => {
     await conn.query('SELECT Id, Name FROM Account ORDER BY CreatedDate DESC LIMIT 2 FOR VIEW');
+    t.pass();
   });
 
   //
-  test.serial('get recently accessed records in all objects and get successfull results', async (t) => {
+  test('get recently accessed records in all objects and get successfull results', async (t) => {
     const records = await conn.recent(2);
     t.true(Array.isArray(records));
     records.forEach((record) => {
@@ -75,7 +80,7 @@ test.group('recent records', (test) => {
   });
 
   //
-  test.serial('get recently viewed accounts in Account object', async (t) => {
+  test('get recently viewed accounts in Account object', async (t) => {
     const records = await conn.sobject('Account').recent();
     t.true(Array.isArray(records));
     records.forEach((record) => {
@@ -86,7 +91,7 @@ test.group('recent records', (test) => {
   });
 
   //
-  test.serial('create, update, delete account records', async () => {
+  test('create, update, delete account records', async (t) => {
     const accs = [{ Name: 'Hello' }, { Name: 'World' }];
     const rets = await conn.sobject('Account').create(accs);
     const id1 = rets[0].id;
@@ -95,10 +100,11 @@ test.group('recent records', (test) => {
       conn.sobject('Account').record(id1).update({ Name: 'Hello2' }),
       conn.sobject('Account').record(id2).destroy(),
     ]);
+    t.pass();
   });
 
   //
-  test.serial('get updated accounts and return updated accounts', async (t) => {
+  test('get updated accounts and return updated accounts', async (t) => {
     const end = new Date();
     const start = new Date(end.getTime() - (1 * 24 * 60 * 60 * 1000)); // 1 day before
     const result = await conn.sobject('Account').updated(start, end);
@@ -106,7 +112,7 @@ test.group('recent records', (test) => {
   });
 
   //
-  test.serial('get updated account (with string input) and return updated accounts', async (t) => {
+  test('get updated account (with string input) and return updated accounts', async (t) => {
     const end = new Date();
     const start = new Date(end.getTime() - (1 * 24 * 60 * 60 * 1000)); // 1 day before
     const result = await conn.sobject('Account').updated(start.toString(), end.toString());
@@ -114,7 +120,7 @@ test.group('recent records', (test) => {
   });
 
   //
-  test.serial('get deleted account and return deleted account object', async (t) => {
+  test('get deleted account and return deleted account object', async (t) => {
     const end = new Date();
     const start = new Date(end.getTime() - (1 * 24 * 60 * 60 * 1000)); // 1 day before
     const result = await conn.sobject('Account').deleted(start, end);
@@ -124,7 +130,7 @@ test.group('recent records', (test) => {
   /**
    *
    */
-  test.serial('get deleted account (with string input) and return deleted account object', async (t) => {
+  test('get deleted account (with string input) and return deleted account object', async (t) => {
     const end = new Date();
     const start = new Date(end.getTime() - (1 * 24 * 60 * 60 * 1000)); // 1 day before
     const result = await conn.sobject('Account').deleted(start.toString(), end.toString());
@@ -138,7 +144,7 @@ test.group('recent records', (test) => {
  */
 test.group('identity', (test) => {
   //
-  test.serial('get user identity information and return user identity information', async (t) => {
+  test('get user identity information and return user identity information', async (t) => {
     const res = await conn.identity();
     t.true(isString(res.id) && res.id.indexOf('https://') === 0);
     t.true(isString(res.user_id));
@@ -154,7 +160,7 @@ test.group('identity', (test) => {
  */
 test.group('limit info', (test) => {
   //
-  test.serial('get current limit information and check api usage and its limit in the org', (t) => {
+  test('get current limit information and check api usage and its limit in the org', (t) => {
     const limitInfo = conn.limitInfo;
     t.true(isObject(limitInfo.apiUsage));
     t.true(isNumber(limitInfo.apiUsage.used));
@@ -164,7 +170,7 @@ test.group('limit info', (test) => {
   });
 
   //
-  test.serial('get system limits information from server limit info in the org', async (t) => {
+  test('get system limits information from server limit info in the org', async (t) => {
     const limits = await conn.limits();
     t.true(isObject(limits));
     t.true(isObject(limits.DataStorageMB));
@@ -185,7 +191,7 @@ test.group('limit info', (test) => {
  */
 test.group('misc metadata', (test) => {
   //
-  test.serial('get tabs list information and return tabs info in the org', async (t) => {
+  test('get tabs list information and return tabs info in the org', async (t) => {
     const tabs = await conn.tabs();
     t.true(Array.isArray(tabs));
     tabs.forEach((tab) => {
@@ -196,7 +202,7 @@ test.group('misc metadata', (test) => {
   });
 
   //
-  test.serial('get theme information and return theme info in the org', async (t) => {
+  test('get theme information and return theme info in the org', async (t) => {
     const theme = await conn.theme();
     t.true(isObject(theme));
     t.true(Array.isArray(theme.themeItems));

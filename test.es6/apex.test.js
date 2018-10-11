@@ -18,7 +18,7 @@ let accountId;
 /**
  *
  */
-test.serial('post account info and return created account id', async (t) => {
+test('post account info and return created account id', async (t) => {
   const params = {
     name: 'My Apex Rest Test #1',
     phone: '654-321-0000',
@@ -32,7 +32,7 @@ test.serial('post account info and return created account id', async (t) => {
 /**
  *
  */
-test.serial('get account info and return created account', async (t) => {
+test('get account info and return created account', async (t) => {
   const acc = await conn.apex.get(`/JSforceTestApexRest/${accountId}`);
   t.true(isObject(acc));
   t.true(acc.Name === 'My Apex Rest Test #1');
@@ -44,7 +44,7 @@ test.serial('get account info and return created account', async (t) => {
 /**
  *
  */
-test.serial('put account info and return updated account', async (t) => {
+test('put account info and return updated account', async (t) => {
   const params = {
     account: {
       Name: 'My Apex Rest Test #1 (put)',
@@ -62,7 +62,7 @@ test.serial('put account info and return updated account', async (t) => {
 /**
  *
  */
-test.serial('patch account info and return updated account', async (t) => {
+test('patch account info and return updated account', async (t) => {
   const params = {
     name: 'My Apex Rest Test #1 (patch)'
   };
@@ -76,7 +76,7 @@ test.serial('patch account info and return updated account', async (t) => {
 /**
  *
  */
-test.serial('delete account info and get no account for delete account id', async (t) => {
+test('delete account info and get no account for delete account id', async (t) => {
   await conn.apex.delete(`/JSforceTestApexRest/${accountId}`);
   const records = await conn.sobject('Account').find({ Id: accountId });
   t.true(records.length === 0);
