@@ -1,4 +1,3 @@
-/* @flow */
 /**
  * @file Manages asynchronous method response cache
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -10,11 +9,16 @@ import EventEmitter from 'events';
  * type def
  */
 export type CachingOptions = {
-  key?: string | (...any[]) => string,
+  key?: string | ((...args: any[]) => string),
   namespace?: string,
   strategy: 'NOCACHE' | 'HIT' | 'IMMEDIATE',
 };
 
+
+type CacheValue<T> = {
+  error?: Error,
+  result: T,
+};
 
 /**
  * Class for managing cache entry
@@ -26,7 +30,7 @@ export type CachingOptions = {
  */
 class CacheEntry<T> extends EventEmitter {
   _fetching: boolean = false;
-  _value: ?{ error?: Error, result?: T } = undefined;
+  _value: CacheValue<T> | void = undefined;
 
   /**
    * Get value in the cache entry
@@ -34,7 +38,7 @@ class CacheEntry<T> extends EventEmitter {
    * @param {() => Promise<T>} [callback] - Callback function callbacked the cache entry updated
    * @returns {T|undefined}
    */
-  get(callback?: (T) => any): ?{ error?: Error, result?: T } {
+  get(callback?: (v: T) => any): CacheValue<T> | void {
     if (callback) {
       const cb = callback;
       this.once('value', (v: T) => cb(v));
@@ -48,7 +52,7 @@ class CacheEntry<T> extends EventEmitter {
   /**
    * Set value in the cache entry
    */
-  set(value: { error?: Error, result?: T }) {
+  set(value: CacheValue<T>) {
     this._value = value;
     this.emit('value', this._value);
   }
@@ -66,7 +70,7 @@ class CacheEntry<T> extends EventEmitter {
  * create and return cache key from namespace and serialized arguments.
  * @private
  */
-function createCacheKey(namespace: ?string, args: any[]): string {
+function createCacheKey(namespace: string | void, args: any[]): string {
   return `${namespace || ''}(${[...args].map(a => JSON.stringify(a)).join(',')})`;
 }
 
@@ -78,6 +82,7 @@ function generateKeyString(options: CachingOptions, scope: any, args: any[]): st
   );
 }
 
+type CachedFunction = Function & { clear: (...args: any[]) => void };
 
 /**
  * Caching manager for async methods
@@ -86,7 +91,7 @@ function generateKeyString(options: CachingOptions, scope: any, args: any[]): st
  * @constructor
  */
 export default class Cache {
-  _entries: {[string]: CacheEntry<any> } = {};
+  private _entries: {[key: string]: CacheEntry<any> } = {};
 
   /**
    * retrive cache entry, or create if not exists.
@@ -119,12 +124,12 @@ export default class Cache {
    * then invoke original if no cached value.
    */
   createCachedFunction(
-    fn: ((...any[]) => Promise<any>),
+    fn: ((...args: any[]) => Promise<any>),
     scope: any,
-    options?: CachingOptions = { strategy: 'NOCACHE' }
-  ): ((...any[]) => any) {
+    options: CachingOptions = { strategy: 'NOCACHE' }
+  ): CachedFunction {
     const strategy = options.strategy;
-    const $fn = (...args: any[]) => {
+    const $fn: any = (...args: any[]) => {
       const key = generateKeyString(options, scope, args);
       const entry = this.get(key);
       const executeFetch = async () => {
@@ -163,10 +168,10 @@ export default class Cache {
           return executeFetch();
       }
     };
-    $fn.clear = (...args) => {
+    $fn.clear = (...args: any[]) => {
       const key = generateKeyString(options, scope, args);
       this.clear(key);
     };
-    return $fn;
+    return $fn as CachedFunction;
   }
 }

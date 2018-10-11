@@ -1,4 +1,3 @@
-/* @flow */
 /**
  * @file JSforce Core
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
