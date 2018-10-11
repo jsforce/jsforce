@@ -1,6 +1,6 @@
 /* @flow */
 import querystring from 'querystring';
-import Transport, { ProxyTransport, HttpProxyTransport, JsonpTransport } from './transport';
+import Transport, { ProxyTransport, HttpProxyTransport } from './transport';
 import type { HttpRequest } from './types';
 
 const defaultOAuth2Config = {
