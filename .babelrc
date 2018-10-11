@@ -3,7 +3,7 @@
     ["@babel/preset-env", {
       "useBuiltIns": "usage"
     }],
-    "@babel/preset-flow"
+    "@babel/preset-typescript"
   ],
   "plugins": [
     "@babel/plugin-proposal-class-properties",
