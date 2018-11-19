@@ -1,6 +1,6 @@
 {
   "author": "Shinichi Tomita <shinichi.tomita@gmail.com>",
-  "name": "jsforce",
+  "name": "@mixmaxhq/jsforce",
   "description": "Salesforce API Library for JavaScript",
   "keywords": [
     "salesforce",
@@ -9,17 +9,17 @@
     "force.com",
     "database.com"
   ],
-  "homepage": "http://github.com/jsforce/jsforce",
+  "homepage": "http://github.com/mixmaxhq/jsforce",
   "version": "1.8.1",
   "repository": {
     "type": "git",
-    "url": "git://github.com/jsforce/jsforce.git"
+    "url": "git://github.com/mixmaxhq/jsforce.git"
   },
   "license": "MIT",
   "licenses": [
     {
       "type": "MIT",
-      "url": "http://github.com/jsforce/jsforce/raw/master/LICENSE"
+      "url": "http://github.com/mixmaxhq/jsforce/raw/master/LICENSE"
     }
   ],
   "main": "./index",
