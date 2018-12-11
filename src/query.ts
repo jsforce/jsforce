@@ -2,8 +2,9 @@
  * @file Manages query for records in Salesforce
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
+import EventEmitter from 'events';
 import { Logger, getLogger } from './util/logger';
-import { Serializable } from './record-stream';
+import RecordStream, { Serializable } from './record-stream';
 import Connection from './connection';
 import { createSOQL } from './soql-builder';
 import { QueryConfig, QueryCondition, SortConfig, SortDir } from './soql-builder';
@@ -51,6 +52,16 @@ export type QueryResult = {
 export type QueryResponse =
   QueryResult | Record[] | Record | number;
 
+export type QueryDestroyOptions = {
+  allowBulk?: boolean,
+  bulkThreshold?: number,
+};
+
+export type QueryUpdateOptions = {
+  allowBulk?: boolean,
+  bulkThreshold?: number,
+};
+
 /**
  *
  */
@@ -62,9 +73,14 @@ export const ResponseTargets: { [K in QueryResponseTarget]: QueryResponseTarget 
 };
 
 /**
+ * 
+ */
+const DEFAULT_BULK_THRESHOLD = 200;
+
+/**
  * Query
  */
-export default class Query extends Serializable {
+export default class Query extends EventEmitter {
   static _logger = getLogger('query');
 
   _conn: Connection;
@@ -77,6 +93,7 @@ export default class Query extends Serializable {
   _executed: boolean = false;
   _finished: boolean = false;
   _chaining: boolean = false;
+  _recordStream: Serializable = new Serializable();
   _promise: Optional<Promise<QueryResponse>>;
   _parent: Optional<Query>;
 
@@ -123,6 +140,9 @@ export default class Query extends Serializable {
       scanAll: false,
       responseTarget: 'QueryResult',
     } as QueryOptions);
+    this.on('record', (record) => this._recordStream.push(record))
+    this.on('end', () => this._recordStream.push(null))
+    this.on('error', (err) => this._recordStream.emit('error', err));
   }
 
 
@@ -390,7 +410,6 @@ export default class Query extends Serializable {
         break;
       }
       const record = data.records[i];
-      this.push(record);
       this.emit('record', record, totalFetched, this);
       totalFetched += 1;
     }
@@ -400,7 +419,7 @@ export default class Query extends Serializable {
     }
     this._finished = this._finished || data.done || !autoFetch;
     if (this._finished) {
-      this.push(null);
+      this.emit('end');
     } else {
       this._execute(options);
     }
@@ -409,20 +428,27 @@ export default class Query extends Serializable {
 
   /**
    * Readable stream implementation
-   * @override
-   * @private
    */
-  _read() {
+  stream(type: 'record' | 'csv' = 'record') {
     if (!this._finished && !this._executed) {
       this.execute({ autoFetch: true });
     }
+    return type === 'record' ? this._recordStream : this._recordStream.stream(type);
   }
+
+  /**
+   * Pipe to stream
+   */
+  pipe(stream: NodeJS.WritableStream) {
+    return this._recordStream.pipe(stream);
+  }
+
 
   /** @override **/
   on(e: string, fn: (...args: any[]) => any): this {
     if (e === 'record') {
       this.on('readable', () => {
-        while (this.read() !== null); // discard buffered records
+        while (this._recordStream.read() !== null); // discard buffered records
       });
     }
     return super.on(e, fn);
@@ -567,94 +593,155 @@ export default class Query extends Serializable {
     }
     return this._promise.then(onResolve, onReject);
   }
+
+  /**
+   * Bulk delete queried records
+   */
+  destroy(type?: string, options?: QueryDestroyOptions) {
+    if (typeof type === 'object' && type !== null) {
+      options = type;
+      type = undefined;
+    }
+    options = options || {};
+    const type_ = type || (this._config && this._config.table);
+    if (!type_) {
+      throw new Error("SOQL based query needs SObject type information to bulk delete.");
+    }
+    // Set the threshold number to pass to bulk API
+    const thresholdNum =
+      options.allowBulk === false ?
+        -1 :
+      typeof options.bulkThreshold === 'number' ?
+        options.bulkThreshold :
+        // determine threshold if the connection version supports SObject collection API or not
+        (this._conn._ensureVersion(42) ? DEFAULT_BULK_THRESHOLD : this._conn._maxRequest / 2);
+    return new Promise((resolve, reject) => {
+      const records: Record[] = [];
+      // let batch = null;
+      const handleRecord = (rec: Record) => {
+        if (!rec.Id) {
+          const err = new Error('Queried record does not include Salesforce record ID.');
+          this.emit('error', err);
+          return;
+        }
+        const record: Record = { Id: rec.Id };
+        // TODO: enable batch switch
+        /*
+        if (batch) {
+          batch.write(record);
+        } else {
+        */
+        records.push(record);
+        /*
+          if (thresholdNum < 0 || records.length > thresholdNum) {
+            // Use bulk delete instead of SObject REST API
+            batch =
+              self._conn.sobject(type).deleteBulk()
+                .on('response', resolve)
+                .on('error', reject);
+            records.forEach(function(record) {
+              batch.write(record);
+            });
+            records = [];
+          }
+        }
+        */
+      };
+      const handleEnd = () => {
+        /*
+        if (batch) {
+          batch.end();
+        } else {
+        */
+        const ids = records.map((record) => record.Id);
+        this._conn.sobject(type_).destroy(ids, { allowRecursive: true }).then(resolve, reject);
+      };
+      this._recordStream
+        .on('data', handleRecord)
+        .on('end', handleEnd)
+        .on('error', reject);
+    });
+  }
+
+  /**
+   * Synonym of Query#destroy()
+   */
+  delete = this.destroy;
+
+  /**
+   * Synonym of Query#destroy()
+   */
+  del = this.destroy;
+
+  /**
+   * Bulk update queried records, using given mapping function/object
+   */
+  update(mapping: ((rec:Record) => Record) | Record, type?: string, options?: QueryUpdateOptions) {
+    if (typeof type === 'object' && type !== null) {
+      options = type;
+      type = undefined;
+    }
+    options = options || {};
+    const type_ = type || (this._config && this._config.table);
+    if (!type_) {
+      throw new Error("SOQL based query needs SObject type information to bulk update.");
+    }
+    const updateStream =
+      typeof mapping === 'function' ? RecordStream.map(mapping) : RecordStream.recordMapStream(mapping);
+    // Set the threshold number to pass to bulk API
+    const thresholdNum =
+      options.allowBulk === false ?
+        -1 :
+      typeof options.bulkThreshold === 'number' ?
+        options.bulkThreshold :
+        // determine threshold if the connection version supports SObject collection API or not
+        (this._conn._ensureVersion(42) ? DEFAULT_BULK_THRESHOLD : this._conn._maxRequest / 2);
+    return new Promise((resolve, reject) => {
+      const records: Record[] = [];
+      // let batch = null;
+      const handleRecord = (record: Record) => {
+        // TODO: enable batch switch
+        /*
+        if (batch) {
+          batch.write(record);
+        } else {
+        */
+        records.push(record);
+        /*
+        if (thresholdNum < 0 || records.length > thresholdNum) {
+          // Use bulk update instead of SObject REST API
+          batch =
+            self._conn.sobject(type).updateBulk()
+              .on('response', resolve)
+              .on('error', reject);
+          records.forEach(function(record) {
+            batch.write(record);
+          });
+          records = [];
+        }
+      }
+        */
+      };
+      const handleEnd = () => {
+        /*
+        if (batch) {
+          batch.end();
+        } else {
+        */
+        this._conn.sobject(type_).update(records, { allowRecursive: true }).then(resolve, reject);
+        /*
+        }
+        */
+      };
+      this._recordStream
+        .on('error', reject)
+        .pipe(updateStream)
+        .on('data', handleRecord)
+        .on('end', handleEnd)
+        .on('error', reject);
+    });
+  }
 }
-
-
-/**
- * Synonym of Query#destroy()
- *
- * @method Query#delete
- * @param {String} [type] - SObject type. Required for SOQL based query object.
- * @param {Callback.<Array.<RecordResult>>} [callback] - Callback function
- * @returns {Bulk~Batch}
- */
-/**
- * Synonym of Query#destroy()
- *
- * @method Query#del
- * @param {String} [type] - SObject type. Required for SOQL based query object.
- * @param {Callback.<Array.<RecordResult>>} [callback] - Callback function
- * @returns {Bulk~Batch}
- */
-/**
- * Bulk delete queried records
- *
- * @method Query#destroy
- * @param {String} [type] - SObject type. Required for SOQL based query object.
- * @param {Callback.<Array.<RecordResult>>} [callback] - Callback function
- * @returns {Promise.<Array.<RecordResult>>}
-Query.prototype.delete =
-Query.prototype.del =
-Query.prototype.destroy = function (type, callback) {
-  if (typeof type === 'function') {
-    callback = type;
-    type = null;
-  }
-  type = type || (this._config && this._config.table);
-  if (!type) {
-    throw new Error('SOQL based query needs SObject type information to bulk delete.');
-  }
-  const batch = this._conn.sobject(type).deleteBulk();
-  const deferred = Promise.defer();
-  const handleError = function (err) {
-    // if batch input receives no records
-    if (err.name === 'ClientInputError') { deferred.resolve([]); }
-    else { deferred.reject(err); }
-  };
-  this.on('error', handleError)
-    .pipe(batch)
-    .on('response', (res) => { deferred.resolve(res); })
-    .on('error', handleError);
-  return deferred.promise.thenCall(callback);
-};
- */
-
-/**
- * Bulk update queried records, using given mapping function/object
- *
- * @param {Record|RecordMapFunction} mapping - Mapping record or record mapping function
- * @param {String} [type] - SObject type. Required for SOQL based query object.
- * @param {Callback.<Array.<RecordResult>>} [callback] - Callback function
- * @returns {Promise.<Array.<RecordResult>>}
-Query.prototype.update = function (mapping, type, callback) {
-  if (typeof type === 'function') {
-    callback = type;
-    type = null;
-  }
-  type = type || (this._config && this._config.table);
-  if (!type) {
-    throw new Error('SOQL based query needs SObject type information to bulk update.');
-  }
-  const updateStream =
-   _.isFunction(mapping) ?
-    RecordStream.map(mapping) :
-    RecordStream.recordMapStream(mapping);
-  const batch = this._conn.sobject(type).updateBulk();
-  const deferred = Promise.defer();
-  const handleError = function (err) {
-    // if batch input receives no records
-    if (err.name === 'ClientInputError') { deferred.resolve([]); }
-    else { deferred.reject(err); }
-  };
-  this.on('error', handleError)
-    .pipe(updateStream)
-    .on('error', handleError)
-    .pipe(batch)
-    .on('response', (res) => { deferred.resolve(res); })
-    .on('error', handleError);
-  return deferred.promise.thenCall(callback);
-};
- */
 
 
 /*--------------------------------------------*/
