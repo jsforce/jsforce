@@ -9,6 +9,7 @@ import Connection from './connection';
 import { createSOQL } from './soql-builder';
 import { QueryConfig, QueryCondition, SortConfig, SortDir } from './soql-builder';
 import { Record, Optional } from './types';
+import { identityFunc } from './util/function';
 
 /**
  * type defs
@@ -93,8 +94,8 @@ export default class Query extends EventEmitter {
   _executed: boolean = false;
   _finished: boolean = false;
   _chaining: boolean = false;
-  _recordStream: Serializable = new Serializable();
-  _promise: Optional<Promise<QueryResponse>>;
+  _promise: Promise<QueryResponse>;
+  _stream: Serializable;
   _parent: Optional<Query>;
 
   totalSize: Optional<number>;
@@ -140,9 +141,19 @@ export default class Query extends EventEmitter {
       scanAll: false,
       responseTarget: 'QueryResult',
     } as QueryOptions);
-    this.on('record', (record) => this._recordStream.push(record))
-    this.on('end', () => this._recordStream.push(null))
-    this.on('error', (err) => this._recordStream.emit('error', err));
+    // promise instance
+    this._promise = new Promise((resolve, reject) => {
+      this.on('response', resolve);
+      this.on('error', reject);
+    });
+    this._stream = new Serializable();
+    this.on('record', (record) => this._stream.push(record));
+    this.on('end', () => this._stream.push(null));
+    this.on('error', (err) => {
+      try {
+        this._stream.emit('error', err);
+      } catch (e) {}
+    });
   }
 
 
@@ -314,12 +325,6 @@ export default class Query extends EventEmitter {
       scanAll: _options.scanAll || this._options.scanAll
     };
 
-    // callback and promise resolution;
-    this._promise = new Promise((resolve, reject) => {
-      this.on('response', resolve);
-      this.on('error', reject);
-    });
-
     // collect fetched records in array
     // only when response target is Records and
     // either callback or chaining promises are available to this query.
@@ -427,35 +432,23 @@ export default class Query extends EventEmitter {
   }
 
   /**
-   * Readable stream implementation
+   * Obtain readable stream instance
    */
-  stream(type: 'record' | 'csv' = 'record') {
+  stream(type: 'record' | 'csv') {
     if (!this._finished && !this._executed) {
       this.execute({ autoFetch: true });
     }
-    return type === 'record' ? this._recordStream : this._recordStream.stream(type);
+    return type === 'record' ? this._stream : this._stream.stream(type);
   }
 
   /**
-   * Pipe to stream
+   * Pipe the queried records to another stream
+   * This is for backward compatibility; Query is not a record stream instance anymore in 2.0.
+   * If you want a record stream instance, use `Query#stream('record')`.
    */
   pipe(stream: NodeJS.WritableStream) {
-    return this._recordStream.pipe(stream);
+    return this.stream('record').pipe(stream);
   }
-
-
-  /** @override **/
-  on(e: string, fn: (...args: any[]) => any): this {
-    if (e === 'record') {
-      this.on('readable', () => {
-        while (this._recordStream.read() !== null); // discard buffered records
-      });
-    }
-    return super.on(e, fn);
-  }
-
-  /** @override **/
-  addListener: ((e: string, fn: (...args: any[]) => any) => any) = this.on;
 
   /**
    * @protected
@@ -582,7 +575,7 @@ export default class Query extends EventEmitter {
    */
   then<U>(
     onResolve: (qr: QueryResponse) => U | Promise<U>,
-    onReject: (err: any) => U | Promise<U>
+    onReject?: (err: any) => U | Promise<U>
   ): Promise<U> {
     this._chaining = true;
     if (!this._finished && !this._executed) {
@@ -592,6 +585,12 @@ export default class Query extends EventEmitter {
       throw new Error('invalid state: promise is not set after query execution');
     }
     return this._promise.then(onResolve, onReject);
+  }
+
+  catch(
+    onReject: (err: any) => QueryResponse | Promise<QueryResponse>
+  ): Promise<QueryResponse> {
+    return this.then(identityFunc, onReject);
   }
 
   /**
@@ -656,7 +655,7 @@ export default class Query extends EventEmitter {
         const ids = records.map((record) => record.Id);
         this._conn.sobject(type_).destroy(ids, { allowRecursive: true }).then(resolve, reject);
       };
-      this._recordStream
+      this.stream('record')
         .on('data', handleRecord)
         .on('end', handleEnd)
         .on('error', reject);
@@ -733,7 +732,7 @@ export default class Query extends EventEmitter {
         }
         */
       };
-      this._recordStream
+      this.stream('record')
         .on('error', reject)
         .pipe(updateStream)
         .on('data', handleRecord)
