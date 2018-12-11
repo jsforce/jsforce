@@ -20,6 +20,9 @@ type CacheValue<T> = {
   result: T,
 };
 
+export type CachedFunction<Fn> = Fn & { clear: (...args: any[]) => void };
+
+
 /**
  * Class for managing cache entry
  *
@@ -82,8 +85,6 @@ function generateKeyString(options: CachingOptions, scope: any, args: any[]): st
   );
 }
 
-type CachedFunction = Function & { clear: (...args: any[]) => void };
-
 /**
  * Caching manager for async methods
  *
@@ -123,11 +124,11 @@ export default class Cache {
    * Enable caching for async call fn to lookup the response cache first,
    * then invoke original if no cached value.
    */
-  createCachedFunction(
-    fn: ((...args: any[]) => Promise<any>),
+  createCachedFunction<Fn extends Function>(
+    fn: Fn,
     scope: any,
     options: CachingOptions = { strategy: 'NOCACHE' }
-  ): CachedFunction {
+  ): CachedFunction<Fn> {
     const strategy = options.strategy;
     const $fn: any = (...args: any[]) => {
       const key = generateKeyString(options, scope, args);
@@ -172,6 +173,6 @@ export default class Cache {
       const key = generateKeyString(options, scope, args);
       this.clear(key);
     };
-    return $fn as CachedFunction;
+    return $fn as CachedFunction<Fn>;
   }
 }

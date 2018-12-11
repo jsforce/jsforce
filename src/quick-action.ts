@@ -3,16 +3,16 @@
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
 import Connection from './connection';
-import type { DescribeQuickActionDetailResult } from './types';
+import { DescribeQuickActionDetailResult, Record, Optional } from './types';
 
 /**
  * type definitions
  */
-export type QuickActionDefaultValues = { [string]: ?any };
+export type QuickActionDefaultValues = { [name: string]: any };
 
 export type QuickActionResult = {
   id: string,
-  feedItemIds: ?string[],
+  feedItemIds: Optional<string[]>,
   success: boolean,
   created: boolean,
   contextId: string,
@@ -40,7 +40,7 @@ export default class QuickAction {
   async describe(): Promise<DescribeQuickActionDetailResult> {
     const url = `${this._path}/describe`;
     const body = await this._conn.request(url);
-    return (body : DescribeQuickActionDetailResult);
+    return (body as DescribeQuickActionDetailResult);
   }
 
   /**
@@ -52,15 +52,15 @@ export default class QuickAction {
       url += `/${contextId}`;
     }
     const body = await this._conn.request(url);
-    return (body : { [string]: ?any });
+    return (body as QuickActionDefaultValues);
   }
 
   /**
    * Execute the action for given context Id and record information
    */
-  async execute(contextId, record): Promise<QuickActionResult> {
+  async execute(contextId: string, record: Record): Promise<QuickActionResult> {
     const requestBody = { contextId, record };
     const resBody = await this._conn.requestPost(this._path, requestBody);
-    return (resBody : QuickActionResult);
+    return (resBody as QuickActionResult);
   }
 }

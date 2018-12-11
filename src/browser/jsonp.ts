@@ -1,16 +1,18 @@
-/* @flow */
+/**
+ * 
+ */
 import { Transform } from 'stream';
-import type { HttpRequest } from '../types';
+import { HttpRequest } from '../types';
 
 let _index = 0;
 
-async function processJsonpRequest(params, jsonpParam, timeout) {
+async function processJsonpRequest(params: HttpRequest, jsonpParam: string, timeout: number) {
   if (params.method.toUpperCase() !== 'GET') {
     throw new Error('JSONP only supports GET request.');
   }
   _index += 1;
   const cbFuncName = `_jsforce_jsonpCallback_${_index}`;
-  const callbacks = window;
+  const callbacks: any = window;
   let url = params.url;
   url += url.indexOf('?') > 0 ? '&' : '?';
   url += `${jsonpParam}=${cbFuncName}`;

@@ -1,4 +1,6 @@
-/* @flow */
+/**
+ * 
+ */
 export function zeroPad(num: number): string {
   if (num < 10) {
     return `0${num}`;
@@ -6,6 +8,9 @@ export function zeroPad(num: number): string {
   return String(num);
 }
 
+/**
+ * 
+ */
 export function formatDate(date: Date) {
   return `${date.getUTCFullYear()
     }-${zeroPad(date.getUTCMonth() + 1)

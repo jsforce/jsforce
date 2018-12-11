@@ -12,6 +12,16 @@
     }]
   ],
   "env": {
+    "module": {
+      "presets": [
+        ["@babel/preset-env", {
+          "modules": false,
+          "useBuiltIns": "usage",
+          "targets": { "esmodules": true }
+        }],
+        "@babel/preset-typescript"
+      ]
+    },
     "test": {
       "presets": [
         ["@babel/preset-env", {

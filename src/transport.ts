@@ -1,7 +1,10 @@
-/* @flow */
+/**
+ * 
+ */
+import { Duplex } from 'stream';
 import _request from 'request';
-import type { HttpRequest, HttpResponse } from './types';
-import { StreamPromise } from './util/promise';
+import { HttpRequest, HttpResponse } from './types';
+import { StreamPromise, StreamPromiseBuilder } from './util/promise';
 import jsonp from './browser/jsonp';
 import canvas from './browser/canvas';
 
@@ -9,7 +12,7 @@ import canvas from './browser/canvas';
  * Normarize Salesforce API host name
  * @private
  */
-function normalizeApiHost(apiHost) {
+function normalizeApiHost(apiHost: string) {
   const m = /(\w+)\.(visual\.force|salesforce)\.com$/.exec(apiHost);
   if (m) {
     return `${m[1]}.salesforce.com`;
@@ -29,7 +32,7 @@ const request = _request.defaults ? (() => {
   if (process.env.HTTP_PROXY) {
     defaults.proxy = process.env.HTTP_PROXY;
   }
-  const timeout = parseInt(process.env.HTTP_TIMEOUT, 10);
+  const timeout = parseInt(process.env.HTTP_TIMEOUT || '0', 10);
   if (timeout) {
     defaults.timeout = timeout;
   }
@@ -53,21 +56,22 @@ export default class Transport {
   /**
    */
   httpRequest(params: HttpRequest): StreamPromise<HttpResponse> {
-    return StreamPromise.create(async (setStream) => {
+    const streamBuilder: StreamPromiseBuilder<HttpResponse> = async (setStream) => {
       const createStream = this.getRequestStreamCreator();
       const stream = createStream(params);
       setStream(stream);
-      return new Promise((resolve, reject) => {
-        stream.on('complete', resolve).on('error', reject);
+      return new Promise<HttpResponse>((resolve, reject) => {
+        stream.on('complete', (res: HttpResponse) => resolve(res)).on('error', reject);
       });
-    });
+    };
+    return StreamPromise.create(streamBuilder);
   }
 
   /**
    * @protected
    */
-  getRequestStreamCreator(): HttpRequest => Stream {
-    return params => request(params, () => {});
+  getRequestStreamCreator(): (req: HttpRequest) => Duplex {
+    return params => (request(params, () => {}) as any) as Duplex;
   }
 }
 
@@ -84,7 +88,7 @@ export class JsonpTransport extends Transport {
     this._jsonpParam = jsonpParam;
   }
 
-  getRequestStreamCreator(): HttpRequest => Stream {
+  getRequestStreamCreator(): (req: HttpRequest) => Duplex {
     const jsonpRequest = jsonp.createRequest(this._jsonpParam);
     return params => jsonpRequest(params);
   }
@@ -102,7 +106,7 @@ export class CanvasTransport extends Transport {
     this._signedRequest = signedRequest;
   }
 
-  getRequestStreamCreator(): HttpRequest => Stream {
+  getRequestStreamCreator(): (req: HttpRequest) => Duplex {
     const canvasRequest = canvas.createRequest(this._signedRequest);
     return params => canvasRequest(params);
   }
@@ -128,7 +132,7 @@ export class ProxyTransport extends Transport {
     if (url.indexOf('/') === 0) {
       url = baseUrl + url;
     }
-    const headers = { 'salesforceproxy-endpoint': url };
+    const headers: { [name: string]: string } = { 'salesforceproxy-endpoint': url };
     if (params.headers) {
       for (const name of Object.keys(params.headers)) {
         headers[name] = params.headers[name];

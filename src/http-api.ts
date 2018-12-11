@@ -1,14 +1,16 @@
-/* @flow */
+/**
+ * 
+ */
 import EventEmitter from 'events';
 import { Logger, getLogger } from './util/logger';
 import { StreamPromise } from './util/promise';
 import Connection from './connection';
 import Transport from './transport';
-import type { HttpRequest, HttpResponse } from './types';
+import { HttpRequest, HttpResponse, SaveError, Optional } from './types';
 
 
 /** @private */
-function parseJSON(str) {
+function parseJSON(str: string) {
   return JSON.parse(str);
 }
 
@@ -45,8 +47,8 @@ export default class HttpApi extends EventEmitter {
   _conn: Connection;
   _logger: Logger;
   _transport: Transport;
-  _responseType: ?string;
-  _noContentResponse: ?string;
+  _responseType: string | void;
+  _noContentResponse: string | void;
 
   constructor(conn: Connection, options: any) {
     super();
@@ -95,7 +97,7 @@ export default class HttpApi extends EventEmitter {
 
       setStream(requestPromise.stream());
 
-      let response: ?HttpResponse;
+      let response: HttpResponse | void;
       try {
         response = await requestPromise;
       } catch (err) {
@@ -105,6 +107,7 @@ export default class HttpApi extends EventEmitter {
         const responseTime = Date.now();
         this._logger.debug(`elappsed time: ${responseTime - requestTime} msec`);
       }
+      if (!response) { return; }
       this._logger.debug(`<response> status=${String(response.statusCode)}, url=${request.url}`);
       this.emit('response', response);
       // Refresh token if session has been expired and requires authentication
@@ -151,7 +154,7 @@ export default class HttpApi extends EventEmitter {
    * Detect response content mime-type
    * @protected
    */
-  getResponseContentType(response: HttpResponse): ?string {
+  getResponseContentType(response: HttpResponse): Optional<string> {
     return this._responseType || (response.headers && response.headers['content-type']);
   }
 
@@ -187,8 +190,8 @@ export default class HttpApi extends EventEmitter {
     }
     if (response.statusCode === 300) { // Multiple Choices
       throw new (class extends Error {
-        content: ?any;
-        constructor(name, message, content) {
+        content: any;
+        constructor(name: string, message: string, content: Optional<string>) {
           super(message);
           this.name = name;
           this.content = content;
@@ -218,7 +221,7 @@ export default class HttpApi extends EventEmitter {
    * Detect error in response body
    * @protected
    */
-  hasErrorInResponseBody(/* body */) {
+  hasErrorInResponseBody(body: Optional<string>) {
     return false;
   }
 
@@ -235,7 +238,7 @@ export default class HttpApi extends EventEmitter {
    * Get error message in response
    * @protected
    */
-  getError(response: HttpResponse, body: any): Error {
+  getError(response: HttpResponse, body?: any): Error {
     let error;
     try {
       error = this.parseError(body || this.parseResponseBody(response));
@@ -248,7 +251,7 @@ export default class HttpApi extends EventEmitter {
       { errorCode: `ERROR_HTTP_${response.statusCode}`, message: response.body };
     return new (class extends Error {
       errorCode: string;
-      constructor({ message, errorCode }) {
+      constructor({ message, errorCode }: SaveError) {
         super(message);
         this.name = errorCode || this.name;
         this.errorCode = this.name;

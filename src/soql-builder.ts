@@ -1,21 +1,20 @@
-/* @flow */
 /**
  * @file Create and build SOQL string from configuration
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
-
 import SfDate from './date';
+import { Optional } from './types';
 
-export type QueryCondition = string | { [string]: any } | Array<{ [string]: any }>;
+export type QueryCondition = string | { [field: string]: any } | Array<{ [field: string]: any }>;
 
 export type SortDir = 'ASC' | 'DESC' | 1 | -1;
 
-export type SortConfig = string | Array<[string, SortDir]> | { [string]: SortDir };
+export type SortConfig = string | Array<[string, SortDir]> | { [field: string]: SortDir };
 
 export type QueryConfig = {
   fields?: string[],
-  includes?: { [string]: QueryConfig },
-  table: string,
+  includes?: { [field: string]: QueryConfig },
+  table?: string,
   conditions?: QueryCondition,
   sort?: SortConfig,
   limit?: number,
@@ -23,7 +22,7 @@ export type QueryConfig = {
 };
 
 /** @private **/
-function escapeSOQLString(str) {
+function escapeSOQLString(str: Optional<string | number | boolean>) {
   return String(str || '').replace(/'/g, "\\'");
 }
 
@@ -31,15 +30,15 @@ function escapeSOQLString(str) {
 /** @private **/
 function createFieldsClause(
   fields?: string[],
-  childQueries?: { [string]: QueryConfig } = {}
+  childQueries: { [name: string]: QueryConfig } = {}
 ): string {
-  const cqueries: QueryConfig[] = ((Object.values(childQueries): any) : QueryConfig[]);
+  const cqueries: QueryConfig[] = ((Object.values(childQueries) as any) as QueryConfig[]);
   // eslint-disable-next-line no-use-before-define
   return [...(fields || ['Id']), ...cqueries.map(cquery => `(${createSOQL(cquery)})`)].join(', ');
 }
 
 /** @private **/
-function createValueExpression(value: any): ?string {
+function createValueExpression(value: any): Optional<string> {
   if (Array.isArray(value)) {
     return value.length > 0 ?
            `(${value.map(createValueExpression).join(', ')})` :
@@ -60,7 +59,7 @@ function createValueExpression(value: any): ?string {
   return value;
 }
 
-const opMap = {
+const opMap: { [op: string]: string } = {
   '=': '=',
   $eq: '=',
   '!=': '!=',
@@ -83,7 +82,7 @@ const opMap = {
 };
 
 /** @private **/
-function createFieldExpression(field: string, value: any): ?string {
+function createFieldExpression(field: string, value: any): Optional<string> {
   let op = '$eq';
   let _value = value;
 
@@ -115,7 +114,7 @@ function createFieldExpression(field: string, value: any): ?string {
 }
 
 /** @private **/
-function createOrderByClause(sort?: SortConfig = []): string {
+function createOrderByClause(sort: SortConfig = []): string {
   let _sort: Array<[string, SortDir]> = [];
   if (typeof sort === 'string') {
     if (/,|\s+(asc|desc)\s*$/.test(sort)) {
@@ -133,12 +132,12 @@ function createOrderByClause(sort?: SortConfig = []): string {
       } else if (flag === '+') {
         field = field.substring(1); // eslint-disable-line no-param-reassign
       }
-      return [field, dir];
+      return [field, dir] as [string, SortDir];
     });
   } else if (Array.isArray(sort)) {
     _sort = sort;
   } else {
-    _sort = Object.entries(sort).map(([field, dir]) => [field, ((dir : any) : SortDir)]);
+    _sort = Object.entries(sort).map(([field, dir]) => [field, dir] as [string, SortDir]);
   }
   return _sort.map(([field, dir]) => {
     /* eslint-disable no-param-reassign */
@@ -161,9 +160,9 @@ type LogicalOperator = 'AND' | 'OR' | 'NOT';
 
 /** @private **/
 function createConditionClause(
-  conditions?: QueryCondition = {},
-  operator?: LogicalOperator = 'AND',
-  depth?: number = 0
+  conditions: QueryCondition = {},
+  operator: LogicalOperator = 'AND',
+  depth: number = 0
 ): string {
   if (typeof conditions === 'string') {
     return conditions;
@@ -180,7 +179,7 @@ function createConditionClause(
   }
   const conditionClauses = ((conditionList.map((cond) => {
     let d = depth + 1;
-    let op: ?LogicalOperator;
+    let op: Optional<LogicalOperator>;
     switch (cond.key) {
       case '$or' :
       case '$and' :
@@ -196,7 +195,7 @@ function createConditionClause(
         return createFieldExpression(cond.key, cond.value);
     }
   })
-  .filter(expr => expr) : any) : string[]);
+  .filter(expr => expr) as any) as string[]);
 
   let hasParen: boolean;
   if (operator === 'NOT') {

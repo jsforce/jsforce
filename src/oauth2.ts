@@ -1,7 +1,9 @@
-/* @flow */
+/**
+ * 
+ */
 import querystring from 'querystring';
 import Transport, { ProxyTransport, HttpProxyTransport } from './transport';
-import type { HttpRequest } from './types';
+import { Optional } from './types';
 
 const defaultOAuth2Config = {
   loginUrl: 'https://login.salesforce.com'
@@ -37,9 +39,9 @@ export default class OAuth2 {
   authzServiceUrl: string;
   tokenServiceUrl: string;
   revokeServiceUrl: string;
-  clientId: ?string;
-  clientSecret: ?string;
-  redirectUri: ?string;
+  clientId: Optional<string>;
+  clientSecret: Optional<string>;
+  redirectUri: Optional<string>;
 
   _transport: Transport;
 
@@ -78,12 +80,13 @@ export default class OAuth2 {
   /**
    * Get Salesforce OAuth2 authorization page URL to redirect user agent.
    */
-  getAuthorizationUrl(params?: { scope?: string, state?: string } = {}) {
-    const _params = Object.assign((params: Object), {
+  getAuthorizationUrl(params: { scope?: string, state?: string } = {}) {
+    const _params = {
+      ...params,
       response_type: 'code',
       client_id: this.clientId,
       redirect_uri: this.redirectUri
-    });
+    };
     return this.authzServiceUrl +
       (this.authzServiceUrl.indexOf('?') >= 0 ? '&' : '?') +
       querystring.stringify(_params);
@@ -96,7 +99,7 @@ export default class OAuth2 {
     if (!this.clientId) {
       throw new Error('No OAuth2 client id information is specified');
     }
-    const params = {
+    const params: { [prop: string]: string } = {
       grant_type: 'refresh_token',
       refresh_token: refreshToken,
       client_id: this.clientId,
@@ -105,7 +108,7 @@ export default class OAuth2 {
       params.client_secret = this.clientSecret;
     }
     const ret = await this._postParams(params);
-    return (ret : TokenResponse);
+    return ret as TokenResponse;
   }
 
   /**
@@ -114,12 +117,12 @@ export default class OAuth2 {
    */
   async requestToken(
     code: string,
-    params?: Object = {}
+    params: { [prop: string]: string }  = {}
   ): Promise<TokenResponse> {
     if (!this.clientId || !this.redirectUri) {
       throw new Error('No OAuth2 client id or redirect uri configuration is specified');
     }
-    const _params = {
+    const _params: { [prop: string]: string } = {
       ...params,
       grant_type: 'authorization_code',
       code,
@@ -130,7 +133,7 @@ export default class OAuth2 {
       _params.client_secret = this.clientSecret;
     }
     const ret = await this._postParams(_params);
-    return (ret : TokenResponse);
+    return ret as TokenResponse;
   }
 
   /**
@@ -148,7 +151,7 @@ export default class OAuth2 {
       client_secret: this.clientSecret,
       redirect_uri: this.redirectUri
     });
-    return (ret : TokenResponse);
+    return ret as TokenResponse;
   }
 
   /**
@@ -164,12 +167,12 @@ export default class OAuth2 {
       }
     });
     if (response.statusCode >= 400) {
-      let res = querystring.parse(response.body);
+      let res: any = querystring.parse(response.body);
       if (!res || !res.error) {
         res = { error: `ERROR_HTTP_${response.statusCode}`, error_description: response.body };
       }
       throw new (class extends Error {
-        constructor({ error, error_description }) {
+        constructor({ error, error_description }: { error: string, error_description: string }) {
           super(error_description);
           this.name = error;
         }
@@ -180,7 +183,7 @@ export default class OAuth2 {
   /**
    * @private
    */
-  async _postParams(params: HttpRequest): Promise<any> {
+  async _postParams(params: { [name: string]: string }): Promise<any> {
     const response = await this._transport.httpRequest({
       method: 'POST',
       url: this.tokenServiceUrl,
@@ -198,7 +201,7 @@ export default class OAuth2 {
     if (response.statusCode >= 400) {
       res = res || { error: `ERROR_HTTP_${response.statusCode}`, error_description: response.body };
       throw new (class extends Error {
-        constructor({ error, error_description }) {
+        constructor({ error, error_description }: { error: string, error_description: string }) {
           super(error_description);
           this.name = error;
         }

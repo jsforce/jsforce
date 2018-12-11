@@ -1,24 +1,36 @@
 /**
  * type defs
  */
+export type Optional<T> = T | null | undefined;
+
+export type Callback<T, T2 = undefined> =
+  (err: Error | null | undefined, ret?: T, ret2?: T2) => any;
+
+export type HttpMethods = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS';
+
 export type HttpRequest = {
   url: string;
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'OPTIONS';
-  headers?: {[string]: string },
+  method: HttpMethods,
+  headers?: { [name: string]: string },
   body?: string
 };
 
 export type HttpResponse = {
   statusCode: number,
-  headers: {[string]: string },
+  headers: { [name: string]: string },
   body: string,
 };
+  
+export type Record = {
+  [field: string]: any,
+  Id: string,
+  attributes?: { type: string },
+};
 
-export type Callback<T> = (Error, T) => any;
-
-export type Record = { Id: string };
-
-export type UnsavedRecord = {};
+export type UnsavedRecord = {
+  [field: string]: any,
+  attributes?: { type: string },
+};
 
 export type SaveError = {
   errorCode: string,
@@ -27,9 +39,15 @@ export type SaveError = {
 };
 
 export type SaveResult = {
-  id: string,
-  sucess: boolean,
+  success: boolean,
+  id?: string,
   errors: SaveError[],
+};
+
+export type SignedRequestObject = {
+  client: {
+    oauthToken: string
+  },
 };
 
 export type Field = {
@@ -37,15 +55,15 @@ export type Field = {
   autoNumber: boolean,
   byteLength: number,
   calculated: boolean,
-  calculatedFormula: object,
+  calculatedFormula: Optional<string>,
   cascadeDelete: boolean,
   caseSensitive: boolean,
-  compoundFieldName: object,
-  controllerName: object,
+  compoundFieldName: Optional<string>,
+  controllerName: Optional<string>,
   createable: boolean,
   custom: boolean,
-  defaultValue: object,
-  defaultValueFormula: object,
+  defaultValue: Optional<string>,
+  defaultValueFormula: Optional<string>,
   defaultedOnCreate: boolean,
   dependentPicklist: boolean,
   deprecatedAndHidden: boolean,
@@ -53,30 +71,30 @@ export type Field = {
   displayLocationInDecimal: boolean,
   encrypted: boolean,
   externalId: boolean,
-  extraTypeInfo: object,
+  extraTypeInfo: Optional<string>,
   filterable: boolean,
   filteredLookupInfo: object,
   groupable: boolean,
   highScaleNumber: boolean,
   htmlFormatted: boolean,
   idLookup: boolean,
-  inlineHelpText: object,
+  inlineHelpText: Optional<string>,
   label: string,
   length: number,
-  mask: object,
-  maskType: object,
+  mask: Optional<string>,
+  maskType: Optional<string>,
   name: string,
   nameField: boolean,
   namePointing: boolean,
   nillable: boolean,
   permissionable: boolean,
-  picklistValues: object,
+  picklistValues: Optional<any[]>,
   precision: number,
   queryByDistance: boolean,
   referenceTargetField: object,
-  referenceTo: object,
-  relationshipName: object,
-  relationshipOrder: object,
+  referenceTo: Optional<string[]>,
+  relationshipName: Optional<string>,
+  relationshipOrder: Optional<number>,
   restrictedDelete: boolean,
   restrictedPicklist: boolean,
   scale: number,
@@ -93,23 +111,23 @@ type ActionOverride = {
   isAvailableInTouch: boolean,
   name: string,
   pageId: string,
-  url: ?string,
+  url: Optional<string>,
 };
 
 type ChildRelationship = {
   cascadeDelete: boolean,
-  childSObject: ?string,
+  childSObject: Optional<string>,
   deprecatedAndHidden: boolean,
   field: 'WhatId',
   junctionIdListNames: string[],
   junctionReferenceTo: string[],
-  relationshipName: ?string,
+  relationshipName: Optional<string>,
   restrictedDelete: boolean,
 };
 
 type NamedLayoutInfo = {
   name: string,
-  urls: {[string]: string },
+  urls: { [key: string]: string },
 };
 
 type RecordTypeInfo = {
@@ -118,7 +136,7 @@ type RecordTypeInfo = {
   master: boolean,
   name: string,
   recordTypeId: string,
-  urls: { [string]: string },
+  urls: { [key: string]: string },
 };
 
 type DescribeSObjectResult_ = {
@@ -131,7 +149,7 @@ type DescribeSObjectResult_ = {
   feedEnabled: boolean,
   hasSubtypes: boolean,
   isSubtype: boolean,
-  keyPrefix: ?string,
+  keyPrefix: Optional<string>,
   label: string,
   labelPlural: string,
   layoutable: boolean,
@@ -145,7 +163,7 @@ type DescribeSObjectResult_ = {
   triggerable: boolean,
   undeletable: boolean,
   updateable: boolean,
-  urls: {[string]: string },
+  urls: { [key: string]: string },
 };
 
 export type DescribeSObjectResult = DescribeSObjectResult_ & {
@@ -154,7 +172,7 @@ export type DescribeSObjectResult = DescribeSObjectResult_ & {
   compactLayoutable: boolean,
   fields: Field[],
   namedLayoutInfos: NamedLayoutInfo[],
-  networkScopeFieldName: ?string,
+  networkScopeFieldName: Optional<string>,
   recordTypeInfos: RecordTypeInfo[],
   searchLayoutable: boolean,
 };
@@ -173,10 +191,10 @@ type DescribeColor = {
 
 type DescribeIcon = {
   contentType: string,
-  height: ?number,
+  height: Optional<number>,
   theme: string,
   url: string,
-  width: ?number
+  width: Optional<number>,
 };
 
 type WebLinkPosition =
@@ -189,14 +207,14 @@ type WebLinkWindowType =
   'newWindow' | 'noSidebar' | 'onClickJavaScript' | 'replace' | 'sidebar';
 
 type DescribeLayoutButton = {
-  behavior: ?WebLinkWindowType,
-  colors: ?DescribeColor[],
-  content: ?string,
-  contentSource: ?WebLinkType,
+  behavior: Optional<WebLinkWindowType>,
+  colors: Optional<DescribeColor[]>,
+  content: Optional<string>,
+  contentSource: Optional<WebLinkType>,
   custom: boolean,
-  encoding: ?string,
-  height: ?number,
-  icons: ?DescribeIcon[],
+  encoding: Optional<string>,
+  height: Optional<number>,
+  icons: Optional<DescribeIcon[]>,
   label: string,
   menubar: boolean,
   name: string,
@@ -206,9 +224,9 @@ type DescribeLayoutButton = {
   showsLocation: boolean,
   showsStatus: boolean,
   toolbar: boolean,
-  url: ?string,
-  width: ?number,
-  windowPosition: ?WebLinkPosition,
+  url: Optional<string>,
+  width: Optional<number>,
+  windowPosition: Optional<WebLinkPosition>,
 };
 
 type DescribeLayoutButtonSection = {
@@ -225,7 +243,7 @@ type DescribeLayoutComponent = {
   displayLines: number,
   tabOrder: number,
   type: LayoutComponentType,
-  value: ?string,
+  value: Optional<string>,
 };
 
 type DescribeLayoutItem = {
@@ -254,13 +272,13 @@ type DescribeLayoutSection = {
 };
 
 type DescribeQuickActionListItemResult = {
-  colors: ?DescribeColor[],
-  iconUrl: ?string,
-  icons: ?DescribeIcon[],
+  colors: Optional<DescribeColor[]>,
+  iconUrl: Optional<string>,
+  icons: Optional<DescribeIcon[]>,
   label: string,
-  miniIconUrl: ?string,
+  miniIconUrl: Optional<string>,
   quickActionName: string,
-  targetSobjectType: ?string,
+  targetSobjectType: Optional<string>,
   type: 'Create' | 'VisualforcePage',
 };
 
@@ -281,7 +299,7 @@ type RelatedListColumn = {
   fieldApiName: string,
   format: string,
   label: string,
-  lookupId: ?string,
+  lookupId: Optional<string>,
   name: string,
 };
 
@@ -296,8 +314,8 @@ type RelatedList = {
   custom: boolean,
   label: string,
   limitRows: number,
-  name: ?string,
-  sobject: ?string,
+  name: Optional<string>,
+  sobject: Optional<string>,
   sort: RelatedListSort[],
 };
 
@@ -333,8 +351,10 @@ type DescribeLayoutFeedView = {
   feedFilters: DescribeLayoutFeedFilter[],
 };
 
+type RecordTypeMapping = any; // TODO
+
 export type DescribeLayoutResult = {
-  feedView: ?DescribeLayoutFeedView[],
+  feedView: Optional<DescribeLayoutFeedView[]>,
   layouts: DescribeLayout[],
   recordTypeMappings: RecordTypeMapping[],
   recordTypeSelectorRequired: boolean[],
@@ -343,7 +363,7 @@ export type DescribeLayoutResult = {
 export type DescribeCompactLayout = {
   actions: DescribeLayoutButton[],
   fieldItems: DescribeLayoutItem[],
-  id: ?string,
+  id: Optional<string>,
   imageItems: DescribeLayoutItem[],
   label: string,
   name: string,
@@ -352,7 +372,7 @@ export type DescribeCompactLayout = {
 
 type RecordTypeCompactLayoutMapping = {
   available: boolean,
-  compactLayoutId: ?string,
+  compactLayoutId: Optional<string>,
   compactLayoutName: string,
   recordTypeId: string,
   recordTypeName: string,
@@ -360,7 +380,7 @@ type RecordTypeCompactLayoutMapping = {
 
 export type DescribeCompactLayoutsResult = {
   compactLayouts: DescribeCompactLayout[],
-  defaultCompactLayoutId: ?string,
+  defaultCompactLayoutId: Optional<string>,
   recordTypeCompactLayoutMappings: RecordTypeCompactLayoutMapping[],
 };
 
@@ -376,10 +396,10 @@ export type DescribeApprovalLayoutsResult = {
 };
 
 export type DescribeTab = {
-  colors: ?DescribeColor[],
+  colors: Optional<DescribeColor[]>,
   custom: boolean,
   iconUrl: string,
-  icons: ?DescribeIcon[],
+  icons: Optional<DescribeIcon[]>,
   label: string,
   miniIconUrl: string,
   name: string,
@@ -389,8 +409,8 @@ export type DescribeTab = {
 
 export type DescribeTheme = {
   themeItems: Array<{
-    colors: ?DescribeColor[],
-    icons: ?DescribeIcon[],
+    colors: Optional<DescribeColor[]>,
+    icons: Optional<DescribeIcon[]>,
     name: string,
   }>
 };
@@ -400,18 +420,20 @@ export type DescribeQuickActionResult = {
   label: string,
   name: string,
   type: string,
-  urls: {[string]: string },
+  urls: { [key: string]: string },
 };
 
+type DescribeQuickActionDefaultValue = any; // TODO
+
 export type DescribeQuickActionDetailResult = DescribeQuickActionResult & {
-  canvasApplicationId: ?string,
-  canvasApplicationName: ?string,
-  colors: ?DescribeColor[],
-  defaultValues: ?DescribeQuickActionDefaultValue[],
-  height: ?number,
-  iconName: ?string,
-  iconUrl: ?string,
-  icons: ?DescribeIcon[],
+  canvasApplicationId: Optional<string>,
+  canvasApplicationName: Optional<string>,
+  colors: Optional<DescribeColor[]>,
+  defaultValues: Optional<DescribeQuickActionDefaultValue[]>,
+  height: Optional<number>,
+  iconName: Optional<string>,
+  iconUrl: Optional<string>,
+  icons: Optional<DescribeIcon[]>,
 };
 
 export type DeletedResult = {
@@ -430,7 +452,7 @@ export type UpdatedResult = {
 
 
 export type LimitsInfo = {
-  [string]: {
+  [ key: string]: {
     Max: number,
     Remaining: number,
   },

@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 import Apex from './api/apex';
 import ConnectionCore from './connection';
 import jsforce, { OAuth2, VERSION } from './core';

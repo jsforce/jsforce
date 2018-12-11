@@ -22,11 +22,18 @@
       "url": "http://github.com/jsforce/jsforce/raw/master/LICENSE"
     }
   ],
+  "module": "./module",
   "main": "./index",
   "scripts": {
-    "build": "babel src -d lib.es6",
+    "build:types": "run-p build:types:*",
+    "build:types:es5": "tsc --emitDeclarationOnly --outDir lib.es6",
+    "build:types:module": "tsc --emitDeclarationOnly --outDir module",
+    "build": "run-p build:types build:es5 build:module",
+    "build:es5": "NODE_ENV=production npm run build:src -- -d lib.es6",
+    "build:module": "NODE_ENV=module npm run build:src -- -d module",
+    "build:src": "babel src --extensions \".ts\"",
     "lint": "eslint src test.es6",
-    "tsc": "tsc",
+    "typec": "tsc --noEmit",
     "test": "ava"
   },
   "directories": {

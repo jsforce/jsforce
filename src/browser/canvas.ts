@@ -1,11 +1,19 @@
-/* @flow */
+/**
+ * 
+ */
 import { Transform } from 'stream';
-import type { HttpRequest } from '../types';
+import { HttpRequest, SignedRequestObject } from '../types';
 
 declare var Sfdc: any;
 
-function parseHeaders(hs) {
-  const headers = {};
+type CanvasResponse = {
+  status: string,
+  responseHeaders: string,
+  payload: any,
+};
+
+function parseHeaders(hs: string) {
+  const headers: HttpRequest['headers'] = {};
   for (const line of hs.split(/\n/)) {
     const [name, value] = line.split(/\s*:\s*/);
     headers[name.toLowerCase()] = value;
@@ -15,10 +23,10 @@ function parseHeaders(hs) {
 
 async function processCanvasRequest(
   params: HttpRequest,
-  signedRequest: Object,
+  signedRequest: SignedRequestObject,
   requestBody: string
 ) {
-  const settings: Object = {
+  const settings: any = {
     client: signedRequest.client,
     method: params.method,
     data: requestBody,
@@ -34,7 +42,7 @@ async function processCanvasRequest(
       }
     }
   }
-  const data = await new Promise((resolve, reject) => {
+  const data = await new Promise<CanvasResponse>((resolve, reject) => {
     settings.success = resolve;
     settings.failure = reject;
     Sfdc.canvas.client.ajax(params.url, settings);
@@ -47,13 +55,13 @@ async function processCanvasRequest(
   return {
     statusCode: data.status,
     headers,
-    body: responseBody,
+    body: responseBody as string,
   };
 }
 
-function createRequest(signedRequest: Object) {
+function createRequest(signedRequest: SignedRequestObject) {
   return (params: HttpRequest) => {
-    const buf = [];
+    const buf: string[] = [];
     const stream = new Transform({
       transform(chunk, encoding, callback) {
         buf.push(typeof chunk === 'string' ? chunk : chunk.toString('utf8'));

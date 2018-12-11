@@ -1,22 +1,24 @@
-/* @flow */
+/**
+ * 
+ */
 import EventEmitter from 'events';
-import type {
+import {
   HttpRequest, HttpResponse, Callback, Record, UnsavedRecord, SaveResult,
   DescribeGlobalResult, DescribeSObjectResult, DescribeTab, DescribeTheme,
   DescribeQuickActionResult,
-  UpdatedResult, DeletedResult, LimitsInfo,
+  UpdatedResult, DeletedResult, LimitsInfo, Optional, SignedRequestObject, SaveError,
 } from './types';
 import { StreamPromise } from './util/promise';
 import Transport, { CanvasTransport, ProxyTransport, HttpProxyTransport } from './transport';
 import { Logger, getLogger } from './util/logger';
-import type { LogLevelConfig } from './util/logger';
-import OAuth2 from './oauth2';
-import type { OAuth2Config } from './oauth2';
-import Cache from './cache';
+import { LogLevelConfig } from './util/logger';
+import OAuth2, { TokenResponse } from './oauth2';
+import { OAuth2Config } from './oauth2';
+import Cache, { CachedFunction } from './cache';
 import HttpApi from './http-api';
-import SessionRefreshDelegate from './session-refresh-delegate';
+import SessionRefreshDelegate, { SessionRefreshFunc } from './session-refresh-delegate';
 import Query from './query';
-import type { QueryOptions } from './query';
+import { QueryOptions } from './query';
 import SObject from './sobject';
 import QuickAction from './quick-action';
 import { formatDate } from './util/formatter';
@@ -39,8 +41,8 @@ export type ConnectionConfig = {
   proxyUrl?: string,
   httpProxy?: string,
   logLevel?: LogLevelConfig,
-  callOptions?: { [string]: string },
-  refreshFn?: (Connection, Callback<string>) => any, // eslint-disable-line no-use-before-define
+  callOptions?: { [name: string]: string },
+  refreshFn?: SessionRefreshFunc,
 };
 
 export type UserInfo = {
@@ -50,13 +52,13 @@ export type UserInfo = {
 };
 
 export type ConnectionEstablishOptions = {
-  accessToken?: string,
-  refreshToken?: string,
-  instanceUrl?: string,
-  sessionId?: string,
-  serverUrl?: string,
-  signedRequest?: string|Object,
-  userInfo?: UserInfo,
+  accessToken?: Optional<string>,
+  refreshToken?: Optional<string>,
+  instanceUrl?: Optional<string>,
+  sessionId?: Optional<string>,
+  serverUrl?: Optional<string>,
+  signedRequest?: Optional<string | SignedRequestObject>,
+  userInfo?: Optional<UserInfo>,
 };
 
 
@@ -80,7 +82,7 @@ const defaultConnectionConfig: {
 /**
  *
  */
-function esc(str: ?string): string {
+function esc(str: Optional<string>): string {
   return String(str || '')
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -91,16 +93,17 @@ function esc(str: ?string): string {
 /**
  *
  */
-function parseSignedRequest(sr: string | Object): Object {
+function parseSignedRequest(sr: string | Object): SignedRequestObject {
   if (typeof sr === 'string') {
     if (sr[0] === '{') { // might be JSON
       return JSON.parse(sr);
     }  // might be original base64-encoded signed request
     const msg = sr.split('.').pop(); // retrieve latter part
+    if (!msg) { throw new Error('Invalid signed request'); }
     const json = Buffer.from(msg, 'base64').toString('utf-8');
     return JSON.parse(json);
   }
-  return sr;
+  return sr as SignedRequestObject;
 }
 
 /** @private **/
@@ -113,7 +116,7 @@ function parseIdUrl(url: string) {
  * Session Refresh delegate function for OAuth2 authz code flow
  * @private
  */
-async function oauthRefreshFn(conn, callback) {
+async function oauthRefreshFn(conn: Connection, callback: Callback<string, TokenResponse>) {
   try {
     if (!conn.refreshToken) { throw new Error('No refresh token found in the connection'); }
     const res = await conn.oauth2.refreshToken(conn.refreshToken);
@@ -123,7 +126,7 @@ async function oauthRefreshFn(conn, callback) {
       accessToken: res.access_token,
       userInfo
     });
-    callback(null, res.access_token, res);
+    callback(undefined, res.access_token, res);
   } catch (err) {
     callback(err);
   }
@@ -133,10 +136,13 @@ async function oauthRefreshFn(conn, callback) {
  * Session Refresh delegate function for username/password login
  * @private
  */
-function createUsernamePasswordRefreshFn(username, password) {
-  return async (conn, callback) => {
+function createUsernamePasswordRefreshFn(username: string, password: string) {
+  return async (conn: Connection, callback: Callback<string, TokenResponse>) => {
     try {
       await conn.login(username, password);
+      if (!conn.accessToken) {
+        throw new Error('Access token not found after login');
+      }
       callback(null, conn.accessToken);
     } catch (err) {
       callback(err);
@@ -144,10 +150,36 @@ function createUsernamePasswordRefreshFn(username, password) {
   };
 }
 
+/**
+ * @private
+ */
+function toSaveResult(id: Optional<string>, err: SaveError): SaveResult {
+  return {
+    ...(id ? { id } : {}),
+    success: false,
+    errors: [err],
+  };
+}
+
 /*
  * Constant of maximum records num in DML operation (update/delete)
  */
 const MAX_DML_COUNT = 200;
+
+/**
+ * 
+ */
+type RetrieveOptions = {
+  allOrNone?: boolean,
+  fields?: string[],
+  headers?: { [name: string]: string },
+};
+
+type DmlOptions = {
+  allOrNone?: boolean,
+  allowRecursive?: boolean,
+  headers?: { [name: string]: string },
+};
 
 /**
  *
@@ -158,35 +190,35 @@ export default class Connection extends EventEmitter {
   version: string;
   loginUrl: string;
   instanceUrl: string;
-  accessToken: ?string;
-  refreshToken: ?string;
-  userInfo: ?UserInfo;
+  accessToken: Optional<string>;
+  refreshToken: Optional<string>;
+  userInfo: Optional<UserInfo>;
   limitInfo: Object = {};
   oauth2: OAuth2;
-  sobjects: { [string]: any } = {};
+  sobjects: { [name: string]: SObject } = {};
   cache: Cache;
-  _callOptions: ?{ [string]: string };
+  _callOptions: Optional<{ [name: string]: string }>;
   _maxRequest: number;
   _logger: Logger;
-  _logLevel: ?LogLevelConfig;
+  _logLevel: Optional<LogLevelConfig>;
   _transport: Transport;
-  _sessionType: ?('soap' | 'oauth2');
-  _refreshDelegate: ?SessionRefreshDelegate;
+  _sessionType: Optional<'soap' | 'oauth2'>;
+  _refreshDelegate: Optional<SessionRefreshDelegate>;
 
-  describe: (string) => Promise<DescribeSObjectResult>;
-  describe$: (string) => Promise<DescribeGlobalResult>;
-  describe$$: (string) => DescribeSObjectResult;
-  describeSObject: (string) => Promise<DescribeSObjectResult>;
-  describeSObject$: (string) => Promise<DescribeSObjectResult>;
-  describeSObject$$: (string) => DescribeSObjectResult;
-  describeGlobal: () => Promise<DescribeGlobalResult>;
-  describeGlobal$: () => Promise<DescribeGlobalResult>;
-  describeGlobal$$: () => DescribeGlobalResult;
+  // describe: (name: string) => Promise<DescribeSObjectResult>;
+  describe$: CachedFunction<(name: string) => Promise<DescribeSObjectResult>>;
+  describe$$: CachedFunction<(name: string) => DescribeSObjectResult>;
+  describeSObject: (name: string) => Promise<DescribeSObjectResult>;
+  describeSObject$: CachedFunction<(name: string) => Promise<DescribeSObjectResult>>;
+  describeSObject$$: CachedFunction<(name: string) => DescribeSObjectResult>;
+  // describeGlobal: () => Promise<DescribeGlobalResult>;
+  describeGlobal$: CachedFunction<() => Promise<DescribeGlobalResult>>;
+  describeGlobal$$: CachedFunction<() => DescribeGlobalResult>;
 
   /**
    *
    */
-  constructor(config?: ConnectionConfig = {}) {
+  constructor(config: ConnectionConfig = {}) {
     super();
     const {
       loginUrl, instanceUrl, version, oauth2, maxRequest, logLevel, proxyUrl, httpProxy,
@@ -215,30 +247,24 @@ export default class Connection extends EventEmitter {
       new Transport();
     this._callOptions = config.callOptions;
     this.cache = new Cache();
-    const describeCacheKey = type => (type ? `describe.${type}` : 'describe');
+    const describeCacheKey = (type?: string) => (type ? `describe.${type}` : 'describe');
     const describe = Connection.prototype.describe;
-    this.describe = (
-      this.cache.createCachedFunction(describe, this, { key: describeCacheKey, strategy: 'NOCACHE' }) : any
-    );
-    this.describe$ = (
-      this.cache.createCachedFunction(describe, this, { key: describeCacheKey, strategy: 'HIT' }) : any
-    );
-    this.describe$$ = (
-      this.cache.createCachedFunction(describe, this, { key: describeCacheKey, strategy: 'IMMEDIATE' }) : any
-    );
+    this.describe =
+      this.cache.createCachedFunction(describe, this, { key: describeCacheKey, strategy: 'NOCACHE' });
+    this.describe$ =
+      this.cache.createCachedFunction(describe, this, { key: describeCacheKey, strategy: 'HIT' });
+    this.describe$$ =
+      this.cache.createCachedFunction(describe, this, { key: describeCacheKey, strategy: 'IMMEDIATE' }) as any;
     this.describeSObject = this.describe;
     this.describeSObject$ = this.describe$;
     this.describeSObject$$ = this.describe$$;
-    const describeGlobal = this.describeGlobal;
-    this.describeGlobal = (
-      this.cache.createCachedFunction(describeGlobal, this, { key: 'describeGlobal', strategy: 'NOCACHE' }) : any
-    );
-    this.describeGlobal$ = (
-      this.cache.createCachedFunction(describeGlobal, this, { key: 'describeGlobal', strategy: 'HIT' }) : any
-    );
-    this.describeGlobal$$ = (
-      this.cache.createCachedFunction(describeGlobal, this, { key: 'describeGlobal', strategy: 'IMMEDIATE' }) : any
-    );
+    const describeGlobal = Connection.prototype.describeGlobal;
+    this.describeGlobal =
+      this.cache.createCachedFunction(describeGlobal, this, { key: 'describeGlobal', strategy: 'NOCACHE' });
+    this.describeGlobal$ =
+      this.cache.createCachedFunction(describeGlobal, this, { key: 'describeGlobal', strategy: 'HIT' });
+    this.describeGlobal$$ =
+      this.cache.createCachedFunction(describeGlobal, this, { key: 'describeGlobal', strategy: 'IMMEDIATE' }) as any;
     const { accessToken, refreshToken, sessionId, serverUrl, signedRequest } = config;
     this._establish({
       accessToken, refreshToken, instanceUrl, sessionId, serverUrl, signedRequest,
@@ -304,7 +330,7 @@ export default class Connection extends EventEmitter {
    */
   async authorize(
     code: string,
-    params?: Object = {}
+    params: { [name: string]: string } = {}
   ): Promise<UserInfo> {
     const res = await this.oauth2.requestToken(code, params);
     const userInfo = parseIdUrl(res.id);
@@ -389,6 +415,9 @@ export default class Connection extends EventEmitter {
     const userId = m && m[1];
     m = response.body.match(/<organizationId>([^<]+)<\/organizationId>/);
     const organizationId = m && m[1];
+    if (!serverUrl || !sessionId || !userId || !organizationId) {
+      throw new Error('could not extract session information from login response');
+    }
     const idUrl = [this.loginUrl, 'id', organizationId, userId].join('/');
     const userInfo = { id: userId, organizationId, url: idUrl };
     this._establish({
@@ -415,8 +444,9 @@ export default class Connection extends EventEmitter {
    * Logout the current session by revoking access token via OAuth2 session revoke
    */
   async logoutByOAuth2(revoke?: boolean): Promise<void> {
-    if (this.accessToken) {
-      await this.oauth2.revokeToken(revoke ? this.refreshToken : this.accessToken);
+    const token = revoke ? this.refreshToken : this.accessToken;
+    if (token) {
+      await this.oauth2.revokeToken(token);
     }
     // Destroy the session bound to this connection
     this._clearSession();
@@ -499,7 +529,7 @@ export default class Connection extends EventEmitter {
    * , or relative path from version root ('/sobjects/Account/describe').
    */
   requestGet(url: string, options?: Object) {
-    const request = { method: 'GET', url };
+    const request: HttpRequest = { method: 'GET', url };
     return this.request(request, options);
   }
 
@@ -512,7 +542,7 @@ export default class Connection extends EventEmitter {
    * , or relative path from version root ('/sobjects/Account/describe').
    */
   requestPost(url: string, body: Object, options?: Object) {
-    const request = {
+    const request: HttpRequest = {
       method: 'POST',
       url,
       body: JSON.stringify(body),
@@ -529,7 +559,7 @@ export default class Connection extends EventEmitter {
    * , or relative path from version root ('/sobjects/Account/describe').
    */
   requestPut(url: string, body: Object, options?: Object) {
-    const request = {
+    const request: HttpRequest = {
       method: 'PUT',
       url,
       body: JSON.stringify(body),
@@ -546,7 +576,7 @@ export default class Connection extends EventEmitter {
    * , or relative path from version root ('/sobjects/Account/describe').
    */
   requestPatch(url: string, body: Object, options?: Object) {
-    const request = {
+    const request: HttpRequest = {
       method: 'PATCH',
       url,
       body: JSON.stringify(body),
@@ -563,7 +593,7 @@ export default class Connection extends EventEmitter {
    * , or relative path from version root ('/sobjects/Account/describe').
    */
   requestDelete(url: string, options?: Object) {
-    const request = { method: 'DELETE', url };
+    const request: HttpRequest = { method: 'DELETE', url };
     return this.request(request, options);
   }
 
@@ -600,14 +630,14 @@ export default class Connection extends EventEmitter {
     return new Query(this, { locator }, null, options);
   }
 
-  /** @private */
-  _ensureVersion(majorVersion) {
+  /* */
+  _ensureVersion(majorVersion: number) {
     const versions = this.version.split('.');
     return parseInt(versions[0], 10) >= majorVersion;
   }
 
-  /** @private */
-  _supports(feature) {
+  /* */
+  _supports(feature: string) {
     switch (feature) {
       case 'sobject-collection': // sobject collection is available only in API ver 42.0+
         return this._ensureVersion(42);
@@ -622,10 +652,7 @@ export default class Connection extends EventEmitter {
   async retrieve(
     type: string,
     ids: string | string[],
-    options?: {
-      fields?: string[],
-      headers?: Object,
-    } = {}
+    options: RetrieveOptions = {},
   ): Promise<Record | Record[]> {
     return (
       Array.isArray(ids) ?
@@ -638,7 +665,7 @@ export default class Connection extends EventEmitter {
   }
 
   /** @private */
-  async _retrieveSingle(type, id, options) {
+  async _retrieveSingle(type: string, id: string, options: RetrieveOptions) {
     if (!id) {
       throw new Error('Invalid record ID. Specify valid record ID value');
     }
@@ -651,8 +678,8 @@ export default class Connection extends EventEmitter {
   }
 
   /** @private */
-  async _retrieveParallel(type, ids, options) {
-    if (ids.length > this.maxRequest) {
+  async _retrieveParallel(type: string, ids: string[], options: RetrieveOptions) {
+    if (ids.length > this._maxRequest) {
       throw new Error('Exceeded max limit of concurrent call');
     }
     return Promise.all(
@@ -668,7 +695,7 @@ export default class Connection extends EventEmitter {
   }
 
   /** @private */
-  async _retrieveMany(type, ids, options) {
+  async _retrieveMany(type: string, ids: string[], options: RetrieveOptions) {
     if (ids.length === 0) {
       return [];
     }
@@ -686,46 +713,27 @@ export default class Connection extends EventEmitter {
     });
   }
 
-  /** @private */
-  _toSaveResult(id, err) {
-    const error = {
-      statusCode: err.errorCode,
-      message: err.message
-    };
-    if (err.content) { error.content = err.content; } // preserve External id duplication message
-    if (err.fields) { error.fields = err.fields; } // preserve DML exception occurred fields
-    const result = {
-      success: false,
-      errors: [error]
-    };
-    if (id) { result.id = id; }
-    return result;
-  }
-
   /**
    * Create records
    */
   async create(
     type: string,
     records: UnsavedRecord | UnsavedRecord[],
-    options?: {
-      allOrNone?: boolean,
-      allowRecursive?: boolean,
-      headers?: Object,
-    } = {}
+    options: DmlOptions = {},
   ): Promise<SaveResult | SaveResult[]> {
-    return (
+    const ret = (
       Array.isArray(records) ?
         // check the version whether SObject collection API is supported (42.0)
         (this._ensureVersion(42) ?
-          this._createMany(type, records, options) :
-          this._createParallel(type, records, options)) :
-        this._createSingle(type, records, options)
+          await this._createMany(type, records, options) :
+          await this._createParallel(type, records, options)) :
+        await this._createSingle(type, records, options)
     );
+    return ret;
   }
 
   /** @private */
-  async _createSingle(type, record, options) {
+  async _createSingle(type: string, record: UnsavedRecord, options: DmlOptions): Promise<SaveResult> {
     const { Id, type: rtype, attributes, ...rec } = record; // eslint-disable-line no-unused-vars
     const sobjectType = type || (attributes && attributes.type) || rtype;
     if (!sobjectType) {
@@ -744,8 +752,8 @@ export default class Connection extends EventEmitter {
   }
 
   /** @private */
-  async _createParallel(type, records, options) {
-    if (records.length > this.maxRequest) {
+  async _createParallel(type: string, records: UnsavedRecord[], options: DmlOptions): Promise<SaveResult[]> {
+    if (records.length > this._maxRequest) {
       throw new Error('Exceeded max limit of concurrent call');
     }
     return Promise.all(
@@ -756,14 +764,14 @@ export default class Connection extends EventEmitter {
           if (options.allOrNone || !err.errorCode) {
             throw err;
           }
-          return this._toSaveResult(null, err);
+          return toSaveResult(null, err);
         })
       )
     );
   }
 
   /** @private */
-  async _createMany(type, records, options) {
+  async _createMany(type: string, records: UnsavedRecord[], options: DmlOptions): Promise<SaveResult[]> {
     if (records.length === 0) {
       return Promise.resolve([]);
     }
@@ -808,11 +816,7 @@ export default class Connection extends EventEmitter {
   async update(
     type: string,
     records: Record | Record[],
-    options?: {
-      allOrNone?: boolean,
-      allowRecursive?: boolean,
-      headers?: Object,
-    } = {}
+    options: DmlOptions = {},
   ): Promise<SaveResult | SaveResult[]> {
     return (
       Array.isArray(records) ?
@@ -825,7 +829,7 @@ export default class Connection extends EventEmitter {
   }
 
   /** @private */
-  async _updateSingle(type, record, options) {
+  async _updateSingle(type: string, record: Record, options: DmlOptions): Promise<SaveResult> {
     // eslint-disable-next-line no-unused-vars
     const { Id: id, type: rtype, attributes, ...rec } = record;
     if (!id) {
@@ -850,8 +854,8 @@ export default class Connection extends EventEmitter {
   }
 
   /** @private */
-  async _updateParallel(type, records, options) {
-    if (records.length > this.maxRequest) {
+  async _updateParallel(type: string, records: Record[], options: DmlOptions) {
+    if (records.length > this._maxRequest) {
       throw new Error('Exceeded max limit of concurrent call');
     }
     return Promise.all(
@@ -862,14 +866,14 @@ export default class Connection extends EventEmitter {
           if (options.allOrNone || !err.errorCode) {
             throw err;
           }
-          return this._toSaveResult(record.Id, err);
+          return toSaveResult(record.Id, err);
         })
       )
     );
   }
 
   /** @private */
-  async _updateMany(type, records, options) {
+  async _updateMany(type: string, records: Record[], options: DmlOptions): Promise<SaveResult[]> {
     if (records.length === 0) {
       return [];
     }
@@ -913,13 +917,10 @@ export default class Connection extends EventEmitter {
     type: string,
     records: Record | Record[],
     extIdField: string,
-    options?: {
-      allOrNone?: boolean,
-      headers?: Object,
-    } = {}
+    options: DmlOptions = {},
   ): Promise<SaveResult | SaveResult[]> {
     const isArray = Array.isArray(records);
-    const _records = isArray ? records : [records];
+    const _records = Array.isArray(records) ? records : [records];
     if (_records.length > this._maxRequest) {
       throw new Error('Exceeded max limit of concurrent call');
     }
@@ -944,7 +945,7 @@ export default class Connection extends EventEmitter {
           // will not revert the other successful requests.
           // It only raises error when met at least one failed request.
           if (!isArray || options.allOrNone || !err.errorCode) { throw err; }
-          return this._toSaveResult(null, err);
+          return toSaveResult(null, err);
         });
       })
     );
@@ -957,11 +958,7 @@ export default class Connection extends EventEmitter {
   async destroy(
     type: string,
     ids: string | string[],
-    options?: {
-      allOrNone?: boolean,
-      allowRecursive?: boolean,
-      headers?: Object,
-    } = {}
+    options: DmlOptions = {},
   ): Promise<SaveResult | SaveResult[]> {
     return (
       Array.isArray(ids) ?
@@ -974,39 +971,39 @@ export default class Connection extends EventEmitter {
   }
 
   /** @private */
-  async _destroySingle(type, id, options) {
+  async _destroySingle(type: string, id: string, options: DmlOptions): Promise<SaveResult> {
     const url = [this._baseUrl(), 'sobjects', type, id].join('/');
     return this.request({
       method: 'DELETE',
       url,
-      headers: options.headers || null
+      headers: options.headers || {} 
     }, {
       noContentResponse: { id, success: true, errors: [] }
     });
   }
 
   /** @private */
-  async _destroyParallel(type, ids, options) {
-    if (ids.length > this.maxRequest) {
+  async _destroyParallel(type: string, ids: string[], options: DmlOptions) {
+    if (ids.length > this._maxRequest) {
       throw new Error('Exceeded max limit of concurrent call');
     }
     return Promise.all(
       ids.map(id =>
-        self._destroySingle(type, id, options).catch((err) => {
+        this._destroySingle(type, id, options).catch((err) => {
           // Be aware that `allOrNone` option in parallel mode
           // will not revert the other successful requests.
           // It only raises error when met at least one failed request.
           if (options.allOrNone || !err.errorCode) {
             throw err;
           }
-          return this._toRecordResult(id, err);
+          return toSaveResult(id, err);
         })
       )
     );
   }
 
   /** @private */
-  async _destroyMany(type, ids, options) {
+  async _destroyMany(type: string, ids: string[], options: DmlOptions): Promise<SaveResult[]> {
     if (ids.length === 0) {
       return [];
     }
@@ -1023,7 +1020,7 @@ export default class Connection extends EventEmitter {
     return this.request({
       method: 'DELETE',
       url,
-      headers: options.headers || null
+      headers: options.headers || {}, 
     });
   }
 
@@ -1042,8 +1039,8 @@ export default class Connection extends EventEmitter {
    */
   async describe(type: string): Promise<DescribeSObjectResult> {
     const url = [this._baseUrl(), 'sobjects', type, 'describe'].join('/');
-    const body: any = await this.request(url);
-    return (body : DescribeSObjectResult);
+    const body = await this.request(url);
+    return (body as DescribeSObjectResult);
   }
 
   /**
@@ -1051,8 +1048,8 @@ export default class Connection extends EventEmitter {
    */
   async describeGlobal() {
     const url = `${this._baseUrl()}/sobjects`;
-    const body: any = await this.request(url);
-    return (body : DescribeGlobalResult);
+    const body = await this.request(url);
+    return (body as DescribeGlobalResult);
   }
 
   /**
@@ -1066,11 +1063,11 @@ export default class Connection extends EventEmitter {
   /**
    * Get identity information of current user
    */
-  async identity(options?: Object = {}) {
+  async identity(options: { headers?: { [name: string]: string } } = {}) {
     let url = this.userInfo && this.userInfo.url;
     if (!url) {
       const res = await this.request({ method: 'GET', url: this._baseUrl(), headers: options.headers });
-      url = (res.identity : string);
+      url = (res.identity as string);
     }
     url += '?format=json';
     if (this.accessToken) {
@@ -1124,7 +1121,7 @@ export default class Connection extends EventEmitter {
     end = formatDate(end);
     url += `&end=${encodeURIComponent(end)}`;
     const body = await this.request(url);
-    return (body : UpdatedResult);
+    return (body as UpdatedResult);
   }
 
   /**
@@ -1145,7 +1142,7 @@ export default class Connection extends EventEmitter {
     end = formatDate(end);
     url += `&end=${encodeURIComponent(end)}`;
     const body = await this.request(url);
-    return (body : DeletedResult);
+    return (body as DeletedResult);
   }
 
   /**
@@ -1154,7 +1151,7 @@ export default class Connection extends EventEmitter {
   async tabs(): Promise<DescribeTab[]> {
     const url = [this._baseUrl(), 'tabs'].join('/');
     const body = await this.request(url);
-    return (body : DescribeTab[]);
+    return (body as DescribeTab[]);
   }
 
   /**
@@ -1163,7 +1160,7 @@ export default class Connection extends EventEmitter {
   async limits(): Promise<LimitsInfo> {
     const url = [this._baseUrl(), 'limits'].join('/');
     const body = await this.request(url);
-    return (body : LimitsInfo);
+    return (body as LimitsInfo);
   }
 
   /**
@@ -1172,7 +1169,7 @@ export default class Connection extends EventEmitter {
   async theme(): Promise<DescribeTheme> {
     const url = [this._baseUrl(), 'theme'].join('/');
     const body = await this.request(url);
-    return (body : DescribeTheme);
+    return (body as DescribeTheme);
   }
 
   /**
@@ -1180,7 +1177,7 @@ export default class Connection extends EventEmitter {
    */
   async quickActions(): Promise<DescribeQuickActionResult[]> {
     const body = await this.request('/quickActions');
-    return (body : DescribeQuickActionResult[]);
+    return (body as DescribeQuickActionResult[]);
   }
 
   /**

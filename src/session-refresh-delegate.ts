@@ -1,7 +1,15 @@
-/* @flow */
+/**
+ * 
+ */
 import { getLogger, Logger } from './util/logger';
-import type { Callback } from './types';
+import { Callback } from './types';
 import Connection from './connection';
+import { TokenResponse } from './oauth2';
+
+/**
+ * 
+ */
+export type SessionRefreshFunc = (conn: Connection, callback: Callback<string, TokenResponse>) => void;
 
 /**
  *
@@ -9,13 +17,13 @@ import Connection from './connection';
 export default class SessionRefreshDelegate {
   static _logger: Logger = getLogger('session-refresh-delegate');
 
-  _refreshFn: (Connection, Callback<string>) => any;
-  _conn: Connection;
-  _logger: Logger;
-  _lastRefreshedAt: ?number;
-  _refreshPromise: ?Promise<void>;
+  private _refreshFn: SessionRefreshFunc;
+  private _conn: Connection;
+  private _logger: Logger;
+  private _lastRefreshedAt: number | void = undefined;
+  private _refreshPromise: Promise<void> | void = undefined;
 
-  constructor(conn: Connection, refreshFn: (Connection, Callback<string>) => any) {
+  constructor(conn: Connection, refreshFn: SessionRefreshFunc) {
     this._conn = conn;
     this._logger =
       conn._logLevel ?

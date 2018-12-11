@@ -1,19 +1,18 @@
-/* @flow */
 /**
  * @file Manages query for records in Salesforce
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
 import { Logger, getLogger } from './util/logger';
 import { Serializable } from './record-stream';
-import type Connection from './connection';
+import Connection from './connection';
 import { createSOQL } from './soql-builder';
-import type { QueryConfig, QueryCondition, SortConfig, SortDir } from './soql-builder';
-import type { Record } from './types';
+import { QueryConfig, QueryCondition, SortConfig, SortDir } from './soql-builder';
+import { Record, Optional } from './types';
 
 /**
  * type defs
  */
-export type QueryFieldsParam = string | string[] | { [string]: boolean|number };
+export type QueryFieldsParam = string | string[] | { [name: string]: boolean | number };
 
 export type SubQueryConfigParam = {
   fields?: QueryFieldsParam,
@@ -25,8 +24,8 @@ export type SubQueryConfigParam = {
 
 export type QueryConfigParam = {
   fields?: QueryFieldsParam,
-  includes?: { [string]: SubQueryConfigParam },
-  table: string,
+  includes?: { [name: string]: SubQueryConfigParam },
+  table?: string,
   conditions?: QueryCondition,
   sort?: SortConfig,
   limit?: number,
@@ -37,7 +36,7 @@ export type QueryResponseTarget =
   'QueryResult' | 'Records' | 'SingleRecord' | 'Count';
 
 export type QueryOptions = {
-  headers: { [string]: string },
+  headers: { [name: string]: string },
   maxFetch: number;
   autoFetch: boolean;
   scanAll: boolean;
@@ -55,7 +54,7 @@ export type QueryResponse =
 /**
  *
  */
-export const ResponseTargets: { [QueryResponseTarget]: QueryResponseTarget } = {
+export const ResponseTargets: { [K in QueryResponseTarget]: QueryResponseTarget } = {
   QueryResult: 'QueryResult',
   Records: 'Records',
   SingleRecord: 'SingleRecord',
@@ -70,19 +69,19 @@ export default class Query extends Serializable {
 
   _conn: Connection;
   _logger: Logger;
-  _soql: ?string;
-  _locator: ?string;
-  _config: QueryConfig;
+  _soql: Optional<string>;
+  _locator: Optional<string>;
+  _config: QueryConfig = {};
   _children: SubQuery[] = [];
   _options: QueryOptions;
   _executed: boolean = false;
   _finished: boolean = false;
   _chaining: boolean = false;
-  _promise: ?Promise<QueryResponse>;
-  _parent: ?Query;
+  _promise: Optional<Promise<QueryResponse>>;
+  _parent: Optional<Query>;
 
-  totalSize: ?number;
-  totalFetched: ?number;
+  totalSize: Optional<number>;
+  totalFetched: Optional<number>;
 
   /**
    *
@@ -90,8 +89,8 @@ export default class Query extends Serializable {
   constructor(
     conn: Connection,
     config: string | QueryConfigParam | { locator: string },
-    parent?: ?Query,
-    options?: $Shape<QueryOptions>
+    parent?: Optional<Query>,
+    options?: Partial<QueryOptions>,
   ) {
     super();
     this._conn = conn;
@@ -99,13 +98,13 @@ export default class Query extends Serializable {
       conn._logLevel ? Query._logger.createInstance(conn._logLevel) : Query._logger;
     if (typeof config === 'string') {
       this._soql = config;
-    } else if (typeof config.locator === 'string') {
-      const locator = config.locator;
+    } else if (typeof (config as any).locator === 'string') {
+      const locator: string = (config as any).locator;
       if (locator.indexOf('/') >= 0) {
         this._locator = locator.split('/').pop();
       }
     } else {
-      const { fields, includes, sort, ..._config } = ((config : any) : QueryConfigParam);
+      const { fields, includes, sort, ..._config } = ((config as any) as QueryConfigParam);
       this._config = _config;
       this.select(fields);
       if (includes) {
@@ -123,14 +122,14 @@ export default class Query extends Serializable {
       autoFetch: false,
       scanAll: false,
       responseTarget: 'QueryResult',
-    } : QueryOptions);
+    } as QueryOptions);
   }
 
 
   /**
    * Select fields to include in the returning result
    */
-  select(fields?: QueryFieldsParam = '*') {
+  select(fields: QueryFieldsParam = '*') {
     if (this._soql) {
       throw Error('Cannot set select fields for the query which has already built SOQL.');
     }
@@ -206,9 +205,9 @@ export default class Query extends Serializable {
    */
   include(
     childRelName: string,
-    conditions?: ?QueryCondition,
-    fields?: ?QueryFieldsParam,
-    options?: { limit?: number, offset?: number, sort?: SortConfig } = {}
+    conditions?: Optional<QueryCondition>,
+    fields?: Optional<QueryFieldsParam>,
+    options: { limit?: number, offset?: number, sort?: SortConfig } = {}
   ): SubQuery {
     if (this._soql) {
       throw Error('Cannot include child relationship into the query which has already built SOQL.');
@@ -230,7 +229,7 @@ export default class Query extends Serializable {
   /**
    * Include child relationship queryies, but not moving down to the children context
    */
-  includeChildren(includes: { [string]: SubQueryConfigParam }) {
+  includeChildren(includes: { [name: string]: SubQueryConfigParam }) {
     if (this._soql) {
       throw Error('Cannot include child relationship into the query which has already built SOQL.');
     }
@@ -278,7 +277,7 @@ export default class Query extends Serializable {
   /**
    * Execute query and fetch records from server.
    */
-  execute(_options?: $Shape<QueryOptions> = {}): Query {
+  execute(_options: Partial<QueryOptions> = {}): Query {
     if (this._executed) {
       throw new Error('re-executing already executed query');
     }
@@ -307,8 +306,8 @@ export default class Query extends Serializable {
     this.once('fetch', () => {
       if (options.responseTarget === ResponseTargets.Records && this._chaining) {
         this._logger.debug('--- collecting all fetched records ---');
-        const records = [];
-        const onRecord = record => records.push(record);
+        const records: Record[] = [];
+        const onRecord = (record: Record) => records.push(record);
         this.on('record', onRecord);
         this.once('end', () => {
           this.removeListener('record', onRecord);
@@ -420,7 +419,7 @@ export default class Query extends Serializable {
   }
 
   /** @override **/
-  on(e: string, fn: Function): this {
+  on(e: string, fn: (...args: any[]) => any): this {
     if (e === 'record') {
       this.on('readable', () => {
         while (this.read() !== null); // discard buffered records
@@ -430,8 +429,7 @@ export default class Query extends Serializable {
   }
 
   /** @override **/
-  addListener: ((e: string, fn: Function) => any) = this.on;
-
+  addListener: ((e: string, fn: (...args: any[]) => any) => any) = this.on;
 
   /**
    * @protected
@@ -444,14 +442,17 @@ export default class Query extends Serializable {
     this._logger.debug(`_expandFields: table = ${table}, fields = ${fields.join(', ')}`);
     const [efields] = await Promise.all([
       this._expandAsteriskFields(table, fields),
-      ...this._children.map(childQuery => childQuery._expandFields()),
+      ...this._children.map(async (childQuery) => {
+        await childQuery._expandFields();
+        return [] as string[];
+      }),
     ]);
     this._config.fields = efields;
     this._config.includes = this._children.map((cquery) => {
       const cconfig = cquery._query._config;
-      return [cconfig.table, cconfig];
+      return [cconfig.table, cconfig] as [string, QueryConfig];
     })
-    .reduce((includes: { [string]: QueryConfig }, [ctable, cconfig]) => {
+    .reduce((includes: { [name: string]: QueryConfig }, [ctable, cconfig]) => {
       includes[ctable] = cconfig; // eslint-disable-line no-param-reassign
       return includes;
     }, {});
@@ -484,11 +485,14 @@ export default class Query extends Serializable {
    */
   async _findRelationObject(relName: string): Promise<string> {
     const table = this._config.table;
+    if (!table) {
+      throw new Error('No table information provided in the query');
+    }
     this._logger.debug(`finding table for relation "${relName}" in "${table}"...`);
     const sobject = await this._conn.describe$(table);
     const upperRname = relName.toUpperCase();
     for (const cr of sobject.childRelationships) {
-      if ((cr.relationshipName || '').toUpperCase() === upperRname) {
+      if ((cr.relationshipName || '').toUpperCase() === upperRname && cr.childSObject) {
         return cr.childSObject;
       }
     }
@@ -507,10 +511,11 @@ export default class Query extends Serializable {
       if (fpath.length > 1) {
         const rname = fpath.shift();
         for (const f of sobject.fields) {
-          if (f.relationshipName &&
+          if (f.relationshipName && rname &&
               f.relationshipName.toUpperCase() === rname.toUpperCase()) {
             const rfield = f;
-            const rtable = rfield.referenceTo.length === 1 ? rfield.referenceTo[0] : 'Name';
+            const referenceTo = rfield.referenceTo || [];
+            const rtable = referenceTo.length === 1 ? referenceTo[0] : 'Name';
             const fpaths = await this._expandAsteriskField(rtable, fpath.join('.'));
             return fpaths.map(fp => `${rname}.${fp}`);
           }
@@ -550,8 +555,8 @@ export default class Query extends Serializable {
    * Delegate to deferred promise, return promise instance for query result
    */
   then<U>(
-    onResolve: (QueryResponse) => U | Promise<U>,
-    onReject: (any) => U | Promise<U>
+    onResolve: (qr: QueryResponse) => U | Promise<U>,
+    onReject: (err: any) => U | Promise<U>
   ): Promise<U> {
     this._chaining = true;
     if (!this._finished && !this._executed) {

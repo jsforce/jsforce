@@ -1,9 +1,7 @@
-/* @flow */
-
 /**
  *
  */
-export const LogLevels = {
+export const LogLevels: { [level: string]: number } = {
   DEBUG: 1,
   INFO: 2,
   WARN: 3,
@@ -18,7 +16,7 @@ const LogLevelLabels = [
 
 
 const globalLogLevelConfig = (() => {
-  const globalLogLevelStr = process.env.JSFORCE_LOG_LEVEL || global.__JSFORCE_LOG_LEVEL__ || 'NONE';
+  const globalLogLevelStr = process.env.JSFORCE_LOG_LEVEL || (global as any).__JSFORCE_LOG_LEVEL__ || 'NONE';
   if (/^(DEBUG|INFO|WARN|ERROR|FATAL|NONE)$/i.test(globalLogLevelStr)) {
     return { '*': globalLogLevelStr };
   }
@@ -29,9 +27,9 @@ const globalLogLevelConfig = (() => {
   }
 })();
 
-export type LogLevelConfig = string | number | { [string]: string | number };
+export type LogLevelConfig = string | number | { [name: string]: string | number };
 
-function getModuleLogLevel(logLevelConfig: { [string]: string | number }, moduleName: string) {
+function getModuleLogLevel(logLevelConfig: { [name: string]: string | number }, moduleName: string) {
   const logLevel = logLevelConfig[moduleName] || logLevelConfig['*'];
   return typeof logLevel === 'number' ? logLevel : (LogLevels[logLevel] || LogLevels.NONE);
 }
@@ -96,7 +94,7 @@ export class Logger {
   }
 }
 
-const loggers = {};
+const loggers: { [name: string]: Logger } = {};
 
 /**
  *

@@ -1,20 +1,24 @@
-/* @flow */
+/**
+ * 
+ */
 import { Logger, getLogger } from './util/logger';
-import type {
+import {
   Record, UnsavedRecord,
-  DescribeLayoutResult, DescribeCompactLayoutsResult, DescribeApprovalLayoutsResult,
+  DescribeLayoutResult, DescribeCompactLayoutsResult, DescribeApprovalLayoutsResult, Optional,
 } from './types';
 import Connection from './connection';
 import RecordReference from './record-reference';
 import Query, { ResponseTargets } from './query';
 import QuickAction from './quick-action';
-import type { QueryFieldsParam, QueryOptions, QueryConfigParam } from './query';
-import type { QueryCondition } from './soql-builder';
+import { QueryFieldsParam, QueryOptions, QueryConfigParam } from './query';
+import { QueryCondition, SortConfig } from './soql-builder';
+import { CachedFunction } from './cache';
 
-export type FindOptions = $Shape<QueryOptions & {
+export type FindOptions = Partial<QueryOptions & {
   limit: number,
   offset: number,
-  includes: {[string]: QueryConfigParam },
+  sort: SortConfig,
+  includes: { [name: string]: QueryConfigParam },
 }>;
 
 /**
@@ -27,15 +31,15 @@ export default class SObject {
   _conn: Connection;
   _logger: Logger;
 
-  layouts: (ln?: string) => Promise<DescribeLayoutResult>;
-  layouts$: (ln?: string) => Promise<DescribeLayoutResult>;
-  layouts$$: (ln?: string) => DescribeLayoutResult;
-  compactLayouts: () => Promise<DescribeCompactLayoutsResult>;
-  compactLayouts$: () => Promise<DescribeCompactLayoutsResult>;
-  compactLayouts$$: () => DescribeCompactLayoutsResult;
-  approvalLayouts: () => Promise<DescribeApprovalLayoutsResult>;
-  approvalLayouts$: () => Promise<DescribeApprovalLayoutsResult>;
-  approvalLayouts$$: () => DescribeCompactLayoutsResult;
+  // layouts: (ln?: string) => Promise<DescribeLayoutResult>;
+  layouts$: CachedFunction<(ln?: string) => Promise<DescribeLayoutResult>>;
+  layouts$$: CachedFunction<(ln?: string) => DescribeLayoutResult>;
+  // compactLayouts: () => Promise<DescribeCompactLayoutsResult>;
+  compactLayouts$: CachedFunction<() => Promise<DescribeCompactLayoutsResult>>;
+  compactLayouts$$: CachedFunction<() => DescribeCompactLayoutsResult>;
+  // approvalLayouts: () => Promise<DescribeApprovalLayoutsResult>;
+  approvalLayouts$: CachedFunction<() => Promise<DescribeApprovalLayoutsResult>>;
+  approvalLayouts$$: CachedFunction<() => DescribeCompactLayoutsResult>;
 
   /**
    *
@@ -46,39 +50,31 @@ export default class SObject {
     this._logger =
       conn._logLevel ? SObject._logger.createInstance(conn._logLevel) : SObject._logger;
     const cache = this._conn.cache;
-    const layoutCacheKey = layoutName => (layoutName ? `layouts.namedLayouts.${layoutName}` : `layouts.${this.type}`);
+    const layoutCacheKey =
+      (layoutName: string) => (layoutName ? `layouts.namedLayouts.${layoutName}` : `layouts.${this.type}`);
     const layouts = SObject.prototype.layouts;
-    this.layouts = (
-      cache.createCachedFunction(layouts, this, { key: layoutCacheKey, strategy: 'NOCACHE' }) : any
-    );
-    this.layouts$ = (
-      cache.createCachedFunction(layouts, this, { key: layoutCacheKey, strategy: 'HIT' }) : any
-    );
-    this.layouts$$ = (
-      cache.createCachedFunction(layouts, this, { key: layoutCacheKey, strategy: 'IMMEDIATE' }) : any
-    );
+    this.layouts =
+      cache.createCachedFunction(layouts, this, { key: layoutCacheKey, strategy: 'NOCACHE' });
+    this.layouts$ =
+      cache.createCachedFunction(layouts, this, { key: layoutCacheKey, strategy: 'HIT' });
+    this.layouts$$ =
+      cache.createCachedFunction(layouts, this, { key: layoutCacheKey, strategy: 'IMMEDIATE' }) as any;
     const compactLayoutCacheKey = `compactLayouts.${this.type}`;
     const compactLayouts = SObject.prototype.compactLayouts;
-    this.compactLayouts = (
-      cache.createCachedFunction(compactLayouts, this, { key: compactLayoutCacheKey, strategy: 'NOCACHE' }) : any
-    );
-    this.compactLayouts$ = (
-      cache.createCachedFunction(compactLayouts, this, { key: compactLayoutCacheKey, strategy: 'HIT' }) : any
-    );
-    this.compactLayouts$$ = (
-      cache.createCachedFunction(compactLayouts, this, { key: compactLayoutCacheKey, strategy: 'IMMEDIATE' }) : any
-    );
+    this.compactLayouts =
+      cache.createCachedFunction(compactLayouts, this, { key: compactLayoutCacheKey, strategy: 'NOCACHE' });
+    this.compactLayouts$ =
+      cache.createCachedFunction(compactLayouts, this, { key: compactLayoutCacheKey, strategy: 'HIT' });
+    this.compactLayouts$$ =
+      cache.createCachedFunction(compactLayouts, this, { key: compactLayoutCacheKey, strategy: 'IMMEDIATE' }) as any;
     const approvalLayoutCacheKey = `approvalLayouts.${this.type}`;
     const approvalLayouts = SObject.prototype.approvalLayouts;
-    this.approvalLayouts = (
-      cache.createCachedFunction(approvalLayouts, this, { key: approvalLayoutCacheKey, strategy: 'NOCACHE' }) : any
-    );
-    this.approvalLayouts$ = (
-      cache.createCachedFunction(approvalLayouts, this, { key: approvalLayoutCacheKey, strategy: 'HIT' }) : any
-    );
-    this.approvalLayouts$$ = (
-      cache.createCachedFunction(approvalLayouts, this, { key: approvalLayoutCacheKey, strategy: 'IMMEDIATE' }) : any
-    );
+    this.approvalLayouts =
+      cache.createCachedFunction(approvalLayouts, this, { key: approvalLayoutCacheKey, strategy: 'NOCACHE' });
+    this.approvalLayouts$ =
+      cache.createCachedFunction(approvalLayouts, this, { key: approvalLayoutCacheKey, strategy: 'HIT' });
+    this.approvalLayouts$$ =
+      cache.createCachedFunction(approvalLayouts, this, { key: approvalLayoutCacheKey, strategy: 'IMMEDIATE' }) as any;
   }
 
   /**
@@ -187,8 +183,8 @@ export default class SObject {
    */
   async layouts(layoutName?: string): Promise<DescribeLayoutResult> {
     const url = `/sobjects/${this.type}/describe/${layoutName ? `namedLayouts/${layoutName}` : 'layouts'}`;
-    const body: any = await this._conn.request(url);
-    return (body : DescribeLayoutResult);
+    const body = await this._conn.request(url);
+    return body as DescribeLayoutResult;
   }
 
   /**
@@ -205,8 +201,8 @@ export default class SObject {
    */
   async compactLayouts(): Promise<DescribeCompactLayoutsResult> {
     const url = `/sobjects/${this.type}/describe/compactLayouts`;
-    const body: any = await this._conn.request(url);
-    return (body : DescribeCompactLayoutsResult);
+    const body = await this._conn.request(url);
+    return body as DescribeCompactLayoutsResult;
   }
 
   /**
@@ -217,8 +213,8 @@ export default class SObject {
    */
   async approvalLayouts(): Promise<DescribeApprovalLayoutsResult> {
     const url = `/sobjects/${this.type}/describe/approvalLayouts`;
-    const body: any = await this._conn.request(url);
-    return (body : DescribeApprovalLayoutsResult);
+    const body = await this._conn.request(url);
+    return body as DescribeApprovalLayoutsResult;
   }
 
 
@@ -226,20 +222,21 @@ export default class SObject {
    * Find and fetch records which matches given conditions
    */
   find(
-    conditions?: ?QueryCondition,
-    fields?: ?QueryFieldsParam,
-    options?: FindOptions = {}
+    conditions?: Optional<QueryCondition>,
+    fields?: Optional<QueryFieldsParam>,
+    options: FindOptions = {}
   ): Query {
+    const { sort, limit, offset, ...qoptions } = options;
     const config: QueryConfigParam = {
       fields: fields === null ? undefined : fields,
       includes: options.includes,
       table: this.type,
       conditions: conditions === null ? undefined : conditions,
-      sort: options.sort,
-      limit: options.limit,
-      offset: options.offset,
+      sort,
+      limit,
+      offset,
     };
-    const query = new Query(this._conn, config, null, options);
+    const query = new Query(this._conn, config, null, qoptions);
     query.setResponseTarget(ResponseTargets.Records);
     return query;
   }
@@ -250,7 +247,7 @@ export default class SObject {
   findOne(
     conditions?: QueryCondition,
     fields?: QueryFieldsParam,
-    options?: $Shape<QueryOptions> = {}
+    options: Partial<QueryOptions> = {}
   ): Query {
     const query = this.find(conditions, fields, Object.assign({}, options, { limit: 1 }));
     query.setResponseTarget(ResponseTargets.SingleRecord);
@@ -267,7 +264,7 @@ export default class SObject {
   /**
    * Count num of records which matches given conditions
    */
-  count(conditions?: ?QueryCondition) {
+  count(conditions?: Optional<QueryCondition>) {
     const query = this.find(conditions, { 'count()': true });
     query.setResponseTarget(ResponseTargets.Count);
     return query;
@@ -350,7 +347,7 @@ class ListView {
   /**
    * Returns detailed information about a list view
    */
-  describe(options?: Object = {}) {
+  describe(options: { headers?: { [name: string]: string } } = {}) {
     const url = `${this._conn._baseUrl()}/sobjects/${this.type}/listviews/${this.id}/describe`;
     return this._conn.request({ method: 'GET', url, headers: options.headers });
   }

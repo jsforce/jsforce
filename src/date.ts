@@ -1,8 +1,10 @@
-/* @flow */
+/**
+ * 
+ */
 import { zeroPad } from './util/formatter';
 
 /** @private **/
-function createLiteralBuilder(literal) {
+function createLiteralBuilder(literal: string) {
   return (num: number) => new SfDate(`${literal}:${String(num)}`); // eslint-disable-line no-use-before-define
 }
 
@@ -14,7 +16,7 @@ function createLiteralBuilder(literal) {
  * @see http://www.salesforce.com/us/developer/docs/soql_sosl/Content/sforce_api_calls_soql_select_dateformats.htm
  */
 export default class SfDate {
-  _literal: string;
+  private _literal: string;
 
   /**
    *

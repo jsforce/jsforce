@@ -1,11 +1,10 @@
-/* @flow */
 /**
  * @file Manages Salesforce Apex REST endpoint calls
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
 import jsforce from '../core';
 import Connection from '../connection';
-import type { HttpRequest } from '../types';
+import { HttpRequest, HttpMethods } from '../types';
 
 /**
  * API class for Apex REST endpoint call
@@ -29,19 +28,20 @@ export default class Apex {
    * @private
    */
   _createRequestParams(
-    method: string,
+    method: HttpMethods,
     path: string,
     body?: Object,
-    options?: Object = {}
+    options: { headers?: HttpRequest['headers'] } = {}
   ): HttpRequest {
+    const headers: HttpRequest['headers'] = typeof options.headers === 'object' ? options.headers : {};
+    if (!/^(GET|DELETE)$/i.test(method)) {
+      headers['content-type'] = 'application/json';
+    }
     const params: HttpRequest = {
       method,
       url: this._baseUrl() + path,
-      headers: typeof options.headers === 'object' ? options.headers : {},
+      headers,
     };
-    if (!/^(GET|DELETE)$/i.test(method)) {
-      params.headers['content-type'] = 'application/json';
-    }
     if (body) {
       params.body = JSON.stringify(body);
     }

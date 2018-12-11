@@ -1,6 +1,8 @@
-/* @flow */
+/**
+ * 
+ */
 import Connection from './connection';
-import type { UnsavedRecord } from './types';
+import { UnsavedRecord } from './types';
 
 /**
  * Remote reference to record information
