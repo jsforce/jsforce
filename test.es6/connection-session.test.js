@@ -72,7 +72,7 @@ test.group('logout', (test) => {
     });
     await delay(10000);
     try {
-      const res = await conn2.query('SELECT Id FROM User'); // eslint-disable-line no-unused-vars
+      await conn2.query('SELECT Id FROM User');
       t.fail();
     } catch (err) {
       t.true(err && typeof err.message === 'string');

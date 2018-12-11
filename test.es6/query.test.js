@@ -132,7 +132,7 @@ test('query table and convert to readable stream and get CSV text', async (t) =>
     next();
   };
   await new Promise((resolve, reject) => {
-    query.stream().pipe(csvOut)
+    query.stream('csv').pipe(csvOut)
       .on('finish', resolve)
       .on('error', reject);
   });
