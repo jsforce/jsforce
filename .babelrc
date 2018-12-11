@@ -11,6 +11,7 @@
       "corejs": 2
     }]
   ],
+  "sourceMaps": "inline",
   "env": {
     "module": {
       "presets": [
