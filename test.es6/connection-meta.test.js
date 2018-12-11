@@ -22,12 +22,10 @@ test.group('describe sobject', (test) => {
     const so = await conn.sobject('Account').describe();
     t.true(so.name === 'Account');
     t.true(Array.isArray(so.fields));
-    // TODO: comment in "await" keyword when $() to return cache-first promise result
-    const so2 = /* await */ conn.sobject('Account').describe$();
+    const so2 = await conn.sobject('Account').describe$();
     t.true(so === so2);
-    // TODO: comment in when $$() variant is introduced for accessing immediate result
-    // const so3 = conn.sobject('Account').describe$$();
-    // t.true(so === so3);
+    const so3 = conn.sobject('Account').describe$$();
+    t.true(so === so3);
     const so4 = await conn.sobject('Account').describe();
     t.true(so !== so4);
     t.true(so4.name === 'Account');
@@ -42,12 +40,10 @@ test.group('describe sobject', (test) => {
     t.true(isString(res.sobjects[0].name));
     t.true(isString(res.sobjects[0].label));
     t.true(isUndefined(res.sobjects[0].fields));
-    // TODO: comment in "await" keyword when $() to return cache-first promise result
-    const res2 = /* await */ conn.describeGlobal$();
+    const res2 = await conn.describeGlobal$();
     t.true(res === res2);
-    // TODO: comment in when $$() variant is introduced for accessing immediate result
-    // const res3 = conn.describeGlobal$$();
-    // t.true(res === res3);
+    const res3 = conn.describeGlobal$$();
+    t.true(res === res3);
     const res4 = await conn.describeGlobal();
     t.true(res !== res4);
     t.true(Array.isArray(res4.sobjects));

@@ -248,8 +248,7 @@ test('list layouts (cache-first) and return Account layout information', async (
  *
  */
 test('get cached layouts and return Account layout information immediately', (t) => {
-  // TODO: switch back to layout$$() to get immediate result
-  const res = Account.layouts$();
+  const res = Account.layouts$$();
   t.true(Array.isArray(res.layouts));
   for (const layout of res.layouts) {
     t.true(layout.id === null || isString(layout.id));
@@ -300,8 +299,7 @@ test('list named layouts (cache-first) and return User named layout information'
 });
 
 test('get cached named layouts and return User named layout information immediately', (t) => {
-  // TODO: switch back to layout$$() to get immediate reusult
-  const res = conn.sobject('User').layouts$('UserAlt');
+  const res = conn.sobject('User').layouts$$('UserAlt');
   t.true(Array.isArray(res.layouts));
   for (const layout of res.layouts) {
     t.true(layout.id === null || isString(layout.id));
@@ -352,8 +350,7 @@ test('list compact layouts (cache-first) and return Account comact layout inform
  *
  */
 test('get cached compact layouts and return Account comapct layout information immediately', (t) => {
-  // TODO: switch back to compactLayout$$() to get immediate result
-  const res = Account.compactLayouts$();
+  const res = Account.compactLayouts$$();
   t.true(Array.isArray(res.compactLayouts));
   for (const clayout of res.compactLayouts) {
     t.true(clayout.id === null || isString(clayout.id));
@@ -398,8 +395,7 @@ test('list approval layouts (cache-first) and return Account approval layout inf
  *
  */
 test('get cached approval layouts and return Account approval layout information immediately', (t) => {
-  // TODO: switch back to approveLayout$$() to get immediate result
-  const res = Account.approvalLayouts$();
+  const res = Account.approvalLayouts$$();
   t.true(Array.isArray(res.approvalLayouts));
   for (const alayout of res.approvalLayouts) {
     t.true(alayout.id === null || isString(alayout.id));
