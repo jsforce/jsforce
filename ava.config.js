@@ -1,13 +1,15 @@
 export default {
   files: [
-    'test.es6/{connection-*,query,sobject}.test.js',
+    'test-ts/{connection-*,query,sobject}.test.ts',
   ],
   concurrency: 1,
   verbose: true,
   failFast: true,
+  extensions: [
+    'ts',
+  ],
   require: [
-    '@babel/register',
-    'esm'
+    'ts-node/register'
   ],
   babel: {
     testOptions: {},
