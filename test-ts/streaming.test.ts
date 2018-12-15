@@ -4,7 +4,7 @@ import config from './config';
 import { isObject, isString, delay } from './util';
 
 const connMgr = new ConnectionManager(config);
-const conn = connMgr.createConnection();
+const conn: any = connMgr.createConnection(); // TODO: remove any
 
 
 /**
@@ -19,8 +19,8 @@ test.before('establish connection', async () => {
  *
  */
 test('subscribe to topic, create account, and receive event of account has been created', async (t) => {
-  let subscr = null;
-  const msgArrived = new Promise((resolve) => {
+  let subscr: any; // TODO: remove any
+  const msgArrived = new Promise<any>((resolve) => { // TODO: remove any
     subscr = conn.streaming.topic('JSforceTestAccountUpdates').subscribe(resolve);
   });
   await delay(5000);
@@ -42,8 +42,8 @@ test('subscribe to generic streaming channel and recieve custom streaming event'
   const channelName = '/u/JSforceTestChannel';
   await conn.sobject('StreamingChannel').create({ Name: channelName });
 
-  let subscr = null;
-  const msgArrived = new Promise((resolve) => {
+  let subscr: any; // TODO: remove any
+  const msgArrived = new Promise<any>((resolve) => { // TODO: remove any
     subscr = conn.streaming.channel(channelName).subscribe(resolve);
   });
   await delay(5000);

@@ -4,7 +4,7 @@ import config from './config';
 import { isObject, isString } from './util';
 
 const connMgr = new ConnectionManager(config);
-const conn = connMgr.createConnection();
+const conn: any = connMgr.createConnection();
 
 /**
  *
@@ -13,7 +13,7 @@ test.before('establish connection', async () => {
   await connMgr.establishConnection(conn);
 });
 
-let accountId = null;
+let accountId: string;
 
 /**
  * Test data setup
@@ -34,7 +34,7 @@ test.group('process rule', (test) => {
   test('retrieve all process rules and list process rules', async (t) => {
     const ruleSet = await conn.process.rule.list();
     for (const rules of Object.values(ruleSet)) {
-      for (const rule of rules) {
+      for (const rule of rules as any) {
         t.true(isString(rule.id));
         t.true(isString(rule.name));
         t.true(isString(rule.object));
@@ -62,7 +62,7 @@ test.group('approval process', (test) => {
   test('retrieve all approval process definitions and list approval process definitions', async (t) => {
     const defsSet = await conn.process.rule.list();
     for (const approvals of Object.values(defsSet)) {
-      for (const approval of approvals) {
+      for (const approval of approvals as any) {
         t.true(isObject(approval));
         t.true(isString(approval.id));
         t.true(isString(approval.name));
@@ -72,7 +72,7 @@ test.group('approval process', (test) => {
     }
   });
 
-  let workitemId = null;
+  let workitemId: string;
   /**
    *
    */

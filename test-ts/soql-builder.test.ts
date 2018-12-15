@@ -279,7 +279,7 @@ test.group('soql-builder', (test) => {
       sort: [
         ['CreatedDate', 'desc'],
         ['Name', 'asc']
-      ],
+      ] as any, // TODO: remove any
       limit: 10
     });
     t.true(soql ===
@@ -300,7 +300,7 @@ test.group('soql-builder', (test) => {
       sort: {
         CreatedDate: 'descending',
         Name: 'ascending'
-      },
+      } as any, // TODO: remove any
       limit: 10
     });
     t.true(soql ===

@@ -1,8 +1,8 @@
-import puppeteer from 'puppeteer';
+import puppeteer, { Page } from 'puppeteer';
 
-function retrieveCallbackedParameters(url) {
-  const params = {};
-  const qparams = url.split('?').pop().split('&');
+function retrieveCallbackedParameters(url: string) {
+  const params: { [name: string]: string } = {};
+  const qparams = (url.split('?').pop() || '').split('&');
   for (const qparam of qparams) {
     const pair = qparam.split('=');
     params[pair[0]] = decodeURIComponent(pair[1]);
@@ -10,7 +10,7 @@ function retrieveCallbackedParameters(url) {
   return params;
 }
 
-async function loginAndApprove(page, username, password) {
+async function loginAndApprove(page: Page, username: string, password: string): Promise<any> {
   const url = page.url();
   if (url.indexOf('/setup/secur/RemoteAccessAuthorizationPage.apexp') > 0) { // authorization page
     await page.click('#oaapprove');
@@ -34,7 +34,7 @@ async function loginAndApprove(page, username, password) {
   }
 }
 
-export default async function authorize(url, username, password) {
+export default async function authorize(url: string, username: string, password: string) {
   const browser = await puppeteer.launch({
     args: ['--no-sandbox', '--disable-setuid-sandbox']
   });

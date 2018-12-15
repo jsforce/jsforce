@@ -4,7 +4,7 @@ import config from './config';
 import { isObject, isString, isNumber, isUndefined, clone } from './util';
 
 const connMgr = new ConnectionManager(config);
-const conn = connMgr.createConnection();
+const conn: any = connMgr.createConnection(); // TODO: remove any
 
 /**
  *
@@ -18,9 +18,9 @@ test.before('establish connection', async () => {
  *
  */
 test.group('report', (test) => {
-  let reportId;
-  let instanceId;
-  let cloneId;
+  let reportId: string;
+  let instanceId: string;
+  let cloneId: string;
 
   /**
    *
@@ -203,10 +203,10 @@ test.group('report', (test) => {
  *
  */
 test.group('dashboard', (test) => {
-  let dashboardId;
-  let dashboardFolderId;
-  let dashboardMetadata;
-  let cloneDashboardId;
+  let dashboardId: string;
+  let dashboardFolderId: string;
+  let dashboardMetadata: any;
+  let cloneDashboardId: string;
 
   /**
    *

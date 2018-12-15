@@ -11,7 +11,11 @@ const getConnectionConfig =
  *
  */
 export default class ConnectionManager {
-  constructor(config) {
+  _config: any; // TODO: remove any
+  _userPool: UserPool | void;
+  _idmap: { [id:string]: string };
+
+  constructor(config: any) { // TODO: remove any
     this._config = config;
     if (config.poolUsername && config.poolPassword) {
       const conn = this.createConnection();
@@ -24,22 +28,22 @@ export default class ConnectionManager {
     return new Connection(getConnectionConfig(this._config));
   }
 
-  async establishConnection(conn) {
+  async establishConnection(conn: Connection) {
     const userPool = this._userPool;
     const config = this._config;
     const username = await (userPool ? userPool.checkout() : config.username);
     // eslint-disable-next-line no-param-reassign
-    conn.__username = username; // for later checkin
+    (conn as any).__username = username; // for later checkin
     await conn.login(username, config.password);
   }
 
-  async closeConnection(conn) {
+  async closeConnection(conn: Connection) {
     const userPool = this._userPool;
     try {
       await conn.apex.delete('/JSforceTestData/');
-      await (userPool ? userPool.checkin(conn.__username) : null);
+      await (userPool ? userPool.checkin((conn as any).__username) : null);
       // eslint-disable-next-line no-param-reassign
-      delete conn.__username;
+      delete (conn as any).__username;
     } catch (e) {
       //
     }

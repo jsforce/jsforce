@@ -4,7 +4,7 @@ import config from './config';
 import { isString, isBoolean, isUndefined } from './util';
 
 const connMgr = new ConnectionManager(config);
-const conn = connMgr.createConnection();
+const conn: any = connMgr.createConnection();
 
 
 /**
@@ -45,9 +45,9 @@ test('describe tabs and return app and its including tabs', async (t) => {
  *
  */
 test.group('convert and merge', (test) => {
-  const accountIds = [];
-  const contactIds = [];
-  const oppIds = [];
+  const accountIds: string[] = [];
+  const contactIds: string[] = [];
+  const oppIds: string[] = [];
   const leads = [{
     FirstName: 'Convert Test #1',
     LastName: 'Lead',
@@ -70,13 +70,13 @@ test.group('convert and merge', (test) => {
     Company: 'JSforce Test'
   }];
 
-  let leadIds;
-  let convertedStatus;
+  let leadIds: string[];
+  let convertedStatus: string;
 
   test.before(async () => {
     // Because ver >= 38.0 metadata API doesn't return picklist values in standard field,
     // fix the version to 37.0
-    const conn370 = connMgr.createConnection();
+    const conn370: any = connMgr.createConnection();
     conn370.version = '37.0';
     conn370.accessToken = conn.accessToken;
     conn370.instanceUrl = conn.instanceUrl;
@@ -84,10 +84,10 @@ test.group('convert and merge', (test) => {
       conn.sobject('Lead').create(leads),
       conn370.metadata.read('CustomField', 'Lead.Status'),
     ]);
-    leadIds = rets.map(r => r.id);
+    leadIds = rets.map((r: any) => r.id); // TODO: remove any
     convertedStatus = statusField.picklist.picklistValues
-      .filter(pv => pv.converted === 'true')
-      .map(pv => pv.fullName)[0];
+      .filter((pv: any) => pv.converted === 'true') // TODO: remove any
+      .map((pv: any) => pv.fullName)[0]; // TODO: remove any
   });
 
   /**

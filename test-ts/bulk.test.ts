@@ -8,7 +8,7 @@ import { isObject, isString } from './util';
 import { isNodeJS } from './helper/env';
 
 const connMgr = new ConnectionManager(config);
-const conn = connMgr.createConnection();
+const conn: any = connMgr.createConnection(); // TODO: remove any
 conn.bulk.pollTimeout = 40 * 1000; // adjust poll timeout to test timeout.
 
 
@@ -52,7 +52,7 @@ test('bulk update and return updated status', async (t) => {
   let records = await conn.sobject('Account')
     .find({ Name: { $like: 'Bulk Account%' } }, { Id: 1, Name: 1 })
     .execute();
-  records = records.map(rec => Object.assign({}, rec, { Name: `${rec.Name} (Updated)` }));
+  records = records.map((rec: any) => Object.assign({}, rec, { Name: `${rec.Name} (Updated)` })); // TODO: remove any
   const rets = await conn.bulk.load('Account', 'update', records);
   t.true(Array.isArray(rets));
   for (const ret of rets) {
@@ -110,7 +110,7 @@ if (isNodeJS()) {
     const fstream = fs.createReadStream(path.join(__dirname, 'data/Account.csv'));
     const batch = conn.bulk.load('Account', 'insert');
     fstream.pipe(batch.stream());
-    const rets = await new Promise((resolve, reject) => {
+    const rets = await new Promise<any[]>((resolve, reject) => {
       batch.on('response', resolve);
       batch.on('error', reject);
     });
@@ -126,7 +126,7 @@ if (isNodeJS()) {
    */
   test('bulk delete from file and return deleted results', async (t) => {
     const records = await conn.sobject('Account').find({ Name: { $like: 'Bulk Account%' } });
-    const data = `Id\n${records.map(r => r.Id).join('\n')}\n`;
+    const data = `Id\n${records.map((r: any) => r.Id).join('\n')}\n`;
     const deleteFileName = path.join(__dirname, 'data/Account_delete.csv');
     await new Promise((resolve, reject) => {
       fs.writeFile(deleteFileName, data, err => (err ? reject(err) : resolve()));
@@ -135,7 +135,7 @@ if (isNodeJS()) {
     const batch = conn.bulk.load('Account', 'delete');
     fstream.pipe(batch.stream());
     const [rets] = await Promise.all([
-      new Promise((resolve, reject) => {
+      new Promise<any[]>((resolve, reject) => {
         batch.on('response', resolve);
         batch.on('error', reject);
       }),
@@ -157,10 +157,10 @@ if (isNodeJS()) {
     const file = path.join(__dirname, '/data/BulkQuery_export.csv');
     const fstream = fs.createWriteStream(file);
     const count = await conn.sobject(config.bigTable).count({});
-    const records = await new Promise((resolve, reject) => {
-      const recs = [];
+    const records = await new Promise<any[]>((resolve, reject) => {
+      const recs: any[] = []; // TODO: remove any
       conn.bulk.query(`SELECT Id, Name FROM ${config.bigTable}`)
-        .on('record', rec => recs.push(rec))
+        .on('record', (rec: any) => recs.push(rec)) // TODO: remove any
         .on('error', reject)
         .stream()
         .pipe(fstream)
@@ -186,9 +186,9 @@ if (isNodeJS()) {
 test('call bulk api from invalid session conn with refresh fn, and return result', async (t) => {
   const accounts = Array.from(Array(100), (a, i) => ({ Name: `Session Expiry Test #${i}` }));
   const insRets = await conn.bulk.load('Account', 'insert', accounts);
-  const deleteRecords = insRets.map(r => ({ Id: r.id }));
+  const deleteRecords = insRets.map((r: any) => ({ Id: r.id })); // TODO: remove any
   let refreshCalled = false;
-  const conn2 = new Connection({
+  const conn2: any = new Connection({ // TODO: remove any
     instanceUrl: conn.instanceUrl,
     accessToken: 'invalid_token',
     logLevel: config.logLevel,
@@ -211,7 +211,7 @@ test('call bulk api from invalid session conn with refresh fn, and return result
  *
  */
 test('call bulk api from invalid session conn without refresh fn, and raise error', async (t) => {
-  const conn3 = new Connection({
+  const conn3: any = new Connection({ // TODO: remove any
     instanceUrl: conn.instanceUrl,
     accessToken: 'invalid_token',
     logLevel: config.logLevel,

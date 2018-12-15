@@ -4,7 +4,7 @@ import config from './config';
 import { isObject } from './util';
 
 const connMgr = new ConnectionManager(config);
-const conn = connMgr.createConnection();
+const conn: any = connMgr.createConnection(); // TODO: remove any
 
 /**
  *
@@ -13,7 +13,7 @@ test.before('establish connection', async () => {
   await connMgr.establishConnection(conn);
 });
 
-let accountId;
+let accountId: string;
 
 /**
  *

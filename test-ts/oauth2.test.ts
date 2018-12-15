@@ -13,7 +13,8 @@ const oauth2 = new OAuth2(config);
  */
 if (isNodeJS()) {
   test.group('web server flow', (test) => {
-    let code, refreshToken; // eslint-disable-line one-var, one-var-declaration-per-line
+    let code: string
+    let refreshToken: string;
 
     //
     test('start OAuth2 web server flow and receive authz code', async (t) => {

@@ -4,7 +4,7 @@ import config from './config';
 import { isObject } from './util';
 
 const connMgr = new ConnectionManager(config);
-const conn = connMgr.createConnection();
+const conn: any = connMgr.createConnection();
 
 /**
  *
@@ -17,8 +17,8 @@ test.before('establish connection', async () => {
  *
  */
 test.group('single record crud', (test) => {
-  let accountId;
-  let account;
+  let accountId: string;
+  let account: any;
 
   //
   test('create account and get created obj', async (t) => {
@@ -64,8 +64,8 @@ test.group('single record crud', (test) => {
  *
  */
 test.group('multiple records crud', (test) => {
-  let accountIds;
-  let accounts;
+  let accountIds: string[];
+  let accounts: any[];
 
   //
   test('create multiple accounts and get successfull results', async (t) => {
@@ -74,10 +74,10 @@ test.group('multiple records crud', (test) => {
       { Name: 'Account #2' },
     ]);
     t.true(Array.isArray(rets));
-    rets.forEach((ret) => {
+    rets.forEach((ret: any) => { // TODO: remove any
       t.true(ret.success);
       t.true(typeof ret.id === 'string');
-      accountIds = rets.map(({ id }) => id);
+      accountIds = rets.map(({ id }: any) => id); // TODO: remoe any
     });
   });
 
@@ -85,7 +85,7 @@ test.group('multiple records crud', (test) => {
   test('retrieve multiple accounts and get specified records', async (t) => {
     const records = await conn.sobject('Account').retrieve(accountIds);
     t.true(Array.isArray(records));
-    records.forEach((record, i) => {
+    records.forEach((record: any, i: number) => {
       t.true(typeof record.Id === 'string');
       t.true(isObject(record.attributes));
       t.true(record.Name === `Account #${i + 1}`);
@@ -99,12 +99,12 @@ test.group('multiple records crud', (test) => {
       accounts.map(({ Id, Name }) => ({ Id, Name: `Updated ${Name}` })),
     );
     t.true(Array.isArray(rets));
-    rets.forEach((ret) => {
+    rets.forEach((ret: any) => { // TODO: remove any
       t.true(ret.success);
     });
     const records = await conn.sobject('Account').retrieve(accountIds);
     t.true(Array.isArray(records));
-    records.forEach((record, i) => {
+    records.forEach((record: any, i: number) => { // TODO: remove any
       t.true(record.Name === `Updated Account #${i + 1}`);
       t.true(isObject(record.attributes));
     });
@@ -114,7 +114,7 @@ test.group('multiple records crud', (test) => {
   test('delete multiple accounts, get successfull results, and not get any records', async (t) => {
     const rets = await conn.sobject('Account').destroy(accountIds);
     t.true(Array.isArray(rets));
-    rets.forEach((ret) => {
+    rets.forEach((ret: any) => {
       t.true(ret.success);
     });
     const records = await conn.sobject('Account').retrieve(accountIds);
@@ -130,7 +130,7 @@ test.group('multiple records crud', (test) => {
  */
 test.group('upsert', (test) => {
   const extId = `ID${Date.now()}`;
-  let recId;
+  let recId: string;
   //
   test('upsert not exisiting record and get successfull result', async (t) => {
     const rec = { Name: 'New Record', [config.upsertField]: extId };

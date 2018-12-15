@@ -4,7 +4,7 @@ import config from './config';
 import { isObject, isString } from './util';
 
 const connMgr = new ConnectionManager(config);
-const conn = connMgr.createConnection();
+const conn: any = connMgr.createConnection(); // TODO: remove any
 
 /**
  *
@@ -41,7 +41,7 @@ test('list sobject actions and return global actions', async (t) => {
   }
 });
 
-let action;
+let action: any; // TODO: remove any
 
 /**
  *

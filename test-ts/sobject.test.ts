@@ -14,8 +14,8 @@ test.before('establish connection', async () => {
 });
 
 
-let Account;
-let Opportunity;
+let Account: any; // TODO: remove any
+let Opportunity: any; // TODO: remove any
 
 /**
  *
@@ -25,7 +25,7 @@ test.before('create sobject and get SObject instances', () => {
   Opportunity = conn.sobject('Opportunity');
 });
 
-let acc;
+let acc: any; // TODO: remnove any
 /**
  *
  */
@@ -406,7 +406,7 @@ test('get cached approval layouts and return Account approval layout information
 });
 
 
-let listviewId;
+let listviewId: string;
 
 /**
  *

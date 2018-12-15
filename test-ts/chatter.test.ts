@@ -4,7 +4,7 @@ import config from './config';
 import { isObject, isString, isUndefined } from './util';
 
 const connMgr = new ConnectionManager(config);
-const conn = connMgr.createConnection();
+const conn: any = connMgr.createConnection(); // TODO: remove any typing
 
 /**
  *
@@ -132,7 +132,7 @@ test.group('feed item', (test) => {
     }
   });
 
-  let feedElementUrl;
+  let feedElementUrl: string;
 
   /**
    *
@@ -169,8 +169,8 @@ test.group('feed item', (test) => {
  *
  */
 test.group('feed comment', (test) => {
-  let feedElementUrl;
-  let commentsUrl;
+  let feedElementUrl: string;
+  let commentsUrl: string;
 
   /**
    *
@@ -218,9 +218,9 @@ test.group('feed comment', (test) => {
  *
  */
 test.group('like', (test) => {
-  let feedElementUrl;
-  let itemLikesUrl;
-  let commentLikesUrl;
+  let feedElementUrl: string;
+  let itemLikesUrl: string;
+  let commentLikesUrl: string;
 
   /**
    *
@@ -251,7 +251,7 @@ test.group('like', (test) => {
   });
 
 
-  let itemLikeUrl;
+  let itemLikeUrl: string;
 
   /**
    *
@@ -271,7 +271,7 @@ test.group('like', (test) => {
     t.true(isUndefined(ret));
   });
 
-  let commentLikeUrl;
+  let commentLikeUrl: string;
 
   /**
    *
@@ -301,7 +301,7 @@ test.group('like', (test) => {
  *
  */
 test.group('batch', (test) => {
-  let feeds;
+  let feeds: any[]; // TODO: add typing
 
   /**
    *
@@ -309,7 +309,7 @@ test.group('batch', (test) => {
   test.before(async () => {
     const result = await conn.chatter.resource('/feeds').retrieve();
     // Exclude PendingReview feed type, which raise 403 error in feed-elements GET request
-    feeds = result.feeds.filter(feed => feed.feedType !== 'PendingReview');
+    feeds = result.feeds.filter((feed: any) => feed.feedType !== 'PendingReview');
   });
 
   /**
@@ -327,7 +327,7 @@ test.group('batch', (test) => {
     }
   });
 
-  let urls = [];
+  let urls: string[] = [];
 
   /**
    *

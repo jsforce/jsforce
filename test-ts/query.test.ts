@@ -7,7 +7,7 @@ import config from './config';
 import { isString, isNumber } from './util';
 
 const connMgr = new ConnectionManager(config);
-const conn = connMgr.createConnection();
+const conn: any = connMgr.createConnection(); // TODO: remove any
 
 /**
  *
@@ -55,11 +55,11 @@ test('query big table and execute queryMore and fetch all records', async (t) =>
  *
  */
 test('query big tables without autoFetch and scan records in one query fetch', async (t) => {
-  const records = [];
-  let query;
+  const records: any[] = []; // TODO: remove any
+  let query: any; // TODO: remove any
   await new Promise((resolve, reject) => {
     query = conn.query(`SELECT Id, Name FROM ${config.bigTable || 'Account'}`)
-      .on('record', record => records.push(record))
+      .on('record', (record: any) => records.push(record)) // TODO: remove any
       .on('end', resolve)
       .on('error', reject)
       .run({ autoFetch: false });
@@ -74,11 +74,11 @@ test('query big tables without autoFetch and scan records in one query fetch', a
  *
  */
 test('query big tables with autoFetch and scan records up to maxFetch num', async (t) => {
-  const records = [];
-  let query;
+  const records: any[] = []; // TODO: remove any
+  let query: any; // TODO: remove any
   await new Promise((resolve, reject) => {
     query = conn.query(`SELECT Id, Name FROM ${config.bigTable || 'Account'}`)
-      .on('record', record => records.push(record))
+      .on('record', (record: any) => records.push(record)) // TODO: remove any
       .on('end', resolve)
       .on('error', reject)
       .run({ autoFetch: true, maxFetch: 5000 });
@@ -93,8 +93,8 @@ test('query big tables with autoFetch and scan records up to maxFetch num', asyn
  *
  */
 test('query big tables by piping randomly-waiting output record stream object and scan records via stream up to maxFetch num', async (t) => {
-  const records = [];
-  let query;
+  const records: any[] = []; // TODO: remove any
+  let query: any;
   await new Promise((resolve, reject) => {
     const outStream = through2.obj(
       (record, enc, next) => {

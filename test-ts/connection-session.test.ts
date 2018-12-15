@@ -9,7 +9,7 @@ import { Connection } from '..';
  *
  */
 test.group('login', (test) => {
-  let conn;
+  let conn: any; // TODO: remove any
 
   //
   test('login by username and password', async (t) => {
@@ -33,7 +33,7 @@ test.group('login', (test) => {
     let refreshCount = 0;
     conn.accessToken = 'invalid access token';
     conn.removeAllListeners('refresh');
-    conn.on('refresh', (at) => {
+    conn.on('refresh', (at: any) => {
       newAccessToken = at;
       refreshCount += 1;
     });
@@ -48,7 +48,7 @@ test.group('login', (test) => {
  *
  */
 test.group('logout', (test) => {
-  let sessionInfo;
+  let sessionInfo: any; // TODO: remove any
 
   //
   test('logout from soap session', async (t) => {
@@ -84,7 +84,7 @@ test.group('logout', (test) => {
  *
  */
 test.group('oauth2 session', (test) => {
-  let sessionInfo;
+  let sessionInfo: any; // TODO: remove any
 
   //
   test('logout oauth2 session', async (t) => {
@@ -126,7 +126,7 @@ test.group('oauth2 session', (test) => {
  *
  */
 test.group('oauth2 refresh', (test) => {
-  let conn;
+  let conn: any; // TODO: remove any
 
   //
   test('authorize web server flow to get access tokens', async (t) => {
@@ -156,7 +156,7 @@ test.group('oauth2 refresh', (test) => {
     let refreshCount = 0;
     conn.accessToken = 'invalid access token';
     conn.removeAllListeners('refresh');
-    conn.on('refresh', (at) => {
+    conn.on('refresh', (at: any) => { // TODO: remove any
       accessToken = at;
       refreshCount += 1;
     });
@@ -172,7 +172,7 @@ test.group('oauth2 refresh', (test) => {
     let refreshCount = 0;
     conn.accessToken = 'invalid access token';
     conn.removeAllListeners('refresh');
-    conn.on('refresh', (at) => {
+    conn.on('refresh', (at: any) => { // TODO: remove any
       accessToken = at;
       refreshCount += 1;
     });

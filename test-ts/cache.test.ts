@@ -7,9 +7,13 @@ import Cache from '../src/cache';
  */
 test.group('cache', (test) => {
   const cache = new Cache();
-  let t1, t2, t3, t4, t5; // eslint-disable-line one-var, one-var-declaration-per-line
+  let t1: number;
+  let t2: number;
+  let t3: number;
+  let t4: number;
+  let t5: number;
 
-  const getTime = () => new Promise((resolve) => {
+  const getTime = () => new Promise<number>((resolve) => {
     setTimeout(() => { resolve(Date.now()); }, 200);
   });
 
@@ -34,7 +38,7 @@ test.group('cache', (test) => {
     t.true(t3 === t2);
   });
 
-  const getTimeCacheImmediate = cache.createCachedFunction(getTime, null, { key: 'getTime', strategy: 'IMMEDIATE' });
+  const getTimeCacheImmediate: Function = cache.createCachedFunction(getTime, null, { key: 'getTime', strategy: 'IMMEDIATE' });
 
   test('call cached function with immediate lookup strategy and get same time which equals to latest fn call result', (t) => {
     t4 = getTimeCacheImmediate();

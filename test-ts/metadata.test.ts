@@ -8,7 +8,7 @@ import { isObject, isString } from './util';
 import { isNodeJS } from './helper/env';
 
 const connMgr = new ConnectionManager(config);
-const conn = connMgr.createConnection();
+const conn: any = connMgr.createConnection();
 conn.metadata.pollTimeout = 40 * 1000; // adjust poll timeout to test timeout.
 
 
@@ -60,7 +60,7 @@ test.group('CRUD based call', (test) => {
     }
   });
 
-  let rmetadata = null;
+  let rmetadata: any = null;
 
   /**
    *
@@ -165,8 +165,8 @@ test.group('CRUD based call', (test) => {
       t.true(isString(result.fullName));
     }
     fullNames =
-      results.filter(m => m.fullName.match(/^JSforceTestObject.+__c$/))
-        .map(m => m.fullName);
+      results.filter((m: any) => m.fullName.match(/^JSforceTestObject.+__c$/))
+        .map((m: any) => m.fullName);
   });
 
   /**
@@ -214,11 +214,11 @@ test.group('file based call', (test) => {
    *
    */
   test('retrieve metadata in packaged file and retrieve package', async (t) => {
-    const bufs = [];
+    const bufs: any[] = [];
     await new Promise((resolve, reject) => {
       conn.metadata.retrieve({ packageNames: ['My Test Package'] })
         .stream()
-        .on('data', d => bufs.push(d))
+        .on('data', (d: any) => bufs.push(d))
         .on('end', resolve)
         .on('error', reject);
     });
@@ -238,14 +238,14 @@ test.group('session refresh', (test) => {
    */
   test('refresh metadata API session and list metadata even if the session has been expired', async (t) => {
     let refreshCalled = false;
-    const conn2 = new Connection({
+    const conn2: any = new Connection({ // TODO: remove any
       instanceUrl: conn.instanceUrl,
       accessToken: 'invalid_token',
       logLevel: config.logLevel,
       proxyUrl: config.proxyUrl,
       refreshFn: (c, callback) => {
         refreshCalled = true;
-        setTimeout(() => callback(null, conn.accessToken), 500);
+        setTimeout(() => callback(null, conn.accessToken || ''), 500);
       },
     });
     const results = await conn2.metadata.list({ type: 'CustomObject' });

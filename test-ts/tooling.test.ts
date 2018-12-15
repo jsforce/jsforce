@@ -3,7 +3,7 @@ import ConnectionManager from './helper/connection-manager';
 import config from './config';
 
 const connMgr = new ConnectionManager(config);
-const conn = connMgr.createConnection();
+const conn: any = connMgr.createConnection(); // TODO: remove any
 
 
 /**

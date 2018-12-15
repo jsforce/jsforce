@@ -4,7 +4,7 @@ import config from './config';
 import { isObject, isString, isNumber, isUndefined } from './util';
 
 const connMgr = new ConnectionManager(config);
-const conn = connMgr.createConnection();
+const conn: any = connMgr.createConnection();
 
 /**
  *
@@ -68,7 +68,7 @@ test.group('recent records', (test) => {
   test('get recently accessed records in all objects and get successfull results', async (t) => {
     const records = await conn.recent(2);
     t.true(Array.isArray(records));
-    records.forEach((record) => {
+    records.forEach((record: any) => { // TODO: remove any
       t.true(isString(record.Id));
       t.true(isString(record.Name));
       t.true(record.attributes.type === 'Account');
@@ -79,7 +79,7 @@ test.group('recent records', (test) => {
   test('get recently viewed accounts in Account object', async (t) => {
     const records = await conn.sobject('Account').recent();
     t.true(Array.isArray(records));
-    records.forEach((record) => {
+    records.forEach((record: any) => { // TODO: remove any
       t.true(isString(record.Id));
       t.true(isString(record.Name));
       t.true(record.attributes.type === 'Account');
@@ -190,7 +190,7 @@ test.group('misc metadata', (test) => {
   test('get tabs list information and return tabs info in the org', async (t) => {
     const tabs = await conn.tabs();
     t.true(Array.isArray(tabs));
-    tabs.forEach((tab) => {
+    tabs.forEach((tab: any) => { // TODO: remove any
       t.true(isString(tab.label));
       t.true(isString(tab.name));
       t.true(isString(tab.url));
@@ -202,16 +202,16 @@ test.group('misc metadata', (test) => {
     const theme = await conn.theme();
     t.true(isObject(theme));
     t.true(Array.isArray(theme.themeItems));
-    theme.themeItems.forEach((th) => {
+    theme.themeItems.forEach((th: any) => { // TODO: remove any
       t.true(isString(th.name));
       t.true(Array.isArray(th.colors) || th.colors === null);
-      (th.colors || []).forEach((c) => {
+      (th.colors || []).forEach((c: any) => { // TODO: remove any
         t.true(isString(c.color));
         t.true(isString(c.context));
         t.true(isString(c.theme));
       });
       t.true(Array.isArray(th.icons) || th.icons === null);
-      (th.icons || []).forEach((ic) => {
+      (th.icons || []).forEach((ic: any) => { // TODO: remove any
         t.true(isString(ic.url));
         t.true(isNumber(ic.width));
         t.true(isNumber(ic.height));
