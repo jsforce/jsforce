@@ -10,7 +10,7 @@
     "database.com"
   ],
   "homepage": "http://github.com/jsforce/jsforce",
-  "version": "1.8.5",
+  "version": "1.9.1",
   "repository": {
     "type": "git",
     "url": "git://github.com/jsforce/jsforce.git"
@@ -30,7 +30,7 @@
     "doc": "jsdoc lib -d doc --recurse --lenient",
     "test": "npm run test:node",
     "test:all": "npm run test:node && npm run test:browser",
-    "test:node": "mocha --retries 2 --reporter spec --require intelli-espower-loader",
+    "test:node": "mocha --retries 2 --reporter spec --require intelli-espower-loader --exit",
     "test:browser": "testem",
     "prepublish": "node -e \"if(process.env.npm_package_version!==require('./lib/VERSION')){console.error('The pacakge.json version is not matching to ./lib/VERSION.js');process.exit(1)}\""
   },
@@ -90,10 +90,10 @@
     "gulp-uglify": "^1.5.4",
     "intelli-espower-loader": "^1.0.1",
     "jsdoc": "^3.5.5",
-    "mocha": "^2.5.3",
+    "mocha": "^5.2.0",
     "power-assert": "^1.6.0",
     "puppeteer": "^1.6.1",
-    "require-swapper": "^0.1.6",
+    "require-swapper": "^0.1.7",
     "testem": "^2.8.2",
     "through2": "^2.0.3",
     "utf-8-validate": "^5.0.1",
