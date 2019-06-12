@@ -267,6 +267,21 @@ if (TestEnv.isNodeJS) {
     });
   });
 
+  describe("describe value type", function() {
+    it("should return describeValueType", function(done) {
+      conn.metadata.describeValueType('{http://soap.sforce.com/2006/04/metadata}ApexClass', function(err, result) {
+        assert.ok(_.isBoolean(result.apiCreatable));
+        assert.ok(_.isBoolean(result.apiDeletable));
+        assert.ok(_.isBoolean(result.apiReadable));
+        assert.ok(_.isBoolean(result.apiUpdatable));
+        assert.ok(_.isBoolean(result.partialSaveAllowed));
+        assert.ok(_.isBoolean(result.testRequired));
+        assert.ok(_.isArray(result.valueTypeFields));
+        done();
+      });
+    });
+  });
+
 
 /*------------------------------------------------------------------------*/
 
