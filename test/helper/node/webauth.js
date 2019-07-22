@@ -1,6 +1,6 @@
 'use strict';
 
-var puppeteer = require('puppeteer');
+var puppeteer = require('puppeteer' + ''); // avoid puppeteer to become browserify target
 
 module.exports = function(url, username, password, callback) {
   var browser, page;
