@@ -1,4 +1,4 @@
-import test from './util/ava/ext';
+import assert from 'assert';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject, isString, delay } from './util';
@@ -9,14 +9,14 @@ const conn: any = connMgr.createConnection(); // TODO: remove any
 /**
  *
  */
-test.before('establish connection', async () => {
+beforeAll(async () => {
   await connMgr.establishConnection(conn);
 });
 
 /**
  *
  */
-test('subscribe to topic, create account, and receive event of account has been created', async (t) => {
+test('subscribe to topic, create account, and receive event of account has been created', async () => {
   let subscr: any; // TODO: remove any
   const msgArrived = new Promise<any>((resolve) => {
     // TODO: remove any
@@ -29,11 +29,11 @@ test('subscribe to topic, create account, and receive event of account has been 
     .sobject('Account')
     .create({ Name: `My New Account #${Date.now()}` });
   const msg = await msgArrived;
-  t.true(isObject(msg.event));
-  t.true(msg.event.type === 'created');
-  t.true(isObject(msg.sobject));
-  t.true(isString(msg.sobject.Name));
-  t.true(isString(msg.sobject.Id));
+  assert.ok(isObject(msg.event));
+  assert.ok(msg.event.type === 'created');
+  assert.ok(isObject(msg.sobject));
+  assert.ok(isString(msg.sobject.Name));
+  assert.ok(isString(msg.sobject.Id));
 
   if (subscr) {
     subscr.cancel();
@@ -43,7 +43,7 @@ test('subscribe to topic, create account, and receive event of account has been 
 /**
  *
  */
-test('subscribe to generic streaming channel and recieve custom streaming event', async (t) => {
+test('subscribe to generic streaming channel and recieve custom streaming event', async () => {
   const channelName = '/u/JSforceTestChannel';
   await conn.sobject('StreamingChannel').create({ Name: channelName });
 
@@ -57,10 +57,10 @@ test('subscribe to generic streaming channel and recieve custom streaming event'
     payload: 'hello, world',
     userIds: [],
   });
-  t.true(res.fanoutCount === -1);
-  t.true(isObject(res.userOnlineStatus));
+  assert.ok(res.fanoutCount === -1);
+  assert.ok(isObject(res.userOnlineStatus));
   const msg = await msgArrived;
-  t.true(msg.payload === 'hello, world');
+  assert.ok(msg.payload === 'hello, world');
 
   if (subscr) {
     subscr.cancel();
@@ -74,6 +74,6 @@ test('subscribe to generic streaming channel and recieve custom streaming event'
 /**
  *
  */
-test.after('close connection', async () => {
+afterAll(async () => {
   await connMgr.closeConnection(conn);
 });

@@ -1,11 +1,11 @@
-import test from './util/ava/ext';
+import assert from 'assert';
 import { isNumber } from './util';
 import Cache from '../src/cache';
 
 /**
  *
  */
-test.group('cache', (test) => {
+describe('cache', () => {
   const cache = new Cache();
   let t1: number;
   let t2: number;
@@ -25,15 +25,15 @@ test.group('cache', (test) => {
     strategy: 'NOCACHE',
   });
 
-  test('call response-cached getTime function and return time', async (t) => {
+  test('call response-cached getTime function and return time', async () => {
     t1 = await getTimeWithResCached();
-    t.true(isNumber(t1));
+    assert.ok(isNumber(t1));
   });
 
-  test('call response-cached function and get different time', async (t) => {
+  test('call response-cached function and get different time', async () => {
     t2 = await getTimeWithResCached();
-    t.true(isNumber(t2));
-    t.true(t1 < t2);
+    assert.ok(isNumber(t2));
+    assert.ok(t1 < t2);
   });
 
   const getTimeCacheIfHit = cache.createCachedFunction(getTime, null, {
@@ -41,10 +41,10 @@ test.group('cache', (test) => {
     strategy: 'HIT',
   });
 
-  test('call cacheable getTime function and get time which equals to latest call result', async (t) => {
+  test('call cacheable getTime function and get time which equals to latest call result', async () => {
     t3 = await getTimeCacheIfHit();
-    t.true(isNumber(t3));
-    t.true(t3 === t2);
+    assert.ok(isNumber(t3));
+    assert.ok(t3 === t2);
   });
 
   const getTimeCacheImmediate: Function = cache.createCachedFunction(
@@ -53,16 +53,16 @@ test.group('cache', (test) => {
     { key: 'getTime', strategy: 'IMMEDIATE' },
   );
 
-  test('call cached function with immediate lookup strategy and get same time which equals to latest fn call result', (t) => {
+  test('call cached function with immediate lookup strategy and get same time which equals to latest fn call result', () => {
     t4 = getTimeCacheImmediate();
-    t.true(isNumber(t4));
-    t.true(t4 === t3);
+    assert.ok(isNumber(t4));
+    assert.ok(t4 === t3);
   });
 
-  test('clear cache and call cache-first function and get time much newer than the latest', async (t) => {
+  test('clear cache and call cache-first function and get time much newer than the latest', async () => {
     cache.clear();
     t5 = await getTimeCacheIfHit();
-    t.true(isNumber(t5));
-    t.true(t4 < t5);
+    assert.ok(isNumber(t5));
+    assert.ok(t4 < t5);
   });
 });

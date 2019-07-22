@@ -1,4 +1,4 @@
-import test from './util/ava/ext';
+import assert from 'assert';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject } from './util';
@@ -9,7 +9,7 @@ const conn: any = connMgr.createConnection(); // TODO: remove any
 /**
  *
  */
-test.before('establish connection', async () => {
+beforeAll(async () => {
   await connMgr.establishConnection(conn);
 });
 
@@ -18,32 +18,32 @@ let accountId: string;
 /**
  *
  */
-test('post account info and return created account id', async (t) => {
+test('post account info and return created account id', async () => {
   const params = {
     name: 'My Apex Rest Test #1',
     phone: '654-321-0000',
     website: 'http://www.google.com',
   };
   const id = await conn.apex.post('/JSforceTestApexRest/', params);
-  t.true(typeof id === 'string');
+  assert.ok(typeof id === 'string');
   accountId = id;
 });
 
 /**
  *
  */
-test('get account info and return created account', async (t) => {
+test('get account info and return created account', async () => {
   const acc = await conn.apex.get(`/JSforceTestApexRest/${accountId}`);
-  t.true(isObject(acc));
-  t.true(acc.Name === 'My Apex Rest Test #1');
-  t.true(acc.Phone === '654-321-0000');
-  t.true(acc.Website === 'http://www.google.com');
+  assert.ok(isObject(acc));
+  assert.ok(acc.Name === 'My Apex Rest Test #1');
+  assert.ok(acc.Phone === '654-321-0000');
+  assert.ok(acc.Website === 'http://www.google.com');
 });
 
 /**
  *
  */
-test('put account info and return updated account', async (t) => {
+test('put account info and return updated account', async () => {
   const params = {
     account: {
       Name: 'My Apex Rest Test #1 (put)',
@@ -51,16 +51,16 @@ test('put account info and return updated account', async (t) => {
     },
   };
   const acc = await conn.apex.put(`/JSforceTestApexRest/${accountId}`, params);
-  t.true(isObject(acc));
-  t.true(acc.Name === 'My Apex Rest Test #1 (put)');
-  t.true(typeof acc.Phone === 'undefined');
-  t.true(acc.Website === 'http://www.google.com');
+  assert.ok(isObject(acc));
+  assert.ok(acc.Name === 'My Apex Rest Test #1 (put)');
+  assert.ok(typeof acc.Phone === 'undefined');
+  assert.ok(acc.Website === 'http://www.google.com');
 });
 
 /**
  *
  */
-test('patch account info and return updated account', async (t) => {
+test('patch account info and return updated account', async () => {
   const params = {
     name: 'My Apex Rest Test #1 (patch)',
   };
@@ -68,24 +68,24 @@ test('patch account info and return updated account', async (t) => {
     `/JSforceTestApexRest/${accountId}`,
     params,
   );
-  t.true(isObject(acc));
-  t.true(acc.Name === 'My Apex Rest Test #1 (patch)');
-  t.true(typeof acc.Phone === 'undefined');
-  t.true(acc.Website === 'http://www.google.com');
+  assert.ok(isObject(acc));
+  assert.ok(acc.Name === 'My Apex Rest Test #1 (patch)');
+  assert.ok(typeof acc.Phone === 'undefined');
+  assert.ok(acc.Website === 'http://www.google.com');
 });
 
 /**
  *
  */
-test('delete account info and get no account for delete account id', async (t) => {
+test('delete account info and get no account for delete account id', async () => {
   await conn.apex.delete(`/JSforceTestApexRest/${accountId}`);
   const records = await conn.sobject('Account').find({ Id: accountId });
-  t.true(records.length === 0);
+  assert.ok(records.length === 0);
 });
 
 /**
  *
  */
-test.after('close connection', async () => {
+afterAll(async () => {
   await connMgr.closeConnection(conn);
 });

@@ -1,6 +1,6 @@
+import assert from 'assert';
 import fs from 'fs';
 import path from 'path';
-import test from './util/ava/ext';
 import { Connection, Date as SfDate } from '..';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
@@ -14,14 +14,14 @@ conn.bulk.pollTimeout = 40 * 1000; // adjust poll timeout to test timeout.
 /**
  *
  */
-test.before('establish connection', async () => {
+beforeAll(async () => {
   await connMgr.establishConnection(conn);
 });
 
 /**
  *
  */
-test('bulk insert records and return result status', async (t) => {
+test('bulk insert records and return result status', async () => {
   const records = [
     ...Array.from(Array(200), (a, i) => ({
       Name: `Bulk Account #${i + 1}`,
@@ -30,23 +30,23 @@ test('bulk insert records and return result status', async (t) => {
     { BillingState: 'CA' }, // should raise error
   ];
   const rets = await conn.bulk.load('Account', 'insert', records);
-  t.true(Array.isArray(rets));
+  assert.ok(Array.isArray(rets));
   let i = 0;
   let ret;
   for (; i < 200; i++) {
     ret = rets[i];
-    t.true(isString(ret.id));
-    t.true(ret.success === true);
+    assert.ok(isString(ret.id));
+    assert.ok(ret.success === true);
   }
   ret = rets[200];
-  t.true(ret.id === null);
-  t.true(ret.success === false);
+  assert.ok(ret.id === null);
+  assert.ok(ret.success === false);
 });
 
 /**
  *
  */
-test('bulk update and return updated status', async (t) => {
+test('bulk update and return updated status', async () => {
   let records = await conn
     .sobject('Account')
     .find({ Name: { $like: 'Bulk Account%' } }, { Id: 1, Name: 1 })
@@ -55,51 +55,51 @@ test('bulk update and return updated status', async (t) => {
     Object.assign({}, rec, { Name: `${rec.Name} (Updated)` }),
   ); // TODO: remove any
   const rets = await conn.bulk.load('Account', 'update', records);
-  t.true(Array.isArray(rets));
+  assert.ok(Array.isArray(rets));
   for (const ret of rets) {
-    t.true(isString(ret.id));
-    t.true(ret.success === true);
+    assert.ok(isString(ret.id));
+    assert.ok(ret.success === true);
   }
 });
 
 /**
  *
  */
-test('bulk update with empty input and raise client input error', async (t) => {
+test('bulk update with empty input and raise client input error', async () => {
   try {
     await conn.bulk.load('Account', 'update', []);
-    t.fail();
+    assert.fail();
   } catch (err) {
-    t.true(isObject(err));
-    t.true(err.name === 'ClientInputError');
+    assert.ok(isObject(err));
+    assert.ok(err.name === 'ClientInputError');
   }
 });
 
 /**
  *
  */
-test('bulk delete and return deleted status', async (t) => {
+test('bulk delete and return deleted status', async () => {
   const records = await conn
     .sobject('Account')
     .find({ Name: { $like: 'Bulk Account%' } })
     .execute();
   const rets = await conn.bulk.load('Account', 'delete', records);
-  t.true(Array.isArray(rets));
+  assert.ok(Array.isArray(rets));
   for (const ret of rets) {
-    t.true(isString(ret.id));
-    t.true(ret.success === true);
+    assert.ok(isString(ret.id));
+    assert.ok(ret.success === true);
   }
 });
 
 /**
  *
  */
-test('bulk delete with empty input and raise client input error', async (t) => {
+test('bulk delete with empty input and raise client input error', async () => {
   try {
     await conn.bulk.load('Account', 'delete', []);
   } catch (err) {
-    t.true(isObject(err));
-    t.true(err.name === 'ClientInputError');
+    assert.ok(isObject(err));
+    assert.ok(err.name === 'ClientInputError');
   }
 });
 
@@ -108,7 +108,7 @@ if (isNodeJS()) {
   /**
    *
    */
-  test('bulk insert from file and return inserted results', async (t) => {
+  test('bulk insert from file and return inserted results', async () => {
     const fstream = fs.createReadStream(
       path.join(__dirname, 'data/Account.csv'),
     );
@@ -118,17 +118,17 @@ if (isNodeJS()) {
       batch.on('response', resolve);
       batch.on('error', reject);
     });
-    t.true(Array.isArray(rets));
+    assert.ok(Array.isArray(rets));
     for (const ret of rets) {
-      t.true(isString(ret.id));
-      t.true(ret.success === true);
+      assert.ok(isString(ret.id));
+      assert.ok(ret.success === true);
     }
   });
 
   /**
    *
    */
-  test('bulk delete from file and return deleted results', async (t) => {
+  test('bulk delete from file and return deleted results', async () => {
     const records = await conn
       .sobject('Account')
       .find({ Name: { $like: 'Bulk Account%' } });
@@ -151,17 +151,17 @@ if (isNodeJS()) {
         batch.job.on('close', resolve); // await job close
       }),
     ]);
-    t.true(Array.isArray(rets));
+    assert.ok(Array.isArray(rets));
     for (const ret of rets) {
-      t.true(isString(ret.id));
-      t.true(ret.success === true);
+      assert.ok(isString(ret.id));
+      assert.ok(ret.success === true);
     }
   });
 
   /**
    *
    */
-  test('bulk query and get records with yielding file output', async (t) => {
+  test('bulk query and get records with yielding file output', async () => {
     const file = path.join(__dirname, '/data/BulkQuery_export.csv');
     const fstream = fs.createWriteStream(file);
     const count = await conn.sobject(config.bigTable).count({});
@@ -175,15 +175,15 @@ if (isNodeJS()) {
         .pipe(fstream)
         .on('finish', () => resolve(recs));
     });
-    t.true(Array.isArray(records) && records.length === count);
+    assert.ok(Array.isArray(records) && records.length === count);
     for (const rec of records) {
-      t.true(isString(rec.Id));
-      t.true(isString(rec.Name));
+      assert.ok(isString(rec.Id));
+      assert.ok(isString(rec.Name));
     }
     const data = fs.readFileSync(file, 'utf-8');
-    t.true(isString(data) && data !== '');
+    assert.ok(isString(data) && data !== '');
     const lines = data.replace(/[\r\n]+$/, '').split(/[\r\n]/);
-    t.true(lines.length === records.length + 1);
+    assert.ok(lines.length === records.length + 1);
   });
 }
 
@@ -192,7 +192,7 @@ if (isNodeJS()) {
 /**
  *
  */
-test('call bulk api from invalid session conn with refresh fn, and return result', async (t) => {
+test('call bulk api from invalid session conn with refresh fn, and return result', async () => {
   const accounts = Array.from(Array(100), (a, i) => ({
     Name: `Session Expiry Test #${i}`,
   }));
@@ -211,18 +211,18 @@ test('call bulk api from invalid session conn with refresh fn, and return result
     },
   });
   const rets = await conn2.bulk.load('Account', 'delete', deleteRecords);
-  t.true(refreshCalled);
-  t.true(Array.isArray(rets));
-  t.true(rets.length === 100);
+  assert.ok(refreshCalled);
+  assert.ok(Array.isArray(rets));
+  assert.ok(rets.length === 100);
   for (const ret of rets) {
-    t.true(ret.success);
+    assert.ok(ret.success);
   }
 });
 
 /**
  *
  */
-test('call bulk api from invalid session conn without refresh fn, and raise error', async (t) => {
+test('call bulk api from invalid session conn without refresh fn, and raise error', async () => {
   const conn3: any = new Connection({
     // TODO: remove any
     instanceUrl: conn.instanceUrl,
@@ -233,10 +233,10 @@ test('call bulk api from invalid session conn without refresh fn, and raise erro
   const records = [{ Name: 'Impossible Bulk Account #1' }];
   try {
     await conn3.bulk.load('Account', 'insert', records);
-    t.fail();
+    assert.fail();
   } catch (err) {
-    t.true(isObject(err));
-    t.true(err.name === 'InvalidSessionId');
+    assert.ok(isObject(err));
+    assert.ok(err.name === 'InvalidSessionId');
   }
 });
 
@@ -247,7 +247,7 @@ const bulkAccountNum = 250;
 /**
  *
  */
-test('bulk update using Query#update and return updated status', async (t) => {
+test('bulk update using Query#update and return updated status', async () => {
   const accounts = Array.from(Array(bulkAccountNum), (a, i) => ({
     Name: `New Bulk Account #${i + 1}`,
     BillingState: 'CA',
@@ -261,29 +261,29 @@ test('bulk update using Query#update and return updated status', async (t) => {
       Name: '${Name} (Updated)', // eslint-disable-line no-template-curly-in-string
       BillingState: null,
     });
-  t.true(Array.isArray(rets));
-  t.true(rets.length === bulkAccountNum);
+  assert.ok(Array.isArray(rets));
+  assert.ok(rets.length === bulkAccountNum);
   for (const ret of rets) {
-    t.true(isString(ret.id));
-    t.true(ret.success === true);
+    assert.ok(isString(ret.id));
+    assert.ok(ret.success === true);
   }
 
   const records = await conn
     .sobject('Account')
     .find({ Name: { $like: 'New Bulk Account%' } }, 'Id, Name, BillingState');
-  t.true(Array.isArray(records));
-  t.true(records.length === bulkAccountNum);
+  assert.ok(Array.isArray(records));
+  assert.ok(records.length === bulkAccountNum);
   for (const record of records) {
-    t.true(isString(record.Id));
-    t.true(/\(Updated\)$/.test(record.Name));
-    t.true(record.BillingState === null);
+    assert.ok(isString(record.Id));
+    assert.ok(/\(Updated\)$/.test(record.Name));
+    assert.ok(record.BillingState === null);
   }
 });
 
 /**
  *
  */
-test('bulk update using Query#update with unmatching query and return empty array records', async (t) => {
+test('bulk update using Query#update with unmatching query and return empty array records', async () => {
   const rets = await conn
     .sobject('Account')
     .find({ CreatedDate: { $lt: new SfDate('1970-01-01T00:00:00Z') } }) // should not match any records
@@ -291,36 +291,36 @@ test('bulk update using Query#update with unmatching query and return empty arra
       Name: '${Name} (Updated)', // eslint-disable-line no-template-curly-in-string
       BillingState: null,
     });
-  t.true(Array.isArray(rets));
-  t.true(rets.length === 0);
+  assert.ok(Array.isArray(rets));
+  assert.ok(rets.length === 0);
 });
 
 /**
  *
  */
-test('bulk delete using Query#destroy and return deleted status', async (t) => {
+test('bulk delete using Query#destroy and return deleted status', async () => {
   const rets = await conn
     .sobject('Account')
     .find({ Name: { $like: 'New Bulk Account%' } })
     .destroy();
-  t.true(Array.isArray(rets));
-  t.true(rets.length === bulkAccountNum);
+  assert.ok(Array.isArray(rets));
+  assert.ok(rets.length === bulkAccountNum);
   for (const ret of rets) {
-    t.true(isString(ret.id));
-    t.true(ret.success === true);
+    assert.ok(isString(ret.id));
+    assert.ok(ret.success === true);
   }
 });
 
 /**
  *
  */
-test('bulk delete using Query#destroy with unmatching query and return empty array records', async (t) => {
+test('bulk delete using Query#destroy with unmatching query and return empty array records', async () => {
   const rets = await conn
     .sobject('Account')
     .find({ CreatedDate: { $lt: new SfDate('1970-01-01T00:00:00Z') } })
     .destroy();
-  t.true(Array.isArray(rets));
-  t.true(rets.length === 0);
+  assert.ok(Array.isArray(rets));
+  assert.ok(rets.length === 0);
 });
 
 /*------------------------------------------------------------------------*/
@@ -330,7 +330,7 @@ const smallAccountNum = 20;
 /**
  *
  */
-test('bulk update using Query#update with bulkThreshold modified and return updated status', async (t) => {
+test('bulk update using Query#update with bulkThreshold modified and return updated status', async () => {
   const records = Array.from({ length: smallAccountNum }).map((_, i) => ({
     Name: `New Bulk Account #${i + 1}`,
     BillingState: 'CA',
@@ -348,43 +348,43 @@ test('bulk update using Query#update with bulkThreshold modified and return upda
       },
       { bulkThreshold: 0 },
     );
-  t.true(Array.isArray(rets));
-  t.true(rets.length === smallAccountNum);
+  assert.ok(Array.isArray(rets));
+  assert.ok(rets.length === smallAccountNum);
   for (const ret of rets) {
-    t.true(isString(ret.id));
-    t.true(ret.success === true);
+    assert.ok(isString(ret.id));
+    assert.ok(ret.success === true);
   }
   const urecords = await conn
     .sobject('Account')
     .find({ Name: { $like: 'New Bulk Account%' } }, 'Id, Name, BillingState');
-  t.true(Array.isArray(urecords));
-  t.true(records.length === smallAccountNum);
+  assert.ok(Array.isArray(urecords));
+  assert.ok(records.length === smallAccountNum);
   for (const record of urecords) {
-    t.true(isString(record.Id));
-    t.true(/\(Updated\)$/.test(record.Name));
-    t.true(record.BillingState === null);
+    assert.ok(isString(record.Id));
+    assert.ok(/\(Updated\)$/.test(record.Name));
+    assert.ok(record.BillingState === null);
   }
 });
 
 /**
  *
  */
-test('bulk delete using Query#destroy with bulkThreshold modified and return deleted status', async (t) => {
+test('bulk delete using Query#destroy with bulkThreshold modified and return deleted status', async () => {
   const rets = await conn
     .sobject('Account')
     .find({ Name: { $like: 'New Bulk Account%' } })
     .destroy({ bulkThreshold: 0 });
-  t.true(Array.isArray(rets));
-  t.true(rets.length === smallAccountNum);
+  assert.ok(Array.isArray(rets));
+  assert.ok(rets.length === smallAccountNum);
   for (const ret of rets) {
-    t.true(isString(ret.id));
-    t.true(ret.success === true);
+    assert.ok(isString(ret.id));
+    assert.ok(ret.success === true);
   }
 });
 
 /**
  *
  */
-test.after('close connection', async () => {
+afterAll(async () => {
   await connMgr.closeConnection(conn);
 });

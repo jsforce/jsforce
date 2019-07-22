@@ -1,4 +1,4 @@
-import test from './util/ava/ext';
+import assert from 'assert';
 import { delay } from './util';
 import authorize from './helper/webauth';
 import config from './config';
@@ -7,30 +7,30 @@ import { Connection } from '..';
 /**
  *
  */
-test.group('login', (test) => {
+describe('login', () => {
   let conn: any; // TODO: remove any
 
   //
-  test('login by username and password', async (t) => {
+  test('login by username and password', async () => {
     conn = new Connection({
       logLevel: config.logLevel,
       proxyUrl: config.proxyUrl,
     });
     const userInfo = await conn.login(config.username, config.password);
-    t.true(typeof conn.accessToken === 'string');
-    t.true(typeof userInfo.id === 'string');
-    t.true(typeof userInfo.organizationId === 'string');
-    t.true(typeof userInfo.url === 'string');
+    assert.ok(typeof conn.accessToken === 'string');
+    assert.ok(typeof userInfo.id === 'string');
+    assert.ok(typeof userInfo.organizationId === 'string');
+    assert.ok(typeof userInfo.url === 'string');
   });
 
   //
-  test('execute query and return some records', async (t) => {
+  test('execute query and return some records', async () => {
     const res = await conn.query('SELECT Id FROM User');
-    t.true(Array.isArray(res.records));
+    assert.ok(Array.isArray(res.records));
   });
 
   //
-  test('catch/handle bad access token', async (t) => {
+  test('catch/handle bad access token', async () => {
     let newAccessToken;
     let refreshCount = 0;
     conn.accessToken = 'invalid access token';
@@ -40,20 +40,20 @@ test.group('login', (test) => {
       refreshCount += 1;
     });
     const res = await conn.query('SELECT Id FROM User LIMIT 5');
-    t.true(refreshCount === 1);
-    t.true(typeof newAccessToken === 'string');
-    t.true(Array.isArray(res.records));
+    assert.ok(refreshCount === 1);
+    assert.ok(typeof newAccessToken === 'string');
+    assert.ok(Array.isArray(res.records));
   });
 });
 
 /**
  *
  */
-test.group('logout', (test) => {
+describe('logout', () => {
   let sessionInfo: any; // TODO: remove any
 
   //
-  test('logout from soap session', async (t) => {
+  test('logout from soap session', async () => {
     const conn1 = new Connection({
       logLevel: config.logLevel,
       proxyUrl: config.proxyUrl,
@@ -64,11 +64,11 @@ test.group('logout', (test) => {
       serverUrl: conn1.instanceUrl,
     };
     await conn1.logout();
-    t.true(conn1.accessToken === null);
+    assert.ok(conn1.accessToken === null);
   });
 
   //
-  test('connect with previous session info to raise auth error', async (t) => {
+  test('connect with previous session info to raise auth error', async () => {
     const conn2 = new Connection({
       sessionId: sessionInfo.sessionId,
       serverUrl: sessionInfo.serverUrl,
@@ -78,9 +78,9 @@ test.group('logout', (test) => {
     await delay(10000);
     try {
       await conn2.query('SELECT Id FROM User');
-      t.fail();
+      assert.fail();
     } catch (err) {
-      t.true(err && typeof err.message === 'string');
+      assert.ok(err && typeof err.message === 'string');
     }
   });
 });
@@ -88,11 +88,11 @@ test.group('logout', (test) => {
 /**
  *
  */
-test.group('oauth2 session', (test) => {
+describe('oauth2 session', () => {
   let sessionInfo: any; // TODO: remove any
 
   //
-  test('logout oauth2 session', async (t) => {
+  test('logout oauth2 session', async () => {
     const conn = new Connection({
       oauth2: {
         clientId: config.clientId,
@@ -107,11 +107,11 @@ test.group('oauth2 session', (test) => {
       instanceUrl: conn.instanceUrl,
     };
     await conn.logout();
-    t.true(conn.accessToken === null);
+    assert.ok(conn.accessToken === null);
   });
 
   //
-  test('connect with previous session info and raise auth error', async (t) => {
+  test('connect with previous session info and raise auth error', async () => {
     const conn = new Connection({
       accessToken: sessionInfo.accessToken,
       instanceUrl: sessionInfo.instanceUrl,
@@ -120,9 +120,9 @@ test.group('oauth2 session', (test) => {
     await delay(10000);
     try {
       await conn.query('SELECT Id FROM User');
-      t.fail();
+      assert.fail();
     } catch (err) {
-      t.true(err && typeof err.message === 'string');
+      assert.ok(err && typeof err.message === 'string');
     }
   });
 });
@@ -130,11 +130,11 @@ test.group('oauth2 session', (test) => {
 /**
  *
  */
-test.group('oauth2 refresh', (test) => {
+describe('oauth2 refresh', () => {
   let conn: any; // TODO: remove any
 
   //
-  test('authorize web server flow to get access tokens', async (t) => {
+  test('authorize web server flow to get access tokens', async () => {
     conn = new Connection({
       oauth2: {
         clientId: config.clientId,
@@ -146,17 +146,17 @@ test.group('oauth2 refresh', (test) => {
     const authzUrl = conn.oauth2.getAuthorizationUrl();
     const params = await authorize(authzUrl, config.username, config.password);
     const userInfo = await conn.authorize(params.code);
-    t.true(typeof userInfo.id === 'string');
-    t.true(typeof userInfo.organizationId === 'string');
-    t.true(typeof userInfo.url === 'string');
-    t.true(typeof conn.accessToken === 'string');
-    t.true(typeof conn.refreshToken === 'string');
+    assert.ok(typeof userInfo.id === 'string');
+    assert.ok(typeof userInfo.organizationId === 'string');
+    assert.ok(typeof userInfo.url === 'string');
+    assert.ok(typeof conn.accessToken === 'string');
+    assert.ok(typeof conn.refreshToken === 'string');
     const res = await conn.query('SELECT Id FROM User');
-    t.true(Array.isArray(res.records));
+    assert.ok(Array.isArray(res.records));
   });
 
   //
-  test('make access token invalid and return responses', async (t) => {
+  test('make access token invalid and return responses', async () => {
     let accessToken;
     let refreshCount = 0;
     conn.accessToken = 'invalid access token';
@@ -167,13 +167,13 @@ test.group('oauth2 refresh', (test) => {
       refreshCount += 1;
     });
     const res = await conn.query('SELECT Id FROM User');
-    t.true(refreshCount === 1);
-    t.true(typeof accessToken === 'string');
-    t.true(Array.isArray(res.records));
+    assert.ok(refreshCount === 1);
+    assert.ok(typeof accessToken === 'string');
+    assert.ok(Array.isArray(res.records));
   });
 
   //
-  test('make access token invalid and call in parallel and return responses', async (t) => {
+  test('make access token invalid and call in parallel and return responses', async () => {
     let accessToken;
     let refreshCount = 0;
     conn.accessToken = 'invalid access token';
@@ -188,24 +188,24 @@ test.group('oauth2 refresh', (test) => {
       conn.describeGlobal(),
       conn.sobject('User').describe(),
     ]);
-    t.true(refreshCount === 1);
-    t.true(typeof accessToken === 'string');
-    t.true(Array.isArray(results));
-    t.true(Array.isArray(results[0].records));
-    t.true(Array.isArray(results[1].sobjects));
-    t.true(Array.isArray(results[2].fields));
+    assert.ok(refreshCount === 1);
+    assert.ok(typeof accessToken === 'string');
+    assert.ok(Array.isArray(results));
+    assert.ok(Array.isArray(results[0].records));
+    assert.ok(Array.isArray(results[1].sobjects));
+    assert.ok(Array.isArray(results[2].fields));
   });
 
   //
-  test('expire both access token and refresh token and return error', async (t) => {
+  test('expire both access token and refresh token and return error', async () => {
     conn.accessToken = 'invalid access token';
     conn.refreshToken = 'invalid refresh token';
     try {
       await conn.query('SELECT Id FROM User');
-      t.fail();
+      assert.fail();
     } catch (err) {
-      t.true(err instanceof Error);
-      t.true(err.name === 'invalid_grant');
+      assert.ok(err instanceof Error);
+      assert.ok(err.name === 'invalid_grant');
     }
   });
 });

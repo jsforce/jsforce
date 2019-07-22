@@ -1,13 +1,13 @@
-import test from './util/ava/ext';
+import assert from 'assert';
 import { createSOQL } from '../src/soql-builder';
 import { SfDate } from '..';
 
 /**
  *
  */
-test.group('soql-builder', (test) => {
+describe('soql-builder', () => {
   //
-  test('build simple query', (t) => {
+  test('build simple query', () => {
     const soql = createSOQL({
       fields: ['Id', 'Name'],
       table: 'Account',
@@ -15,7 +15,7 @@ test.group('soql-builder', (test) => {
       limit: 10,
       offset: 20,
     });
-    t.true(
+    assert.ok(
       soql ===
         'SELECT Id, Name FROM Account ' +
           "WHERE Id = '0011000000NPNrW' LIMIT 10 OFFSET 20",
@@ -25,7 +25,7 @@ test.group('soql-builder', (test) => {
   /**
    *
    */
-  test('build query with OR operator', (t) => {
+  test('build query with OR operator', () => {
     const soql = createSOQL({
       fields: ['Id', 'Name'],
       table: 'Account',
@@ -33,7 +33,7 @@ test.group('soql-builder', (test) => {
         $or: [{ Id: '0011000000NPNrW' }, { Id: '00110000005WlZd' }],
       },
     });
-    t.true(
+    assert.ok(
       soql ===
         'SELECT Id, Name FROM Account ' +
           "WHERE Id = '0011000000NPNrW' OR Id = '00110000005WlZd'",
@@ -41,7 +41,7 @@ test.group('soql-builder', (test) => {
   });
 
   //
-  test('build query with nested OR operator', (t) => {
+  test('build query with nested OR operator', () => {
     const soql = createSOQL({
       fields: ['Id', 'Name'],
       table: 'Account',
@@ -50,7 +50,7 @@ test.group('soql-builder', (test) => {
         $or: [{ Id: '0011000000NPNrW' }, { Id: '00110000005WlZd' }],
       },
     });
-    t.true(
+    assert.ok(
       soql ===
         'SELECT Id, Name FROM Account ' +
           "WHERE Type = 'Partner' AND (Id = '0011000000NPNrW' OR Id = '00110000005WlZd')",
@@ -58,7 +58,7 @@ test.group('soql-builder', (test) => {
   });
 
   //
-  test('build query with nested OR/AND operator', (t) => {
+  test('build query with nested OR/AND operator', () => {
     const soql = createSOQL({
       table: 'Opportunity',
       conditions: {
@@ -70,7 +70,7 @@ test.group('soql-builder', (test) => {
         ],
       },
     });
-    t.true(
+    assert.ok(
       soql ===
         'SELECT Id FROM Opportunity ' +
           "WHERE Account.Type = 'Partner' OR (Amount >= 1000 AND Amount < 2000)",
@@ -78,7 +78,7 @@ test.group('soql-builder', (test) => {
   });
 
   //
-  test('build query with nested NOT/AND operator', (t) => {
+  test('build query with nested NOT/AND operator', () => {
     const soql = createSOQL({
       table: 'Opportunity',
       conditions: {
@@ -91,7 +91,7 @@ test.group('soql-builder', (test) => {
         },
       },
     });
-    t.true(
+    assert.ok(
       soql ===
         'SELECT Id FROM Opportunity ' +
           "WHERE NOT (Amount >= 1000 AND Amount < 2000 AND Account.Type = 'Customer')",
@@ -99,7 +99,7 @@ test.group('soql-builder', (test) => {
   });
 
   //
-  test('build query with nested NOT operator', (t) => {
+  test('build query with nested NOT operator', () => {
     const soql = createSOQL({
       table: 'Opportunity',
       conditions: {
@@ -109,7 +109,7 @@ test.group('soql-builder', (test) => {
         Amount: { $gte: 1000 },
       },
     });
-    t.true(
+    assert.ok(
       soql ===
         'SELECT Id FROM Opportunity ' +
           "WHERE (NOT Name LIKE 'Test%') AND Amount >= 1000",
@@ -117,7 +117,7 @@ test.group('soql-builder', (test) => {
   });
 
   //
-  test('build query with nested OR/NOT/AND operator', (t) => {
+  test('build query with nested OR/NOT/AND operator', () => {
     const soql = createSOQL({
       table: 'Opportunity',
       conditions: {
@@ -135,7 +135,7 @@ test.group('soql-builder', (test) => {
         ],
       },
     });
-    t.true(
+    assert.ok(
       soql ===
         'SELECT Id FROM Opportunity ' +
           "WHERE Account.Type = 'Partner' OR (NOT (Amount >= 1000 AND Amount < 2000 AND Account.Type = 'Customer'))",
@@ -143,7 +143,7 @@ test.group('soql-builder', (test) => {
   });
 
   //
-  test('build query with Date field for date literal', (t) => {
+  test('build query with Date field for date literal', () => {
     const soql = createSOQL({
       table: 'Opportunity',
       conditions: {
@@ -159,7 +159,7 @@ test.group('soql-builder', (test) => {
         ],
       },
     });
-    t.true(
+    assert.ok(
       soql ===
         'SELECT Id FROM Opportunity ' +
           'WHERE CloseDate >= LAST_N_DAYS:10 AND CloseDate <= TOMORROW ' +
@@ -168,7 +168,7 @@ test.group('soql-builder', (test) => {
   });
 
   //
-  test('build query with String field using $like/$nlike operator', (t) => {
+  test('build query with String field using $like/$nlike operator', () => {
     const soql = createSOQL({
       table: 'Account',
       conditions: {
@@ -176,7 +176,7 @@ test.group('soql-builder', (test) => {
         'Owner.Name': { $nlike: '%Test%' },
       },
     });
-    t.true(
+    assert.ok(
       soql ===
         'SELECT Id FROM Account ' +
           "WHERE Name LIKE 'John\\'s%' AND (NOT Owner.Name LIKE '%Test%')",
@@ -184,7 +184,7 @@ test.group('soql-builder', (test) => {
   });
 
   //
-  test('build query using $in/$nin operator', (t) => {
+  test('build query using $in/$nin operator', () => {
     const soql = createSOQL({
       table: 'Contact',
       conditions: {
@@ -193,7 +193,7 @@ test.group('soql-builder', (test) => {
         'Owner.Id': { $nin: ['00510000000N2C2'] },
       },
     });
-    t.true(
+    assert.ok(
       soql ===
         'SELECT Id FROM Contact ' +
           "WHERE Account.Id IN ('0011000000NPNrW', '00110000005WlZd') " +
@@ -202,7 +202,7 @@ test.group('soql-builder', (test) => {
   });
 
   //
-  test('build query using $exists operator', (t) => {
+  test('build query using $exists operator', () => {
     const soql = createSOQL({
       table: 'Task',
       conditions: {
@@ -210,13 +210,13 @@ test.group('soql-builder', (test) => {
         WhoId: { $exists: false },
       },
     });
-    t.true(
+    assert.ok(
       soql === 'SELECT Id FROM Task ' + 'WHERE WhatId != null AND WhoId = null',
     );
   });
 
   //
-  test('build query using $includes/$excludes operator', (t) => {
+  test('build query using $includes/$excludes operator', () => {
     const soql = createSOQL({
       table: 'Contact',
       conditions: {
@@ -224,7 +224,7 @@ test.group('soql-builder', (test) => {
         Certifications__c: { $excludes: ['Oracle'] },
       },
     });
-    t.true(
+    assert.ok(
       soql ===
         'SELECT Id FROM Contact ' +
           "WHERE Languages__c INCLUDES ('English', 'Japanese') " +
@@ -233,7 +233,7 @@ test.group('soql-builder', (test) => {
   });
 
   //
-  test('build query for matching null', (t) => {
+  test('build query for matching null', () => {
     const soql = createSOQL({
       table: 'Account',
       conditions: {
@@ -241,7 +241,7 @@ test.group('soql-builder', (test) => {
         LastActivityDate: null,
       },
     });
-    t.true(
+    assert.ok(
       soql ===
         'SELECT Id FROM Account ' +
           'WHERE Type != null AND LastActivityDate = null',
@@ -249,24 +249,24 @@ test.group('soql-builder', (test) => {
   });
 
   //
-  test('build query with undefined condition', (t) => {
+  test('build query with undefined condition', () => {
     const soql = createSOQL({
       table: 'Account',
       conditions: {
         Type: undefined,
       },
     });
-    t.true(soql === 'SELECT Id FROM Account');
+    assert.ok(soql === 'SELECT Id FROM Account');
   });
 
   //
-  test('build query with sort option', (t) => {
+  test('build query with sort option', () => {
     const soql = createSOQL({
       table: 'Opportunity',
       sort: '-CreatedDate',
       limit: 10,
     });
-    t.true(
+    assert.ok(
       soql ===
         'SELECT Id FROM Opportunity ' +
           'ORDER BY CreatedDate DESC ' +
@@ -275,7 +275,7 @@ test.group('soql-builder', (test) => {
   });
 
   //
-  test('build query with multiple sort option in array', (t) => {
+  test('build query with multiple sort option in array', () => {
     const soql = createSOQL({
       table: 'Opportunity',
       conditions: {
@@ -284,7 +284,7 @@ test.group('soql-builder', (test) => {
       sort: [['CreatedDate', 'desc'], ['Name', 'asc']] as any, // TODO: remove any
       limit: 10,
     });
-    t.true(
+    assert.ok(
       soql ===
         'SELECT Id FROM Opportunity ' +
           "WHERE Owner.Name LIKE 'A%' " +
@@ -294,7 +294,7 @@ test.group('soql-builder', (test) => {
   });
 
   //
-  test('build query with multiple sort option in hash', (t) => {
+  test('build query with multiple sort option in hash', () => {
     const soql = createSOQL({
       table: 'Opportunity',
       conditions: {
@@ -306,7 +306,7 @@ test.group('soql-builder', (test) => {
       } as any, // TODO: remove any
       limit: 10,
     });
-    t.true(
+    assert.ok(
       soql ===
         'SELECT Id FROM Opportunity ' +
           "WHERE Owner.Name LIKE 'A%' " +

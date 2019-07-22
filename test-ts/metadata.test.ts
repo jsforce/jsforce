@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import test from './util/ava/ext';
+import assert from 'assert';
 import { Connection } from '..';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
@@ -14,14 +14,14 @@ conn.metadata.pollTimeout = 40 * 1000; // adjust poll timeout to test timeout.
 /**
  *
  */
-test.before('establish connection', async () => {
+beforeAll(async () => {
   await connMgr.establishConnection(conn);
 });
 
 /**
  * Synchronous CRUD call tests (create, read, update, upsert, rename, delete)
  */
-test.group('CRUD based call', (test) => {
+describe('CRUD based call', () => {
   const metadata = [
     {
       fullName: 'JSforceTestObjectSync1__c',
@@ -51,13 +51,13 @@ test.group('CRUD based call', (test) => {
   /**
    *
    */
-  test('create metadata synchronously and create custom objects', async (t) => {
+  test('create metadata synchronously and create custom objects', async () => {
     const results = await conn.metadata.create('CustomObject', metadata);
-    t.true(Array.isArray(results));
-    t.true(results.length === metadata.length);
+    assert.ok(Array.isArray(results));
+    assert.ok(results.length === metadata.length);
     for (const result of results) {
-      t.true(result.success === true);
-      t.true(isString(result.fullName));
+      assert.ok(result.success === true);
+      assert.ok(isString(result.fullName));
     }
   });
 
@@ -66,14 +66,14 @@ test.group('CRUD based call', (test) => {
   /**
    *
    */
-  test('read metadata synchronously and return custom objects metadata', async (t) => {
+  test('read metadata synchronously and return custom objects metadata', async () => {
     const results = await conn.metadata.read('CustomObject', fullNames);
-    t.true(Array.isArray(results));
-    t.true(results.length === fullNames.length);
+    assert.ok(Array.isArray(results));
+    assert.ok(results.length === fullNames.length);
     for (const result of results) {
-      t.true(isString(result.fullName));
-      t.true(isObject(result.nameField));
-      t.true(isString(result.nameField.label));
+      assert.ok(isString(result.fullName));
+      assert.ok(isObject(result.nameField));
+      assert.ok(isString(result.nameField.label));
     }
     rmetadata = results;
   });
@@ -81,15 +81,15 @@ test.group('CRUD based call', (test) => {
   /**
    *
    */
-  test('update metadata synchronously return updated custom object metadata', async (t) => {
+  test('update metadata synchronously return updated custom object metadata', async () => {
     rmetadata[0].label = 'Updated Test Object Sync 2';
     rmetadata[1].deploymentStatus = 'Deployed';
     const results = await conn.metadata.update('CustomObject', rmetadata);
-    t.true(Array.isArray(results));
-    t.true(results.length === fullNames.length);
+    assert.ok(Array.isArray(results));
+    assert.ok(results.length === fullNames.length);
     for (const result of results) {
-      t.true(result.success === true);
-      t.true(isString(result.fullName));
+      assert.ok(result.success === true);
+      assert.ok(isString(result.fullName));
     }
     rmetadata = results; // eslint-disable-line require-atomic-updates
   });
@@ -97,7 +97,7 @@ test.group('CRUD based call', (test) => {
   /**
    *
    */
-  test('upsert metadata synchronously and upsert custom objects', async (t) => {
+  test('upsert metadata synchronously and upsert custom objects', async () => {
     const umetadata = [
       {
         fullName: 'JSforceTestObjectSync2__c',
@@ -123,21 +123,21 @@ test.group('CRUD based call', (test) => {
       },
     ];
     const results = await conn.metadata.upsert('CustomObject', umetadata);
-    t.true(Array.isArray(results));
-    t.true(results.length === umetadata.length);
+    assert.ok(Array.isArray(results));
+    assert.ok(results.length === umetadata.length);
     for (const [i, result] of results.entries()) {
-      t.true(result.success === true);
-      t.true(
+      assert.ok(result.success === true);
+      assert.ok(
         result.created === (result.fullName === 'JSforceTestObjectSync3__c'),
       );
-      t.true(result.fullName === umetadata[i].fullName);
+      assert.ok(result.fullName === umetadata[i].fullName);
     }
   });
 
   /**
    *
    */
-  test('rename metadata synchronously and rename a custom object', async (t) => {
+  test('rename metadata synchronously and rename a custom object', async () => {
     const oldName = fullNames[0];
     const newName = oldName.replace(/__c$/, 'Updated__c');
     // Rename operation is not working before API version 35.0
@@ -148,12 +148,12 @@ test.group('CRUD based call', (test) => {
     }
     try {
       let result = await conn.metadata.rename('CustomObject', oldName, newName);
-      t.true(result.success === true);
-      t.true(isString(result.fullName));
-      t.true(result.fullName === oldName);
+      assert.ok(result.success === true);
+      assert.ok(isString(result.fullName));
+      assert.ok(result.fullName === oldName);
       result = await conn.metadata.read('CustomObject', newName);
-      t.true(isString(result.fullName));
-      t.true(result.fullName === newName);
+      assert.ok(isString(result.fullName));
+      assert.ok(result.fullName === newName);
     } finally {
       conn.version = origVersion; // eslint-disable-line require-atomic-updates
     }
@@ -162,13 +162,13 @@ test.group('CRUD based call', (test) => {
   /**
    *
    */
-  test('list metadata synchronously and list custom objects', async (t) => {
+  test('list metadata synchronously and list custom objects', async () => {
     const results = await conn.metadata.list({ type: 'CustomObject' });
-    t.true(Array.isArray(results));
+    assert.ok(Array.isArray(results));
     for (const result of results) {
-      t.true(result.type === 'CustomObject');
-      t.true(isString(result.id));
-      t.true(isString(result.fullName));
+      assert.ok(result.type === 'CustomObject');
+      assert.ok(isString(result.id));
+      assert.ok(isString(result.fullName));
     }
     fullNames = results
       .filter((m: any) => m.fullName.match(/^JSforceTestObject.+__c$/))
@@ -178,13 +178,13 @@ test.group('CRUD based call', (test) => {
   /**
    *
    */
-  test('delete metadata synchronously and delete custom objects', async (t) => {
+  test('delete metadata synchronously and delete custom objects', async () => {
     const results = await conn.metadata.delete('CustomObject', fullNames);
-    t.true(Array.isArray(results));
-    t.true(results.length === fullNames.length);
+    assert.ok(Array.isArray(results));
+    assert.ok(results.length === fullNames.length);
     for (const result of results) {
-      t.true(result.success === true);
-      t.true(isString(result.fullName));
+      assert.ok(result.success === true);
+      assert.ok(isString(result.fullName));
     }
   });
 }); // end of CRUD based call tests
@@ -194,12 +194,12 @@ test.group('CRUD based call', (test) => {
 /**
  *
  */
-test.group('file based call', (test) => {
+describe('file based call', () => {
   /**
    *
    */
   if (isNodeJS()) {
-    test('deploy metadata in packaged file and deploy package', async (t) => {
+    test('deploy metadata in packaged file and deploy package', async () => {
       const zipStream = fs.createReadStream(
         path.join(__dirname, '/data/MyPackage.zip'),
       );
@@ -209,19 +209,21 @@ test.group('file based call', (test) => {
           runTests: ['MyApexTriggerTest'],
         })
         .complete();
-      t.true(result.done === true);
-      t.true(result.success === true);
-      t.true(result.status === 'Succeeded');
-      t.true(result.numberComponentErrors === 0);
-      t.true(result.numberComponentsDeployed === result.numberComponentsTotal);
-      t.true(result.numberTestsCompleted === 1);
+      assert.ok(result.done === true);
+      assert.ok(result.success === true);
+      assert.ok(result.status === 'Succeeded');
+      assert.ok(result.numberComponentErrors === 0);
+      assert.ok(
+        result.numberComponentsDeployed === result.numberComponentsTotal,
+      );
+      assert.ok(result.numberTestsCompleted === 1);
     });
   }
 
   /**
    *
    */
-  test('retrieve metadata in packaged file and retrieve package', async (t) => {
+  test('retrieve metadata in packaged file and retrieve package', async () => {
     const bufs: any[] = [];
     await new Promise((resolve, reject) => {
       conn.metadata
@@ -231,7 +233,7 @@ test.group('file based call', (test) => {
         .on('end', resolve)
         .on('error', reject);
     });
-    t.true(bufs.length > 0);
+    assert.ok(bufs.length > 0);
   });
 });
 
@@ -240,11 +242,11 @@ test.group('file based call', (test) => {
 /**
  *
  */
-test.group('session refresh', (test) => {
+describe('session refresh', () => {
   /**
    *
    */
-  test('refresh metadata API session and list metadata even if the session has been expired', async (t) => {
+  test('refresh metadata API session and list metadata even if the session has been expired', async () => {
     let refreshCalled = false;
     const conn2: any = new Connection({
       // TODO: remove any
@@ -258,8 +260,8 @@ test.group('session refresh', (test) => {
       },
     });
     const results = await conn2.metadata.list({ type: 'CustomObject' });
-    t.true(refreshCalled);
-    t.true(Array.isArray(results));
+    assert.ok(refreshCalled);
+    assert.ok(Array.isArray(results));
   });
 });
 
@@ -268,6 +270,6 @@ test.group('session refresh', (test) => {
 /**
  *
  */
-test.after('close connection', async () => {
+afterAll(async () => {
   await connMgr.closeConnection(conn);
 });

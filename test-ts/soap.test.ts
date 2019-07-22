@@ -1,4 +1,4 @@
-import test from './util/ava/ext';
+import assert from 'assert';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isString, isBoolean, isUndefined } from './util';
@@ -9,7 +9,7 @@ const conn: any = connMgr.createConnection();
 /**
  *
  */
-test.before('establish connection', async () => {
+beforeAll(async () => {
   await connMgr.establishConnection(conn);
 });
 
@@ -18,22 +18,22 @@ test.before('establish connection', async () => {
 /**
  *
  */
-test('describe tabs and return app and its including tabs', async (t) => {
+test('describe tabs and return app and its including tabs', async () => {
   const apps = await conn.soap.describeTabs();
-  t.true(apps.length > 0);
+  assert.ok(apps.length > 0);
   for (const app of apps) {
-    t.true(isString(app.label));
-    t.true(isString(app.logoUrl));
-    t.true(isBoolean(app.selected));
-    t.true(Array.isArray(app.tabs));
+    assert.ok(isString(app.label));
+    assert.ok(isString(app.logoUrl));
+    assert.ok(isBoolean(app.selected));
+    assert.ok(Array.isArray(app.tabs));
     for (const tab of app.tabs) {
-      t.true(Array.isArray(tab.icons));
-      t.true(isBoolean(tab.custom));
-      t.true(isString(tab.name));
-      t.true(isString(tab.label));
-      t.true(isString(tab.url));
-      t.true(isString(tab.miniIconUrl));
-      t.true(isString(tab.sobjectName));
+      assert.ok(Array.isArray(tab.icons));
+      assert.ok(isBoolean(tab.custom));
+      assert.ok(isString(tab.name));
+      assert.ok(isString(tab.label));
+      assert.ok(isString(tab.url));
+      assert.ok(isString(tab.miniIconUrl));
+      assert.ok(isString(tab.sobjectName));
     }
   }
 });
@@ -41,7 +41,7 @@ test('describe tabs and return app and its including tabs', async (t) => {
 /**
  *
  */
-test.group('convert and merge', (test) => {
+describe('convert and merge', () => {
   const accountIds: string[] = [];
   const contactIds: string[] = [];
   const oppIds: string[] = [];
@@ -76,7 +76,7 @@ test.group('convert and merge', (test) => {
   let leadIds: string[];
   let convertedStatus: string;
 
-  test.before(async () => {
+  beforeAll(async () => {
     // Because ver >= 38.0 metadata API doesn't return picklist values in standard field,
     // fix the version to 37.0
     const conn370: any = connMgr.createConnection();
@@ -96,15 +96,15 @@ test.group('convert and merge', (test) => {
   /**
    *
    */
-  test('convert leads and return converted account/contact/opp information', async (t) => {
+  test('convert leads and return converted account/contact/opp information', async () => {
     const ret = await conn.soap.convertLead({
       leadId: leadIds[0],
       convertedStatus,
     });
-    t.true(ret.success === true);
-    t.true(isString(ret.accountId));
-    t.true(isString(ret.contactId));
-    t.true(isString(ret.opportunityId));
+    assert.ok(ret.success === true);
+    assert.ok(isString(ret.accountId));
+    assert.ok(isString(ret.contactId));
+    assert.ok(isString(ret.opportunityId));
     accountIds.push(ret.accountId);
     contactIds.push(ret.contactId);
     oppIds.push(ret.opportunityId);
@@ -113,24 +113,24 @@ test.group('convert and merge', (test) => {
   /**
    *
    */
-  test('convert lead by specifying accountId and without creating opportunity', async (t) => {
+  test('convert lead by specifying accountId and without creating opportunity', async () => {
     const ret = await conn.soap.convertLead({
       leadId: leadIds[1],
       accountId: accountIds[0],
       convertedStatus,
       doNotCreateOpportunity: true,
     });
-    t.true(ret.success === true);
-    t.true(isString(ret.accountId));
-    t.true(isString(ret.contactId));
-    t.true(ret.opportunityId === null || isUndefined(ret.OpportunityId));
+    assert.ok(ret.success === true);
+    assert.ok(isString(ret.accountId));
+    assert.ok(isString(ret.contactId));
+    assert.ok(ret.opportunityId === null || isUndefined(ret.OpportunityId));
     contactIds.push(ret.contactId);
   });
 
   /**
    *
    */
-  test('merge records', async (t) => {
+  test('merge records', async () => {
     const masterRecord = Object.assign(
       { type: 'Lead' },
       { Id: leadIds[2] },
@@ -138,16 +138,16 @@ test.group('convert and merge', (test) => {
     );
     const recordToMergeIds = [leadIds[3], leadIds[4]];
     const ret = await conn.soap.merge({ masterRecord, recordToMergeIds });
-    t.true(ret.success === true);
-    t.true(ret.id === leadIds[2]);
-    t.true(ret.mergedRecordIds.length === 2);
+    assert.ok(ret.success === true);
+    assert.ok(ret.id === leadIds[2]);
+    assert.ok(ret.mergedRecordIds.length === 2);
     leadIds = leadIds.slice(0, 3); // eslint-disable-line require-atomic-updates
   });
 
   /**
    *
    */
-  test.after(async () => {
+  afterAll(async () => {
     await conn.sobject('Opportunity').destroy(oppIds);
     await conn.sobject('Contact').destroy(contactIds);
     await conn.sobject('Account').destroy(accountIds);
@@ -160,6 +160,6 @@ test.group('convert and merge', (test) => {
 /**
  *
  */
-test.after('close connection', async () => {
+afterAll(async () => {
   await connMgr.closeConnection(conn);
 });
