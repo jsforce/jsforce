@@ -21,8 +21,8 @@ function makeGroupedFn(
   if (level === 0) { return origFn as any; }
   const groupedFn: any = (title: string, ...args: any[]) => (
     typeof title === 'string' && groupTitle ?
-    origFn.call(scope, `${groupTitle} : ${title}`, ...args) :
-    origFn.call(scope, title, ...args)
+    (origFn as any).call(scope, `${groupTitle} : ${title}`, ...args) :
+    (origFn as any).call(scope, title, ...args)
   );
   testFnNames.forEach((fname) => {
     groupedFn[fname] = makeGroupedFn((origFn as any)[fname], origFn, groupTitle, level - 1);

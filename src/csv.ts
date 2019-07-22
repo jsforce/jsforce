@@ -4,7 +4,7 @@
 import { Transform } from 'stream';
 import csvParse, { Options as ParseOpts } from 'csv-parse';
 import csvParseSync from 'csv-parse/lib/sync';
-import csvStringify, { StringifyOpts } from 'csv-stringify';
+import csvStringify, { Options as StringifyOpts } from 'csv-stringify';
 import csvStringifySync from 'csv-stringify/lib/sync';
 
 /**
