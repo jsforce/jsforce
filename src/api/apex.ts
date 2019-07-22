@@ -31,9 +31,10 @@ export default class Apex {
     method: HttpMethods,
     path: string,
     body?: Object,
-    options: { headers?: HttpRequest['headers'] } = {}
+    options: { headers?: HttpRequest['headers'] } = {},
   ): HttpRequest {
-    const headers: HttpRequest['headers'] = typeof options.headers === 'object' ? options.headers : {};
+    const headers: HttpRequest['headers'] =
+      typeof options.headers === 'object' ? options.headers : {};
     if (!/^(GET|DELETE)$/i.test(method)) {
       headers['content-type'] = 'application/json';
     }
@@ -52,7 +53,9 @@ export default class Apex {
    * Call Apex REST service in GET request
    */
   get(path: string, options?: Object) {
-    return this._conn.request(this._createRequestParams('GET', path, undefined, options));
+    return this._conn.request(
+      this._createRequestParams('GET', path, undefined, options),
+    );
   }
 
   /**
@@ -83,7 +86,9 @@ export default class Apex {
    * Call Apex REST service in DELETE request
    */
   delete(path: string, options?: Object) {
-    return this._conn.request(this._createRequestParams('DELETE', path, undefined, options));
+    return this._conn.request(
+      this._createRequestParams('DELETE', path, undefined, options),
+    );
   }
 
   /**
@@ -91,7 +96,6 @@ export default class Apex {
    */
   del = this.delete;
 }
-
 
 /*--------------------------------------------*/
 /*

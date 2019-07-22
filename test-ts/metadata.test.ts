@@ -11,7 +11,6 @@ const connMgr = new ConnectionManager(config);
 const conn: any = connMgr.createConnection();
 conn.metadata.pollTimeout = 40 * 1000; // adjust poll timeout to test timeout.
 
-
 /**
  *
  */
@@ -19,33 +18,35 @@ test.before('establish connection', async () => {
   await connMgr.establishConnection(conn);
 });
 
-
 /**
  * Synchronous CRUD call tests (create, read, update, upsert, rename, delete)
  */
 test.group('CRUD based call', (test) => {
-  const metadata = [{
-    fullName: 'JSforceTestObjectSync1__c',
-    label: 'Test Object Sync 1',
-    pluralLabel: 'Test Object Sync 1',
-    nameField: {
-      type: 'Text',
-      label: 'Test Object Name'
+  const metadata = [
+    {
+      fullName: 'JSforceTestObjectSync1__c',
+      label: 'Test Object Sync 1',
+      pluralLabel: 'Test Object Sync 1',
+      nameField: {
+        type: 'Text',
+        label: 'Test Object Name',
+      },
+      deploymentStatus: 'Deployed',
+      sharingModel: 'ReadWrite',
     },
-    deploymentStatus: 'Deployed',
-    sharingModel: 'ReadWrite'
-  }, {
-    fullName: 'JSforceTestObjectSync2__c',
-    label: 'Test Object Sync 2',
-    pluralLabel: 'Test Object 2',
-    nameField: {
-      type: 'AutoNumber',
-      label: 'Test Object #'
+    {
+      fullName: 'JSforceTestObjectSync2__c',
+      label: 'Test Object Sync 2',
+      pluralLabel: 'Test Object 2',
+      nameField: {
+        type: 'AutoNumber',
+        label: 'Test Object #',
+      },
+      deploymentStatus: 'InDevelopment',
+      sharingModel: 'Private',
     },
-    deploymentStatus: 'InDevelopment',
-    sharingModel: 'Private'
-  }];
-  let fullNames = metadata.map(meta => meta.fullName);
+  ];
+  let fullNames = metadata.map((meta) => meta.fullName);
 
   /**
    *
@@ -97,33 +98,38 @@ test.group('CRUD based call', (test) => {
    *
    */
   test('upsert metadata synchronously and upsert custom objects', async (t) => {
-    const umetadata = [{
-      fullName: 'JSforceTestObjectSync2__c',
-      label: 'Upserted Object Sync 2',
-      pluralLabel: 'Upserted Object Sync 2',
-      nameField: {
-        type: 'Text',
-        label: 'Test Object Name'
+    const umetadata = [
+      {
+        fullName: 'JSforceTestObjectSync2__c',
+        label: 'Upserted Object Sync 2',
+        pluralLabel: 'Upserted Object Sync 2',
+        nameField: {
+          type: 'Text',
+          label: 'Test Object Name',
+        },
+        deploymentStatus: 'Deployed',
+        sharingModel: 'ReadWrite',
       },
-      deploymentStatus: 'Deployed',
-      sharingModel: 'ReadWrite'
-    }, {
-      fullName: 'JSforceTestObjectSync3__c',
-      label: 'Upserted Object Sync 3',
-      pluralLabel: 'Upserted Object Sync 3',
-      nameField: {
-        type: 'Text',
-        label: 'Test Object Name'
+      {
+        fullName: 'JSforceTestObjectSync3__c',
+        label: 'Upserted Object Sync 3',
+        pluralLabel: 'Upserted Object Sync 3',
+        nameField: {
+          type: 'Text',
+          label: 'Test Object Name',
+        },
+        deploymentStatus: 'Deployed',
+        sharingModel: 'ReadWrite',
       },
-      deploymentStatus: 'Deployed',
-      sharingModel: 'ReadWrite'
-    }];
+    ];
     const results = await conn.metadata.upsert('CustomObject', umetadata);
     t.true(Array.isArray(results));
     t.true(results.length === umetadata.length);
     for (const [i, result] of results.entries()) {
       t.true(result.success === true);
-      t.true(result.created === (result.fullName === 'JSforceTestObjectSync3__c'));
+      t.true(
+        result.created === (result.fullName === 'JSforceTestObjectSync3__c'),
+      );
       t.true(result.fullName === umetadata[i].fullName);
     }
   });
@@ -164,9 +170,9 @@ test.group('CRUD based call', (test) => {
       t.true(isString(result.id));
       t.true(isString(result.fullName));
     }
-    fullNames =
-      results.filter((m: any) => m.fullName.match(/^JSforceTestObject.+__c$/))
-        .map((m: any) => m.fullName);
+    fullNames = results
+      .filter((m: any) => m.fullName.match(/^JSforceTestObject.+__c$/))
+      .map((m: any) => m.fullName);
   });
 
   /**
@@ -194,9 +200,11 @@ test.group('file based call', (test) => {
    */
   if (isNodeJS()) {
     test('deploy metadata in packaged file and deploy package', async (t) => {
-      const zipStream = fs.createReadStream(path.join(__dirname, '/data/MyPackage.zip'));
-      const result =
-        await conn.metadata.deploy(zipStream, {
+      const zipStream = fs.createReadStream(
+        path.join(__dirname, '/data/MyPackage.zip'),
+      );
+      const result = await conn.metadata
+        .deploy(zipStream, {
           testLevel: 'RunSpecifiedTests',
           runTests: ['MyApexTriggerTest'],
         })
@@ -216,7 +224,8 @@ test.group('file based call', (test) => {
   test('retrieve metadata in packaged file and retrieve package', async (t) => {
     const bufs: any[] = [];
     await new Promise((resolve, reject) => {
-      conn.metadata.retrieve({ packageNames: ['My Test Package'] })
+      conn.metadata
+        .retrieve({ packageNames: ['My Test Package'] })
         .stream()
         .on('data', (d: any) => bufs.push(d))
         .on('end', resolve)
@@ -225,7 +234,6 @@ test.group('file based call', (test) => {
     t.true(bufs.length > 0);
   });
 });
-
 
 /*------------------------------------------------------------------------*/
 
@@ -238,7 +246,8 @@ test.group('session refresh', (test) => {
    */
   test('refresh metadata API session and list metadata even if the session has been expired', async (t) => {
     let refreshCalled = false;
-    const conn2: any = new Connection({ // TODO: remove any
+    const conn2: any = new Connection({
+      // TODO: remove any
       instanceUrl: conn.instanceUrl,
       accessToken: 'invalid_token',
       logLevel: config.logLevel,
@@ -255,7 +264,6 @@ test.group('session refresh', (test) => {
 });
 
 /*------------------------------------------------------------------------*/
-
 
 /**
  *

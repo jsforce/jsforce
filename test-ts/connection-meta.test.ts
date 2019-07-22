@@ -60,7 +60,9 @@ test.group('describe sobject', (test) => {
 test.group('recent records', (test) => {
   //
   test('access account records for view', async (t) => {
-    await conn.query('SELECT Id, Name FROM Account ORDER BY CreatedDate DESC LIMIT 2 FOR VIEW');
+    await conn.query(
+      'SELECT Id, Name FROM Account ORDER BY CreatedDate DESC LIMIT 2 FOR VIEW',
+    );
     t.pass();
   });
 
@@ -68,7 +70,8 @@ test.group('recent records', (test) => {
   test('get recently accessed records in all objects and get successfull results', async (t) => {
     const records = await conn.recent(2);
     t.true(Array.isArray(records));
-    records.forEach((record: any) => { // TODO: remove any
+    records.forEach((record: any) => {
+      // TODO: remove any
       t.true(isString(record.Id));
       t.true(isString(record.Name));
       t.true(record.attributes.type === 'Account');
@@ -79,7 +82,8 @@ test.group('recent records', (test) => {
   test('get recently viewed accounts in Account object', async (t) => {
     const records = await conn.sobject('Account').recent();
     t.true(Array.isArray(records));
-    records.forEach((record: any) => { // TODO: remove any
+    records.forEach((record: any) => {
+      // TODO: remove any
       t.true(isString(record.Id));
       t.true(isString(record.Name));
       t.true(record.attributes.type === 'Account');
@@ -93,8 +97,14 @@ test.group('recent records', (test) => {
     const id1 = rets[0].id;
     const id2 = rets[1].id;
     await Promise.all([
-      conn.sobject('Account').record(id1).update({ Name: 'Hello2' }),
-      conn.sobject('Account').record(id2).destroy(),
+      conn
+        .sobject('Account')
+        .record(id1)
+        .update({ Name: 'Hello2' }),
+      conn
+        .sobject('Account')
+        .record(id2)
+        .destroy(),
     ]);
     t.pass();
   });
@@ -102,7 +112,7 @@ test.group('recent records', (test) => {
   //
   test('get updated accounts and return updated accounts', async (t) => {
     const end = new Date();
-    const start = new Date(end.getTime() - (1 * 24 * 60 * 60 * 1000)); // 1 day before
+    const start = new Date(end.getTime() - 1 * 24 * 60 * 60 * 1000); // 1 day before
     const result = await conn.sobject('Account').updated(start, end);
     t.true(Array.isArray(result.ids));
   });
@@ -110,15 +120,17 @@ test.group('recent records', (test) => {
   //
   test('get updated account (with string input) and return updated accounts', async (t) => {
     const end = new Date();
-    const start = new Date(end.getTime() - (1 * 24 * 60 * 60 * 1000)); // 1 day before
-    const result = await conn.sobject('Account').updated(start.toString(), end.toString());
+    const start = new Date(end.getTime() - 1 * 24 * 60 * 60 * 1000); // 1 day before
+    const result = await conn
+      .sobject('Account')
+      .updated(start.toString(), end.toString());
     t.true(Array.isArray(result.ids));
   });
 
   //
   test('get deleted account and return deleted account object', async (t) => {
     const end = new Date();
-    const start = new Date(end.getTime() - (1 * 24 * 60 * 60 * 1000)); // 1 day before
+    const start = new Date(end.getTime() - 1 * 24 * 60 * 60 * 1000); // 1 day before
     const result = await conn.sobject('Account').deleted(start, end);
     t.true(Array.isArray(result.deletedRecords));
   });
@@ -128,12 +140,13 @@ test.group('recent records', (test) => {
    */
   test('get deleted account (with string input) and return deleted account object', async (t) => {
     const end = new Date();
-    const start = new Date(end.getTime() - (1 * 24 * 60 * 60 * 1000)); // 1 day before
-    const result = await conn.sobject('Account').deleted(start.toString(), end.toString());
+    const start = new Date(end.getTime() - 1 * 24 * 60 * 60 * 1000); // 1 day before
+    const result = await conn
+      .sobject('Account')
+      .deleted(start.toString(), end.toString());
     t.true(Array.isArray(result.deletedRecords));
   });
 });
-
 
 /**
  *
@@ -181,7 +194,6 @@ test.group('limit info', (test) => {
   });
 });
 
-
 /**
  *
  */
@@ -190,7 +202,8 @@ test.group('misc metadata', (test) => {
   test('get tabs list information and return tabs info in the org', async (t) => {
     const tabs = await conn.tabs();
     t.true(Array.isArray(tabs));
-    tabs.forEach((tab: any) => { // TODO: remove any
+    tabs.forEach((tab: any) => {
+      // TODO: remove any
       t.true(isString(tab.label));
       t.true(isString(tab.name));
       t.true(isString(tab.url));
@@ -202,16 +215,19 @@ test.group('misc metadata', (test) => {
     const theme = await conn.theme();
     t.true(isObject(theme));
     t.true(Array.isArray(theme.themeItems));
-    theme.themeItems.forEach((th: any) => { // TODO: remove any
+    theme.themeItems.forEach((th: any) => {
+      // TODO: remove any
       t.true(isString(th.name));
       t.true(Array.isArray(th.colors) || th.colors === null);
-      (th.colors || []).forEach((c: any) => { // TODO: remove any
+      (th.colors || []).forEach((c: any) => {
+        // TODO: remove any
         t.true(isString(c.color));
         t.true(isString(c.context));
         t.true(isString(c.theme));
       });
       t.true(Array.isArray(th.icons) || th.icons === null);
-      (th.icons || []).forEach((ic: any) => { // TODO: remove any
+      (th.icons || []).forEach((ic: any) => {
+        // TODO: remove any
         t.true(isString(ic.url));
         t.true(isNumber(ic.width));
         t.true(isNumber(ic.height));

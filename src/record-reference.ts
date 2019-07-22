@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 import Connection from './connection';
 import { UnsavedRecord } from './types';
@@ -60,7 +60,13 @@ export default class RecordReference {
    * @returns {stream.Stream}
    */
   blob(fieldName: string) {
-    const url = [this._conn._baseUrl(), 'sobjects', this.type, this.id, fieldName].join('/');
+    const url = [
+      this._conn._baseUrl(),
+      'sobjects',
+      this.type,
+      this.id,
+      fieldName,
+    ].join('/');
     return this._conn.request(url).stream();
   }
 }

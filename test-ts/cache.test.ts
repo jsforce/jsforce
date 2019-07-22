@@ -13,11 +13,17 @@ test.group('cache', (test) => {
   let t4: number;
   let t5: number;
 
-  const getTime = () => new Promise<number>((resolve) => {
-    setTimeout(() => { resolve(Date.now()); }, 200);
-  });
+  const getTime = () =>
+    new Promise<number>((resolve) => {
+      setTimeout(() => {
+        resolve(Date.now());
+      }, 200);
+    });
 
-  const getTimeWithResCached = cache.createCachedFunction(getTime, null, { key: 'getTime', strategy: 'NOCACHE' });
+  const getTimeWithResCached = cache.createCachedFunction(getTime, null, {
+    key: 'getTime',
+    strategy: 'NOCACHE',
+  });
 
   test('call response-cached getTime function and return time', async (t) => {
     t1 = await getTimeWithResCached();
@@ -30,7 +36,10 @@ test.group('cache', (test) => {
     t.true(t1 < t2);
   });
 
-  const getTimeCacheIfHit = cache.createCachedFunction(getTime, null, { key: 'getTime', strategy: 'HIT' });
+  const getTimeCacheIfHit = cache.createCachedFunction(getTime, null, {
+    key: 'getTime',
+    strategy: 'HIT',
+  });
 
   test('call cacheable getTime function and get time which equals to latest call result', async (t) => {
     t3 = await getTimeCacheIfHit();
@@ -38,7 +47,11 @@ test.group('cache', (test) => {
     t.true(t3 === t2);
   });
 
-  const getTimeCacheImmediate: Function = cache.createCachedFunction(getTime, null, { key: 'getTime', strategy: 'IMMEDIATE' });
+  const getTimeCacheImmediate: Function = cache.createCachedFunction(
+    getTime,
+    null,
+    { key: 'getTime', strategy: 'IMMEDIATE' },
+  );
 
   test('call cached function with immediate lookup strategy and get same time which equals to latest fn call result', (t) => {
     t4 = getTimeCacheImmediate();

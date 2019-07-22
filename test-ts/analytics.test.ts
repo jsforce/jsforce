@@ -13,7 +13,6 @@ test.before('establish connection', async () => {
   await connMgr.establishConnection(conn);
 });
 
-
 /**
  *
  */
@@ -26,8 +25,15 @@ test.group('report', (test) => {
    *
    */
   test.before(async () => {
-    const res = await conn.sobject('Report').findOne({ Name: 'Lead List Report' }, 'Id').execute();
-    if (!res) { throw new Error('No Report Name \'Lead List Report\' was found in the org.'); }
+    const res = await conn
+      .sobject('Report')
+      .findOne({ Name: 'Lead List Report' }, 'Id')
+      .execute();
+    if (!res) {
+      throw new Error(
+        "No Report Name 'Lead List Report' was found in the org.",
+      );
+    }
     reportId = res.Id;
   });
 
@@ -74,7 +80,9 @@ test.group('report', (test) => {
    *
    */
   test('execute report synchronously with details and return report execution result', async (t) => {
-    const result = await conn.analytics.report(reportId).execute({ details: true });
+    const result = await conn.analytics
+      .report(reportId)
+      .execute({ details: true });
     t.true(isObject(result));
     t.true(result.hasDetailRows === true);
     t.true(isObject(result.reportMetadata));
@@ -85,7 +93,6 @@ test.group('report', (test) => {
     t.true(isObject(result.factMap['T!T'].aggregates));
   });
 
-
   /**
    *
    */
@@ -93,15 +100,18 @@ test.group('report', (test) => {
     const metadata = {
       reportMetadata: {
         historicalSnapshotDates: [],
-        reportFilters: [{
-          column: 'COMPANY',
-          operator: 'contains',
-          value: ',Inc.',
-        }],
+        reportFilters: [
+          {
+            column: 'COMPANY',
+            operator: 'contains',
+            value: ',Inc.',
+          },
+        ],
       },
     };
-    const result =
-      await conn.analytics.report(reportId).execute({ metadata, details: true });
+    const result = await conn.analytics
+      .report(reportId)
+      .execute({ metadata, details: true });
     t.true(isObject(result));
     t.true(isObject(result.reportMetadata));
     t.true(Array.isArray(result.reportMetadata.reportFilters));
@@ -111,7 +121,6 @@ test.group('report', (test) => {
     t.true(Array.isArray(result.factMap['T!T'].rows));
     t.true(isObject(result.factMap['T!T'].aggregates));
   });
-
 
   /**
    *
@@ -124,7 +133,6 @@ test.group('report', (test) => {
     t.true(isString(instance.requestDate));
     instanceId = instance.id;
   });
-
 
   /**
    *
@@ -143,7 +151,10 @@ test.group('report', (test) => {
    *
    */
   test('retrieve asynchronously executed report result and return report execution result', async (t) => {
-    const result = await conn.analytics.report(reportId).instance(instanceId).retrieve();
+    const result = await conn.analytics
+      .report(reportId)
+      .instance(instanceId)
+      .retrieve();
     t.true(isObject(result));
     t.true(isObject(result.attributes));
     t.true(result.attributes.id === instanceId);
@@ -175,13 +186,14 @@ test.group('report', (test) => {
    *
    */
   test('clone report and get the cloned report', async (t) => {
-    const result = await conn.analytics.report(reportId).clone('Lead List Report Clone');
+    const result = await conn.analytics
+      .report(reportId)
+      .clone('Lead List Report Clone');
     t.true(isObject(result.reportMetadata));
     cloneId = result.reportMetadata.id;
     t.true(cloneId !== reportId);
     t.true(result.reportMetadata.name === 'Lead List Report Clone');
   });
-
 
   /**
    *
@@ -198,7 +210,6 @@ test.group('report', (test) => {
   });
 });
 
-
 /**
  *
  */
@@ -212,9 +223,15 @@ test.group('dashboard', (test) => {
    *
    */
   test.before(async () => {
-    const res =
-      await conn.sobject('Dashboard').findOne({ Title: 'Lead List Dashboard' }, 'Id').execute();
-    if (!res) { throw new Error('No Dashboard Named \'Lead List Dashboard\' was found in the org.'); }
+    const res = await conn
+      .sobject('Dashboard')
+      .findOne({ Title: 'Lead List Dashboard' }, 'Id')
+      .execute();
+    if (!res) {
+      throw new Error(
+        "No Dashboard Named 'Lead List Dashboard' was found in the org.",
+      );
+    }
     dashboardId = res.Id;
   });
 
@@ -230,7 +247,6 @@ test.group('dashboard', (test) => {
       t.true(isString(dashboard.url));
     }
   });
-
 
   /**
    *
@@ -256,8 +272,9 @@ test.group('dashboard', (test) => {
    *
    */
   test('get one dashboard component and return one component', async (t) => {
-    const meta =
-      await conn.analytics.dashboard(dashboardId).components(dashboardMetadata.components[0].id);
+    const meta = await conn.analytics
+      .dashboard(dashboardId)
+      .components(dashboardMetadata.components[0].id);
     t.true(meta.componentData.length === 1);
   });
 
@@ -321,7 +338,6 @@ test.group('dashboard', (test) => {
     }
   });
 });
-
 
 /**
  *

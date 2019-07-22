@@ -4,24 +4,21 @@
  */
 import EventEmitter from 'events';
 
-
 /**
  * type def
  */
 export type CachingOptions = {
-  key?: string | ((...args: any[]) => string),
-  namespace?: string,
-  strategy: 'NOCACHE' | 'HIT' | 'IMMEDIATE',
+  key?: string | ((...args: any[]) => string);
+  namespace?: string;
+  strategy: 'NOCACHE' | 'HIT' | 'IMMEDIATE';
 };
 
-
 type CacheValue<T> = {
-  error?: Error,
-  result: T,
+  error?: Error;
+  result: T;
 };
 
 export type CachedFunction<Fn> = Fn & { clear: (...args: any[]) => void };
-
 
 /**
  * Class for managing cache entry
@@ -74,15 +71,21 @@ class CacheEntry<T> extends EventEmitter {
  * @private
  */
 function createCacheKey(namespace: string | void, args: any[]): string {
-  return `${namespace || ''}(${[...args].map(a => JSON.stringify(a)).join(',')})`;
+  return `${namespace || ''}(${[...args]
+    .map((a) => JSON.stringify(a))
+    .join(',')})`;
 }
 
-function generateKeyString(options: CachingOptions, scope: any, args: any[]): string {
-  return (
-    typeof options.key === 'string' ? options.key :
-    typeof options.key === 'function' ? options.key.apply(scope, args) :
-    createCacheKey(options.namespace, args)
-  );
+function generateKeyString(
+  options: CachingOptions,
+  scope: any,
+  args: any[],
+): string {
+  return typeof options.key === 'string'
+    ? options.key
+    : typeof options.key === 'function'
+    ? options.key.apply(scope, args)
+    : createCacheKey(options.namespace, args);
 }
 
 /**
@@ -92,7 +95,7 @@ function generateKeyString(options: CachingOptions, scope: any, args: any[]): st
  * @constructor
  */
 export default class Cache {
-  private _entries: {[key: string]: CacheEntry<any> } = {};
+  private _entries: { [key: string]: CacheEntry<any> } = {};
 
   /**
    * retrive cache entry, or create if not exists.
@@ -127,7 +130,7 @@ export default class Cache {
   createCachedFunction<Fn extends Function>(
     fn: Fn,
     scope: any,
-    options: CachingOptions = { strategy: 'NOCACHE' }
+    options: CachingOptions = { strategy: 'NOCACHE' },
   ): CachedFunction<Fn> {
     const strategy = options.strategy;
     const $fn: any = (...args: any[]) => {
@@ -151,16 +154,20 @@ export default class Cache {
           if (!value) {
             throw new Error('Function call result is not cached yet.');
           }
-          if (value.error) { throw value.error; }
+          if (value.error) {
+            throw value.error;
+          }
           return value.result;
         case 'HIT':
           return (async () => {
-            if (!entry._fetching) { // only when no other client is calling function
+            if (!entry._fetching) {
+              // only when no other client is calling function
               await executeFetch();
             }
             return new Promise((resolve, reject) => {
               entry.get(({ error, result }) => {
-                if (error) reject(error); else resolve(result);
+                if (error) reject(error);
+                else resolve(result);
               });
             });
           })();

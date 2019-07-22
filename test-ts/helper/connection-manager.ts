@@ -4,8 +4,9 @@ import { getConnectionConfig as getNodeConnectionConfig } from './node/connectio
 import { getConnectionConfig as getBrowserConnectionConfig } from './browser/connection';
 import { isNodeJS } from './env';
 
-const getConnectionConfig =
-  isNodeJS() ? getNodeConnectionConfig : getBrowserConnectionConfig;
+const getConnectionConfig = isNodeJS()
+  ? getNodeConnectionConfig
+  : getBrowserConnectionConfig;
 
 /**
  *
@@ -13,9 +14,10 @@ const getConnectionConfig =
 export default class ConnectionManager {
   _config: any; // TODO: remove any
   _userPool: UserPool | void;
-  _idmap: { [id:string]: string };
+  _idmap: { [id: string]: string };
 
-  constructor(config: any) { // TODO: remove any
+  constructor(config: any) {
+    // TODO: remove any
     this._config = config;
     if (config.poolUsername && config.poolPassword) {
       const conn = this.createConnection();

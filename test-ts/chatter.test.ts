@@ -66,7 +66,6 @@ test.group('users and groups', (test) => {
   });
 });
 
-
 /**
  *
  */
@@ -86,7 +85,6 @@ test.group('feeds', (test) => {
   });
 });
 
-
 /**
  *
  */
@@ -95,7 +93,9 @@ test.group('feed item', (test) => {
    *
    */
   test('get items from feed items', async (t) => {
-    const result = await conn.chatter.resource('/feeds/company/feed-elements').retrieve();
+    const result = await conn.chatter
+      .resource('/feeds/company/feed-elements')
+      .retrieve();
     t.true(Array.isArray(result.elements));
     for (const element of result.elements) {
       t.true(isString(element.id));
@@ -140,13 +140,15 @@ test.group('feed item', (test) => {
   test('create new feed item', async (t) => {
     const result = await conn.chatter.resource('/feed-elements').create({
       body: {
-        messageSegments: [{
-          type: 'Text',
-          text: 'This is new post'
-        }]
+        messageSegments: [
+          {
+            type: 'Text',
+            text: 'This is new post',
+          },
+        ],
       },
       feedElementType: 'FeedItem',
-      subjectId: 'me'
+      subjectId: 'me',
     });
     t.true(isString(result.id));
     t.true(result.type === 'TextPost');
@@ -164,7 +166,6 @@ test.group('feed item', (test) => {
   });
 });
 
-
 /**
  *
  */
@@ -178,13 +179,15 @@ test.group('feed comment', (test) => {
   test.before(async () => {
     const result = await conn.chatter.resource('/feed-elements').create({
       body: {
-        messageSegments: [{
-          type: 'Text',
-          text: 'A new post with comments'
-        }],
+        messageSegments: [
+          {
+            type: 'Text',
+            text: 'A new post with comments',
+          },
+        ],
       },
       feedElementType: 'FeedItem',
-      subjectId: 'me'
+      subjectId: 'me',
     });
     feedElementUrl = result.url;
     commentsUrl = result.capabilities.comments.page.currentPageUrl;
@@ -196,11 +199,13 @@ test.group('feed comment', (test) => {
   test('create feed comment', async (t) => {
     const ret = await conn.chatter.resource(commentsUrl).create({
       body: {
-        messageSegments: [{
-          type: 'Text',
-          text: 'This is new comment #1'
-        }]
-      }
+        messageSegments: [
+          {
+            type: 'Text',
+            text: 'This is new comment #1',
+          },
+        ],
+      },
     });
     t.true(isObject(ret));
   });
@@ -212,7 +217,6 @@ test.group('feed comment', (test) => {
     await conn.chatter.resource(feedElementUrl).delete();
   });
 });
-
 
 /**
  *
@@ -226,30 +230,36 @@ test.group('like', (test) => {
    *
    */
   test.before(async () => {
-    const feedElemResult = await conn.chatter.resource('/feed-elements').create({
-      body: {
-        messageSegments: [{
-          type: 'Text',
-          text: 'A new post with likes'
-        }]
-      },
-      feedElementType: 'FeedItem',
-      subjectId: 'me'
-    });
+    const feedElemResult = await conn.chatter
+      .resource('/feed-elements')
+      .create({
+        body: {
+          messageSegments: [
+            {
+              type: 'Text',
+              text: 'A new post with likes',
+            },
+          ],
+        },
+        feedElementType: 'FeedItem',
+        subjectId: 'me',
+      });
     feedElementUrl = feedElemResult.url;
     itemLikesUrl = feedElemResult.capabilities.chatterLikes.page.currentPageUrl;
-    const commentsUrl = feedElemResult.capabilities.comments.page.currentPageUrl;
+    const commentsUrl =
+      feedElemResult.capabilities.comments.page.currentPageUrl;
     const commentResult = await conn.chatter.resource(commentsUrl).create({
       body: {
-        messageSegments: [{
-          type: 'Text',
-          text: 'A new comment with likes'
-        }]
-      }
+        messageSegments: [
+          {
+            type: 'Text',
+            text: 'A new comment with likes',
+          },
+        ],
+      },
     });
     commentLikesUrl = commentResult.likes.currentPageUrl;
   });
-
 
   let itemLikeUrl: string;
 
@@ -296,7 +306,6 @@ test.group('like', (test) => {
   });
 });
 
-
 /**
  *
  */
@@ -309,14 +318,18 @@ test.group('batch', (test) => {
   test.before(async () => {
     const result = await conn.chatter.resource('/feeds').retrieve();
     // Exclude PendingReview feed type, which raise 403 error in feed-elements GET request
-    feeds = result.feeds.filter((feed: any) => feed.feedType !== 'PendingReview');
+    feeds = result.feeds.filter(
+      (feed: any) => feed.feedType !== 'PendingReview',
+    );
   });
 
   /**
    *
    */
   test('get all feed items', async (t) => {
-    const resources = feeds.map(feed => conn.chatter.resource(feed.feedElementsUrl));
+    const resources = feeds.map((feed) =>
+      conn.chatter.resource(feed.feedElementsUrl),
+    );
     const ret = await conn.chatter.batch(resources);
     t.true(ret.hasErrors === false);
     t.true(Array.isArray(ret.results) && ret.results.length === feeds.length);
@@ -336,25 +349,32 @@ test.group('batch', (test) => {
     const result = await conn.chatter.batch([
       conn.chatter.resource('/feed-elements').create({
         body: {
-          messageSegments: [{
-            type: 'Text',
-            text: 'This is a post text'
-          }]
+          messageSegments: [
+            {
+              type: 'Text',
+              text: 'This is a post text',
+            },
+          ],
         },
         feedElementType: 'FeedItem',
-        subjectId: 'me'
+        subjectId: 'me',
       }),
       conn.chatter.resource('/feed-elements').create({
         body: {
-          messageSegments: [{
-            type: 'Text',
-            text: 'This is another post text, following to previous.'
-          }]
+          messageSegments: [
+            {
+              type: 'Text',
+              text: 'This is another post text, following to previous.',
+            },
+          ],
         },
         feedElementType: 'FeedItem',
-        subjectId: 'me'
+        subjectId: 'me',
       }),
-      conn.chatter.resource('/feeds/news/me/feed-elements', { pageSize: 2, sort: 'CreatedDateDesc' }),
+      conn.chatter.resource('/feeds/news/me/feed-elements', {
+        pageSize: 2,
+        sort: 'CreatedDateDesc',
+      }),
     ]);
     t.true(result.hasErrors === false);
     t.true(Array.isArray(result.results) && result.results.length === 3);
@@ -372,12 +392,11 @@ test.group('batch', (test) => {
   test.after('delete all created resources', async () => {
     if (urls && urls.length > 0) {
       await conn.chatter.batch(
-        urls.map(url => conn.chatter.resource(url).delete())
+        urls.map((url) => conn.chatter.resource(url).delete()),
       );
     }
   });
 });
-
 
 /**
  *

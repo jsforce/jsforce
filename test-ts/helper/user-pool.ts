@@ -9,7 +9,8 @@ export default class UserPool {
   _conn: Connection;
   _login: Promise<any> | void;
 
-  constructor(config: any, conn: Connection) { // TODO: remove any
+  constructor(config: any, conn: Connection) {
+    // TODO: remove any
     this._config = config;
     this._conn = conn;
     const { poolUsername, poolPassword } = config;
@@ -22,7 +23,9 @@ export default class UserPool {
     const config = this._config;
     const conn = this._conn;
     await this._login;
-    const res = await conn.apex.post('/JSforceTestUserPool/', { clientName: config.poolClient });
+    const res = await conn.apex.post('/JSforceTestUserPool/', {
+      clientName: config.poolClient,
+    });
     if (res.username) {
       console.log('Username:', res.username);
       return res.username;

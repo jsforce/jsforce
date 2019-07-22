@@ -6,7 +6,6 @@ import { Readable, Writable, Duplex, Transform, PassThrough } from 'stream';
 import { Record, Optional } from './types';
 import { serializeCSVStream, parseCSVStream } from './csv';
 
-
 /**
  * type defs
  */
@@ -22,7 +21,9 @@ export type RecordStreamParseOption = {};
 function evalMapping(value: any, mapping: { [prop: string]: string }) {
   if (typeof value === 'string') {
     const m = /^\$\{(\w+)\}$/.exec(value);
-    if (m) { return mapping[m[1]]; }
+    if (m) {
+      return mapping[m[1]];
+    }
     return value.replace(/\$\{(\w+)\}/g, ($0, prop) => {
       const v = mapping[prop];
       return typeof v === 'undefined' || v === null ? '' : String(v);
@@ -34,11 +35,15 @@ function evalMapping(value: any, mapping: { [prop: string]: string }) {
 /**
  * @private
  */
-function convertRecordForSerialization(record: Record, options: { nullValue?: boolean } = {}): Record {
+function convertRecordForSerialization(
+  record: Record,
+  options: { nullValue?: boolean } = {},
+): Record {
   return Object.keys(record).reduce((rec: Record, key: string) => {
     const value = (rec as any)[key];
     let urec: Record;
-    if (key === 'attributes') { // 'attributes' prop will be ignored
+    if (key === 'attributes') {
+      // 'attributes' prop will be ignored
       urec = { ...rec };
       delete urec[key];
       return urec;
@@ -46,10 +51,13 @@ function convertRecordForSerialization(record: Record, options: { nullValue?: bo
       return { ...rec, [key]: options.nullValue } as Record;
     } else if (value !== null && typeof value === 'object') {
       const precord = convertRecordForSerialization(value, options);
-      return Object.keys(precord).reduce((prec: Record, pkey) => {
-        prec[`${key}.${pkey}`] = precord[pkey]; // eslint-disable-line no-param-reassign
-        return prec;
-      }, { ...rec });
+      return Object.keys(precord).reduce(
+        (prec: Record, pkey) => {
+          prec[`${key}.${pkey}`] = precord[pkey]; // eslint-disable-line no-param-reassign
+          return prec;
+        },
+        { ...rec },
+      );
     }
     return rec;
   }, record);
@@ -64,13 +72,17 @@ function createPipelineStream(s1: Writable, s2: Writable) {
     source.unpipe(pipeline);
     source.pipe(s1).pipe(s2);
   });
-  pipeline.pipe = (dest: Writable, options?: any) => s2.pipe(dest, options);
-  return (pipeline as Transform);
+  pipeline.pipe = (dest: Writable, options?: any) =>
+    s2.pipe(
+      dest,
+      options,
+    );
+  return pipeline as Transform;
 }
 
 type StreamConverter = {
-  serialize: (options?: RecordStreamSerializeOption) => Transform,
-  parse: (options?: RecordStreamParseOption) => Transform,
+  serialize: (options?: RecordStreamSerializeOption) => Transform;
+  parse: (options?: RecordStreamParseOption) => Transform;
 };
 
 /**
@@ -81,8 +93,10 @@ const CSVStreamConverter: StreamConverter = {
     const { nullValue, ...csvOpts } = options;
     return createPipelineStream(
       // eslint-disable-next-line no-use-before-define
-      RecordStream.map(record => convertRecordForSerialization(record, options)),
-      serializeCSVStream(csvOpts)
+      RecordStream.map((record) =>
+        convertRecordForSerialization(record, options),
+      ),
+      serializeCSVStream(csvOpts),
     );
   },
   parse(options: RecordStreamParseOption = {}) {
@@ -166,9 +180,11 @@ export default class RecordStream extends PassThrough {
     const filterStream = new Transform({
       objectMode: true,
       transform(record, enc, callback) {
-        if (fn(record)) { filterStream.push(record); }
+        if (fn(record)) {
+          filterStream.push(record);
+        }
         callback();
-      }
+      },
     });
     return filterStream;
   }
@@ -191,7 +207,6 @@ export class Serializable extends RecordStream {
   }
 }
 
-
 /**
  * @class RecordStream.Parsable
  * @extends {RecordStream}
@@ -210,10 +225,10 @@ export class Parsable extends RecordStream {
     }
     const dataStream = new PassThrough();
     const parserStream = converter.parse(options);
-    parserStream.on('error', err => this.emit('error', err));
-    parserStream.pipe(this).pipe(
-      new PassThrough({ objectMode: true, highWaterMark: (500 * 1000) })
-    );
+    parserStream.on('error', (err) => this.emit('error', err));
+    parserStream
+      .pipe(this)
+      .pipe(new PassThrough({ objectMode: true, highWaterMark: 500 * 1000 }));
     if (this._execParse) {
       dataStream.pipe(parserStream);
     } else {

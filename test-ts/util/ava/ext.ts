@@ -1,16 +1,22 @@
 import test from 'ava';
 
 const testFnNames = [
-  'cb', 'only', 'skip', 'todo', 'failing',
-  'before', 'after', 'beforeEach', 'afterEach',
+  'cb',
+  'only',
+  'skip',
+  'todo',
+  'failing',
+  'before',
+  'after',
+  'beforeEach',
+  'afterEach',
 ];
 
 type TestInterface = typeof test.serial;
 
 type GroudpedTestInterface = TestInterface & {
-  group: (title: string, callback: (test: TestInterface) => any) => void,
+  group: (title: string, callback: (test: TestInterface) => any) => void;
 };
-
 
 function makeGroupedFn(
   origFn: TestInterface,
@@ -18,14 +24,20 @@ function makeGroupedFn(
   groupTitle: string | void | null,
   level: number = 1,
 ): GroudpedTestInterface {
-  if (level === 0) { return origFn as any; }
-  const groupedFn: any = (title: string, ...args: any[]) => (
-    typeof title === 'string' && groupTitle ?
-    (origFn as any).call(scope, `${groupTitle} : ${title}`, ...args) :
-    (origFn as any).call(scope, title, ...args)
-  );
+  if (level === 0) {
+    return origFn as any;
+  }
+  const groupedFn: any = (title: string, ...args: any[]) =>
+    typeof title === 'string' && groupTitle
+      ? (origFn as any).call(scope, `${groupTitle} : ${title}`, ...args)
+      : (origFn as any).call(scope, title, ...args);
   testFnNames.forEach((fname) => {
-    groupedFn[fname] = makeGroupedFn((origFn as any)[fname], origFn, groupTitle, level - 1);
+    groupedFn[fname] = makeGroupedFn(
+      (origFn as any)[fname],
+      origFn,
+      groupTitle,
+      level - 1,
+    );
   });
   return groupedFn;
 }

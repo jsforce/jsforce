@@ -1,12 +1,16 @@
 /**
- * 
+ *
  */
 import { Transform } from 'stream';
 import { HttpRequest } from '../types';
 
 let _index = 0;
 
-async function processJsonpRequest(params: HttpRequest, jsonpParam: string, timeout: number) {
+async function processJsonpRequest(
+  params: HttpRequest,
+  jsonpParam: string,
+  timeout: number,
+) {
   if (params.method.toUpperCase() !== 'GET') {
     throw new Error('JSONP only supports GET request.');
   }
@@ -33,7 +37,7 @@ async function processJsonpRequest(params: HttpRequest, jsonpParam: string, time
     return {
       statusCode: 200,
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(res)
+      body: JSON.stringify(res),
     };
   } finally {
     clearTimeout(pid);
@@ -44,13 +48,22 @@ async function processJsonpRequest(params: HttpRequest, jsonpParam: string, time
   }
 }
 
-function createRequest(jsonpParam: string = 'callback', timeout: number = 10000) {
+function createRequest(
+  jsonpParam: string = 'callback',
+  timeout: number = 10000,
+) {
   return (params: HttpRequest) => {
     const stream = new Transform({
-      transform(chunk, encoding, callback) { callback(); },
+      transform(chunk, encoding, callback) {
+        callback();
+      },
       flush() {
         (async () => {
-          const response = await processJsonpRequest(params, jsonpParam, timeout);
+          const response = await processJsonpRequest(
+            params,
+            jsonpParam,
+            timeout,
+          );
           stream.emit('response', response);
           stream.emit('complete', response);
           stream.push(response.body);

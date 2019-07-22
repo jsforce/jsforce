@@ -13,7 +13,6 @@ test.before('establish connection', async () => {
   await connMgr.establishConnection(conn);
 });
 
-
 let Account: any; // TODO: remove any
 let Opportunity: any; // TODO: remove any
 
@@ -90,7 +89,10 @@ test('find records with sort option and return sorted records', async (t) => {
  *
  */
 test('find records with multiple sort options and return sorted records', async (t) => {
-  const records = await Opportunity.find({}, { 'Account.Name': 1, CloseDate: 1 })
+  const records = await Opportunity.find(
+    {},
+    { 'Account.Name': 1, CloseDate: 1 },
+  )
     .sort('Account.Name -CloseDate')
     .exec();
   t.true(Array.isArray(records));
@@ -166,7 +168,9 @@ test('select records with asterisk and return records', async (t) => {
  */
 test('select records including child objects and return records with child records', async (t) => {
   const records = await Account.find(null, 'Id')
-    .include('Contacts').select('*').limit(2)
+    .include('Contacts')
+    .select('*')
+    .limit(2)
     .end()
     .include('Opportunities', null, 'Id, Name', { limit: 2 })
     .end()
@@ -362,7 +366,6 @@ test('get cached compact layouts and return Account comapct layout information i
   t.true(Array.isArray(res.recordTypeCompactLayoutMappings));
 });
 
-
 /**
  *
  */
@@ -405,7 +408,6 @@ test('get cached approval layouts and return Account approval layout information
   }
 });
 
-
 let listviewId: string;
 
 /**
@@ -421,7 +423,9 @@ test('listup list views and return list views definitions on the sobject', async
     t.true(isString(listview.describeUrl));
     t.true(isString(listview.resultsUrl));
     t.true(isBoolean(listview.soqlCompatible));
-    if (i === 0) { listviewId = listview.id; }
+    if (i === 0) {
+      listviewId = listview.id;
+    }
   }
 });
 
@@ -481,7 +485,6 @@ test('explain query plan of list view and get explain result', async (t) => {
     t.true(isString(plan.sobjectType));
   }
 });
-
 
 /**
  *

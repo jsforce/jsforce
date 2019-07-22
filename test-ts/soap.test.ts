@@ -6,14 +6,12 @@ import { isString, isBoolean, isUndefined } from './util';
 const connMgr = new ConnectionManager(config);
 const conn: any = connMgr.createConnection();
 
-
 /**
  *
  */
 test.before('establish connection', async () => {
   await connMgr.establishConnection(conn);
 });
-
 
 /*------------------------------------------------------------------------*/
 
@@ -40,7 +38,6 @@ test('describe tabs and return app and its including tabs', async (t) => {
   }
 });
 
-
 /**
  *
  */
@@ -48,27 +45,33 @@ test.group('convert and merge', (test) => {
   const accountIds: string[] = [];
   const contactIds: string[] = [];
   const oppIds: string[] = [];
-  const leads = [{
-    FirstName: 'Convert Test #1',
-    LastName: 'Lead',
-    Company: 'JSforce Test'
-  }, {
-    FirstName: 'Convert Test #2',
-    LastName: 'Lead',
-    Company: 'JSforce Test'
-  }, {
-    FirstName: 'Merge Test (Master)',
-    LastName: 'Lead',
-    Company: 'JSforce Test'
-  }, {
-    FirstName: 'Merge Test (Merging #1)',
-    LastName: 'Lead',
-    Company: 'JSforce Test'
-  }, {
-    FirstName: 'Merge Test (Merging #2)',
-    LastName: 'Lead',
-    Company: 'JSforce Test'
-  }];
+  const leads = [
+    {
+      FirstName: 'Convert Test #1',
+      LastName: 'Lead',
+      Company: 'JSforce Test',
+    },
+    {
+      FirstName: 'Convert Test #2',
+      LastName: 'Lead',
+      Company: 'JSforce Test',
+    },
+    {
+      FirstName: 'Merge Test (Master)',
+      LastName: 'Lead',
+      Company: 'JSforce Test',
+    },
+    {
+      FirstName: 'Merge Test (Merging #1)',
+      LastName: 'Lead',
+      Company: 'JSforce Test',
+    },
+    {
+      FirstName: 'Merge Test (Merging #2)',
+      LastName: 'Lead',
+      Company: 'JSforce Test',
+    },
+  ];
 
   let leadIds: string[];
   let convertedStatus: string;
@@ -94,7 +97,10 @@ test.group('convert and merge', (test) => {
    *
    */
   test('convert leads and return converted account/contact/opp information', async (t) => {
-    const ret = await conn.soap.convertLead({ leadId: leadIds[0], convertedStatus });
+    const ret = await conn.soap.convertLead({
+      leadId: leadIds[0],
+      convertedStatus,
+    });
     t.true(ret.success === true);
     t.true(isString(ret.accountId));
     t.true(isString(ret.contactId));
@@ -112,7 +118,7 @@ test.group('convert and merge', (test) => {
       leadId: leadIds[1],
       accountId: accountIds[0],
       convertedStatus,
-      doNotCreateOpportunity: true
+      doNotCreateOpportunity: true,
     });
     t.true(ret.success === true);
     t.true(isString(ret.accountId));
@@ -125,7 +131,11 @@ test.group('convert and merge', (test) => {
    *
    */
   test('merge records', async (t) => {
-    const masterRecord = Object.assign({ type: 'Lead' }, { Id: leadIds[2] }, leads[2]);
+    const masterRecord = Object.assign(
+      { type: 'Lead' },
+      { Id: leadIds[2] },
+      leads[2],
+    );
     const recordToMergeIds = [leadIds[3], leadIds[4]];
     const ret = await conn.soap.merge({ masterRecord, recordToMergeIds });
     t.true(ret.success === true);
@@ -146,7 +156,6 @@ test.group('convert and merge', (test) => {
 });
 
 /*------------------------------------------------------------------------*/
-
 
 /**
  *

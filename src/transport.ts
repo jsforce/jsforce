@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 import { Duplex } from 'stream';
 import _request from 'request';
@@ -21,30 +21,30 @@ function normalizeApiHost(apiHost: string) {
 }
 
 // set options if defaults setting is available in request, which is not available in xhr module.
-const request = _request.defaults ? (() => {
-  const defaults: {
-    followAllRedirects?: boolean,
-    proxy?: string,
-    timeout?: number,
-  } = {
-    followAllRedirects: true
-  };
-  if (process.env.HTTP_PROXY) {
-    defaults.proxy = process.env.HTTP_PROXY;
-  }
-  const timeout = parseInt(process.env.HTTP_TIMEOUT || '0', 10);
-  if (timeout) {
-    defaults.timeout = timeout;
-  }
-  return _request.defaults(defaults);
-})() : _request;
-
+const request = _request.defaults
+  ? (() => {
+      const defaults: {
+        followAllRedirects?: boolean;
+        proxy?: string;
+        timeout?: number;
+      } = {
+        followAllRedirects: true,
+      };
+      if (process.env.HTTP_PROXY) {
+        defaults.proxy = process.env.HTTP_PROXY;
+      }
+      const timeout = parseInt(process.env.HTTP_TIMEOUT || '0', 10);
+      if (timeout) {
+        defaults.timeout = timeout;
+      }
+      return _request.defaults(defaults);
+    })()
+  : _request;
 
 const baseUrl =
-  typeof window !== 'undefined' && window.location && window.location.host ?
-    `https://${normalizeApiHost(window.location.host)}` :
-    process.env.LOCATION_BASE_URL || '';
-
+  typeof window !== 'undefined' && window.location && window.location.host
+    ? `https://${normalizeApiHost(window.location.host)}`
+    : process.env.LOCATION_BASE_URL || '';
 
 /**
  * Class for HTTP request transport
@@ -56,12 +56,16 @@ export default class Transport {
   /**
    */
   httpRequest(params: HttpRequest): StreamPromise<HttpResponse> {
-    const streamBuilder: StreamPromiseBuilder<HttpResponse> = async (setStream) => {
+    const streamBuilder: StreamPromiseBuilder<HttpResponse> = async (
+      setStream,
+    ) => {
       const createStream = this.getRequestStreamCreator();
       const stream = createStream(params);
       setStream(stream);
       return new Promise<HttpResponse>((resolve, reject) => {
-        stream.on('complete', (res: HttpResponse) => resolve(res)).on('error', reject);
+        stream
+          .on('complete', (res: HttpResponse) => resolve(res))
+          .on('error', reject);
       });
     };
     return StreamPromise.create(streamBuilder);
@@ -71,10 +75,9 @@ export default class Transport {
    * @protected
    */
   getRequestStreamCreator(): (req: HttpRequest) => Duplex {
-    return params => (request(params, () => {}) as any) as Duplex;
+    return (params) => (request(params, () => {}) as any) as Duplex;
   }
 }
-
 
 /**
  * Class for JSONP request transport
@@ -90,7 +93,7 @@ export class JsonpTransport extends Transport {
 
   getRequestStreamCreator(): (req: HttpRequest) => Duplex {
     const jsonpRequest = jsonp.createRequest(this._jsonpParam);
-    return params => jsonpRequest(params);
+    return (params) => jsonpRequest(params);
   }
 }
 
@@ -108,10 +111,9 @@ export class CanvasTransport extends Transport {
 
   getRequestStreamCreator(): (req: HttpRequest) => Duplex {
     const canvasRequest = canvas.createRequest(this._signedRequest);
-    return params => canvasRequest(params);
+    return (params) => canvasRequest(params);
   }
 }
-
 
 /**
  * Class for HTTP request transport using AJAX proxy service
@@ -132,7 +134,9 @@ export class ProxyTransport extends Transport {
     if (url.indexOf('/') === 0) {
       url = baseUrl + url;
     }
-    const headers: { [name: string]: string } = { 'salesforceproxy-endpoint': url };
+    const headers: { [name: string]: string } = {
+      'salesforceproxy-endpoint': url,
+    };
     if (params.headers) {
       for (const name of Object.keys(params.headers)) {
         headers[name] = params.headers[name];

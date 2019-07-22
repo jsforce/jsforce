@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 import Apex from './api/apex';
 import ConnectionCore from './connection';

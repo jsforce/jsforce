@@ -1,34 +1,34 @@
 /**
- * 
+ *
  */
 import querystring from 'querystring';
 import Transport, { ProxyTransport, HttpProxyTransport } from './transport';
 import { Optional } from './types';
 
 const defaultOAuth2Config = {
-  loginUrl: 'https://login.salesforce.com'
+  loginUrl: 'https://login.salesforce.com',
 };
 
 /**
  * type defs
  */
 export type OAuth2Config = {
-  clientId?: string,
-  clientSecret?: string,
-  redirectUri?: string,
-  loginUrl?: string,
-  authzServiceUrl?: string,
-  tokenServiceUrl?: string,
-  revokeServiceUrl?: string,
-  proxyUrl?: string,
-  httpProxy?: string,
+  clientId?: string;
+  clientSecret?: string;
+  redirectUri?: string;
+  loginUrl?: string;
+  authzServiceUrl?: string;
+  tokenServiceUrl?: string;
+  revokeServiceUrl?: string;
+  proxyUrl?: string;
+  httpProxy?: string;
 };
 
 export type TokenResponse = {
-  id: string,
-  access_token: string,
-  refresh_token: string,
-  instance_url: string,
+  id: string;
+  access_token: string;
+  refresh_token: string;
+  instance_url: string;
 };
 
 /**
@@ -50,15 +50,25 @@ export default class OAuth2 {
    */
   constructor(config: OAuth2Config) {
     const {
-      loginUrl, authzServiceUrl, tokenServiceUrl, revokeServiceUrl,
-      clientId, clientSecret, redirectUri,
-      proxyUrl, httpProxy,
+      loginUrl,
+      authzServiceUrl,
+      tokenServiceUrl,
+      revokeServiceUrl,
+      clientId,
+      clientSecret,
+      redirectUri,
+      proxyUrl,
+      httpProxy,
     } = config;
     if (authzServiceUrl && tokenServiceUrl) {
-      this.loginUrl = authzServiceUrl.split('/').slice(0, 3).join('/');
+      this.loginUrl = authzServiceUrl
+        .split('/')
+        .slice(0, 3)
+        .join('/');
       this.authzServiceUrl = authzServiceUrl;
       this.tokenServiceUrl = tokenServiceUrl;
-      this.revokeServiceUrl = revokeServiceUrl || `${this.loginUrl}/services/oauth2/revoke`;
+      this.revokeServiceUrl =
+        revokeServiceUrl || `${this.loginUrl}/services/oauth2/revoke`;
     } else {
       this.loginUrl = loginUrl || defaultOAuth2Config.loginUrl;
       this.authzServiceUrl = `${this.loginUrl}/services/oauth2/authorize`;
@@ -80,16 +90,18 @@ export default class OAuth2 {
   /**
    * Get Salesforce OAuth2 authorization page URL to redirect user agent.
    */
-  getAuthorizationUrl(params: { scope?: string, state?: string } = {}) {
+  getAuthorizationUrl(params: { scope?: string; state?: string } = {}) {
     const _params = {
       ...params,
       response_type: 'code',
       client_id: this.clientId,
-      redirect_uri: this.redirectUri
+      redirect_uri: this.redirectUri,
     };
-    return this.authzServiceUrl +
+    return (
+      this.authzServiceUrl +
       (this.authzServiceUrl.indexOf('?') >= 0 ? '&' : '?') +
-      querystring.stringify(_params);
+      querystring.stringify(_params)
+    );
   }
 
   /**
@@ -117,10 +129,12 @@ export default class OAuth2 {
    */
   async requestToken(
     code: string,
-    params: { [prop: string]: string }  = {}
+    params: { [prop: string]: string } = {},
   ): Promise<TokenResponse> {
     if (!this.clientId || !this.redirectUri) {
-      throw new Error('No OAuth2 client id or redirect uri configuration is specified');
+      throw new Error(
+        'No OAuth2 client id or redirect uri configuration is specified',
+      );
     }
     const _params: { [prop: string]: string } = {
       ...params,
@@ -139,7 +153,10 @@ export default class OAuth2 {
   /**
    * OAuth2 Username-Password Flow (Resource Owner Password Credentials)
    */
-  async authenticate(username: string, password: string): Promise<TokenResponse> {
+  async authenticate(
+    username: string,
+    password: string,
+  ): Promise<TokenResponse> {
     if (!this.clientId || !this.clientSecret || !this.redirectUri) {
       throw new Error('No valid OAuth2 client configuration set');
     }
@@ -149,7 +166,7 @@ export default class OAuth2 {
       password,
       client_id: this.clientId,
       client_secret: this.clientSecret,
-      redirect_uri: this.redirectUri
+      redirect_uri: this.redirectUri,
     });
     return ret as TokenResponse;
   }
@@ -163,16 +180,25 @@ export default class OAuth2 {
       url: this.revokeServiceUrl,
       body: querystring.stringify({ token }),
       headers: {
-        'content-type': 'application/x-www-form-urlencoded'
-      }
+        'content-type': 'application/x-www-form-urlencoded',
+      },
     });
     if (response.statusCode >= 400) {
       let res: any = querystring.parse(response.body);
       if (!res || !res.error) {
-        res = { error: `ERROR_HTTP_${response.statusCode}`, error_description: response.body };
+        res = {
+          error: `ERROR_HTTP_${response.statusCode}`,
+          error_description: response.body,
+        };
       }
       throw new (class extends Error {
-        constructor({ error, error_description }: { error: string, error_description: string }) {
+        constructor({
+          error,
+          error_description,
+        }: {
+          error: string;
+          error_description: string;
+        }) {
           super(error_description);
           this.name = error;
         }
@@ -189,8 +215,8 @@ export default class OAuth2 {
       url: this.tokenServiceUrl,
       body: querystring.stringify(params),
       headers: {
-        'content-type': 'application/x-www-form-urlencoded'
-      }
+        'content-type': 'application/x-www-form-urlencoded',
+      },
     });
     let res;
     try {
@@ -199,9 +225,18 @@ export default class OAuth2 {
       /* eslint-disable no-empty */
     }
     if (response.statusCode >= 400) {
-      res = res || { error: `ERROR_HTTP_${response.statusCode}`, error_description: response.body };
+      res = res || {
+        error: `ERROR_HTTP_${response.statusCode}`,
+        error_description: response.body,
+      };
       throw new (class extends Error {
-        constructor({ error, error_description }: { error: string, error_description: string }) {
+        constructor({
+          error,
+          error_description,
+        }: {
+          error: string;
+          error_description: string;
+        }) {
           super(error_description);
           this.name = error;
         }

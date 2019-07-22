@@ -11,14 +11,12 @@ const connMgr = new ConnectionManager(config);
 const conn: any = connMgr.createConnection(); // TODO: remove any
 conn.bulk.pollTimeout = 40 * 1000; // adjust poll timeout to test timeout.
 
-
 /**
  *
  */
 test.before('establish connection', async () => {
   await connMgr.establishConnection(conn);
 });
-
 
 /**
  *
@@ -49,10 +47,13 @@ test('bulk insert records and return result status', async (t) => {
  *
  */
 test('bulk update and return updated status', async (t) => {
-  let records = await conn.sobject('Account')
+  let records = await conn
+    .sobject('Account')
     .find({ Name: { $like: 'Bulk Account%' } }, { Id: 1, Name: 1 })
     .execute();
-  records = records.map((rec: any) => Object.assign({}, rec, { Name: `${rec.Name} (Updated)` })); // TODO: remove any
+  records = records.map((rec: any) =>
+    Object.assign({}, rec, { Name: `${rec.Name} (Updated)` }),
+  ); // TODO: remove any
   const rets = await conn.bulk.load('Account', 'update', records);
   t.true(Array.isArray(rets));
   for (const ret of rets) {
@@ -78,7 +79,8 @@ test('bulk update with empty input and raise client input error', async (t) => {
  *
  */
 test('bulk delete and return deleted status', async (t) => {
-  const records = await conn.sobject('Account')
+  const records = await conn
+    .sobject('Account')
     .find({ Name: { $like: 'Bulk Account%' } })
     .execute();
   const rets = await conn.bulk.load('Account', 'delete', records);
@@ -107,7 +109,9 @@ if (isNodeJS()) {
    *
    */
   test('bulk insert from file and return inserted results', async (t) => {
-    const fstream = fs.createReadStream(path.join(__dirname, 'data/Account.csv'));
+    const fstream = fs.createReadStream(
+      path.join(__dirname, 'data/Account.csv'),
+    );
     const batch = conn.bulk.load('Account', 'insert');
     fstream.pipe(batch.stream());
     const rets = await new Promise<any[]>((resolve, reject) => {
@@ -125,11 +129,15 @@ if (isNodeJS()) {
    *
    */
   test('bulk delete from file and return deleted results', async (t) => {
-    const records = await conn.sobject('Account').find({ Name: { $like: 'Bulk Account%' } });
+    const records = await conn
+      .sobject('Account')
+      .find({ Name: { $like: 'Bulk Account%' } });
     const data = `Id\n${records.map((r: any) => r.Id).join('\n')}\n`;
     const deleteFileName = path.join(__dirname, 'data/Account_delete.csv');
     await new Promise((resolve, reject) => {
-      fs.writeFile(deleteFileName, data, err => (err ? reject(err) : resolve()));
+      fs.writeFile(deleteFileName, data, (err) =>
+        err ? reject(err) : resolve(),
+      );
     });
     const fstream = fs.createReadStream(deleteFileName);
     const batch = conn.bulk.load('Account', 'delete');
@@ -159,7 +167,8 @@ if (isNodeJS()) {
     const count = await conn.sobject(config.bigTable).count({});
     const records = await new Promise<any[]>((resolve, reject) => {
       const recs: any[] = []; // TODO: remove any
-      conn.bulk.query(`SELECT Id, Name FROM ${config.bigTable}`)
+      conn.bulk
+        .query(`SELECT Id, Name FROM ${config.bigTable}`)
         .on('record', (rec: any) => recs.push(rec)) // TODO: remove any
         .on('error', reject)
         .stream()
@@ -184,11 +193,14 @@ if (isNodeJS()) {
  *
  */
 test('call bulk api from invalid session conn with refresh fn, and return result', async (t) => {
-  const accounts = Array.from(Array(100), (a, i) => ({ Name: `Session Expiry Test #${i}` }));
+  const accounts = Array.from(Array(100), (a, i) => ({
+    Name: `Session Expiry Test #${i}`,
+  }));
   const insRets = await conn.bulk.load('Account', 'insert', accounts);
   const deleteRecords = insRets.map((r: any) => ({ Id: r.id })); // TODO: remove any
   let refreshCalled = false;
-  const conn2: any = new Connection({ // TODO: remove any
+  const conn2: any = new Connection({
+    // TODO: remove any
     instanceUrl: conn.instanceUrl,
     accessToken: 'invalid_token',
     logLevel: config.logLevel,
@@ -211,11 +223,12 @@ test('call bulk api from invalid session conn with refresh fn, and return result
  *
  */
 test('call bulk api from invalid session conn without refresh fn, and raise error', async (t) => {
-  const conn3: any = new Connection({ // TODO: remove any
+  const conn3: any = new Connection({
+    // TODO: remove any
     instanceUrl: conn.instanceUrl,
     accessToken: 'invalid_token',
     logLevel: config.logLevel,
-    proxyUrl: config.proxyUrl
+    proxyUrl: config.proxyUrl,
   });
   const records = [{ Name: 'Impossible Bulk Account #1' }];
   try {
@@ -241,11 +254,12 @@ test('bulk update using Query#update and return updated status', async (t) => {
     NumberOfEmployees: 300 * (i + 1),
   }));
   await conn.bulk.load('Account', 'insert', accounts);
-  const rets = await conn.sobject('Account')
+  const rets = await conn
+    .sobject('Account')
     .find({ Name: { $like: 'New Bulk Account%' } })
     .update({
       Name: '${Name} (Updated)', // eslint-disable-line no-template-curly-in-string
-      BillingState: null
+      BillingState: null,
     });
   t.true(Array.isArray(rets));
   t.true(rets.length === bulkAccountNum);
@@ -254,7 +268,8 @@ test('bulk update using Query#update and return updated status', async (t) => {
     t.true(ret.success === true);
   }
 
-  const records = await conn.sobject('Account')
+  const records = await conn
+    .sobject('Account')
     .find({ Name: { $like: 'New Bulk Account%' } }, 'Id, Name, BillingState');
   t.true(Array.isArray(records));
   t.true(records.length === bulkAccountNum);
@@ -269,11 +284,12 @@ test('bulk update using Query#update and return updated status', async (t) => {
  *
  */
 test('bulk update using Query#update with unmatching query and return empty array records', async (t) => {
-  const rets = await conn.sobject('Account')
+  const rets = await conn
+    .sobject('Account')
     .find({ CreatedDate: { $lt: new SfDate('1970-01-01T00:00:00Z') } }) // should not match any records
     .update({
       Name: '${Name} (Updated)', // eslint-disable-line no-template-curly-in-string
-      BillingState: null
+      BillingState: null,
     });
   t.true(Array.isArray(rets));
   t.true(rets.length === 0);
@@ -283,7 +299,8 @@ test('bulk update using Query#update with unmatching query and return empty arra
  *
  */
 test('bulk delete using Query#destroy and return deleted status', async (t) => {
-  const rets = await conn.sobject('Account')
+  const rets = await conn
+    .sobject('Account')
     .find({ Name: { $like: 'New Bulk Account%' } })
     .destroy();
   t.true(Array.isArray(rets));
@@ -298,7 +315,8 @@ test('bulk delete using Query#destroy and return deleted status', async (t) => {
  *
  */
 test('bulk delete using Query#destroy with unmatching query and return empty array records', async (t) => {
-  const rets = await conn.sobject('Account')
+  const rets = await conn
+    .sobject('Account')
     .find({ CreatedDate: { $lt: new SfDate('1970-01-01T00:00:00Z') } })
     .destroy();
   t.true(Array.isArray(rets));
@@ -320,19 +338,24 @@ test('bulk update using Query#update with bulkThreshold modified and return upda
   }));
   await conn.bulk.load('Account', 'insert', records);
 
-  const rets = await conn.sobject('Account')
+  const rets = await conn
+    .sobject('Account')
     .find({ Name: { $like: 'New Bulk Account%' } })
-    .update({
-      Name: '${Name} (Updated)', // eslint-disable-line no-template-curly-in-string
-      BillingState: null
-    }, { bulkThreshold: 0 });
+    .update(
+      {
+        Name: '${Name} (Updated)', // eslint-disable-line no-template-curly-in-string
+        BillingState: null,
+      },
+      { bulkThreshold: 0 },
+    );
   t.true(Array.isArray(rets));
   t.true(rets.length === smallAccountNum);
   for (const ret of rets) {
     t.true(isString(ret.id));
     t.true(ret.success === true);
   }
-  const urecords = await conn.sobject('Account')
+  const urecords = await conn
+    .sobject('Account')
     .find({ Name: { $like: 'New Bulk Account%' } }, 'Id, Name, BillingState');
   t.true(Array.isArray(urecords));
   t.true(records.length === smallAccountNum);
@@ -347,7 +370,8 @@ test('bulk update using Query#update with bulkThreshold modified and return upda
  *
  */
 test('bulk delete using Query#destroy with bulkThreshold modified and return deleted status', async (t) => {
-  const rets = await conn.sobject('Account')
+  const rets = await conn
+    .sobject('Account')
     .find({ Name: { $like: 'New Bulk Account%' } })
     .destroy({ bulkThreshold: 0 });
   t.true(Array.isArray(rets));

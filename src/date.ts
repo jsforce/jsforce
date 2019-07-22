@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 import { zeroPad } from './util/formatter';
 
@@ -75,9 +75,11 @@ export default class SfDate {
     const hh = _date.getUTCHours();
     const mi = _date.getUTCMinutes();
     const ss = _date.getUTCSeconds();
-    const dtstr =
-      `${[yy, zeroPad(mm), zeroPad(dd)].join('-')}T${
-      [zeroPad(hh), zeroPad(mi), zeroPad(ss)].join(':')}Z`;
+    const dtstr = `${[yy, zeroPad(mm), zeroPad(dd)].join('-')}T${[
+      zeroPad(hh),
+      zeroPad(mi),
+      zeroPad(ss),
+    ].join(':')}Z`;
     return new SfDate(dtstr);
   }
 
@@ -107,8 +109,10 @@ export default class SfDate {
         d.setUTCSeconds(parseInt(m[7], 10));
         d.setUTCMilliseconds(parseInt(m[9] || '0', 10));
         if (m[10] && m[10] !== 'Z') {
-          const offset = (parseInt(m[12], 10) * 60) + parseInt(m[13], 10);
-          d.setTime(((m[11] === '+' ? -1 : 1) * offset * 60 * 1000) + d.getTime());
+          const offset = parseInt(m[12], 10) * 60 + parseInt(m[13], 10);
+          d.setTime(
+            (m[11] === '+' ? -1 : 1) * offset * 60 * 1000 + d.getTime(),
+          );
         }
       }
       return d;
@@ -147,8 +151,12 @@ export default class SfDate {
   static LAST_FISCAL_QUARTER = new SfDate('LAST_FISCAL_QUARTER');
   static NEXT_FISCAL_QUARTER = new SfDate('NEXT_FISCAL_QUARTER');
   static THIS_FISCAL_YEAR = new SfDate('THIS_FISCAL_YEAR');
-  static NEXT_N_FISCAL_QUARTERS = createLiteralBuilder('NEXT_N_FISCAL_QUARTERS');
-  static LAST_N_FISCAL_QUARTERS = createLiteralBuilder('LAST_N_FISCAL_QUARTERS');
+  static NEXT_N_FISCAL_QUARTERS = createLiteralBuilder(
+    'NEXT_N_FISCAL_QUARTERS',
+  );
+  static LAST_N_FISCAL_QUARTERS = createLiteralBuilder(
+    'LAST_N_FISCAL_QUARTERS',
+  );
   static LAST_FISCAL_YEAR = new SfDate('LAST_FISCAL_YEAR');
   static NEXT_FISCAL_YEAR = new SfDate('NEXT_FISCAL_YEAR');
   static NEXT_N_FISCAL_YEARS = createLiteralBuilder('NEXT_N_FISCAL_YEARS');

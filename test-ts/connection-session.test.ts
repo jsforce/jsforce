@@ -4,7 +4,6 @@ import authorize from './helper/webauth';
 import config from './config';
 import { Connection } from '..';
 
-
 /**
  *
  */
@@ -13,7 +12,10 @@ test.group('login', (test) => {
 
   //
   test('login by username and password', async (t) => {
-    conn = new Connection({ logLevel: config.logLevel, proxyUrl: config.proxyUrl });
+    conn = new Connection({
+      logLevel: config.logLevel,
+      proxyUrl: config.proxyUrl,
+    });
     const userInfo = await conn.login(config.username, config.password);
     t.true(typeof conn.accessToken === 'string');
     t.true(typeof userInfo.id === 'string');
@@ -52,7 +54,10 @@ test.group('logout', (test) => {
 
   //
   test('logout from soap session', async (t) => {
-    const conn1 = new Connection({ logLevel: config.logLevel, proxyUrl: config.proxyUrl });
+    const conn1 = new Connection({
+      logLevel: config.logLevel,
+      proxyUrl: config.proxyUrl,
+    });
     await conn1.loginBySoap(config.username, config.password);
     sessionInfo = {
       sessionId: conn1.accessToken,
@@ -156,7 +161,8 @@ test.group('oauth2 refresh', (test) => {
     let refreshCount = 0;
     conn.accessToken = 'invalid access token';
     conn.removeAllListeners('refresh');
-    conn.on('refresh', (at: any) => { // TODO: remove any
+    conn.on('refresh', (at: any) => {
+      // TODO: remove any
       accessToken = at;
       refreshCount += 1;
     });
@@ -172,7 +178,8 @@ test.group('oauth2 refresh', (test) => {
     let refreshCount = 0;
     conn.accessToken = 'invalid access token';
     conn.removeAllListeners('refresh');
-    conn.on('refresh', (at: any) => { // TODO: remove any
+    conn.on('refresh', (at: any) => {
+      // TODO: remove any
       accessToken = at;
       refreshCount += 1;
     });

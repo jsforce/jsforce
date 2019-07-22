@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 import EventEmitter from 'events';
 import { Logger, getLogger } from './util/logger';
@@ -7,7 +7,6 @@ import { StreamPromise } from './util/promise';
 import Connection from './connection';
 import Transport from './transport';
 import { HttpRequest, HttpResponse, SaveError, Optional } from './types';
-
 
 /** @private */
 function parseJSON(str: string) {
@@ -36,7 +35,9 @@ function parseCSV(str: string) {
 }
 
 /** @private */
-function parseText(str: string) { return str; }
+function parseText(str: string) {
+  return str;
+}
 
 /**
  * HTTP based API class with authorization hook
@@ -53,8 +54,9 @@ export default class HttpApi extends EventEmitter {
   constructor(conn: Connection, options: any) {
     super();
     this._conn = conn;
-    this._logger =
-      conn._logLevel ? HttpApi._logger.createInstance(conn._logLevel) : HttpApi._logger;
+    this._logger = conn._logLevel
+      ? HttpApi._logger.createInstance(conn._logLevel)
+      : HttpApi._logger;
     this._responseType = options.responseType;
     this._transport = options.transport || conn._transport;
     this._noContentResponse = options.noContentResponse;
@@ -91,7 +93,9 @@ export default class HttpApi extends EventEmitter {
       this.beforeSend(request);
 
       this.emit('request', request);
-      this._logger.debug(`<request> method=${request.method}, url=${request.url}`);
+      this._logger.debug(
+        `<request> method=${request.method}, url=${request.url}`,
+      );
       const requestTime = Date.now();
       const requestPromise = this._transport.httpRequest(request);
 
@@ -107,8 +111,12 @@ export default class HttpApi extends EventEmitter {
         const responseTime = Date.now();
         this._logger.debug(`elappsed time: ${responseTime - requestTime} msec`);
       }
-      if (!response) { return; }
-      this._logger.debug(`<response> status=${String(response.statusCode)}, url=${request.url}`);
+      if (!response) {
+        return;
+      }
+      this._logger.debug(
+        `<response> status=${String(response.statusCode)}, url=${request.url}`,
+      );
       this.emit('response', response);
       // Refresh token if session has been expired and requires authentication
       // when session refresh delegate is available
@@ -155,7 +163,10 @@ export default class HttpApi extends EventEmitter {
    * @protected
    */
   getResponseContentType(response: HttpResponse): Optional<string> {
-    return this._responseType || (response.headers && response.headers['content-type']);
+    return (
+      this._responseType ||
+      (response.headers && response.headers['content-type'])
+    );
   }
 
   /**
@@ -163,10 +174,13 @@ export default class HttpApi extends EventEmitter {
    */
   parseResponseBody(response: HttpResponse) {
     const contentType = this.getResponseContentType(response) || '';
-    const parseBody = /^(text|application)\/xml(;|$)/.test(contentType) ? parseXML :
-           /^application\/json(;|$)/.test(contentType) ? parseJSON :
-           /^text\/csv(;|$)/.test(contentType) ? parseCSV :
-           parseText;
+    const parseBody = /^(text|application)\/xml(;|$)/.test(contentType)
+      ? parseXML
+      : /^application\/json(;|$)/.test(contentType)
+      ? parseJSON
+      : /^text\/csv(;|$)/.test(contentType)
+      ? parseCSV
+      : parseText;
     try {
       return parseBody(response.body);
     } catch (e) {
@@ -179,7 +193,8 @@ export default class HttpApi extends EventEmitter {
    * @protected
    */
   getResponseBody(response: HttpResponse) {
-    if (response.statusCode === 204) { // No Content
+    if (response.statusCode === 204) {
+      // No Content
       return this._noContentResponse;
     }
     const body = this.parseResponseBody(response);
@@ -188,7 +203,8 @@ export default class HttpApi extends EventEmitter {
       err = this.getError(response, body);
       throw err;
     }
-    if (response.statusCode === 300) { // Multiple Choices
+    if (response.statusCode === 300) {
+      // Multiple Choices
       throw new (class extends Error {
         content: any;
         constructor(name: string, message: string, content: Optional<string>) {
@@ -246,9 +262,14 @@ export default class HttpApi extends EventEmitter {
       // eslint-disable no-empty
     }
     error =
-      typeof error === 'object' && error !== null && typeof error.message === 'string' ?
-      error :
-      { errorCode: `ERROR_HTTP_${response.statusCode}`, message: response.body };
+      typeof error === 'object' &&
+      error !== null &&
+      typeof error.message === 'string'
+        ? error
+        : {
+            errorCode: `ERROR_HTTP_${response.statusCode}`,
+            message: response.body,
+          };
     return new (class extends Error {
       errorCode: string;
       constructor({ message, errorCode }: SaveError) {

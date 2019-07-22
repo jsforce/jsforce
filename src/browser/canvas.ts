@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 import { Transform } from 'stream';
 import { HttpRequest, SignedRequestObject } from '../types';
@@ -7,9 +7,9 @@ import { HttpRequest, SignedRequestObject } from '../types';
 declare var Sfdc: any;
 
 type CanvasResponse = {
-  status: string,
-  responseHeaders: string,
-  payload: any,
+  status: string;
+  responseHeaders: string;
+  payload: any;
 };
 
 function parseHeaders(hs: string) {
@@ -24,7 +24,7 @@ function parseHeaders(hs: string) {
 async function processCanvasRequest(
   params: HttpRequest,
   signedRequest: SignedRequestObject,
-  requestBody: string
+  requestBody: string,
 ) {
   const settings: any = {
     client: signedRequest.client,
@@ -70,13 +70,17 @@ function createRequest(signedRequest: SignedRequestObject) {
       flush() {
         (async () => {
           const body = buf.join('');
-          const response = await processCanvasRequest(params, signedRequest, body);
+          const response = await processCanvasRequest(
+            params,
+            signedRequest,
+            body,
+          );
           stream.emit('response', response);
           stream.emit('complete', response);
           stream.push(response.body);
           stream.push(null);
         })();
-      }
+      },
     });
     if (params.body) {
       stream.end(params.body);
@@ -85,8 +89,7 @@ function createRequest(signedRequest: SignedRequestObject) {
   };
 }
 
-
 export default {
   supported: typeof Sfdc === 'object' && typeof Sfdc.canvas !== 'undefined',
-  createRequest
+  createRequest,
 };

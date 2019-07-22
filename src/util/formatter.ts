@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 export function zeroPad(num: number): string {
   if (num < 10) {
@@ -9,14 +9,12 @@ export function zeroPad(num: number): string {
 }
 
 /**
- * 
+ *
  */
 export function formatDate(date: Date) {
-  return `${date.getUTCFullYear()
-    }-${zeroPad(date.getUTCMonth() + 1)
-    }-${zeroPad(date.getUTCDate())
-    }T${zeroPad(date.getUTCHours())
-    }:${zeroPad(date.getUTCMinutes())
-    }:${zeroPad(date.getUTCSeconds())
-    }+00:00`;
+  return `${date.getUTCFullYear()}-${zeroPad(date.getUTCMonth() + 1)}-${zeroPad(
+    date.getUTCDate(),
+  )}T${zeroPad(date.getUTCHours())}:${zeroPad(date.getUTCMinutes())}:${zeroPad(
+    date.getUTCSeconds(),
+  )}+00:00`;
 }

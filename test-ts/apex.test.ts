@@ -22,7 +22,7 @@ test('post account info and return created account id', async (t) => {
   const params = {
     name: 'My Apex Rest Test #1',
     phone: '654-321-0000',
-    website: 'http://www.google.com'
+    website: 'http://www.google.com',
   };
   const id = await conn.apex.post('/JSforceTestApexRest/', params);
   t.true(typeof id === 'string');
@@ -39,7 +39,6 @@ test('get account info and return created account', async (t) => {
   t.true(acc.Phone === '654-321-0000');
   t.true(acc.Website === 'http://www.google.com');
 });
-
 
 /**
  *
@@ -58,15 +57,17 @@ test('put account info and return updated account', async (t) => {
   t.true(acc.Website === 'http://www.google.com');
 });
 
-
 /**
  *
  */
 test('patch account info and return updated account', async (t) => {
   const params = {
-    name: 'My Apex Rest Test #1 (patch)'
+    name: 'My Apex Rest Test #1 (patch)',
   };
-  const acc = await conn.apex.patch(`/JSforceTestApexRest/${accountId}`, params);
+  const acc = await conn.apex.patch(
+    `/JSforceTestApexRest/${accountId}`,
+    params,
+  );
   t.true(isObject(acc));
   t.true(acc.Name === 'My Apex Rest Test #1 (patch)');
   t.true(typeof acc.Phone === 'undefined');
@@ -81,7 +82,6 @@ test('delete account info and get no account for delete account id', async (t) =
   const records = await conn.sobject('Account').find({ Id: accountId });
   t.true(records.length === 0);
 });
-
 
 /**
  *

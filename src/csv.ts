@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 import { Transform } from 'stream';
 import csvParse, { Options as ParseOpts } from 'csv-parse';

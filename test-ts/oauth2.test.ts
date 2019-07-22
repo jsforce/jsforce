@@ -5,7 +5,6 @@ import authorize from './helper/webauth';
 import config from './config';
 import { OAuth2 } from '..';
 
-
 const oauth2 = new OAuth2(config);
 
 /**
@@ -13,7 +12,7 @@ const oauth2 = new OAuth2(config);
  */
 if (isNodeJS()) {
   test.group('web server flow', (test) => {
-    let code: string
+    let code: string;
     let refreshToken: string;
 
     //

@@ -5,20 +5,26 @@
 import SfDate from './date';
 import { Optional } from './types';
 
-export type QueryCondition = string | { [field: string]: any } | Array<{ [field: string]: any }>;
+export type QueryCondition =
+  | string
+  | { [field: string]: any }
+  | Array<{ [field: string]: any }>;
 
 export type SortDir = 'ASC' | 'DESC' | 1 | -1;
 
-export type SortConfig = string | Array<[string, SortDir]> | { [field: string]: SortDir };
+export type SortConfig =
+  | string
+  | Array<[string, SortDir]>
+  | { [field: string]: SortDir };
 
 export type QueryConfig = {
-  fields?: string[],
-  includes?: { [field: string]: QueryConfig },
-  table?: string,
-  conditions?: QueryCondition,
-  sort?: SortConfig,
-  limit?: number,
-  offset?: number,
+  fields?: string[];
+  includes?: { [field: string]: QueryConfig };
+  table?: string;
+  conditions?: QueryCondition;
+  sort?: SortConfig;
+  limit?: number;
+  offset?: number;
 };
 
 /** @private **/
@@ -26,23 +32,27 @@ function escapeSOQLString(str: Optional<string | number | boolean>) {
   return String(str || '').replace(/'/g, "\\'");
 }
 
-
 /** @private **/
 function createFieldsClause(
   fields?: string[],
-  childQueries: { [name: string]: QueryConfig } = {}
+  childQueries: { [name: string]: QueryConfig } = {},
 ): string {
-  const cqueries: QueryConfig[] = ((Object.values(childQueries) as any) as QueryConfig[]);
+  const cqueries: QueryConfig[] = (Object.values(
+    childQueries,
+  ) as any) as QueryConfig[];
   // eslint-disable-next-line no-use-before-define
-  return [...(fields || ['Id']), ...cqueries.map(cquery => `(${createSOQL(cquery)})`)].join(', ');
+  return [
+    ...(fields || ['Id']),
+    ...cqueries.map((cquery) => `(${createSOQL(cquery)})`),
+  ].join(', ');
 }
 
 /** @private **/
 function createValueExpression(value: any): Optional<string> {
   if (Array.isArray(value)) {
-    return value.length > 0 ?
-           `(${value.map(createValueExpression).join(', ')})` :
-           undefined;
+    return value.length > 0
+      ? `(${value.map(createValueExpression).join(', ')})`
+      : undefined;
   }
   if (value instanceof SfDate) {
     return value.toString();
@@ -51,7 +61,7 @@ function createValueExpression(value: any): Optional<string> {
     return `'${escapeSOQLString(value)}'`;
   }
   if (typeof value === 'number') {
-    return (value).toString();
+    return value.toString();
   }
   if (value === null) {
     return 'null';
@@ -78,7 +88,7 @@ const opMap: { [op: string]: string } = {
   $nin: 'NOT IN',
   $includes: 'INCLUDES',
   $excludes: 'EXCLUDES',
-  $exists: 'EXISTS'
+  $exists: 'EXISTS',
 };
 
 /** @private **/
@@ -100,9 +110,13 @@ function createFieldExpression(field: string, value: any): Optional<string> {
     }
   }
   const sfop = opMap[op];
-  if (!sfop || typeof _value === 'undefined') { return null; }
+  if (!sfop || typeof _value === 'undefined') {
+    return null;
+  }
   const valueExpr = createValueExpression(_value);
-  if (typeof valueExpr === 'undefined') { return null; }
+  if (typeof valueExpr === 'undefined') {
+    return null;
+  }
   switch (sfop) {
     case 'NOT LIKE':
       return `(${['NOT', field, 'LIKE', valueExpr].join(' ')})`;
@@ -137,23 +151,27 @@ function createOrderByClause(sort: SortConfig = []): string {
   } else if (Array.isArray(sort)) {
     _sort = sort;
   } else {
-    _sort = Object.entries(sort).map(([field, dir]) => [field, dir] as [string, SortDir]);
+    _sort = Object.entries(sort).map(
+      ([field, dir]) => [field, dir] as [string, SortDir],
+    );
   }
-  return _sort.map(([field, dir]) => {
-    /* eslint-disable no-param-reassign */
-    switch (String(dir)) {
-      case 'DESC':
-      case 'desc':
-      case 'descending':
-      case '-':
-      case '-1':
-        dir = 'DESC';
-        break;
-      default:
-        dir = 'ASC';
-    }
-    return `${field} ${dir}`;
-  }).join(', ');
+  return _sort
+    .map(([field, dir]) => {
+      /* eslint-disable no-param-reassign */
+      switch (String(dir)) {
+        case 'DESC':
+        case 'desc':
+        case 'descending':
+        case '-':
+        case '-1':
+          dir = 'DESC';
+          break;
+        default:
+          dir = 'ASC';
+      }
+      return `${field} ${dir}`;
+    })
+    .join(', ');
 }
 
 type LogicalOperator = 'AND' | 'OR' | 'NOT';
@@ -162,48 +180,59 @@ type LogicalOperator = 'AND' | 'OR' | 'NOT';
 function createConditionClause(
   conditions: QueryCondition = {},
   operator: LogicalOperator = 'AND',
-  depth: number = 0
+  depth: number = 0,
 ): string {
   if (typeof conditions === 'string') {
     return conditions;
   }
-  let conditionList: Array<{ key: string, value: QueryCondition }> = [];
-  if (!Array.isArray(conditions)) { // if passed in hash object
+  let conditionList: Array<{ key: string; value: QueryCondition }> = [];
+  if (!Array.isArray(conditions)) {
+    // if passed in hash object
     const conditionsMap = conditions;
-    conditionList = Object.keys(conditionsMap).map(key => ({ key, value: conditionsMap[key] }));
+    conditionList = Object.keys(conditionsMap).map((key) => ({
+      key,
+      value: conditionsMap[key],
+    }));
   } else {
     conditionList = conditions.map((cond) => {
-      const conds = Object.keys(cond).map(key => ({ key, value: cond[key] }));
-      return conds.length > 1 ? { key: '$and', value: conds.map(c => ({ [c.key]: c.value })) } : conds[0];
+      const conds = Object.keys(cond).map((key) => ({ key, value: cond[key] }));
+      return conds.length > 1
+        ? { key: '$and', value: conds.map((c) => ({ [c.key]: c.value })) }
+        : conds[0];
     });
   }
-  const conditionClauses = ((conditionList.map((cond) => {
-    let d = depth + 1;
-    let op: Optional<LogicalOperator>;
-    switch (cond.key) {
-      case '$or' :
-      case '$and' :
-      case '$not' :
-        if (operator !== 'NOT' && conditionList.length === 1) {
-          d = depth; // not change tree depth
-        }
-        op = cond.key === '$or' ? 'OR' :
-             cond.key === '$and' ? 'AND' :
-             'NOT';
-        return createConditionClause(cond.value, op, d);
-      default:
-        return createFieldExpression(cond.key, cond.value);
-    }
-  })
-  .filter(expr => expr) as any) as string[]);
+  const conditionClauses = (conditionList
+    .map((cond) => {
+      let d = depth + 1;
+      let op: Optional<LogicalOperator>;
+      switch (cond.key) {
+        case '$or':
+        case '$and':
+        case '$not':
+          if (operator !== 'NOT' && conditionList.length === 1) {
+            d = depth; // not change tree depth
+          }
+          op = cond.key === '$or' ? 'OR' : cond.key === '$and' ? 'AND' : 'NOT';
+          return createConditionClause(cond.value, op, d);
+        default:
+          return createFieldExpression(cond.key, cond.value);
+      }
+    })
+    .filter((expr) => expr) as any) as string[];
 
   let hasParen: boolean;
   if (operator === 'NOT') {
     hasParen = depth > 0;
-    return `${hasParen ? '(' : ''}NOT ${conditionClauses[0]}${hasParen ? ')' : ''}`;
+    return `${hasParen ? '(' : ''}NOT ${conditionClauses[0]}${
+      hasParen ? ')' : ''
+    }`;
   }
   hasParen = depth > 0 && conditionClauses.length > 1;
-  return (hasParen ? '(' : '') + conditionClauses.join(` ${operator} `) + (hasParen ? ')' : '');
+  return (
+    (hasParen ? '(' : '') +
+    conditionClauses.join(` ${operator} `) +
+    (hasParen ? ')' : '')
+  );
 }
 
 /**
@@ -215,7 +244,7 @@ export function createSOQL(query: QueryConfig): string {
     'SELECT ',
     createFieldsClause(query.fields, query.includes),
     ' FROM ',
-    query.table
+    query.table,
   ].join('');
   const cond = createConditionClause(query.conditions);
   if (cond) {

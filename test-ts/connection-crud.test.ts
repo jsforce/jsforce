@@ -38,9 +38,15 @@ test.group('single record crud', (test) => {
 
   //
   test('update account, get successful result, and retrieve the updated record', async (t) => {
-    const ret = await conn.sobject('Account').record(account.Id).update({ Name: 'Hello2' });
+    const ret = await conn
+      .sobject('Account')
+      .record(account.Id)
+      .update({ Name: 'Hello2' });
     t.true(ret.success);
-    const record = await conn.sobject('Account').record(accountId).retrieve();
+    const record = await conn
+      .sobject('Account')
+      .record(accountId)
+      .retrieve();
     t.true(record.Name === 'Hello2');
     t.true(isObject(record.attributes));
   });
@@ -52,9 +58,15 @@ test.group('single record crud', (test) => {
         'SForce-Auto-Assign': 'FALSE',
       },
     };
-    const ret = await conn.sobject('Account').record(account.Id).update({ Name: 'Hello3' }, options);
+    const ret = await conn
+      .sobject('Account')
+      .record(account.Id)
+      .update({ Name: 'Hello3' }, options);
     t.true(ret.success);
-    const record = await conn.sobject('Account').record(accountId).retrieve(options);
+    const record = await conn
+      .sobject('Account')
+      .record(accountId)
+      .retrieve(options);
     t.true(record.Name === 'Hello3');
     t.true(isObject(record.attributes));
   });
@@ -69,12 +81,12 @@ test.group('multiple records crud', (test) => {
 
   //
   test('create multiple accounts and get successfull results', async (t) => {
-    const rets = await conn.sobject('Account').create([
-      { Name: 'Account #1' },
-      { Name: 'Account #2' },
-    ]);
+    const rets = await conn
+      .sobject('Account')
+      .create([{ Name: 'Account #1' }, { Name: 'Account #2' }]);
     t.true(Array.isArray(rets));
-    rets.forEach((ret: any) => { // TODO: remove any
+    rets.forEach((ret: any) => {
+      // TODO: remove any
       t.true(ret.success);
       t.true(typeof ret.id === 'string');
       accountIds = rets.map(({ id }: any) => id); // TODO: remoe any
@@ -95,16 +107,20 @@ test.group('multiple records crud', (test) => {
 
   //
   test('update multiple accounts, get successfull results, and get updated records', async (t) => {
-    const rets = await conn.sobject('Account').update(
-      accounts.map(({ Id, Name }) => ({ Id, Name: `Updated ${Name}` })),
-    );
+    const rets = await conn
+      .sobject('Account')
+      .update(
+        accounts.map(({ Id, Name }) => ({ Id, Name: `Updated ${Name}` })),
+      );
     t.true(Array.isArray(rets));
-    rets.forEach((ret: any) => { // TODO: remove any
+    rets.forEach((ret: any) => {
+      // TODO: remove any
       t.true(ret.success);
     });
     const records = await conn.sobject('Account').retrieve(accountIds);
     t.true(Array.isArray(records));
-    records.forEach((record: any, i: number) => { // TODO: remove any
+    records.forEach((record: any, i: number) => {
+      // TODO: remove any
       t.true(record.Name === `Updated Account #${i + 1}`);
       t.true(isObject(record.attributes));
     });
@@ -124,7 +140,6 @@ test.group('multiple records crud', (test) => {
   });
 });
 
-
 /**
  *
  */
@@ -134,7 +149,9 @@ test.group('upsert', (test) => {
   //
   test('upsert not exisiting record and get successfull result', async (t) => {
     const rec = { Name: 'New Record', [config.upsertField]: extId };
-    const ret = await conn.sobject(config.upsertTable).upsert(rec, config.upsertField);
+    const ret = await conn
+      .sobject(config.upsertTable)
+      .upsert(rec, config.upsertField);
     t.true(ret.success);
     t.true(typeof ret.id === 'string');
     recId = ret.id;
@@ -142,7 +159,9 @@ test.group('upsert', (test) => {
 
   test('upsert already existing record, get successfull result, and get updated record', async (t) => {
     const rec = { Name: 'Updated Record', [config.upsertField]: extId };
-    const ret = await conn.sobject(config.upsertTable).upsert(rec, config.upsertField);
+    const ret = await conn
+      .sobject(config.upsertTable)
+      .upsert(rec, config.upsertField);
     t.true(ret.success);
     t.true(typeof ret.id === 'undefined');
     const record = await conn.sobject(config.upsertTable).retrieve(recId);
@@ -153,7 +172,10 @@ test.group('upsert', (test) => {
     const rec1 = { Name: 'Duplicated Record', [config.upsertField]: extId };
     await conn.sobject(config.upsertTable).create(rec1);
     try {
-      const rec2 = { Name: 'Updated Record, Twice', [config.upsertField]: extId };
+      const rec2 = {
+        Name: 'Updated Record, Twice',
+        [config.upsertField]: extId,
+      };
       await conn.sobject(config.upsertTable).upsert(rec2, config.upsertField);
       t.fail();
     } catch (err) {

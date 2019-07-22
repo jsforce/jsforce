@@ -74,7 +74,9 @@ test('get default values of the action and return default field values', async (
  *
  */
 test('get default values of the action for an account record and return default values', async (t) => {
-  const ret = await conn.sobject('Account').create({ Name: 'JSforce QuickAction Test' });
+  const ret = await conn
+    .sobject('Account')
+    .create({ Name: 'JSforce QuickAction Test' });
   const accId = ret.id;
   try {
     const res = await action.defaultValues(accId);
@@ -92,11 +94,13 @@ test('get default values of the action for an account record and return default 
  *
  */
 test('execute action for record', async (t) => {
-  const ret = await conn.sobject('Account').create({ Name: 'JSforce QuickAction Test' });
+  const ret = await conn
+    .sobject('Account')
+    .create({ Name: 'JSforce QuickAction Test' });
   const accId = ret.id;
   const record = {
     Subject: 'My Task Test',
-    Description: 'This is the task'
+    Description: 'This is the task',
   };
   try {
     const res = await action.execute(accId, record);
@@ -110,7 +114,6 @@ test('execute action for record', async (t) => {
     await conn.sobject('Account').destroy(accId);
   }
 });
-
 
 /**
  *

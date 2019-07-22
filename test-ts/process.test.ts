@@ -19,8 +19,9 @@ let accountId: string;
  * Test data setup
  */
 test.before(async () => {
-  const ret =
-    await conn.sobject('Account').create({ Name: 'JSforce ProcessRule/ApprovalProcess Test' });
+  const ret = await conn
+    .sobject('Account')
+    .create({ Name: 'JSforce ProcessRule/ApprovalProcess Test' });
   accountId = ret.id;
 });
 
@@ -77,7 +78,10 @@ test.group('approval process', (test) => {
    *
    */
   test('submit approval process and confirm approval request submitted', async (t) => {
-    const result = await conn.process.approval.submit(accountId, 'This is test approval request submission.');
+    const result = await conn.process.approval.submit(
+      accountId,
+      'This is test approval request submission.',
+    );
     t.true(result.success);
     t.true(result.errors === null);
     t.true(Array.isArray(result.actorIds));

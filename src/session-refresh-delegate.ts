@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 import { getLogger, Logger } from './util/logger';
 import { Callback } from './types';
@@ -7,9 +7,12 @@ import Connection from './connection';
 import { TokenResponse } from './oauth2';
 
 /**
- * 
+ *
  */
-export type SessionRefreshFunc = (conn: Connection, callback: Callback<string, TokenResponse>) => void;
+export type SessionRefreshFunc = (
+  conn: Connection,
+  callback: Callback<string, TokenResponse>,
+) => void;
 
 /**
  *
@@ -25,10 +28,9 @@ export default class SessionRefreshDelegate {
 
   constructor(conn: Connection, refreshFn: SessionRefreshFunc) {
     this._conn = conn;
-    this._logger =
-      conn._logLevel ?
-      SessionRefreshDelegate._logger.createInstance(conn._logLevel) :
-      SessionRefreshDelegate._logger;
+    this._logger = conn._logLevel
+      ? SessionRefreshDelegate._logger.createInstance(conn._logLevel)
+      : SessionRefreshDelegate._logger;
     this._refreshFn = refreshFn;
   }
 
@@ -38,7 +40,9 @@ export default class SessionRefreshDelegate {
    */
   async refresh(since: number) {
     // Callback immediately When refreshed after designated time
-    if (this._lastRefreshedAt && this._lastRefreshedAt > since) { return; }
+    if (this._lastRefreshedAt && this._lastRefreshedAt > since) {
+      return;
+    }
     if (this._refreshPromise) {
       await this._refreshPromise;
       return;

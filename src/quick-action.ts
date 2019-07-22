@@ -11,12 +11,12 @@ import { DescribeQuickActionDetailResult, Record, Optional } from './types';
 export type QuickActionDefaultValues = { [name: string]: any };
 
 export type QuickActionResult = {
-  id: string,
-  feedItemIds: Optional<string[]>,
-  success: boolean,
-  created: boolean,
-  contextId: string,
-  errors: Object[],
+  id: string;
+  feedItemIds: Optional<string[]>;
+  success: boolean;
+  created: boolean;
+  contextId: string;
+  errors: Object[];
 };
 
 /**
@@ -40,7 +40,7 @@ export default class QuickAction {
   async describe(): Promise<DescribeQuickActionDetailResult> {
     const url = `${this._path}/describe`;
     const body = await this._conn.request(url);
-    return (body as DescribeQuickActionDetailResult);
+    return body as DescribeQuickActionDetailResult;
   }
 
   /**
@@ -52,7 +52,7 @@ export default class QuickAction {
       url += `/${contextId}`;
     }
     const body = await this._conn.request(url);
-    return (body as QuickActionDefaultValues);
+    return body as QuickActionDefaultValues;
   }
 
   /**
@@ -61,6 +61,6 @@ export default class QuickAction {
   async execute(contextId: string, record: Record): Promise<QuickActionResult> {
     const requestBody = { contextId, record };
     const resBody = await this._conn.requestPost(this._path, requestBody);
-    return (resBody as QuickActionResult);
+    return resBody as QuickActionResult;
   }
 }

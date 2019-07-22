@@ -5,7 +5,6 @@ import config from './config';
 const connMgr = new ConnectionManager(config);
 const conn: any = connMgr.createConnection(); // TODO: remove any
 
-
 /**
  *
  */
@@ -13,14 +12,11 @@ test.before('establish connection', async () => {
   await connMgr.establishConnection(conn);
 });
 
-
 /**
  *
  */
 test('execute anonymous apex and execute successfully', async (t) => {
-  const body = [
-    "System.debug('Hello, World');"
-  ].join('\n');
+  const body = ["System.debug('Hello, World');"].join('\n');
   const res = await conn.tooling.executeAnonymous(body);
   t.true(res.compiled === true);
   t.true(res.success === true);

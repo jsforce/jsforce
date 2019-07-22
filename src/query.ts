@@ -7,38 +7,49 @@ import { Logger, getLogger } from './util/logger';
 import RecordStream, { Serializable } from './record-stream';
 import Connection from './connection';
 import { createSOQL } from './soql-builder';
-import { QueryConfig, QueryCondition, SortConfig, SortDir } from './soql-builder';
+import {
+  QueryConfig,
+  QueryCondition,
+  SortConfig,
+  SortDir,
+} from './soql-builder';
 import { Record, Optional } from './types';
 import { identityFunc } from './util/function';
 
 /**
  * type defs
  */
-export type QueryFieldsParam = string | string[] | { [name: string]: boolean | number };
+export type QueryFieldsParam =
+  | string
+  | string[]
+  | { [name: string]: boolean | number };
 
 export type SubQueryConfigParam = {
-  fields?: QueryFieldsParam,
-  conditions?: QueryCondition,
-  sort?: SortConfig,
-  limit?: number,
-  offset?: number,
-}
+  fields?: QueryFieldsParam;
+  conditions?: QueryCondition;
+  sort?: SortConfig;
+  limit?: number;
+  offset?: number;
+};
 
 export type QueryConfigParam = {
-  fields?: QueryFieldsParam,
-  includes?: { [name: string]: SubQueryConfigParam },
-  table?: string,
-  conditions?: QueryCondition,
-  sort?: SortConfig,
-  limit?: number,
-  offset?: number,
+  fields?: QueryFieldsParam;
+  includes?: { [name: string]: SubQueryConfigParam };
+  table?: string;
+  conditions?: QueryCondition;
+  sort?: SortConfig;
+  limit?: number;
+  offset?: number;
 };
 
 export type QueryResponseTarget =
-  'QueryResult' | 'Records' | 'SingleRecord' | 'Count';
+  | 'QueryResult'
+  | 'Records'
+  | 'SingleRecord'
+  | 'Count';
 
 export type QueryOptions = {
-  headers: { [name: string]: string },
+  headers: { [name: string]: string };
   maxFetch: number;
   autoFetch: boolean;
   scanAll: boolean;
@@ -46,27 +57,28 @@ export type QueryOptions = {
 };
 
 export type QueryResult = {
-  size: number,
-  records: Record[],
+  size: number;
+  records: Record[];
 };
 
-export type QueryResponse =
-  QueryResult | Record[] | Record | number;
+export type QueryResponse = QueryResult | Record[] | Record | number;
 
 export type QueryDestroyOptions = {
-  allowBulk?: boolean,
-  bulkThreshold?: number,
+  allowBulk?: boolean;
+  bulkThreshold?: number;
 };
 
 export type QueryUpdateOptions = {
-  allowBulk?: boolean,
-  bulkThreshold?: number,
+  allowBulk?: boolean;
+  bulkThreshold?: number;
 };
 
 /**
  *
  */
-export const ResponseTargets: { [K in QueryResponseTarget]: QueryResponseTarget } = {
+export const ResponseTargets: {
+  [K in QueryResponseTarget]: QueryResponseTarget;
+} = {
   QueryResult: 'QueryResult',
   Records: 'Records',
   SingleRecord: 'SingleRecord',
@@ -74,7 +86,7 @@ export const ResponseTargets: { [K in QueryResponseTarget]: QueryResponseTarget 
 };
 
 /**
- * 
+ *
  */
 const DEFAULT_BULK_THRESHOLD = 200;
 
@@ -112,8 +124,9 @@ export default class Query extends EventEmitter {
   ) {
     super();
     this._conn = conn;
-    this._logger =
-      conn._logLevel ? Query._logger.createInstance(conn._logLevel) : Query._logger;
+    this._logger = conn._logLevel
+      ? Query._logger.createInstance(conn._logLevel)
+      : Query._logger;
     if (typeof config === 'string') {
       this._soql = config;
     } else if (typeof (config as any).locator === 'string') {
@@ -122,7 +135,12 @@ export default class Query extends EventEmitter {
         this._locator = locator.split('/').pop();
       }
     } else {
-      const { fields, includes, sort, ..._config } = ((config as any) as QueryConfigParam);
+      const {
+        fields,
+        includes,
+        sort,
+        ..._config
+      } = (config as any) as QueryConfigParam;
       this._config = _config;
       this.select(fields);
       if (includes) {
@@ -133,14 +151,14 @@ export default class Query extends EventEmitter {
       }
     }
     this._parent = parent;
-    this._options = ({
+    this._options = {
       ...(options || {}),
       headers: {},
       maxFetch: 10000,
       autoFetch: false,
       scanAll: false,
       responseTarget: 'QueryResult',
-    } as QueryOptions);
+    } as QueryOptions;
     // promise instance
     this._promise = new Promise((resolve, reject) => {
       this.on('response', resolve);
@@ -156,20 +174,24 @@ export default class Query extends EventEmitter {
     });
   }
 
-
   /**
    * Select fields to include in the returning result
    */
   select(fields: QueryFieldsParam = '*') {
     if (this._soql) {
-      throw Error('Cannot set select fields for the query which has already built SOQL.');
+      throw Error(
+        'Cannot set select fields for the query which has already built SOQL.',
+      );
     }
-    this._config.fields = (
-      typeof fields === 'string' ? fields.split(/\s*,\s*/) :
-      Array.isArray(fields) ? fields :
-      // eslint-disable-next-line no-unused-vars
-      Object.entries(fields).filter(([f, v]) => v).map(([f]) => f)
-    );
+    this._config.fields =
+      typeof fields === 'string'
+        ? fields.split(/\s*,\s*/)
+        : Array.isArray(fields)
+        ? fields
+        : // eslint-disable-next-line no-unused-vars
+          Object.entries(fields)
+            .filter(([f, v]) => v)
+            .map(([f]) => f);
     return this;
   }
 
@@ -178,7 +200,9 @@ export default class Query extends EventEmitter {
    */
   where(conditions: QueryCondition) {
     if (this._soql) {
-      throw Error('Cannot set where conditions for the query which has already built SOQL.');
+      throw Error(
+        'Cannot set where conditions for the query which has already built SOQL.',
+      );
     }
     this._config.conditions = conditions;
     return this;
@@ -189,7 +213,9 @@ export default class Query extends EventEmitter {
    */
   limit(limit: number) {
     if (this._soql) {
-      throw Error('Cannot set limit for the query which has already built SOQL.');
+      throw Error(
+        'Cannot set limit for the query which has already built SOQL.',
+      );
     }
     this._config.limit = limit;
     return this;
@@ -200,7 +226,9 @@ export default class Query extends EventEmitter {
    */
   skip(offset: number) {
     if (this._soql) {
-      throw Error('Cannot set skip/offset for the query which has already built SOQL.');
+      throw Error(
+        'Cannot set skip/offset for the query which has already built SOQL.',
+      );
     }
     this._config.offset = offset;
     return this;
@@ -216,7 +244,9 @@ export default class Query extends EventEmitter {
    */
   sort(sort: SortConfig, dir?: SortDir) {
     if (this._soql) {
-      throw Error('Cannot set sort for the query which has already built SOQL.');
+      throw Error(
+        'Cannot set sort for the query which has already built SOQL.',
+      );
     }
     if (typeof sort === 'string' && typeof dir !== 'undefined') {
       // eslint-disable-next-line no-param-reassign
@@ -238,10 +268,12 @@ export default class Query extends EventEmitter {
     childRelName: string,
     conditions?: Optional<QueryCondition>,
     fields?: Optional<QueryFieldsParam>,
-    options: { limit?: number, offset?: number, sort?: SortConfig } = {}
+    options: { limit?: number; offset?: number; sort?: SortConfig } = {},
   ): SubQuery {
     if (this._soql) {
-      throw Error('Cannot include child relationship into the query which has already built SOQL.');
+      throw Error(
+        'Cannot include child relationship into the query which has already built SOQL.',
+      );
     }
     const childConfig: QueryConfigParam = {
       fields: fields === null ? undefined : fields,
@@ -262,7 +294,9 @@ export default class Query extends EventEmitter {
    */
   includeChildren(includes: { [name: string]: SubQueryConfigParam }) {
     if (this._soql) {
-      throw Error('Cannot include child relationship into the query which has already built SOQL.');
+      throw Error(
+        'Cannot include child relationship into the query which has already built SOQL.',
+      );
     }
     for (const crname of Object.keys(includes)) {
       const { conditions, fields, ...options } = includes[crname];
@@ -322,14 +356,17 @@ export default class Query extends EventEmitter {
       responseTarget: _options.responseTarget || this._options.responseTarget,
       autoFetch: _options.autoFetch || this._options.autoFetch,
       maxFetch: _options.maxFetch || this._options.maxFetch,
-      scanAll: _options.scanAll || this._options.scanAll
+      scanAll: _options.scanAll || this._options.scanAll,
     };
 
     // collect fetched records in array
     // only when response target is Records and
     // either callback or chaining promises are available to this query.
     this.once('fetch', () => {
-      if (options.responseTarget === ResponseTargets.Records && this._chaining) {
+      if (
+        options.responseTarget === ResponseTargets.Records &&
+        this._chaining
+      ) {
         this._logger.debug('--- collecting all fetched records ---');
         const records: Record[] = [];
         const onRecord = (record: Record) => records.push(record);
@@ -382,7 +419,13 @@ export default class Query extends EventEmitter {
       const soql = await this.toSOQL();
       this.totalFetched = 0;
       this._logger.debug(`SOQL = ${soql}`);
-      url = [this._conn._baseUrl(), '/', (scanAll ? 'queryAll' : 'query'), '?q=', encodeURIComponent(soql)].join('');
+      url = [
+        this._conn._baseUrl(),
+        '/',
+        scanAll ? 'queryAll' : 'query',
+        '?q=',
+        encodeURIComponent(soql),
+      ].join('');
     }
     const data = await this._conn.request({ method: 'GET', url, headers });
     this.emit('fetch');
@@ -455,10 +498,14 @@ export default class Query extends EventEmitter {
    */
   async _expandFields(): Promise<void> {
     if (this._soql) {
-      throw new Error('Cannot expand fields for the query which has already built SOQL.');
+      throw new Error(
+        'Cannot expand fields for the query which has already built SOQL.',
+      );
     }
     const { fields = [], table = '' } = this._config;
-    this._logger.debug(`_expandFields: table = ${table}, fields = ${fields.join(', ')}`);
+    this._logger.debug(
+      `_expandFields: table = ${table}, fields = ${fields.join(', ')}`,
+    );
     const [efields] = await Promise.all([
       this._expandAsteriskFields(table, fields),
       ...this._children.map(async (childQuery) => {
@@ -467,27 +514,35 @@ export default class Query extends EventEmitter {
       }),
     ]);
     this._config.fields = efields;
-    this._config.includes = this._children.map((cquery) => {
-      const cconfig = cquery._query._config;
-      return [cconfig.table, cconfig] as [string, QueryConfig];
-    })
-    .reduce((includes: { [name: string]: QueryConfig }, [ctable, cconfig]) => {
-      includes[ctable] = cconfig; // eslint-disable-line no-param-reassign
-      return includes;
-    }, {});
+    this._config.includes = this._children
+      .map((cquery) => {
+        const cconfig = cquery._query._config;
+        return [cconfig.table, cconfig] as [string, QueryConfig];
+      })
+      .reduce(
+        (includes: { [name: string]: QueryConfig }, [ctable, cconfig]) => {
+          includes[ctable] = cconfig; // eslint-disable-line no-param-reassign
+          return includes;
+        },
+        {},
+      );
   }
 
   /**
    *
    */
-  async _expandAsteriskFields(_table: string, fields: string[]): Promise<string[]> {
+  async _expandAsteriskFields(
+    _table: string,
+    fields: string[],
+  ): Promise<string[]> {
     const table = await this._getSObjectName(_table);
     const expandedFields = await Promise.all(
-      fields.map(async field => this._expandAsteriskField(table, field))
+      fields.map(async (field) => this._expandAsteriskField(table, field)),
     );
-    return expandedFields.reduce((eflds: string[], flds: string[]): string[] => (
-      [...eflds, ...flds]
-    ), []);
+    return expandedFields.reduce(
+      (eflds: string[], flds: string[]): string[] => [...eflds, ...flds],
+      [],
+    );
     // return expandedFields.reduce((efields, fs) => [...efields, ...fs], []);
     // return [];
   }
@@ -507,11 +562,16 @@ export default class Query extends EventEmitter {
     if (!table) {
       throw new Error('No table information provided in the query');
     }
-    this._logger.debug(`finding table for relation "${relName}" in "${table}"...`);
+    this._logger.debug(
+      `finding table for relation "${relName}" in "${table}"...`,
+    );
     const sobject = await this._conn.describe$(table);
     const upperRname = relName.toUpperCase();
     for (const cr of sobject.childRelationships) {
-      if ((cr.relationshipName || '').toUpperCase() === upperRname && cr.childSObject) {
+      if (
+        (cr.relationshipName || '').toUpperCase() === upperRname &&
+        cr.childSObject
+      ) {
         return cr.childSObject;
       }
     }
@@ -530,18 +590,24 @@ export default class Query extends EventEmitter {
       if (fpath.length > 1) {
         const rname = fpath.shift();
         for (const f of sobject.fields) {
-          if (f.relationshipName && rname &&
-              f.relationshipName.toUpperCase() === rname.toUpperCase()) {
+          if (
+            f.relationshipName &&
+            rname &&
+            f.relationshipName.toUpperCase() === rname.toUpperCase()
+          ) {
             const rfield = f;
             const referenceTo = rfield.referenceTo || [];
             const rtable = referenceTo.length === 1 ? referenceTo[0] : 'Name';
-            const fpaths = await this._expandAsteriskField(rtable, fpath.join('.'));
-            return fpaths.map(fp => `${rname}.${fp}`);
+            const fpaths = await this._expandAsteriskField(
+              rtable,
+              fpath.join('.'),
+            );
+            return fpaths.map((fp) => `${rname}.${fp}`);
           }
         }
         return [];
       }
-      return sobject.fields.map(f => f.name);
+      return sobject.fields.map((f) => f.name);
     }
     return [field];
   }
@@ -575,20 +641,22 @@ export default class Query extends EventEmitter {
    */
   then<U>(
     onResolve: (qr: QueryResponse) => U | Promise<U>,
-    onReject?: (err: any) => U | Promise<U>
+    onReject?: (err: any) => U | Promise<U>,
   ): Promise<U> {
     this._chaining = true;
     if (!this._finished && !this._executed) {
       this.execute();
     }
     if (!this._promise) {
-      throw new Error('invalid state: promise is not set after query execution');
+      throw new Error(
+        'invalid state: promise is not set after query execution',
+      );
     }
     return this._promise.then(onResolve, onReject);
   }
 
   catch(
-    onReject: (err: any) => QueryResponse | Promise<QueryResponse>
+    onReject: (err: any) => QueryResponse | Promise<QueryResponse>,
   ): Promise<QueryResponse> {
     return this.then(identityFunc, onReject);
   }
@@ -604,22 +672,28 @@ export default class Query extends EventEmitter {
     options = options || {};
     const type_ = type || (this._config && this._config.table);
     if (!type_) {
-      throw new Error("SOQL based query needs SObject type information to bulk delete.");
+      throw new Error(
+        'SOQL based query needs SObject type information to bulk delete.',
+      );
     }
     // Set the threshold number to pass to bulk API
     const thresholdNum =
-      options.allowBulk === false ?
-        -1 :
-      typeof options.bulkThreshold === 'number' ?
-        options.bulkThreshold :
-        // determine threshold if the connection version supports SObject collection API or not
-        (this._conn._ensureVersion(42) ? DEFAULT_BULK_THRESHOLD : this._conn._maxRequest / 2);
+      options.allowBulk === false
+        ? -1
+        : typeof options.bulkThreshold === 'number'
+        ? options.bulkThreshold
+        : // determine threshold if the connection version supports SObject collection API or not
+        this._conn._ensureVersion(42)
+        ? DEFAULT_BULK_THRESHOLD
+        : this._conn._maxRequest / 2;
     return new Promise((resolve, reject) => {
       const records: Record[] = [];
       // let batch = null;
       const handleRecord = (rec: Record) => {
         if (!rec.Id) {
-          const err = new Error('Queried record does not include Salesforce record ID.');
+          const err = new Error(
+            'Queried record does not include Salesforce record ID.',
+          );
           this.emit('error', err);
           return;
         }
@@ -653,7 +727,10 @@ export default class Query extends EventEmitter {
         } else {
         */
         const ids = records.map((record) => record.Id);
-        this._conn.sobject(type_).destroy(ids, { allowRecursive: true }).then(resolve, reject);
+        this._conn
+          .sobject(type_)
+          .destroy(ids, { allowRecursive: true })
+          .then(resolve, reject);
       };
       this.stream('record')
         .on('data', handleRecord)
@@ -675,7 +752,11 @@ export default class Query extends EventEmitter {
   /**
    * Bulk update queried records, using given mapping function/object
    */
-  update(mapping: ((rec:Record) => Record) | Record, type?: string, options?: QueryUpdateOptions) {
+  update(
+    mapping: ((rec: Record) => Record) | Record,
+    type?: string,
+    options?: QueryUpdateOptions,
+  ) {
     if (typeof type === 'object' && type !== null) {
       options = type;
       type = undefined;
@@ -683,18 +764,24 @@ export default class Query extends EventEmitter {
     options = options || {};
     const type_ = type || (this._config && this._config.table);
     if (!type_) {
-      throw new Error("SOQL based query needs SObject type information to bulk update.");
+      throw new Error(
+        'SOQL based query needs SObject type information to bulk update.',
+      );
     }
     const updateStream =
-      typeof mapping === 'function' ? RecordStream.map(mapping) : RecordStream.recordMapStream(mapping);
+      typeof mapping === 'function'
+        ? RecordStream.map(mapping)
+        : RecordStream.recordMapStream(mapping);
     // Set the threshold number to pass to bulk API
     const thresholdNum =
-      options.allowBulk === false ?
-        -1 :
-      typeof options.bulkThreshold === 'number' ?
-        options.bulkThreshold :
-        // determine threshold if the connection version supports SObject collection API or not
-        (this._conn._ensureVersion(42) ? DEFAULT_BULK_THRESHOLD : this._conn._maxRequest / 2);
+      options.allowBulk === false
+        ? -1
+        : typeof options.bulkThreshold === 'number'
+        ? options.bulkThreshold
+        : // determine threshold if the connection version supports SObject collection API or not
+        this._conn._ensureVersion(42)
+        ? DEFAULT_BULK_THRESHOLD
+        : this._conn._maxRequest / 2;
     return new Promise((resolve, reject) => {
       const records: Record[] = [];
       // let batch = null;
@@ -727,7 +814,10 @@ export default class Query extends EventEmitter {
           batch.end();
         } else {
         */
-        this._conn.sobject(type_).update(records, { allowRecursive: true }).then(resolve, reject);
+        this._conn
+          .sobject(type_)
+          .update(records, { allowRecursive: true })
+          .then(resolve, reject);
         /*
         }
         */
@@ -741,7 +831,6 @@ export default class Query extends EventEmitter {
     });
   }
 }
-
 
 /*--------------------------------------------*/
 
