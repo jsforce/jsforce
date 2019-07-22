@@ -845,7 +845,7 @@ export default class Connection extends EventEmitter {
     record: UnsavedRecord,
     options: DmlOptions,
   ): Promise<SaveResult> {
-    const { Id, type: rtype, attributes, ...rec } = record; // eslint-disable-line no-unused-vars
+    const { Id, type: rtype, attributes, ...rec } = record;
     const sobjectType = type || (attributes && attributes.type) || rtype;
     if (!sobjectType) {
       throw new Error('No SObject Type defined in record');
@@ -909,7 +909,7 @@ export default class Connection extends EventEmitter {
       ];
     }
     const _records = records.map((record) => {
-      const { Id, type: rtype, attributes, ...rec } = record; // eslint-disable-line no-unused-vars
+      const { Id, type: rtype, attributes, ...rec } = record;
       const sobjectType = type || (attributes && attributes.type) || rtype;
       if (!sobjectType) {
         throw new Error('No SObject Type defined in record');
@@ -958,7 +958,6 @@ export default class Connection extends EventEmitter {
     record: Record,
     options: DmlOptions,
   ): Promise<SaveResult> {
-    // eslint-disable-next-line no-unused-vars
     const { Id: id, type: rtype, attributes, ...rec } = record;
     if (!id) {
       throw new Error('Record id is not found in record.');
@@ -1027,7 +1026,6 @@ export default class Connection extends EventEmitter {
       ];
     }
     const _records = records.map((record) => {
-      // eslint-disable-line no-unused-vars
       const { Id: id, type: rtype, attributes, ...rec } = record;
       if (!id) {
         throw new Error('Record id is not found in record.');
@@ -1069,7 +1067,6 @@ export default class Connection extends EventEmitter {
     }
     const results = await Promise.all(
       _records.map((record) => {
-        // eslint-disable-next-line no-unused-vars
         const { [extIdField]: extId, type: rtype, attributes, ...rec } = record;
         const url = [this._baseUrl(), 'sobjects', type, extIdField, extId].join(
           '/',

@@ -237,7 +237,7 @@ export default class HttpApi extends EventEmitter {
    * Detect error in response body
    * @protected
    */
-  hasErrorInResponseBody(body: Optional<string>) {
+  hasErrorInResponseBody(_body: Optional<string>) {
     return false;
   }
 

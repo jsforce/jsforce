@@ -170,7 +170,9 @@ export default class Query extends EventEmitter {
     this.on('error', (err) => {
       try {
         this._stream.emit('error', err);
-      } catch (e) {}
+      } catch (e) {
+        // eslint-disable-line no-empty
+      }
     });
   }
 
@@ -188,9 +190,8 @@ export default class Query extends EventEmitter {
         ? fields.split(/\s*,\s*/)
         : Array.isArray(fields)
         ? fields
-        : // eslint-disable-next-line no-unused-vars
-          Object.entries(fields)
-            .filter(([f, v]) => v)
+        : Object.entries(fields)
+            .filter(([_f, v]) => v)
             .map(([f]) => f);
     return this;
   }
@@ -677,6 +678,8 @@ export default class Query extends EventEmitter {
       );
     }
     // Set the threshold number to pass to bulk API
+    // FIXME:
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const thresholdNum =
       options.allowBulk === false
         ? -1
@@ -773,6 +776,8 @@ export default class Query extends EventEmitter {
         ? RecordStream.map(mapping)
         : RecordStream.recordMapStream(mapping);
     // Set the threshold number to pass to bulk API
+    // FIXME:
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const thresholdNum =
       options.allowBulk === false
         ? -1

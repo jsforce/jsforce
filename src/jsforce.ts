@@ -11,6 +11,6 @@ export class Connection extends ConnectionCore {
   apex: Apex = new Apex(this);
 }
 
-jsforce.Connection = Connection; // eslint-disable-line import/no-named-as-default-member
+jsforce.Connection = Connection;
 
 export default jsforce;

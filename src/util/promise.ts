@@ -19,7 +19,7 @@ export class StreamPromise<T> extends Promise<T> {
   } // dummy
 
   static create<T>(asyncFn: StreamPromiseBuilder<T>) {
-    let streamCallback = (s: any) => {};
+    let streamCallback = (_s: any) => {};
     const streamReady = new Promise<Duplex>((resolve) => {
       streamCallback = resolve;
     });

@@ -1,8 +1,7 @@
-// eslint-disable-next-line no-unused-vars
 export default async function authorize(
-  url: string,
-  username: string,
-  password: string,
+  _url: string,
+  _username: string,
+  _password: string,
 ) {
   return {};
 }

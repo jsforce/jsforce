@@ -91,7 +91,7 @@ test.group('CRUD based call', (test) => {
       t.true(result.success === true);
       t.true(isString(result.fullName));
     }
-    rmetadata = results;
+    rmetadata = results; // eslint-disable-line require-atomic-updates
   });
 
   /**
@@ -155,7 +155,7 @@ test.group('CRUD based call', (test) => {
       t.true(isString(result.fullName));
       t.true(result.fullName === newName);
     } finally {
-      conn.version = origVersion;
+      conn.version = origVersion; // eslint-disable-line require-atomic-updates
     }
   });
 

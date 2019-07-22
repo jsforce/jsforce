@@ -18,7 +18,10 @@ module.exports = {
   },
   rules: {
     'no-unused-vars': 0,
-    '@typescript-eslint/no-unused-vars': 2,
+    '@typescript-eslint/no-unused-vars': [2, {
+      argsIgnorePattern: '^_',
+      ignoreRestSiblings: true,
+    }],
     'prettier/prettier': [2, {
       arrowParens: 'always',
       singleQuote: true,

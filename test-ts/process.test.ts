@@ -104,7 +104,7 @@ test.group('approval process', (test) => {
     t.true(isString(result.instanceId));
     t.true(result.instanceStatus === 'Pending');
     t.true(Array.isArray(result.newWorkitemIds));
-    workitemId = result.newWorkitemIds[0];
+    workitemId = result.newWorkitemIds[0]; // eslint-disable-line require-atomic-updates
   });
 
   /**

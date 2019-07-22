@@ -141,7 +141,7 @@ test.group('convert and merge', (test) => {
     t.true(ret.success === true);
     t.true(ret.id === leadIds[2]);
     t.true(ret.mergedRecordIds.length === 2);
-    leadIds = leadIds.slice(0, 3);
+    leadIds = leadIds.slice(0, 3); // eslint-disable-line require-atomic-updates
   });
 
   /**
