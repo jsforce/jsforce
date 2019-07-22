@@ -1,0 +1,46 @@
+version: 2.1
+executors:
+  node10:
+    docker:
+      - image: circleci/node:10.16.0-browsers
+jobs:
+  test_node:
+    executor: node10
+    steps:
+      - checkout
+      - restore_cache:
+          key: jsforce-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
+      - run:
+          name: Install
+          command: npm install
+      - save_cache:
+          paths:
+            - node_modules
+          key: jsforce-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
+      - run:
+          name: Test
+          command: npm test
+  test_browser:
+    executor: node10
+    steps:
+      - checkout
+      - restore_cache:
+          key: jsforce-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
+      - run:
+          name: Install
+          command: npm install
+      - save_cache:
+          paths:
+            - node_modules
+          key: jsforce-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
+      - run:
+          name: Test
+          command: |
+            npm run build:all
+            npm run test:browser -- ci
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test_node
+      # - test_browser
