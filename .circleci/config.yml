@@ -43,4 +43,4 @@ workflows:
   test:
     jobs:
       - test_node
-      - test_browser
+      # - test_browser
