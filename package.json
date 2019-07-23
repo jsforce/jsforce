@@ -37,7 +37,7 @@
     "build:src": "babel src --extensions \".ts\"",
     "lint": "eslint --ext .ts,.js src test-ts",
     "typec": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest `if (test \"${SF_POOL_USERNAME}\" = \"\"); then echo \"-w 1\"; else echo \"\"; fi`"
   },
   "directories": {
     "test": "test-ts/"
