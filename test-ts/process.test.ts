@@ -9,16 +9,10 @@ const conn: any = connMgr.createConnection();
 /**
  *
  */
-beforeAll(async () => {
-  await connMgr.establishConnection(conn);
-});
-
 let accountId: string;
 
-/**
- * Test data setup
- */
 beforeAll(async () => {
+  await connMgr.establishConnection(conn);
   const ret = await conn
     .sobject('Account')
     .create({ Name: 'JSforce ProcessRule/ApprovalProcess Test' });
@@ -123,17 +117,11 @@ describe('approval process', () => {
 });
 
 /**
- * cleanup
+ *
  */
 afterAll(async () => {
   if (accountId) {
     await conn.sobject('Account').destroy(accountId);
   }
-});
-
-/**
- *
- */
-afterAll(async () => {
   await connMgr.closeConnection(conn);
 });
