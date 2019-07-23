@@ -45,30 +45,34 @@ test('subscribe to topic, create account, and receive event of account has been 
  */
 test('subscribe to generic streaming channel and recieve custom streaming event', async () => {
   const channelName = '/u/JSforceTestChannel';
-  await conn.sobject('StreamingChannel').create({ Name: channelName });
+  try {
+    await conn.sobject('StreamingChannel').create({ Name: channelName });
 
-  let subscr: any; // TODO: remove any
-  const msgArrived = new Promise<any>((resolve) => {
-    // TODO: remove any
-    subscr = conn.streaming.channel(channelName).subscribe(resolve);
-  });
-  await delay(5000);
-  const res = await conn.streaming.channel(channelName).push({
-    payload: 'hello, world',
-    userIds: [],
-  });
-  assert.ok(res.fanoutCount === -1);
-  assert.ok(isObject(res.userOnlineStatus));
-  const msg = await msgArrived;
-  assert.ok(msg.payload === 'hello, world');
+    let subscr: any; // TODO: remove any
+    const msgArrived = new Promise<any>((resolve) => {
+      // TODO: remove any
+      subscr = conn.streaming.channel(channelName).subscribe(resolve);
+    });
+    await delay(5000);
+    const res = await conn.streaming.channel(channelName).push({
+      payload: 'hello, world',
+      userIds: [],
+    });
+    assert.ok(res.fanoutCount === -1);
+    assert.ok(isObject(res.userOnlineStatus));
+    const msg = await msgArrived;
+    assert.ok(msg.payload === 'hello, world');
 
-  if (subscr) {
-    subscr.cancel();
+    if (subscr) {
+      console.log('canceling subscription...');
+      subscr.cancel();
+    }
+  } finally {
+    await conn
+      .sobject('StreamingChannel')
+      .find({ Name: channelName })
+      .destroy();
   }
-  await conn
-    .sobject('StreamingChannel')
-    .find({ Name: channelName })
-    .destroy();
 });
 
 /**
