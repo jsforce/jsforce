@@ -1,3 +1,3 @@
 export function isNodeJS() {
-  return typeof window === 'undefined';
+  return Object.prototype.toString.call(global.process) === '[object process]';
 }

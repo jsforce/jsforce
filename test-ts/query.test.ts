@@ -1,6 +1,6 @@
 import stream from 'stream';
 import through2 from 'through2';
-import test from './util/ava/ext';
+import assert from 'assert';
 import { SfDate } from '..';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
@@ -12,23 +12,23 @@ const conn: any = connMgr.createConnection(); // TODO: remove any
 /**
  *
  */
-test.before('establish connection', async () => {
+beforeAll(async () => {
   await connMgr.establishConnection(conn);
 });
 
 /**
  *
  */
-test('query accounts and return records', async (t) => {
+test('query accounts and return records', async () => {
   const query = conn.query('SELECT Id, Name FROM Account');
   const result = await query.run();
-  t.true(isNumber(result.totalSize));
+  assert.ok(isNumber(result.totalSize));
 });
 
 /**
  *
  */
-test('query accounts with scanAll option and return all records', async (t) => {
+test('query accounts with scanAll option and return all records', async () => {
   // create and delete record
   const ret = await conn
     .sobject('Account')
@@ -41,14 +41,14 @@ test('query accounts with scanAll option and return all records', async (t) => {
     'SELECT Id, IsDeleted, Name FROM Account WHERE IsDeleted = true',
   );
   const result = await query.run({ scanAll: true });
-  t.true(isNumber(result.totalSize));
-  t.true(result.totalSize > 0);
+  assert.ok(isNumber(result.totalSize));
+  assert.ok(result.totalSize > 0);
 });
 
 /**
  *
  */
-test('query big table and execute queryMore and fetch all records', async (t) => {
+test('query big table and execute queryMore and fetch all records', async () => {
   let result = await conn.query(
     `SELECT Id, Name FROM ${config.bigTable || 'Account'}`,
   );
@@ -57,13 +57,13 @@ test('query big table and execute queryMore and fetch all records', async (t) =>
     result = await conn.queryMore(result.nextRecordsUrl);
     records = [...records, ...result.records];
   }
-  t.true(records.length === result.totalSize);
+  assert.ok(records.length === result.totalSize);
 });
 
 /**
  *
  */
-test('query big tables without autoFetch and scan records in one query fetch', async (t) => {
+test('query big tables without autoFetch and scan records in one query fetch', async () => {
   const records: any[] = []; // TODO: remove any
   let query: any; // TODO: remove any
   await new Promise((resolve, reject) => {
@@ -74,8 +74,8 @@ test('query big tables without autoFetch and scan records in one query fetch', a
       .on('error', reject)
       .run({ autoFetch: false });
   });
-  t.true(query.totalFetched === records.length);
-  t.true(
+  assert.ok(query.totalFetched === records.length);
+  assert.ok(
     query.totalSize > 2000
       ? query.totalFetched === 2000
       : query.totalFetched === query.totalSize,
@@ -85,7 +85,7 @@ test('query big tables without autoFetch and scan records in one query fetch', a
 /**
  *
  */
-test('query big tables with autoFetch and scan records up to maxFetch num', async (t) => {
+test('query big tables with autoFetch and scan records up to maxFetch num', async () => {
   const records: any[] = []; // TODO: remove any
   let query: any; // TODO: remove any
   await new Promise((resolve, reject) => {
@@ -96,8 +96,8 @@ test('query big tables with autoFetch and scan records up to maxFetch num', asyn
       .on('error', reject)
       .run({ autoFetch: true, maxFetch: 5000 });
   });
-  t.true(query.totalFetched === records.length);
-  t.true(
+  assert.ok(query.totalFetched === records.length);
+  assert.ok(
     query.totalSize > 5000
       ? query.totalFetched === 5000
       : query.totalFetched === query.totalSize,
@@ -107,7 +107,7 @@ test('query big tables with autoFetch and scan records up to maxFetch num', asyn
 /**
  *
  */
-test('query big tables by piping randomly-waiting output record stream object and scan records via stream up to maxFetch num', async (t) => {
+test('query big tables by piping randomly-waiting output record stream object and scan records via stream up to maxFetch num', async () => {
   const records: any[] = []; // TODO: remove any
   let query: any;
   await new Promise((resolve, reject) => {
@@ -132,8 +132,8 @@ test('query big tables by piping randomly-waiting output record stream object an
       .on('finish', resolve)
       .on('error', reject);
   });
-  t.true(query.totalFetched === records.length);
-  t.true(
+  assert.ok(query.totalFetched === records.length);
+  assert.ok(
     query.totalSize > 5000
       ? query.totalFetched === 5000
       : query.totalFetched === query.totalSize,
@@ -143,7 +143,7 @@ test('query big tables by piping randomly-waiting output record stream object an
 /**
  *
  */
-test('query table and convert to readable stream and get CSV text', async (t) => {
+test('query table and convert to readable stream and get CSV text', async () => {
   const query = conn.query('SELECT Id, Name FROM Account LIMIT 10');
   const csvOut = new stream.Writable();
   let result = '';
@@ -158,27 +158,27 @@ test('query table and convert to readable stream and get CSV text', async (t) =>
       .on('finish', resolve)
       .on('error', reject);
   });
-  t.true(isString(result));
+  assert.ok(isString(result));
   const header = result.split('\n')[0];
-  t.true(header === 'Id,Name');
+  assert.ok(header === 'Id,Name');
 });
 
 /**
  *
  */
-test('explain query plan of soql query and get explain result', async (t) => {
+test('explain query plan of soql query and get explain result', async () => {
   const query = conn.query(
     'SELECT Id, Name FROM Account ORDER BY CreatedDate DESC LIMIT 10',
   );
   const result = await query.explain();
-  t.true(Array.isArray(result.plans));
+  assert.ok(Array.isArray(result.plans));
   for (const plan of result.plans) {
-    t.true(isNumber(plan.cardinality));
-    t.true(Array.isArray(plan.fields));
-    t.true(isString(plan.leadingOperationType));
-    t.true(isNumber(plan.relativeCost));
-    t.true(isNumber(plan.sobjectCardinality));
-    t.true(isString(plan.sobjectType));
+    assert.ok(isNumber(plan.cardinality));
+    assert.ok(Array.isArray(plan.fields));
+    assert.ok(isString(plan.leadingOperationType));
+    assert.ok(isNumber(plan.relativeCost));
+    assert.ok(isNumber(plan.sobjectCardinality));
+    assert.ok(isString(plan.sobjectType));
   }
 });
 
@@ -189,20 +189,20 @@ const accountNum = 20;
 /**
  *
  */
-test('setup for query and update / destroy test', async (t) => {
+test('setup for query and update / destroy test', async () => {
   const records = Array.from({ length: accountNum }).map((_, i) => ({
     Name: `New Bulk Account #${i + 1}`,
     BillingState: 'CA',
     NumberOfEmployees: 300 * (i + 1),
   }));
   await conn.sobject('Account').create(records);
-  t.pass();
+  assert.ok(true);
 });
 
 /**
  *
  */
-test('update queried records using Query#update and return updated records', async (t) => {
+test('update queried records using Query#update and return updated records', async () => {
   const rets = await conn
     .sobject('Account')
     .find({ Name: { $like: 'New Bulk Account%' } })
@@ -210,28 +210,28 @@ test('update queried records using Query#update and return updated records', asy
       Name: '${Name} (Updated)', // eslint-disable-line no-template-curly-in-string
       BillingState: null,
     });
-  t.true(Array.isArray(rets));
-  t.true(rets.length === accountNum);
+  assert.ok(Array.isArray(rets));
+  assert.ok(rets.length === accountNum);
   for (const ret of rets) {
-    t.true(isString(ret.id));
-    t.true(ret.success === true);
+    assert.ok(isString(ret.id));
+    assert.ok(ret.success === true);
   }
   const urecords = await conn
     .sobject('Account')
     .find({ Name: { $like: 'New Bulk Account%' } });
-  t.true(Array.isArray(urecords));
-  t.true(urecords.length === accountNum);
+  assert.ok(Array.isArray(urecords));
+  assert.ok(urecords.length === accountNum);
   for (const record of urecords) {
-    t.true(isString(record.Id));
-    t.true(/\(Updated\)$/.test(record.Name));
-    t.true(record.BillingState === null);
+    assert.ok(isString(record.Id));
+    assert.ok(/\(Updated\)$/.test(record.Name));
+    assert.ok(record.BillingState === null);
   }
 });
 
 /**
  *
  */
-test('update queried records using Query#update, for unmatching query, and return empty array records', async (t) => {
+test('update queried records using Query#update, for unmatching query, and return empty array records', async () => {
   const rets = await conn
     .sobject('Account')
     .find({ CreatedDate: { $lt: new SfDate('1970-01-01T00:00:00Z') } }) // should not match any records
@@ -239,56 +239,56 @@ test('update queried records using Query#update, for unmatching query, and retur
       Name: '${Name} (Updated)', // eslint-disable-line no-template-curly-in-string
       BillingState: null,
     });
-  t.true(Array.isArray(rets));
-  t.true(rets.length === 0);
+  assert.ok(Array.isArray(rets));
+  assert.ok(rets.length === 0);
 });
 
 /**
  *
  */
-test('delete queried records using Query#destroy and return deleted status', async (t) => {
+test('delete queried records using Query#destroy and return deleted status', async () => {
   const rets = await conn
     .sobject('Account')
     .find({ Name: { $like: 'New Bulk Account%' } })
     .destroy();
-  t.true(Array.isArray(rets));
-  t.true(rets.length === accountNum);
+  assert.ok(Array.isArray(rets));
+  assert.ok(rets.length === accountNum);
   for (const ret of rets) {
-    t.true(isString(ret.id));
-    t.true(ret.success === true);
+    assert.ok(isString(ret.id));
+    assert.ok(ret.success === true);
   }
 });
 
 /**
  *
  */
-test('delete queried records using Query#destroy, for unmatching query, and return empty array records', async (t) => {
+test('delete queried records using Query#destroy, for unmatching query, and return empty array records', async () => {
   const rets = await conn
     .sobject('Account')
     .find({ CreatedDate: { $lt: new SfDate('1970-01-01T00:00:00Z') } })
     .destroy();
-  t.true(Array.isArray(rets));
-  t.true(rets.length === 0);
+  assert.ok(Array.isArray(rets));
+  assert.ok(rets.length === 0);
 });
 
 /*------------------------------------------------------------------------*/
 // The num is over 200, but not falling back to bulk API because `allowBulk` option is set to false.
 const massiveAccountNum = 300;
 
-test('setup for query and update/destroy with allowBulk=false test', async (t) => {
+test('setup for query and update/destroy with allowBulk=false test', async () => {
   const records = Array.from({ length: massiveAccountNum }).map((_, i) => ({
     Name: `New Bulk Account #${i + 1}`,
     BillingState: 'CA',
     NumberOfEmployees: 300 * (i + 1),
   }));
   await conn.sobject('Account').create(records, { allowRecursive: true });
-  t.pass();
+  assert.ok(true);
 });
 
 /**
  *
  */
-test('update queried records using Query#update, with allowBulk = false, and return updated records', async (t) => {
+test('update queried records using Query#update, with allowBulk = false, and return updated records', async () => {
   const rets = await conn
     .sobject('Account')
     .find({ Name: { $like: 'New Bulk Account%' } })
@@ -299,43 +299,43 @@ test('update queried records using Query#update, with allowBulk = false, and ret
       },
       { allowBulk: false },
     );
-  t.true(Array.isArray(rets));
-  t.true(rets.length === massiveAccountNum);
+  assert.ok(Array.isArray(rets));
+  assert.ok(rets.length === massiveAccountNum);
   for (const ret of rets) {
-    t.true(isString(ret.id));
-    t.true(ret.success === true);
+    assert.ok(isString(ret.id));
+    assert.ok(ret.success === true);
   }
   const records = await conn
     .sobject('Account')
     .find({ Name: { $like: 'New Bulk Account%' } }, 'Id, Name, BillingState');
-  t.true(Array.isArray(records));
-  t.true(records.length === massiveAccountNum);
+  assert.ok(Array.isArray(records));
+  assert.ok(records.length === massiveAccountNum);
   for (const record of records) {
-    t.true(isString(record.Id));
-    t.true(/\(Updated\)$/.test(record.Name));
-    t.true(record.BillingState === null);
+    assert.ok(isString(record.Id));
+    assert.ok(/\(Updated\)$/.test(record.Name));
+    assert.ok(record.BillingState === null);
   }
 });
 
 /**
  *
  */
-test('delete queried records using Query#destroy, with allowBulk = false, and return deleted status', async (t) => {
+test('delete queried records using Query#destroy, with allowBulk = false, and return deleted status', async () => {
   const rets = await conn
     .sobject('Account')
     .find({ Name: { $like: 'New Bulk Account%' } })
     .destroy();
-  t.true(Array.isArray(rets));
-  t.true(rets.length === massiveAccountNum);
+  assert.ok(Array.isArray(rets));
+  assert.ok(rets.length === massiveAccountNum);
   for (const ret of rets) {
-    t.true(isString(ret.id));
-    t.true(ret.success === true);
+    assert.ok(isString(ret.id));
+    assert.ok(ret.success === true);
   }
 });
 
 /**
  *
  */
-test.after('close connection', async () => {
+afterAll(async () => {
   await connMgr.closeConnection(conn);
 });

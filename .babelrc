@@ -1,34 +1,47 @@
 {
   "presets": [
-    ["@babel/preset-env", {
-      "useBuiltIns": "usage"
-    }],
+    [
+      "@babel/preset-env",
+      {
+        "useBuiltIns": "usage"
+      }
+    ],
     "@babel/preset-typescript"
   ],
   "plugins": [
     "@babel/plugin-proposal-class-properties",
-    ["@babel/plugin-transform-runtime", {
-      "corejs": 2
-    }]
+    [
+      "@babel/plugin-transform-runtime",
+      {
+        "corejs": 2
+      }
+    ]
   ],
   "sourceMaps": "inline",
   "env": {
     "module": {
       "presets": [
-        ["@babel/preset-env", {
-          "modules": false,
-          "useBuiltIns": "usage",
-          "targets": { "esmodules": true }
-        }],
+        [
+          "@babel/preset-env",
+          {
+            "modules": false,
+            "useBuiltIns": "usage",
+            "targets": { "esmodules": true }
+          }
+        ],
         "@babel/preset-typescript"
       ]
     },
     "test": {
       "presets": [
-        ["@babel/preset-env", {
-          "useBuiltIns": "usage",
-          "targets": { "node": true }
-        }]
+        [
+          "@babel/preset-env",
+          {
+            "targets": { "node": true }
+          }
+        ],
+        "@babel/preset-typescript",
+        "power-assert"
       ]
     }
   }

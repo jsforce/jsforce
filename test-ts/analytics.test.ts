@@ -1,4 +1,4 @@
-import test from './util/ava/ext';
+import assert from 'assert';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject, isString, isNumber, isUndefined, clone } from './util';
@@ -9,14 +9,14 @@ const conn: any = connMgr.createConnection(); // TODO: remove any
 /**
  *
  */
-test.before('establish connection', async () => {
+beforeAll(async () => {
   await connMgr.establishConnection(conn);
 });
 
 /**
  *
  */
-test.group('report', (test) => {
+describe('report', () => {
   let reportId: string;
   let instanceId: string;
   let cloneId: string;
@@ -24,7 +24,7 @@ test.group('report', (test) => {
   /**
    *
    */
-  test.before(async () => {
+  beforeAll(async () => {
     const res = await conn
       .sobject('Report')
       .findOne({ Name: 'Lead List Report' }, 'Id')
@@ -40,63 +40,63 @@ test.group('report', (test) => {
   /**
    *
    */
-  test('list recent reports and return report infomation list', async (t) => {
+  test('list recent reports and return report infomation list', async () => {
     const reports = await conn.analytics.reports();
-    t.true(Array.isArray(reports));
+    assert.ok(Array.isArray(reports));
     for (const report of reports) {
-      t.true(isString(report.id));
-      t.true(isString(report.name));
-      t.true(isString(report.url));
+      assert.ok(isString(report.id));
+      assert.ok(isString(report.name));
+      assert.ok(isString(report.url));
     }
   });
 
   /**
    *
    */
-  test('describe report and return report metadata', async (t) => {
+  test('describe report and return report metadata', async () => {
     const meta = await conn.analytics.report(reportId).describe();
-    t.true(isObject(meta));
-    t.true(isObject(meta.reportMetadata));
-    t.true(isObject(meta.reportTypeMetadata));
-    t.true(isObject(meta.reportExtendedMetadata));
+    assert.ok(isObject(meta));
+    assert.ok(isObject(meta.reportMetadata));
+    assert.ok(isObject(meta.reportTypeMetadata));
+    assert.ok(isObject(meta.reportExtendedMetadata));
   });
 
   /**
    *
    */
-  test('execute report synchronously and return report execution result', async (t) => {
+  test('execute report synchronously and return report execution result', async () => {
     const result = await conn.analytics.report(reportId).execute();
-    t.true(isObject(result));
-    t.true(result.hasDetailRows === false);
-    t.true(isObject(result.reportMetadata));
-    t.true(result.reportMetadata.id === reportId);
-    t.true(isObject(result.factMap));
-    t.true(isObject(result.factMap['T!T']));
-    t.true(isUndefined(result.factMap['T!T'].rows));
-    t.true(isObject(result.factMap['T!T'].aggregates));
+    assert.ok(isObject(result));
+    assert.ok(result.hasDetailRows === false);
+    assert.ok(isObject(result.reportMetadata));
+    assert.ok(result.reportMetadata.id === reportId);
+    assert.ok(isObject(result.factMap));
+    assert.ok(isObject(result.factMap['T!T']));
+    assert.ok(isUndefined(result.factMap['T!T'].rows));
+    assert.ok(isObject(result.factMap['T!T'].aggregates));
   });
 
   /**
    *
    */
-  test('execute report synchronously with details and return report execution result', async (t) => {
+  test('execute report synchronously with details and return report execution result', async () => {
     const result = await conn.analytics
       .report(reportId)
       .execute({ details: true });
-    t.true(isObject(result));
-    t.true(result.hasDetailRows === true);
-    t.true(isObject(result.reportMetadata));
-    t.true(result.reportMetadata.id === reportId);
-    t.true(isObject(result.factMap));
-    t.true(isObject(result.factMap['T!T']));
-    t.true(Array.isArray(result.factMap['T!T'].rows));
-    t.true(isObject(result.factMap['T!T'].aggregates));
+    assert.ok(isObject(result));
+    assert.ok(result.hasDetailRows === true);
+    assert.ok(isObject(result.reportMetadata));
+    assert.ok(result.reportMetadata.id === reportId);
+    assert.ok(isObject(result.factMap));
+    assert.ok(isObject(result.factMap['T!T']));
+    assert.ok(Array.isArray(result.factMap['T!T'].rows));
+    assert.ok(isObject(result.factMap['T!T'].aggregates));
   });
 
   /**
    *
    */
-  test('execute report synchronously with filters overrided and return report execution result', async (t) => {
+  test('execute report synchronously with filters overrided and return report execution result', async () => {
     const metadata = {
       reportMetadata: {
         historicalSnapshotDates: [],
@@ -112,100 +112,100 @@ test.group('report', (test) => {
     const result = await conn.analytics
       .report(reportId)
       .execute({ metadata, details: true });
-    t.true(isObject(result));
-    t.true(isObject(result.reportMetadata));
-    t.true(Array.isArray(result.reportMetadata.reportFilters));
-    t.true(result.reportMetadata.id === reportId);
-    t.true(isObject(result.factMap));
-    t.true(isObject(result.factMap['T!T']));
-    t.true(Array.isArray(result.factMap['T!T'].rows));
-    t.true(isObject(result.factMap['T!T'].aggregates));
+    assert.ok(isObject(result));
+    assert.ok(isObject(result.reportMetadata));
+    assert.ok(Array.isArray(result.reportMetadata.reportFilters));
+    assert.ok(result.reportMetadata.id === reportId);
+    assert.ok(isObject(result.factMap));
+    assert.ok(isObject(result.factMap['T!T']));
+    assert.ok(Array.isArray(result.factMap['T!T'].rows));
+    assert.ok(isObject(result.factMap['T!T'].aggregates));
   });
 
   /**
    *
    */
-  test('execute report asynchronously and return report instance info', async (t) => {
+  test('execute report asynchronously and return report instance info', async () => {
     const instance = await conn.analytics.report(reportId).executeAsync();
-    t.true(isObject(instance));
-    t.true(isString(instance.id));
-    t.true(isString(instance.status));
-    t.true(isString(instance.requestDate));
+    assert.ok(isObject(instance));
+    assert.ok(isString(instance.id));
+    assert.ok(isString(instance.status));
+    assert.ok(isString(instance.requestDate));
     instanceId = instance.id;
   });
 
   /**
    *
    */
-  test('list asynchronously executed report instances and return report instance list', async (t) => {
+  test('list asynchronously executed report instances and return report instance list', async () => {
     const instances = await conn.analytics.report(reportId).instances();
-    t.true(Array.isArray(instances));
+    assert.ok(Array.isArray(instances));
     for (const instance of instances) {
-      t.true(isString(instance.id));
-      t.true(isString(instance.status));
-      t.true(isString(instance.requestDate));
+      assert.ok(isString(instance.id));
+      assert.ok(isString(instance.status));
+      assert.ok(isString(instance.requestDate));
     }
   });
 
   /**
    *
    */
-  test('retrieve asynchronously executed report result and return report execution result', async (t) => {
+  test('retrieve asynchronously executed report result and return report execution result', async () => {
     const result = await conn.analytics
       .report(reportId)
       .instance(instanceId)
       .retrieve();
-    t.true(isObject(result));
-    t.true(isObject(result.attributes));
-    t.true(result.attributes.id === instanceId);
-    t.true(isString(result.attributes.status));
-    t.true(isString(result.attributes.requestDate));
+    assert.ok(isObject(result));
+    assert.ok(isObject(result.attributes));
+    assert.ok(result.attributes.id === instanceId);
+    assert.ok(isString(result.attributes.status));
+    assert.ok(isString(result.attributes.requestDate));
     if (result.attributes.status === 'Success') {
-      t.true(isObject(result.reportMetadata));
-      t.true(result.reportMetadata.id === reportId);
+      assert.ok(isObject(result.reportMetadata));
+      assert.ok(result.reportMetadata.id === reportId);
     }
   });
 
   /**
    *
    */
-  test('explain query plan of report and get explain result', async (t) => {
+  test('explain query plan of report and get explain result', async () => {
     const result = await conn.analytics.report(reportId).explain();
-    t.true(Array.isArray(result.plans));
+    assert.ok(Array.isArray(result.plans));
     for (const plan of result.plans) {
-      t.true(isNumber(plan.cardinality));
-      t.true(Array.isArray(plan.fields));
-      t.true(isString(plan.leadingOperationType));
-      t.true(isNumber(plan.relativeCost));
-      t.true(isNumber(plan.sobjectCardinality));
-      t.true(isString(plan.sobjectType));
+      assert.ok(isNumber(plan.cardinality));
+      assert.ok(Array.isArray(plan.fields));
+      assert.ok(isString(plan.leadingOperationType));
+      assert.ok(isNumber(plan.relativeCost));
+      assert.ok(isNumber(plan.sobjectCardinality));
+      assert.ok(isString(plan.sobjectType));
     }
   });
 
   /**
    *
    */
-  test('clone report and get the cloned report', async (t) => {
+  test('clone report and get the cloned report', async () => {
     const result = await conn.analytics
       .report(reportId)
       .clone('Lead List Report Clone');
-    t.true(isObject(result.reportMetadata));
+    assert.ok(isObject(result.reportMetadata));
     cloneId = result.reportMetadata.id;
-    t.true(cloneId !== reportId);
-    t.true(result.reportMetadata.name === 'Lead List Report Clone');
+    assert.ok(cloneId !== reportId);
+    assert.ok(result.reportMetadata.name === 'Lead List Report Clone');
   });
 
   /**
    *
    */
-  test('destroy report and confirm the report destroyed', async (t) => {
+  test('destroy report and confirm the report destroyed', async () => {
     await conn.analytics.report(cloneId).destroy();
     try {
       await conn.analytics.report(cloneId).describe();
-      t.fail();
+      assert.fail();
     } catch (err) {
-      t.true(isObject(err));
-      t.true(err.name === 'NOT_FOUND');
+      assert.ok(isObject(err));
+      assert.ok(err.name === 'NOT_FOUND');
     }
   });
 });
@@ -213,7 +213,7 @@ test.group('report', (test) => {
 /**
  *
  */
-test.group('dashboard', (test) => {
+describe('dashboard', () => {
   let dashboardId: string;
   let dashboardFolderId: string;
   let dashboardMetadata: any;
@@ -222,7 +222,7 @@ test.group('dashboard', (test) => {
   /**
    *
    */
-  test.before(async () => {
+  beforeAll(async () => {
     const res = await conn
       .sobject('Dashboard')
       .findOne({ Title: 'Lead List Dashboard' }, 'Id')
@@ -238,24 +238,24 @@ test.group('dashboard', (test) => {
   /**
    *
    */
-  test('list recent dashboards and return dashboard infomation list', async (t) => {
+  test('list recent dashboards and return dashboard infomation list', async () => {
     const dashboards = await conn.analytics.dashboards();
-    t.true(Array.isArray(dashboards));
+    assert.ok(Array.isArray(dashboards));
     for (const dashboard of dashboards) {
-      t.true(isString(dashboard.id));
-      t.true(isString(dashboard.name));
-      t.true(isString(dashboard.url));
+      assert.ok(isString(dashboard.id));
+      assert.ok(isString(dashboard.name));
+      assert.ok(isString(dashboard.url));
     }
   });
 
   /**
    *
    */
-  test('describe dashboard and return dashboard metadata', async (t) => {
+  test('describe dashboard and return dashboard metadata', async () => {
     const meta = await conn.analytics.dashboard(dashboardId).describe();
-    t.true(isObject(meta));
-    t.true(Array.isArray(meta.components));
-    t.true(isObject(meta.layout));
+    assert.ok(isObject(meta));
+    assert.ok(Array.isArray(meta.components));
+    assert.ok(isObject(meta.layout));
     dashboardFolderId = meta.folderId;
     dashboardMetadata = clone(meta);
   });
@@ -263,78 +263,80 @@ test.group('dashboard', (test) => {
   /**
    *
    */
-  test('get all dashboard components and return all components', async (t) => {
+  test('get all dashboard components and return all components', async () => {
     const meta = await conn.analytics.dashboard(dashboardId).components();
-    t.true(dashboardMetadata.components.length === meta.componentData.length);
+    assert.ok(
+      dashboardMetadata.components.length === meta.componentData.length,
+    );
   });
 
   /**
    *
    */
-  test('get one dashboard component and return one component', async (t) => {
+  test('get one dashboard component and return one component', async () => {
     const meta = await conn.analytics
       .dashboard(dashboardId)
       .components(dashboardMetadata.components[0].id);
-    t.true(meta.componentData.length === 1);
+    assert.ok(meta.componentData.length === 1);
   });
 
   /**
    *
    */
-  test('get three dashboard components and return three components', async (t) => {
+  test('get three dashboard components and return three components', async () => {
     const ids = [
       dashboardMetadata.components[0].id,
       dashboardMetadata.components[1].id,
       dashboardMetadata.components[2].id,
     ];
     const meta = await conn.analytics.dashboard(dashboardId).components(ids);
-    t.true(meta.componentData.length === 3);
+    assert.ok(meta.componentData.length === 3);
   });
 
   /**
    *
    */
-  test('get status of dashboard and return dashboard status metadata', async (t) => {
+  test('get status of dashboard and return dashboard status metadata', async () => {
     const meta = await conn.analytics.dashboard(dashboardId).status();
-    t.true(isObject(meta));
-    t.true(Array.isArray(meta.componentStatus));
+    assert.ok(isObject(meta));
+    assert.ok(Array.isArray(meta.componentStatus));
   });
 
   /**
    *
    */
-  test('clone dashboard and return cloned dashboard', async (t) => {
+  test('clone dashboard and return cloned dashboard', async () => {
     const result = await conn.analytics.dashboard(dashboardId).clone({
       name: 'Lead List Dashboard Clone',
       folderId: dashboardFolderId,
     });
-    t.true(isObject(result.attributes));
+    assert.ok(isObject(result.attributes));
     cloneDashboardId = result.attributes.dashboardId;
-    t.true(cloneDashboardId !== dashboardId);
-    t.true(result.name === 'Lead List Dashboard Clone');
+    assert.ok(cloneDashboardId !== dashboardId);
+    assert.ok(result.name === 'Lead List Dashboard Clone');
   });
 
   /**
    *
    */
-  test('refresh dashboard and return refreshed dashboard metadata', async (t) => {
+  test('refresh dashboard and return refreshed dashboard metadata', async () => {
     // refresh cloned dashboard, in order to prevent frequent refresh error.
     const meta = await conn.analytics.dashboard(cloneDashboardId).refresh();
-    t.true(isObject(meta));
-    t.true(isString(meta.statusUrl));
+    assert.ok(isObject(meta));
+    assert.ok(isString(meta.statusUrl));
   });
 
   /**
    *
    */
-  test('destroy dashboard and confirm the dashboard destroyed', async (t) => {
+  test('destroy dashboard and confirm the dashboard destroyed', async () => {
     await conn.analytics.dashboard(cloneDashboardId).destroy();
     try {
       await conn.analytics.dashboard(cloneDashboardId).describe();
-      t.fail();
+      assert.fail();
     } catch (err) {
-      t.true(isObject(err));
-      t.true(err.name === 'ENTITY_IS_DELETED');
+      assert.ok(isObject(err));
+      assert.ok(err.name === 'ENTITY_IS_DELETED');
     }
   });
 });
@@ -342,6 +344,6 @@ test.group('dashboard', (test) => {
 /**
  *
  */
-test.after('close connection', async () => {
+afterAll(async () => {
   await connMgr.closeConnection(conn);
 });
