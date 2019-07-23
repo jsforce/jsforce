@@ -22,11 +22,9 @@ describe('describe sobject', () => {
     const so = await conn.sobject('Account').describe();
     assert.ok(so.name === 'Account');
     assert.ok(Array.isArray(so.fields));
-    /*
     const so2 = await conn.sobject('Account').describe$();
     assert.ok(so === so2);
-    */
-    const so3 = conn.sobject('Account').describe$();
+    const so3 = conn.sobject('Account').describe$$();
     assert.ok(so === so3);
     const so4 = await conn.sobject('Account').describe();
     assert.ok(so !== so4);
@@ -42,11 +40,9 @@ describe('describe sobject', () => {
     assert.ok(isString(res.sobjects[0].name));
     assert.ok(isString(res.sobjects[0].label));
     assert.ok(isUndefined(res.sobjects[0].fields));
-    /*
     const res2 = await conn.describeGlobal$();
     assert.ok(res === res2);
-    */
-    const res3 = conn.describeGlobal$();
+    const res3 = conn.describeGlobal$$();
     assert.ok(res === res3);
     const res4 = await conn.describeGlobal();
     assert.ok(res !== res4);
