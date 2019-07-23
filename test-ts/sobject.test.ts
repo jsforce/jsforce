@@ -252,7 +252,7 @@ test('list layouts (cache-first) and return Account layout information', async (
  *
  */
 test('get cached layouts and return Account layout information immediately', () => {
-  const res = Account.layouts$();
+  const res = Account.layouts$$();
   assert.ok(Array.isArray(res.layouts));
   for (const layout of res.layouts) {
     assert.ok(layout.id === null || isString(layout.id));
@@ -303,7 +303,7 @@ test('list named layouts (cache-first) and return User named layout information'
 });
 
 test('get cached named layouts and return User named layout information immediately', () => {
-  const res = conn.sobject('User').layouts$('UserAlt');
+  const res = conn.sobject('User').layouts$$('UserAlt');
   assert.ok(Array.isArray(res.layouts));
   for (const layout of res.layouts) {
     assert.ok(layout.id === null || isString(layout.id));
@@ -358,7 +358,7 @@ test('list compact layouts (cache-first) and return Account comact layout inform
  *
  */
 test('get cached compact layouts and return Account comapct layout information immediately', () => {
-  const res = Account.compactLayouts$();
+  const res = Account.compactLayouts$$();
   assert.ok(Array.isArray(res.compactLayouts));
   for (const clayout of res.compactLayouts) {
     assert.ok(clayout.id === null || isString(clayout.id));
@@ -404,7 +404,7 @@ test('list approval layouts (cache-first) and return Account approval layout inf
  *
  */
 test('get cached approval layouts and return Account approval layout information immediately', () => {
-  const res = Account.approvalLayouts$();
+  const res = Account.approvalLayouts$$();
   assert.ok(Array.isArray(res.approvalLayouts));
   for (const alayout of res.approvalLayouts) {
     assert.ok(alayout.id === null || isString(alayout.id));
