@@ -11,6 +11,10 @@ const connMgr = new ConnectionManager(config);
 const conn: any = connMgr.createConnection();
 conn.metadata.pollTimeout = 40 * 1000; // adjust poll timeout to test timeout.
 
+// TODO: remove the overriding of connection version when updated the default API version.
+// At least ver 45.0 is needed to pass rename test, otherwise it fails `enableLicensing` not valid error.
+conn.version = '45.0';
+
 /**
  *
  */
