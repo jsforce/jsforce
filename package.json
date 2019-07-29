@@ -10,7 +10,7 @@
     "database.com"
   ],
   "homepage": "http://github.com/jsforce/jsforce",
-  "version": "1.9.1",
+  "version": "1.9.2",
   "repository": {
     "type": "git",
     "url": "git://github.com/jsforce/jsforce.git"
@@ -64,7 +64,7 @@
     "csv-stringify": "^1.0.4",
     "faye": "^1.2.0",
     "inherits": "^2.0.1",
-    "lodash": "^4.11.1",
+    "lodash": "^4.17.14",
     "multistream": "^2.0.5",
     "opn": "^5.3.0",
     "promise": "^7.1.1",
@@ -89,10 +89,10 @@
     "gulp-sourcemaps": "^1.12.1",
     "gulp-uglify": "^1.5.4",
     "intelli-espower-loader": "^1.0.1",
-    "jsdoc": "^3.5.5",
+    "jsdoc": "^3.6.3",
     "mocha": "^5.2.0",
     "power-assert": "^1.6.0",
-    "puppeteer": "^1.6.1",
+    "puppeteer": "^1.18.1",
     "require-swapper": "^0.1.7",
     "testem": "^2.8.2",
     "through2": "^2.0.3",
