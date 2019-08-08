@@ -18,6 +18,12 @@ jobs:
             - node_modules
           key: jsforce-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
       - run:
+          name: Lint and Type Check
+          command: |
+            npm run lint
+            npm run build:types
+            npm run typecheck
+      - run:
           name: Test
           command: npm test
   test_browser:
