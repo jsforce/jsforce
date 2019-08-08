@@ -36,7 +36,7 @@
     "build:module": "NODE_ENV=module npm run build:src -- -d module",
     "build:src": "babel src --extensions \".ts\"",
     "lint": "eslint --ext .ts,.js src test-ts",
-    "typec": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
     "test": "jest `if (test \"${SF_POOL_USERNAME}\" = \"\"); then echo \"-w 1\"; else echo \"-w 5\"; fi`"
   },
   "directories": {
