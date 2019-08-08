@@ -4,11 +4,13 @@
 import { Logger, getLogger } from './util/logger';
 import {
   Record,
-  UnsavedRecord,
   DescribeLayoutResult,
   DescribeCompactLayoutsResult,
   DescribeApprovalLayoutsResult,
   Optional,
+  DmlOptions,
+  SaveResult,
+  RetrieveOptions,
 } from './types';
 import Connection from './connection';
 import RecordReference from './record-reference';
@@ -109,7 +111,13 @@ export default class SObject {
   /**
    * Create records
    */
-  create(records: UnsavedRecord | UnsavedRecord[], options?: Object) {
+  create(records: Record, options?: DmlOptions): Promise<SaveResult>;
+  create(records: Record[], options?: DmlOptions): Promise<SaveResult[]>;
+  create(
+    records: Record | Record[],
+    options?: DmlOptions,
+  ): Promise<SaveResult | SaveResult[]>;
+  async create(records: Record | Record[], options?: DmlOptions) {
     return this._conn.create(this.type, records, options);
   }
 
@@ -121,6 +129,12 @@ export default class SObject {
   /**
    * Retrieve specified records
    */
+  retrieve(ids: string, options?: RetrieveOptions): Promise<Record>;
+  retrieve(ids: string[], options?: RetrieveOptions): Promise<Record[]>;
+  retrieve(
+    ids: string | string[],
+    options?: RetrieveOptions,
+  ): Promise<Record | Record[]>;
   retrieve(ids: string | string[], options?: Object) {
     return this._conn.retrieve(this.type, ids, options);
   }
@@ -128,21 +142,48 @@ export default class SObject {
   /**
    * Update records
    */
-  update(records: Record | Record[], options?: Object) {
+  update(records: Record, options?: DmlOptions): Promise<SaveResult>;
+  update(records: Record[], options?: DmlOptions): Promise<SaveResult[]>;
+  update(
+    records: Record | Record[],
+    options?: DmlOptions,
+  ): Promise<SaveResult | SaveResult[]>;
+  update(records: Record | Record[], options?: DmlOptions) {
     return this._conn.update(this.type, records, options);
   }
 
   /**
    * Upsert records
    */
-  upsert(records: Record | Record[], extIdField: string, options?: Object) {
+  upsert(
+    records: Record,
+    extIdField: string,
+    options?: DmlOptions,
+  ): Promise<SaveResult>;
+  upsert(
+    records: Record[],
+    extIdField: string,
+    options?: DmlOptions,
+  ): Promise<SaveResult[]>;
+  upsert(
+    records: Record | Record[],
+    extIdField: string,
+    options?: DmlOptions,
+  ): Promise<SaveResult | SaveResult[]>;
+  upsert(records: Record | Record[], extIdField: string, options?: DmlOptions) {
     return this._conn.upsert(this.type, records, extIdField, options);
   }
 
   /**
    * Delete records
    */
-  destroy(ids: string | string[], options?: Object) {
+  destroy(ids: string, options?: DmlOptions): Promise<SaveResult>;
+  destroy(ids: string[], options?: DmlOptions): Promise<SaveResult[]>;
+  destroy(
+    ids: string | string[],
+    options?: DmlOptions,
+  ): Promise<SaveResult | SaveResult[]>;
+  destroy(ids: string | string[], options?: DmlOptions) {
     return this._conn.destroy(this.type, ids, options);
   }
 

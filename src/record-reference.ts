@@ -2,7 +2,7 @@
  *
  */
 import Connection from './connection';
-import { UnsavedRecord } from './types';
+import { Record, RetrieveOptions, DmlOptions } from './types';
 
 /**
  * Remote reference to record information
@@ -24,22 +24,22 @@ export default class RecordReference {
   /**
    * Retrieve record field information
    */
-  retrieve(options?: Object) {
+  retrieve(options?: RetrieveOptions) {
     return this._conn.retrieve(this.type, this.id, options);
   }
 
   /**
    * Update record field information
    */
-  update(record: UnsavedRecord, options?: Object) {
-    const _record = Object.assign({}, record, { Id: this.id });
+  async update(record: Record, options?: DmlOptions) {
+    const _record = { ...record, Id: this.id };
     return this._conn.update(this.type, _record, options);
   }
 
   /**
    * Delete record field
    */
-  destroy(options?: Object) {
+  destroy(options?: DmlOptions) {
     return this._conn.destroy(this.type, this.id, options);
   }
 

@@ -2,9 +2,10 @@ import assert from 'assert';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject } from './util';
+import { Record } from '../src/types';
 
 const connMgr = new ConnectionManager(config);
-const conn: any = connMgr.createConnection();
+const conn = connMgr.createConnection();
 
 /**
  *
@@ -18,14 +19,14 @@ beforeAll(async () => {
  */
 describe('single record crud', () => {
   let accountId: string;
-  let account: any;
+  let account: Record;
 
   //
   test('create account and get created obj', async () => {
     const ret = await conn.sobject('Account').create({ Name: 'Hello' });
     assert.ok(ret.success);
     assert.ok(typeof ret.id === 'string');
-    accountId = ret.id;
+    accountId = ret.id as string;
   });
 
   //
@@ -40,7 +41,7 @@ describe('single record crud', () => {
   test('update account, get successful result, and retrieve the updated record', async () => {
     const ret = await conn
       .sobject('Account')
-      .record(account.Id)
+      .record(account.Id as string)
       .update({ Name: 'Hello2' });
     assert.ok(ret.success);
     const record = await conn
@@ -60,7 +61,7 @@ describe('single record crud', () => {
     };
     const ret = await conn
       .sobject('Account')
-      .record(account.Id)
+      .record(account.Id as string)
       .update({ Name: 'Hello3' }, options);
     assert.ok(ret.success);
     const record = await conn
@@ -77,7 +78,7 @@ describe('single record crud', () => {
  */
 describe('multiple records crud', () => {
   let accountIds: string[];
-  let accounts: any[];
+  let accounts: Record[];
 
   //
   test('create multiple accounts and get successfull results', async () => {
@@ -85,19 +86,18 @@ describe('multiple records crud', () => {
       .sobject('Account')
       .create([{ Name: 'Account #1' }, { Name: 'Account #2' }]);
     assert.ok(Array.isArray(rets));
-    rets.forEach((ret: any) => {
-      // TODO: remove any
+    rets.forEach((ret) => {
       assert.ok(ret.success);
       assert.ok(typeof ret.id === 'string');
-      accountIds = rets.map(({ id }: any) => id); // TODO: remoe any
     });
+    accountIds = rets.map(({ id }) => id as string);
   });
 
   //
   test('retrieve multiple accounts and get specified records', async () => {
     const records = await conn.sobject('Account').retrieve(accountIds);
     assert.ok(Array.isArray(records));
-    records.forEach((record: any, i: number) => {
+    records.forEach((record, i) => {
       assert.ok(typeof record.Id === 'string');
       assert.ok(isObject(record.attributes));
       assert.ok(record.Name === `Account #${i + 1}`);
@@ -110,17 +110,17 @@ describe('multiple records crud', () => {
     const rets = await conn
       .sobject('Account')
       .update(
-        accounts.map(({ Id, Name }) => ({ Id, Name: `Updated ${Name}` })),
+        accounts.map(
+          ({ Id, Name }) => ({ Id, Name: `Updated ${Name}` } as Record),
+        ),
       );
     assert.ok(Array.isArray(rets));
-    rets.forEach((ret: any) => {
-      // TODO: remove any
+    rets.forEach((ret) => {
       assert.ok(ret.success);
     });
     const records = await conn.sobject('Account').retrieve(accountIds);
     assert.ok(Array.isArray(records));
-    records.forEach((record: any, i: number) => {
-      // TODO: remove any
+    records.forEach((record, i) => {
       assert.ok(record.Name === `Updated Account #${i + 1}`);
       assert.ok(isObject(record.attributes));
     });
@@ -130,7 +130,7 @@ describe('multiple records crud', () => {
   test('delete multiple accounts, get successfull results, and not get any records', async () => {
     const rets = await conn.sobject('Account').destroy(accountIds);
     assert.ok(Array.isArray(rets));
-    rets.forEach((ret: any) => {
+    rets.forEach((ret) => {
       assert.ok(ret.success);
     });
     const records = await conn.sobject('Account').retrieve(accountIds);
@@ -148,13 +148,16 @@ describe('upsert', () => {
   let recId: string;
   //
   test('upsert not exisiting record and get successfull result', async () => {
-    const rec = { Name: 'New Record', [config.upsertField]: extId };
+    const rec = {
+      Name: 'New Record',
+      [config.upsertField]: extId,
+    };
     const ret = await conn
       .sobject(config.upsertTable)
       .upsert(rec, config.upsertField);
     assert.ok(ret.success);
     assert.ok(typeof ret.id === 'string');
-    recId = ret.id;
+    recId = ret.id as string;
   });
 
   test('upsert already existing record, get successfull result, and get updated record', async () => {

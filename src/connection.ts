@@ -7,7 +7,6 @@ import {
   HttpResponse,
   Callback,
   Record,
-  UnsavedRecord,
   SaveResult,
   DescribeGlobalResult,
   DescribeSObjectResult,
@@ -20,6 +19,8 @@ import {
   Optional,
   SignedRequestObject,
   SaveError,
+  DmlOptions,
+  RetrieveOptions,
 } from './types';
 import { StreamPromise } from './util/promise';
 import Transport, {
@@ -193,21 +194,6 @@ function toSaveResult(id: Optional<string>, err: SaveError): SaveResult {
  * Constant of maximum records num in DML operation (update/delete)
  */
 const MAX_DML_COUNT = 200;
-
-/**
- *
- */
-type RetrieveOptions = {
-  allOrNone?: boolean;
-  fields?: string[];
-  headers?: { [name: string]: string };
-};
-
-type DmlOptions = {
-  allOrNone?: boolean;
-  allowRecursive?: boolean;
-  headers?: { [name: string]: string };
-};
 
 /**
  *
@@ -755,11 +741,26 @@ export default class Connection extends EventEmitter {
   /**
    * Retrieve specified records
    */
+  retrieve(
+    type: string,
+    ids: string,
+    options?: RetrieveOptions,
+  ): Promise<Record>;
+  retrieve(
+    type: string,
+    ids: string[],
+    options?: RetrieveOptions,
+  ): Promise<Record[]>;
+  retrieve(
+    type: string,
+    ids: string | string[],
+    options?: RetrieveOptions,
+  ): Promise<Record | Record[]>;
   async retrieve(
     type: string,
     ids: string | string[],
     options: RetrieveOptions = {},
-  ): Promise<Record | Record[]> {
+  ) {
     return Array.isArray(ids)
       ? // check the version whether SObject collection API is supported (42.0)
         this._ensureVersion(42)
@@ -827,9 +828,30 @@ export default class Connection extends EventEmitter {
    */
   async create(
     type: string,
-    records: UnsavedRecord | UnsavedRecord[],
+    records: Record,
+    options?: DmlOptions,
+  ): Promise<SaveResult>;
+  async create(
+    type: string,
+    records: Record[],
+    options?: DmlOptions,
+  ): Promise<SaveResult[]>;
+  async create(
+    type: string,
+    records: Record | Record[],
+    options?: DmlOptions,
+  ): Promise<SaveResult | SaveResult[]>;
+  /**
+   *
+   * @param type
+   * @param records
+   * @param options
+   */
+  async create(
+    type: string,
+    records: Record | Record[],
     options: DmlOptions = {},
-  ): Promise<SaveResult | SaveResult[]> {
+  ) {
     const ret = Array.isArray(records)
       ? // check the version whether SObject collection API is supported (42.0)
         this._ensureVersion(42)
@@ -840,11 +862,7 @@ export default class Connection extends EventEmitter {
   }
 
   /** @private */
-  async _createSingle(
-    type: string,
-    record: UnsavedRecord,
-    options: DmlOptions,
-  ): Promise<SaveResult> {
+  async _createSingle(type: string, record: Record, options: DmlOptions) {
     const { Id, type: rtype, attributes, ...rec } = record;
     const sobjectType = type || (attributes && attributes.type) || rtype;
     if (!sobjectType) {
@@ -863,11 +881,7 @@ export default class Connection extends EventEmitter {
   }
 
   /** @private */
-  async _createParallel(
-    type: string,
-    records: UnsavedRecord[],
-    options: DmlOptions,
-  ): Promise<SaveResult[]> {
+  async _createParallel(type: string, records: Record[], options: DmlOptions) {
     if (records.length > this._maxRequest) {
       throw new Error('Exceeded max limit of concurrent call');
     }
@@ -888,7 +902,7 @@ export default class Connection extends EventEmitter {
   /** @private */
   async _createMany(
     type: string,
-    records: UnsavedRecord[],
+    records: Record[],
     options: DmlOptions,
   ): Promise<SaveResult[]> {
     if (records.length === 0) {
@@ -938,6 +952,27 @@ export default class Connection extends EventEmitter {
 
   /**
    * Update records
+   */
+  async update(
+    type: string,
+    records: Record,
+    options?: DmlOptions,
+  ): Promise<SaveResult>;
+  async update(
+    type: string,
+    records: Record[],
+    options?: DmlOptions,
+  ): Promise<SaveResult[]>;
+  async update(
+    type: string,
+    records: Record | Record[],
+    options?: DmlOptions,
+  ): Promise<SaveResult | SaveResult[]>;
+  /**
+   *
+   * @param type
+   * @param records
+   * @param options
    */
   async update(
     type: string,
@@ -1056,6 +1091,24 @@ export default class Connection extends EventEmitter {
    */
   async upsert(
     type: string,
+    records: Record,
+    extIdField: string,
+    options?: DmlOptions,
+  ): Promise<SaveResult>;
+  async upsert(
+    type: string,
+    records: Record[],
+    extIdField: string,
+    options?: DmlOptions,
+  ): Promise<SaveResult[]>;
+  async upsert(
+    type: string,
+    records: Record | Record[],
+    extIdField: string,
+    options?: DmlOptions,
+  ): Promise<SaveResult | SaveResult[]>;
+  async upsert(
+    type: string,
     records: Record | Record[],
     extIdField: string,
     options: DmlOptions = {},
@@ -1100,6 +1153,27 @@ export default class Connection extends EventEmitter {
 
   /**
    * Delete records
+   */
+  async destroy(
+    type: string,
+    ids: string,
+    options?: DmlOptions,
+  ): Promise<SaveResult>;
+  async destroy(
+    type: string,
+    ids: string[],
+    options?: DmlOptions,
+  ): Promise<SaveResult[]>;
+  async destroy(
+    type: string,
+    ids: string | string[],
+    options?: DmlOptions,
+  ): Promise<SaveResult | SaveResult[]>;
+  /**
+   *
+   * @param type
+   * @param ids
+   * @param options
    */
   async destroy(
     type: string,

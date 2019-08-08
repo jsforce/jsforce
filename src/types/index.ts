@@ -32,12 +32,7 @@ export type HttpResponse = {
 
 export type Record = {
   [field: string]: any;
-  Id: string;
-  attributes?: { type: string };
-};
-
-export type UnsavedRecord = {
-  [field: string]: any;
+  Id?: string;
   attributes?: { type: string };
 };
 
@@ -51,6 +46,18 @@ export type SaveResult = {
   success: boolean;
   id?: string;
   errors: SaveError[];
+};
+
+export type RetrieveOptions = {
+  allOrNone?: boolean;
+  fields?: string[];
+  headers?: { [name: string]: string };
+};
+
+export type DmlOptions = {
+  allOrNone?: boolean;
+  allowRecursive?: boolean;
+  headers?: { [name: string]: string };
 };
 
 export type SignedRequestObject = {
