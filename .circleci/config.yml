@@ -21,6 +21,7 @@ jobs:
           name: Lint and Type Check
           command: |
             npm run lint
+            npm run build:types
             npm run typecheck
       - run:
           name: Test
