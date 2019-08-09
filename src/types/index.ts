@@ -134,7 +134,7 @@ type ChildRelationship = {
   cascadeDelete: boolean;
   childSObject: Optional<string>;
   deprecatedAndHidden: boolean;
-  field: 'WhatId';
+  field: Optional<string>;
   junctionIdListNames: string[];
   junctionReferenceTo: string[];
   relationshipName: Optional<string>;
