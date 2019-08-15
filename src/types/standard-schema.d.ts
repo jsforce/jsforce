@@ -1,4 +1,4 @@
-import { Schema, SObjectDefinition, DateString } from './schema';
+import { Schema, SObjectDefinition, DateString, BlobString, Address } from '.';
 
 type Fields$AcceptedEventRelation = {
   //
@@ -28,7 +28,9 @@ type ChildRelationships$AcceptedEventRelation = {
   //
 };
 
-interface SObjectDefinition$AcceptedEventRelation extends SObjectDefinition {
+interface SObjectDefinition$AcceptedEventRelation
+  extends SObjectDefinition<'AcceptedEventRelation'> {
+  Name: 'AcceptedEventRelation';
   Fields: Fields$AcceptedEventRelation;
   ParentReferences: ParentReferences$AcceptedEventRelation;
   ChildRelationships: ChildRelationships$AcceptedEventRelation;
@@ -50,7 +52,7 @@ type Fields$Account = {
   BillingLatitude: number | null;
   BillingLongitude: number | null;
   BillingGeocodeAccuracy: string | null;
-  BillingAddress: string | null;
+  BillingAddress: Address | null;
   ShippingStreet: string | null;
   ShippingCity: string | null;
   ShippingState: string | null;
@@ -59,7 +61,7 @@ type Fields$Account = {
   ShippingLatitude: number | null;
   ShippingLongitude: number | null;
   ShippingGeocodeAccuracy: string | null;
-  ShippingAddress: string | null;
+  ShippingAddress: Address | null;
   Phone: string | null;
   Fax: string | null;
   Website: string | null;
@@ -141,7 +143,8 @@ type ChildRelationships$Account = {
   WorkOrders: SObjectDefinition$WorkOrder;
 };
 
-interface SObjectDefinition$Account extends SObjectDefinition {
+interface SObjectDefinition$Account extends SObjectDefinition<'Account'> {
+  Name: 'Account';
   Fields: Fields$Account;
   ParentReferences: ParentReferences$Account;
   ChildRelationships: ChildRelationships$Account;
@@ -170,7 +173,7 @@ type Fields$AccountBrand = {
   Latitude: number | null;
   Longitude: number | null;
   GeocodeAccuracy: string | null;
-  Address: string | null;
+  Address: Address | null;
   Website: string | null;
   Email: string | null;
   Phone: string | null;
@@ -193,7 +196,9 @@ type ChildRelationships$AccountBrand = {
   ContentDocumentLinks: SObjectDefinition$ContentDocumentLink;
 };
 
-interface SObjectDefinition$AccountBrand extends SObjectDefinition {
+interface SObjectDefinition$AccountBrand
+  extends SObjectDefinition<'AccountBrand'> {
+  Name: 'AccountBrand';
   Fields: Fields$AccountBrand;
   ParentReferences: ParentReferences$AccountBrand;
   ChildRelationships: ChildRelationships$AccountBrand;
@@ -222,7 +227,9 @@ type ChildRelationships$AccountBrandShare = {
   //
 };
 
-interface SObjectDefinition$AccountBrandShare extends SObjectDefinition {
+interface SObjectDefinition$AccountBrandShare
+  extends SObjectDefinition<'AccountBrandShare'> {
+  Name: 'AccountBrandShare';
   Fields: Fields$AccountBrandShare;
   ParentReferences: ParentReferences$AccountBrandShare;
   ChildRelationships: ChildRelationships$AccountBrandShare;
@@ -232,7 +239,7 @@ type Fields$AccountChangeEvent = {
   //
   Id: string | null;
   ReplayId: string | null;
-  ChangeEventHeader: string;
+  ChangeEventHeader: any;
   Name: string | null;
   LastName: string | null;
   FirstName: string | null;
@@ -247,7 +254,7 @@ type Fields$AccountChangeEvent = {
   BillingLatitude: number | null;
   BillingLongitude: number | null;
   BillingGeocodeAccuracy: string | null;
-  BillingAddress: string | null;
+  BillingAddress: Address | null;
   ShippingStreet: string | null;
   ShippingCity: string | null;
   ShippingState: string | null;
@@ -256,7 +263,7 @@ type Fields$AccountChangeEvent = {
   ShippingLatitude: number | null;
   ShippingLongitude: number | null;
   ShippingGeocodeAccuracy: string | null;
-  ShippingAddress: string | null;
+  ShippingAddress: Address | null;
   Phone: string | null;
   Fax: string | null;
   Website: string | null;
@@ -283,7 +290,9 @@ type ChildRelationships$AccountChangeEvent = {
   //
 };
 
-interface SObjectDefinition$AccountChangeEvent extends SObjectDefinition {
+interface SObjectDefinition$AccountChangeEvent
+  extends SObjectDefinition<'AccountChangeEvent'> {
+  Name: 'AccountChangeEvent';
   Fields: Fields$AccountChangeEvent;
   ParentReferences: ParentReferences$AccountChangeEvent;
   ChildRelationships: ChildRelationships$AccountChangeEvent;
@@ -316,7 +325,9 @@ type ChildRelationships$AccountContactRole = {
   //
 };
 
-interface SObjectDefinition$AccountContactRole extends SObjectDefinition {
+interface SObjectDefinition$AccountContactRole
+  extends SObjectDefinition<'AccountContactRole'> {
+  Name: 'AccountContactRole';
   Fields: Fields$AccountContactRole;
   ParentReferences: ParentReferences$AccountContactRole;
   ChildRelationships: ChildRelationships$AccountContactRole;
@@ -326,7 +337,7 @@ type Fields$AccountContactRoleChangeEvent = {
   //
   Id: string | null;
   ReplayId: string | null;
-  ChangeEventHeader: string;
+  ChangeEventHeader: any;
   CreatedDate: DateString | null;
   CreatedById: string | null;
   LastModifiedDate: DateString | null;
@@ -346,7 +357,8 @@ type ChildRelationships$AccountContactRoleChangeEvent = {
 };
 
 interface SObjectDefinition$AccountContactRoleChangeEvent
-  extends SObjectDefinition {
+  extends SObjectDefinition<'AccountContactRoleChangeEvent'> {
+  Name: 'AccountContactRoleChangeEvent';
   Fields: Fields$AccountContactRoleChangeEvent;
   ParentReferences: ParentReferences$AccountContactRoleChangeEvent;
   ChildRelationships: ChildRelationships$AccountContactRoleChangeEvent;
@@ -388,7 +400,9 @@ type ChildRelationships$AccountFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$AccountFeed extends SObjectDefinition {
+interface SObjectDefinition$AccountFeed
+  extends SObjectDefinition<'AccountFeed'> {
+  Name: 'AccountFeed';
   Fields: Fields$AccountFeed;
   ParentReferences: ParentReferences$AccountFeed;
   ChildRelationships: ChildRelationships$AccountFeed;
@@ -416,7 +430,9 @@ type ChildRelationships$AccountHistory = {
   //
 };
 
-interface SObjectDefinition$AccountHistory extends SObjectDefinition {
+interface SObjectDefinition$AccountHistory
+  extends SObjectDefinition<'AccountHistory'> {
+  Name: 'AccountHistory';
   Fields: Fields$AccountHistory;
   ParentReferences: ParentReferences$AccountHistory;
   ChildRelationships: ChildRelationships$AccountHistory;
@@ -452,7 +468,9 @@ type ChildRelationships$AccountPartner = {
   //
 };
 
-interface SObjectDefinition$AccountPartner extends SObjectDefinition {
+interface SObjectDefinition$AccountPartner
+  extends SObjectDefinition<'AccountPartner'> {
+  Name: 'AccountPartner';
   Fields: Fields$AccountPartner;
   ParentReferences: ParentReferences$AccountPartner;
   ChildRelationships: ChildRelationships$AccountPartner;
@@ -484,7 +502,9 @@ type ChildRelationships$AccountShare = {
   //
 };
 
-interface SObjectDefinition$AccountShare extends SObjectDefinition {
+interface SObjectDefinition$AccountShare
+  extends SObjectDefinition<'AccountShare'> {
+  Name: 'AccountShare';
   Fields: Fields$AccountShare;
   ParentReferences: ParentReferences$AccountShare;
   ChildRelationships: ChildRelationships$AccountShare;
@@ -520,7 +540,9 @@ type ChildRelationships$ActionLinkGroupTemplate = {
   ActionLinkTemplates: SObjectDefinition$ActionLinkTemplate;
 };
 
-interface SObjectDefinition$ActionLinkGroupTemplate extends SObjectDefinition {
+interface SObjectDefinition$ActionLinkGroupTemplate
+  extends SObjectDefinition<'ActionLinkGroupTemplate'> {
+  Name: 'ActionLinkGroupTemplate';
   Fields: Fields$ActionLinkGroupTemplate;
   ParentReferences: ParentReferences$ActionLinkGroupTemplate;
   ChildRelationships: ChildRelationships$ActionLinkGroupTemplate;
@@ -561,7 +583,9 @@ type ChildRelationships$ActionLinkTemplate = {
   //
 };
 
-interface SObjectDefinition$ActionLinkTemplate extends SObjectDefinition {
+interface SObjectDefinition$ActionLinkTemplate
+  extends SObjectDefinition<'ActionLinkTemplate'> {
+  Name: 'ActionLinkTemplate';
   Fields: Fields$ActionLinkTemplate;
   ParentReferences: ParentReferences$ActionLinkTemplate;
   ChildRelationships: ChildRelationships$ActionLinkTemplate;
@@ -619,7 +643,9 @@ type ChildRelationships$ActivityHistory = {
   //
 };
 
-interface SObjectDefinition$ActivityHistory extends SObjectDefinition {
+interface SObjectDefinition$ActivityHistory
+  extends SObjectDefinition<'ActivityHistory'> {
+  Name: 'ActivityHistory';
   Fields: Fields$ActivityHistory;
   ParentReferences: ParentReferences$ActivityHistory;
   ChildRelationships: ChildRelationships$ActivityHistory;
@@ -650,7 +676,9 @@ type ChildRelationships$AdditionalNumber = {
   //
 };
 
-interface SObjectDefinition$AdditionalNumber extends SObjectDefinition {
+interface SObjectDefinition$AdditionalNumber
+  extends SObjectDefinition<'AdditionalNumber'> {
+  Name: 'AdditionalNumber';
   Fields: Fields$AdditionalNumber;
   ParentReferences: ParentReferences$AdditionalNumber;
   ChildRelationships: ChildRelationships$AdditionalNumber;
@@ -669,7 +697,9 @@ type ChildRelationships$AggregateResult = {
   //
 };
 
-interface SObjectDefinition$AggregateResult extends SObjectDefinition {
+interface SObjectDefinition$AggregateResult
+  extends SObjectDefinition<'AggregateResult'> {
+  Name: 'AggregateResult';
   Fields: Fields$AggregateResult;
   ParentReferences: ParentReferences$AggregateResult;
   ChildRelationships: ChildRelationships$AggregateResult;
@@ -703,7 +733,9 @@ type ChildRelationships$Announcement = {
   //
 };
 
-interface SObjectDefinition$Announcement extends SObjectDefinition {
+interface SObjectDefinition$Announcement
+  extends SObjectDefinition<'Announcement'> {
+  Name: 'Announcement';
   Fields: Fields$Announcement;
   ParentReferences: ParentReferences$Announcement;
   ChildRelationships: ChildRelationships$Announcement;
@@ -738,7 +770,8 @@ type ChildRelationships$ApexClass = {
   SetupEntityAccessItems: SObjectDefinition$SetupEntityAccess;
 };
 
-interface SObjectDefinition$ApexClass extends SObjectDefinition {
+interface SObjectDefinition$ApexClass extends SObjectDefinition<'ApexClass'> {
+  Name: 'ApexClass';
   Fields: Fields$ApexClass;
   ParentReferences: ParentReferences$ApexClass;
   ChildRelationships: ChildRelationships$ApexClass;
@@ -772,7 +805,9 @@ type ChildRelationships$ApexComponent = {
   //
 };
 
-interface SObjectDefinition$ApexComponent extends SObjectDefinition {
+interface SObjectDefinition$ApexComponent
+  extends SObjectDefinition<'ApexComponent'> {
+  Name: 'ApexComponent';
   Fields: Fields$ApexComponent;
   ParentReferences: ParentReferences$ApexComponent;
   ChildRelationships: ChildRelationships$ApexComponent;
@@ -802,7 +837,9 @@ type ChildRelationships$ApexEmailNotification = {
   //
 };
 
-interface SObjectDefinition$ApexEmailNotification extends SObjectDefinition {
+interface SObjectDefinition$ApexEmailNotification
+  extends SObjectDefinition<'ApexEmailNotification'> {
+  Name: 'ApexEmailNotification';
   Fields: Fields$ApexEmailNotification;
   ParentReferences: ParentReferences$ApexEmailNotification;
   ChildRelationships: ChildRelationships$ApexEmailNotification;
@@ -833,7 +870,8 @@ type ChildRelationships$ApexLog = {
   //
 };
 
-interface SObjectDefinition$ApexLog extends SObjectDefinition {
+interface SObjectDefinition$ApexLog extends SObjectDefinition<'ApexLog'> {
+  Name: 'ApexLog';
   Fields: Fields$ApexLog;
   ParentReferences: ParentReferences$ApexLog;
   ChildRelationships: ChildRelationships$ApexLog;
@@ -870,7 +908,8 @@ type ChildRelationships$ApexPage = {
   SetupEntityAccessItems: SObjectDefinition$SetupEntityAccess;
 };
 
-interface SObjectDefinition$ApexPage extends SObjectDefinition {
+interface SObjectDefinition$ApexPage extends SObjectDefinition<'ApexPage'> {
+  Name: 'ApexPage';
   Fields: Fields$ApexPage;
   ParentReferences: ParentReferences$ApexPage;
   ChildRelationships: ChildRelationships$ApexPage;
@@ -898,7 +937,9 @@ type ChildRelationships$ApexPageInfo = {
   //
 };
 
-interface SObjectDefinition$ApexPageInfo extends SObjectDefinition {
+interface SObjectDefinition$ApexPageInfo
+  extends SObjectDefinition<'ApexPageInfo'> {
+  Name: 'ApexPageInfo';
   Fields: Fields$ApexPageInfo;
   ParentReferences: ParentReferences$ApexPageInfo;
   ChildRelationships: ChildRelationships$ApexPageInfo;
@@ -928,7 +969,9 @@ type ChildRelationships$ApexTestQueueItem = {
   //
 };
 
-interface SObjectDefinition$ApexTestQueueItem extends SObjectDefinition {
+interface SObjectDefinition$ApexTestQueueItem
+  extends SObjectDefinition<'ApexTestQueueItem'> {
+  Name: 'ApexTestQueueItem';
   Fields: Fields$ApexTestQueueItem;
   ParentReferences: ParentReferences$ApexTestQueueItem;
   ChildRelationships: ChildRelationships$ApexTestQueueItem;
@@ -965,7 +1008,9 @@ type ChildRelationships$ApexTestResult = {
   ApexTestResults: SObjectDefinition$ApexTestResultLimits;
 };
 
-interface SObjectDefinition$ApexTestResult extends SObjectDefinition {
+interface SObjectDefinition$ApexTestResult
+  extends SObjectDefinition<'ApexTestResult'> {
+  Name: 'ApexTestResult';
   Fields: Fields$ApexTestResult;
   ParentReferences: ParentReferences$ApexTestResult;
   ChildRelationships: ChildRelationships$ApexTestResult;
@@ -1006,7 +1051,9 @@ type ChildRelationships$ApexTestResultLimits = {
   //
 };
 
-interface SObjectDefinition$ApexTestResultLimits extends SObjectDefinition {
+interface SObjectDefinition$ApexTestResultLimits
+  extends SObjectDefinition<'ApexTestResultLimits'> {
+  Name: 'ApexTestResultLimits';
   Fields: Fields$ApexTestResultLimits;
   ParentReferences: ParentReferences$ApexTestResultLimits;
   ChildRelationships: ChildRelationships$ApexTestResultLimits;
@@ -1049,7 +1096,9 @@ type ChildRelationships$ApexTestRunResult = {
   //
 };
 
-interface SObjectDefinition$ApexTestRunResult extends SObjectDefinition {
+interface SObjectDefinition$ApexTestRunResult
+  extends SObjectDefinition<'ApexTestRunResult'> {
+  Name: 'ApexTestRunResult';
   Fields: Fields$ApexTestRunResult;
   ParentReferences: ParentReferences$ApexTestRunResult;
   ChildRelationships: ChildRelationships$ApexTestRunResult;
@@ -1078,7 +1127,9 @@ type ChildRelationships$ApexTestSuite = {
   ApexClassJunctions: SObjectDefinition$TestSuiteMembership;
 };
 
-interface SObjectDefinition$ApexTestSuite extends SObjectDefinition {
+interface SObjectDefinition$ApexTestSuite
+  extends SObjectDefinition<'ApexTestSuite'> {
+  Name: 'ApexTestSuite';
   Fields: Fields$ApexTestSuite;
   ParentReferences: ParentReferences$ApexTestSuite;
   ChildRelationships: ChildRelationships$ApexTestSuite;
@@ -1121,7 +1172,9 @@ type ChildRelationships$ApexTrigger = {
   //
 };
 
-interface SObjectDefinition$ApexTrigger extends SObjectDefinition {
+interface SObjectDefinition$ApexTrigger
+  extends SObjectDefinition<'ApexTrigger'> {
+  Name: 'ApexTrigger';
   Fields: Fields$ApexTrigger;
   ParentReferences: ParentReferences$ApexTrigger;
   ChildRelationships: ChildRelationships$ApexTrigger;
@@ -1158,7 +1211,9 @@ type ChildRelationships$AppDefinition = {
   AppTabs: SObjectDefinition$AppTabMember;
 };
 
-interface SObjectDefinition$AppDefinition extends SObjectDefinition {
+interface SObjectDefinition$AppDefinition
+  extends SObjectDefinition<'AppDefinition'> {
+  Name: 'AppDefinition';
   Fields: Fields$AppDefinition;
   ParentReferences: ParentReferences$AppDefinition;
   ChildRelationships: ChildRelationships$AppDefinition;
@@ -1216,7 +1271,9 @@ type ChildRelationships$AppMenuItem = {
   //
 };
 
-interface SObjectDefinition$AppMenuItem extends SObjectDefinition {
+interface SObjectDefinition$AppMenuItem
+  extends SObjectDefinition<'AppMenuItem'> {
+  Name: 'AppMenuItem';
   Fields: Fields$AppMenuItem;
   ParentReferences: ParentReferences$AppMenuItem;
   ChildRelationships: ChildRelationships$AppMenuItem;
@@ -1240,7 +1297,9 @@ type ChildRelationships$AppTabMember = {
   //
 };
 
-interface SObjectDefinition$AppTabMember extends SObjectDefinition {
+interface SObjectDefinition$AppTabMember
+  extends SObjectDefinition<'AppTabMember'> {
+  Name: 'AppTabMember';
   Fields: Fields$AppTabMember;
   ParentReferences: ParentReferences$AppTabMember;
   ChildRelationships: ChildRelationships$AppTabMember;
@@ -1274,7 +1333,8 @@ type ChildRelationships$Approval = {
   //
 };
 
-interface SObjectDefinition$Approval extends SObjectDefinition {
+interface SObjectDefinition$Approval extends SObjectDefinition<'Approval'> {
+  Name: 'Approval';
   Fields: Fields$Approval;
   ParentReferences: ParentReferences$Approval;
   ChildRelationships: ChildRelationships$Approval;
@@ -1360,7 +1420,8 @@ type ChildRelationships$Asset = {
   WorkOrderLineItems: SObjectDefinition$WorkOrderLineItem;
 };
 
-interface SObjectDefinition$Asset extends SObjectDefinition {
+interface SObjectDefinition$Asset extends SObjectDefinition<'Asset'> {
+  Name: 'Asset';
   Fields: Fields$Asset;
   ParentReferences: ParentReferences$Asset;
   ChildRelationships: ChildRelationships$Asset;
@@ -1370,7 +1431,7 @@ type Fields$AssetChangeEvent = {
   //
   Id: string | null;
   ReplayId: string | null;
-  ChangeEventHeader: string;
+  ChangeEventHeader: any;
   ContactId: string | null;
   AccountId: string | null;
   ParentId: string | null;
@@ -1404,7 +1465,9 @@ type ChildRelationships$AssetChangeEvent = {
   //
 };
 
-interface SObjectDefinition$AssetChangeEvent extends SObjectDefinition {
+interface SObjectDefinition$AssetChangeEvent
+  extends SObjectDefinition<'AssetChangeEvent'> {
+  Name: 'AssetChangeEvent';
   Fields: Fields$AssetChangeEvent;
   ParentReferences: ParentReferences$AssetChangeEvent;
   ChildRelationships: ChildRelationships$AssetChangeEvent;
@@ -1446,7 +1509,8 @@ type ChildRelationships$AssetFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$AssetFeed extends SObjectDefinition {
+interface SObjectDefinition$AssetFeed extends SObjectDefinition<'AssetFeed'> {
+  Name: 'AssetFeed';
   Fields: Fields$AssetFeed;
   ParentReferences: ParentReferences$AssetFeed;
   ChildRelationships: ChildRelationships$AssetFeed;
@@ -1474,7 +1538,9 @@ type ChildRelationships$AssetHistory = {
   //
 };
 
-interface SObjectDefinition$AssetHistory extends SObjectDefinition {
+interface SObjectDefinition$AssetHistory
+  extends SObjectDefinition<'AssetHistory'> {
+  Name: 'AssetHistory';
   Fields: Fields$AssetHistory;
   ParentReferences: ParentReferences$AssetHistory;
   ChildRelationships: ChildRelationships$AssetHistory;
@@ -1525,7 +1591,9 @@ type ChildRelationships$AssetRelationship = {
   Tasks: SObjectDefinition$Task;
 };
 
-interface SObjectDefinition$AssetRelationship extends SObjectDefinition {
+interface SObjectDefinition$AssetRelationship
+  extends SObjectDefinition<'AssetRelationship'> {
+  Name: 'AssetRelationship';
   Fields: Fields$AssetRelationship;
   ParentReferences: ParentReferences$AssetRelationship;
   ChildRelationships: ChildRelationships$AssetRelationship;
@@ -1567,7 +1635,9 @@ type ChildRelationships$AssetRelationshipFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$AssetRelationshipFeed extends SObjectDefinition {
+interface SObjectDefinition$AssetRelationshipFeed
+  extends SObjectDefinition<'AssetRelationshipFeed'> {
+  Name: 'AssetRelationshipFeed';
   Fields: Fields$AssetRelationshipFeed;
   ParentReferences: ParentReferences$AssetRelationshipFeed;
   ChildRelationships: ChildRelationships$AssetRelationshipFeed;
@@ -1595,7 +1665,9 @@ type ChildRelationships$AssetRelationshipHistory = {
   //
 };
 
-interface SObjectDefinition$AssetRelationshipHistory extends SObjectDefinition {
+interface SObjectDefinition$AssetRelationshipHistory
+  extends SObjectDefinition<'AssetRelationshipHistory'> {
+  Name: 'AssetRelationshipHistory';
   Fields: Fields$AssetRelationshipHistory;
   ParentReferences: ParentReferences$AssetRelationshipHistory;
   ChildRelationships: ChildRelationships$AssetRelationshipHistory;
@@ -1624,7 +1696,8 @@ type ChildRelationships$AssetShare = {
   //
 };
 
-interface SObjectDefinition$AssetShare extends SObjectDefinition {
+interface SObjectDefinition$AssetShare extends SObjectDefinition<'AssetShare'> {
+  Name: 'AssetShare';
   Fields: Fields$AssetShare;
   ParentReferences: ParentReferences$AssetShare;
   ChildRelationships: ChildRelationships$AssetShare;
@@ -1659,7 +1732,9 @@ type ChildRelationships$AssetTokenEvent = {
   //
 };
 
-interface SObjectDefinition$AssetTokenEvent extends SObjectDefinition {
+interface SObjectDefinition$AssetTokenEvent
+  extends SObjectDefinition<'AssetTokenEvent'> {
+  Name: 'AssetTokenEvent';
   Fields: Fields$AssetTokenEvent;
   ParentReferences: ParentReferences$AssetTokenEvent;
   ChildRelationships: ChildRelationships$AssetTokenEvent;
@@ -1688,7 +1763,9 @@ type ChildRelationships$AssignmentRule = {
   //
 };
 
-interface SObjectDefinition$AssignmentRule extends SObjectDefinition {
+interface SObjectDefinition$AssignmentRule
+  extends SObjectDefinition<'AssignmentRule'> {
+  Name: 'AssignmentRule';
   Fields: Fields$AssignmentRule;
   ParentReferences: ParentReferences$AssignmentRule;
   ChildRelationships: ChildRelationships$AssignmentRule;
@@ -1724,7 +1801,9 @@ type ChildRelationships$AsyncApexJob = {
   AsyncApex: SObjectDefinition$ApexTestRunResult;
 };
 
-interface SObjectDefinition$AsyncApexJob extends SObjectDefinition {
+interface SObjectDefinition$AsyncApexJob
+  extends SObjectDefinition<'AsyncApexJob'> {
+  Name: 'AsyncApexJob';
   Fields: Fields$AsyncApexJob;
   ParentReferences: ParentReferences$AsyncApexJob;
   ChildRelationships: ChildRelationships$AsyncApexJob;
@@ -1762,7 +1841,9 @@ type ChildRelationships$AttachedContentDocument = {
   //
 };
 
-interface SObjectDefinition$AttachedContentDocument extends SObjectDefinition {
+interface SObjectDefinition$AttachedContentDocument
+  extends SObjectDefinition<'AttachedContentDocument'> {
+  Name: 'AttachedContentDocument';
   Fields: Fields$AttachedContentDocument;
   ParentReferences: ParentReferences$AttachedContentDocument;
   ChildRelationships: ChildRelationships$AttachedContentDocument;
@@ -1777,7 +1858,7 @@ type Fields$Attachment = {
   IsPrivate: boolean;
   ContentType: string | null;
   BodyLength: number | null;
-  Body: string;
+  Body: BlobString;
   OwnerId: string;
   CreatedDate: DateString;
   CreatedById: string;
@@ -1799,7 +1880,8 @@ type ChildRelationships$Attachment = {
   //
 };
 
-interface SObjectDefinition$Attachment extends SObjectDefinition {
+interface SObjectDefinition$Attachment extends SObjectDefinition<'Attachment'> {
+  Name: 'Attachment';
   Fields: Fields$Attachment;
   ParentReferences: ParentReferences$Attachment;
   ChildRelationships: ChildRelationships$Attachment;
@@ -1831,7 +1913,9 @@ type ChildRelationships$AuraDefinition = {
   //
 };
 
-interface SObjectDefinition$AuraDefinition extends SObjectDefinition {
+interface SObjectDefinition$AuraDefinition
+  extends SObjectDefinition<'AuraDefinition'> {
+  Name: 'AuraDefinition';
   Fields: Fields$AuraDefinition;
   ParentReferences: ParentReferences$AuraDefinition;
   ChildRelationships: ChildRelationships$AuraDefinition;
@@ -1864,7 +1948,9 @@ type ChildRelationships$AuraDefinitionBundle = {
   //
 };
 
-interface SObjectDefinition$AuraDefinitionBundle extends SObjectDefinition {
+interface SObjectDefinition$AuraDefinitionBundle
+  extends SObjectDefinition<'AuraDefinitionBundle'> {
+  Name: 'AuraDefinitionBundle';
   Fields: Fields$AuraDefinitionBundle;
   ParentReferences: ParentReferences$AuraDefinitionBundle;
   ChildRelationships: ChildRelationships$AuraDefinitionBundle;
@@ -1889,7 +1975,9 @@ type ChildRelationships$AuraDefinitionBundleInfo = {
   Bundle: SObjectDefinition$AuraDefinitionInfo;
 };
 
-interface SObjectDefinition$AuraDefinitionBundleInfo extends SObjectDefinition {
+interface SObjectDefinition$AuraDefinitionBundleInfo
+  extends SObjectDefinition<'AuraDefinitionBundleInfo'> {
+  Name: 'AuraDefinitionBundleInfo';
   Fields: Fields$AuraDefinitionBundleInfo;
   ParentReferences: ParentReferences$AuraDefinitionBundleInfo;
   ChildRelationships: ChildRelationships$AuraDefinitionBundleInfo;
@@ -1917,7 +2005,9 @@ type ChildRelationships$AuraDefinitionInfo = {
   //
 };
 
-interface SObjectDefinition$AuraDefinitionInfo extends SObjectDefinition {
+interface SObjectDefinition$AuraDefinitionInfo
+  extends SObjectDefinition<'AuraDefinitionInfo'> {
+  Name: 'AuraDefinitionInfo';
   Fields: Fields$AuraDefinitionInfo;
   ParentReferences: ParentReferences$AuraDefinitionInfo;
   ChildRelationships: ChildRelationships$AuraDefinitionInfo;
@@ -1955,7 +2045,8 @@ type ChildRelationships$AuthConfig = {
   AuthProvidersForConfig: SObjectDefinition$AuthConfigProviders;
 };
 
-interface SObjectDefinition$AuthConfig extends SObjectDefinition {
+interface SObjectDefinition$AuthConfig extends SObjectDefinition<'AuthConfig'> {
+  Name: 'AuthConfig';
   Fields: Fields$AuthConfig;
   ParentReferences: ParentReferences$AuthConfig;
   ChildRelationships: ChildRelationships$AuthConfig;
@@ -1986,7 +2077,9 @@ type ChildRelationships$AuthConfigProviders = {
   //
 };
 
-interface SObjectDefinition$AuthConfigProviders extends SObjectDefinition {
+interface SObjectDefinition$AuthConfigProviders
+  extends SObjectDefinition<'AuthConfigProviders'> {
+  Name: 'AuthConfigProviders';
   Fields: Fields$AuthConfigProviders;
   ParentReferences: ParentReferences$AuthConfigProviders;
   ChildRelationships: ChildRelationships$AuthConfigProviders;
@@ -2029,7 +2122,9 @@ type ChildRelationships$AuthProvider = {
   //
 };
 
-interface SObjectDefinition$AuthProvider extends SObjectDefinition {
+interface SObjectDefinition$AuthProvider
+  extends SObjectDefinition<'AuthProvider'> {
+  Name: 'AuthProvider';
   Fields: Fields$AuthProvider;
   ParentReferences: ParentReferences$AuthProvider;
   ChildRelationships: ChildRelationships$AuthProvider;
@@ -2066,7 +2161,9 @@ type ChildRelationships$AuthSession = {
   SessionPermSetActivations: SObjectDefinition$SessionPermSetActivation;
 };
 
-interface SObjectDefinition$AuthSession extends SObjectDefinition {
+interface SObjectDefinition$AuthSession
+  extends SObjectDefinition<'AuthSession'> {
+  Name: 'AuthSession';
   Fields: Fields$AuthSession;
   ParentReferences: ParentReferences$AuthSession;
   ChildRelationships: ChildRelationships$AuthSession;
@@ -2114,7 +2211,9 @@ type ChildRelationships$BackgroundOperation = {
   MergedOperations: SObjectDefinition$BackgroundOperation;
 };
 
-interface SObjectDefinition$BackgroundOperation extends SObjectDefinition {
+interface SObjectDefinition$BackgroundOperation
+  extends SObjectDefinition<'BackgroundOperation'> {
+  Name: 'BackgroundOperation';
   Fields: Fields$BackgroundOperation;
   ParentReferences: ParentReferences$BackgroundOperation;
   ChildRelationships: ChildRelationships$BackgroundOperation;
@@ -2146,7 +2245,9 @@ type ChildRelationships$BrandTemplate = {
   //
 };
 
-interface SObjectDefinition$BrandTemplate extends SObjectDefinition {
+interface SObjectDefinition$BrandTemplate
+  extends SObjectDefinition<'BrandTemplate'> {
+  Name: 'BrandTemplate';
   Fields: Fields$BrandTemplate;
   ParentReferences: ParentReferences$BrandTemplate;
   ChildRelationships: ChildRelationships$BrandTemplate;
@@ -2178,7 +2279,9 @@ type ChildRelationships$BrandingSet = {
   //
 };
 
-interface SObjectDefinition$BrandingSet extends SObjectDefinition {
+interface SObjectDefinition$BrandingSet
+  extends SObjectDefinition<'BrandingSet'> {
+  Name: 'BrandingSet';
   Fields: Fields$BrandingSet;
   ParentReferences: ParentReferences$BrandingSet;
   ChildRelationships: ChildRelationships$BrandingSet;
@@ -2209,7 +2312,9 @@ type ChildRelationships$BrandingSetProperty = {
   //
 };
 
-interface SObjectDefinition$BrandingSetProperty extends SObjectDefinition {
+interface SObjectDefinition$BrandingSetProperty
+  extends SObjectDefinition<'BrandingSetProperty'> {
+  Name: 'BrandingSetProperty';
   Fields: Fields$BrandingSetProperty;
   ParentReferences: ParentReferences$BrandingSetProperty;
   ChildRelationships: ChildRelationships$BrandingSetProperty;
@@ -2257,7 +2362,9 @@ type ChildRelationships$BusinessHours = {
   WorkOrders: SObjectDefinition$WorkOrder;
 };
 
-interface SObjectDefinition$BusinessHours extends SObjectDefinition {
+interface SObjectDefinition$BusinessHours
+  extends SObjectDefinition<'BusinessHours'> {
+  Name: 'BusinessHours';
   Fields: Fields$BusinessHours;
   ParentReferences: ParentReferences$BusinessHours;
   ChildRelationships: ChildRelationships$BusinessHours;
@@ -2288,7 +2395,9 @@ type ChildRelationships$BusinessProcess = {
   //
 };
 
-interface SObjectDefinition$BusinessProcess extends SObjectDefinition {
+interface SObjectDefinition$BusinessProcess
+  extends SObjectDefinition<'BusinessProcess'> {
+  Name: 'BusinessProcess';
   Fields: Fields$BusinessProcess;
   ParentReferences: ParentReferences$BusinessProcess;
   ChildRelationships: ChildRelationships$BusinessProcess;
@@ -2319,7 +2428,8 @@ type ChildRelationships$CallCenter = {
   //
 };
 
-interface SObjectDefinition$CallCenter extends SObjectDefinition {
+interface SObjectDefinition$CallCenter extends SObjectDefinition<'CallCenter'> {
+  Name: 'CallCenter';
   Fields: Fields$CallCenter;
   ParentReferences: ParentReferences$CallCenter;
   ChildRelationships: ChildRelationships$CallCenter;
@@ -2399,7 +2509,8 @@ type ChildRelationships$Campaign = {
   TopicAssignments: SObjectDefinition$TopicAssignment;
 };
 
-interface SObjectDefinition$Campaign extends SObjectDefinition {
+interface SObjectDefinition$Campaign extends SObjectDefinition<'Campaign'> {
+  Name: 'Campaign';
   Fields: Fields$Campaign;
   ParentReferences: ParentReferences$Campaign;
   ChildRelationships: ChildRelationships$Campaign;
@@ -2409,7 +2520,7 @@ type Fields$CampaignChangeEvent = {
   //
   Id: string | null;
   ReplayId: string | null;
-  ChangeEventHeader: string;
+  ChangeEventHeader: any;
   Name: string | null;
   ParentId: string | null;
   Type: string | null;
@@ -2447,7 +2558,9 @@ type ChildRelationships$CampaignChangeEvent = {
   //
 };
 
-interface SObjectDefinition$CampaignChangeEvent extends SObjectDefinition {
+interface SObjectDefinition$CampaignChangeEvent
+  extends SObjectDefinition<'CampaignChangeEvent'> {
+  Name: 'CampaignChangeEvent';
   Fields: Fields$CampaignChangeEvent;
   ParentReferences: ParentReferences$CampaignChangeEvent;
   ChildRelationships: ChildRelationships$CampaignChangeEvent;
@@ -2489,7 +2602,9 @@ type ChildRelationships$CampaignFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$CampaignFeed extends SObjectDefinition {
+interface SObjectDefinition$CampaignFeed
+  extends SObjectDefinition<'CampaignFeed'> {
+  Name: 'CampaignFeed';
   Fields: Fields$CampaignFeed;
   ParentReferences: ParentReferences$CampaignFeed;
   ChildRelationships: ChildRelationships$CampaignFeed;
@@ -2517,7 +2632,9 @@ type ChildRelationships$CampaignHistory = {
   //
 };
 
-interface SObjectDefinition$CampaignHistory extends SObjectDefinition {
+interface SObjectDefinition$CampaignHistory
+  extends SObjectDefinition<'CampaignHistory'> {
+  Name: 'CampaignHistory';
   Fields: Fields$CampaignHistory;
   ParentReferences: ParentReferences$CampaignHistory;
   ChildRelationships: ChildRelationships$CampaignHistory;
@@ -2554,7 +2671,9 @@ type ChildRelationships$CampaignInfluenceModel = {
   //
 };
 
-interface SObjectDefinition$CampaignInfluenceModel extends SObjectDefinition {
+interface SObjectDefinition$CampaignInfluenceModel
+  extends SObjectDefinition<'CampaignInfluenceModel'> {
+  Name: 'CampaignInfluenceModel';
   Fields: Fields$CampaignInfluenceModel;
   ParentReferences: ParentReferences$CampaignInfluenceModel;
   ChildRelationships: ChildRelationships$CampaignInfluenceModel;
@@ -2615,7 +2734,9 @@ type ChildRelationships$CampaignMember = {
   RecordActions: SObjectDefinition$RecordAction;
 };
 
-interface SObjectDefinition$CampaignMember extends SObjectDefinition {
+interface SObjectDefinition$CampaignMember
+  extends SObjectDefinition<'CampaignMember'> {
+  Name: 'CampaignMember';
   Fields: Fields$CampaignMember;
   ParentReferences: ParentReferences$CampaignMember;
   ChildRelationships: ChildRelationships$CampaignMember;
@@ -2647,7 +2768,9 @@ type ChildRelationships$CampaignMemberStatus = {
   //
 };
 
-interface SObjectDefinition$CampaignMemberStatus extends SObjectDefinition {
+interface SObjectDefinition$CampaignMemberStatus
+  extends SObjectDefinition<'CampaignMemberStatus'> {
+  Name: 'CampaignMemberStatus';
   Fields: Fields$CampaignMemberStatus;
   ParentReferences: ParentReferences$CampaignMemberStatus;
   ChildRelationships: ChildRelationships$CampaignMemberStatus;
@@ -2676,7 +2799,9 @@ type ChildRelationships$CampaignShare = {
   //
 };
 
-interface SObjectDefinition$CampaignShare extends SObjectDefinition {
+interface SObjectDefinition$CampaignShare
+  extends SObjectDefinition<'CampaignShare'> {
+  Name: 'CampaignShare';
   Fields: Fields$CampaignShare;
   ParentReferences: ParentReferences$CampaignShare;
   ChildRelationships: ChildRelationships$CampaignShare;
@@ -2784,7 +2909,8 @@ type ChildRelationships$Case = {
   WorkOrders: SObjectDefinition$WorkOrder;
 };
 
-interface SObjectDefinition$Case extends SObjectDefinition {
+interface SObjectDefinition$Case extends SObjectDefinition<'Case'> {
+  Name: 'Case';
   Fields: Fields$Case;
   ParentReferences: ParentReferences$Case;
   ChildRelationships: ChildRelationships$Case;
@@ -2817,7 +2943,9 @@ type ChildRelationships$CaseArticle = {
   //
 };
 
-interface SObjectDefinition$CaseArticle extends SObjectDefinition {
+interface SObjectDefinition$CaseArticle
+  extends SObjectDefinition<'CaseArticle'> {
+  Name: 'CaseArticle';
   Fields: Fields$CaseArticle;
   ParentReferences: ParentReferences$CaseArticle;
   ChildRelationships: ChildRelationships$CaseArticle;
@@ -2827,7 +2955,7 @@ type Fields$CaseChangeEvent = {
   //
   Id: string | null;
   ReplayId: string | null;
-  ChangeEventHeader: string;
+  ChangeEventHeader: any;
   CaseNumber: string;
   ContactId: string | null;
   AccountId: string | null;
@@ -2875,7 +3003,9 @@ type ChildRelationships$CaseChangeEvent = {
   //
 };
 
-interface SObjectDefinition$CaseChangeEvent extends SObjectDefinition {
+interface SObjectDefinition$CaseChangeEvent
+  extends SObjectDefinition<'CaseChangeEvent'> {
+  Name: 'CaseChangeEvent';
   Fields: Fields$CaseChangeEvent;
   ParentReferences: ParentReferences$CaseChangeEvent;
   ChildRelationships: ChildRelationships$CaseChangeEvent;
@@ -2906,7 +3036,9 @@ type ChildRelationships$CaseComment = {
   //
 };
 
-interface SObjectDefinition$CaseComment extends SObjectDefinition {
+interface SObjectDefinition$CaseComment
+  extends SObjectDefinition<'CaseComment'> {
+  Name: 'CaseComment';
   Fields: Fields$CaseComment;
   ParentReferences: ParentReferences$CaseComment;
   ChildRelationships: ChildRelationships$CaseComment;
@@ -2938,7 +3070,9 @@ type ChildRelationships$CaseContactRole = {
   //
 };
 
-interface SObjectDefinition$CaseContactRole extends SObjectDefinition {
+interface SObjectDefinition$CaseContactRole
+  extends SObjectDefinition<'CaseContactRole'> {
+  Name: 'CaseContactRole';
   Fields: Fields$CaseContactRole;
   ParentReferences: ParentReferences$CaseContactRole;
   ChildRelationships: ChildRelationships$CaseContactRole;
@@ -2972,7 +3106,9 @@ type ChildRelationships$CaseExternalDocument = {
   //
 };
 
-interface SObjectDefinition$CaseExternalDocument extends SObjectDefinition {
+interface SObjectDefinition$CaseExternalDocument
+  extends SObjectDefinition<'CaseExternalDocument'> {
+  Name: 'CaseExternalDocument';
   Fields: Fields$CaseExternalDocument;
   ParentReferences: ParentReferences$CaseExternalDocument;
   ChildRelationships: ChildRelationships$CaseExternalDocument;
@@ -3014,7 +3150,8 @@ type ChildRelationships$CaseFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$CaseFeed extends SObjectDefinition {
+interface SObjectDefinition$CaseFeed extends SObjectDefinition<'CaseFeed'> {
+  Name: 'CaseFeed';
   Fields: Fields$CaseFeed;
   ParentReferences: ParentReferences$CaseFeed;
   ChildRelationships: ChildRelationships$CaseFeed;
@@ -3042,7 +3179,9 @@ type ChildRelationships$CaseHistory = {
   //
 };
 
-interface SObjectDefinition$CaseHistory extends SObjectDefinition {
+interface SObjectDefinition$CaseHistory
+  extends SObjectDefinition<'CaseHistory'> {
+  Name: 'CaseHistory';
   Fields: Fields$CaseHistory;
   ParentReferences: ParentReferences$CaseHistory;
   ChildRelationships: ChildRelationships$CaseHistory;
@@ -3094,7 +3233,9 @@ type ChildRelationships$CaseMilestone = {
   //
 };
 
-interface SObjectDefinition$CaseMilestone extends SObjectDefinition {
+interface SObjectDefinition$CaseMilestone
+  extends SObjectDefinition<'CaseMilestone'> {
+  Name: 'CaseMilestone';
   Fields: Fields$CaseMilestone;
   ParentReferences: ParentReferences$CaseMilestone;
   ChildRelationships: ChildRelationships$CaseMilestone;
@@ -3123,7 +3264,8 @@ type ChildRelationships$CaseShare = {
   //
 };
 
-interface SObjectDefinition$CaseShare extends SObjectDefinition {
+interface SObjectDefinition$CaseShare extends SObjectDefinition<'CaseShare'> {
+  Name: 'CaseShare';
   Fields: Fields$CaseShare;
   ParentReferences: ParentReferences$CaseShare;
   ChildRelationships: ChildRelationships$CaseShare;
@@ -3151,7 +3293,9 @@ type ChildRelationships$CaseSolution = {
   //
 };
 
-interface SObjectDefinition$CaseSolution extends SObjectDefinition {
+interface SObjectDefinition$CaseSolution
+  extends SObjectDefinition<'CaseSolution'> {
+  Name: 'CaseSolution';
   Fields: Fields$CaseSolution;
   ParentReferences: ParentReferences$CaseSolution;
   ChildRelationships: ChildRelationships$CaseSolution;
@@ -3182,7 +3326,8 @@ type ChildRelationships$CaseStatus = {
   //
 };
 
-interface SObjectDefinition$CaseStatus extends SObjectDefinition {
+interface SObjectDefinition$CaseStatus extends SObjectDefinition<'CaseStatus'> {
+  Name: 'CaseStatus';
   Fields: Fields$CaseStatus;
   ParentReferences: ParentReferences$CaseStatus;
   ChildRelationships: ChildRelationships$CaseStatus;
@@ -3215,7 +3360,9 @@ type ChildRelationships$CaseSubjectParticle = {
   //
 };
 
-interface SObjectDefinition$CaseSubjectParticle extends SObjectDefinition {
+interface SObjectDefinition$CaseSubjectParticle
+  extends SObjectDefinition<'CaseSubjectParticle'> {
+  Name: 'CaseSubjectParticle';
   Fields: Fields$CaseSubjectParticle;
   ParentReferences: ParentReferences$CaseSubjectParticle;
   ChildRelationships: ChildRelationships$CaseSubjectParticle;
@@ -3251,7 +3398,9 @@ type ChildRelationships$CaseTeamMember = {
   //
 };
 
-interface SObjectDefinition$CaseTeamMember extends SObjectDefinition {
+interface SObjectDefinition$CaseTeamMember
+  extends SObjectDefinition<'CaseTeamMember'> {
+  Name: 'CaseTeamMember';
   Fields: Fields$CaseTeamMember;
   ParentReferences: ParentReferences$CaseTeamMember;
   ChildRelationships: ChildRelationships$CaseTeamMember;
@@ -3280,7 +3429,9 @@ type ChildRelationships$CaseTeamRole = {
   //
 };
 
-interface SObjectDefinition$CaseTeamRole extends SObjectDefinition {
+interface SObjectDefinition$CaseTeamRole
+  extends SObjectDefinition<'CaseTeamRole'> {
+  Name: 'CaseTeamRole';
   Fields: Fields$CaseTeamRole;
   ParentReferences: ParentReferences$CaseTeamRole;
   ChildRelationships: ChildRelationships$CaseTeamRole;
@@ -3308,7 +3459,9 @@ type ChildRelationships$CaseTeamTemplate = {
   //
 };
 
-interface SObjectDefinition$CaseTeamTemplate extends SObjectDefinition {
+interface SObjectDefinition$CaseTeamTemplate
+  extends SObjectDefinition<'CaseTeamTemplate'> {
+  Name: 'CaseTeamTemplate';
   Fields: Fields$CaseTeamTemplate;
   ParentReferences: ParentReferences$CaseTeamTemplate;
   ChildRelationships: ChildRelationships$CaseTeamTemplate;
@@ -3337,7 +3490,9 @@ type ChildRelationships$CaseTeamTemplateMember = {
   //
 };
 
-interface SObjectDefinition$CaseTeamTemplateMember extends SObjectDefinition {
+interface SObjectDefinition$CaseTeamTemplateMember
+  extends SObjectDefinition<'CaseTeamTemplateMember'> {
+  Name: 'CaseTeamTemplateMember';
   Fields: Fields$CaseTeamTemplateMember;
   ParentReferences: ParentReferences$CaseTeamTemplateMember;
   ChildRelationships: ChildRelationships$CaseTeamTemplateMember;
@@ -3364,7 +3519,9 @@ type ChildRelationships$CaseTeamTemplateRecord = {
   //
 };
 
-interface SObjectDefinition$CaseTeamTemplateRecord extends SObjectDefinition {
+interface SObjectDefinition$CaseTeamTemplateRecord
+  extends SObjectDefinition<'CaseTeamTemplateRecord'> {
+  Name: 'CaseTeamTemplateRecord';
   Fields: Fields$CaseTeamTemplateRecord;
   ParentReferences: ParentReferences$CaseTeamTemplateRecord;
   ChildRelationships: ChildRelationships$CaseTeamTemplateRecord;
@@ -3393,7 +3550,9 @@ type ChildRelationships$CategoryData = {
   //
 };
 
-interface SObjectDefinition$CategoryData extends SObjectDefinition {
+interface SObjectDefinition$CategoryData
+  extends SObjectDefinition<'CategoryData'> {
+  Name: 'CategoryData';
   Fields: Fields$CategoryData;
   ParentReferences: ParentReferences$CategoryData;
   ChildRelationships: ChildRelationships$CategoryData;
@@ -3423,7 +3582,9 @@ type ChildRelationships$CategoryNode = {
   //
 };
 
-interface SObjectDefinition$CategoryNode extends SObjectDefinition {
+interface SObjectDefinition$CategoryNode
+  extends SObjectDefinition<'CategoryNode'> {
+  Name: 'CategoryNode';
   Fields: Fields$CategoryNode;
   ParentReferences: ParentReferences$CategoryNode;
   ChildRelationships: ChildRelationships$CategoryNode;
@@ -3449,7 +3610,9 @@ type ChildRelationships$ChatterActivity = {
   //
 };
 
-interface SObjectDefinition$ChatterActivity extends SObjectDefinition {
+interface SObjectDefinition$ChatterActivity
+  extends SObjectDefinition<'ChatterActivity'> {
+  Name: 'ChatterActivity';
   Fields: Fields$ChatterActivity;
   ParentReferences: ParentReferences$ChatterActivity;
   ChildRelationships: ChildRelationships$ChatterActivity;
@@ -3490,7 +3653,9 @@ type ChildRelationships$ChatterExtension = {
   //
 };
 
-interface SObjectDefinition$ChatterExtension extends SObjectDefinition {
+interface SObjectDefinition$ChatterExtension
+  extends SObjectDefinition<'ChatterExtension'> {
+  Name: 'ChatterExtension';
   Fields: Fields$ChatterExtension;
   ParentReferences: ParentReferences$ChatterExtension;
   ChildRelationships: ChildRelationships$ChatterExtension;
@@ -3522,7 +3687,9 @@ type ChildRelationships$ChatterExtensionConfig = {
   //
 };
 
-interface SObjectDefinition$ChatterExtensionConfig extends SObjectDefinition {
+interface SObjectDefinition$ChatterExtensionConfig
+  extends SObjectDefinition<'ChatterExtensionConfig'> {
+  Name: 'ChatterExtensionConfig';
   Fields: Fields$ChatterExtensionConfig;
   ParentReferences: ParentReferences$ChatterExtensionConfig;
   ChildRelationships: ChildRelationships$ChatterExtensionConfig;
@@ -3547,7 +3714,9 @@ type ChildRelationships$ClientBrowser = {
   //
 };
 
-interface SObjectDefinition$ClientBrowser extends SObjectDefinition {
+interface SObjectDefinition$ClientBrowser
+  extends SObjectDefinition<'ClientBrowser'> {
+  Name: 'ClientBrowser';
   Fields: Fields$ClientBrowser;
   ParentReferences: ParentReferences$ClientBrowser;
   ChildRelationships: ChildRelationships$ClientBrowser;
@@ -3604,7 +3773,9 @@ type ChildRelationships$CollaborationGroup = {
   FeedSubscriptionsForEntity: SObjectDefinition$EntitySubscription;
 };
 
-interface SObjectDefinition$CollaborationGroup extends SObjectDefinition {
+interface SObjectDefinition$CollaborationGroup
+  extends SObjectDefinition<'CollaborationGroup'> {
+  Name: 'CollaborationGroup';
   Fields: Fields$CollaborationGroup;
   ParentReferences: ParentReferences$CollaborationGroup;
   ChildRelationships: ChildRelationships$CollaborationGroup;
@@ -3646,7 +3817,9 @@ type ChildRelationships$CollaborationGroupFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$CollaborationGroupFeed extends SObjectDefinition {
+interface SObjectDefinition$CollaborationGroupFeed
+  extends SObjectDefinition<'CollaborationGroupFeed'> {
+  Name: 'CollaborationGroupFeed';
   Fields: Fields$CollaborationGroupFeed;
   ParentReferences: ParentReferences$CollaborationGroupFeed;
   ChildRelationships: ChildRelationships$CollaborationGroupFeed;
@@ -3679,7 +3852,9 @@ type ChildRelationships$CollaborationGroupMember = {
   //
 };
 
-interface SObjectDefinition$CollaborationGroupMember extends SObjectDefinition {
+interface SObjectDefinition$CollaborationGroupMember
+  extends SObjectDefinition<'CollaborationGroupMember'> {
+  Name: 'CollaborationGroupMember';
   Fields: Fields$CollaborationGroupMember;
   ParentReferences: ParentReferences$CollaborationGroupMember;
   ChildRelationships: ChildRelationships$CollaborationGroupMember;
@@ -3712,7 +3887,8 @@ type ChildRelationships$CollaborationGroupMemberRequest = {
 };
 
 interface SObjectDefinition$CollaborationGroupMemberRequest
-  extends SObjectDefinition {
+  extends SObjectDefinition<'CollaborationGroupMemberRequest'> {
+  Name: 'CollaborationGroupMemberRequest';
   Fields: Fields$CollaborationGroupMemberRequest;
   ParentReferences: ParentReferences$CollaborationGroupMemberRequest;
   ChildRelationships: ChildRelationships$CollaborationGroupMemberRequest;
@@ -3743,7 +3919,9 @@ type ChildRelationships$CollaborationGroupRecord = {
   //
 };
 
-interface SObjectDefinition$CollaborationGroupRecord extends SObjectDefinition {
+interface SObjectDefinition$CollaborationGroupRecord
+  extends SObjectDefinition<'CollaborationGroupRecord'> {
+  Name: 'CollaborationGroupRecord';
   Fields: Fields$CollaborationGroupRecord;
   ParentReferences: ParentReferences$CollaborationGroupRecord;
   ChildRelationships: ChildRelationships$CollaborationGroupRecord;
@@ -3776,7 +3954,9 @@ type ChildRelationships$CollaborationInvitation = {
   //
 };
 
-interface SObjectDefinition$CollaborationInvitation extends SObjectDefinition {
+interface SObjectDefinition$CollaborationInvitation
+  extends SObjectDefinition<'CollaborationInvitation'> {
+  Name: 'CollaborationInvitation';
   Fields: Fields$CollaborationInvitation;
   ParentReferences: ParentReferences$CollaborationInvitation;
   ChildRelationships: ChildRelationships$CollaborationInvitation;
@@ -3800,7 +3980,9 @@ type ChildRelationships$ColorDefinition = {
   //
 };
 
-interface SObjectDefinition$ColorDefinition extends SObjectDefinition {
+interface SObjectDefinition$ColorDefinition
+  extends SObjectDefinition<'ColorDefinition'> {
+  Name: 'ColorDefinition';
   Fields: Fields$ColorDefinition;
   ParentReferences: ParentReferences$ColorDefinition;
   ChildRelationships: ChildRelationships$ColorDefinition;
@@ -3837,7 +4019,9 @@ type ChildRelationships$CombinedAttachment = {
   //
 };
 
-interface SObjectDefinition$CombinedAttachment extends SObjectDefinition {
+interface SObjectDefinition$CombinedAttachment
+  extends SObjectDefinition<'CombinedAttachment'> {
+  Name: 'CombinedAttachment';
   Fields: Fields$CombinedAttachment;
   ParentReferences: ParentReferences$CombinedAttachment;
   ChildRelationships: ChildRelationships$CombinedAttachment;
@@ -3867,7 +4051,8 @@ type ChildRelationships$Community = {
   //
 };
 
-interface SObjectDefinition$Community extends SObjectDefinition {
+interface SObjectDefinition$Community extends SObjectDefinition<'Community'> {
+  Name: 'Community';
   Fields: Fields$Community;
   ParentReferences: ParentReferences$Community;
   ChildRelationships: ChildRelationships$Community;
@@ -3906,7 +4091,9 @@ type ChildRelationships$ConnectedApplication = {
   SetupEntityAccessItems: SObjectDefinition$SetupEntityAccess;
 };
 
-interface SObjectDefinition$ConnectedApplication extends SObjectDefinition {
+interface SObjectDefinition$ConnectedApplication
+  extends SObjectDefinition<'ConnectedApplication'> {
+  Name: 'ConnectedApplication';
   Fields: Fields$ConnectedApplication;
   ParentReferences: ParentReferences$ConnectedApplication;
   ChildRelationships: ChildRelationships$ConnectedApplication;
@@ -3930,7 +4117,7 @@ type Fields$Contact = {
   OtherLatitude: number | null;
   OtherLongitude: number | null;
   OtherGeocodeAccuracy: string | null;
-  OtherAddress: string | null;
+  OtherAddress: Address | null;
   MailingStreet: string | null;
   MailingCity: string | null;
   MailingState: string | null;
@@ -3939,7 +4126,7 @@ type Fields$Contact = {
   MailingLatitude: number | null;
   MailingLongitude: number | null;
   MailingGeocodeAccuracy: string | null;
-  MailingAddress: string | null;
+  MailingAddress: Address | null;
   Phone: string | null;
   Fax: string | null;
   MobilePhone: string | null;
@@ -4035,7 +4222,8 @@ type ChildRelationships$Contact = {
   WorkOrders: SObjectDefinition$WorkOrder;
 };
 
-interface SObjectDefinition$Contact extends SObjectDefinition {
+interface SObjectDefinition$Contact extends SObjectDefinition<'Contact'> {
+  Name: 'Contact';
   Fields: Fields$Contact;
   ParentReferences: ParentReferences$Contact;
   ChildRelationships: ChildRelationships$Contact;
@@ -4045,7 +4233,7 @@ type Fields$ContactChangeEvent = {
   //
   Id: string | null;
   ReplayId: string | null;
-  ChangeEventHeader: string;
+  ChangeEventHeader: any;
   AccountId: string | null;
   LastName: string | null;
   FirstName: string | null;
@@ -4059,7 +4247,7 @@ type Fields$ContactChangeEvent = {
   OtherLatitude: number | null;
   OtherLongitude: number | null;
   OtherGeocodeAccuracy: string | null;
-  OtherAddress: string | null;
+  OtherAddress: Address | null;
   MailingStreet: string | null;
   MailingCity: string | null;
   MailingState: string | null;
@@ -4068,7 +4256,7 @@ type Fields$ContactChangeEvent = {
   MailingLatitude: number | null;
   MailingLongitude: number | null;
   MailingGeocodeAccuracy: string | null;
-  MailingAddress: string | null;
+  MailingAddress: Address | null;
   Phone: string | null;
   Fax: string | null;
   MobilePhone: string | null;
@@ -4109,7 +4297,9 @@ type ChildRelationships$ContactChangeEvent = {
   //
 };
 
-interface SObjectDefinition$ContactChangeEvent extends SObjectDefinition {
+interface SObjectDefinition$ContactChangeEvent
+  extends SObjectDefinition<'ContactChangeEvent'> {
+  Name: 'ContactChangeEvent';
   Fields: Fields$ContactChangeEvent;
   ParentReferences: ParentReferences$ContactChangeEvent;
   ChildRelationships: ChildRelationships$ContactChangeEvent;
@@ -4151,7 +4341,9 @@ type ChildRelationships$ContactFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$ContactFeed extends SObjectDefinition {
+interface SObjectDefinition$ContactFeed
+  extends SObjectDefinition<'ContactFeed'> {
+  Name: 'ContactFeed';
   Fields: Fields$ContactFeed;
   ParentReferences: ParentReferences$ContactFeed;
   ChildRelationships: ChildRelationships$ContactFeed;
@@ -4179,7 +4371,9 @@ type ChildRelationships$ContactHistory = {
   //
 };
 
-interface SObjectDefinition$ContactHistory extends SObjectDefinition {
+interface SObjectDefinition$ContactHistory
+  extends SObjectDefinition<'ContactHistory'> {
+  Name: 'ContactHistory';
   Fields: Fields$ContactHistory;
   ParentReferences: ParentReferences$ContactHistory;
   ChildRelationships: ChildRelationships$ContactHistory;
@@ -4224,7 +4418,9 @@ type ChildRelationships$ContactRequest = {
   Tasks: SObjectDefinition$Task;
 };
 
-interface SObjectDefinition$ContactRequest extends SObjectDefinition {
+interface SObjectDefinition$ContactRequest
+  extends SObjectDefinition<'ContactRequest'> {
+  Name: 'ContactRequest';
   Fields: Fields$ContactRequest;
   ParentReferences: ParentReferences$ContactRequest;
   ChildRelationships: ChildRelationships$ContactRequest;
@@ -4253,7 +4449,9 @@ type ChildRelationships$ContactRequestShare = {
   //
 };
 
-interface SObjectDefinition$ContactRequestShare extends SObjectDefinition {
+interface SObjectDefinition$ContactRequestShare
+  extends SObjectDefinition<'ContactRequestShare'> {
+  Name: 'ContactRequestShare';
   Fields: Fields$ContactRequestShare;
   ParentReferences: ParentReferences$ContactRequestShare;
   ChildRelationships: ChildRelationships$ContactRequestShare;
@@ -4282,7 +4480,9 @@ type ChildRelationships$ContactShare = {
   //
 };
 
-interface SObjectDefinition$ContactShare extends SObjectDefinition {
+interface SObjectDefinition$ContactShare
+  extends SObjectDefinition<'ContactShare'> {
+  Name: 'ContactShare';
   Fields: Fields$ContactShare;
   ParentReferences: ParentReferences$ContactShare;
   ChildRelationships: ChildRelationships$ContactShare;
@@ -4316,7 +4516,9 @@ type ChildRelationships$ContentAsset = {
   //
 };
 
-interface SObjectDefinition$ContentAsset extends SObjectDefinition {
+interface SObjectDefinition$ContentAsset
+  extends SObjectDefinition<'ContentAsset'> {
+  Name: 'ContentAsset';
   Fields: Fields$ContentAsset;
   ParentReferences: ParentReferences$ContentAsset;
   ChildRelationships: ChildRelationships$ContentAsset;
@@ -4335,7 +4537,9 @@ type ChildRelationships$ContentBody = {
   //
 };
 
-interface SObjectDefinition$ContentBody extends SObjectDefinition {
+interface SObjectDefinition$ContentBody
+  extends SObjectDefinition<'ContentBody'> {
+  Name: 'ContentBody';
   Fields: Fields$ContentBody;
   ParentReferences: ParentReferences$ContentBody;
   ChildRelationships: ChildRelationships$ContentBody;
@@ -4387,7 +4591,9 @@ type ChildRelationships$ContentDistribution = {
   ContentDistributionViews: SObjectDefinition$ContentDistributionView;
 };
 
-interface SObjectDefinition$ContentDistribution extends SObjectDefinition {
+interface SObjectDefinition$ContentDistribution
+  extends SObjectDefinition<'ContentDistribution'> {
+  Name: 'ContentDistribution';
   Fields: Fields$ContentDistribution;
   ParentReferences: ParentReferences$ContentDistribution;
   ChildRelationships: ChildRelationships$ContentDistribution;
@@ -4416,7 +4622,9 @@ type ChildRelationships$ContentDistributionView = {
   //
 };
 
-interface SObjectDefinition$ContentDistributionView extends SObjectDefinition {
+interface SObjectDefinition$ContentDistributionView
+  extends SObjectDefinition<'ContentDistributionView'> {
+  Name: 'ContentDistributionView';
   Fields: Fields$ContentDistributionView;
   ParentReferences: ParentReferences$ContentDistributionView;
   ChildRelationships: ChildRelationships$ContentDistributionView;
@@ -4471,7 +4679,9 @@ type ChildRelationships$ContentDocument = {
   TopicAssignments: SObjectDefinition$TopicAssignment;
 };
 
-interface SObjectDefinition$ContentDocument extends SObjectDefinition {
+interface SObjectDefinition$ContentDocument
+  extends SObjectDefinition<'ContentDocument'> {
+  Name: 'ContentDocument';
   Fields: Fields$ContentDocument;
   ParentReferences: ParentReferences$ContentDocument;
   ChildRelationships: ChildRelationships$ContentDocument;
@@ -4513,7 +4723,9 @@ type ChildRelationships$ContentDocumentFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$ContentDocumentFeed extends SObjectDefinition {
+interface SObjectDefinition$ContentDocumentFeed
+  extends SObjectDefinition<'ContentDocumentFeed'> {
+  Name: 'ContentDocumentFeed';
   Fields: Fields$ContentDocumentFeed;
   ParentReferences: ParentReferences$ContentDocumentFeed;
   ChildRelationships: ChildRelationships$ContentDocumentFeed;
@@ -4541,7 +4753,9 @@ type ChildRelationships$ContentDocumentHistory = {
   //
 };
 
-interface SObjectDefinition$ContentDocumentHistory extends SObjectDefinition {
+interface SObjectDefinition$ContentDocumentHistory
+  extends SObjectDefinition<'ContentDocumentHistory'> {
+  Name: 'ContentDocumentHistory';
   Fields: Fields$ContentDocumentHistory;
   ParentReferences: ParentReferences$ContentDocumentHistory;
   ChildRelationships: ChildRelationships$ContentDocumentHistory;
@@ -4568,7 +4782,9 @@ type ChildRelationships$ContentDocumentLink = {
   //
 };
 
-interface SObjectDefinition$ContentDocumentLink extends SObjectDefinition {
+interface SObjectDefinition$ContentDocumentLink
+  extends SObjectDefinition<'ContentDocumentLink'> {
+  Name: 'ContentDocumentLink';
   Fields: Fields$ContentDocumentLink;
   ParentReferences: ParentReferences$ContentDocumentLink;
   ChildRelationships: ChildRelationships$ContentDocumentLink;
@@ -4594,7 +4810,8 @@ type ChildRelationships$ContentDocumentSubscription = {
 };
 
 interface SObjectDefinition$ContentDocumentSubscription
-  extends SObjectDefinition {
+  extends SObjectDefinition<'ContentDocumentSubscription'> {
+  Name: 'ContentDocumentSubscription';
   Fields: Fields$ContentDocumentSubscription;
   ParentReferences: ParentReferences$ContentDocumentSubscription;
   ChildRelationships: ChildRelationships$ContentDocumentSubscription;
@@ -4625,7 +4842,9 @@ type ChildRelationships$ContentFolder = {
   ContentFolderLinks: SObjectDefinition$ContentFolderLink;
 };
 
-interface SObjectDefinition$ContentFolder extends SObjectDefinition {
+interface SObjectDefinition$ContentFolder
+  extends SObjectDefinition<'ContentFolder'> {
+  Name: 'ContentFolder';
   Fields: Fields$ContentFolder;
   ParentReferences: ParentReferences$ContentFolder;
   ChildRelationships: ChildRelationships$ContentFolder;
@@ -4659,7 +4878,9 @@ type ChildRelationships$ContentFolderItem = {
   //
 };
 
-interface SObjectDefinition$ContentFolderItem extends SObjectDefinition {
+interface SObjectDefinition$ContentFolderItem
+  extends SObjectDefinition<'ContentFolderItem'> {
+  Name: 'ContentFolderItem';
   Fields: Fields$ContentFolderItem;
   ParentReferences: ParentReferences$ContentFolderItem;
   ChildRelationships: ChildRelationships$ContentFolderItem;
@@ -4683,7 +4904,9 @@ type ChildRelationships$ContentFolderLink = {
   //
 };
 
-interface SObjectDefinition$ContentFolderLink extends SObjectDefinition {
+interface SObjectDefinition$ContentFolderLink
+  extends SObjectDefinition<'ContentFolderLink'> {
+  Name: 'ContentFolderLink';
   Fields: Fields$ContentFolderLink;
   ParentReferences: ParentReferences$ContentFolderLink;
   ChildRelationships: ChildRelationships$ContentFolderLink;
@@ -4714,7 +4937,9 @@ type ChildRelationships$ContentFolderMember = {
   //
 };
 
-interface SObjectDefinition$ContentFolderMember extends SObjectDefinition {
+interface SObjectDefinition$ContentFolderMember
+  extends SObjectDefinition<'ContentFolderMember'> {
+  Name: 'ContentFolderMember';
   Fields: Fields$ContentFolderMember;
   ParentReferences: ParentReferences$ContentFolderMember;
   ChildRelationships: ChildRelationships$ContentFolderMember;
@@ -4752,7 +4977,9 @@ type ChildRelationships$ContentHubItem = {
   //
 };
 
-interface SObjectDefinition$ContentHubItem extends SObjectDefinition {
+interface SObjectDefinition$ContentHubItem
+  extends SObjectDefinition<'ContentHubItem'> {
+  Name: 'ContentHubItem';
   Fields: Fields$ContentHubItem;
   ParentReferences: ParentReferences$ContentHubItem;
   ChildRelationships: ChildRelationships$ContentHubItem;
@@ -4782,7 +5009,9 @@ type ChildRelationships$ContentHubRepository = {
   //
 };
 
-interface SObjectDefinition$ContentHubRepository extends SObjectDefinition {
+interface SObjectDefinition$ContentHubRepository
+  extends SObjectDefinition<'ContentHubRepository'> {
+  Name: 'ContentHubRepository';
   Fields: Fields$ContentHubRepository;
   ParentReferences: ParentReferences$ContentHubRepository;
   ChildRelationships: ChildRelationships$ContentHubRepository;
@@ -4809,7 +5038,9 @@ type ChildRelationships$ContentNotification = {
   //
 };
 
-interface SObjectDefinition$ContentNotification extends SObjectDefinition {
+interface SObjectDefinition$ContentNotification
+  extends SObjectDefinition<'ContentNotification'> {
+  Name: 'ContentNotification';
   Fields: Fields$ContentNotification;
   ParentReferences: ParentReferences$ContentNotification;
   ChildRelationships: ChildRelationships$ContentNotification;
@@ -4830,7 +5061,9 @@ type ChildRelationships$ContentTagSubscription = {
   //
 };
 
-interface SObjectDefinition$ContentTagSubscription extends SObjectDefinition {
+interface SObjectDefinition$ContentTagSubscription
+  extends SObjectDefinition<'ContentTagSubscription'> {
+  Name: 'ContentTagSubscription';
   Fields: Fields$ContentTagSubscription;
   ParentReferences: ParentReferences$ContentTagSubscription;
   ChildRelationships: ChildRelationships$ContentTagSubscription;
@@ -4853,7 +5086,9 @@ type ChildRelationships$ContentUserSubscription = {
   //
 };
 
-interface SObjectDefinition$ContentUserSubscription extends SObjectDefinition {
+interface SObjectDefinition$ContentUserSubscription
+  extends SObjectDefinition<'ContentUserSubscription'> {
+  Name: 'ContentUserSubscription';
   Fields: Fields$ContentUserSubscription;
   ParentReferences: ParentReferences$ContentUserSubscription;
   ChildRelationships: ChildRelationships$ContentUserSubscription;
@@ -4890,7 +5125,7 @@ type Fields$ContentVersion = {
   TagCsv: string | null;
   FileType: string;
   PublishStatus: string;
-  VersionData: string | null;
+  VersionData: BlobString | null;
   ContentSize: number | null;
   FileExtension: string | null;
   FirstPublishLocationId: string | null;
@@ -4922,7 +5157,9 @@ type ChildRelationships$ContentVersion = {
   Histories: SObjectDefinition$ContentVersionHistory;
 };
 
-interface SObjectDefinition$ContentVersion extends SObjectDefinition {
+interface SObjectDefinition$ContentVersion
+  extends SObjectDefinition<'ContentVersion'> {
+  Name: 'ContentVersion';
   Fields: Fields$ContentVersion;
   ParentReferences: ParentReferences$ContentVersion;
   ChildRelationships: ChildRelationships$ContentVersion;
@@ -4947,7 +5184,9 @@ type ChildRelationships$ContentVersionComment = {
   //
 };
 
-interface SObjectDefinition$ContentVersionComment extends SObjectDefinition {
+interface SObjectDefinition$ContentVersionComment
+  extends SObjectDefinition<'ContentVersionComment'> {
+  Name: 'ContentVersionComment';
   Fields: Fields$ContentVersionComment;
   ParentReferences: ParentReferences$ContentVersionComment;
   ChildRelationships: ChildRelationships$ContentVersionComment;
@@ -4975,7 +5214,9 @@ type ChildRelationships$ContentVersionHistory = {
   //
 };
 
-interface SObjectDefinition$ContentVersionHistory extends SObjectDefinition {
+interface SObjectDefinition$ContentVersionHistory
+  extends SObjectDefinition<'ContentVersionHistory'> {
+  Name: 'ContentVersionHistory';
   Fields: Fields$ContentVersionHistory;
   ParentReferences: ParentReferences$ContentVersionHistory;
   ChildRelationships: ChildRelationships$ContentVersionHistory;
@@ -5001,7 +5242,9 @@ type ChildRelationships$ContentVersionRating = {
   //
 };
 
-interface SObjectDefinition$ContentVersionRating extends SObjectDefinition {
+interface SObjectDefinition$ContentVersionRating
+  extends SObjectDefinition<'ContentVersionRating'> {
+  Name: 'ContentVersionRating';
   Fields: Fields$ContentVersionRating;
   ParentReferences: ParentReferences$ContentVersionRating;
   ChildRelationships: ChildRelationships$ContentVersionRating;
@@ -5046,7 +5289,9 @@ type ChildRelationships$ContentWorkspace = {
   ContentWorkspaceMembers: SObjectDefinition$ContentWorkspaceMember;
 };
 
-interface SObjectDefinition$ContentWorkspace extends SObjectDefinition {
+interface SObjectDefinition$ContentWorkspace
+  extends SObjectDefinition<'ContentWorkspace'> {
+  Name: 'ContentWorkspace';
   Fields: Fields$ContentWorkspace;
   ParentReferences: ParentReferences$ContentWorkspace;
   ChildRelationships: ChildRelationships$ContentWorkspace;
@@ -5073,7 +5318,9 @@ type ChildRelationships$ContentWorkspaceDoc = {
   //
 };
 
-interface SObjectDefinition$ContentWorkspaceDoc extends SObjectDefinition {
+interface SObjectDefinition$ContentWorkspaceDoc
+  extends SObjectDefinition<'ContentWorkspaceDoc'> {
+  Name: 'ContentWorkspaceDoc';
   Fields: Fields$ContentWorkspaceDoc;
   ParentReferences: ParentReferences$ContentWorkspaceDoc;
   ChildRelationships: ChildRelationships$ContentWorkspaceDoc;
@@ -5102,7 +5349,9 @@ type ChildRelationships$ContentWorkspaceMember = {
   //
 };
 
-interface SObjectDefinition$ContentWorkspaceMember extends SObjectDefinition {
+interface SObjectDefinition$ContentWorkspaceMember
+  extends SObjectDefinition<'ContentWorkspaceMember'> {
+  Name: 'ContentWorkspaceMember';
   Fields: Fields$ContentWorkspaceMember;
   ParentReferences: ParentReferences$ContentWorkspaceMember;
   ChildRelationships: ChildRelationships$ContentWorkspaceMember;
@@ -5145,7 +5394,8 @@ type ChildRelationships$ContentWorkspacePermission = {
 };
 
 interface SObjectDefinition$ContentWorkspacePermission
-  extends SObjectDefinition {
+  extends SObjectDefinition<'ContentWorkspacePermission'> {
+  Name: 'ContentWorkspacePermission';
   Fields: Fields$ContentWorkspacePermission;
   ParentReferences: ParentReferences$ContentWorkspacePermission;
   ChildRelationships: ChildRelationships$ContentWorkspacePermission;
@@ -5169,7 +5419,8 @@ type ChildRelationships$ContentWorkspaceSubscription = {
 };
 
 interface SObjectDefinition$ContentWorkspaceSubscription
-  extends SObjectDefinition {
+  extends SObjectDefinition<'ContentWorkspaceSubscription'> {
+  Name: 'ContentWorkspaceSubscription';
   Fields: Fields$ContentWorkspaceSubscription;
   ParentReferences: ParentReferences$ContentWorkspaceSubscription;
   ChildRelationships: ChildRelationships$ContentWorkspaceSubscription;
@@ -5190,7 +5441,7 @@ type Fields$Contract = {
   BillingLatitude: number | null;
   BillingLongitude: number | null;
   BillingGeocodeAccuracy: string | null;
-  BillingAddress: string | null;
+  BillingAddress: Address | null;
   ShippingStreet: string | null;
   ShippingCity: string | null;
   ShippingState: string | null;
@@ -5199,7 +5450,7 @@ type Fields$Contract = {
   ShippingLatitude: number | null;
   ShippingLongitude: number | null;
   ShippingGeocodeAccuracy: string | null;
-  ShippingAddress: string | null;
+  ShippingAddress: Address | null;
   ContractTerm: number | null;
   OwnerId: string;
   Status: string;
@@ -5263,7 +5514,8 @@ type ChildRelationships$Contract = {
   TopicAssignments: SObjectDefinition$TopicAssignment;
 };
 
-interface SObjectDefinition$Contract extends SObjectDefinition {
+interface SObjectDefinition$Contract extends SObjectDefinition<'Contract'> {
+  Name: 'Contract';
   Fields: Fields$Contract;
   ParentReferences: ParentReferences$Contract;
   ChildRelationships: ChildRelationships$Contract;
@@ -5296,7 +5548,9 @@ type ChildRelationships$ContractContactRole = {
   //
 };
 
-interface SObjectDefinition$ContractContactRole extends SObjectDefinition {
+interface SObjectDefinition$ContractContactRole
+  extends SObjectDefinition<'ContractContactRole'> {
+  Name: 'ContractContactRole';
   Fields: Fields$ContractContactRole;
   ParentReferences: ParentReferences$ContractContactRole;
   ChildRelationships: ChildRelationships$ContractContactRole;
@@ -5338,7 +5592,9 @@ type ChildRelationships$ContractFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$ContractFeed extends SObjectDefinition {
+interface SObjectDefinition$ContractFeed
+  extends SObjectDefinition<'ContractFeed'> {
+  Name: 'ContractFeed';
   Fields: Fields$ContractFeed;
   ParentReferences: ParentReferences$ContractFeed;
   ChildRelationships: ChildRelationships$ContractFeed;
@@ -5366,7 +5622,9 @@ type ChildRelationships$ContractHistory = {
   //
 };
 
-interface SObjectDefinition$ContractHistory extends SObjectDefinition {
+interface SObjectDefinition$ContractHistory
+  extends SObjectDefinition<'ContractHistory'> {
+  Name: 'ContractHistory';
   Fields: Fields$ContractHistory;
   ParentReferences: ParentReferences$ContractHistory;
   ChildRelationships: ChildRelationships$ContractHistory;
@@ -5434,7 +5692,9 @@ type ChildRelationships$ContractLineItem = {
   Tasks: SObjectDefinition$Task;
 };
 
-interface SObjectDefinition$ContractLineItem extends SObjectDefinition {
+interface SObjectDefinition$ContractLineItem
+  extends SObjectDefinition<'ContractLineItem'> {
+  Name: 'ContractLineItem';
   Fields: Fields$ContractLineItem;
   ParentReferences: ParentReferences$ContractLineItem;
   ChildRelationships: ChildRelationships$ContractLineItem;
@@ -5444,7 +5704,7 @@ type Fields$ContractLineItemChangeEvent = {
   //
   Id: string | null;
   ReplayId: string | null;
-  ChangeEventHeader: string;
+  ChangeEventHeader: any;
   LineItemNumber: string;
   CreatedDate: DateString | null;
   CreatedById: string | null;
@@ -5472,7 +5732,8 @@ type ChildRelationships$ContractLineItemChangeEvent = {
 };
 
 interface SObjectDefinition$ContractLineItemChangeEvent
-  extends SObjectDefinition {
+  extends SObjectDefinition<'ContractLineItemChangeEvent'> {
+  Name: 'ContractLineItemChangeEvent';
   Fields: Fields$ContractLineItemChangeEvent;
   ParentReferences: ParentReferences$ContractLineItemChangeEvent;
   ChildRelationships: ChildRelationships$ContractLineItemChangeEvent;
@@ -5500,7 +5761,9 @@ type ChildRelationships$ContractLineItemHistory = {
   //
 };
 
-interface SObjectDefinition$ContractLineItemHistory extends SObjectDefinition {
+interface SObjectDefinition$ContractLineItemHistory
+  extends SObjectDefinition<'ContractLineItemHistory'> {
+  Name: 'ContractLineItemHistory';
   Fields: Fields$ContractLineItemHistory;
   ParentReferences: ParentReferences$ContractLineItemHistory;
   ChildRelationships: ChildRelationships$ContractLineItemHistory;
@@ -5531,7 +5794,9 @@ type ChildRelationships$ContractStatus = {
   //
 };
 
-interface SObjectDefinition$ContractStatus extends SObjectDefinition {
+interface SObjectDefinition$ContractStatus
+  extends SObjectDefinition<'ContractStatus'> {
+  Name: 'ContractStatus';
   Fields: Fields$ContractStatus;
   ParentReferences: ParentReferences$ContractStatus;
   ChildRelationships: ChildRelationships$ContractStatus;
@@ -5563,7 +5828,9 @@ type ChildRelationships$CorsWhitelistEntry = {
   //
 };
 
-interface SObjectDefinition$CorsWhitelistEntry extends SObjectDefinition {
+interface SObjectDefinition$CorsWhitelistEntry
+  extends SObjectDefinition<'CorsWhitelistEntry'> {
+  Name: 'CorsWhitelistEntry';
   Fields: Fields$CorsWhitelistEntry;
   ParentReferences: ParentReferences$CorsWhitelistEntry;
   ChildRelationships: ChildRelationships$CorsWhitelistEntry;
@@ -5584,7 +5851,9 @@ type ChildRelationships$CronJobDetail = {
   //
 };
 
-interface SObjectDefinition$CronJobDetail extends SObjectDefinition {
+interface SObjectDefinition$CronJobDetail
+  extends SObjectDefinition<'CronJobDetail'> {
+  Name: 'CronJobDetail';
   Fields: Fields$CronJobDetail;
   ParentReferences: ParentReferences$CronJobDetail;
   ChildRelationships: ChildRelationships$CronJobDetail;
@@ -5619,7 +5888,9 @@ type ChildRelationships$CronTrigger = {
   //
 };
 
-interface SObjectDefinition$CronTrigger extends SObjectDefinition {
+interface SObjectDefinition$CronTrigger
+  extends SObjectDefinition<'CronTrigger'> {
+  Name: 'CronTrigger';
   Fields: Fields$CronTrigger;
   ParentReferences: ParentReferences$CronTrigger;
   ChildRelationships: ChildRelationships$CronTrigger;
@@ -5653,7 +5924,9 @@ type ChildRelationships$CspTrustedSite = {
   //
 };
 
-interface SObjectDefinition$CspTrustedSite extends SObjectDefinition {
+interface SObjectDefinition$CspTrustedSite
+  extends SObjectDefinition<'CspTrustedSite'> {
+  Name: 'CspTrustedSite';
   Fields: Fields$CspTrustedSite;
   ParentReferences: ParentReferences$CspTrustedSite;
   ChildRelationships: ChildRelationships$CspTrustedSite;
@@ -5680,7 +5953,9 @@ type ChildRelationships$CustomBrand = {
   CustomBrandAssets: SObjectDefinition$CustomBrandAsset;
 };
 
-interface SObjectDefinition$CustomBrand extends SObjectDefinition {
+interface SObjectDefinition$CustomBrand
+  extends SObjectDefinition<'CustomBrand'> {
+  Name: 'CustomBrand';
   Fields: Fields$CustomBrand;
   ParentReferences: ParentReferences$CustomBrand;
   ChildRelationships: ChildRelationships$CustomBrand;
@@ -5710,7 +5985,9 @@ type ChildRelationships$CustomBrandAsset = {
   //
 };
 
-interface SObjectDefinition$CustomBrandAsset extends SObjectDefinition {
+interface SObjectDefinition$CustomBrandAsset
+  extends SObjectDefinition<'CustomBrandAsset'> {
+  Name: 'CustomBrandAsset';
   Fields: Fields$CustomBrandAsset;
   ParentReferences: ParentReferences$CustomBrandAsset;
   ChildRelationships: ChildRelationships$CustomBrandAsset;
@@ -5742,7 +6019,9 @@ type ChildRelationships$CustomHttpHeader = {
   //
 };
 
-interface SObjectDefinition$CustomHttpHeader extends SObjectDefinition {
+interface SObjectDefinition$CustomHttpHeader
+  extends SObjectDefinition<'CustomHttpHeader'> {
+  Name: 'CustomHttpHeader';
   Fields: Fields$CustomHttpHeader;
   ParentReferences: ParentReferences$CustomHttpHeader;
   ChildRelationships: ChildRelationships$CustomHttpHeader;
@@ -5770,7 +6049,8 @@ type ChildRelationships$CustomObjectUserLicenseMetrics = {
 };
 
 interface SObjectDefinition$CustomObjectUserLicenseMetrics
-  extends SObjectDefinition {
+  extends SObjectDefinition<'CustomObjectUserLicenseMetrics'> {
+  Name: 'CustomObjectUserLicenseMetrics';
   Fields: Fields$CustomObjectUserLicenseMetrics;
   ParentReferences: ParentReferences$CustomObjectUserLicenseMetrics;
   ChildRelationships: ChildRelationships$CustomObjectUserLicenseMetrics;
@@ -5807,7 +6087,9 @@ type ChildRelationships$CustomPermission = {
   SetupEntityAccessItems: SObjectDefinition$SetupEntityAccess;
 };
 
-interface SObjectDefinition$CustomPermission extends SObjectDefinition {
+interface SObjectDefinition$CustomPermission
+  extends SObjectDefinition<'CustomPermission'> {
+  Name: 'CustomPermission';
   Fields: Fields$CustomPermission;
   ParentReferences: ParentReferences$CustomPermission;
   ChildRelationships: ChildRelationships$CustomPermission;
@@ -5839,7 +6121,8 @@ type ChildRelationships$CustomPermissionDependency = {
 };
 
 interface SObjectDefinition$CustomPermissionDependency
-  extends SObjectDefinition {
+  extends SObjectDefinition<'CustomPermissionDependency'> {
+  Name: 'CustomPermissionDependency';
   Fields: Fields$CustomPermissionDependency;
   ParentReferences: ParentReferences$CustomPermissionDependency;
   ChildRelationships: ChildRelationships$CustomPermissionDependency;
@@ -5897,7 +6180,8 @@ type ChildRelationships$Dashboard = {
   FeedSubscriptionsForEntity: SObjectDefinition$EntitySubscription;
 };
 
-interface SObjectDefinition$Dashboard extends SObjectDefinition {
+interface SObjectDefinition$Dashboard extends SObjectDefinition<'Dashboard'> {
+  Name: 'Dashboard';
   Fields: Fields$Dashboard;
   ParentReferences: ParentReferences$Dashboard;
   ChildRelationships: ChildRelationships$Dashboard;
@@ -5925,7 +6209,9 @@ type ChildRelationships$DashboardComponent = {
   FeedSubscriptionsForEntity: SObjectDefinition$EntitySubscription;
 };
 
-interface SObjectDefinition$DashboardComponent extends SObjectDefinition {
+interface SObjectDefinition$DashboardComponent
+  extends SObjectDefinition<'DashboardComponent'> {
+  Name: 'DashboardComponent';
   Fields: Fields$DashboardComponent;
   ParentReferences: ParentReferences$DashboardComponent;
   ChildRelationships: ChildRelationships$DashboardComponent;
@@ -5967,7 +6253,9 @@ type ChildRelationships$DashboardComponentFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$DashboardComponentFeed extends SObjectDefinition {
+interface SObjectDefinition$DashboardComponentFeed
+  extends SObjectDefinition<'DashboardComponentFeed'> {
+  Name: 'DashboardComponentFeed';
   Fields: Fields$DashboardComponentFeed;
   ParentReferences: ParentReferences$DashboardComponentFeed;
   ChildRelationships: ChildRelationships$DashboardComponentFeed;
@@ -6009,7 +6297,9 @@ type ChildRelationships$DashboardFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$DashboardFeed extends SObjectDefinition {
+interface SObjectDefinition$DashboardFeed
+  extends SObjectDefinition<'DashboardFeed'> {
+  Name: 'DashboardFeed';
   Fields: Fields$DashboardFeed;
   ParentReferences: ParentReferences$DashboardFeed;
   ChildRelationships: ChildRelationships$DashboardFeed;
@@ -6046,7 +6336,8 @@ type ChildRelationships$DataAssessmentFieldMetric = {
 };
 
 interface SObjectDefinition$DataAssessmentFieldMetric
-  extends SObjectDefinition {
+  extends SObjectDefinition<'DataAssessmentFieldMetric'> {
+  Name: 'DataAssessmentFieldMetric';
   Fields: Fields$DataAssessmentFieldMetric;
   ParentReferences: ParentReferences$DataAssessmentFieldMetric;
   ChildRelationships: ChildRelationships$DataAssessmentFieldMetric;
@@ -6081,7 +6372,9 @@ type ChildRelationships$DataAssessmentMetric = {
   DataAssessmentMetrics: SObjectDefinition$DataAssessmentFieldMetric;
 };
 
-interface SObjectDefinition$DataAssessmentMetric extends SObjectDefinition {
+interface SObjectDefinition$DataAssessmentMetric
+  extends SObjectDefinition<'DataAssessmentMetric'> {
+  Name: 'DataAssessmentMetric';
   Fields: Fields$DataAssessmentMetric;
   ParentReferences: ParentReferences$DataAssessmentMetric;
   ChildRelationships: ChildRelationships$DataAssessmentMetric;
@@ -6114,7 +6407,8 @@ type ChildRelationships$DataAssessmentValueMetric = {
 };
 
 interface SObjectDefinition$DataAssessmentValueMetric
-  extends SObjectDefinition {
+  extends SObjectDefinition<'DataAssessmentValueMetric'> {
+  Name: 'DataAssessmentValueMetric';
   Fields: Fields$DataAssessmentValueMetric;
   ParentReferences: ParentReferences$DataAssessmentValueMetric;
   ChildRelationships: ChildRelationships$DataAssessmentValueMetric;
@@ -6146,7 +6440,8 @@ type ChildRelationships$DataIntegrationRecordPurchasePermission = {
 };
 
 interface SObjectDefinition$DataIntegrationRecordPurchasePermission
-  extends SObjectDefinition {
+  extends SObjectDefinition<'DataIntegrationRecordPurchasePermission'> {
+  Name: 'DataIntegrationRecordPurchasePermission';
   Fields: Fields$DataIntegrationRecordPurchasePermission;
   ParentReferences: ParentReferences$DataIntegrationRecordPurchasePermission;
   ChildRelationships: ChildRelationships$DataIntegrationRecordPurchasePermission;
@@ -6171,7 +6466,9 @@ type ChildRelationships$DataStatistics = {
   //
 };
 
-interface SObjectDefinition$DataStatistics extends SObjectDefinition {
+interface SObjectDefinition$DataStatistics
+  extends SObjectDefinition<'DataStatistics'> {
+  Name: 'DataStatistics';
   Fields: Fields$DataStatistics;
   ParentReferences: ParentReferences$DataStatistics;
   ChildRelationships: ChildRelationships$DataStatistics;
@@ -6195,7 +6492,8 @@ type ChildRelationships$DataType = {
   //
 };
 
-interface SObjectDefinition$DataType extends SObjectDefinition {
+interface SObjectDefinition$DataType extends SObjectDefinition<'DataType'> {
+  Name: 'DataType';
   Fields: Fields$DataType;
   ParentReferences: ParentReferences$DataType;
   ChildRelationships: ChildRelationships$DataType;
@@ -6225,7 +6523,9 @@ type ChildRelationships$DatacloudAddress = {
   //
 };
 
-interface SObjectDefinition$DatacloudAddress extends SObjectDefinition {
+interface SObjectDefinition$DatacloudAddress
+  extends SObjectDefinition<'DatacloudAddress'> {
+  Name: 'DatacloudAddress';
   Fields: Fields$DatacloudAddress;
   ParentReferences: ParentReferences$DatacloudAddress;
   ChildRelationships: ChildRelationships$DatacloudAddress;
@@ -6246,7 +6546,7 @@ type Fields$DatasetExport = {
   Status: string;
   Owner: string | null;
   PublisherInfo: string;
-  Metadata: string | null;
+  Metadata: BlobString | null;
 };
 
 type ParentReferences$DatasetExport = {
@@ -6260,7 +6560,9 @@ type ChildRelationships$DatasetExport = {
   DatasetExportParts: SObjectDefinition$DatasetExportPart;
 };
 
-interface SObjectDefinition$DatasetExport extends SObjectDefinition {
+interface SObjectDefinition$DatasetExport
+  extends SObjectDefinition<'DatasetExport'> {
+  Name: 'DatasetExport';
   Fields: Fields$DatasetExport;
   ParentReferences: ParentReferences$DatasetExport;
   ChildRelationships: ChildRelationships$DatasetExport;
@@ -6289,7 +6591,9 @@ type ChildRelationships$DatasetExportEvent = {
   //
 };
 
-interface SObjectDefinition$DatasetExportEvent extends SObjectDefinition {
+interface SObjectDefinition$DatasetExportEvent
+  extends SObjectDefinition<'DatasetExportEvent'> {
+  Name: 'DatasetExportEvent';
   Fields: Fields$DatasetExportEvent;
   ParentReferences: ParentReferences$DatasetExportEvent;
   ChildRelationships: ChildRelationships$DatasetExportEvent;
@@ -6309,7 +6613,7 @@ type Fields$DatasetExportPart = {
   CompressedDataFileLength: number;
   PartNumber: number;
   Owner: string;
-  DataFile: string;
+  DataFile: BlobString;
 };
 
 type ParentReferences$DatasetExportPart = {
@@ -6323,7 +6627,9 @@ type ChildRelationships$DatasetExportPart = {
   //
 };
 
-interface SObjectDefinition$DatasetExportPart extends SObjectDefinition {
+interface SObjectDefinition$DatasetExportPart
+  extends SObjectDefinition<'DatasetExportPart'> {
+  Name: 'DatasetExportPart';
   Fields: Fields$DatasetExportPart;
   ParentReferences: ParentReferences$DatasetExportPart;
   ChildRelationships: ChildRelationships$DatasetExportPart;
@@ -6357,7 +6663,9 @@ type ChildRelationships$DeclinedEventRelation = {
   //
 };
 
-interface SObjectDefinition$DeclinedEventRelation extends SObjectDefinition {
+interface SObjectDefinition$DeclinedEventRelation
+  extends SObjectDefinition<'DeclinedEventRelation'> {
+  Name: 'DeclinedEventRelation';
   Fields: Fields$DeclinedEventRelation;
   ParentReferences: ParentReferences$DeclinedEventRelation;
   ChildRelationships: ChildRelationships$DeclinedEventRelation;
@@ -6375,7 +6683,7 @@ type Fields$Document = {
   Type: string | null;
   IsPublic: boolean;
   BodyLength: number;
-  Body: string | null;
+  Body: BlobString | null;
   Url: string | null;
   Description: string | null;
   Keywords: string | null;
@@ -6403,7 +6711,8 @@ type ChildRelationships$Document = {
   //
 };
 
-interface SObjectDefinition$Document extends SObjectDefinition {
+interface SObjectDefinition$Document extends SObjectDefinition<'Document'> {
+  Name: 'Document';
   Fields: Fields$Document;
   ParentReferences: ParentReferences$Document;
   ChildRelationships: ChildRelationships$Document;
@@ -6428,7 +6737,9 @@ type ChildRelationships$DocumentAttachmentMap = {
   //
 };
 
-interface SObjectDefinition$DocumentAttachmentMap extends SObjectDefinition {
+interface SObjectDefinition$DocumentAttachmentMap
+  extends SObjectDefinition<'DocumentAttachmentMap'> {
+  Name: 'DocumentAttachmentMap';
   Fields: Fields$DocumentAttachmentMap;
   ParentReferences: ParentReferences$DocumentAttachmentMap;
   ChildRelationships: ChildRelationships$DocumentAttachmentMap;
@@ -6459,7 +6770,8 @@ type ChildRelationships$Domain = {
   DomainSites: SObjectDefinition$DomainSite;
 };
 
-interface SObjectDefinition$Domain extends SObjectDefinition {
+interface SObjectDefinition$Domain extends SObjectDefinition<'Domain'> {
+  Name: 'Domain';
   Fields: Fields$Domain;
   ParentReferences: ParentReferences$Domain;
   ChildRelationships: ChildRelationships$Domain;
@@ -6490,7 +6802,8 @@ type ChildRelationships$DomainSite = {
   //
 };
 
-interface SObjectDefinition$DomainSite extends SObjectDefinition {
+interface SObjectDefinition$DomainSite extends SObjectDefinition<'DomainSite'> {
+  Name: 'DomainSite';
   Fields: Fields$DomainSite;
   ParentReferences: ParentReferences$DomainSite;
   ChildRelationships: ChildRelationships$DomainSite;
@@ -6524,7 +6837,9 @@ type ChildRelationships$DuplicateRecordItem = {
   ProcessSteps: SObjectDefinition$ProcessInstanceHistory;
 };
 
-interface SObjectDefinition$DuplicateRecordItem extends SObjectDefinition {
+interface SObjectDefinition$DuplicateRecordItem
+  extends SObjectDefinition<'DuplicateRecordItem'> {
+  Name: 'DuplicateRecordItem';
   Fields: Fields$DuplicateRecordItem;
   ParentReferences: ParentReferences$DuplicateRecordItem;
   ChildRelationships: ChildRelationships$DuplicateRecordItem;
@@ -6560,7 +6875,9 @@ type ChildRelationships$DuplicateRecordSet = {
   ProcessSteps: SObjectDefinition$ProcessInstanceHistory;
 };
 
-interface SObjectDefinition$DuplicateRecordSet extends SObjectDefinition {
+interface SObjectDefinition$DuplicateRecordSet
+  extends SObjectDefinition<'DuplicateRecordSet'> {
+  Name: 'DuplicateRecordSet';
   Fields: Fields$DuplicateRecordSet;
   ParentReferences: ParentReferences$DuplicateRecordSet;
   ChildRelationships: ChildRelationships$DuplicateRecordSet;
@@ -6596,7 +6913,9 @@ type ChildRelationships$DuplicateRule = {
   DuplicateRecordSets: SObjectDefinition$DuplicateRecordSet;
 };
 
-interface SObjectDefinition$DuplicateRule extends SObjectDefinition {
+interface SObjectDefinition$DuplicateRule
+  extends SObjectDefinition<'DuplicateRule'> {
+  Name: 'DuplicateRule';
   Fields: Fields$DuplicateRule;
   ParentReferences: ParentReferences$DuplicateRule;
   ChildRelationships: ChildRelationships$DuplicateRule;
@@ -6618,7 +6937,7 @@ type Fields$EmailCapture = {
   Recipient: string | null;
   CaptureDate: DateString | null;
   RawMessageLength: number | null;
-  RawMessage: string | null;
+  RawMessage: BlobString | null;
 };
 
 type ParentReferences$EmailCapture = {
@@ -6631,7 +6950,9 @@ type ChildRelationships$EmailCapture = {
   //
 };
 
-interface SObjectDefinition$EmailCapture extends SObjectDefinition {
+interface SObjectDefinition$EmailCapture
+  extends SObjectDefinition<'EmailCapture'> {
+  Name: 'EmailCapture';
   Fields: Fields$EmailCapture;
   ParentReferences: ParentReferences$EmailCapture;
   ChildRelationships: ChildRelationships$EmailCapture;
@@ -6664,7 +6985,9 @@ type ChildRelationships$EmailDomainFilter = {
   //
 };
 
-interface SObjectDefinition$EmailDomainFilter extends SObjectDefinition {
+interface SObjectDefinition$EmailDomainFilter
+  extends SObjectDefinition<'EmailDomainFilter'> {
+  Name: 'EmailDomainFilter';
   Fields: Fields$EmailDomainFilter;
   ParentReferences: ParentReferences$EmailDomainFilter;
   ChildRelationships: ChildRelationships$EmailDomainFilter;
@@ -6696,7 +7019,9 @@ type ChildRelationships$EmailDomainKey = {
   //
 };
 
-interface SObjectDefinition$EmailDomainKey extends SObjectDefinition {
+interface SObjectDefinition$EmailDomainKey
+  extends SObjectDefinition<'EmailDomainKey'> {
+  Name: 'EmailDomainKey';
   Fields: Fields$EmailDomainKey;
   ParentReferences: ParentReferences$EmailDomainKey;
   ChildRelationships: ChildRelationships$EmailDomainKey;
@@ -6756,7 +7081,9 @@ type ChildRelationships$EmailMessage = {
   ProcessSteps: SObjectDefinition$ProcessInstanceHistory;
 };
 
-interface SObjectDefinition$EmailMessage extends SObjectDefinition {
+interface SObjectDefinition$EmailMessage
+  extends SObjectDefinition<'EmailMessage'> {
+  Name: 'EmailMessage';
   Fields: Fields$EmailMessage;
   ParentReferences: ParentReferences$EmailMessage;
   ChildRelationships: ChildRelationships$EmailMessage;
@@ -6787,7 +7114,9 @@ type ChildRelationships$EmailMessageRelation = {
   //
 };
 
-interface SObjectDefinition$EmailMessageRelation extends SObjectDefinition {
+interface SObjectDefinition$EmailMessageRelation
+  extends SObjectDefinition<'EmailMessageRelation'> {
+  Name: 'EmailMessageRelation';
   Fields: Fields$EmailMessageRelation;
   ParentReferences: ParentReferences$EmailMessageRelation;
   ChildRelationships: ChildRelationships$EmailMessageRelation;
@@ -6821,7 +7150,8 @@ type ChildRelationships$EmailRelay = {
   Filters: SObjectDefinition$EmailDomainFilter;
 };
 
-interface SObjectDefinition$EmailRelay extends SObjectDefinition {
+interface SObjectDefinition$EmailRelay extends SObjectDefinition<'EmailRelay'> {
+  Name: 'EmailRelay';
   Fields: Fields$EmailRelay;
   ParentReferences: ParentReferences$EmailRelay;
   ChildRelationships: ChildRelationships$EmailRelay;
@@ -6855,7 +7185,9 @@ type ChildRelationships$EmailServicesAddress = {
   //
 };
 
-interface SObjectDefinition$EmailServicesAddress extends SObjectDefinition {
+interface SObjectDefinition$EmailServicesAddress
+  extends SObjectDefinition<'EmailServicesAddress'> {
+  Name: 'EmailServicesAddress';
   Fields: Fields$EmailServicesAddress;
   ParentReferences: ParentReferences$EmailServicesAddress;
   ChildRelationships: ChildRelationships$EmailServicesAddress;
@@ -6897,7 +7229,9 @@ type ChildRelationships$EmailServicesFunction = {
   Addresses: SObjectDefinition$EmailServicesAddress;
 };
 
-interface SObjectDefinition$EmailServicesFunction extends SObjectDefinition {
+interface SObjectDefinition$EmailServicesFunction
+  extends SObjectDefinition<'EmailServicesFunction'> {
+  Name: 'EmailServicesFunction';
   Fields: Fields$EmailServicesFunction;
   ParentReferences: ParentReferences$EmailServicesFunction;
   ChildRelationships: ChildRelationships$EmailServicesFunction;
@@ -6930,7 +7264,9 @@ type ChildRelationships$EmailStatus = {
   //
 };
 
-interface SObjectDefinition$EmailStatus extends SObjectDefinition {
+interface SObjectDefinition$EmailStatus
+  extends SObjectDefinition<'EmailStatus'> {
+  Name: 'EmailStatus';
   Fields: Fields$EmailStatus;
   ParentReferences: ParentReferences$EmailStatus;
   ChildRelationships: ChildRelationships$EmailStatus;
@@ -6982,7 +7318,9 @@ type ChildRelationships$EmailTemplate = {
   ContentDocumentLinks: SObjectDefinition$ContentDocumentLink;
 };
 
-interface SObjectDefinition$EmailTemplate extends SObjectDefinition {
+interface SObjectDefinition$EmailTemplate
+  extends SObjectDefinition<'EmailTemplate'> {
+  Name: 'EmailTemplate';
   Fields: Fields$EmailTemplate;
   ParentReferences: ParentReferences$EmailTemplate;
   ChildRelationships: ChildRelationships$EmailTemplate;
@@ -7034,7 +7372,9 @@ type ChildRelationships$EmbeddedServiceDetail = {
   //
 };
 
-interface SObjectDefinition$EmbeddedServiceDetail extends SObjectDefinition {
+interface SObjectDefinition$EmbeddedServiceDetail
+  extends SObjectDefinition<'EmbeddedServiceDetail'> {
+  Name: 'EmbeddedServiceDetail';
   Fields: Fields$EmbeddedServiceDetail;
   ParentReferences: ParentReferences$EmbeddedServiceDetail;
   ChildRelationships: ChildRelationships$EmbeddedServiceDetail;
@@ -7103,7 +7443,9 @@ type ChildRelationships$Entitlement = {
   WorkOrders: SObjectDefinition$WorkOrder;
 };
 
-interface SObjectDefinition$Entitlement extends SObjectDefinition {
+interface SObjectDefinition$Entitlement
+  extends SObjectDefinition<'Entitlement'> {
+  Name: 'Entitlement';
   Fields: Fields$Entitlement;
   ParentReferences: ParentReferences$Entitlement;
   ChildRelationships: ChildRelationships$Entitlement;
@@ -7113,7 +7455,7 @@ type Fields$EntitlementChangeEvent = {
   //
   Id: string | null;
   ReplayId: string | null;
-  ChangeEventHeader: string;
+  ChangeEventHeader: any;
   Name: string | null;
   CreatedDate: DateString | null;
   CreatedById: string | null;
@@ -7141,7 +7483,9 @@ type ChildRelationships$EntitlementChangeEvent = {
   //
 };
 
-interface SObjectDefinition$EntitlementChangeEvent extends SObjectDefinition {
+interface SObjectDefinition$EntitlementChangeEvent
+  extends SObjectDefinition<'EntitlementChangeEvent'> {
+  Name: 'EntitlementChangeEvent';
   Fields: Fields$EntitlementChangeEvent;
   ParentReferences: ParentReferences$EntitlementChangeEvent;
   ChildRelationships: ChildRelationships$EntitlementChangeEvent;
@@ -7173,7 +7517,9 @@ type ChildRelationships$EntitlementContact = {
   //
 };
 
-interface SObjectDefinition$EntitlementContact extends SObjectDefinition {
+interface SObjectDefinition$EntitlementContact
+  extends SObjectDefinition<'EntitlementContact'> {
+  Name: 'EntitlementContact';
   Fields: Fields$EntitlementContact;
   ParentReferences: ParentReferences$EntitlementContact;
   ChildRelationships: ChildRelationships$EntitlementContact;
@@ -7215,7 +7561,9 @@ type ChildRelationships$EntitlementFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$EntitlementFeed extends SObjectDefinition {
+interface SObjectDefinition$EntitlementFeed
+  extends SObjectDefinition<'EntitlementFeed'> {
+  Name: 'EntitlementFeed';
   Fields: Fields$EntitlementFeed;
   ParentReferences: ParentReferences$EntitlementFeed;
   ChildRelationships: ChildRelationships$EntitlementFeed;
@@ -7243,7 +7591,9 @@ type ChildRelationships$EntitlementHistory = {
   //
 };
 
-interface SObjectDefinition$EntitlementHistory extends SObjectDefinition {
+interface SObjectDefinition$EntitlementHistory
+  extends SObjectDefinition<'EntitlementHistory'> {
+  Name: 'EntitlementHistory';
   Fields: Fields$EntitlementHistory;
   ParentReferences: ParentReferences$EntitlementHistory;
   ChildRelationships: ChildRelationships$EntitlementHistory;
@@ -7277,7 +7627,9 @@ type ChildRelationships$EntitlementTemplate = {
   //
 };
 
-interface SObjectDefinition$EntitlementTemplate extends SObjectDefinition {
+interface SObjectDefinition$EntitlementTemplate
+  extends SObjectDefinition<'EntitlementTemplate'> {
+  Name: 'EntitlementTemplate';
   Fields: Fields$EntitlementTemplate;
   ParentReferences: ParentReferences$EntitlementTemplate;
   ChildRelationships: ChildRelationships$EntitlementTemplate;
@@ -7325,7 +7677,7 @@ type Fields$EntityDefinition = {
   RunningUserEntityAccessId: string | null;
   PublisherId: string | null;
   IsLayoutable: boolean;
-  RecordTypesSupported: string | null;
+  RecordTypesSupported: any | null;
   InternalSharingModel: string;
   ExternalSharingModel: string;
   HasSubtypes: boolean;
@@ -7350,7 +7702,9 @@ type ChildRelationships$EntityDefinition = {
   SearchLayouts: SObjectDefinition$SearchLayout;
 };
 
-interface SObjectDefinition$EntityDefinition extends SObjectDefinition {
+interface SObjectDefinition$EntityDefinition
+  extends SObjectDefinition<'EntityDefinition'> {
+  Name: 'EntityDefinition';
   Fields: Fields$EntityDefinition;
   ParentReferences: ParentReferences$EntityDefinition;
   ChildRelationships: ChildRelationships$EntityDefinition;
@@ -7417,7 +7771,9 @@ type ChildRelationships$EntityMilestone = {
   ProcessSteps: SObjectDefinition$ProcessInstanceHistory;
 };
 
-interface SObjectDefinition$EntityMilestone extends SObjectDefinition {
+interface SObjectDefinition$EntityMilestone
+  extends SObjectDefinition<'EntityMilestone'> {
+  Name: 'EntityMilestone';
   Fields: Fields$EntityMilestone;
   ParentReferences: ParentReferences$EntityMilestone;
   ChildRelationships: ChildRelationships$EntityMilestone;
@@ -7459,7 +7815,9 @@ type ChildRelationships$EntityMilestoneFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$EntityMilestoneFeed extends SObjectDefinition {
+interface SObjectDefinition$EntityMilestoneFeed
+  extends SObjectDefinition<'EntityMilestoneFeed'> {
+  Name: 'EntityMilestoneFeed';
   Fields: Fields$EntityMilestoneFeed;
   ParentReferences: ParentReferences$EntityMilestoneFeed;
   ChildRelationships: ChildRelationships$EntityMilestoneFeed;
@@ -7487,7 +7845,9 @@ type ChildRelationships$EntityMilestoneHistory = {
   //
 };
 
-interface SObjectDefinition$EntityMilestoneHistory extends SObjectDefinition {
+interface SObjectDefinition$EntityMilestoneHistory
+  extends SObjectDefinition<'EntityMilestoneHistory'> {
+  Name: 'EntityMilestoneHistory';
   Fields: Fields$EntityMilestoneHistory;
   ParentReferences: ParentReferences$EntityMilestoneHistory;
   ChildRelationships: ChildRelationships$EntityMilestoneHistory;
@@ -7548,7 +7908,7 @@ type Fields$EntityParticle = {
   IsIdLookup: boolean;
   IsNamePointing: boolean;
   RelationshipOrder: number | null;
-  ReferenceTo: string | null;
+  ReferenceTo: any | null;
   IsComponent: boolean;
   IsCompound: boolean;
 };
@@ -7562,7 +7922,9 @@ type ChildRelationships$EntityParticle = {
   PicklistValues: SObjectDefinition$PicklistValueInfo;
 };
 
-interface SObjectDefinition$EntityParticle extends SObjectDefinition {
+interface SObjectDefinition$EntityParticle
+  extends SObjectDefinition<'EntityParticle'> {
+  Name: 'EntityParticle';
   Fields: Fields$EntityParticle;
   ParentReferences: ParentReferences$EntityParticle;
   ChildRelationships: ChildRelationships$EntityParticle;
@@ -7589,7 +7951,9 @@ type ChildRelationships$EntitySubscription = {
   //
 };
 
-interface SObjectDefinition$EntitySubscription extends SObjectDefinition {
+interface SObjectDefinition$EntitySubscription
+  extends SObjectDefinition<'EntitySubscription'> {
+  Name: 'EntitySubscription';
   Fields: Fields$EntitySubscription;
   ParentReferences: ParentReferences$EntitySubscription;
   ChildRelationships: ChildRelationships$EntitySubscription;
@@ -7665,7 +8029,8 @@ type ChildRelationships$Event = {
   UndecidedEventRelations: SObjectDefinition$UndecidedEventRelation;
 };
 
-interface SObjectDefinition$Event extends SObjectDefinition {
+interface SObjectDefinition$Event extends SObjectDefinition<'Event'> {
+  Name: 'Event';
   Fields: Fields$Event;
   ParentReferences: ParentReferences$Event;
   ChildRelationships: ChildRelationships$Event;
@@ -7693,7 +8058,9 @@ type ChildRelationships$EventBusSubscriber = {
   //
 };
 
-interface SObjectDefinition$EventBusSubscriber extends SObjectDefinition {
+interface SObjectDefinition$EventBusSubscriber
+  extends SObjectDefinition<'EventBusSubscriber'> {
+  Name: 'EventBusSubscriber';
   Fields: Fields$EventBusSubscriber;
   ParentReferences: ParentReferences$EventBusSubscriber;
   ChildRelationships: ChildRelationships$EventBusSubscriber;
@@ -7703,7 +8070,7 @@ type Fields$EventChangeEvent = {
   //
   Id: string | null;
   ReplayId: string | null;
-  ChangeEventHeader: string;
+  ChangeEventHeader: any;
   WhoId: string | null;
   WhatId: string | null;
   Subject: string | null;
@@ -7747,7 +8114,9 @@ type ChildRelationships$EventChangeEvent = {
   //
 };
 
-interface SObjectDefinition$EventChangeEvent extends SObjectDefinition {
+interface SObjectDefinition$EventChangeEvent
+  extends SObjectDefinition<'EventChangeEvent'> {
+  Name: 'EventChangeEvent';
   Fields: Fields$EventChangeEvent;
   ParentReferences: ParentReferences$EventChangeEvent;
   ChildRelationships: ChildRelationships$EventChangeEvent;
@@ -7789,7 +8158,8 @@ type ChildRelationships$EventFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$EventFeed extends SObjectDefinition {
+interface SObjectDefinition$EventFeed extends SObjectDefinition<'EventFeed'> {
+  Name: 'EventFeed';
   Fields: Fields$EventFeed;
   ParentReferences: ParentReferences$EventFeed;
   ChildRelationships: ChildRelationships$EventFeed;
@@ -7811,7 +8181,7 @@ type Fields$EventLogFile = {
   ApiVersion: number;
   LogFileFieldNames: string | null;
   LogFileFieldTypes: string | null;
-  LogFile: string;
+  LogFile: BlobString;
 };
 
 type ParentReferences$EventLogFile = {
@@ -7824,7 +8194,9 @@ type ChildRelationships$EventLogFile = {
   //
 };
 
-interface SObjectDefinition$EventLogFile extends SObjectDefinition {
+interface SObjectDefinition$EventLogFile
+  extends SObjectDefinition<'EventLogFile'> {
+  Name: 'EventLogFile';
   Fields: Fields$EventLogFile;
   ParentReferences: ParentReferences$EventLogFile;
   ChildRelationships: ChildRelationships$EventLogFile;
@@ -7858,7 +8230,9 @@ type ChildRelationships$EventRelation = {
   //
 };
 
-interface SObjectDefinition$EventRelation extends SObjectDefinition {
+interface SObjectDefinition$EventRelation
+  extends SObjectDefinition<'EventRelation'> {
+  Name: 'EventRelation';
   Fields: Fields$EventRelation;
   ParentReferences: ParentReferences$EventRelation;
   ChildRelationships: ChildRelationships$EventRelation;
@@ -7868,7 +8242,7 @@ type Fields$EventRelationChangeEvent = {
   //
   Id: string | null;
   ReplayId: string | null;
-  ChangeEventHeader: string;
+  ChangeEventHeader: any;
   RelationId: string | null;
   EventId: string | null;
   Status: string | null;
@@ -7888,7 +8262,9 @@ type ChildRelationships$EventRelationChangeEvent = {
   //
 };
 
-interface SObjectDefinition$EventRelationChangeEvent extends SObjectDefinition {
+interface SObjectDefinition$EventRelationChangeEvent
+  extends SObjectDefinition<'EventRelationChangeEvent'> {
+  Name: 'EventRelationChangeEvent';
   Fields: Fields$EventRelationChangeEvent;
   ParentReferences: ParentReferences$EventRelationChangeEvent;
   ChildRelationships: ChildRelationships$EventRelationChangeEvent;
@@ -7935,7 +8311,9 @@ type ChildRelationships$ExternalDataSource = {
   SetupEntityAccessItems: SObjectDefinition$SetupEntityAccess;
 };
 
-interface SObjectDefinition$ExternalDataSource extends SObjectDefinition {
+interface SObjectDefinition$ExternalDataSource
+  extends SObjectDefinition<'ExternalDataSource'> {
+  Name: 'ExternalDataSource';
   Fields: Fields$ExternalDataSource;
   ParentReferences: ParentReferences$ExternalDataSource;
   ChildRelationships: ChildRelationships$ExternalDataSource;
@@ -7971,7 +8349,9 @@ type ChildRelationships$ExternalDataUserAuth = {
   //
 };
 
-interface SObjectDefinition$ExternalDataUserAuth extends SObjectDefinition {
+interface SObjectDefinition$ExternalDataUserAuth
+  extends SObjectDefinition<'ExternalDataUserAuth'> {
+  Name: 'ExternalDataUserAuth';
   Fields: Fields$ExternalDataUserAuth;
   ParentReferences: ParentReferences$ExternalDataUserAuth;
   ChildRelationships: ChildRelationships$ExternalDataUserAuth;
@@ -8020,7 +8400,9 @@ type ChildRelationships$ExternalSocialAccount = {
   SetupEntityAccessItems: SObjectDefinition$SetupEntityAccess;
 };
 
-interface SObjectDefinition$ExternalSocialAccount extends SObjectDefinition {
+interface SObjectDefinition$ExternalSocialAccount
+  extends SObjectDefinition<'ExternalSocialAccount'> {
+  Name: 'ExternalSocialAccount';
   Fields: Fields$ExternalSocialAccount;
   ParentReferences: ParentReferences$ExternalSocialAccount;
   ChildRelationships: ChildRelationships$ExternalSocialAccount;
@@ -8045,7 +8427,9 @@ type ChildRelationships$FeedAttachment = {
   //
 };
 
-interface SObjectDefinition$FeedAttachment extends SObjectDefinition {
+interface SObjectDefinition$FeedAttachment
+  extends SObjectDefinition<'FeedAttachment'> {
+  Name: 'FeedAttachment';
   Fields: Fields$FeedAttachment;
   ParentReferences: ParentReferences$FeedAttachment;
   ChildRelationships: ChildRelationships$FeedAttachment;
@@ -8091,7 +8475,9 @@ type ChildRelationships$FeedComment = {
   FeedRevisions: SObjectDefinition$FeedRevision;
 };
 
-interface SObjectDefinition$FeedComment extends SObjectDefinition {
+interface SObjectDefinition$FeedComment
+  extends SObjectDefinition<'FeedComment'> {
+  Name: 'FeedComment';
   Fields: Fields$FeedComment;
   ParentReferences: ParentReferences$FeedComment;
   ChildRelationships: ChildRelationships$FeedComment;
@@ -8147,7 +8533,8 @@ type ChildRelationships$FeedItem = {
   FeedItemThanks: SObjectDefinition$WorkThanks;
 };
 
-interface SObjectDefinition$FeedItem extends SObjectDefinition {
+interface SObjectDefinition$FeedItem extends SObjectDefinition<'FeedItem'> {
+  Name: 'FeedItem';
   Fields: Fields$FeedItem;
   ParentReferences: ParentReferences$FeedItem;
   ChildRelationships: ChildRelationships$FeedItem;
@@ -8174,7 +8561,8 @@ type ChildRelationships$FeedLike = {
   //
 };
 
-interface SObjectDefinition$FeedLike extends SObjectDefinition {
+interface SObjectDefinition$FeedLike extends SObjectDefinition<'FeedLike'> {
+  Name: 'FeedLike';
   Fields: Fields$FeedLike;
   ParentReferences: ParentReferences$FeedLike;
   ChildRelationships: ChildRelationships$FeedLike;
@@ -8201,7 +8589,9 @@ type ChildRelationships$FeedPollChoice = {
   FeedPollVotes: SObjectDefinition$FeedPollVote;
 };
 
-interface SObjectDefinition$FeedPollChoice extends SObjectDefinition {
+interface SObjectDefinition$FeedPollChoice
+  extends SObjectDefinition<'FeedPollChoice'> {
+  Name: 'FeedPollChoice';
   Fields: Fields$FeedPollChoice;
   ParentReferences: ParentReferences$FeedPollChoice;
   ChildRelationships: ChildRelationships$FeedPollChoice;
@@ -8228,7 +8618,9 @@ type ChildRelationships$FeedPollVote = {
   //
 };
 
-interface SObjectDefinition$FeedPollVote extends SObjectDefinition {
+interface SObjectDefinition$FeedPollVote
+  extends SObjectDefinition<'FeedPollVote'> {
+  Name: 'FeedPollVote';
   Fields: Fields$FeedPollVote;
   ParentReferences: ParentReferences$FeedPollVote;
   ChildRelationships: ChildRelationships$FeedPollVote;
@@ -8258,7 +8650,9 @@ type ChildRelationships$FeedRevision = {
   //
 };
 
-interface SObjectDefinition$FeedRevision extends SObjectDefinition {
+interface SObjectDefinition$FeedRevision
+  extends SObjectDefinition<'FeedRevision'> {
+  Name: 'FeedRevision';
   Fields: Fields$FeedRevision;
   ParentReferences: ParentReferences$FeedRevision;
   ChildRelationships: ChildRelationships$FeedRevision;
@@ -8287,7 +8681,8 @@ type ChildRelationships$FeedSignal = {
   //
 };
 
-interface SObjectDefinition$FeedSignal extends SObjectDefinition {
+interface SObjectDefinition$FeedSignal extends SObjectDefinition<'FeedSignal'> {
+  Name: 'FeedSignal';
   Fields: Fields$FeedSignal;
   ParentReferences: ParentReferences$FeedSignal;
   ChildRelationships: ChildRelationships$FeedSignal;
@@ -8310,7 +8705,9 @@ type ChildRelationships$FeedTrackedChange = {
   //
 };
 
-interface SObjectDefinition$FeedTrackedChange extends SObjectDefinition {
+interface SObjectDefinition$FeedTrackedChange
+  extends SObjectDefinition<'FeedTrackedChange'> {
+  Name: 'FeedTrackedChange';
   Fields: Fields$FeedTrackedChange;
   ParentReferences: ParentReferences$FeedTrackedChange;
   ChildRelationships: ChildRelationships$FeedTrackedChange;
@@ -8354,7 +8751,7 @@ type Fields$FieldDefinition = {
   PublisherId: string | null;
   RunningUserFieldAccessId: string | null;
   RelationshipName: string | null;
-  ReferenceTo: string | null;
+  ReferenceTo: any | null;
   ReferenceTargetField: string | null;
   IsCompound: boolean;
   IsSearchPrefilterable: boolean;
@@ -8375,7 +8772,9 @@ type ChildRelationships$FieldDefinition = {
   //
 };
 
-interface SObjectDefinition$FieldDefinition extends SObjectDefinition {
+interface SObjectDefinition$FieldDefinition
+  extends SObjectDefinition<'FieldDefinition'> {
+  Name: 'FieldDefinition';
   Fields: Fields$FieldDefinition;
   ParentReferences: ParentReferences$FieldDefinition;
   ChildRelationships: ChildRelationships$FieldDefinition;
@@ -8401,7 +8800,9 @@ type ChildRelationships$FieldPermissions = {
   //
 };
 
-interface SObjectDefinition$FieldPermissions extends SObjectDefinition {
+interface SObjectDefinition$FieldPermissions
+  extends SObjectDefinition<'FieldPermissions'> {
+  Name: 'FieldPermissions';
   Fields: Fields$FieldPermissions;
   ParentReferences: ParentReferences$FieldPermissions;
   ChildRelationships: ChildRelationships$FieldPermissions;
@@ -8437,7 +8838,9 @@ type ChildRelationships$FileSearchActivity = {
   //
 };
 
-interface SObjectDefinition$FileSearchActivity extends SObjectDefinition {
+interface SObjectDefinition$FileSearchActivity
+  extends SObjectDefinition<'FileSearchActivity'> {
+  Name: 'FileSearchActivity';
   Fields: Fields$FileSearchActivity;
   ParentReferences: ParentReferences$FileSearchActivity;
   ChildRelationships: ChildRelationships$FileSearchActivity;
@@ -8471,7 +8874,9 @@ type ChildRelationships$FiscalYearSettings = {
   Periods: SObjectDefinition$Period;
 };
 
-interface SObjectDefinition$FiscalYearSettings extends SObjectDefinition {
+interface SObjectDefinition$FiscalYearSettings
+  extends SObjectDefinition<'FiscalYearSettings'> {
+  Name: 'FiscalYearSettings';
   Fields: Fields$FiscalYearSettings;
   ParentReferences: ParentReferences$FiscalYearSettings;
   ChildRelationships: ChildRelationships$FiscalYearSettings;
@@ -8495,7 +8900,9 @@ type ChildRelationships$FlexQueueItem = {
   //
 };
 
-interface SObjectDefinition$FlexQueueItem extends SObjectDefinition {
+interface SObjectDefinition$FlexQueueItem
+  extends SObjectDefinition<'FlexQueueItem'> {
+  Name: 'FlexQueueItem';
   Fields: Fields$FlexQueueItem;
   ParentReferences: ParentReferences$FlexQueueItem;
   ChildRelationships: ChildRelationships$FlexQueueItem;
@@ -8532,7 +8939,9 @@ type ChildRelationships$FlowInterview = {
   RecordActions: SObjectDefinition$RecordAction;
 };
 
-interface SObjectDefinition$FlowInterview extends SObjectDefinition {
+interface SObjectDefinition$FlowInterview
+  extends SObjectDefinition<'FlowInterview'> {
+  Name: 'FlowInterview';
   Fields: Fields$FlowInterview;
   ParentReferences: ParentReferences$FlowInterview;
   ChildRelationships: ChildRelationships$FlowInterview;
@@ -8561,7 +8970,9 @@ type ChildRelationships$FlowInterviewShare = {
   //
 };
 
-interface SObjectDefinition$FlowInterviewShare extends SObjectDefinition {
+interface SObjectDefinition$FlowInterviewShare
+  extends SObjectDefinition<'FlowInterviewShare'> {
+  Name: 'FlowInterviewShare';
   Fields: Fields$FlowInterviewShare;
   ParentReferences: ParentReferences$FlowInterviewShare;
   ChildRelationships: ChildRelationships$FlowInterviewShare;
@@ -8593,7 +9004,9 @@ type ChildRelationships$FlowRecordRelation = {
   //
 };
 
-interface SObjectDefinition$FlowRecordRelation extends SObjectDefinition {
+interface SObjectDefinition$FlowRecordRelation
+  extends SObjectDefinition<'FlowRecordRelation'> {
+  Name: 'FlowRecordRelation';
   Fields: Fields$FlowRecordRelation;
   ParentReferences: ParentReferences$FlowRecordRelation;
   ChildRelationships: ChildRelationships$FlowRecordRelation;
@@ -8627,7 +9040,9 @@ type ChildRelationships$FlowStageRelation = {
   //
 };
 
-interface SObjectDefinition$FlowStageRelation extends SObjectDefinition {
+interface SObjectDefinition$FlowStageRelation
+  extends SObjectDefinition<'FlowStageRelation'> {
+  Name: 'FlowStageRelation';
   Fields: Fields$FlowStageRelation;
   ParentReferences: ParentReferences$FlowStageRelation;
   ChildRelationships: ChildRelationships$FlowStageRelation;
@@ -8661,7 +9076,8 @@ type ChildRelationships$Folder = {
   SubFolders: SObjectDefinition$Folder;
 };
 
-interface SObjectDefinition$Folder extends SObjectDefinition {
+interface SObjectDefinition$Folder extends SObjectDefinition<'Folder'> {
+  Name: 'Folder';
   Fields: Fields$Folder;
   ParentReferences: ParentReferences$Folder;
   ChildRelationships: ChildRelationships$Folder;
@@ -8697,7 +9113,9 @@ type ChildRelationships$FolderedContentDocument = {
   //
 };
 
-interface SObjectDefinition$FolderedContentDocument extends SObjectDefinition {
+interface SObjectDefinition$FolderedContentDocument
+  extends SObjectDefinition<'FolderedContentDocument'> {
+  Name: 'FolderedContentDocument';
   Fields: Fields$FolderedContentDocument;
   ParentReferences: ParentReferences$FolderedContentDocument;
   ChildRelationships: ChildRelationships$FolderedContentDocument;
@@ -8724,7 +9142,9 @@ type ChildRelationships$ForecastShare = {
   //
 };
 
-interface SObjectDefinition$ForecastShare extends SObjectDefinition {
+interface SObjectDefinition$ForecastShare
+  extends SObjectDefinition<'ForecastShare'> {
+  Name: 'ForecastShare';
   Fields: Fields$ForecastShare;
   ParentReferences: ParentReferences$ForecastShare;
   ChildRelationships: ChildRelationships$ForecastShare;
@@ -8755,7 +9175,9 @@ type ChildRelationships$ForecastingShare = {
   //
 };
 
-interface SObjectDefinition$ForecastingShare extends SObjectDefinition {
+interface SObjectDefinition$ForecastingShare
+  extends SObjectDefinition<'ForecastingShare'> {
+  Name: 'ForecastingShare';
   Fields: Fields$ForecastingShare;
   ParentReferences: ParentReferences$ForecastingShare;
   ChildRelationships: ChildRelationships$ForecastingShare;
@@ -8786,7 +9208,9 @@ type ChildRelationships$GrantedByLicense = {
   //
 };
 
-interface SObjectDefinition$GrantedByLicense extends SObjectDefinition {
+interface SObjectDefinition$GrantedByLicense
+  extends SObjectDefinition<'GrantedByLicense'> {
+  Name: 'GrantedByLicense';
   Fields: Fields$GrantedByLicense;
   ParentReferences: ParentReferences$GrantedByLicense;
   ChildRelationships: ChildRelationships$GrantedByLicense;
@@ -8825,7 +9249,8 @@ type ChildRelationships$Group = {
   DelegatedUsers: SObjectDefinition$User;
 };
 
-interface SObjectDefinition$Group extends SObjectDefinition {
+interface SObjectDefinition$Group extends SObjectDefinition<'Group'> {
+  Name: 'Group';
   Fields: Fields$Group;
   ParentReferences: ParentReferences$Group;
   ChildRelationships: ChildRelationships$Group;
@@ -8848,7 +9273,9 @@ type ChildRelationships$GroupMember = {
   //
 };
 
-interface SObjectDefinition$GroupMember extends SObjectDefinition {
+interface SObjectDefinition$GroupMember
+  extends SObjectDefinition<'GroupMember'> {
+  Name: 'GroupMember';
   Fields: Fields$GroupMember;
   ParentReferences: ParentReferences$GroupMember;
   ChildRelationships: ChildRelationships$GroupMember;
@@ -8889,7 +9316,8 @@ type ChildRelationships$Holiday = {
   //
 };
 
-interface SObjectDefinition$Holiday extends SObjectDefinition {
+interface SObjectDefinition$Holiday extends SObjectDefinition<'Holiday'> {
+  Name: 'Holiday';
   Fields: Fields$Holiday;
   ParentReferences: ParentReferences$Holiday;
   ChildRelationships: ChildRelationships$Holiday;
@@ -8915,7 +9343,9 @@ type ChildRelationships$IconDefinition = {
   //
 };
 
-interface SObjectDefinition$IconDefinition extends SObjectDefinition {
+interface SObjectDefinition$IconDefinition
+  extends SObjectDefinition<'IconDefinition'> {
+  Name: 'IconDefinition';
   Fields: Fields$IconDefinition;
   ParentReferences: ParentReferences$IconDefinition;
   ChildRelationships: ChildRelationships$IconDefinition;
@@ -8965,7 +9395,8 @@ type ChildRelationships$Idea = {
   Votes: SObjectDefinition$Vote;
 };
 
-interface SObjectDefinition$Idea extends SObjectDefinition {
+interface SObjectDefinition$Idea extends SObjectDefinition<'Idea'> {
+  Name: 'Idea';
   Fields: Fields$Idea;
   ParentReferences: ParentReferences$Idea;
   ChildRelationships: ChildRelationships$Idea;
@@ -8999,7 +9430,9 @@ type ChildRelationships$IdeaComment = {
   Votes: SObjectDefinition$Vote;
 };
 
-interface SObjectDefinition$IdeaComment extends SObjectDefinition {
+interface SObjectDefinition$IdeaComment
+  extends SObjectDefinition<'IdeaComment'> {
+  Name: 'IdeaComment';
   Fields: Fields$IdeaComment;
   ParentReferences: ParentReferences$IdeaComment;
   ChildRelationships: ChildRelationships$IdeaComment;
@@ -9028,7 +9461,9 @@ type ChildRelationships$IdpEventLog = {
   //
 };
 
-interface SObjectDefinition$IdpEventLog extends SObjectDefinition {
+interface SObjectDefinition$IdpEventLog
+  extends SObjectDefinition<'IdpEventLog'> {
+  Name: 'IdpEventLog';
   Fields: Fields$IdpEventLog;
   ParentReferences: ParentReferences$IdpEventLog;
   ChildRelationships: ChildRelationships$IdpEventLog;
@@ -9077,7 +9512,8 @@ type ChildRelationships$Individual = {
   Leads: SObjectDefinition$Lead;
 };
 
-interface SObjectDefinition$Individual extends SObjectDefinition {
+interface SObjectDefinition$Individual extends SObjectDefinition<'Individual'> {
+  Name: 'Individual';
   Fields: Fields$Individual;
   ParentReferences: ParentReferences$Individual;
   ChildRelationships: ChildRelationships$Individual;
@@ -9105,7 +9541,9 @@ type ChildRelationships$IndividualHistory = {
   //
 };
 
-interface SObjectDefinition$IndividualHistory extends SObjectDefinition {
+interface SObjectDefinition$IndividualHistory
+  extends SObjectDefinition<'IndividualHistory'> {
+  Name: 'IndividualHistory';
   Fields: Fields$IndividualHistory;
   ParentReferences: ParentReferences$IndividualHistory;
   ChildRelationships: ChildRelationships$IndividualHistory;
@@ -9134,7 +9572,9 @@ type ChildRelationships$IndividualShare = {
   //
 };
 
-interface SObjectDefinition$IndividualShare extends SObjectDefinition {
+interface SObjectDefinition$IndividualShare
+  extends SObjectDefinition<'IndividualShare'> {
+  Name: 'IndividualShare';
   Fields: Fields$IndividualShare;
   ParentReferences: ParentReferences$IndividualShare;
   ChildRelationships: ChildRelationships$IndividualShare;
@@ -9168,7 +9608,9 @@ type ChildRelationships$InstalledMobileApp = {
   //
 };
 
-interface SObjectDefinition$InstalledMobileApp extends SObjectDefinition {
+interface SObjectDefinition$InstalledMobileApp
+  extends SObjectDefinition<'InstalledMobileApp'> {
+  Name: 'InstalledMobileApp';
   Fields: Fields$InstalledMobileApp;
   ParentReferences: ParentReferences$InstalledMobileApp;
   ChildRelationships: ChildRelationships$InstalledMobileApp;
@@ -9217,7 +9659,9 @@ type ChildRelationships$KnowledgeArticle = {
   Votes: SObjectDefinition$Vote;
 };
 
-interface SObjectDefinition$KnowledgeArticle extends SObjectDefinition {
+interface SObjectDefinition$KnowledgeArticle
+  extends SObjectDefinition<'KnowledgeArticle'> {
+  Name: 'KnowledgeArticle';
   Fields: Fields$KnowledgeArticle;
   ParentReferences: ParentReferences$KnowledgeArticle;
   ChildRelationships: ChildRelationships$KnowledgeArticle;
@@ -9293,7 +9737,9 @@ type ChildRelationships$KnowledgeArticleVersion = {
   TopicAssignments: SObjectDefinition$TopicAssignment;
 };
 
-interface SObjectDefinition$KnowledgeArticleVersion extends SObjectDefinition {
+interface SObjectDefinition$KnowledgeArticleVersion
+  extends SObjectDefinition<'KnowledgeArticleVersion'> {
+  Name: 'KnowledgeArticleVersion';
   Fields: Fields$KnowledgeArticleVersion;
   ParentReferences: ParentReferences$KnowledgeArticleVersion;
   ChildRelationships: ChildRelationships$KnowledgeArticleVersion;
@@ -9328,7 +9774,8 @@ type ChildRelationships$KnowledgeArticleVersionHistory = {
 };
 
 interface SObjectDefinition$KnowledgeArticleVersionHistory
-  extends SObjectDefinition {
+  extends SObjectDefinition<'KnowledgeArticleVersionHistory'> {
+  Name: 'KnowledgeArticleVersionHistory';
   Fields: Fields$KnowledgeArticleVersionHistory;
   ParentReferences: ParentReferences$KnowledgeArticleVersionHistory;
   ChildRelationships: ChildRelationships$KnowledgeArticleVersionHistory;
@@ -9353,7 +9800,9 @@ type ChildRelationships$KnowledgeArticleViewStat = {
   //
 };
 
-interface SObjectDefinition$KnowledgeArticleViewStat extends SObjectDefinition {
+interface SObjectDefinition$KnowledgeArticleViewStat
+  extends SObjectDefinition<'KnowledgeArticleViewStat'> {
+  Name: 'KnowledgeArticleViewStat';
   Fields: Fields$KnowledgeArticleViewStat;
   ParentReferences: ParentReferences$KnowledgeArticleViewStat;
   ChildRelationships: ChildRelationships$KnowledgeArticleViewStat;
@@ -9377,7 +9826,9 @@ type ChildRelationships$KnowledgeArticleVoteStat = {
   //
 };
 
-interface SObjectDefinition$KnowledgeArticleVoteStat extends SObjectDefinition {
+interface SObjectDefinition$KnowledgeArticleVoteStat
+  extends SObjectDefinition<'KnowledgeArticleVoteStat'> {
+  Name: 'KnowledgeArticleVoteStat';
   Fields: Fields$KnowledgeArticleVoteStat;
   ParentReferences: ParentReferences$KnowledgeArticleVoteStat;
   ChildRelationships: ChildRelationships$KnowledgeArticleVoteStat;
@@ -9406,7 +9857,8 @@ type ChildRelationships$Knowledge__DataCategorySelection = {
 };
 
 interface SObjectDefinition$Knowledge__DataCategorySelection
-  extends SObjectDefinition {
+  extends SObjectDefinition<'Knowledge__DataCategorySelection'> {
+  Name: 'Knowledge__DataCategorySelection';
   Fields: Fields$Knowledge__DataCategorySelection;
   ParentReferences: ParentReferences$Knowledge__DataCategorySelection;
   ChildRelationships: ChildRelationships$Knowledge__DataCategorySelection;
@@ -9431,7 +9883,9 @@ type ChildRelationships$Knowledge__ViewStat = {
   //
 };
 
-interface SObjectDefinition$Knowledge__ViewStat extends SObjectDefinition {
+interface SObjectDefinition$Knowledge__ViewStat
+  extends SObjectDefinition<'Knowledge__ViewStat'> {
+  Name: 'Knowledge__ViewStat';
   Fields: Fields$Knowledge__ViewStat;
   ParentReferences: ParentReferences$Knowledge__ViewStat;
   ChildRelationships: ChildRelationships$Knowledge__ViewStat;
@@ -9455,7 +9909,9 @@ type ChildRelationships$Knowledge__VoteStat = {
   //
 };
 
-interface SObjectDefinition$Knowledge__VoteStat extends SObjectDefinition {
+interface SObjectDefinition$Knowledge__VoteStat
+  extends SObjectDefinition<'Knowledge__VoteStat'> {
+  Name: 'Knowledge__VoteStat';
   Fields: Fields$Knowledge__VoteStat;
   ParentReferences: ParentReferences$Knowledge__VoteStat;
   ChildRelationships: ChildRelationships$Knowledge__VoteStat;
@@ -9503,7 +9959,9 @@ type ChildRelationships$Knowledge__ka = {
   Votes: SObjectDefinition$Vote;
 };
 
-interface SObjectDefinition$Knowledge__ka extends SObjectDefinition {
+interface SObjectDefinition$Knowledge__ka
+  extends SObjectDefinition<'Knowledge__ka'> {
+  Name: 'Knowledge__ka';
   Fields: Fields$Knowledge__ka;
   ParentReferences: ParentReferences$Knowledge__ka;
   ChildRelationships: ChildRelationships$Knowledge__ka;
@@ -9580,7 +10038,9 @@ type ChildRelationships$Knowledge__kav = {
   TopicAssignments: SObjectDefinition$TopicAssignment;
 };
 
-interface SObjectDefinition$Knowledge__kav extends SObjectDefinition {
+interface SObjectDefinition$Knowledge__kav
+  extends SObjectDefinition<'Knowledge__kav'> {
+  Name: 'Knowledge__kav';
   Fields: Fields$Knowledge__kav;
   ParentReferences: ParentReferences$Knowledge__kav;
   ChildRelationships: ChildRelationships$Knowledge__kav;
@@ -9603,7 +10063,9 @@ type ChildRelationships$KnowledgeableUser = {
   //
 };
 
-interface SObjectDefinition$KnowledgeableUser extends SObjectDefinition {
+interface SObjectDefinition$KnowledgeableUser
+  extends SObjectDefinition<'KnowledgeableUser'> {
+  Name: 'KnowledgeableUser';
   Fields: Fields$KnowledgeableUser;
   ParentReferences: ParentReferences$KnowledgeableUser;
   ChildRelationships: ChildRelationships$KnowledgeableUser;
@@ -9628,7 +10090,7 @@ type Fields$Lead = {
   Latitude: number | null;
   Longitude: number | null;
   GeocodeAccuracy: string | null;
-  Address: string | null;
+  Address: Address | null;
   Phone: string | null;
   Email: string | null;
   Website: string | null;
@@ -9709,7 +10171,8 @@ type ChildRelationships$Lead = {
   UndecidedEventRelations: SObjectDefinition$UndecidedEventRelation;
 };
 
-interface SObjectDefinition$Lead extends SObjectDefinition {
+interface SObjectDefinition$Lead extends SObjectDefinition<'Lead'> {
+  Name: 'Lead';
   Fields: Fields$Lead;
   ParentReferences: ParentReferences$Lead;
   ChildRelationships: ChildRelationships$Lead;
@@ -9719,7 +10182,7 @@ type Fields$LeadChangeEvent = {
   //
   Id: string | null;
   ReplayId: string | null;
-  ChangeEventHeader: string;
+  ChangeEventHeader: any;
   LastName: string | null;
   FirstName: string | null;
   Salutation: string | null;
@@ -9734,7 +10197,7 @@ type Fields$LeadChangeEvent = {
   Latitude: number | null;
   Longitude: number | null;
   GeocodeAccuracy: string | null;
-  Address: string | null;
+  Address: Address | null;
   Phone: string | null;
   Email: string | null;
   Website: string | null;
@@ -9771,7 +10234,9 @@ type ChildRelationships$LeadChangeEvent = {
   //
 };
 
-interface SObjectDefinition$LeadChangeEvent extends SObjectDefinition {
+interface SObjectDefinition$LeadChangeEvent
+  extends SObjectDefinition<'LeadChangeEvent'> {
+  Name: 'LeadChangeEvent';
   Fields: Fields$LeadChangeEvent;
   ParentReferences: ParentReferences$LeadChangeEvent;
   ChildRelationships: ChildRelationships$LeadChangeEvent;
@@ -9813,7 +10278,8 @@ type ChildRelationships$LeadFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$LeadFeed extends SObjectDefinition {
+interface SObjectDefinition$LeadFeed extends SObjectDefinition<'LeadFeed'> {
+  Name: 'LeadFeed';
   Fields: Fields$LeadFeed;
   ParentReferences: ParentReferences$LeadFeed;
   ChildRelationships: ChildRelationships$LeadFeed;
@@ -9841,7 +10307,9 @@ type ChildRelationships$LeadHistory = {
   //
 };
 
-interface SObjectDefinition$LeadHistory extends SObjectDefinition {
+interface SObjectDefinition$LeadHistory
+  extends SObjectDefinition<'LeadHistory'> {
+  Name: 'LeadHistory';
   Fields: Fields$LeadHistory;
   ParentReferences: ParentReferences$LeadHistory;
   ChildRelationships: ChildRelationships$LeadHistory;
@@ -9870,7 +10338,8 @@ type ChildRelationships$LeadShare = {
   //
 };
 
-interface SObjectDefinition$LeadShare extends SObjectDefinition {
+interface SObjectDefinition$LeadShare extends SObjectDefinition<'LeadShare'> {
+  Name: 'LeadShare';
   Fields: Fields$LeadShare;
   ParentReferences: ParentReferences$LeadShare;
   ChildRelationships: ChildRelationships$LeadShare;
@@ -9901,7 +10370,8 @@ type ChildRelationships$LeadStatus = {
   //
 };
 
-interface SObjectDefinition$LeadStatus extends SObjectDefinition {
+interface SObjectDefinition$LeadStatus extends SObjectDefinition<'LeadStatus'> {
+  Name: 'LeadStatus';
   Fields: Fields$LeadStatus;
   ParentReferences: ParentReferences$LeadStatus;
   ChildRelationships: ChildRelationships$LeadStatus;
@@ -9936,7 +10406,9 @@ type ChildRelationships$LightningExperienceTheme = {
   //
 };
 
-interface SObjectDefinition$LightningExperienceTheme extends SObjectDefinition {
+interface SObjectDefinition$LightningExperienceTheme
+  extends SObjectDefinition<'LightningExperienceTheme'> {
+  Name: 'LightningExperienceTheme';
   Fields: Fields$LightningExperienceTheme;
   ParentReferences: ParentReferences$LightningExperienceTheme;
   ChildRelationships: ChildRelationships$LightningExperienceTheme;
@@ -9981,7 +10453,9 @@ type ChildRelationships$LinkedArticle = {
   TopicAssignments: SObjectDefinition$TopicAssignment;
 };
 
-interface SObjectDefinition$LinkedArticle extends SObjectDefinition {
+interface SObjectDefinition$LinkedArticle
+  extends SObjectDefinition<'LinkedArticle'> {
+  Name: 'LinkedArticle';
   Fields: Fields$LinkedArticle;
   ParentReferences: ParentReferences$LinkedArticle;
   ChildRelationships: ChildRelationships$LinkedArticle;
@@ -10023,7 +10497,9 @@ type ChildRelationships$LinkedArticleFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$LinkedArticleFeed extends SObjectDefinition {
+interface SObjectDefinition$LinkedArticleFeed
+  extends SObjectDefinition<'LinkedArticleFeed'> {
+  Name: 'LinkedArticleFeed';
   Fields: Fields$LinkedArticleFeed;
   ParentReferences: ParentReferences$LinkedArticleFeed;
   ChildRelationships: ChildRelationships$LinkedArticleFeed;
@@ -10051,7 +10527,9 @@ type ChildRelationships$LinkedArticleHistory = {
   //
 };
 
-interface SObjectDefinition$LinkedArticleHistory extends SObjectDefinition {
+interface SObjectDefinition$LinkedArticleHistory
+  extends SObjectDefinition<'LinkedArticleHistory'> {
+  Name: 'LinkedArticleHistory';
   Fields: Fields$LinkedArticleHistory;
   ParentReferences: ParentReferences$LinkedArticleHistory;
   ChildRelationships: ChildRelationships$LinkedArticleHistory;
@@ -10102,7 +10580,8 @@ type ChildRelationships$ListEmail = {
   Tasks: SObjectDefinition$Task;
 };
 
-interface SObjectDefinition$ListEmail extends SObjectDefinition {
+interface SObjectDefinition$ListEmail extends SObjectDefinition<'ListEmail'> {
+  Name: 'ListEmail';
   Fields: Fields$ListEmail;
   ParentReferences: ParentReferences$ListEmail;
   ChildRelationships: ChildRelationships$ListEmail;
@@ -10112,7 +10591,7 @@ type Fields$ListEmailChangeEvent = {
   //
   Id: string | null;
   ReplayId: string | null;
-  ChangeEventHeader: string;
+  ChangeEventHeader: any;
   OwnerId: string | null;
   Name: string | null;
   CreatedDate: DateString | null;
@@ -10139,7 +10618,9 @@ type ChildRelationships$ListEmailChangeEvent = {
   //
 };
 
-interface SObjectDefinition$ListEmailChangeEvent extends SObjectDefinition {
+interface SObjectDefinition$ListEmailChangeEvent
+  extends SObjectDefinition<'ListEmailChangeEvent'> {
+  Name: 'ListEmailChangeEvent';
   Fields: Fields$ListEmailChangeEvent;
   ParentReferences: ParentReferences$ListEmailChangeEvent;
   ChildRelationships: ChildRelationships$ListEmailChangeEvent;
@@ -10172,7 +10653,9 @@ type ChildRelationships$ListEmailRecipientSource = {
   //
 };
 
-interface SObjectDefinition$ListEmailRecipientSource extends SObjectDefinition {
+interface SObjectDefinition$ListEmailRecipientSource
+  extends SObjectDefinition<'ListEmailRecipientSource'> {
+  Name: 'ListEmailRecipientSource';
   Fields: Fields$ListEmailRecipientSource;
   ParentReferences: ParentReferences$ListEmailRecipientSource;
   ChildRelationships: ChildRelationships$ListEmailRecipientSource;
@@ -10201,7 +10684,9 @@ type ChildRelationships$ListEmailShare = {
   //
 };
 
-interface SObjectDefinition$ListEmailShare extends SObjectDefinition {
+interface SObjectDefinition$ListEmailShare
+  extends SObjectDefinition<'ListEmailShare'> {
+  Name: 'ListEmailShare';
   Fields: Fields$ListEmailShare;
   ParentReferences: ParentReferences$ListEmailShare;
   ChildRelationships: ChildRelationships$ListEmailShare;
@@ -10235,7 +10720,8 @@ type ChildRelationships$ListView = {
   ListEmailRecipientSources: SObjectDefinition$ListEmailRecipientSource;
 };
 
-interface SObjectDefinition$ListView extends SObjectDefinition {
+interface SObjectDefinition$ListView extends SObjectDefinition<'ListView'> {
+  Name: 'ListView';
   Fields: Fields$ListView;
   ParentReferences: ParentReferences$ListView;
   ChildRelationships: ChildRelationships$ListView;
@@ -10272,7 +10758,9 @@ type ChildRelationships$ListViewChart = {
   //
 };
 
-interface SObjectDefinition$ListViewChart extends SObjectDefinition {
+interface SObjectDefinition$ListViewChart
+  extends SObjectDefinition<'ListViewChart'> {
+  Name: 'ListViewChart';
   Fields: Fields$ListViewChart;
   ParentReferences: ParentReferences$ListViewChart;
   ChildRelationships: ChildRelationships$ListViewChart;
@@ -10308,7 +10796,9 @@ type ChildRelationships$ListViewChartInstance = {
   //
 };
 
-interface SObjectDefinition$ListViewChartInstance extends SObjectDefinition {
+interface SObjectDefinition$ListViewChartInstance
+  extends SObjectDefinition<'ListViewChartInstance'> {
+  Name: 'ListViewChartInstance';
   Fields: Fields$ListViewChartInstance;
   ParentReferences: ParentReferences$ListViewChartInstance;
   ChildRelationships: ChildRelationships$ListViewChartInstance;
@@ -10343,7 +10833,8 @@ type ChildRelationships$LoginGeo = {
   //
 };
 
-interface SObjectDefinition$LoginGeo extends SObjectDefinition {
+interface SObjectDefinition$LoginGeo extends SObjectDefinition<'LoginGeo'> {
+  Name: 'LoginGeo';
   Fields: Fields$LoginGeo;
   ParentReferences: ParentReferences$LoginGeo;
   ChildRelationships: ChildRelationships$LoginGeo;
@@ -10380,7 +10871,9 @@ type ChildRelationships$LoginHistory = {
   //
 };
 
-interface SObjectDefinition$LoginHistory extends SObjectDefinition {
+interface SObjectDefinition$LoginHistory
+  extends SObjectDefinition<'LoginHistory'> {
+  Name: 'LoginHistory';
   Fields: Fields$LoginHistory;
   ParentReferences: ParentReferences$LoginHistory;
   ChildRelationships: ChildRelationships$LoginHistory;
@@ -10406,7 +10899,8 @@ type ChildRelationships$LoginIp = {
   //
 };
 
-interface SObjectDefinition$LoginIp extends SObjectDefinition {
+interface SObjectDefinition$LoginIp extends SObjectDefinition<'LoginIp'> {
+  Name: 'LoginIp';
   Fields: Fields$LoginIp;
   ParentReferences: ParentReferences$LoginIp;
   ChildRelationships: ChildRelationships$LoginIp;
@@ -10438,7 +10932,9 @@ type ChildRelationships$LogoutEventStream = {
   //
 };
 
-interface SObjectDefinition$LogoutEventStream extends SObjectDefinition {
+interface SObjectDefinition$LogoutEventStream
+  extends SObjectDefinition<'LogoutEventStream'> {
+  Name: 'LogoutEventStream';
   Fields: Fields$LogoutEventStream;
   ParentReferences: ParentReferences$LogoutEventStream;
   ChildRelationships: ChildRelationships$LogoutEventStream;
@@ -10495,7 +10991,9 @@ type ChildRelationships$LookedUpFromActivity = {
   //
 };
 
-interface SObjectDefinition$LookedUpFromActivity extends SObjectDefinition {
+interface SObjectDefinition$LookedUpFromActivity
+  extends SObjectDefinition<'LookedUpFromActivity'> {
+  Name: 'LookedUpFromActivity';
   Fields: Fields$LookedUpFromActivity;
   ParentReferences: ParentReferences$LookedUpFromActivity;
   ChildRelationships: ChildRelationships$LookedUpFromActivity;
@@ -10532,7 +11030,8 @@ type ChildRelationships$Macro = {
   Histories: SObjectDefinition$MacroHistory;
 };
 
-interface SObjectDefinition$Macro extends SObjectDefinition {
+interface SObjectDefinition$Macro extends SObjectDefinition<'Macro'> {
+  Name: 'Macro';
   Fields: Fields$Macro;
   ParentReferences: ParentReferences$Macro;
   ChildRelationships: ChildRelationships$Macro;
@@ -10560,7 +11059,9 @@ type ChildRelationships$MacroHistory = {
   //
 };
 
-interface SObjectDefinition$MacroHistory extends SObjectDefinition {
+interface SObjectDefinition$MacroHistory
+  extends SObjectDefinition<'MacroHistory'> {
+  Name: 'MacroHistory';
   Fields: Fields$MacroHistory;
   ParentReferences: ParentReferences$MacroHistory;
   ChildRelationships: ChildRelationships$MacroHistory;
@@ -10595,7 +11096,9 @@ type ChildRelationships$MacroInstruction = {
   //
 };
 
-interface SObjectDefinition$MacroInstruction extends SObjectDefinition {
+interface SObjectDefinition$MacroInstruction
+  extends SObjectDefinition<'MacroInstruction'> {
+  Name: 'MacroInstruction';
   Fields: Fields$MacroInstruction;
   ParentReferences: ParentReferences$MacroInstruction;
   ChildRelationships: ChildRelationships$MacroInstruction;
@@ -10624,7 +11127,8 @@ type ChildRelationships$MacroShare = {
   //
 };
 
-interface SObjectDefinition$MacroShare extends SObjectDefinition {
+interface SObjectDefinition$MacroShare extends SObjectDefinition<'MacroShare'> {
+  Name: 'MacroShare';
   Fields: Fields$MacroShare;
   ParentReferences: ParentReferences$MacroShare;
   ChildRelationships: ChildRelationships$MacroShare;
@@ -10639,7 +11143,7 @@ type Fields$MailmergeTemplate = {
   Filename: string;
   BodyLength: number | null;
   Category: string | null;
-  Body: string;
+  Body: BlobString;
   LastUsedDate: DateString | null;
   CreatedDate: DateString;
   CreatedById: string;
@@ -10662,7 +11166,9 @@ type ChildRelationships$MailmergeTemplate = {
   //
 };
 
-interface SObjectDefinition$MailmergeTemplate extends SObjectDefinition {
+interface SObjectDefinition$MailmergeTemplate
+  extends SObjectDefinition<'MailmergeTemplate'> {
+  Name: 'MailmergeTemplate';
   Fields: Fields$MailmergeTemplate;
   ParentReferences: ParentReferences$MailmergeTemplate;
   ChildRelationships: ChildRelationships$MailmergeTemplate;
@@ -10700,7 +11206,9 @@ type ChildRelationships$MatchingRule = {
   MatchingRuleItems: SObjectDefinition$MatchingRuleItem;
 };
 
-interface SObjectDefinition$MatchingRule extends SObjectDefinition {
+interface SObjectDefinition$MatchingRule
+  extends SObjectDefinition<'MatchingRule'> {
+  Name: 'MatchingRule';
   Fields: Fields$MatchingRule;
   ParentReferences: ParentReferences$MatchingRule;
   ChildRelationships: ChildRelationships$MatchingRule;
@@ -10733,7 +11241,9 @@ type ChildRelationships$MatchingRuleItem = {
   //
 };
 
-interface SObjectDefinition$MatchingRuleItem extends SObjectDefinition {
+interface SObjectDefinition$MatchingRuleItem
+  extends SObjectDefinition<'MatchingRuleItem'> {
+  Name: 'MatchingRuleItem';
   Fields: Fields$MatchingRuleItem;
   ParentReferences: ParentReferences$MatchingRuleItem;
   ChildRelationships: ChildRelationships$MatchingRuleItem;
@@ -10762,7 +11272,9 @@ type ChildRelationships$MilestoneType = {
   //
 };
 
-interface SObjectDefinition$MilestoneType extends SObjectDefinition {
+interface SObjectDefinition$MilestoneType
+  extends SObjectDefinition<'MilestoneType'> {
+  Name: 'MilestoneType';
   Fields: Fields$MilestoneType;
   ParentReferences: ParentReferences$MilestoneType;
   ChildRelationships: ChildRelationships$MilestoneType;
@@ -10800,7 +11312,8 @@ type ChildRelationships$Name = {
   //
 };
 
-interface SObjectDefinition$Name extends SObjectDefinition {
+interface SObjectDefinition$Name extends SObjectDefinition<'Name'> {
+  Name: 'Name';
   Fields: Fields$Name;
   ParentReferences: ParentReferences$Name;
   ChildRelationships: ChildRelationships$Name;
@@ -10841,7 +11354,9 @@ type ChildRelationships$NamedCredential = {
   SetupEntityAccessItems: SObjectDefinition$SetupEntityAccess;
 };
 
-interface SObjectDefinition$NamedCredential extends SObjectDefinition {
+interface SObjectDefinition$NamedCredential
+  extends SObjectDefinition<'NamedCredential'> {
+  Name: 'NamedCredential';
   Fields: Fields$NamedCredential;
   ParentReferences: ParentReferences$NamedCredential;
   ChildRelationships: ChildRelationships$NamedCredential;
@@ -10875,7 +11390,8 @@ type ChildRelationships$Note = {
   //
 };
 
-interface SObjectDefinition$Note extends SObjectDefinition {
+interface SObjectDefinition$Note extends SObjectDefinition<'Note'> {
+  Name: 'Note';
   Fields: Fields$Note;
   ParentReferences: ParentReferences$Note;
   ChildRelationships: ChildRelationships$Note;
@@ -10909,7 +11425,9 @@ type ChildRelationships$NoteAndAttachment = {
   //
 };
 
-interface SObjectDefinition$NoteAndAttachment extends SObjectDefinition {
+interface SObjectDefinition$NoteAndAttachment
+  extends SObjectDefinition<'NoteAndAttachment'> {
+  Name: 'NoteAndAttachment';
   Fields: Fields$NoteAndAttachment;
   ParentReferences: ParentReferences$NoteAndAttachment;
   ChildRelationships: ChildRelationships$NoteAndAttachment;
@@ -10939,7 +11457,8 @@ type ChildRelationships$OauthToken = {
   //
 };
 
-interface SObjectDefinition$OauthToken extends SObjectDefinition {
+interface SObjectDefinition$OauthToken extends SObjectDefinition<'OauthToken'> {
+  Name: 'OauthToken';
   Fields: Fields$OauthToken;
   ParentReferences: ParentReferences$OauthToken;
   ChildRelationships: ChildRelationships$OauthToken;
@@ -10974,7 +11493,9 @@ type ChildRelationships$ObjectPermissions = {
   //
 };
 
-interface SObjectDefinition$ObjectPermissions extends SObjectDefinition {
+interface SObjectDefinition$ObjectPermissions
+  extends SObjectDefinition<'ObjectPermissions'> {
+  Name: 'ObjectPermissions';
   Fields: Fields$ObjectPermissions;
   ParentReferences: ParentReferences$ObjectPermissions;
   ChildRelationships: ChildRelationships$ObjectPermissions;
@@ -11032,7 +11553,9 @@ type ChildRelationships$OpenActivity = {
   //
 };
 
-interface SObjectDefinition$OpenActivity extends SObjectDefinition {
+interface SObjectDefinition$OpenActivity
+  extends SObjectDefinition<'OpenActivity'> {
+  Name: 'OpenActivity';
   Fields: Fields$OpenActivity;
   ParentReferences: ParentReferences$OpenActivity;
   ChildRelationships: ChildRelationships$OpenActivity;
@@ -11117,7 +11640,9 @@ type ChildRelationships$Opportunity = {
   TopicAssignments: SObjectDefinition$TopicAssignment;
 };
 
-interface SObjectDefinition$Opportunity extends SObjectDefinition {
+interface SObjectDefinition$Opportunity
+  extends SObjectDefinition<'Opportunity'> {
+  Name: 'Opportunity';
   Fields: Fields$Opportunity;
   ParentReferences: ParentReferences$Opportunity;
   ChildRelationships: ChildRelationships$Opportunity;
@@ -11127,7 +11652,7 @@ type Fields$OpportunityChangeEvent = {
   //
   Id: string | null;
   ReplayId: string | null;
-  ChangeEventHeader: string;
+  ChangeEventHeader: any;
   AccountId: string | null;
   Name: string | null;
   Description: string | null;
@@ -11160,7 +11685,9 @@ type ChildRelationships$OpportunityChangeEvent = {
   //
 };
 
-interface SObjectDefinition$OpportunityChangeEvent extends SObjectDefinition {
+interface SObjectDefinition$OpportunityChangeEvent
+  extends SObjectDefinition<'OpportunityChangeEvent'> {
+  Name: 'OpportunityChangeEvent';
   Fields: Fields$OpportunityChangeEvent;
   ParentReferences: ParentReferences$OpportunityChangeEvent;
   ChildRelationships: ChildRelationships$OpportunityChangeEvent;
@@ -11192,7 +11719,9 @@ type ChildRelationships$OpportunityCompetitor = {
   //
 };
 
-interface SObjectDefinition$OpportunityCompetitor extends SObjectDefinition {
+interface SObjectDefinition$OpportunityCompetitor
+  extends SObjectDefinition<'OpportunityCompetitor'> {
+  Name: 'OpportunityCompetitor';
   Fields: Fields$OpportunityCompetitor;
   ParentReferences: ParentReferences$OpportunityCompetitor;
   ChildRelationships: ChildRelationships$OpportunityCompetitor;
@@ -11225,7 +11754,9 @@ type ChildRelationships$OpportunityContactRole = {
   //
 };
 
-interface SObjectDefinition$OpportunityContactRole extends SObjectDefinition {
+interface SObjectDefinition$OpportunityContactRole
+  extends SObjectDefinition<'OpportunityContactRole'> {
+  Name: 'OpportunityContactRole';
   Fields: Fields$OpportunityContactRole;
   ParentReferences: ParentReferences$OpportunityContactRole;
   ChildRelationships: ChildRelationships$OpportunityContactRole;
@@ -11235,7 +11766,7 @@ type Fields$OpportunityContactRoleChangeEvent = {
   //
   Id: string | null;
   ReplayId: string | null;
-  ChangeEventHeader: string;
+  ChangeEventHeader: any;
   OpportunityId: string | null;
   ContactId: string | null;
   Role: string | null;
@@ -11254,7 +11785,8 @@ type ChildRelationships$OpportunityContactRoleChangeEvent = {
 };
 
 interface SObjectDefinition$OpportunityContactRoleChangeEvent
-  extends SObjectDefinition {
+  extends SObjectDefinition<'OpportunityContactRoleChangeEvent'> {
+  Name: 'OpportunityContactRoleChangeEvent';
   Fields: Fields$OpportunityContactRoleChangeEvent;
   ParentReferences: ParentReferences$OpportunityContactRoleChangeEvent;
   ChildRelationships: ChildRelationships$OpportunityContactRoleChangeEvent;
@@ -11296,7 +11828,9 @@ type ChildRelationships$OpportunityFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$OpportunityFeed extends SObjectDefinition {
+interface SObjectDefinition$OpportunityFeed
+  extends SObjectDefinition<'OpportunityFeed'> {
+  Name: 'OpportunityFeed';
   Fields: Fields$OpportunityFeed;
   ParentReferences: ParentReferences$OpportunityFeed;
   ChildRelationships: ChildRelationships$OpportunityFeed;
@@ -11324,7 +11858,9 @@ type ChildRelationships$OpportunityFieldHistory = {
   //
 };
 
-interface SObjectDefinition$OpportunityFieldHistory extends SObjectDefinition {
+interface SObjectDefinition$OpportunityFieldHistory
+  extends SObjectDefinition<'OpportunityFieldHistory'> {
+  Name: 'OpportunityFieldHistory';
   Fields: Fields$OpportunityFieldHistory;
   ParentReferences: ParentReferences$OpportunityFieldHistory;
   ChildRelationships: ChildRelationships$OpportunityFieldHistory;
@@ -11356,7 +11892,9 @@ type ChildRelationships$OpportunityHistory = {
   //
 };
 
-interface SObjectDefinition$OpportunityHistory extends SObjectDefinition {
+interface SObjectDefinition$OpportunityHistory
+  extends SObjectDefinition<'OpportunityHistory'> {
+  Name: 'OpportunityHistory';
   Fields: Fields$OpportunityHistory;
   ParentReferences: ParentReferences$OpportunityHistory;
   ChildRelationships: ChildRelationships$OpportunityHistory;
@@ -11398,7 +11936,9 @@ type ChildRelationships$OpportunityLineItem = {
   //
 };
 
-interface SObjectDefinition$OpportunityLineItem extends SObjectDefinition {
+interface SObjectDefinition$OpportunityLineItem
+  extends SObjectDefinition<'OpportunityLineItem'> {
+  Name: 'OpportunityLineItem';
   Fields: Fields$OpportunityLineItem;
   ParentReferences: ParentReferences$OpportunityLineItem;
   ChildRelationships: ChildRelationships$OpportunityLineItem;
@@ -11432,7 +11972,9 @@ type ChildRelationships$OpportunityPartner = {
   //
 };
 
-interface SObjectDefinition$OpportunityPartner extends SObjectDefinition {
+interface SObjectDefinition$OpportunityPartner
+  extends SObjectDefinition<'OpportunityPartner'> {
+  Name: 'OpportunityPartner';
   Fields: Fields$OpportunityPartner;
   ParentReferences: ParentReferences$OpportunityPartner;
   ChildRelationships: ChildRelationships$OpportunityPartner;
@@ -11461,7 +12003,9 @@ type ChildRelationships$OpportunityShare = {
   //
 };
 
-interface SObjectDefinition$OpportunityShare extends SObjectDefinition {
+interface SObjectDefinition$OpportunityShare
+  extends SObjectDefinition<'OpportunityShare'> {
+  Name: 'OpportunityShare';
   Fields: Fields$OpportunityShare;
   ParentReferences: ParentReferences$OpportunityShare;
   ChildRelationships: ChildRelationships$OpportunityShare;
@@ -11497,7 +12041,9 @@ type ChildRelationships$OpportunityStage = {
   //
 };
 
-interface SObjectDefinition$OpportunityStage extends SObjectDefinition {
+interface SObjectDefinition$OpportunityStage
+  extends SObjectDefinition<'OpportunityStage'> {
+  Name: 'OpportunityStage';
   Fields: Fields$OpportunityStage;
   ParentReferences: ParentReferences$OpportunityStage;
   ChildRelationships: ChildRelationships$OpportunityStage;
@@ -11527,7 +12073,7 @@ type Fields$Order = {
   BillingLatitude: number | null;
   BillingLongitude: number | null;
   BillingGeocodeAccuracy: string | null;
-  BillingAddress: string | null;
+  BillingAddress: Address | null;
   ShippingStreet: string | null;
   ShippingCity: string | null;
   ShippingState: string | null;
@@ -11536,7 +12082,7 @@ type Fields$Order = {
   ShippingLatitude: number | null;
   ShippingLongitude: number | null;
   ShippingGeocodeAccuracy: string | null;
-  ShippingAddress: string | null;
+  ShippingAddress: Address | null;
   ActivatedDate: DateString | null;
   ActivatedById: string | null;
   StatusCode: string;
@@ -11592,7 +12138,8 @@ type ChildRelationships$Order = {
   WorkOrderLineItems: SObjectDefinition$WorkOrderLineItem;
 };
 
-interface SObjectDefinition$Order extends SObjectDefinition {
+interface SObjectDefinition$Order extends SObjectDefinition<'Order'> {
+  Name: 'Order';
   Fields: Fields$Order;
   ParentReferences: ParentReferences$Order;
   ChildRelationships: ChildRelationships$Order;
@@ -11602,7 +12149,7 @@ type Fields$OrderChangeEvent = {
   //
   Id: string | null;
   ReplayId: string | null;
-  ChangeEventHeader: string;
+  ChangeEventHeader: any;
   OwnerId: string | null;
   ContractId: string | null;
   AccountId: string | null;
@@ -11624,7 +12171,7 @@ type Fields$OrderChangeEvent = {
   BillingLatitude: number | null;
   BillingLongitude: number | null;
   BillingGeocodeAccuracy: string | null;
-  BillingAddress: string | null;
+  BillingAddress: Address | null;
   ShippingStreet: string | null;
   ShippingCity: string | null;
   ShippingState: string | null;
@@ -11633,7 +12180,7 @@ type Fields$OrderChangeEvent = {
   ShippingLatitude: number | null;
   ShippingLongitude: number | null;
   ShippingGeocodeAccuracy: string | null;
-  ShippingAddress: string | null;
+  ShippingAddress: Address | null;
   ActivatedDate: DateString | null;
   ActivatedById: string | null;
   StatusCode: string | null;
@@ -11653,7 +12200,9 @@ type ChildRelationships$OrderChangeEvent = {
   //
 };
 
-interface SObjectDefinition$OrderChangeEvent extends SObjectDefinition {
+interface SObjectDefinition$OrderChangeEvent
+  extends SObjectDefinition<'OrderChangeEvent'> {
+  Name: 'OrderChangeEvent';
   Fields: Fields$OrderChangeEvent;
   ParentReferences: ParentReferences$OrderChangeEvent;
   ChildRelationships: ChildRelationships$OrderChangeEvent;
@@ -11695,7 +12244,8 @@ type ChildRelationships$OrderFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$OrderFeed extends SObjectDefinition {
+interface SObjectDefinition$OrderFeed extends SObjectDefinition<'OrderFeed'> {
+  Name: 'OrderFeed';
   Fields: Fields$OrderFeed;
   ParentReferences: ParentReferences$OrderFeed;
   ChildRelationships: ChildRelationships$OrderFeed;
@@ -11723,7 +12273,9 @@ type ChildRelationships$OrderHistory = {
   //
 };
 
-interface SObjectDefinition$OrderHistory extends SObjectDefinition {
+interface SObjectDefinition$OrderHistory
+  extends SObjectDefinition<'OrderHistory'> {
+  Name: 'OrderHistory';
   Fields: Fields$OrderHistory;
   ParentReferences: ParentReferences$OrderHistory;
   ChildRelationships: ChildRelationships$OrderHistory;
@@ -11774,7 +12326,8 @@ type ChildRelationships$OrderItem = {
   Histories: SObjectDefinition$OrderItemHistory;
 };
 
-interface SObjectDefinition$OrderItem extends SObjectDefinition {
+interface SObjectDefinition$OrderItem extends SObjectDefinition<'OrderItem'> {
+  Name: 'OrderItem';
   Fields: Fields$OrderItem;
   ParentReferences: ParentReferences$OrderItem;
   ChildRelationships: ChildRelationships$OrderItem;
@@ -11784,7 +12337,7 @@ type Fields$OrderItemChangeEvent = {
   //
   Id: string | null;
   ReplayId: string | null;
-  ChangeEventHeader: string;
+  ChangeEventHeader: any;
   OrderId: string | null;
   PricebookEntryId: string | null;
   OriginalOrderItemId: string | null;
@@ -11810,7 +12363,9 @@ type ChildRelationships$OrderItemChangeEvent = {
   //
 };
 
-interface SObjectDefinition$OrderItemChangeEvent extends SObjectDefinition {
+interface SObjectDefinition$OrderItemChangeEvent
+  extends SObjectDefinition<'OrderItemChangeEvent'> {
+  Name: 'OrderItemChangeEvent';
   Fields: Fields$OrderItemChangeEvent;
   ParentReferences: ParentReferences$OrderItemChangeEvent;
   ChildRelationships: ChildRelationships$OrderItemChangeEvent;
@@ -11852,7 +12407,9 @@ type ChildRelationships$OrderItemFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$OrderItemFeed extends SObjectDefinition {
+interface SObjectDefinition$OrderItemFeed
+  extends SObjectDefinition<'OrderItemFeed'> {
+  Name: 'OrderItemFeed';
   Fields: Fields$OrderItemFeed;
   ParentReferences: ParentReferences$OrderItemFeed;
   ChildRelationships: ChildRelationships$OrderItemFeed;
@@ -11880,7 +12437,9 @@ type ChildRelationships$OrderItemHistory = {
   //
 };
 
-interface SObjectDefinition$OrderItemHistory extends SObjectDefinition {
+interface SObjectDefinition$OrderItemHistory
+  extends SObjectDefinition<'OrderItemHistory'> {
+  Name: 'OrderItemHistory';
   Fields: Fields$OrderItemHistory;
   ParentReferences: ParentReferences$OrderItemHistory;
   ChildRelationships: ChildRelationships$OrderItemHistory;
@@ -11909,7 +12468,8 @@ type ChildRelationships$OrderShare = {
   //
 };
 
-interface SObjectDefinition$OrderShare extends SObjectDefinition {
+interface SObjectDefinition$OrderShare extends SObjectDefinition<'OrderShare'> {
+  Name: 'OrderShare';
   Fields: Fields$OrderShare;
   ParentReferences: ParentReferences$OrderShare;
   ChildRelationships: ChildRelationships$OrderShare;
@@ -11936,7 +12496,9 @@ type ChildRelationships$OrgLifecycleNotification = {
   //
 };
 
-interface SObjectDefinition$OrgLifecycleNotification extends SObjectDefinition {
+interface SObjectDefinition$OrgLifecycleNotification
+  extends SObjectDefinition<'OrgLifecycleNotification'> {
+  Name: 'OrgLifecycleNotification';
   Fields: Fields$OrgLifecycleNotification;
   ParentReferences: ParentReferences$OrgLifecycleNotification;
   ChildRelationships: ChildRelationships$OrgLifecycleNotification;
@@ -11965,7 +12527,9 @@ type ChildRelationships$OrgWideEmailAddress = {
   //
 };
 
-interface SObjectDefinition$OrgWideEmailAddress extends SObjectDefinition {
+interface SObjectDefinition$OrgWideEmailAddress
+  extends SObjectDefinition<'OrgWideEmailAddress'> {
+  Name: 'OrgWideEmailAddress';
   Fields: Fields$OrgWideEmailAddress;
   ParentReferences: ParentReferences$OrgWideEmailAddress;
   ChildRelationships: ChildRelationships$OrgWideEmailAddress;
@@ -11984,7 +12548,7 @@ type Fields$Organization = {
   Latitude: number | null;
   Longitude: number | null;
   GeocodeAccuracy: string | null;
-  Address: string | null;
+  Address: Address | null;
   Phone: string | null;
   Fax: string | null;
   PrimaryContact: string | null;
@@ -12043,7 +12607,9 @@ type ChildRelationships$Organization = {
   CustomBrands: SObjectDefinition$CustomBrand;
 };
 
-interface SObjectDefinition$Organization extends SObjectDefinition {
+interface SObjectDefinition$Organization
+  extends SObjectDefinition<'Organization'> {
+  Name: 'Organization';
   Fields: Fields$Organization;
   ParentReferences: ParentReferences$Organization;
   ChildRelationships: ChildRelationships$Organization;
@@ -12078,7 +12644,9 @@ type ChildRelationships$OutgoingEmail = {
   OutgoingEmailRelations: SObjectDefinition$OutgoingEmailRelation;
 };
 
-interface SObjectDefinition$OutgoingEmail extends SObjectDefinition {
+interface SObjectDefinition$OutgoingEmail
+  extends SObjectDefinition<'OutgoingEmail'> {
+  Name: 'OutgoingEmail';
   Fields: Fields$OutgoingEmail;
   ParentReferences: ParentReferences$OutgoingEmail;
   ChildRelationships: ChildRelationships$OutgoingEmail;
@@ -12102,7 +12670,9 @@ type ChildRelationships$OutgoingEmailRelation = {
   //
 };
 
-interface SObjectDefinition$OutgoingEmailRelation extends SObjectDefinition {
+interface SObjectDefinition$OutgoingEmailRelation
+  extends SObjectDefinition<'OutgoingEmailRelation'> {
+  Name: 'OutgoingEmailRelation';
   Fields: Fields$OutgoingEmailRelation;
   ParentReferences: ParentReferences$OutgoingEmailRelation;
   ChildRelationships: ChildRelationships$OutgoingEmailRelation;
@@ -12139,7 +12709,9 @@ type ChildRelationships$OwnedContentDocument = {
   //
 };
 
-interface SObjectDefinition$OwnedContentDocument extends SObjectDefinition {
+interface SObjectDefinition$OwnedContentDocument
+  extends SObjectDefinition<'OwnedContentDocument'> {
+  Name: 'OwnedContentDocument';
   Fields: Fields$OwnedContentDocument;
   ParentReferences: ParentReferences$OwnedContentDocument;
   ChildRelationships: ChildRelationships$OwnedContentDocument;
@@ -12164,7 +12736,9 @@ type ChildRelationships$OwnerChangeOptionInfo = {
   //
 };
 
-interface SObjectDefinition$OwnerChangeOptionInfo extends SObjectDefinition {
+interface SObjectDefinition$OwnerChangeOptionInfo
+  extends SObjectDefinition<'OwnerChangeOptionInfo'> {
+  Name: 'OwnerChangeOptionInfo';
   Fields: Fields$OwnerChangeOptionInfo;
   ParentReferences: ParentReferences$OwnerChangeOptionInfo;
   ChildRelationships: ChildRelationships$OwnerChangeOptionInfo;
@@ -12192,7 +12766,9 @@ type ChildRelationships$PackageLicense = {
   //
 };
 
-interface SObjectDefinition$PackageLicense extends SObjectDefinition {
+interface SObjectDefinition$PackageLicense
+  extends SObjectDefinition<'PackageLicense'> {
+  Name: 'PackageLicense';
   Fields: Fields$PackageLicense;
   ParentReferences: ParentReferences$PackageLicense;
   ChildRelationships: ChildRelationships$PackageLicense;
@@ -12228,7 +12804,8 @@ type ChildRelationships$Partner = {
   //
 };
 
-interface SObjectDefinition$Partner extends SObjectDefinition {
+interface SObjectDefinition$Partner extends SObjectDefinition<'Partner'> {
+  Name: 'Partner';
   Fields: Fields$Partner;
   ParentReferences: ParentReferences$Partner;
   ChildRelationships: ChildRelationships$Partner;
@@ -12258,7 +12835,9 @@ type ChildRelationships$PartnerRole = {
   //
 };
 
-interface SObjectDefinition$PartnerRole extends SObjectDefinition {
+interface SObjectDefinition$PartnerRole
+  extends SObjectDefinition<'PartnerRole'> {
+  Name: 'PartnerRole';
   Fields: Fields$PartnerRole;
   ParentReferences: ParentReferences$PartnerRole;
   ChildRelationships: ChildRelationships$PartnerRole;
@@ -12288,7 +12867,8 @@ type ChildRelationships$Period = {
   //
 };
 
-interface SObjectDefinition$Period extends SObjectDefinition {
+interface SObjectDefinition$Period extends SObjectDefinition<'Period'> {
+  Name: 'Period';
   Fields: Fields$Period;
   ParentReferences: ParentReferences$Period;
   ChildRelationships: ChildRelationships$Period;
@@ -12538,7 +13118,9 @@ type ChildRelationships$PermissionSet = {
   SetupEntityAccessItems: SObjectDefinition$SetupEntityAccess;
 };
 
-interface SObjectDefinition$PermissionSet extends SObjectDefinition {
+interface SObjectDefinition$PermissionSet
+  extends SObjectDefinition<'PermissionSet'> {
+  Name: 'PermissionSet';
   Fields: Fields$PermissionSet;
   ParentReferences: ParentReferences$PermissionSet;
   ChildRelationships: ChildRelationships$PermissionSet;
@@ -12562,7 +13144,9 @@ type ChildRelationships$PermissionSetAssignment = {
   //
 };
 
-interface SObjectDefinition$PermissionSetAssignment extends SObjectDefinition {
+interface SObjectDefinition$PermissionSetAssignment
+  extends SObjectDefinition<'PermissionSetAssignment'> {
+  Name: 'PermissionSetAssignment';
   Fields: Fields$PermissionSetAssignment;
   ParentReferences: ParentReferences$PermissionSetAssignment;
   ChildRelationships: ChildRelationships$PermissionSetAssignment;
@@ -12807,7 +13391,9 @@ type ChildRelationships$PermissionSetLicense = {
   PermissionSetLicenseAssignments: SObjectDefinition$PermissionSetLicenseAssign;
 };
 
-interface SObjectDefinition$PermissionSetLicense extends SObjectDefinition {
+interface SObjectDefinition$PermissionSetLicense
+  extends SObjectDefinition<'PermissionSetLicense'> {
+  Name: 'PermissionSetLicense';
   Fields: Fields$PermissionSetLicense;
   ParentReferences: ParentReferences$PermissionSetLicense;
   ChildRelationships: ChildRelationships$PermissionSetLicense;
@@ -12839,7 +13425,8 @@ type ChildRelationships$PermissionSetLicenseAssign = {
 };
 
 interface SObjectDefinition$PermissionSetLicenseAssign
-  extends SObjectDefinition {
+  extends SObjectDefinition<'PermissionSetLicenseAssign'> {
+  Name: 'PermissionSetLicenseAssign';
   Fields: Fields$PermissionSetLicenseAssign;
   ParentReferences: ParentReferences$PermissionSetLicenseAssign;
   ChildRelationships: ChildRelationships$PermissionSetLicenseAssign;
@@ -12865,7 +13452,9 @@ type ChildRelationships$PicklistValueInfo = {
   //
 };
 
-interface SObjectDefinition$PicklistValueInfo extends SObjectDefinition {
+interface SObjectDefinition$PicklistValueInfo
+  extends SObjectDefinition<'PicklistValueInfo'> {
+  Name: 'PicklistValueInfo';
   Fields: Fields$PicklistValueInfo;
   ParentReferences: ParentReferences$PicklistValueInfo;
   ChildRelationships: ChildRelationships$PicklistValueInfo;
@@ -12913,7 +13502,9 @@ type ChildRelationships$PlatformAction = {
   //
 };
 
-interface SObjectDefinition$PlatformAction extends SObjectDefinition {
+interface SObjectDefinition$PlatformAction
+  extends SObjectDefinition<'PlatformAction'> {
+  Name: 'PlatformAction';
   Fields: Fields$PlatformAction;
   ParentReferences: ParentReferences$PlatformAction;
   ChildRelationships: ChildRelationships$PlatformAction;
@@ -12947,7 +13538,9 @@ type ChildRelationships$PlatformCachePartition = {
   PlatforCachePartitionTypes: SObjectDefinition$PlatformCachePartitionType;
 };
 
-interface SObjectDefinition$PlatformCachePartition extends SObjectDefinition {
+interface SObjectDefinition$PlatformCachePartition
+  extends SObjectDefinition<'PlatformCachePartition'> {
+  Name: 'PlatformCachePartition';
   Fields: Fields$PlatformCachePartition;
   ParentReferences: ParentReferences$PlatformCachePartition;
   ChildRelationships: ChildRelationships$PlatformCachePartition;
@@ -12981,7 +13574,8 @@ type ChildRelationships$PlatformCachePartitionType = {
 };
 
 interface SObjectDefinition$PlatformCachePartitionType
-  extends SObjectDefinition {
+  extends SObjectDefinition<'PlatformCachePartitionType'> {
+  Name: 'PlatformCachePartitionType';
   Fields: Fields$PlatformCachePartitionType;
   ParentReferences: ParentReferences$PlatformCachePartitionType;
   ChildRelationships: ChildRelationships$PlatformCachePartitionType;
@@ -13022,7 +13616,8 @@ type ChildRelationships$Pricebook2 = {
   WorkOrders: SObjectDefinition$WorkOrder;
 };
 
-interface SObjectDefinition$Pricebook2 extends SObjectDefinition {
+interface SObjectDefinition$Pricebook2 extends SObjectDefinition<'Pricebook2'> {
+  Name: 'Pricebook2';
   Fields: Fields$Pricebook2;
   ParentReferences: ParentReferences$Pricebook2;
   ChildRelationships: ChildRelationships$Pricebook2;
@@ -13050,7 +13645,9 @@ type ChildRelationships$Pricebook2History = {
   //
 };
 
-interface SObjectDefinition$Pricebook2History extends SObjectDefinition {
+interface SObjectDefinition$Pricebook2History
+  extends SObjectDefinition<'Pricebook2History'> {
+  Name: 'Pricebook2History';
   Fields: Fields$Pricebook2History;
   ParentReferences: ParentReferences$Pricebook2History;
   ChildRelationships: ChildRelationships$Pricebook2History;
@@ -13091,7 +13688,9 @@ type ChildRelationships$PricebookEntry = {
   WorkOrderLineItems: SObjectDefinition$WorkOrderLineItem;
 };
 
-interface SObjectDefinition$PricebookEntry extends SObjectDefinition {
+interface SObjectDefinition$PricebookEntry
+  extends SObjectDefinition<'PricebookEntry'> {
+  Name: 'PricebookEntry';
   Fields: Fields$PricebookEntry;
   ParentReferences: ParentReferences$PricebookEntry;
   ChildRelationships: ChildRelationships$PricebookEntry;
@@ -13124,7 +13723,9 @@ type ChildRelationships$ProcessDefinition = {
   //
 };
 
-interface SObjectDefinition$ProcessDefinition extends SObjectDefinition {
+interface SObjectDefinition$ProcessDefinition
+  extends SObjectDefinition<'ProcessDefinition'> {
+  Name: 'ProcessDefinition';
   Fields: Fields$ProcessDefinition;
   ParentReferences: ParentReferences$ProcessDefinition;
   ChildRelationships: ChildRelationships$ProcessDefinition;
@@ -13168,7 +13769,9 @@ type ChildRelationships$ProcessInstance = {
   Workitems: SObjectDefinition$ProcessInstanceWorkitem;
 };
 
-interface SObjectDefinition$ProcessInstance extends SObjectDefinition {
+interface SObjectDefinition$ProcessInstance
+  extends SObjectDefinition<'ProcessInstance'> {
+  Name: 'ProcessInstance';
   Fields: Fields$ProcessInstance;
   ParentReferences: ParentReferences$ProcessInstance;
   ChildRelationships: ChildRelationships$ProcessInstance;
@@ -13209,7 +13812,9 @@ type ChildRelationships$ProcessInstanceHistory = {
   //
 };
 
-interface SObjectDefinition$ProcessInstanceHistory extends SObjectDefinition {
+interface SObjectDefinition$ProcessInstanceHistory
+  extends SObjectDefinition<'ProcessInstanceHistory'> {
+  Name: 'ProcessInstanceHistory';
   Fields: Fields$ProcessInstanceHistory;
   ParentReferences: ParentReferences$ProcessInstanceHistory;
   ChildRelationships: ChildRelationships$ProcessInstanceHistory;
@@ -13248,7 +13853,9 @@ type ChildRelationships$ProcessInstanceNode = {
   //
 };
 
-interface SObjectDefinition$ProcessInstanceNode extends SObjectDefinition {
+interface SObjectDefinition$ProcessInstanceNode
+  extends SObjectDefinition<'ProcessInstanceNode'> {
+  Name: 'ProcessInstanceNode';
   Fields: Fields$ProcessInstanceNode;
   ParentReferences: ParentReferences$ProcessInstanceNode;
   ChildRelationships: ChildRelationships$ProcessInstanceNode;
@@ -13283,7 +13890,9 @@ type ChildRelationships$ProcessInstanceStep = {
   //
 };
 
-interface SObjectDefinition$ProcessInstanceStep extends SObjectDefinition {
+interface SObjectDefinition$ProcessInstanceStep
+  extends SObjectDefinition<'ProcessInstanceStep'> {
+  Name: 'ProcessInstanceStep';
   Fields: Fields$ProcessInstanceStep;
   ParentReferences: ParentReferences$ProcessInstanceStep;
   ChildRelationships: ChildRelationships$ProcessInstanceStep;
@@ -13316,7 +13925,9 @@ type ChildRelationships$ProcessInstanceWorkitem = {
   //
 };
 
-interface SObjectDefinition$ProcessInstanceWorkitem extends SObjectDefinition {
+interface SObjectDefinition$ProcessInstanceWorkitem
+  extends SObjectDefinition<'ProcessInstanceWorkitem'> {
+  Name: 'ProcessInstanceWorkitem';
   Fields: Fields$ProcessInstanceWorkitem;
   ParentReferences: ParentReferences$ProcessInstanceWorkitem;
   ChildRelationships: ChildRelationships$ProcessInstanceWorkitem;
@@ -13341,7 +13952,9 @@ type ChildRelationships$ProcessNode = {
   //
 };
 
-interface SObjectDefinition$ProcessNode extends SObjectDefinition {
+interface SObjectDefinition$ProcessNode
+  extends SObjectDefinition<'ProcessNode'> {
+  Name: 'ProcessNode';
   Fields: Fields$ProcessNode;
   ParentReferences: ParentReferences$ProcessNode;
   ChildRelationships: ChildRelationships$ProcessNode;
@@ -13403,7 +14016,8 @@ type ChildRelationships$Product2 = {
   WorkOrderLineItems: SObjectDefinition$WorkOrderLineItem;
 };
 
-interface SObjectDefinition$Product2 extends SObjectDefinition {
+interface SObjectDefinition$Product2 extends SObjectDefinition<'Product2'> {
+  Name: 'Product2';
   Fields: Fields$Product2;
   ParentReferences: ParentReferences$Product2;
   ChildRelationships: ChildRelationships$Product2;
@@ -13413,7 +14027,7 @@ type Fields$Product2ChangeEvent = {
   //
   Id: string | null;
   ReplayId: string | null;
-  ChangeEventHeader: string;
+  ChangeEventHeader: any;
   Name: string | null;
   ProductCode: string | null;
   Description: string | null;
@@ -13439,7 +14053,9 @@ type ChildRelationships$Product2ChangeEvent = {
   //
 };
 
-interface SObjectDefinition$Product2ChangeEvent extends SObjectDefinition {
+interface SObjectDefinition$Product2ChangeEvent
+  extends SObjectDefinition<'Product2ChangeEvent'> {
+  Name: 'Product2ChangeEvent';
   Fields: Fields$Product2ChangeEvent;
   ParentReferences: ParentReferences$Product2ChangeEvent;
   ChildRelationships: ChildRelationships$Product2ChangeEvent;
@@ -13481,7 +14097,9 @@ type ChildRelationships$Product2Feed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$Product2Feed extends SObjectDefinition {
+interface SObjectDefinition$Product2Feed
+  extends SObjectDefinition<'Product2Feed'> {
+  Name: 'Product2Feed';
   Fields: Fields$Product2Feed;
   ParentReferences: ParentReferences$Product2Feed;
   ChildRelationships: ChildRelationships$Product2Feed;
@@ -13509,7 +14127,9 @@ type ChildRelationships$Product2History = {
   //
 };
 
-interface SObjectDefinition$Product2History extends SObjectDefinition {
+interface SObjectDefinition$Product2History
+  extends SObjectDefinition<'Product2History'> {
+  Name: 'Product2History';
   Fields: Fields$Product2History;
   ParentReferences: ParentReferences$Product2History;
   ChildRelationships: ChildRelationships$Product2History;
@@ -13535,7 +14155,8 @@ type ChildRelationships$ProductEntitlementTemplate = {
 };
 
 interface SObjectDefinition$ProductEntitlementTemplate
-  extends SObjectDefinition {
+  extends SObjectDefinition<'ProductEntitlementTemplate'> {
+  Name: 'ProductEntitlementTemplate';
   Fields: Fields$ProductEntitlementTemplate;
   ParentReferences: ParentReferences$ProductEntitlementTemplate;
   ChildRelationships: ChildRelationships$ProductEntitlementTemplate;
@@ -13777,7 +14398,8 @@ type ChildRelationships$Profile = {
   Users: SObjectDefinition$User;
 };
 
-interface SObjectDefinition$Profile extends SObjectDefinition {
+interface SObjectDefinition$Profile extends SObjectDefinition<'Profile'> {
+  Name: 'Profile';
   Fields: Fields$Profile;
   ParentReferences: ParentReferences$Profile;
   ChildRelationships: ChildRelationships$Profile;
@@ -13820,7 +14442,9 @@ type ChildRelationships$ProfileSkill = {
   ProfileSkillUserChildren: SObjectDefinition$ProfileSkillUser;
 };
 
-interface SObjectDefinition$ProfileSkill extends SObjectDefinition {
+interface SObjectDefinition$ProfileSkill
+  extends SObjectDefinition<'ProfileSkill'> {
+  Name: 'ProfileSkill';
   Fields: Fields$ProfileSkill;
   ParentReferences: ParentReferences$ProfileSkill;
   ChildRelationships: ChildRelationships$ProfileSkill;
@@ -13860,7 +14484,9 @@ type ChildRelationships$ProfileSkillEndorsement = {
   Histories: SObjectDefinition$ProfileSkillEndorsementHistory;
 };
 
-interface SObjectDefinition$ProfileSkillEndorsement extends SObjectDefinition {
+interface SObjectDefinition$ProfileSkillEndorsement
+  extends SObjectDefinition<'ProfileSkillEndorsement'> {
+  Name: 'ProfileSkillEndorsement';
   Fields: Fields$ProfileSkillEndorsement;
   ParentReferences: ParentReferences$ProfileSkillEndorsement;
   ChildRelationships: ChildRelationships$ProfileSkillEndorsement;
@@ -13903,7 +14529,8 @@ type ChildRelationships$ProfileSkillEndorsementFeed = {
 };
 
 interface SObjectDefinition$ProfileSkillEndorsementFeed
-  extends SObjectDefinition {
+  extends SObjectDefinition<'ProfileSkillEndorsementFeed'> {
+  Name: 'ProfileSkillEndorsementFeed';
   Fields: Fields$ProfileSkillEndorsementFeed;
   ParentReferences: ParentReferences$ProfileSkillEndorsementFeed;
   ChildRelationships: ChildRelationships$ProfileSkillEndorsementFeed;
@@ -13932,7 +14559,8 @@ type ChildRelationships$ProfileSkillEndorsementHistory = {
 };
 
 interface SObjectDefinition$ProfileSkillEndorsementHistory
-  extends SObjectDefinition {
+  extends SObjectDefinition<'ProfileSkillEndorsementHistory'> {
+  Name: 'ProfileSkillEndorsementHistory';
   Fields: Fields$ProfileSkillEndorsementHistory;
   ParentReferences: ParentReferences$ProfileSkillEndorsementHistory;
   ChildRelationships: ChildRelationships$ProfileSkillEndorsementHistory;
@@ -13974,7 +14602,9 @@ type ChildRelationships$ProfileSkillFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$ProfileSkillFeed extends SObjectDefinition {
+interface SObjectDefinition$ProfileSkillFeed
+  extends SObjectDefinition<'ProfileSkillFeed'> {
+  Name: 'ProfileSkillFeed';
   Fields: Fields$ProfileSkillFeed;
   ParentReferences: ParentReferences$ProfileSkillFeed;
   ChildRelationships: ChildRelationships$ProfileSkillFeed;
@@ -14002,7 +14632,9 @@ type ChildRelationships$ProfileSkillHistory = {
   //
 };
 
-interface SObjectDefinition$ProfileSkillHistory extends SObjectDefinition {
+interface SObjectDefinition$ProfileSkillHistory
+  extends SObjectDefinition<'ProfileSkillHistory'> {
+  Name: 'ProfileSkillHistory';
   Fields: Fields$ProfileSkillHistory;
   ParentReferences: ParentReferences$ProfileSkillHistory;
   ChildRelationships: ChildRelationships$ProfileSkillHistory;
@@ -14031,7 +14663,9 @@ type ChildRelationships$ProfileSkillShare = {
   //
 };
 
-interface SObjectDefinition$ProfileSkillShare extends SObjectDefinition {
+interface SObjectDefinition$ProfileSkillShare
+  extends SObjectDefinition<'ProfileSkillShare'> {
+  Name: 'ProfileSkillShare';
   Fields: Fields$ProfileSkillShare;
   ParentReferences: ParentReferences$ProfileSkillShare;
   ChildRelationships: ChildRelationships$ProfileSkillShare;
@@ -14073,7 +14707,9 @@ type ChildRelationships$ProfileSkillUser = {
   Histories: SObjectDefinition$ProfileSkillUserHistory;
 };
 
-interface SObjectDefinition$ProfileSkillUser extends SObjectDefinition {
+interface SObjectDefinition$ProfileSkillUser
+  extends SObjectDefinition<'ProfileSkillUser'> {
+  Name: 'ProfileSkillUser';
   Fields: Fields$ProfileSkillUser;
   ParentReferences: ParentReferences$ProfileSkillUser;
   ChildRelationships: ChildRelationships$ProfileSkillUser;
@@ -14115,7 +14751,9 @@ type ChildRelationships$ProfileSkillUserFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$ProfileSkillUserFeed extends SObjectDefinition {
+interface SObjectDefinition$ProfileSkillUserFeed
+  extends SObjectDefinition<'ProfileSkillUserFeed'> {
+  Name: 'ProfileSkillUserFeed';
   Fields: Fields$ProfileSkillUserFeed;
   ParentReferences: ParentReferences$ProfileSkillUserFeed;
   ChildRelationships: ChildRelationships$ProfileSkillUserFeed;
@@ -14143,7 +14781,9 @@ type ChildRelationships$ProfileSkillUserHistory = {
   //
 };
 
-interface SObjectDefinition$ProfileSkillUserHistory extends SObjectDefinition {
+interface SObjectDefinition$ProfileSkillUserHistory
+  extends SObjectDefinition<'ProfileSkillUserHistory'> {
+  Name: 'ProfileSkillUserHistory';
   Fields: Fields$ProfileSkillUserHistory;
   ParentReferences: ParentReferences$ProfileSkillUserHistory;
   ChildRelationships: ChildRelationships$ProfileSkillUserHistory;
@@ -14170,7 +14810,8 @@ type ChildRelationships$Publisher = {
   InstalledFieldDefinitions: SObjectDefinition$FieldDefinition;
 };
 
-interface SObjectDefinition$Publisher extends SObjectDefinition {
+interface SObjectDefinition$Publisher extends SObjectDefinition<'Publisher'> {
+  Name: 'Publisher';
   Fields: Fields$Publisher;
   ParentReferences: ParentReferences$Publisher;
   ChildRelationships: ChildRelationships$Publisher;
@@ -14208,7 +14849,8 @@ type ChildRelationships$PushTopic = {
   //
 };
 
-interface SObjectDefinition$PushTopic extends SObjectDefinition {
+interface SObjectDefinition$PushTopic extends SObjectDefinition<'PushTopic'> {
+  Name: 'PushTopic';
   Fields: Fields$PushTopic;
   ParentReferences: ParentReferences$PushTopic;
   ChildRelationships: ChildRelationships$PushTopic;
@@ -14233,7 +14875,9 @@ type ChildRelationships$QueueSobject = {
   //
 };
 
-interface SObjectDefinition$QueueSobject extends SObjectDefinition {
+interface SObjectDefinition$QueueSobject
+  extends SObjectDefinition<'QueueSobject'> {
+  Name: 'QueueSobject';
   Fields: Fields$QueueSobject;
   ParentReferences: ParentReferences$QueueSobject;
   ChildRelationships: ChildRelationships$QueueSobject;
@@ -14269,7 +14913,8 @@ type ChildRelationships$QuickText = {
   Histories: SObjectDefinition$QuickTextHistory;
 };
 
-interface SObjectDefinition$QuickText extends SObjectDefinition {
+interface SObjectDefinition$QuickText extends SObjectDefinition<'QuickText'> {
+  Name: 'QuickText';
   Fields: Fields$QuickText;
   ParentReferences: ParentReferences$QuickText;
   ChildRelationships: ChildRelationships$QuickText;
@@ -14297,7 +14942,9 @@ type ChildRelationships$QuickTextHistory = {
   //
 };
 
-interface SObjectDefinition$QuickTextHistory extends SObjectDefinition {
+interface SObjectDefinition$QuickTextHistory
+  extends SObjectDefinition<'QuickTextHistory'> {
+  Name: 'QuickTextHistory';
   Fields: Fields$QuickTextHistory;
   ParentReferences: ParentReferences$QuickTextHistory;
   ChildRelationships: ChildRelationships$QuickTextHistory;
@@ -14326,7 +14973,9 @@ type ChildRelationships$QuickTextShare = {
   //
 };
 
-interface SObjectDefinition$QuickTextShare extends SObjectDefinition {
+interface SObjectDefinition$QuickTextShare
+  extends SObjectDefinition<'QuickTextShare'> {
+  Name: 'QuickTextShare';
   Fields: Fields$QuickTextShare;
   ParentReferences: ParentReferences$QuickTextShare;
   ChildRelationships: ChildRelationships$QuickTextShare;
@@ -14364,7 +15013,9 @@ type ChildRelationships$RecentlyViewed = {
   //
 };
 
-interface SObjectDefinition$RecentlyViewed extends SObjectDefinition {
+interface SObjectDefinition$RecentlyViewed
+  extends SObjectDefinition<'RecentlyViewed'> {
+  Name: 'RecentlyViewed';
   Fields: Fields$RecentlyViewed;
   ParentReferences: ParentReferences$RecentlyViewed;
   ChildRelationships: ChildRelationships$RecentlyViewed;
@@ -14401,7 +15052,9 @@ type ChildRelationships$RecordAction = {
   //
 };
 
-interface SObjectDefinition$RecordAction extends SObjectDefinition {
+interface SObjectDefinition$RecordAction
+  extends SObjectDefinition<'RecordAction'> {
+  Name: 'RecordAction';
   Fields: Fields$RecordAction;
   ParentReferences: ParentReferences$RecordAction;
   ChildRelationships: ChildRelationships$RecordAction;
@@ -14434,7 +15087,8 @@ type ChildRelationships$RecordType = {
   //
 };
 
-interface SObjectDefinition$RecordType extends SObjectDefinition {
+interface SObjectDefinition$RecordType extends SObjectDefinition<'RecordType'> {
+  Name: 'RecordType';
   Fields: Fields$RecordType;
   ParentReferences: ParentReferences$RecordType;
   ChildRelationships: ChildRelationships$RecordType;
@@ -14452,7 +15106,7 @@ type Fields$RelationshipDomain = {
   IsCascadeDelete: boolean;
   IsDeprecatedAndHidden: boolean;
   IsRestrictedDelete: boolean;
-  JunctionIdListNames: string | null;
+  JunctionIdListNames: any | null;
 };
 
 type ParentReferences$RelationshipDomain = {
@@ -14463,7 +15117,9 @@ type ChildRelationships$RelationshipDomain = {
   //
 };
 
-interface SObjectDefinition$RelationshipDomain extends SObjectDefinition {
+interface SObjectDefinition$RelationshipDomain
+  extends SObjectDefinition<'RelationshipDomain'> {
+  Name: 'RelationshipDomain';
   Fields: Fields$RelationshipDomain;
   ParentReferences: ParentReferences$RelationshipDomain;
   ChildRelationships: ChildRelationships$RelationshipDomain;
@@ -14478,7 +15134,7 @@ type Fields$RelationshipInfo = {
   IsCascadeDelete: boolean;
   IsDeprecatedAndHidden: boolean;
   IsRestrictedDelete: boolean;
-  JunctionIdListNames: string | null;
+  JunctionIdListNames: any | null;
 };
 
 type ParentReferences$RelationshipInfo = {
@@ -14490,7 +15146,9 @@ type ChildRelationships$RelationshipInfo = {
   RelationshipDomains: SObjectDefinition$RelationshipDomain;
 };
 
-interface SObjectDefinition$RelationshipInfo extends SObjectDefinition {
+interface SObjectDefinition$RelationshipInfo
+  extends SObjectDefinition<'RelationshipInfo'> {
+  Name: 'RelationshipInfo';
   Fields: Fields$RelationshipInfo;
   ParentReferences: ParentReferences$RelationshipInfo;
   ChildRelationships: ChildRelationships$RelationshipInfo;
@@ -14533,7 +15191,8 @@ type ChildRelationships$Report = {
   Feeds: SObjectDefinition$ReportFeed;
 };
 
-interface SObjectDefinition$Report extends SObjectDefinition {
+interface SObjectDefinition$Report extends SObjectDefinition<'Report'> {
+  Name: 'Report';
   Fields: Fields$Report;
   ParentReferences: ParentReferences$Report;
   ChildRelationships: ChildRelationships$Report;
@@ -14575,7 +15234,8 @@ type ChildRelationships$ReportFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$ReportFeed extends SObjectDefinition {
+interface SObjectDefinition$ReportFeed extends SObjectDefinition<'ReportFeed'> {
+  Name: 'ReportFeed';
   Fields: Fields$ReportFeed;
   ParentReferences: ParentReferences$ReportFeed;
   ChildRelationships: ChildRelationships$ReportFeed;
@@ -14626,7 +15286,9 @@ type ChildRelationships$SamlSsoConfig = {
   //
 };
 
-interface SObjectDefinition$SamlSsoConfig extends SObjectDefinition {
+interface SObjectDefinition$SamlSsoConfig
+  extends SObjectDefinition<'SamlSsoConfig'> {
+  Name: 'SamlSsoConfig';
   Fields: Fields$SamlSsoConfig;
   ParentReferences: ParentReferences$SamlSsoConfig;
   ChildRelationships: ChildRelationships$SamlSsoConfig;
@@ -14642,7 +15304,7 @@ type Fields$Scontrol = {
   HtmlWrapper: string;
   Filename: string | null;
   BodyLength: number;
-  Binary: string | null;
+  Binary: BlobString | null;
   ContentSource: string | null;
   SupportsCaching: boolean;
   NamespacePrefix: string | null;
@@ -14664,7 +15326,8 @@ type ChildRelationships$Scontrol = {
   //
 };
 
-interface SObjectDefinition$Scontrol extends SObjectDefinition {
+interface SObjectDefinition$Scontrol extends SObjectDefinition<'Scontrol'> {
+  Name: 'Scontrol';
   Fields: Fields$Scontrol;
   ParentReferences: ParentReferences$Scontrol;
   ChildRelationships: ChildRelationships$Scontrol;
@@ -14704,7 +15367,9 @@ type ChildRelationships$SearchActivity = {
   //
 };
 
-interface SObjectDefinition$SearchActivity extends SObjectDefinition {
+interface SObjectDefinition$SearchActivity
+  extends SObjectDefinition<'SearchActivity'> {
+  Name: 'SearchActivity';
   Fields: Fields$SearchActivity;
   ParentReferences: ParentReferences$SearchActivity;
   ChildRelationships: ChildRelationships$SearchActivity;
@@ -14719,8 +15384,8 @@ type Fields$SearchLayout = {
   LastModifiedDate: DateString;
   LastModifiedById: string;
   EntityDefinitionId: string | null;
-  FieldsDisplayed: string | null;
-  ButtonsDisplayed: string | null;
+  FieldsDisplayed: any | null;
+  ButtonsDisplayed: any | null;
 };
 
 type ParentReferences$SearchLayout = {
@@ -14732,7 +15397,9 @@ type ChildRelationships$SearchLayout = {
   //
 };
 
-interface SObjectDefinition$SearchLayout extends SObjectDefinition {
+interface SObjectDefinition$SearchLayout
+  extends SObjectDefinition<'SearchLayout'> {
+  Name: 'SearchLayout';
   Fields: Fields$SearchLayout;
   ParentReferences: ParentReferences$SearchLayout;
   ChildRelationships: ChildRelationships$SearchLayout;
@@ -14762,7 +15429,9 @@ type ChildRelationships$SearchPromotionRule = {
   //
 };
 
-interface SObjectDefinition$SearchPromotionRule extends SObjectDefinition {
+interface SObjectDefinition$SearchPromotionRule
+  extends SObjectDefinition<'SearchPromotionRule'> {
+  Name: 'SearchPromotionRule';
   Fields: Fields$SearchPromotionRule;
   ParentReferences: ParentReferences$SearchPromotionRule;
   ChildRelationships: ChildRelationships$SearchPromotionRule;
@@ -14793,7 +15462,9 @@ type ChildRelationships$SecureAgentsCluster = {
   //
 };
 
-interface SObjectDefinition$SecureAgentsCluster extends SObjectDefinition {
+interface SObjectDefinition$SecureAgentsCluster
+  extends SObjectDefinition<'SecureAgentsCluster'> {
+  Name: 'SecureAgentsCluster';
   Fields: Fields$SecureAgentsCluster;
   ParentReferences: ParentReferences$SecureAgentsCluster;
   ChildRelationships: ChildRelationships$SecureAgentsCluster;
@@ -14826,7 +15497,9 @@ type ChildRelationships$SecurityCustomBaseline = {
   //
 };
 
-interface SObjectDefinition$SecurityCustomBaseline extends SObjectDefinition {
+interface SObjectDefinition$SecurityCustomBaseline
+  extends SObjectDefinition<'SecurityCustomBaseline'> {
+  Name: 'SecurityCustomBaseline';
   Fields: Fields$SecurityCustomBaseline;
   ParentReferences: ParentReferences$SecurityCustomBaseline;
   ChildRelationships: ChildRelationships$SecurityCustomBaseline;
@@ -14861,7 +15534,7 @@ type Fields$ServiceContract = {
   BillingLatitude: number | null;
   BillingLongitude: number | null;
   BillingGeocodeAccuracy: string | null;
-  BillingAddress: string | null;
+  BillingAddress: Address | null;
   ShippingStreet: string | null;
   ShippingCity: string | null;
   ShippingState: string | null;
@@ -14870,7 +15543,7 @@ type Fields$ServiceContract = {
   ShippingLatitude: number | null;
   ShippingLongitude: number | null;
   ShippingGeocodeAccuracy: string | null;
-  ShippingAddress: string | null;
+  ShippingAddress: Address | null;
   Pricebook2Id: string | null;
   ShippingHandling: number | null;
   Tax: number | null;
@@ -14924,7 +15597,9 @@ type ChildRelationships$ServiceContract = {
   WorkOrders: SObjectDefinition$WorkOrder;
 };
 
-interface SObjectDefinition$ServiceContract extends SObjectDefinition {
+interface SObjectDefinition$ServiceContract
+  extends SObjectDefinition<'ServiceContract'> {
+  Name: 'ServiceContract';
   Fields: Fields$ServiceContract;
   ParentReferences: ParentReferences$ServiceContract;
   ChildRelationships: ChildRelationships$ServiceContract;
@@ -14934,7 +15609,7 @@ type Fields$ServiceContractChangeEvent = {
   //
   Id: string | null;
   ReplayId: string | null;
-  ChangeEventHeader: string;
+  ChangeEventHeader: any;
   OwnerId: string | null;
   Name: string | null;
   CreatedDate: DateString | null;
@@ -14957,7 +15632,7 @@ type Fields$ServiceContractChangeEvent = {
   BillingLatitude: number | null;
   BillingLongitude: number | null;
   BillingGeocodeAccuracy: string | null;
-  BillingAddress: string | null;
+  BillingAddress: Address | null;
   ShippingStreet: string | null;
   ShippingCity: string | null;
   ShippingState: string | null;
@@ -14966,7 +15641,7 @@ type Fields$ServiceContractChangeEvent = {
   ShippingLatitude: number | null;
   ShippingLongitude: number | null;
   ShippingGeocodeAccuracy: string | null;
-  ShippingAddress: string | null;
+  ShippingAddress: Address | null;
   Pricebook2Id: string | null;
   ShippingHandling: number | null;
   Tax: number | null;
@@ -14988,7 +15663,8 @@ type ChildRelationships$ServiceContractChangeEvent = {
 };
 
 interface SObjectDefinition$ServiceContractChangeEvent
-  extends SObjectDefinition {
+  extends SObjectDefinition<'ServiceContractChangeEvent'> {
+  Name: 'ServiceContractChangeEvent';
   Fields: Fields$ServiceContractChangeEvent;
   ParentReferences: ParentReferences$ServiceContractChangeEvent;
   ChildRelationships: ChildRelationships$ServiceContractChangeEvent;
@@ -15030,7 +15706,9 @@ type ChildRelationships$ServiceContractFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$ServiceContractFeed extends SObjectDefinition {
+interface SObjectDefinition$ServiceContractFeed
+  extends SObjectDefinition<'ServiceContractFeed'> {
+  Name: 'ServiceContractFeed';
   Fields: Fields$ServiceContractFeed;
   ParentReferences: ParentReferences$ServiceContractFeed;
   ChildRelationships: ChildRelationships$ServiceContractFeed;
@@ -15058,7 +15736,9 @@ type ChildRelationships$ServiceContractHistory = {
   //
 };
 
-interface SObjectDefinition$ServiceContractHistory extends SObjectDefinition {
+interface SObjectDefinition$ServiceContractHistory
+  extends SObjectDefinition<'ServiceContractHistory'> {
+  Name: 'ServiceContractHistory';
   Fields: Fields$ServiceContractHistory;
   ParentReferences: ParentReferences$ServiceContractHistory;
   ChildRelationships: ChildRelationships$ServiceContractHistory;
@@ -15087,7 +15767,9 @@ type ChildRelationships$ServiceContractShare = {
   //
 };
 
-interface SObjectDefinition$ServiceContractShare extends SObjectDefinition {
+interface SObjectDefinition$ServiceContractShare
+  extends SObjectDefinition<'ServiceContractShare'> {
+  Name: 'ServiceContractShare';
   Fields: Fields$ServiceContractShare;
   ParentReferences: ParentReferences$ServiceContractShare;
   ChildRelationships: ChildRelationships$ServiceContractShare;
@@ -15121,7 +15803,9 @@ type ChildRelationships$SessionPermSetActivation = {
   //
 };
 
-interface SObjectDefinition$SessionPermSetActivation extends SObjectDefinition {
+interface SObjectDefinition$SessionPermSetActivation
+  extends SObjectDefinition<'SessionPermSetActivation'> {
+  Name: 'SessionPermSetActivation';
   Fields: Fields$SessionPermSetActivation;
   ParentReferences: ParentReferences$SessionPermSetActivation;
   ChildRelationships: ChildRelationships$SessionPermSetActivation;
@@ -15148,7 +15832,9 @@ type ChildRelationships$SetupAuditTrail = {
   //
 };
 
-interface SObjectDefinition$SetupAuditTrail extends SObjectDefinition {
+interface SObjectDefinition$SetupAuditTrail
+  extends SObjectDefinition<'SetupAuditTrail'> {
+  Name: 'SetupAuditTrail';
   Fields: Fields$SetupAuditTrail;
   ParentReferences: ParentReferences$SetupAuditTrail;
   ChildRelationships: ChildRelationships$SetupAuditTrail;
@@ -15172,7 +15858,9 @@ type ChildRelationships$SetupEntityAccess = {
   //
 };
 
-interface SObjectDefinition$SetupEntityAccess extends SObjectDefinition {
+interface SObjectDefinition$SetupEntityAccess
+  extends SObjectDefinition<'SetupEntityAccess'> {
+  Name: 'SetupEntityAccess';
   Fields: Fields$SetupEntityAccess;
   ParentReferences: ParentReferences$SetupEntityAccess;
   ChildRelationships: ChildRelationships$SetupEntityAccess;
@@ -15236,7 +15924,8 @@ type ChildRelationships$Site = {
   Histories: SObjectDefinition$SiteHistory;
 };
 
-interface SObjectDefinition$Site extends SObjectDefinition {
+interface SObjectDefinition$Site extends SObjectDefinition<'Site'> {
+  Name: 'Site';
   Fields: Fields$Site;
   ParentReferences: ParentReferences$Site;
   ChildRelationships: ChildRelationships$Site;
@@ -15258,7 +15947,8 @@ type ChildRelationships$SiteDetail = {
   //
 };
 
-interface SObjectDefinition$SiteDetail extends SObjectDefinition {
+interface SObjectDefinition$SiteDetail extends SObjectDefinition<'SiteDetail'> {
+  Name: 'SiteDetail';
   Fields: Fields$SiteDetail;
   ParentReferences: ParentReferences$SiteDetail;
   ChildRelationships: ChildRelationships$SiteDetail;
@@ -15300,7 +15990,8 @@ type ChildRelationships$SiteFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$SiteFeed extends SObjectDefinition {
+interface SObjectDefinition$SiteFeed extends SObjectDefinition<'SiteFeed'> {
+  Name: 'SiteFeed';
   Fields: Fields$SiteFeed;
   ParentReferences: ParentReferences$SiteFeed;
   ChildRelationships: ChildRelationships$SiteFeed;
@@ -15328,7 +16019,9 @@ type ChildRelationships$SiteHistory = {
   //
 };
 
-interface SObjectDefinition$SiteHistory extends SObjectDefinition {
+interface SObjectDefinition$SiteHistory
+  extends SObjectDefinition<'SiteHistory'> {
+  Name: 'SiteHistory';
   Fields: Fields$SiteHistory;
   ParentReferences: ParentReferences$SiteHistory;
   ChildRelationships: ChildRelationships$SiteHistory;
@@ -15365,7 +16058,8 @@ type ChildRelationships$SlaProcess = {
   EntityMilestones: SObjectDefinition$EntityMilestone;
 };
 
-interface SObjectDefinition$SlaProcess extends SObjectDefinition {
+interface SObjectDefinition$SlaProcess extends SObjectDefinition<'SlaProcess'> {
+  Name: 'SlaProcess';
   Fields: Fields$SlaProcess;
   ParentReferences: ParentReferences$SlaProcess;
   ChildRelationships: ChildRelationships$SlaProcess;
@@ -15425,7 +16119,9 @@ type ChildRelationships$SocialPersona = {
   Posts: SObjectDefinition$SocialPost;
 };
 
-interface SObjectDefinition$SocialPersona extends SObjectDefinition {
+interface SObjectDefinition$SocialPersona
+  extends SObjectDefinition<'SocialPersona'> {
+  Name: 'SocialPersona';
   Fields: Fields$SocialPersona;
   ParentReferences: ParentReferences$SocialPersona;
   ChildRelationships: ChildRelationships$SocialPersona;
@@ -15453,7 +16149,9 @@ type ChildRelationships$SocialPersonaHistory = {
   //
 };
 
-interface SObjectDefinition$SocialPersonaHistory extends SObjectDefinition {
+interface SObjectDefinition$SocialPersonaHistory
+  extends SObjectDefinition<'SocialPersonaHistory'> {
+  Name: 'SocialPersonaHistory';
   Fields: Fields$SocialPersonaHistory;
   ParentReferences: ParentReferences$SocialPersonaHistory;
   ChildRelationships: ChildRelationships$SocialPersonaHistory;
@@ -15561,7 +16259,8 @@ type ChildRelationships$SocialPost = {
   Histories: SObjectDefinition$SocialPostHistory;
 };
 
-interface SObjectDefinition$SocialPost extends SObjectDefinition {
+interface SObjectDefinition$SocialPost extends SObjectDefinition<'SocialPost'> {
+  Name: 'SocialPost';
   Fields: Fields$SocialPost;
   ParentReferences: ParentReferences$SocialPost;
   ChildRelationships: ChildRelationships$SocialPost;
@@ -15603,7 +16302,9 @@ type ChildRelationships$SocialPostFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$SocialPostFeed extends SObjectDefinition {
+interface SObjectDefinition$SocialPostFeed
+  extends SObjectDefinition<'SocialPostFeed'> {
+  Name: 'SocialPostFeed';
   Fields: Fields$SocialPostFeed;
   ParentReferences: ParentReferences$SocialPostFeed;
   ChildRelationships: ChildRelationships$SocialPostFeed;
@@ -15631,7 +16332,9 @@ type ChildRelationships$SocialPostHistory = {
   //
 };
 
-interface SObjectDefinition$SocialPostHistory extends SObjectDefinition {
+interface SObjectDefinition$SocialPostHistory
+  extends SObjectDefinition<'SocialPostHistory'> {
+  Name: 'SocialPostHistory';
   Fields: Fields$SocialPostHistory;
   ParentReferences: ParentReferences$SocialPostHistory;
   ChildRelationships: ChildRelationships$SocialPostHistory;
@@ -15660,7 +16363,9 @@ type ChildRelationships$SocialPostShare = {
   //
 };
 
-interface SObjectDefinition$SocialPostShare extends SObjectDefinition {
+interface SObjectDefinition$SocialPostShare
+  extends SObjectDefinition<'SocialPostShare'> {
+  Name: 'SocialPostShare';
   Fields: Fields$SocialPostShare;
   ParentReferences: ParentReferences$SocialPostShare;
   ChildRelationships: ChildRelationships$SocialPostShare;
@@ -15717,7 +16422,8 @@ type ChildRelationships$Solution = {
   Votes: SObjectDefinition$Vote;
 };
 
-interface SObjectDefinition$Solution extends SObjectDefinition {
+interface SObjectDefinition$Solution extends SObjectDefinition<'Solution'> {
+  Name: 'Solution';
   Fields: Fields$Solution;
   ParentReferences: ParentReferences$Solution;
   ChildRelationships: ChildRelationships$Solution;
@@ -15759,7 +16465,9 @@ type ChildRelationships$SolutionFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$SolutionFeed extends SObjectDefinition {
+interface SObjectDefinition$SolutionFeed
+  extends SObjectDefinition<'SolutionFeed'> {
+  Name: 'SolutionFeed';
   Fields: Fields$SolutionFeed;
   ParentReferences: ParentReferences$SolutionFeed;
   ChildRelationships: ChildRelationships$SolutionFeed;
@@ -15787,7 +16495,9 @@ type ChildRelationships$SolutionHistory = {
   //
 };
 
-interface SObjectDefinition$SolutionHistory extends SObjectDefinition {
+interface SObjectDefinition$SolutionHistory
+  extends SObjectDefinition<'SolutionHistory'> {
+  Name: 'SolutionHistory';
   Fields: Fields$SolutionHistory;
   ParentReferences: ParentReferences$SolutionHistory;
   ChildRelationships: ChildRelationships$SolutionHistory;
@@ -15818,7 +16528,9 @@ type ChildRelationships$SolutionStatus = {
   //
 };
 
-interface SObjectDefinition$SolutionStatus extends SObjectDefinition {
+interface SObjectDefinition$SolutionStatus
+  extends SObjectDefinition<'SolutionStatus'> {
+  Name: 'SolutionStatus';
   Fields: Fields$SolutionStatus;
   ParentReferences: ParentReferences$SolutionStatus;
   ChildRelationships: ChildRelationships$SolutionStatus;
@@ -15844,7 +16556,9 @@ type ChildRelationships$SourceChangeNotification = {
   //
 };
 
-interface SObjectDefinition$SourceChangeNotification extends SObjectDefinition {
+interface SObjectDefinition$SourceChangeNotification
+  extends SObjectDefinition<'SourceChangeNotification'> {
+  Name: 'SourceChangeNotification';
   Fields: Fields$SourceChangeNotification;
   ParentReferences: ParentReferences$SourceChangeNotification;
   ChildRelationships: ChildRelationships$SourceChangeNotification;
@@ -15876,7 +16590,8 @@ type ChildRelationships$Stamp = {
   CustomBrands: SObjectDefinition$CustomBrand;
 };
 
-interface SObjectDefinition$Stamp extends SObjectDefinition {
+interface SObjectDefinition$Stamp extends SObjectDefinition<'Stamp'> {
+  Name: 'Stamp';
   Fields: Fields$Stamp;
   ParentReferences: ParentReferences$Stamp;
   ChildRelationships: ChildRelationships$Stamp;
@@ -15907,7 +16622,9 @@ type ChildRelationships$StampAssignment = {
   //
 };
 
-interface SObjectDefinition$StampAssignment extends SObjectDefinition {
+interface SObjectDefinition$StampAssignment
+  extends SObjectDefinition<'StampAssignment'> {
+  Name: 'StampAssignment';
   Fields: Fields$StampAssignment;
   ParentReferences: ParentReferences$StampAssignment;
   ChildRelationships: ChildRelationships$StampAssignment;
@@ -15920,7 +16637,7 @@ type Fields$StaticResource = {
   Name: string;
   ContentType: string;
   BodyLength: number;
-  Body: string | null;
+  Body: BlobString | null;
   Description: string | null;
   CreatedDate: DateString;
   CreatedById: string;
@@ -15940,7 +16657,9 @@ type ChildRelationships$StaticResource = {
   //
 };
 
-interface SObjectDefinition$StaticResource extends SObjectDefinition {
+interface SObjectDefinition$StaticResource
+  extends SObjectDefinition<'StaticResource'> {
+  Name: 'StaticResource';
   Fields: Fields$StaticResource;
   ParentReferences: ParentReferences$StaticResource;
   ChildRelationships: ChildRelationships$StaticResource;
@@ -15976,7 +16695,9 @@ type ChildRelationships$StreamingChannel = {
   ProcessSteps: SObjectDefinition$ProcessInstanceHistory;
 };
 
-interface SObjectDefinition$StreamingChannel extends SObjectDefinition {
+interface SObjectDefinition$StreamingChannel
+  extends SObjectDefinition<'StreamingChannel'> {
+  Name: 'StreamingChannel';
   Fields: Fields$StreamingChannel;
   ParentReferences: ParentReferences$StreamingChannel;
   ChildRelationships: ChildRelationships$StreamingChannel;
@@ -16005,7 +16726,9 @@ type ChildRelationships$StreamingChannelShare = {
   //
 };
 
-interface SObjectDefinition$StreamingChannelShare extends SObjectDefinition {
+interface SObjectDefinition$StreamingChannelShare
+  extends SObjectDefinition<'StreamingChannelShare'> {
+  Name: 'StreamingChannelShare';
   Fields: Fields$StreamingChannelShare;
   ParentReferences: ParentReferences$StreamingChannelShare;
   ChildRelationships: ChildRelationships$StreamingChannelShare;
@@ -16035,7 +16758,9 @@ type ChildRelationships$TabDefinition = {
   Icons: SObjectDefinition$IconDefinition;
 };
 
-interface SObjectDefinition$TabDefinition extends SObjectDefinition {
+interface SObjectDefinition$TabDefinition
+  extends SObjectDefinition<'TabDefinition'> {
+  Name: 'TabDefinition';
   Fields: Fields$TabDefinition;
   ParentReferences: ParentReferences$TabDefinition;
   ChildRelationships: ChildRelationships$TabDefinition;
@@ -16105,7 +16830,8 @@ type ChildRelationships$Task = {
   TopicAssignments: SObjectDefinition$TopicAssignment;
 };
 
-interface SObjectDefinition$Task extends SObjectDefinition {
+interface SObjectDefinition$Task extends SObjectDefinition<'Task'> {
+  Name: 'Task';
   Fields: Fields$Task;
   ParentReferences: ParentReferences$Task;
   ChildRelationships: ChildRelationships$Task;
@@ -16115,7 +16841,7 @@ type Fields$TaskChangeEvent = {
   //
   Id: string | null;
   ReplayId: string | null;
-  ChangeEventHeader: string;
+  ChangeEventHeader: any;
   WhoId: string | null;
   WhatId: string | null;
   Subject: string | null;
@@ -16158,7 +16884,9 @@ type ChildRelationships$TaskChangeEvent = {
   //
 };
 
-interface SObjectDefinition$TaskChangeEvent extends SObjectDefinition {
+interface SObjectDefinition$TaskChangeEvent
+  extends SObjectDefinition<'TaskChangeEvent'> {
+  Name: 'TaskChangeEvent';
   Fields: Fields$TaskChangeEvent;
   ParentReferences: ParentReferences$TaskChangeEvent;
   ChildRelationships: ChildRelationships$TaskChangeEvent;
@@ -16200,7 +16928,8 @@ type ChildRelationships$TaskFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$TaskFeed extends SObjectDefinition {
+interface SObjectDefinition$TaskFeed extends SObjectDefinition<'TaskFeed'> {
+  Name: 'TaskFeed';
   Fields: Fields$TaskFeed;
   ParentReferences: ParentReferences$TaskFeed;
   ChildRelationships: ChildRelationships$TaskFeed;
@@ -16231,7 +16960,9 @@ type ChildRelationships$TaskPriority = {
   //
 };
 
-interface SObjectDefinition$TaskPriority extends SObjectDefinition {
+interface SObjectDefinition$TaskPriority
+  extends SObjectDefinition<'TaskPriority'> {
+  Name: 'TaskPriority';
   Fields: Fields$TaskPriority;
   ParentReferences: ParentReferences$TaskPriority;
   ChildRelationships: ChildRelationships$TaskPriority;
@@ -16262,7 +16993,8 @@ type ChildRelationships$TaskStatus = {
   //
 };
 
-interface SObjectDefinition$TaskStatus extends SObjectDefinition {
+interface SObjectDefinition$TaskStatus extends SObjectDefinition<'TaskStatus'> {
+  Name: 'TaskStatus';
   Fields: Fields$TaskStatus;
   ParentReferences: ParentReferences$TaskStatus;
   ChildRelationships: ChildRelationships$TaskStatus;
@@ -16301,7 +17033,9 @@ type ChildRelationships$TenantUsageEntitlement = {
   //
 };
 
-interface SObjectDefinition$TenantUsageEntitlement extends SObjectDefinition {
+interface SObjectDefinition$TenantUsageEntitlement
+  extends SObjectDefinition<'TenantUsageEntitlement'> {
+  Name: 'TenantUsageEntitlement';
   Fields: Fields$TenantUsageEntitlement;
   ParentReferences: ParentReferences$TenantUsageEntitlement;
   ChildRelationships: ChildRelationships$TenantUsageEntitlement;
@@ -16332,7 +17066,9 @@ type ChildRelationships$TestSuiteMembership = {
   //
 };
 
-interface SObjectDefinition$TestSuiteMembership extends SObjectDefinition {
+interface SObjectDefinition$TestSuiteMembership
+  extends SObjectDefinition<'TestSuiteMembership'> {
+  Name: 'TestSuiteMembership';
   Fields: Fields$TestSuiteMembership;
   ParentReferences: ParentReferences$TestSuiteMembership;
   ChildRelationships: ChildRelationships$TestSuiteMembership;
@@ -16361,7 +17097,9 @@ type ChildRelationships$ThirdPartyAccountLink = {
   //
 };
 
-interface SObjectDefinition$ThirdPartyAccountLink extends SObjectDefinition {
+interface SObjectDefinition$ThirdPartyAccountLink
+  extends SObjectDefinition<'ThirdPartyAccountLink'> {
+  Name: 'ThirdPartyAccountLink';
   Fields: Fields$ThirdPartyAccountLink;
   ParentReferences: ParentReferences$ThirdPartyAccountLink;
   ChildRelationships: ChildRelationships$ThirdPartyAccountLink;
@@ -16394,7 +17132,8 @@ type ChildRelationships$TodayGoal = {
   //
 };
 
-interface SObjectDefinition$TodayGoal extends SObjectDefinition {
+interface SObjectDefinition$TodayGoal extends SObjectDefinition<'TodayGoal'> {
+  Name: 'TodayGoal';
   Fields: Fields$TodayGoal;
   ParentReferences: ParentReferences$TodayGoal;
   ChildRelationships: ChildRelationships$TodayGoal;
@@ -16423,7 +17162,9 @@ type ChildRelationships$TodayGoalShare = {
   //
 };
 
-interface SObjectDefinition$TodayGoalShare extends SObjectDefinition {
+interface SObjectDefinition$TodayGoalShare
+  extends SObjectDefinition<'TodayGoalShare'> {
+  Name: 'TodayGoalShare';
   Fields: Fields$TodayGoalShare;
   ParentReferences: ParentReferences$TodayGoalShare;
   ChildRelationships: ChildRelationships$TodayGoalShare;
@@ -16454,7 +17195,8 @@ type ChildRelationships$Topic = {
   Feeds: SObjectDefinition$TopicFeed;
 };
 
-interface SObjectDefinition$Topic extends SObjectDefinition {
+interface SObjectDefinition$Topic extends SObjectDefinition<'Topic'> {
+  Name: 'Topic';
   Fields: Fields$Topic;
   ParentReferences: ParentReferences$Topic;
   ChildRelationships: ChildRelationships$Topic;
@@ -16484,7 +17226,9 @@ type ChildRelationships$TopicAssignment = {
   //
 };
 
-interface SObjectDefinition$TopicAssignment extends SObjectDefinition {
+interface SObjectDefinition$TopicAssignment
+  extends SObjectDefinition<'TopicAssignment'> {
+  Name: 'TopicAssignment';
   Fields: Fields$TopicAssignment;
   ParentReferences: ParentReferences$TopicAssignment;
   ChildRelationships: ChildRelationships$TopicAssignment;
@@ -16526,7 +17270,8 @@ type ChildRelationships$TopicFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$TopicFeed extends SObjectDefinition {
+interface SObjectDefinition$TopicFeed extends SObjectDefinition<'TopicFeed'> {
+  Name: 'TopicFeed';
   Fields: Fields$TopicFeed;
   ParentReferences: ParentReferences$TopicFeed;
   ChildRelationships: ChildRelationships$TopicFeed;
@@ -16549,7 +17294,9 @@ type ChildRelationships$TopicUserEvent = {
   //
 };
 
-interface SObjectDefinition$TopicUserEvent extends SObjectDefinition {
+interface SObjectDefinition$TopicUserEvent
+  extends SObjectDefinition<'TopicUserEvent'> {
+  Name: 'TopicUserEvent';
   Fields: Fields$TopicUserEvent;
   ParentReferences: ParentReferences$TopicUserEvent;
   ChildRelationships: ChildRelationships$TopicUserEvent;
@@ -16583,7 +17330,9 @@ type ChildRelationships$UndecidedEventRelation = {
   //
 };
 
-interface SObjectDefinition$UndecidedEventRelation extends SObjectDefinition {
+interface SObjectDefinition$UndecidedEventRelation
+  extends SObjectDefinition<'UndecidedEventRelation'> {
+  Name: 'UndecidedEventRelation';
   Fields: Fields$UndecidedEventRelation;
   ParentReferences: ParentReferences$UndecidedEventRelation;
   ChildRelationships: ChildRelationships$UndecidedEventRelation;
@@ -16608,7 +17357,7 @@ type Fields$User = {
   Latitude: number | null;
   Longitude: number | null;
   GeocodeAccuracy: string | null;
-  Address: string | null;
+  Address: Address | null;
   Email: string;
   EmailPreferencesAutoBcc: boolean;
   EmailPreferencesAutoBccStayInTouch: boolean;
@@ -16806,7 +17555,8 @@ type ChildRelationships$User = {
   GivenThanks: SObjectDefinition$WorkThanks;
 };
 
-interface SObjectDefinition$User extends SObjectDefinition {
+interface SObjectDefinition$User extends SObjectDefinition<'User'> {
+  Name: 'User';
   Fields: Fields$User;
   ParentReferences: ParentReferences$User;
   ChildRelationships: ChildRelationships$User;
@@ -16838,7 +17588,9 @@ type ChildRelationships$UserAppInfo = {
   //
 };
 
-interface SObjectDefinition$UserAppInfo extends SObjectDefinition {
+interface SObjectDefinition$UserAppInfo
+  extends SObjectDefinition<'UserAppInfo'> {
+  Name: 'UserAppInfo';
   Fields: Fields$UserAppInfo;
   ParentReferences: ParentReferences$UserAppInfo;
   ChildRelationships: ChildRelationships$UserAppInfo;
@@ -16870,7 +17622,9 @@ type ChildRelationships$UserAppMenuCustomization = {
   //
 };
 
-interface SObjectDefinition$UserAppMenuCustomization extends SObjectDefinition {
+interface SObjectDefinition$UserAppMenuCustomization
+  extends SObjectDefinition<'UserAppMenuCustomization'> {
+  Name: 'UserAppMenuCustomization';
   Fields: Fields$UserAppMenuCustomization;
   ParentReferences: ParentReferences$UserAppMenuCustomization;
   ChildRelationships: ChildRelationships$UserAppMenuCustomization;
@@ -16900,7 +17654,8 @@ type ChildRelationships$UserAppMenuCustomizationShare = {
 };
 
 interface SObjectDefinition$UserAppMenuCustomizationShare
-  extends SObjectDefinition {
+  extends SObjectDefinition<'UserAppMenuCustomizationShare'> {
+  Name: 'UserAppMenuCustomizationShare';
   Fields: Fields$UserAppMenuCustomizationShare;
   ParentReferences: ParentReferences$UserAppMenuCustomizationShare;
   ChildRelationships: ChildRelationships$UserAppMenuCustomizationShare;
@@ -16934,7 +17689,9 @@ type ChildRelationships$UserAppMenuItem = {
   //
 };
 
-interface SObjectDefinition$UserAppMenuItem extends SObjectDefinition {
+interface SObjectDefinition$UserAppMenuItem
+  extends SObjectDefinition<'UserAppMenuItem'> {
+  Name: 'UserAppMenuItem';
   Fields: Fields$UserAppMenuItem;
   ParentReferences: ParentReferences$UserAppMenuItem;
   ChildRelationships: ChildRelationships$UserAppMenuItem;
@@ -16944,7 +17701,7 @@ type Fields$UserChangeEvent = {
   //
   Id: string | null;
   ReplayId: string | null;
-  ChangeEventHeader: string;
+  ChangeEventHeader: any;
   Username: string | null;
   LastName: string | null;
   FirstName: string | null;
@@ -16961,7 +17718,7 @@ type Fields$UserChangeEvent = {
   Latitude: number | null;
   Longitude: number | null;
   GeocodeAccuracy: string | null;
-  Address: string | null;
+  Address: Address | null;
   Email: string | null;
   EmailPreferencesAutoBcc: boolean;
   EmailPreferencesAutoBccStayInTouch: boolean;
@@ -17103,7 +17860,9 @@ type ChildRelationships$UserChangeEvent = {
   //
 };
 
-interface SObjectDefinition$UserChangeEvent extends SObjectDefinition {
+interface SObjectDefinition$UserChangeEvent
+  extends SObjectDefinition<'UserChangeEvent'> {
+  Name: 'UserChangeEvent';
   Fields: Fields$UserChangeEvent;
   ParentReferences: ParentReferences$UserChangeEvent;
   ChildRelationships: ChildRelationships$UserChangeEvent;
@@ -17135,7 +17894,9 @@ type ChildRelationships$UserEntityAccess = {
   //
 };
 
-interface SObjectDefinition$UserEntityAccess extends SObjectDefinition {
+interface SObjectDefinition$UserEntityAccess
+  extends SObjectDefinition<'UserEntityAccess'> {
+  Name: 'UserEntityAccess';
   Fields: Fields$UserEntityAccess;
   ParentReferences: ParentReferences$UserEntityAccess;
   ChildRelationships: ChildRelationships$UserEntityAccess;
@@ -17177,7 +17938,8 @@ type ChildRelationships$UserFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$UserFeed extends SObjectDefinition {
+interface SObjectDefinition$UserFeed extends SObjectDefinition<'UserFeed'> {
+  Name: 'UserFeed';
   Fields: Fields$UserFeed;
   ParentReferences: ParentReferences$UserFeed;
   ChildRelationships: ChildRelationships$UserFeed;
@@ -17204,7 +17966,9 @@ type ChildRelationships$UserFieldAccess = {
   //
 };
 
-interface SObjectDefinition$UserFieldAccess extends SObjectDefinition {
+interface SObjectDefinition$UserFieldAccess
+  extends SObjectDefinition<'UserFieldAccess'> {
+  Name: 'UserFieldAccess';
   Fields: Fields$UserFieldAccess;
   ParentReferences: ParentReferences$UserFieldAccess;
   ChildRelationships: ChildRelationships$UserFieldAccess;
@@ -17235,7 +17999,9 @@ type ChildRelationships$UserLicense = {
   //
 };
 
-interface SObjectDefinition$UserLicense extends SObjectDefinition {
+interface SObjectDefinition$UserLicense
+  extends SObjectDefinition<'UserLicense'> {
+  Name: 'UserLicense';
   Fields: Fields$UserLicense;
   ParentReferences: ParentReferences$UserLicense;
   ChildRelationships: ChildRelationships$UserLicense;
@@ -17268,7 +18034,9 @@ type ChildRelationships$UserListView = {
   //
 };
 
-interface SObjectDefinition$UserListView extends SObjectDefinition {
+interface SObjectDefinition$UserListView
+  extends SObjectDefinition<'UserListView'> {
+  Name: 'UserListView';
   Fields: Fields$UserListView;
   ParentReferences: ParentReferences$UserListView;
   ChildRelationships: ChildRelationships$UserListView;
@@ -17301,7 +18069,9 @@ type ChildRelationships$UserListViewCriterion = {
   //
 };
 
-interface SObjectDefinition$UserListViewCriterion extends SObjectDefinition {
+interface SObjectDefinition$UserListViewCriterion
+  extends SObjectDefinition<'UserListViewCriterion'> {
+  Name: 'UserListViewCriterion';
   Fields: Fields$UserListViewCriterion;
   ParentReferences: ParentReferences$UserListViewCriterion;
   ChildRelationships: ChildRelationships$UserListViewCriterion;
@@ -17326,7 +18096,8 @@ type ChildRelationships$UserLogin = {
   //
 };
 
-interface SObjectDefinition$UserLogin extends SObjectDefinition {
+interface SObjectDefinition$UserLogin extends SObjectDefinition<'UserLogin'> {
+  Name: 'UserLogin';
   Fields: Fields$UserLogin;
   ParentReferences: ParentReferences$UserLogin;
   ChildRelationships: ChildRelationships$UserLogin;
@@ -17355,7 +18126,9 @@ type ChildRelationships$UserPackageLicense = {
   //
 };
 
-interface SObjectDefinition$UserPackageLicense extends SObjectDefinition {
+interface SObjectDefinition$UserPackageLicense
+  extends SObjectDefinition<'UserPackageLicense'> {
+  Name: 'UserPackageLicense';
   Fields: Fields$UserPackageLicense;
   ParentReferences: ParentReferences$UserPackageLicense;
   ChildRelationships: ChildRelationships$UserPackageLicense;
@@ -17583,7 +18356,9 @@ type ChildRelationships$UserPermissionAccess = {
   //
 };
 
-interface SObjectDefinition$UserPermissionAccess extends SObjectDefinition {
+interface SObjectDefinition$UserPermissionAccess
+  extends SObjectDefinition<'UserPermissionAccess'> {
+  Name: 'UserPermissionAccess';
   Fields: Fields$UserPermissionAccess;
   ParentReferences: ParentReferences$UserPermissionAccess;
   ChildRelationships: ChildRelationships$UserPermissionAccess;
@@ -17606,7 +18381,9 @@ type ChildRelationships$UserPreference = {
   //
 };
 
-interface SObjectDefinition$UserPreference extends SObjectDefinition {
+interface SObjectDefinition$UserPreference
+  extends SObjectDefinition<'UserPreference'> {
+  Name: 'UserPreference';
   Fields: Fields$UserPreference;
   ParentReferences: ParentReferences$UserPreference;
   ChildRelationships: ChildRelationships$UserPreference;
@@ -17647,7 +18424,9 @@ type ChildRelationships$UserProvAccount = {
   //
 };
 
-interface SObjectDefinition$UserProvAccount extends SObjectDefinition {
+interface SObjectDefinition$UserProvAccount
+  extends SObjectDefinition<'UserProvAccount'> {
+  Name: 'UserProvAccount';
   Fields: Fields$UserProvAccount;
   ParentReferences: ParentReferences$UserProvAccount;
   ChildRelationships: ChildRelationships$UserProvAccount;
@@ -17686,7 +18465,9 @@ type ChildRelationships$UserProvAccountStaging = {
   //
 };
 
-interface SObjectDefinition$UserProvAccountStaging extends SObjectDefinition {
+interface SObjectDefinition$UserProvAccountStaging
+  extends SObjectDefinition<'UserProvAccountStaging'> {
+  Name: 'UserProvAccountStaging';
   Fields: Fields$UserProvAccountStaging;
   ParentReferences: ParentReferences$UserProvAccountStaging;
   ChildRelationships: ChildRelationships$UserProvAccountStaging;
@@ -17719,7 +18500,9 @@ type ChildRelationships$UserProvMockTarget = {
   //
 };
 
-interface SObjectDefinition$UserProvMockTarget extends SObjectDefinition {
+interface SObjectDefinition$UserProvMockTarget
+  extends SObjectDefinition<'UserProvMockTarget'> {
+  Name: 'UserProvMockTarget';
   Fields: Fields$UserProvMockTarget;
   ParentReferences: ParentReferences$UserProvMockTarget;
   ChildRelationships: ChildRelationships$UserProvMockTarget;
@@ -17762,7 +18545,9 @@ type ChildRelationships$UserProvisioningConfig = {
   //
 };
 
-interface SObjectDefinition$UserProvisioningConfig extends SObjectDefinition {
+interface SObjectDefinition$UserProvisioningConfig
+  extends SObjectDefinition<'UserProvisioningConfig'> {
+  Name: 'UserProvisioningConfig';
   Fields: Fields$UserProvisioningConfig;
   ParentReferences: ParentReferences$UserProvisioningConfig;
   ChildRelationships: ChildRelationships$UserProvisioningConfig;
@@ -17798,7 +18583,9 @@ type ChildRelationships$UserProvisioningLog = {
   //
 };
 
-interface SObjectDefinition$UserProvisioningLog extends SObjectDefinition {
+interface SObjectDefinition$UserProvisioningLog
+  extends SObjectDefinition<'UserProvisioningLog'> {
+  Name: 'UserProvisioningLog';
   Fields: Fields$UserProvisioningLog;
   ParentReferences: ParentReferences$UserProvisioningLog;
   ChildRelationships: ChildRelationships$UserProvisioningLog;
@@ -17849,7 +18636,9 @@ type ChildRelationships$UserProvisioningRequest = {
   ProcessSteps: SObjectDefinition$ProcessInstanceHistory;
 };
 
-interface SObjectDefinition$UserProvisioningRequest extends SObjectDefinition {
+interface SObjectDefinition$UserProvisioningRequest
+  extends SObjectDefinition<'UserProvisioningRequest'> {
+  Name: 'UserProvisioningRequest';
   Fields: Fields$UserProvisioningRequest;
   ParentReferences: ParentReferences$UserProvisioningRequest;
   ChildRelationships: ChildRelationships$UserProvisioningRequest;
@@ -17879,7 +18668,8 @@ type ChildRelationships$UserProvisioningRequestShare = {
 };
 
 interface SObjectDefinition$UserProvisioningRequestShare
-  extends SObjectDefinition {
+  extends SObjectDefinition<'UserProvisioningRequestShare'> {
+  Name: 'UserProvisioningRequestShare';
   Fields: Fields$UserProvisioningRequestShare;
   ParentReferences: ParentReferences$UserProvisioningRequestShare;
   ChildRelationships: ChildRelationships$UserProvisioningRequestShare;
@@ -17906,7 +18696,9 @@ type ChildRelationships$UserRecordAccess = {
   //
 };
 
-interface SObjectDefinition$UserRecordAccess extends SObjectDefinition {
+interface SObjectDefinition$UserRecordAccess
+  extends SObjectDefinition<'UserRecordAccess'> {
+  Name: 'UserRecordAccess';
   Fields: Fields$UserRecordAccess;
   ParentReferences: ParentReferences$UserRecordAccess;
   ChildRelationships: ChildRelationships$UserRecordAccess;
@@ -17943,7 +18735,8 @@ type ChildRelationships$UserRole = {
   Users: SObjectDefinition$User;
 };
 
-interface SObjectDefinition$UserRole extends SObjectDefinition {
+interface SObjectDefinition$UserRole extends SObjectDefinition<'UserRole'> {
+  Name: 'UserRole';
   Fields: Fields$UserRole;
   ParentReferences: ParentReferences$UserRole;
   ChildRelationships: ChildRelationships$UserRole;
@@ -17972,7 +18765,8 @@ type ChildRelationships$UserShare = {
   //
 };
 
-interface SObjectDefinition$UserShare extends SObjectDefinition {
+interface SObjectDefinition$UserShare extends SObjectDefinition<'UserShare'> {
+  Name: 'UserShare';
   Fields: Fields$UserShare;
   ParentReferences: ParentReferences$UserShare;
   ChildRelationships: ChildRelationships$UserShare;
@@ -18015,7 +18809,9 @@ type ChildRelationships$VerificationHistory = {
   //
 };
 
-interface SObjectDefinition$VerificationHistory extends SObjectDefinition {
+interface SObjectDefinition$VerificationHistory
+  extends SObjectDefinition<'VerificationHistory'> {
+  Name: 'VerificationHistory';
   Fields: Fields$VerificationHistory;
   ParentReferences: ParentReferences$VerificationHistory;
   ChildRelationships: ChildRelationships$VerificationHistory;
@@ -18043,7 +18839,8 @@ type ChildRelationships$VisibilityChangeNotification = {
 };
 
 interface SObjectDefinition$VisibilityChangeNotification
-  extends SObjectDefinition {
+  extends SObjectDefinition<'VisibilityChangeNotification'> {
+  Name: 'VisibilityChangeNotification';
   Fields: Fields$VisibilityChangeNotification;
   ParentReferences: ParentReferences$VisibilityChangeNotification;
   ChildRelationships: ChildRelationships$VisibilityChangeNotification;
@@ -18067,7 +18864,9 @@ type ChildRelationships$VisualforceAccessMetrics = {
   //
 };
 
-interface SObjectDefinition$VisualforceAccessMetrics extends SObjectDefinition {
+interface SObjectDefinition$VisualforceAccessMetrics
+  extends SObjectDefinition<'VisualforceAccessMetrics'> {
+  Name: 'VisualforceAccessMetrics';
   Fields: Fields$VisualforceAccessMetrics;
   ParentReferences: ParentReferences$VisualforceAccessMetrics;
   ChildRelationships: ChildRelationships$VisualforceAccessMetrics;
@@ -18097,7 +18896,8 @@ type ChildRelationships$Vote = {
   //
 };
 
-interface SObjectDefinition$Vote extends SObjectDefinition {
+interface SObjectDefinition$Vote extends SObjectDefinition<'Vote'> {
+  Name: 'Vote';
   Fields: Fields$Vote;
   ParentReferences: ParentReferences$Vote;
   ChildRelationships: ChildRelationships$Vote;
@@ -18135,7 +18935,9 @@ type ChildRelationships$WaveAutoInstallRequest = {
   WaveCompatibilityCheckItems: SObjectDefinition$WaveCompatibilityCheckItem;
 };
 
-interface SObjectDefinition$WaveAutoInstallRequest extends SObjectDefinition {
+interface SObjectDefinition$WaveAutoInstallRequest
+  extends SObjectDefinition<'WaveAutoInstallRequest'> {
+  Name: 'WaveAutoInstallRequest';
   Fields: Fields$WaveAutoInstallRequest;
   ParentReferences: ParentReferences$WaveAutoInstallRequest;
   ChildRelationships: ChildRelationships$WaveAutoInstallRequest;
@@ -18171,7 +18973,8 @@ type ChildRelationships$WaveCompatibilityCheckItem = {
 };
 
 interface SObjectDefinition$WaveCompatibilityCheckItem
-  extends SObjectDefinition {
+  extends SObjectDefinition<'WaveCompatibilityCheckItem'> {
+  Name: 'WaveCompatibilityCheckItem';
   Fields: Fields$WaveCompatibilityCheckItem;
   ParentReferences: ParentReferences$WaveCompatibilityCheckItem;
   ChildRelationships: ChildRelationships$WaveCompatibilityCheckItem;
@@ -18219,7 +19022,8 @@ type ChildRelationships$WebLink = {
   //
 };
 
-interface SObjectDefinition$WebLink extends SObjectDefinition {
+interface SObjectDefinition$WebLink extends SObjectDefinition<'WebLink'> {
+  Name: 'WebLink';
   Fields: Fields$WebLink;
   ParentReferences: ParentReferences$WebLink;
   ChildRelationships: ChildRelationships$WebLink;
@@ -18251,7 +19055,8 @@ type ChildRelationships$WorkAccess = {
   //
 };
 
-interface SObjectDefinition$WorkAccess extends SObjectDefinition {
+interface SObjectDefinition$WorkAccess extends SObjectDefinition<'WorkAccess'> {
+  Name: 'WorkAccess';
   Fields: Fields$WorkAccess;
   ParentReferences: ParentReferences$WorkAccess;
   ChildRelationships: ChildRelationships$WorkAccess;
@@ -18280,7 +19085,9 @@ type ChildRelationships$WorkAccessShare = {
   //
 };
 
-interface SObjectDefinition$WorkAccessShare extends SObjectDefinition {
+interface SObjectDefinition$WorkAccessShare
+  extends SObjectDefinition<'WorkAccessShare'> {
+  Name: 'WorkAccessShare';
   Fields: Fields$WorkAccessShare;
   ParentReferences: ParentReferences$WorkAccessShare;
   ChildRelationships: ChildRelationships$WorkAccessShare;
@@ -18320,7 +19127,8 @@ type ChildRelationships$WorkBadge = {
   //
 };
 
-interface SObjectDefinition$WorkBadge extends SObjectDefinition {
+interface SObjectDefinition$WorkBadge extends SObjectDefinition<'WorkBadge'> {
+  Name: 'WorkBadge';
   Fields: Fields$WorkBadge;
   ParentReferences: ParentReferences$WorkBadge;
   ChildRelationships: ChildRelationships$WorkBadge;
@@ -18371,7 +19179,9 @@ type ChildRelationships$WorkBadgeDefinition = {
   Histories: SObjectDefinition$WorkBadgeDefinitionHistory;
 };
 
-interface SObjectDefinition$WorkBadgeDefinition extends SObjectDefinition {
+interface SObjectDefinition$WorkBadgeDefinition
+  extends SObjectDefinition<'WorkBadgeDefinition'> {
+  Name: 'WorkBadgeDefinition';
   Fields: Fields$WorkBadgeDefinition;
   ParentReferences: ParentReferences$WorkBadgeDefinition;
   ChildRelationships: ChildRelationships$WorkBadgeDefinition;
@@ -18413,7 +19223,9 @@ type ChildRelationships$WorkBadgeDefinitionFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$WorkBadgeDefinitionFeed extends SObjectDefinition {
+interface SObjectDefinition$WorkBadgeDefinitionFeed
+  extends SObjectDefinition<'WorkBadgeDefinitionFeed'> {
+  Name: 'WorkBadgeDefinitionFeed';
   Fields: Fields$WorkBadgeDefinitionFeed;
   ParentReferences: ParentReferences$WorkBadgeDefinitionFeed;
   ChildRelationships: ChildRelationships$WorkBadgeDefinitionFeed;
@@ -18442,7 +19254,8 @@ type ChildRelationships$WorkBadgeDefinitionHistory = {
 };
 
 interface SObjectDefinition$WorkBadgeDefinitionHistory
-  extends SObjectDefinition {
+  extends SObjectDefinition<'WorkBadgeDefinitionHistory'> {
+  Name: 'WorkBadgeDefinitionHistory';
   Fields: Fields$WorkBadgeDefinitionHistory;
   ParentReferences: ParentReferences$WorkBadgeDefinitionHistory;
   ChildRelationships: ChildRelationships$WorkBadgeDefinitionHistory;
@@ -18471,7 +19284,9 @@ type ChildRelationships$WorkBadgeDefinitionShare = {
   //
 };
 
-interface SObjectDefinition$WorkBadgeDefinitionShare extends SObjectDefinition {
+interface SObjectDefinition$WorkBadgeDefinitionShare
+  extends SObjectDefinition<'WorkBadgeDefinitionShare'> {
+  Name: 'WorkBadgeDefinitionShare';
   Fields: Fields$WorkBadgeDefinitionShare;
   ParentReferences: ParentReferences$WorkBadgeDefinitionShare;
   ChildRelationships: ChildRelationships$WorkBadgeDefinitionShare;
@@ -18504,7 +19319,7 @@ type Fields$WorkOrder = {
   Latitude: number | null;
   Longitude: number | null;
   GeocodeAccuracy: string | null;
-  Address: string | null;
+  Address: Address | null;
   Description: string | null;
   StartDate: DateString | null;
   EndDate: DateString | null;
@@ -18579,7 +19394,8 @@ type ChildRelationships$WorkOrder = {
   WorkOrderLineItems: SObjectDefinition$WorkOrderLineItem;
 };
 
-interface SObjectDefinition$WorkOrder extends SObjectDefinition {
+interface SObjectDefinition$WorkOrder extends SObjectDefinition<'WorkOrder'> {
+  Name: 'WorkOrder';
   Fields: Fields$WorkOrder;
   ParentReferences: ParentReferences$WorkOrder;
   ChildRelationships: ChildRelationships$WorkOrder;
@@ -18621,7 +19437,9 @@ type ChildRelationships$WorkOrderFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$WorkOrderFeed extends SObjectDefinition {
+interface SObjectDefinition$WorkOrderFeed
+  extends SObjectDefinition<'WorkOrderFeed'> {
+  Name: 'WorkOrderFeed';
   Fields: Fields$WorkOrderFeed;
   ParentReferences: ParentReferences$WorkOrderFeed;
   ChildRelationships: ChildRelationships$WorkOrderFeed;
@@ -18649,7 +19467,9 @@ type ChildRelationships$WorkOrderHistory = {
   //
 };
 
-interface SObjectDefinition$WorkOrderHistory extends SObjectDefinition {
+interface SObjectDefinition$WorkOrderHistory
+  extends SObjectDefinition<'WorkOrderHistory'> {
+  Name: 'WorkOrderHistory';
   Fields: Fields$WorkOrderHistory;
   ParentReferences: ParentReferences$WorkOrderHistory;
   ChildRelationships: ChildRelationships$WorkOrderHistory;
@@ -18695,7 +19515,7 @@ type Fields$WorkOrderLineItem = {
   Latitude: number | null;
   Longitude: number | null;
   GeocodeAccuracy: string | null;
-  Address: string | null;
+  Address: Address | null;
   Subject: string | null;
   StatusCategory: string | null;
   IsClosed: boolean;
@@ -18741,7 +19561,9 @@ type ChildRelationships$WorkOrderLineItem = {
   Histories: SObjectDefinition$WorkOrderLineItemHistory;
 };
 
-interface SObjectDefinition$WorkOrderLineItem extends SObjectDefinition {
+interface SObjectDefinition$WorkOrderLineItem
+  extends SObjectDefinition<'WorkOrderLineItem'> {
+  Name: 'WorkOrderLineItem';
   Fields: Fields$WorkOrderLineItem;
   ParentReferences: ParentReferences$WorkOrderLineItem;
   ChildRelationships: ChildRelationships$WorkOrderLineItem;
@@ -18783,7 +19605,9 @@ type ChildRelationships$WorkOrderLineItemFeed = {
   FeedTrackedChanges: SObjectDefinition$FeedTrackedChange;
 };
 
-interface SObjectDefinition$WorkOrderLineItemFeed extends SObjectDefinition {
+interface SObjectDefinition$WorkOrderLineItemFeed
+  extends SObjectDefinition<'WorkOrderLineItemFeed'> {
+  Name: 'WorkOrderLineItemFeed';
   Fields: Fields$WorkOrderLineItemFeed;
   ParentReferences: ParentReferences$WorkOrderLineItemFeed;
   ChildRelationships: ChildRelationships$WorkOrderLineItemFeed;
@@ -18811,7 +19635,9 @@ type ChildRelationships$WorkOrderLineItemHistory = {
   //
 };
 
-interface SObjectDefinition$WorkOrderLineItemHistory extends SObjectDefinition {
+interface SObjectDefinition$WorkOrderLineItemHistory
+  extends SObjectDefinition<'WorkOrderLineItemHistory'> {
+  Name: 'WorkOrderLineItemHistory';
   Fields: Fields$WorkOrderLineItemHistory;
   ParentReferences: ParentReferences$WorkOrderLineItemHistory;
   ChildRelationships: ChildRelationships$WorkOrderLineItemHistory;
@@ -18842,7 +19668,9 @@ type ChildRelationships$WorkOrderLineItemStatus = {
   //
 };
 
-interface SObjectDefinition$WorkOrderLineItemStatus extends SObjectDefinition {
+interface SObjectDefinition$WorkOrderLineItemStatus
+  extends SObjectDefinition<'WorkOrderLineItemStatus'> {
+  Name: 'WorkOrderLineItemStatus';
   Fields: Fields$WorkOrderLineItemStatus;
   ParentReferences: ParentReferences$WorkOrderLineItemStatus;
   ChildRelationships: ChildRelationships$WorkOrderLineItemStatus;
@@ -18871,7 +19699,9 @@ type ChildRelationships$WorkOrderShare = {
   //
 };
 
-interface SObjectDefinition$WorkOrderShare extends SObjectDefinition {
+interface SObjectDefinition$WorkOrderShare
+  extends SObjectDefinition<'WorkOrderShare'> {
+  Name: 'WorkOrderShare';
   Fields: Fields$WorkOrderShare;
   ParentReferences: ParentReferences$WorkOrderShare;
   ChildRelationships: ChildRelationships$WorkOrderShare;
@@ -18902,7 +19732,9 @@ type ChildRelationships$WorkOrderStatus = {
   //
 };
 
-interface SObjectDefinition$WorkOrderStatus extends SObjectDefinition {
+interface SObjectDefinition$WorkOrderStatus
+  extends SObjectDefinition<'WorkOrderStatus'> {
+  Name: 'WorkOrderStatus';
   Fields: Fields$WorkOrderStatus;
   ParentReferences: ParentReferences$WorkOrderStatus;
   ChildRelationships: ChildRelationships$WorkOrderStatus;
@@ -18937,7 +19769,8 @@ type ChildRelationships$WorkThanks = {
   Badges: SObjectDefinition$WorkBadge;
 };
 
-interface SObjectDefinition$WorkThanks extends SObjectDefinition {
+interface SObjectDefinition$WorkThanks extends SObjectDefinition<'WorkThanks'> {
+  Name: 'WorkThanks';
   Fields: Fields$WorkThanks;
   ParentReferences: ParentReferences$WorkThanks;
   ChildRelationships: ChildRelationships$WorkThanks;
@@ -18966,7 +19799,9 @@ type ChildRelationships$WorkThanksShare = {
   //
 };
 
-interface SObjectDefinition$WorkThanksShare extends SObjectDefinition {
+interface SObjectDefinition$WorkThanksShare
+  extends SObjectDefinition<'WorkThanksShare'> {
+  Name: 'WorkThanksShare';
   Fields: Fields$WorkThanksShare;
   ParentReferences: ParentReferences$WorkThanksShare;
   ChildRelationships: ChildRelationships$WorkThanksShare;

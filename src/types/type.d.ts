@@ -1,8 +1,8 @@
+import { Optional } from './util';
+
 /**
  * type defs
  */
-export type Optional<T> = T | null | undefined;
-
 export type Callback<T, T2 = undefined> = (
   err: Error | null | undefined,
   ret?: T,
