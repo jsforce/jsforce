@@ -118,7 +118,9 @@ const DataStreamConverters: { [key: string]: StreamConverter } = {
  * @constructor
  * @extends stream.Transform
  */
-export default class RecordStream extends PassThrough {
+export default class RecordStream<
+  R extends Record = Record
+> extends PassThrough {
   /**
    *
    */
@@ -129,15 +131,15 @@ export default class RecordStream extends PassThrough {
   /**
    * Get record stream of queried records applying the given mapping function
    */
-  map(fn: (rec: Record) => Optional<Record>): Duplex {
-    return this.pipe(RecordStream.map(fn));
+  map<RR extends Record>(fn: (rec: R) => Optional<RR>) {
+    return this.pipe(RecordStream.map<R, RR>(fn));
   }
 
   /**
    * Get record stream of queried records, applying the given filter function
    */
-  filter(fn: (rec: Record) => boolean): Duplex {
-    return this.pipe(RecordStream.filter(fn));
+  filter(fn: (rec: R) => boolean): Duplex {
+    return this.pipe(RecordStream.filter<R>(fn));
   }
 
   /* --------------------------------------------------- */
@@ -145,7 +147,9 @@ export default class RecordStream extends PassThrough {
   /**
    * Create a record stream which maps records and pass them to downstream
    */
-  static map(fn: (rec: Record) => Optional<Record>): Duplex {
+  static map<R1 extends Record = Record, R2 extends Record = Record>(
+    fn: (rec: R1) => Optional<R2>,
+  ) {
     const mapStream = new Transform({
       objectMode: true,
       transform(record, enc, callback) {
@@ -160,13 +164,16 @@ export default class RecordStream extends PassThrough {
   /**
    * Create mapping stream using given record template
    */
-  static recordMapStream(record: Record, noeval?: boolean) {
-    return RecordStream.map((rec) => {
+  static recordMapStream<
+    R1 extends Record = Record,
+    R2 extends Record = Record
+  >(record: R2, noeval?: boolean) {
+    return RecordStream.map<R1, R2>((rec) => {
       const mapped: Record = { Id: rec.Id };
       for (const prop of Object.keys(record)) {
         mapped[prop] = noeval ? record[prop] : evalMapping(record[prop], rec);
       }
-      return mapped;
+      return mapped as R2;
     });
   }
 
@@ -176,7 +183,7 @@ export default class RecordStream extends PassThrough {
    * @param {RecordFilterFunction} fn - Record filtering function
    * @returns {RecordStream.Serializable}
    */
-  static filter(fn: (rec: Record) => boolean): Duplex {
+  static filter<R1 extends Record = Record>(fn: (rec: R1) => boolean): Duplex {
     const filterStream = new Transform({
       objectMode: true,
       transform(record, enc, callback) {
@@ -194,7 +201,7 @@ export default class RecordStream extends PassThrough {
  * @class RecordStream.Serializable
  * @extends {RecordStream}
  */
-export class Serializable extends RecordStream {
+export class Serializable<R extends Record = Record> extends RecordStream<R> {
   /**
    * Create readable data stream which emits serialized record data
    */
@@ -211,7 +218,7 @@ export class Serializable extends RecordStream {
  * @class RecordStream.Parsable
  * @extends {RecordStream}
  */
-export class Parsable extends RecordStream {
+export class Parsable<R extends Record = Record> extends RecordStream<R> {
   _execParse: boolean = false;
   _incomings: Array<[Readable, Writable]> = [];
 

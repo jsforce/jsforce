@@ -23,6 +23,7 @@ import {
   SaveResult,
 } from './types';
 import { identityFunc } from './util/function';
+import { Readable } from 'stream';
 
 /**
  * type defs
@@ -135,7 +136,7 @@ export default class Query<
   _finished: boolean = false;
   _chaining: boolean = false;
   _promise: Promise<QueryResponse<R, QRT>>;
-  _stream: Serializable;
+  _stream: Serializable<R>;
   _parent: Optional<Query<S, SObjectNames<S>>>;
 
   totalSize: Optional<number>;
@@ -517,7 +518,9 @@ export default class Query<
   /**
    * Obtain readable stream instance
    */
-  stream(type: 'record' | 'csv') {
+  stream(type: 'record'): Serializable<R>;
+  stream(type: 'csv'): Readable;
+  stream(type: 'record' | 'csv' = 'csv') {
     if (!this._finished && !this._executed) {
       this.execute({ autoFetch: true });
     }
