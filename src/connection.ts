@@ -15,7 +15,7 @@ import {
   DescribeQuickActionResult,
   UpdatedResult,
   DeletedResult,
-  LimitsInfo,
+  OrganizationLimitsInfo,
   Optional,
   SignedRequestObject,
   SaveError,
@@ -73,6 +73,13 @@ export type UserInfo = {
   id: string;
   organizationId: string;
   url: string;
+};
+
+export type LimitInfo = {
+  apiUsage?: {
+    used: number;
+    limit: number;
+  };
 };
 
 export type ConnectionEstablishOptions = {
@@ -217,7 +224,7 @@ export default class Connection<
   accessToken: Optional<string>;
   refreshToken: Optional<string>;
   userInfo: Optional<UserInfo>;
-  limitInfo: Object = {};
+  limitInfo: LimitInfo = {};
   oauth2: OAuth2;
   sobjects: { [N in SObjectNames<S>]?: SObject<S, N> } = {};
   cache: Cache;
@@ -1450,10 +1457,10 @@ export default class Connection<
   /**
    * Returns curren system limit in the organization
    */
-  async limits(): Promise<LimitsInfo> {
+  async limits(): Promise<OrganizationLimitsInfo> {
     const url = [this._baseUrl(), 'limits'].join('/');
     const body = await this.request(url);
-    return body as LimitsInfo;
+    return body as OrganizationLimitsInfo;
   }
 
   /**

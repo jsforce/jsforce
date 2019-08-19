@@ -483,7 +483,7 @@ export type UpdatedResult = {
   latestDateCovered: string;
 };
 
-export type LimitsInfo = {
+export type OrganizationLimitsInfo = {
   [key: string]: {
     Max: number;
     Remaining: number;
