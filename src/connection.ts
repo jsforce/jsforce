@@ -21,6 +21,11 @@ import {
   SaveError,
   DmlOptions,
   RetrieveOptions,
+  Schema,
+  SObjectNames,
+  SObjectInputRecord,
+  SObjectUpdateRecord,
+  SObjectFieldNames,
 } from './types';
 import { StreamPromise } from './util/promise';
 import Transport, {
@@ -46,7 +51,7 @@ import { formatDate } from './util/formatter';
 /**
  * type definitions
  */
-export type ConnectionConfig = {
+export type ConnectionConfig<S extends Schema> = {
   version?: string;
   loginUrl?: string;
   accessToken?: string;
@@ -61,7 +66,7 @@ export type ConnectionConfig = {
   httpProxy?: string;
   logLevel?: LogLevelConfig;
   callOptions?: { [name: string]: string };
-  refreshFn?: SessionRefreshFunc;
+  refreshFn?: SessionRefreshFunc<S>;
 };
 
 export type UserInfo = {
@@ -137,8 +142,8 @@ function parseIdUrl(url: string) {
  * Session Refresh delegate function for OAuth2 authz code flow
  * @private
  */
-async function oauthRefreshFn(
-  conn: Connection,
+async function oauthRefreshFn<S extends Schema>(
+  conn: Connection<S>,
   callback: Callback<string, TokenResponse>,
 ) {
   try {
@@ -162,9 +167,12 @@ async function oauthRefreshFn(
  * Session Refresh delegate function for username/password login
  * @private
  */
-function createUsernamePasswordRefreshFn(username: string, password: string) {
+function createUsernamePasswordRefreshFn<S extends Schema>(
+  username: string,
+  password: string,
+) {
   return async (
-    conn: Connection,
+    conn: Connection<S>,
     callback: Callback<string, TokenResponse>,
   ) => {
     try {
@@ -198,7 +206,9 @@ const MAX_DML_COUNT = 200;
 /**
  *
  */
-export default class Connection extends EventEmitter {
+export default class Connection<
+  S extends Schema = Schema
+> extends EventEmitter {
   static _logger = getLogger('connection');
 
   version: string;
@@ -209,7 +219,7 @@ export default class Connection extends EventEmitter {
   userInfo: Optional<UserInfo>;
   limitInfo: Object = {};
   oauth2: OAuth2;
-  sobjects: { [name: string]: SObject } = {};
+  sobjects: { [N in SObjectNames<S>]?: SObject<S, N> } = {};
   cache: Cache;
   _callOptions: Optional<{ [name: string]: string }>;
   _maxRequest: number;
@@ -217,7 +227,7 @@ export default class Connection extends EventEmitter {
   _logLevel: Optional<LogLevelConfig>;
   _transport: Transport;
   _sessionType: Optional<'soap' | 'oauth2'>;
-  _refreshDelegate: Optional<SessionRefreshDelegate>;
+  _refreshDelegate: Optional<SessionRefreshDelegate<S>>;
 
   // describe: (name: string) => Promise<DescribeSObjectResult>;
   describe$: CachedFunction<(name: string) => Promise<DescribeSObjectResult>>;
@@ -234,7 +244,7 @@ export default class Connection extends EventEmitter {
   /**
    *
    */
-  constructor(config: ConnectionConfig = {}) {
+  constructor(config: ConnectionConfig<S> = {}) {
     super();
     const {
       loginUrl,
@@ -711,14 +721,17 @@ export default class Connection extends EventEmitter {
   /**
    *
    */
-  query(soql: string, options?: QueryOptions): Query {
+  query(soql: string, options?: QueryOptions): Query<S, SObjectNames<S>> {
     return new Query(this, soql, null, options);
   }
 
   /**
    *
    */
-  queryMore(locator: string, options?: QueryOptions): Query {
+  queryMore(
+    locator: string,
+    options?: QueryOptions,
+  ): Query<S, SObjectNames<S>> {
     return new Query(this, { locator }, null, options);
   }
 
@@ -741,18 +754,18 @@ export default class Connection extends EventEmitter {
   /**
    * Retrieve specified records
    */
-  retrieve(
-    type: string,
+  retrieve<N extends SObjectNames<S>>(
+    type: N,
     ids: string,
     options?: RetrieveOptions,
   ): Promise<Record>;
-  retrieve(
-    type: string,
+  retrieve<N extends SObjectNames<S>>(
+    type: N,
     ids: string[],
     options?: RetrieveOptions,
   ): Promise<Record[]>;
-  retrieve(
-    type: string,
+  retrieve<N extends SObjectNames<S>>(
+    type: N,
     ids: string | string[],
     options?: RetrieveOptions,
   ): Promise<Record | Record[]>;
@@ -826,23 +839,27 @@ export default class Connection extends EventEmitter {
   /**
    * Create records
    */
-  async create(
-    type: string,
-    records: Record,
-    options?: DmlOptions,
-  ): Promise<SaveResult>;
-  async create(
-    type: string,
-    records: Record[],
+  create<
+    N extends SObjectNames<S>,
+    InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>
+  >(type: N, records: InputRecord, options?: DmlOptions): Promise<SaveResult>;
+  create<
+    N extends SObjectNames<S>,
+    InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>
+  >(
+    type: N,
+    records: InputRecord[],
     options?: DmlOptions,
   ): Promise<SaveResult[]>;
-  async create(
-    type: string,
-    records: Record | Record[],
+  create<
+    N extends SObjectNames<S>,
+    InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>
+  >(
+    type: N,
+    records: InputRecord | InputRecord[],
     options?: DmlOptions,
   ): Promise<SaveResult | SaveResult[]>;
   /**
-   *
    * @param type
    * @param records
    * @param options
@@ -953,29 +970,33 @@ export default class Connection extends EventEmitter {
   /**
    * Update records
    */
-  async update(
-    type: string,
-    records: Record,
-    options?: DmlOptions,
-  ): Promise<SaveResult>;
-  async update(
-    type: string,
-    records: Record[],
+  update<
+    N extends SObjectNames<S>,
+    UpdateRecord extends SObjectUpdateRecord<S, N> = SObjectUpdateRecord<S, N>
+  >(type: N, records: UpdateRecord, options?: DmlOptions): Promise<SaveResult>;
+  update<
+    N extends SObjectNames<S>,
+    UpdateRecord extends SObjectUpdateRecord<S, N> = SObjectUpdateRecord<S, N>
+  >(
+    type: N,
+    records: UpdateRecord[],
     options?: DmlOptions,
   ): Promise<SaveResult[]>;
-  async update(
-    type: string,
-    records: Record | Record[],
+  update<
+    N extends SObjectNames<S>,
+    UpdateRecord extends SObjectUpdateRecord<S, N> = SObjectUpdateRecord<S, N>
+  >(
+    type: N,
+    records: UpdateRecord | UpdateRecord[],
     options?: DmlOptions,
   ): Promise<SaveResult | SaveResult[]>;
   /**
-   *
    * @param type
    * @param records
    * @param options
    */
-  async update(
-    type: string,
+  update<N extends SObjectNames<S>>(
+    type: N,
     records: Record | Record[],
     options: DmlOptions = {},
   ): Promise<SaveResult | SaveResult[]> {
@@ -1089,24 +1110,43 @@ export default class Connection extends EventEmitter {
   /**
    * Upsert records
    */
-  async upsert(
-    type: string,
-    records: Record,
-    extIdField: string,
+  upsert<
+    N extends SObjectNames<S>,
+    InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>,
+    FieldNames extends SObjectFieldNames<S, N> = SObjectFieldNames<S, N>
+  >(
+    type: N,
+    records: InputRecord,
+    extIdField: FieldNames,
     options?: DmlOptions,
   ): Promise<SaveResult>;
-  async upsert(
-    type: string,
-    records: Record[],
-    extIdField: string,
+  upsert<
+    N extends SObjectNames<S>,
+    InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>,
+    FieldNames extends SObjectFieldNames<S, N> = SObjectFieldNames<S, N>
+  >(
+    type: N,
+    records: InputRecord[],
+    extIdField: FieldNames,
     options?: DmlOptions,
   ): Promise<SaveResult[]>;
-  async upsert(
-    type: string,
-    records: Record | Record[],
-    extIdField: string,
+  upsert<
+    N extends SObjectNames<S>,
+    InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>,
+    FieldNames extends SObjectFieldNames<S, N> = SObjectFieldNames<S, N>
+  >(
+    type: N,
+    records: InputRecord | InputRecord[],
+    extIdField: FieldNames,
     options?: DmlOptions,
   ): Promise<SaveResult | SaveResult[]>;
+  /**
+   *
+   * @param type
+   * @param records
+   * @param extIdField
+   * @param options
+   */
   async upsert(
     type: string,
     records: Record | Record[],
@@ -1154,23 +1194,22 @@ export default class Connection extends EventEmitter {
   /**
    * Delete records
    */
-  async destroy(
-    type: string,
+  destroy<N extends SObjectNames<S>>(
+    type: N,
     ids: string,
     options?: DmlOptions,
   ): Promise<SaveResult>;
-  async destroy(
-    type: string,
+  destroy<N extends SObjectNames<S>>(
+    type: N,
     ids: string[],
     options?: DmlOptions,
   ): Promise<SaveResult[]>;
-  async destroy(
-    type: string,
+  destroy<N extends SObjectNames<S>>(
+    type: N,
     ids: string | string[],
     options?: DmlOptions,
   ): Promise<SaveResult | SaveResult[]>;
   /**
-   *
    * @param type
    * @param ids
    * @param options
@@ -1289,9 +1328,12 @@ export default class Connection extends EventEmitter {
   /**
    * Get SObject instance
    */
-  sobject(type: string): SObject {
-    this.sobjects[type] = this.sobjects[type] || new SObject(this, type);
-    return this.sobjects[type];
+  sobject<N extends SObjectNames<S>>(type: N): SObject<S, N> {
+    const so =
+      (this.sobjects[type] as SObject<S, N> | undefined) ||
+      new SObject(this, type);
+    this.sobjects[type] = so;
+    return so;
   }
 
   /**
@@ -1429,7 +1471,7 @@ export default class Connection extends EventEmitter {
   /**
    * Get reference for specified global quick aciton
    */
-  quickAction(actionName: string): QuickAction {
+  quickAction(actionName: string): QuickAction<S> {
     return new QuickAction(this, `/quickActions/${actionName}`);
   }
 }

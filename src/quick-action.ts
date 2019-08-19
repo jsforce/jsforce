@@ -3,7 +3,12 @@
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
 import Connection from './connection';
-import { DescribeQuickActionDetailResult, Record, Optional } from './types';
+import {
+  DescribeQuickActionDetailResult,
+  Record,
+  Optional,
+  Schema,
+} from './types';
 
 /**
  * type definitions
@@ -22,14 +27,14 @@ export type QuickActionResult = {
 /**
  * A class for quick action
  */
-export default class QuickAction {
-  _conn: Connection;
+export default class QuickAction<S extends Schema> {
+  _conn: Connection<S>;
   _path: string;
 
   /**
    *
    */
-  constructor(conn: Connection, path: string) {
+  constructor(conn: Connection<S>, path: string) {
     this._conn = conn;
     this._path = path;
   }

@@ -11,32 +11,60 @@ import {
   DmlOptions,
   SaveResult,
   RetrieveOptions,
+  Schema,
+  SObjectNames,
+  SObjectRecord,
+  SObjectInputRecord,
+  SObjectUpdateRecord,
+  ChildRelationshipNames,
+  ChildRelationshipSObjectName,
+  SObjectFieldNames,
 } from './types';
 import Connection from './connection';
 import RecordReference from './record-reference';
-import Query, { ResponseTargets } from './query';
+import Query, {
+  ResponseTargets,
+  QueryFieldsParam,
+  QueryOptions,
+  QueryConfigParam,
+} from './query';
 import QuickAction from './quick-action';
-import { QueryFieldsParam, QueryOptions, QueryConfigParam } from './query';
 import { QueryCondition, SortConfig } from './soql-builder';
 import { CachedFunction } from './cache';
 
-export type FindOptions = Partial<
+type ChildQueryConfigParam<
+  S extends Schema,
+  N extends SObjectNames<S>,
+  CRN extends ChildRelationshipNames<S, N>,
+  CN extends SObjectNames<S> = ChildRelationshipSObjectName<S, N, CRN>
+> = QueryConfigParam<S, CN>;
+
+export type FindOptions<S extends Schema, N extends SObjectNames<S>> = Partial<
   QueryOptions & {
     limit: number;
     offset: number;
     sort: SortConfig;
-    includes: { [name: string]: QueryConfigParam };
+    includes: {
+      [CRN in ChildRelationshipNames<S, N>]: ChildQueryConfigParam<S, N, CRN>;
+    };
   }
 >;
 
 /**
  * A class for organizing all SObject access
  */
-export default class SObject {
+export default class SObject<
+  S extends Schema,
+  N extends SObjectNames<S>,
+  FieldNames extends SObjectFieldNames<S, N> = SObjectFieldNames<S, N>,
+  RetrieveRecord extends SObjectRecord<S, N, '*'> = SObjectRecord<S, N, '*'>,
+  InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>,
+  UpdateRecord extends SObjectUpdateRecord<S, N> = SObjectUpdateRecord<S, N>
+> {
   static _logger = getLogger('sobject');
 
-  type: string;
-  _conn: Connection;
+  type: N;
+  _conn: Connection<S>;
   _logger: Logger;
 
   // layouts: (ln?: string) => Promise<DescribeLayoutResult>;
@@ -54,7 +82,7 @@ export default class SObject {
   /**
    *
    */
-  constructor(conn: Connection, type: string) {
+  constructor(conn: Connection<S>, type: N) {
     this.type = type;
     this._conn = conn;
     this._logger = conn._logLevel
@@ -111,13 +139,13 @@ export default class SObject {
   /**
    * Create records
    */
-  create(records: Record, options?: DmlOptions): Promise<SaveResult>;
-  create(records: Record[], options?: DmlOptions): Promise<SaveResult[]>;
+  create(records: InputRecord, options?: DmlOptions): Promise<SaveResult>;
+  create(records: InputRecord[], options?: DmlOptions): Promise<SaveResult[]>;
   create(
-    records: Record | Record[],
+    records: InputRecord | InputRecord[],
     options?: DmlOptions,
   ): Promise<SaveResult | SaveResult[]>;
-  async create(records: Record | Record[], options?: DmlOptions) {
+  async create(records: InputRecord | InputRecord[], options?: DmlOptions) {
     return this._conn.create(this.type, records, options);
   }
 
@@ -129,12 +157,12 @@ export default class SObject {
   /**
    * Retrieve specified records
    */
-  retrieve(ids: string, options?: RetrieveOptions): Promise<Record>;
-  retrieve(ids: string[], options?: RetrieveOptions): Promise<Record[]>;
+  retrieve(ids: string, options?: RetrieveOptions): Promise<RetrieveRecord>;
+  retrieve(ids: string[], options?: RetrieveOptions): Promise<RetrieveRecord[]>;
   retrieve(
     ids: string | string[],
     options?: RetrieveOptions,
-  ): Promise<Record | Record[]>;
+  ): Promise<RetrieveRecord | RetrieveRecord[]>;
   retrieve(ids: string | string[], options?: Object) {
     return this._conn.retrieve(this.type, ids, options);
   }
@@ -142,13 +170,13 @@ export default class SObject {
   /**
    * Update records
    */
-  update(records: Record, options?: DmlOptions): Promise<SaveResult>;
-  update(records: Record[], options?: DmlOptions): Promise<SaveResult[]>;
+  update(records: UpdateRecord, options?: DmlOptions): Promise<SaveResult>;
+  update(records: UpdateRecord[], options?: DmlOptions): Promise<SaveResult[]>;
   update(
-    records: Record | Record[],
+    records: UpdateRecord | UpdateRecord[],
     options?: DmlOptions,
   ): Promise<SaveResult | SaveResult[]>;
-  update(records: Record | Record[], options?: DmlOptions) {
+  update(records: UpdateRecord | UpdateRecord[], options?: DmlOptions) {
     return this._conn.update(this.type, records, options);
   }
 
@@ -156,21 +184,25 @@ export default class SObject {
    * Upsert records
    */
   upsert(
-    records: Record,
-    extIdField: string,
+    records: InputRecord,
+    extIdField: FieldNames,
     options?: DmlOptions,
   ): Promise<SaveResult>;
   upsert(
-    records: Record[],
-    extIdField: string,
+    records: InputRecord[],
+    extIdField: FieldNames,
     options?: DmlOptions,
   ): Promise<SaveResult[]>;
   upsert(
-    records: Record | Record[],
-    extIdField: string,
+    records: InputRecord | InputRecord[],
+    extIdField: FieldNames,
     options?: DmlOptions,
   ): Promise<SaveResult | SaveResult[]>;
-  upsert(records: Record | Record[], extIdField: string, options?: DmlOptions) {
+  upsert(
+    records: Record | Record[],
+    extIdField: FieldNames,
+    options?: DmlOptions,
+  ) {
     return this._conn.upsert(this.type, records, extIdField, options);
   }
 
@@ -221,7 +253,7 @@ export default class SObject {
   /**
    * Get record representation instance by given id
    */
-  record(id: string) {
+  record(id: string): RecordReference<S, N> {
     return new RecordReference(this._conn, this.type, id);
   }
 
@@ -293,10 +325,10 @@ export default class SObject {
   find(
     conditions?: Optional<QueryCondition>,
     fields?: Optional<QueryFieldsParam>,
-    options: FindOptions = {},
-  ): Query {
+    options: FindOptions<S, N> = {},
+  ): Query<S, N> {
     const { sort, limit, offset, ...qoptions } = options;
-    const config: QueryConfigParam = {
+    const config: QueryConfigParam<S, N> = {
       fields: fields === null ? undefined : fields,
       includes: options.includes,
       table: this.type,
@@ -317,7 +349,7 @@ export default class SObject {
     conditions?: QueryCondition,
     fields?: QueryFieldsParam,
     options: Partial<QueryOptions> = {},
-  ): Query {
+  ): Query<S, N> {
     const query = this.find(
       conditions,
       fields,

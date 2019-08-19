@@ -12,7 +12,7 @@ import {
   FieldPathSpecifier,
   FieldProjectionConfigObject,
 } from './projection';
-import { StringKeys, PickIfMatch } from './util';
+import { StringKeys, PickIfMatch, ConditionalPartial } from './util';
 
 /**
  *
@@ -27,20 +27,26 @@ type RecordWithParentRefs<
   IsPartial extends boolean = false,
   PSOR extends SObjectDefinition['ParentReferences'] = SO['ParentReferences']
 > = RecordWithFields<SO, IsPartial> &
-  {
-    [K in StringKeys<PSOR>]: PSOR[K] extends SObjectDefinition
-      ? RecordWithParentRefs<PSOR[K], IsPartial>
-      : null;
-  };
+  ConditionalPartial<
+    {
+      [K in StringKeys<PSOR>]:
+        | RecordWithParentRefs<NonNullable<PSOR[K]>, IsPartial>
+        | Extract<PSOR[K], null>;
+    },
+    IsPartial
+  >;
 
 type RecordWithChildRelations<
   SO extends SObjectDefinition,
   IsPartial extends boolean = false,
   CSOR extends SObjectDefinition['ChildRelationships'] = SO['ChildRelationships']
 > = RecordWithParentRefs<SO, IsPartial> &
-  {
-    [K in StringKeys<CSOR>]: ChildRelationObject<CSOR[K], IsPartial> | null;
-  };
+  ConditionalPartial<
+    {
+      [K in StringKeys<CSOR>]: ChildRelationObject<CSOR[K], IsPartial> | null;
+    },
+    IsPartial
+  >;
 
 type ChildRelationObject<
   CO extends SObjectDefinition,

@@ -13,7 +13,14 @@ import {
   SortConfig,
   SortDir,
 } from './soql-builder';
-import { Record, Optional } from './types';
+import {
+  Record,
+  Optional,
+  Schema,
+  SObjectNames,
+  ChildRelationshipNames,
+  SObjectUpdateRecord,
+} from './types';
 import { identityFunc } from './util/function';
 
 /**
@@ -32,9 +39,13 @@ export type SubQueryConfigParam = {
   offset?: number;
 };
 
-export type QueryConfigParam = {
+export type QueryConfigParam<
+  S extends Schema,
+  N extends SObjectNames<S>,
+  CN extends ChildRelationshipNames<S, N> = ChildRelationshipNames<S, N>
+> = {
   fields?: QueryFieldsParam;
-  includes?: { [name: string]: SubQueryConfigParam };
+  includes?: { [name in CN]: SubQueryConfigParam };
   table?: string;
   conditions?: QueryCondition;
   sort?: SortConfig;
@@ -93,22 +104,25 @@ const DEFAULT_BULK_THRESHOLD = 200;
 /**
  * Query
  */
-export default class Query extends EventEmitter {
+export default class Query<
+  S extends Schema,
+  N extends SObjectNames<S>
+> extends EventEmitter {
   static _logger = getLogger('query');
 
-  _conn: Connection;
+  _conn: Connection<S>;
   _logger: Logger;
   _soql: Optional<string>;
   _locator: Optional<string>;
   _config: QueryConfig = {};
-  _children: SubQuery[] = [];
+  _children: SubQuery<S, SObjectNames<S>, N>[] = [];
   _options: QueryOptions;
   _executed: boolean = false;
   _finished: boolean = false;
   _chaining: boolean = false;
   _promise: Promise<QueryResponse>;
   _stream: Serializable;
-  _parent: Optional<Query>;
+  _parent: Optional<Query<S, SObjectNames<S>>>;
 
   totalSize: Optional<number>;
   totalFetched: Optional<number>;
@@ -117,9 +131,9 @@ export default class Query extends EventEmitter {
    *
    */
   constructor(
-    conn: Connection,
-    config: string | QueryConfigParam | { locator: string },
-    parent?: Optional<Query>,
+    conn: Connection<S>,
+    config: string | QueryConfigParam<S, N> | { locator: string },
+    parent?: Optional<Query<S, SObjectNames<S>>>,
     options?: Partial<QueryOptions>,
   ) {
     super();
@@ -140,7 +154,7 @@ export default class Query extends EventEmitter {
         includes,
         sort,
         ..._config
-      } = (config as any) as QueryConfigParam;
+      } = (config as any) as QueryConfigParam<S, N>;
       this._config = _config;
       this.select(fields);
       if (includes) {
@@ -265,18 +279,21 @@ export default class Query extends EventEmitter {
   /**
    * Include child relationship query and move down to the child query context
    */
-  include(
-    childRelName: string,
+  include<
+    CRN extends ChildRelationshipNames<S, N>,
+    CN extends SObjectNames<S> = SObjectNames<S> // ChildRelationshipSObjectName<S, N, CRN>
+  >(
+    childRelName: CRN,
     conditions?: Optional<QueryCondition>,
     fields?: Optional<QueryFieldsParam>,
     options: { limit?: number; offset?: number; sort?: SortConfig } = {},
-  ): SubQuery {
+  ): SubQuery<S, CN, N> {
     if (this._soql) {
       throw Error(
         'Cannot include child relationship into the query which has already built SOQL.',
       );
     }
-    const childConfig: QueryConfigParam = {
+    const childConfig: QueryConfigParam<S, CN> = {
       fields: fields === null ? undefined : fields,
       table: childRelName,
       conditions: conditions === null ? undefined : conditions,
@@ -293,13 +310,17 @@ export default class Query extends EventEmitter {
   /**
    * Include child relationship queryies, but not moving down to the children context
    */
-  includeChildren(includes: { [name: string]: SubQueryConfigParam }) {
+  includeChildren<CN extends ChildRelationshipNames<S, N>>(
+    includes: {
+      [name in CN]: SubQueryConfigParam;
+    },
+  ) {
     if (this._soql) {
       throw Error(
         'Cannot include child relationship into the query which has already built SOQL.',
       );
     }
-    for (const crname of Object.keys(includes)) {
+    for (const crname of Object.keys(includes) as CN[]) {
       const { conditions, fields, ...options } = includes[crname];
       this.include(crname, conditions, fields, options);
     }
@@ -343,7 +364,7 @@ export default class Query extends EventEmitter {
   /**
    * Execute query and fetch records from server.
    */
-  execute(_options: Partial<QueryOptions> = {}): Query {
+  execute(_options: Partial<QueryOptions> = {}): Query<S, N> {
     if (this._executed) {
       throw new Error('re-executing already executed query');
     }
@@ -665,13 +686,14 @@ export default class Query extends EventEmitter {
   /**
    * Bulk delete queried records
    */
-  destroy(type?: string, options?: QueryDestroyOptions) {
+  destroy(type?: N, options?: QueryDestroyOptions) {
     if (typeof type === 'object' && type !== null) {
       options = type;
       type = undefined;
     }
     options = options || {};
-    const type_ = type || (this._config && this._config.table);
+    const type_: Optional<N> =
+      type || ((this._config && this._config.table) as Optional<N>);
     if (!type_) {
       throw new Error(
         'SOQL based query needs SObject type information to bulk delete.',
@@ -729,7 +751,7 @@ export default class Query extends EventEmitter {
           batch.end();
         } else {
         */
-        const ids = records.map((record) => record.Id);
+        const ids = records.map((record) => record.Id as string);
         this._conn
           .sobject(type_)
           .destroy(ids, { allowRecursive: true })
@@ -757,7 +779,7 @@ export default class Query extends EventEmitter {
    */
   update(
     mapping: ((rec: Record) => Record) | Record,
-    type?: string,
+    type?: N,
     options?: QueryUpdateOptions,
   ) {
     if (typeof type === 'object' && type !== null) {
@@ -765,7 +787,8 @@ export default class Query extends EventEmitter {
       type = undefined;
     }
     options = options || {};
-    const type_ = type || (this._config && this._config.table);
+    const type_: Optional<N> =
+      type || (this._config && (this._config.table as Optional<N>));
     if (!type_) {
       throw new Error(
         'SOQL based query needs SObject type information to bulk update.',
@@ -788,7 +811,7 @@ export default class Query extends EventEmitter {
         ? DEFAULT_BULK_THRESHOLD
         : this._conn._maxRequest / 2;
     return new Promise((resolve, reject) => {
-      const records: Record[] = [];
+      const records: SObjectUpdateRecord<S, N>[] = [];
       // let batch = null;
       const handleRecord = (record: Record) => {
         // TODO: enable batch switch
@@ -797,7 +820,7 @@ export default class Query extends EventEmitter {
           batch.write(record);
         } else {
         */
-        records.push(record);
+        records.push(record as SObjectUpdateRecord<S, N>);
         /*
         if (thresholdNum < 0 || records.length > thresholdNum) {
           // Use bulk update instead of SObject REST API
@@ -842,14 +865,22 @@ export default class Query extends EventEmitter {
 /**
  * SubQuery object for representing child relationship query
  */
-export class SubQuery {
-  _query: Query;
-  _parent: Query;
+export class SubQuery<
+  S extends Schema,
+  N extends SObjectNames<S>,
+  PN extends SObjectNames<S>
+> {
+  _query: Query<S, N>;
+  _parent: Query<S, PN>;
 
   /**
    *
    */
-  constructor(conn: Connection, config: QueryConfigParam, parent: Query) {
+  constructor(
+    conn: Connection<S>,
+    config: QueryConfigParam<S, N>,
+    parent: Query<S, PN>,
+  ) {
     this._query = new Query(conn, config, parent);
     this._parent = parent;
   }

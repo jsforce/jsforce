@@ -36,6 +36,8 @@ export type Record = {
   attributes?: { type: string };
 };
 
+export type SavedRecord = Record & { Id: string };
+
 export type SaveError = {
   errorCode: string;
   message: string;

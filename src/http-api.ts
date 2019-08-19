@@ -6,7 +6,13 @@ import { Logger, getLogger } from './util/logger';
 import { StreamPromise } from './util/promise';
 import Connection from './connection';
 import Transport from './transport';
-import { HttpRequest, HttpResponse, SaveError, Optional } from './types';
+import {
+  HttpRequest,
+  HttpResponse,
+  SaveError,
+  Optional,
+  Schema,
+} from './types';
 
 /** @private */
 function parseJSON(str: string) {
@@ -42,16 +48,16 @@ function parseText(str: string) {
 /**
  * HTTP based API class with authorization hook
  */
-export default class HttpApi extends EventEmitter {
+export default class HttpApi<S extends Schema> extends EventEmitter {
   static _logger = getLogger('http-api');
 
-  _conn: Connection;
+  _conn: Connection<S>;
   _logger: Logger;
   _transport: Transport;
   _responseType: string | void;
   _noContentResponse: string | void;
 
-  constructor(conn: Connection, options: any) {
+  constructor(conn: Connection<S>, options: any) {
     super();
     this._conn = conn;
     this._logger = conn._logLevel

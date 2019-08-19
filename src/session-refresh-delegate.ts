@@ -2,31 +2,31 @@
  *
  */
 import { getLogger, Logger } from './util/logger';
-import { Callback } from './types';
+import { Callback, Schema } from './types';
 import Connection from './connection';
 import { TokenResponse } from './oauth2';
 
 /**
  *
  */
-export type SessionRefreshFunc = (
-  conn: Connection,
+export type SessionRefreshFunc<S extends Schema> = (
+  conn: Connection<S>,
   callback: Callback<string, TokenResponse>,
 ) => void;
 
 /**
  *
  */
-export default class SessionRefreshDelegate {
+export default class SessionRefreshDelegate<S extends Schema> {
   static _logger: Logger = getLogger('session-refresh-delegate');
 
-  private _refreshFn: SessionRefreshFunc;
-  private _conn: Connection;
+  private _refreshFn: SessionRefreshFunc<S>;
+  private _conn: Connection<S>;
   private _logger: Logger;
   private _lastRefreshedAt: number | void = undefined;
   private _refreshPromise: Promise<void> | void = undefined;
 
-  constructor(conn: Connection, refreshFn: SessionRefreshFunc) {
+  constructor(conn: Connection<S>, refreshFn: SessionRefreshFunc<S>) {
     this._conn = conn;
     this._logger = conn._logLevel
       ? SessionRefreshDelegate._logger.createInstance(conn._logLevel)

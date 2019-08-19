@@ -2,20 +2,33 @@
  *
  */
 import Connection from './connection';
-import { Record, RetrieveOptions, DmlOptions } from './types';
+import {
+  Record,
+  RetrieveOptions,
+  DmlOptions,
+  Schema,
+  SObjectNames,
+  SObjectInputRecord,
+  SObjectUpdateRecord,
+} from './types';
 
 /**
  * Remote reference to record information
  */
-export default class RecordReference {
-  type: string;
+export default class RecordReference<
+  S extends Schema,
+  N extends SObjectNames<S>,
+  InputRecord extends Record = SObjectInputRecord<S, N>,
+  RetrieveRecord extends Record = SObjectUpdateRecord<S, N>
+> {
+  type: N;
   id: string;
-  _conn: Connection;
+  _conn: Connection<S>;
 
   /**
    *
    */
-  constructor(conn: Connection, type: string, id: string) {
+  constructor(conn: Connection<S>, type: N, id: string) {
     this._conn = conn;
     this.type = type;
     this.id = id;
@@ -24,14 +37,15 @@ export default class RecordReference {
   /**
    * Retrieve record field information
    */
-  retrieve(options?: RetrieveOptions) {
-    return this._conn.retrieve(this.type, this.id, options);
+  async retrieve(options?: RetrieveOptions) {
+    const rec = await this._conn.retrieve(this.type, this.id, options);
+    return rec as RetrieveRecord;
   }
 
   /**
    * Update record field information
    */
-  async update(record: Record, options?: DmlOptions) {
+  async update(record: InputRecord, options?: DmlOptions) {
     const _record = { ...record, Id: this.id };
     return this._conn.update(this.type, _record, options);
   }

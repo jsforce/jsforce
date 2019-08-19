@@ -42,6 +42,11 @@ export interface Schema {
  */
 export type SObjectNames<S extends Schema> = StringKeys<S['SObjects']>;
 
+export type SObjectFieldNames<
+  S extends Schema,
+  N extends SObjectNames<S>
+> = StringKeys<S['SObjects'][N]['Fields']>;
+
 export type ParentReferenceNames<
   S extends Schema,
   N extends SObjectNames<S>
