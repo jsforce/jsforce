@@ -721,8 +721,13 @@ export default class Connection<
   /**
    *
    */
-  query(soql: string, options?: QueryOptions): Query<S, SObjectNames<S>> {
-    return new Query(this, soql, null, options);
+  query(soql: string, options?: Partial<QueryOptions>) {
+    return new Query<S, SObjectNames<S>, Record, 'QueryResult'>(
+      this,
+      soql,
+      null,
+      options,
+    );
   }
 
   /**

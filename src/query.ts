@@ -20,6 +20,7 @@ import {
   SObjectNames,
   ChildRelationshipNames,
   SObjectUpdateRecord,
+  SaveResult,
 } from './types';
 import { identityFunc } from './util/function';
 
@@ -53,12 +54,6 @@ export type QueryConfigParam<
   offset?: number;
 };
 
-export type QueryResponseTarget =
-  | 'QueryResult'
-  | 'Records'
-  | 'SingleRecord'
-  | 'Count';
-
 export type QueryOptions = {
   headers: { [name: string]: string };
   maxFetch: number;
@@ -67,12 +62,41 @@ export type QueryOptions = {
   responseTarget: QueryResponseTarget;
 };
 
-export type QueryResult = {
-  size: number;
-  records: Record[];
+export type QueryResult<R extends Record> = {
+  done: boolean;
+  totalSize: number;
+  records: R[];
+  nextRecordsUrl?: string;
 };
 
-export type QueryResponse = QueryResult | Record[] | Record | number;
+const ResponseTargetValues = [
+  'QueryResult',
+  'Records',
+  'SingleRecord',
+  'Count',
+] as const;
+
+export type QueryResponseTarget = typeof ResponseTargetValues[number];
+
+export const ResponseTargets: {
+  [K in QueryResponseTarget]: K;
+} = ResponseTargetValues.reduce(
+  (values, target) => ({ ...values, [target]: target }),
+  {} as {
+    [K in QueryResponseTarget]: K;
+  },
+);
+
+export type QueryResponse<
+  R extends Record,
+  QRT extends QueryResponseTarget = QueryResponseTarget
+> = QRT extends 'QueryResult'
+  ? QueryResult<R>
+  : QRT extends 'Records'
+  ? R[]
+  : QRT extends 'SingleRecord'
+  ? R | null
+  : number; // QRT extends 'Count'
 
 export type QueryDestroyOptions = {
   allowBulk?: boolean;
@@ -87,18 +111,6 @@ export type QueryUpdateOptions = {
 /**
  *
  */
-export const ResponseTargets: {
-  [K in QueryResponseTarget]: QueryResponseTarget;
-} = {
-  QueryResult: 'QueryResult',
-  Records: 'Records',
-  SingleRecord: 'SingleRecord',
-  Count: 'Count',
-};
-
-/**
- *
- */
 const DEFAULT_BULK_THRESHOLD = 200;
 
 /**
@@ -106,7 +118,9 @@ const DEFAULT_BULK_THRESHOLD = 200;
  */
 export default class Query<
   S extends Schema,
-  N extends SObjectNames<S>
+  N extends SObjectNames<S>,
+  R extends Record = Record,
+  QRT extends QueryResponseTarget = QueryResponseTarget
 > extends EventEmitter {
   static _logger = getLogger('query');
 
@@ -120,7 +134,7 @@ export default class Query<
   _executed: boolean = false;
   _finished: boolean = false;
   _chaining: boolean = false;
-  _promise: Promise<QueryResponse>;
+  _promise: Promise<QueryResponse<R, QRT>>;
   _stream: Serializable;
   _parent: Optional<Query<S, SObjectNames<S>>>;
 
@@ -354,17 +368,21 @@ export default class Query<
   /**
    *
    */
-  setResponseTarget(responseTarget: QueryResponseTarget) {
+  setResponseTarget<QRT1 extends QueryResponseTarget>(
+    responseTarget: QRT1,
+  ): Query<S, N, R, QRT1> {
     if (responseTarget in ResponseTargets) {
       this._options.responseTarget = responseTarget;
     }
-    return this;
+    return (this as Query<S, N, R>) as Query<S, N, R, QRT1>;
   }
 
   /**
    * Execute query and fetch records from server.
    */
-  execute(_options: Partial<QueryOptions> = {}): Query<S, N> {
+  execute<QRT1 extends QueryResponseTarget = QRT>(
+    options_: Partial<QueryOptions> & { responseTarget?: QRT1 } = {},
+  ): Query<S, N, R, QRT1> {
     if (this._executed) {
       throw new Error('re-executing already executed query');
     }
@@ -374,11 +392,11 @@ export default class Query<
     }
 
     const options = {
-      headers: _options.headers || this._options.headers,
-      responseTarget: _options.responseTarget || this._options.responseTarget,
-      autoFetch: _options.autoFetch || this._options.autoFetch,
-      maxFetch: _options.maxFetch || this._options.maxFetch,
-      scanAll: _options.scanAll || this._options.scanAll,
+      headers: options_.headers || this._options.headers,
+      responseTarget: options_.responseTarget || this._options.responseTarget,
+      autoFetch: options_.autoFetch || this._options.autoFetch,
+      maxFetch: options_.maxFetch || this._options.maxFetch,
+      scanAll: options_.scanAll || this._options.scanAll,
     };
 
     // collect fetched records in array
@@ -416,7 +434,7 @@ export default class Query<
     })();
 
     // return Query instance for chaining
-    return this;
+    return (this as Query<S, N, R>) as Query<S, N, R, QRT1>;
   }
 
   /**
@@ -432,7 +450,7 @@ export default class Query<
   /**
    * @private
    */
-  async _execute(options: QueryOptions): Promise<QueryResponse> {
+  async _execute(options: QueryOptions): Promise<QueryResponse<R>> {
     const { headers, responseTarget, autoFetch, maxFetch, scanAll } = options;
     let url = '';
     if (this._locator) {
@@ -662,8 +680,8 @@ export default class Query<
    * Delegate to deferred promise, return promise instance for query result
    */
   then<U>(
-    onResolve: (qr: QueryResponse) => U | Promise<U>,
-    onReject?: (err: any) => U | Promise<U>,
+    onResolve: (qr: QueryResponse<R, QRT>) => U | Promise<U>,
+    onReject?: (err: Error) => U | Promise<U>,
   ): Promise<U> {
     this._chaining = true;
     if (!this._finished && !this._executed) {
@@ -678,15 +696,19 @@ export default class Query<
   }
 
   catch(
-    onReject: (err: any) => QueryResponse | Promise<QueryResponse>,
-  ): Promise<QueryResponse> {
+    onReject: (
+      err: Error,
+    ) => QueryResponse<R, QRT> | Promise<QueryResponse<R, QRT>>,
+  ): Promise<QueryResponse<R, QRT>> {
     return this.then(identityFunc, onReject);
   }
 
   /**
    * Bulk delete queried records
    */
-  destroy(type?: N, options?: QueryDestroyOptions) {
+  destroy(options?: QueryDestroyOptions): Promise<SaveResult[]>;
+  destroy(type: N, options?: QueryDestroyOptions): Promise<SaveResult[]>;
+  destroy(type?: N | QueryDestroyOptions, options?: QueryDestroyOptions) {
     if (typeof type === 'object' && type !== null) {
       options = type;
       type = undefined;

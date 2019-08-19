@@ -33,7 +33,7 @@ export type HttpResponse = {
 export type Record = {
   [field: string]: any;
   Id?: string;
-  attributes?: { type: string };
+  attributes?: { type: string; url: string };
 };
 
 export type SavedRecord = Record & { Id: string };
@@ -44,11 +44,17 @@ export type SaveError = {
   fields?: string[];
 };
 
-export type SaveResult = {
-  success: boolean;
-  id?: string;
-  errors: SaveError[];
-};
+export type SaveResult =
+  | {
+      success: true;
+      id: string;
+      errors?: SaveError[];
+    }
+  | {
+      success: false;
+      id?: string;
+      errors: SaveError[];
+    };
 
 export type RetrieveOptions = {
   allOrNone?: boolean;

@@ -2,7 +2,7 @@ import assert from 'assert';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject } from './util';
-import { Record } from '../src/types';
+import { Record, SavedRecord } from '../src/types';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();
@@ -111,7 +111,7 @@ describe('multiple records crud', () => {
       .sobject('Account')
       .update(
         accounts.map(
-          ({ Id, Name }) => ({ Id, Name: `Updated ${Name}` } as Record),
+          ({ Id, Name }) => ({ Id, Name: `Updated ${Name}` } as SavedRecord),
         ),
       );
     assert.ok(Array.isArray(rets));

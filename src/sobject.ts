@@ -326,7 +326,7 @@ export default class SObject<
     conditions?: Optional<QueryCondition>,
     fields?: Optional<QueryFieldsParam>,
     options: FindOptions<S, N> = {},
-  ): Query<S, N> {
+  ) {
     const { sort, limit, offset, ...qoptions } = options;
     const config: QueryConfigParam<S, N> = {
       fields: fields === null ? undefined : fields,
@@ -337,9 +337,8 @@ export default class SObject<
       limit,
       offset,
     };
-    const query = new Query(this._conn, config, null, qoptions);
-    query.setResponseTarget(ResponseTargets.Records);
-    return query;
+    const query = new Query<S, N, Record>(this._conn, config, null, qoptions);
+    return query.setResponseTarget(ResponseTargets.Records);
   }
 
   /**
@@ -349,14 +348,13 @@ export default class SObject<
     conditions?: QueryCondition,
     fields?: QueryFieldsParam,
     options: Partial<QueryOptions> = {},
-  ): Query<S, N> {
+  ) {
     const query = this.find(
       conditions,
       fields,
       Object.assign({}, options, { limit: 1 }),
     );
-    query.setResponseTarget(ResponseTargets.SingleRecord);
-    return query;
+    return query.setResponseTarget(ResponseTargets.SingleRecord);
   }
 
   /**
@@ -371,8 +369,7 @@ export default class SObject<
    */
   count(conditions?: Optional<QueryCondition>) {
     const query = this.find(conditions, { 'count()': true });
-    query.setResponseTarget(ResponseTargets.Count);
-    return query;
+    return query.setResponseTarget(ResponseTargets.Count);
   }
 
   /**
