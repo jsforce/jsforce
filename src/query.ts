@@ -21,6 +21,7 @@ import {
   ChildRelationshipNames,
   SObjectUpdateRecord,
   SaveResult,
+  ChildRelationshipSObjectName,
 } from './types';
 import { identityFunc } from './util/function';
 import { Readable } from 'stream';
@@ -33,21 +34,14 @@ export type QueryFieldsParam =
   | string[]
   | { [name: string]: boolean | number };
 
-export type SubQueryConfigParam = {
+export type QueryConfigParam<S extends Schema, N extends SObjectNames<S>> = {
   fields?: QueryFieldsParam;
-  conditions?: QueryCondition;
-  sort?: SortConfig;
-  limit?: number;
-  offset?: number;
-};
-
-export type QueryConfigParam<
-  S extends Schema,
-  N extends SObjectNames<S>,
-  CN extends ChildRelationshipNames<S, N> = ChildRelationshipNames<S, N>
-> = {
-  fields?: QueryFieldsParam;
-  includes?: { [name in CN]: SubQueryConfigParam };
+  includes?: {
+    [CRN in ChildRelationshipNames<S, N>]?: QueryConfigParam<
+      S,
+      ChildRelationshipSObjectName<S, N, CRN>
+    >;
+  };
   table?: string;
   conditions?: QueryCondition;
   sort?: SortConfig;
@@ -130,7 +124,7 @@ export default class Query<
   _soql: Optional<string>;
   _locator: Optional<string>;
   _config: QueryConfig = {};
-  _children: SubQuery<S, SObjectNames<S>, N>[] = [];
+  _children: SubQuery<S, N>[] = [];
   _options: QueryOptions;
   _executed: boolean = false;
   _finished: boolean = false;
@@ -296,13 +290,13 @@ export default class Query<
    */
   include<
     CRN extends ChildRelationshipNames<S, N>,
-    CN extends SObjectNames<S> = SObjectNames<S> // ChildRelationshipSObjectName<S, N, CRN>
+    CN extends ChildRelationshipSObjectName<S, N, CRN>
   >(
     childRelName: CRN,
     conditions?: Optional<QueryCondition>,
     fields?: Optional<QueryFieldsParam>,
     options: { limit?: number; offset?: number; sort?: SortConfig } = {},
-  ): SubQuery<S, CN, N> {
+  ): SubQuery<S, N, CRN> {
     if (this._soql) {
       throw Error(
         'Cannot include child relationship into the query which has already built SOQL.',
@@ -325,18 +319,24 @@ export default class Query<
   /**
    * Include child relationship queryies, but not moving down to the children context
    */
-  includeChildren<CN extends ChildRelationshipNames<S, N>>(
+  includeChildren(
     includes: {
-      [name in CN]: SubQueryConfigParam;
+      [CRN in ChildRelationshipNames<S, N>]?: QueryConfigParam<
+        S,
+        ChildRelationshipSObjectName<S, N, CRN>
+      >;
     },
   ) {
+    type CRN = ChildRelationshipNames<S, N>;
     if (this._soql) {
       throw Error(
         'Cannot include child relationship into the query which has already built SOQL.',
       );
     }
-    for (const crname of Object.keys(includes) as CN[]) {
-      const { conditions, fields, ...options } = includes[crname];
+    for (const crname of Object.keys(includes) as CRN[]) {
+      const { conditions, fields, ...options } = includes[
+        crname
+      ] as QueryConfigParam<S, ChildRelationshipSObjectName<S, N, CRN>>;
       this.include(crname, conditions, fields, options);
     }
     return this;
@@ -575,10 +575,10 @@ export default class Query<
    *
    */
   async _expandAsteriskFields(
-    _table: string,
+    table_: string,
     fields: string[],
   ): Promise<string[]> {
-    const table = await this._getSObjectName(_table);
+    const table = await this._getSObjectName(table_);
     const expandedFields = await Promise.all(
       fields.map(async (field) => this._expandAsteriskField(table, field)),
     );
@@ -892,10 +892,15 @@ export default class Query<
  */
 export class SubQuery<
   S extends Schema,
-  N extends SObjectNames<S>,
-  PN extends SObjectNames<S>
+  PN extends SObjectNames<S>,
+  CRN extends ChildRelationshipNames<S, PN> = ChildRelationshipNames<S, PN>,
+  CN extends ChildRelationshipSObjectName<
+    S,
+    PN,
+    CRN
+  > = ChildRelationshipSObjectName<S, PN, CRN>
 > {
-  _query: Query<S, N>;
+  _query: Query<S, SObjectNames<S>>;
   _parent: Query<S, PN>;
 
   /**
@@ -903,7 +908,7 @@ export class SubQuery<
    */
   constructor(
     conn: Connection<S>,
-    config: QueryConfigParam<S, N>,
+    config: QueryConfigParam<S, CN>,
     parent: Query<S, PN>,
   ) {
     this._query = new Query(conn, config, parent);
