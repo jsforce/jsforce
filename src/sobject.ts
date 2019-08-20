@@ -19,6 +19,9 @@ import {
   ChildRelationshipNames,
   ChildRelationshipSObjectName,
   SObjectFieldNames,
+  FieldProjectionConfig,
+  FieldPathSpecifier,
+  FieldPathScopedProjection,
 } from './types';
 import Connection from './connection';
 import RecordReference from './record-reference';
@@ -322,45 +325,71 @@ export default class SObject<
   /**
    * Find and fetch records which matches given conditions
    */
+  find<R extends Record = Record>(
+    conditions?: Optional<QueryCondition>,
+  ): Query<S, N, SObjectRecord<S, N, '*', R>, 'Records'>;
+  find<
+    R extends Record = Record,
+    FP extends FieldPathSpecifier<S, N> = FieldPathSpecifier<S, N>,
+    FPC extends FieldProjectionConfig = FieldPathScopedProjection<S, N, FP>
+  >(
+    conditions: Optional<QueryCondition>,
+    fields?: Optional<QueryFieldsParam<S, N, FP>>,
+    options?: FindOptions<S, N>,
+  ): Query<S, N, SObjectRecord<S, N, FPC, R>, 'Records'>;
   find(
     conditions?: Optional<QueryCondition>,
-    fields?: Optional<QueryFieldsParam>,
+    fields?: Optional<QueryFieldsParam<S, N, FieldPathSpecifier<S, N>>>,
     options: FindOptions<S, N> = {},
-  ) {
+  ): Query<S, N, any, 'Records'> {
     const { sort, limit, offset, ...qoptions } = options;
     const config: QueryConfigParam<S, N> = {
-      fields: fields === null ? undefined : fields,
+      fields: fields == null ? undefined : fields,
       includes: options.includes,
       table: this.type,
-      conditions: conditions === null ? undefined : conditions,
+      conditions: conditions == null ? undefined : conditions,
       sort,
       limit,
       offset,
     };
-    const query = new Query<S, N, Record>(this._conn, config, null, qoptions);
+    const query = new Query<S, N>(this._conn, config, qoptions);
     return query.setResponseTarget(ResponseTargets.Records);
   }
 
   /**
    * Fetch one record which matches given conditions
    */
+  findOne<R extends Record = Record>(
+    conditions?: Optional<QueryCondition>,
+  ): Query<S, N, SObjectRecord<S, N, '*', R>, 'SingleRecord'>;
+  findOne<
+    R extends Record = Record,
+    FP extends FieldPathSpecifier<S, N> = FieldPathSpecifier<S, N>,
+    FPC extends FieldProjectionConfig = FieldPathScopedProjection<S, N, FP>
+  >(
+    conditions: Optional<QueryCondition>,
+    fields?: Optional<QueryFieldsParam<S, N, FP>>,
+    options?: FindOptions<S, N>,
+  ): Query<S, N, SObjectRecord<S, N, FPC, R>, 'SingleRecord'>;
   findOne(
-    conditions?: QueryCondition,
-    fields?: QueryFieldsParam,
-    options: Partial<QueryOptions> = {},
-  ) {
-    const query = this.find(
-      conditions,
-      fields,
-      Object.assign({}, options, { limit: 1 }),
-    );
+    conditions?: Optional<QueryCondition>,
+    fields?: Optional<QueryFieldsParam<S, N, FieldPathSpecifier<S, N>>>,
+    options: FindOptions<S, N> = {},
+  ): Query<S, N, any, 'SingleRecord'> {
+    const query = this.find(conditions, fields, { ...options, limit: 1 });
     return query.setResponseTarget(ResponseTargets.SingleRecord);
   }
 
   /**
    * Find and fetch records only by specifying fields to fetch.
    */
-  select(fields: QueryFieldsParam) {
+  select<
+    R extends Record = Record,
+    FP extends FieldPathSpecifier<S, N> = FieldPathSpecifier<S, N>,
+    FPC extends FieldProjectionConfig = FieldPathScopedProjection<S, N, FP>
+  >(
+    fields: QueryFieldsParam<S, N, FP>,
+  ): Query<S, N, SObjectRecord<S, N, FPC, R>, 'Records'> {
     return this.find(null, fields);
   }
 
@@ -368,7 +397,7 @@ export default class SObject<
    * Count num of records which matches given conditions
    */
   count(conditions?: Optional<QueryCondition>) {
-    const query = this.find(conditions, { 'count()': true });
+    const query = this.find(conditions, 'count()');
     return query.setResponseTarget(ResponseTargets.Count);
   }
 

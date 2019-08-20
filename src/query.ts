@@ -19,9 +19,13 @@ import {
   Schema,
   SObjectNames,
   ChildRelationshipNames,
+  ChildRelationshipSObjectName,
+  FieldProjectionConfig,
+  FieldPathSpecifier,
+  FieldPathScopedProjection,
+  SObjectRecord,
   SObjectUpdateRecord,
   SaveResult,
-  ChildRelationshipSObjectName,
 } from './types';
 import { identityFunc } from './util/function';
 import { Readable } from 'stream';
@@ -29,13 +33,14 @@ import { Readable } from 'stream';
 /**
  * type defs
  */
-export type QueryFieldsParam =
-  | string
-  | string[]
-  | { [name: string]: boolean | number };
+export type QueryFieldsParam<
+  S extends Schema,
+  N extends SObjectNames<S>,
+  FP extends FieldPathSpecifier<S, N> = FieldPathSpecifier<S, N>
+> = FP | FP[] | string | string[];
 
 export type QueryConfigParam<S extends Schema, N extends SObjectNames<S>> = {
-  fields?: QueryFieldsParam;
+  fields?: QueryFieldsParam<S, N>;
   includes?: {
     [CRN in ChildRelationshipNames<S, N>]?: QueryConfigParam<
       S,
@@ -124,14 +129,13 @@ export default class Query<
   _soql: Optional<string>;
   _locator: Optional<string>;
   _config: QueryConfig = {};
-  _children: SubQuery<S, N>[] = [];
+  _children: SubQuery<S, N, any, any>[] = [];
   _options: QueryOptions;
   _executed: boolean = false;
   _finished: boolean = false;
   _chaining: boolean = false;
   _promise: Promise<QueryResponse<R, QRT>>;
   _stream: Serializable<R>;
-  _parent: Optional<Query<S, SObjectNames<S>>>;
 
   totalSize: Optional<number>;
   totalFetched: Optional<number>;
@@ -142,7 +146,6 @@ export default class Query<
   constructor(
     conn: Connection<S>,
     config: string | QueryConfigParam<S, N> | { locator: string },
-    parent?: Optional<Query<S, SObjectNames<S>>>,
     options?: Partial<QueryOptions>,
   ) {
     super();
@@ -158,14 +161,12 @@ export default class Query<
         this._locator = locator.split('/').pop();
       }
     } else {
-      const {
-        fields,
-        includes,
-        sort,
-        ..._config
-      } = (config as any) as QueryConfigParam<S, N>;
+      const { fields, includes, sort, ..._config } = config as QueryConfigParam<
+        S,
+        N
+      >;
       this._config = _config;
-      this.select(fields);
+      this.select(fields as any);
       if (includes) {
         this.includeChildren(includes);
       }
@@ -173,14 +174,13 @@ export default class Query<
         this.sort(sort);
       }
     }
-    this._parent = parent;
     this._options = {
-      ...(options || {}),
       headers: {},
       maxFetch: 10000,
       autoFetch: false,
       scanAll: false,
       responseTarget: 'QueryResult',
+      ...(options || {}),
     } as QueryOptions;
     // promise instance
     this._promise = new Promise((resolve, reject) => {
@@ -202,21 +202,31 @@ export default class Query<
   /**
    * Select fields to include in the returning result
    */
-  select(fields: QueryFieldsParam = '*') {
+  select<
+    R extends Record = Record,
+    FP extends FieldPathSpecifier<S, N> = FieldPathSpecifier<S, N>,
+    FPC extends FieldProjectionConfig = FieldPathScopedProjection<S, N, FP>
+  >(
+    fields: QueryFieldsParam<S, N, FP>,
+  ): Query<S, N, SObjectRecord<S, N, FPC, R>, QRT> {
     if (this._soql) {
       throw Error(
         'Cannot set select fields for the query which has already built SOQL.',
       );
     }
-    this._config.fields =
-      typeof fields === 'string'
+    function toFieldArray(fields: QueryFieldsParam<S, N, FP>): string[] {
+      return typeof fields === 'string'
         ? fields.split(/\s*,\s*/)
         : Array.isArray(fields)
-        ? fields
-        : Object.entries(fields)
+        ? (fields as Array<string | FP>)
+            .map(toFieldArray)
+            .reduce((fs, f) => [...fs, ...f], [] as string[])
+        : Object.entries(fields as { [name: string]: any })
             .filter(([_f, v]) => v)
             .map(([f]) => f);
-    return this;
+    }
+    this._config.fields = toFieldArray(fields);
+    return this as Query<S, N, any, QRT>;
   }
 
   /**
@@ -294,7 +304,7 @@ export default class Query<
   >(
     childRelName: CRN,
     conditions?: Optional<QueryCondition>,
-    fields?: Optional<QueryFieldsParam>,
+    fields?: Optional<QueryFieldsParam<S, CN>>,
     options: { limit?: number; offset?: number; sort?: SortConfig } = {},
   ): SubQuery<S, N, CRN> {
     if (this._soql) {
@@ -311,7 +321,12 @@ export default class Query<
       sort: options.sort,
     };
     // eslint-disable-next-line no-use-before-define
-    const childQuery = new SubQuery(this._conn, childConfig, this);
+    const childQuery = new SubQuery(
+      this._conn,
+      childRelName,
+      childConfig,
+      this,
+    );
     this._children.push(childQuery);
     return childQuery;
   }
@@ -539,18 +554,19 @@ export default class Query<
   /**
    * @protected
    */
-  async _expandFields(): Promise<void> {
+  async _expandFields(sobject_?: string): Promise<void> {
     if (this._soql) {
       throw new Error(
         'Cannot expand fields for the query which has already built SOQL.',
       );
     }
     const { fields = [], table = '' } = this._config;
+    const sobject = sobject_ || table;
     this._logger.debug(
-      `_expandFields: table = ${table}, fields = ${fields.join(', ')}`,
+      `_expandFields: sobject = ${sobject}, fields = ${fields.join(', ')}`,
     );
     const [efields] = await Promise.all([
-      this._expandAsteriskFields(table, fields),
+      this._expandAsteriskFields(sobject, fields),
       ...this._children.map(async (childQuery) => {
         await childQuery._expandFields();
         return [] as string[];
@@ -569,32 +585,6 @@ export default class Query<
         },
         {},
       );
-  }
-
-  /**
-   *
-   */
-  async _expandAsteriskFields(
-    table_: string,
-    fields: string[],
-  ): Promise<string[]> {
-    const table = await this._getSObjectName(table_);
-    const expandedFields = await Promise.all(
-      fields.map(async (field) => this._expandAsteriskField(table, field)),
-    );
-    return expandedFields.reduce(
-      (eflds: string[], flds: string[]): string[] => [...eflds, ...flds],
-      [],
-    );
-    // return expandedFields.reduce((efields, fs) => [...efields, ...fs], []);
-    // return [];
-  }
-
-  /**
-   *
-   */
-  async _getSObjectName(table: string): Promise<string> {
-    return this._parent ? this._parent._findRelationObject(table) : table;
   }
 
   /**
@@ -619,6 +609,22 @@ export default class Query<
       }
     }
     throw new Error(`No child relationship found: ${relName}`);
+  }
+
+  /**
+   *
+   */
+  async _expandAsteriskFields(
+    sobject: string,
+    fields: string[],
+  ): Promise<string[]> {
+    const expandedFields = await Promise.all(
+      fields.map(async (field) => this._expandAsteriskField(sobject, field)),
+    );
+    return expandedFields.reduce(
+      (eflds: string[], flds: string[]): string[] => [...eflds, ...flds],
+      [],
+    );
   }
 
   /**
@@ -802,9 +808,18 @@ export default class Query<
   /**
    * Bulk update queried records, using given mapping function/object
    */
-  update(
-    mapping: ((rec: Record) => Record) | Record,
-    type?: N,
+  update<UR extends SObjectUpdateRecord<S, N>>(
+    mapping: ((rec: R) => UR) | UR,
+    type: N,
+    options?: QueryUpdateOptions,
+  ): Promise<SaveResult[]>;
+  update<UR extends SObjectUpdateRecord<S, N>>(
+    mapping: ((rec: R) => UR) | UR,
+    options?: QueryUpdateOptions,
+  ): Promise<SaveResult[]>;
+  update<UR extends SObjectUpdateRecord<S, N>>(
+    mapping: ((rec: R) => UR) | UR,
+    type?: N | QueryUpdateOptions,
     options?: QueryUpdateOptions,
   ) {
     if (typeof type === 'object' && type !== null) {
@@ -898,28 +913,40 @@ export class SubQuery<
     S,
     PN,
     CRN
-  > = ChildRelationshipSObjectName<S, PN, CRN>
+  > = ChildRelationshipSObjectName<S, PN, CRN>,
+  PR extends Record = Record,
+  PQRT extends QueryResponseTarget = QueryResponseTarget,
+  CR extends Record = Record
 > {
-  _query: Query<S, SObjectNames<S>>;
-  _parent: Query<S, PN>;
+  _relName: CRN;
+  _query: Query<S, CN>;
+  _parent: Query<S, PN, PR, PQRT>;
 
   /**
    *
    */
   constructor(
     conn: Connection<S>,
+    relName: CRN,
     config: QueryConfigParam<S, CN>,
-    parent: Query<S, PN>,
+    parent: Query<S, PN, PR, PQRT>,
   ) {
-    this._query = new Query(conn, config, parent);
+    this._relName = relName;
+    this._query = new Query(conn, config);
     this._parent = parent;
   }
 
   /**
    *
    */
-  select(fields?: QueryFieldsParam): this {
-    this._query.select(fields);
+  select<
+    R extends Record = Record,
+    FP extends FieldPathSpecifier<S, CN> = FieldPathSpecifier<S, CN>,
+    FPC extends FieldProjectionConfig = FieldPathScopedProjection<S, CN, FP>
+  >(
+    fields: QueryFieldsParam<S, CN, FP>,
+  ): SubQuery<S, PN, CRN, CN, PR, PQRT, SObjectRecord<S, CN, FPC, R>> {
+    this._query = this._query.select(fields);
     return this;
   }
 
@@ -927,7 +954,7 @@ export class SubQuery<
    *
    */
   where(conditions: QueryCondition): this {
-    this._query.where(conditions);
+    this._query = this._query.where(conditions);
     return this;
   }
 
@@ -935,7 +962,7 @@ export class SubQuery<
    * Limit the returning result
    */
   limit(limit: number) {
-    this._query.limit(limit);
+    this._query = this._query.limit(limit);
     return this;
   }
 
@@ -943,7 +970,7 @@ export class SubQuery<
    * Skip records
    */
   skip(offset: number) {
-    this._query.skip(offset);
+    this._query = this._query.skip(offset);
     return this;
   }
 
@@ -956,7 +983,7 @@ export class SubQuery<
    * Set query sort with direction
    */
   sort(sort: SortConfig, dir?: SortDir) {
-    this._query.sort(sort, dir);
+    this._query = this._query.sort(sort, dir);
     return this;
   }
 
@@ -968,8 +995,9 @@ export class SubQuery<
   /**
    *
    */
-  _expandFields() {
-    return this._query._expandFields();
+  async _expandFields() {
+    const sobject = await this._parent._findRelationObject(this._relName);
+    return this._query._expandFields(sobject);
   }
 
   /**

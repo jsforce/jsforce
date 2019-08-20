@@ -732,7 +732,6 @@ export default class Connection<
     return new Query<S, SObjectNames<S>, Record, 'QueryResult'>(
       this,
       soql,
-      null,
       options,
     );
   }
@@ -744,7 +743,7 @@ export default class Connection<
     locator: string,
     options?: QueryOptions,
   ): Query<S, SObjectNames<S>> {
-    return new Query(this, { locator }, null, options);
+    return new Query(this, { locator }, options);
   }
 
   /* */
