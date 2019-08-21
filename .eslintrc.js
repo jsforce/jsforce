@@ -18,6 +18,7 @@ module.exports = {
   },
   rules: {
     'no-unused-vars': 0,
+    'no-dupe-class-members': 0,
     '@typescript-eslint/no-unused-vars': [2, {
       argsIgnorePattern: '^_',
       ignoreRestSiblings: true,
