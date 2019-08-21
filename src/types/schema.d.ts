@@ -42,6 +42,8 @@ export interface Schema {
  */
 export type SObjectTypeString = string & { __SObjectTypeBrand: never };
 
+export type SObjectFieldString = string & { __SObjectFieldBrand: never };
+
 export type SObjectRelationshipString = string & {
   __SObjectRelationshipBrand: never;
 };

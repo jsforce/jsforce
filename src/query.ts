@@ -7,7 +7,7 @@ import { Logger, getLogger } from './util/logger';
 import RecordStream, { Serializable } from './record-stream';
 import Connection from './connection';
 import { createSOQL } from './soql-builder';
-import { QueryConfig as SOQLQueryConfig, Sort, SortDir } from './soql-builder';
+import { QueryConfig as SOQLQueryConfig, SortDir } from './soql-builder';
 import {
   Record,
   Optional,
@@ -24,6 +24,8 @@ import {
   SaveResult,
   DateString,
   SObjectChildRelationship,
+  SObjectFieldString,
+  SObjectFieldNames,
 } from './types';
 import { identityFunc } from './util/function';
 import { Readable } from 'stream';
@@ -83,6 +85,16 @@ export type QueryCondition<S extends Schema, N extends SObjectNames<S>> =
     }
   | ConditionSet<SObjectRecord<S, N>>;
 
+export type QuerySort<
+  S extends Schema,
+  N extends SObjectNames<S>,
+  R extends SObjectRecord<S, N> = SObjectRecord<S, N>
+> =
+  | {
+      [K in keyof R]?: SortDir;
+    }
+  | Array<[keyof R, SortDir]>;
+
 /**
  *
  */
@@ -100,7 +112,7 @@ export type QueryConfig<
   };
   table?: string;
   conditions?: QueryCondition<S, N>;
-  sort?: Sort;
+  sort?: QuerySort<S, N>;
   limit?: number;
   offset?: number;
 };
@@ -327,7 +339,12 @@ export default class Query<
   /**
    * Set query sort with direction
    */
-  sort(sort: Sort, dir?: SortDir) {
+  sort(sort: QuerySort<S, N>): this;
+  sort(sort: SObjectFieldNames<S, N> | SObjectFieldString, dir: SortDir): this;
+  sort(
+    sort: QuerySort<S, N> | SObjectFieldNames<S, N> | SObjectFieldString,
+    dir?: SortDir,
+  ) {
     if (this._soql) {
       throw Error(
         'Cannot set sort for the query which has already built SOQL.',
@@ -335,9 +352,10 @@ export default class Query<
     }
     if (typeof sort === 'string' && typeof dir !== 'undefined') {
       // eslint-disable-next-line no-param-reassign
-      sort = [[sort, dir]];
+      this._config.sort = [[sort, dir]];
+    } else if (typeof sort !== 'string') {
+      this._config.sort = sort as { [field: string]: SortDir };
     }
-    this._config.sort = sort;
     return this;
   }
 
@@ -359,7 +377,7 @@ export default class Query<
     childRelName: CRN | SObjectRelationshipString,
     conditions?: Optional<QueryCondition<S, CN>>,
     fields?: Optional<QueryField<S, CN, CFP>>,
-    options: { limit?: number; offset?: number; sort?: Sort } = {},
+    options: { limit?: number; offset?: number; sort?: QuerySort<S, CN> } = {},
   ): SubQuery<S, N, R, QRT, CRN, CN, CR> {
     if (this._soql) {
       throw Error(
@@ -1049,8 +1067,13 @@ export class SubQuery<
   /**
    * Set query sort with direction
    */
-  sort(sort: Sort, dir?: SortDir) {
-    this._query = this._query.sort(sort, dir);
+  sort(sort: QuerySort<S, CN>): this;
+  sort(sort: SObjectFieldNames<S, CN> | SObjectFieldString, dir: SortDir): this;
+  sort(
+    sort: QuerySort<S, CN> | SObjectFieldNames<S, CN> | SObjectFieldString,
+    dir?: SortDir,
+  ) {
+    this._query = this._query.sort(sort as any, dir as SortDir);
     return this;
   }
 
