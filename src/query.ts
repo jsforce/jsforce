@@ -38,7 +38,7 @@ export type QueryField<
   S extends Schema,
   N extends SObjectNames<S>,
   FP extends FieldPathSpecifier<S, N> = FieldPathSpecifier<S, N>
-> = FP | FP[] | string | string[];
+> = FP | FP[] | string | string[] | { [field: string]: number | boolean };
 
 /**
  *
@@ -229,7 +229,7 @@ export default class Query<
         N
       >;
       this._config = _config;
-      this.select(fields as any);
+      this.select(fields);
       if (includes) {
         this.includeChildren(includes);
       }
@@ -270,7 +270,7 @@ export default class Query<
     FP extends FieldPathSpecifier<S, N> = FieldPathSpecifier<S, N>,
     FPC extends FieldProjectionConfig = FieldPathScopedProjection<S, N, FP>,
     R2 extends SObjectRecord<S, N, FPC, R> = SObjectRecord<S, N, FPC, R>
-  >(fields: QueryField<S, N, FP>): Query<S, N, R2, QRT> {
+  >(fields: QueryField<S, N, FP> = '*'): Query<S, N, R2, QRT> {
     if (this._soql) {
       throw Error(
         'Cannot set select fields for the query which has already built SOQL.',
@@ -287,7 +287,9 @@ export default class Query<
             .filter(([_f, v]) => v)
             .map(([f]) => f);
     }
-    this._config.fields = toFieldArray(fields);
+    if (fields) {
+      this._config.fields = toFieldArray(fields);
+    }
     // force convert query record type without changing instance;
     return (this as any) as Query<S, N, R2, QRT>;
   }
@@ -340,9 +342,11 @@ export default class Query<
    * Set query sort with direction
    */
   sort(sort: QuerySort<S, N>): this;
-  sort(sort: SObjectFieldNames<S, N> | SObjectFieldString, dir: SortDir): this;
+  sort(sort: string): this;
+  sort(sort: SObjectFieldNames<S, N>, dir: SortDir): this;
+  sort(sort: string, dir: SortDir): this;
   sort(
-    sort: QuerySort<S, N> | SObjectFieldNames<S, N> | SObjectFieldString,
+    sort: QuerySort<S, N> | SObjectFieldNames<S, N> | string,
     dir?: SortDir,
   ) {
     if (this._soql) {
@@ -351,10 +355,9 @@ export default class Query<
       );
     }
     if (typeof sort === 'string' && typeof dir !== 'undefined') {
-      // eslint-disable-next-line no-param-reassign
       this._config.sort = [[sort, dir]];
-    } else if (typeof sort !== 'string') {
-      this._config.sort = sort as { [field: string]: SortDir };
+    } else {
+      this._config.sort = sort as string | { [field: string]: SortDir };
     }
     return this;
   }

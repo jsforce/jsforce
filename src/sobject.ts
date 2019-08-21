@@ -33,7 +33,6 @@ import Query, {
   QueryConfig,
 } from './query';
 import QuickAction from './quick-action';
-import { Sort } from './soql-builder';
 import { CachedFunction } from './cache';
 
 type ChildQueryConfigParam<
@@ -44,14 +43,11 @@ type ChildQueryConfigParam<
 > = QueryConfig<S, CN>;
 
 export type FindOptions<S extends Schema, N extends SObjectNames<S>> = Partial<
-  QueryOptions & {
-    limit: number;
-    offset: number;
-    sort: Sort;
-    includes: {
-      [CRN in ChildRelationshipNames<S, N>]: ChildQueryConfigParam<S, N, CRN>;
-    };
-  }
+  QueryOptions &
+    Pick<QueryConfig<S, N>, 'sort' | 'includes'> & {
+      limit: number;
+      offset: number;
+    }
 >;
 
 /**

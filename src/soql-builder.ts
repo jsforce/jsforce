@@ -10,7 +10,7 @@ export type Condition =
   | { [field: string]: any }
   | Array<{ [field: string]: any }>;
 
-export type SortDir = 'ASC' | 'DESC' | 1 | -1;
+export type SortDir = 'ASC' | 'DESC' | 'asc' | 'desc' | 1 | -1;
 
 export type Sort =
   | string
