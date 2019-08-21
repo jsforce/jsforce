@@ -131,12 +131,24 @@ type RecordFieldProjection<
       RecordFieldProjectionForString<S, SO, FPCS> &
       RecordFieldProjectionForObjectConfig<S, SO, FPCO>;
 
-export type SObjectChildRelationship<
-  S extends Schema,
-  N extends string,
+type SObjectChildRelationshipRecord_<CRN extends string, CR extends Record> = {
+  [K in CRN]: ChildRelationRecordSet<CR> | null;
+};
+
+type IsUnionString_<T extends string, TOrig extends string> = T extends string
+  ? IsEqualType<T, TOrig> extends true
+    ? false
+    : true
+  : never;
+
+type IsUnionString<T extends string> = IsUnionString_<T, T>;
+
+export type SObjectChildRelationshipProp<
   CRN extends string,
   CR extends Record
-> = { [K in CRN]: ChildRelationRecordSet<CR> | null };
+> = IsUnionString<CRN> extends true
+  ? {}
+  : SObjectChildRelationshipRecord_<CRN, CR>;
 
 export type SObjectRecord<
   S extends Schema,
@@ -144,7 +156,7 @@ export type SObjectRecord<
   FPC extends FieldProjectionConfig = '*',
   R extends Record = Record,
   Option extends Partial<{ Extend: boolean }> = {}
-> = IsEqualType<N, SObjectNames<S>> extends true
+> = IsUnionString<N> extends true
   ? R
   : IsEqualType<R, Record> extends true
   ? RecordFieldProjection<S, N, FPC> & Record

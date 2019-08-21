@@ -13,7 +13,6 @@ import {
   Optional,
   Schema,
   SObjectNames,
-  SObjectRelationshipString,
   ChildRelationshipNames,
   ChildRelationshipSObjectName,
   FieldProjectionConfig,
@@ -23,8 +22,7 @@ import {
   SObjectUpdateRecord,
   SaveResult,
   DateString,
-  SObjectChildRelationship,
-  SObjectFieldString,
+  SObjectChildRelationshipProp,
   SObjectFieldNames,
 } from './types';
 import { Readable } from 'stream';
@@ -376,7 +374,30 @@ export default class Query<
     CFPC extends FieldProjectionConfig = FieldPathScopedProjection<S, CN, CFP>,
     CR extends Record = SObjectRecord<S, CN, CFPC>
   >(
-    childRelName: CRN | SObjectRelationshipString,
+    childRelName: CRN,
+    conditions?: Optional<QueryCondition<S, CN>>,
+    fields?: Optional<QueryField<S, CN, CFP>>,
+    options?: { limit?: number; offset?: number; sort?: QuerySort<S, CN> },
+  ): SubQuery<S, N, R, QRT, CRN, CN, CR>;
+  include<
+    CRN extends ChildRelationshipNames<S, N>,
+    CN extends SObjectNames<S>,
+    CR extends Record = SObjectRecord<S, CN>
+  >(
+    childRelName: string,
+    conditions?: Optional<QueryCondition<S, CN>>,
+    fields?: Optional<QueryField<S, CN>>,
+    options?: { limit?: number; offset?: number; sort?: QuerySort<S, CN> },
+  ): SubQuery<S, N, R, QRT, CRN, CN, CR>;
+
+  include<
+    CRN extends ChildRelationshipNames<S, N>,
+    CN extends ChildRelationshipSObjectName<S, N, CRN>,
+    CFP extends FieldPathSpecifier<S, CN> = FieldPathSpecifier<S, CN>,
+    CFPC extends FieldProjectionConfig = FieldPathScopedProjection<S, CN, CFP>,
+    CR extends Record = SObjectRecord<S, CN, CFPC>
+  >(
+    childRelName: CRN | string,
     conditions?: Optional<QueryCondition<S, CN>>,
     fields?: Optional<QueryField<S, CN, CFP>>,
     options: { limit?: number; offset?: number; sort?: QuerySort<S, CN> } = {},
@@ -996,11 +1017,7 @@ export class SubQuery<
   PR extends Record,
   PQRT extends QueryResponseTarget,
   CRN extends ChildRelationshipNames<S, PN> = ChildRelationshipNames<S, PN>,
-  CN extends ChildRelationshipSObjectName<
-    S,
-    PN,
-    CRN
-  > = ChildRelationshipSObjectName<S, PN, CRN>,
+  CN extends SObjectNames<S> = ChildRelationshipSObjectName<S, PN, CRN>,
   CR extends Record = Record
 > {
   _relName: CRN;
@@ -1077,9 +1094,11 @@ export class SubQuery<
    * Set query sort with direction
    */
   sort(sort: QuerySort<S, CN>): this;
-  sort(sort: SObjectFieldNames<S, CN> | SObjectFieldString, dir: SortDir): this;
+  sort(sort: string): this;
+  sort(sort: SObjectFieldNames<S, CN>, dir: SortDir): this;
+  sort(sort: string, dir: SortDir): this;
   sort(
-    sort: QuerySort<S, CN> | SObjectFieldNames<S, CN> | SObjectFieldString,
+    sort: QuerySort<S, CN> | SObjectFieldNames<S, CN> | string,
     dir?: SortDir,
   ) {
     this._query = this._query.sort(sort as any, dir as SortDir);
@@ -1103,7 +1122,11 @@ export class SubQuery<
    * Back the context to parent query object
    */
   end<
-    PR1 extends Record = PR & SObjectChildRelationship<S, PN, CRN, CR>
+    CRP extends SObjectChildRelationshipProp<
+      CRN,
+      CR
+    > = SObjectChildRelationshipProp<CRN, CR>,
+    PR1 extends Record = PR & CRP
   >(): Query<S, PN, PR1, PQRT> {
     return (this._parent as any) as Query<S, PN, PR1, PQRT>;
   }

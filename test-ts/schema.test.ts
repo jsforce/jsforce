@@ -17,7 +17,6 @@ import {
   Record,
   DateString,
   Address,
-  SObjectTypeString,
 } from '../src';
 
 const connMgr = new ConnectionManager(config);
@@ -221,7 +220,7 @@ describe('standard schema', () => {
 
     //
     const recs7 = await conn
-      .sobject('Account' as SObjectTypeString)
+      .sobject('Account' as string)
       .find<{ Id: string; Name: string }>({ Name: { $like: 'A%' } }, [
         'Id',
         'Name',

@@ -26,7 +26,6 @@ import {
   SObjectInputRecord,
   SObjectUpdateRecord,
   SObjectFieldNames,
-  SObjectTypeString,
 } from './types';
 import { StreamPromise } from './util/promise';
 import Transport, {
@@ -1340,9 +1339,9 @@ export default class Connection<
   /**
    * Get SObject instance
    */
-  sobject<N extends SObjectNames<S>>(
-    type: N | SObjectTypeString,
-  ): SObject<S, N> {
+  sobject<N extends SObjectNames<S>>(type: N): SObject<S, N>;
+  sobject<N extends SObjectNames<S>>(type: string): SObject<S, N>;
+  sobject<N extends SObjectNames<S>>(type: N | string): SObject<S, N> {
     const so =
       (this.sobjects[type as N] as SObject<S, N> | undefined) ||
       new SObject(this, type as N);

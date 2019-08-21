@@ -3,7 +3,6 @@
  */
 import Connection from './connection';
 import {
-  Record,
   RetrieveOptions,
   DmlOptions,
   Schema,
@@ -18,8 +17,8 @@ import {
 export default class RecordReference<
   S extends Schema,
   N extends SObjectNames<S>,
-  InputRecord extends Record = SObjectInputRecord<S, N>,
-  RetrieveRecord extends Record = SObjectUpdateRecord<S, N>
+  InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>,
+  RetrieveRecord extends SObjectUpdateRecord<S, N> = SObjectUpdateRecord<S, N>
 > {
   type: N;
   id: string;
@@ -46,8 +45,8 @@ export default class RecordReference<
    * Update record field information
    */
   async update(record: InputRecord, options?: DmlOptions) {
-    const _record = { ...record, Id: this.id };
-    return this._conn.update(this.type, _record, options);
+    const record_ = { ...record, Id: this.id };
+    return this._conn.update(this.type, record_, options);
   }
 
   /**
