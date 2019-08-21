@@ -2,6 +2,7 @@ import assert from 'assert';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject, isString, isNumber, isBoolean, isUndefined } from './util';
+import { Record } from '../src';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();
@@ -13,18 +14,10 @@ beforeAll(async () => {
   await connMgr.establishConnection(conn);
 });
 
-let Account: any; // TODO: remove any
-let Opportunity: any; // TODO: remove any
+const Account = conn.sobject('Account');
+const Opportunity = conn.sobject('Opportunity');
 
-/**
- *
- */
-beforeAll(() => {
-  Account = conn.sobject('Account');
-  Opportunity = conn.sobject('Opportunity');
-});
-
-let acc: any; // TODO: remnove any
+let acc: Record;
 /**
  *
  */
@@ -58,7 +51,10 @@ test('find with conditions', async () => {
 test('find one record and return a record', async () => {
   const record = await Account.findOne({ Id: acc.Id });
   assert.ok(isObject(record));
-  assert.ok(isString(record.Id));
+  // TODO: delete if check when assertions in control flow analysis is introduced to TS
+  if (record) {
+    assert.ok(isString(record.Id));
+  }
 });
 
 /**
