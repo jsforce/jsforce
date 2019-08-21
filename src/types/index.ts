@@ -1,6 +1,6 @@
-export * from './type';
+export * from './common';
 export * from './schema';
 export * from './projection';
 export * from './record';
 export * from './util';
-export { StandardSchema } from './standard-schema';
+export * from './standard-schema';

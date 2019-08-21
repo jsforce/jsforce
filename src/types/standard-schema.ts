@@ -1,4 +1,10 @@
-import { Schema, SObjectDefinition, DateString, BlobString, Address } from '.';
+import {
+  Schema,
+  SObjectDefinition,
+  DateString,
+  BlobString,
+  Address,
+} from './schema';
 
 type Fields$AcceptedEventRelation = {
   //

@@ -1,4 +1,4 @@
-import { Record } from './type';
+import { Record } from './common';
 import {
   Schema,
   SObjectDefinition,
