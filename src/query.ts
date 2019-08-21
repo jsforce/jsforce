@@ -27,7 +27,6 @@ import {
   SObjectFieldString,
   SObjectFieldNames,
 } from './types';
-import { identityFunc } from './util/function';
 import { Readable } from 'stream';
 import SfDate from './date';
 
@@ -767,10 +766,13 @@ export default class Query<
    *
    * Delegate to deferred promise, return promise instance for query result
    */
-  then<U>(
-    onResolve: (qr: QueryResponse<R, QRT>) => U | Promise<U>,
-    onReject?: (err: Error) => U | Promise<U>,
-  ): Promise<U> {
+  then<U, V>(
+    onResolve?:
+      | ((qr: QueryResponse<R, QRT>) => U | Promise<U>)
+      | null
+      | undefined,
+    onReject?: ((err: Error) => V | Promise<V>) | null | undefined,
+  ): Promise<U | V> {
     this._chaining = true;
     if (!this._finished && !this._executed) {
       this.execute();
@@ -788,7 +790,11 @@ export default class Query<
       err: Error,
     ) => QueryResponse<R, QRT> | Promise<QueryResponse<R, QRT>>,
   ): Promise<QueryResponse<R, QRT>> {
-    return this.then(identityFunc, onReject);
+    return this.then(null, onReject);
+  }
+
+  promise(): Promise<QueryResponse<R, QRT>> {
+    return Promise.resolve(this);
   }
 
   /**
