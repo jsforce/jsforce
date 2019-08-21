@@ -419,7 +419,7 @@ export type DescribeCompactLayoutsResult = {
 
 type DescribeApprovalLayout = {
   id: string;
-  labe: string;
+  label: string;
   layoutItems: DescribeLayoutItem[];
   name: string;
 };

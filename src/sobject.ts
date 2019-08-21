@@ -77,7 +77,7 @@ export default class SObject<
   approvalLayouts$: CachedFunction<
     () => Promise<DescribeApprovalLayoutsResult>
   >;
-  approvalLayouts$$: CachedFunction<() => DescribeCompactLayoutsResult>;
+  approvalLayouts$$: CachedFunction<() => DescribeApprovalLayoutsResult>;
 
   /**
    *
