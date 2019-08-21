@@ -40,6 +40,12 @@ export interface Schema {
 /**
  *
  */
+export type SObjectTypeString = string & { __SObjectTypeBrand: never };
+
+export type SObjectRelationshipString = string & {
+  __SObjectRelationshipBrand: never;
+};
+
 export type SObjectNames<S extends Schema> = StringKeys<S['SObjects']>;
 
 export type SObjectFieldNames<

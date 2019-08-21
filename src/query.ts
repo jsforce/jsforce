@@ -7,17 +7,13 @@ import { Logger, getLogger } from './util/logger';
 import RecordStream, { Serializable } from './record-stream';
 import Connection from './connection';
 import { createSOQL } from './soql-builder';
-import {
-  QueryConfig,
-  QueryCondition,
-  SortConfig,
-  SortDir,
-} from './soql-builder';
+import { QueryConfig as SOQLQueryConfig, Sort, SortDir } from './soql-builder';
 import {
   Record,
   Optional,
   Schema,
   SObjectNames,
+  SObjectRelationshipString,
   ChildRelationshipNames,
   ChildRelationshipSObjectName,
   FieldProjectionConfig,
@@ -26,30 +22,85 @@ import {
   SObjectRecord,
   SObjectUpdateRecord,
   SaveResult,
+  DateString,
+  SObjectChildRelationship,
 } from './types';
 import { identityFunc } from './util/function';
 import { Readable } from 'stream';
+import SfDate from './date';
 
 /**
- * type defs
+ *
  */
-export type QueryFieldsParam<
+export type QueryField<
   S extends Schema,
   N extends SObjectNames<S>,
   FP extends FieldPathSpecifier<S, N> = FieldPathSpecifier<S, N>
 > = FP | FP[] | string | string[];
 
-export type QueryConfigParam<S extends Schema, N extends SObjectNames<S>> = {
-  fields?: QueryFieldsParam<S, N>;
+/**
+ *
+ */
+type CValue<T> = T extends DateString
+  ? SfDate
+  : T extends string | number | boolean
+  ? T
+  : never;
+
+type CondOp<T> =
+  | ['$eq', CValue<T> | null]
+  | ['$ne', CValue<T> | null]
+  | ['$gt', CValue<T>]
+  | ['$gte', CValue<T>]
+  | ['$lt', CValue<T>]
+  | ['$lte', CValue<T>]
+  | ['$like', T extends string ? T : never]
+  | ['$nlike', T extends string ? T : never]
+  | ['$in', Array<CValue<T>>]
+  | ['$nin', Array<CValue<T>>]
+  | ['$includes', T extends string ? T[] : never]
+  | ['$excludes', T extends string ? T[] : never]
+  | ['$exists', boolean];
+
+type CondValueObj<T, Op = CondOp<T>[0]> = Op extends CondOp<T>[0]
+  ? Op extends string
+    ? { [K in Op]: Extract<CondOp<T>, [Op, any]>[1] }
+    : never
+  : never;
+
+type CondValue<T> = CValue<T> | Array<CValue<T>> | null | CondValueObj<T>;
+
+type ConditionSet<R extends Record> = {
+  [K in keyof R]?: CondValue<R[K]>;
+};
+
+export type QueryCondition<S extends Schema, N extends SObjectNames<S>> =
+  | {
+      $or: QueryCondition<S, N>[];
+    }
+  | {
+      $and: QueryCondition<S, N>[];
+    }
+  | ConditionSet<SObjectRecord<S, N>>;
+
+/**
+ *
+ */
+export type QueryConfig<
+  S extends Schema,
+  N extends SObjectNames<S>,
+  FP extends FieldPathSpecifier<S, N> = FieldPathSpecifier<S, N>
+> = {
+  fields?: QueryField<S, N, FP>;
   includes?: {
-    [CRN in ChildRelationshipNames<S, N>]?: QueryConfigParam<
+    [CRN in ChildRelationshipNames<S, N>]?: QueryConfig<
       S,
       ChildRelationshipSObjectName<S, N, CRN>
     >;
   };
   table?: string;
-  conditions?: QueryCondition;
-  sort?: SortConfig;
+  conditions?: QueryCondition<S, N>;
+  sort?: Sort;
   limit?: number;
   offset?: number;
 };
@@ -128,8 +179,8 @@ export default class Query<
   _logger: Logger;
   _soql: Optional<string>;
   _locator: Optional<string>;
-  _config: QueryConfig = {};
-  _children: SubQuery<S, N, any, any>[] = [];
+  _config: SOQLQueryConfig = {};
+  _children: SubQuery<S, N, R, QRT, any, any, any>[] = [];
   _options: QueryOptions;
   _executed: boolean = false;
   _finished: boolean = false;
@@ -145,7 +196,7 @@ export default class Query<
    */
   constructor(
     conn: Connection<S>,
-    config: string | QueryConfigParam<S, N> | { locator: string },
+    config: string | QueryConfig<S, N> | { locator: string },
     options?: Partial<QueryOptions>,
   ) {
     super();
@@ -161,7 +212,7 @@ export default class Query<
         this._locator = locator.split('/').pop();
       }
     } else {
-      const { fields, includes, sort, ..._config } = config as QueryConfigParam<
+      const { fields, includes, sort, ..._config } = config as QueryConfig<
         S,
         N
       >;
@@ -205,16 +256,15 @@ export default class Query<
   select<
     R extends Record = Record,
     FP extends FieldPathSpecifier<S, N> = FieldPathSpecifier<S, N>,
-    FPC extends FieldProjectionConfig = FieldPathScopedProjection<S, N, FP>
-  >(
-    fields: QueryFieldsParam<S, N, FP>,
-  ): Query<S, N, SObjectRecord<S, N, FPC, R>, QRT> {
+    FPC extends FieldProjectionConfig = FieldPathScopedProjection<S, N, FP>,
+    R2 extends SObjectRecord<S, N, FPC, R> = SObjectRecord<S, N, FPC, R>
+  >(fields: QueryField<S, N, FP>): Query<S, N, R2, QRT> {
     if (this._soql) {
       throw Error(
         'Cannot set select fields for the query which has already built SOQL.',
       );
     }
-    function toFieldArray(fields: QueryFieldsParam<S, N, FP>): string[] {
+    function toFieldArray(fields: QueryField<S, N, FP>): string[] {
       return typeof fields === 'string'
         ? fields.split(/\s*,\s*/)
         : Array.isArray(fields)
@@ -226,13 +276,14 @@ export default class Query<
             .map(([f]) => f);
     }
     this._config.fields = toFieldArray(fields);
-    return this as Query<S, N, any, QRT>;
+    // force convert query record type without changing instance;
+    return (this as any) as Query<S, N, R2, QRT>;
   }
 
   /**
    * Set query conditions to filter the result records
    */
-  where(conditions: QueryCondition) {
+  where(conditions: QueryCondition<S, N> | string) {
     if (this._soql) {
       throw Error(
         'Cannot set where conditions for the query which has already built SOQL.',
@@ -276,7 +327,7 @@ export default class Query<
   /**
    * Set query sort with direction
    */
-  sort(sort: SortConfig, dir?: SortDir) {
+  sort(sort: Sort, dir?: SortDir) {
     if (this._soql) {
       throw Error(
         'Cannot set sort for the query which has already built SOQL.',
@@ -300,19 +351,22 @@ export default class Query<
    */
   include<
     CRN extends ChildRelationshipNames<S, N>,
-    CN extends ChildRelationshipSObjectName<S, N, CRN>
+    CN extends ChildRelationshipSObjectName<S, N, CRN>,
+    CFP extends FieldPathSpecifier<S, CN> = FieldPathSpecifier<S, CN>,
+    CFPC extends FieldProjectionConfig = FieldPathScopedProjection<S, CN, CFP>,
+    CR extends Record = SObjectRecord<S, CN, CFPC>
   >(
-    childRelName: CRN,
-    conditions?: Optional<QueryCondition>,
-    fields?: Optional<QueryFieldsParam<S, CN>>,
-    options: { limit?: number; offset?: number; sort?: SortConfig } = {},
-  ): SubQuery<S, N, CRN> {
+    childRelName: CRN | SObjectRelationshipString,
+    conditions?: Optional<QueryCondition<S, CN>>,
+    fields?: Optional<QueryField<S, CN, CFP>>,
+    options: { limit?: number; offset?: number; sort?: Sort } = {},
+  ): SubQuery<S, N, R, QRT, CRN, CN, CR> {
     if (this._soql) {
       throw Error(
         'Cannot include child relationship into the query which has already built SOQL.',
       );
     }
-    const childConfig: QueryConfigParam<S, CN> = {
+    const childConfig: QueryConfig<S, CN, CFP> = {
       fields: fields === null ? undefined : fields,
       table: childRelName,
       conditions: conditions === null ? undefined : conditions,
@@ -321,9 +375,9 @@ export default class Query<
       sort: options.sort,
     };
     // eslint-disable-next-line no-use-before-define
-    const childQuery = new SubQuery(
+    const childQuery = new SubQuery<S, N, R, QRT, CRN, CN, CR>(
       this._conn,
-      childRelName,
+      childRelName as CRN,
       childConfig,
       this,
     );
@@ -336,7 +390,7 @@ export default class Query<
    */
   includeChildren(
     includes: {
-      [CRN in ChildRelationshipNames<S, N>]?: QueryConfigParam<
+      [CRN in ChildRelationshipNames<S, N>]?: QueryConfig<
         S,
         ChildRelationshipSObjectName<S, N, CRN>
       >;
@@ -351,7 +405,7 @@ export default class Query<
     for (const crname of Object.keys(includes) as CRN[]) {
       const { conditions, fields, ...options } = includes[
         crname
-      ] as QueryConfigParam<S, ChildRelationshipSObjectName<S, N, CRN>>;
+      ] as QueryConfig<S, ChildRelationshipSObjectName<S, N, CRN>>;
       this.include(crname, conditions, fields, options);
     }
     return this;
@@ -390,6 +444,7 @@ export default class Query<
     if (responseTarget in ResponseTargets) {
       this._options.responseTarget = responseTarget;
     }
+    // force change query response target without changing instance
     return (this as Query<S, N, R>) as Query<S, N, R, QRT1>;
   }
 
@@ -576,14 +631,14 @@ export default class Query<
     this._config.includes = this._children
       .map((cquery) => {
         const cconfig = cquery._query._config;
-        return [cconfig.table, cconfig] as [string, QueryConfig];
+        return [cconfig.table, cconfig] as [string, SOQLQueryConfig];
       })
       .reduce(
-        (includes: { [name: string]: QueryConfig }, [ctable, cconfig]) => {
-          includes[ctable] = cconfig; // eslint-disable-line no-param-reassign
-          return includes;
-        },
-        {},
+        (includes, [ctable, cconfig]) => ({
+          ...includes,
+          [ctable]: cconfig,
+        }),
+        {} as { [name: string]: SOQLQueryConfig },
       );
   }
 
@@ -630,15 +685,18 @@ export default class Query<
   /**
    *
    */
-  async _expandAsteriskField(table: string, field: string): Promise<string[]> {
-    this._logger.debug(`expanding field "${field}" in "${table}"...`);
+  async _expandAsteriskField(
+    sobject: string,
+    field: string,
+  ): Promise<string[]> {
+    this._logger.debug(`expanding field "${field}" in "${sobject}"...`);
     const fpath = field.split('.');
     if (fpath[fpath.length - 1] === '*') {
-      const sobject = await this._conn.describe$(table);
-      this._logger.debug(`table ${table} has been described`);
+      const so = await this._conn.describe$(sobject);
+      this._logger.debug(`table ${sobject} has been described`);
       if (fpath.length > 1) {
         const rname = fpath.shift();
-        for (const f of sobject.fields) {
+        for (const f of so.fields) {
           if (
             f.relationshipName &&
             rname &&
@@ -656,7 +714,7 @@ export default class Query<
         }
         return [];
       }
-      return sobject.fields.map((f) => f.name);
+      return so.fields.map((f) => f.name);
     }
     return [field];
   }
@@ -908,18 +966,18 @@ export default class Query<
 export class SubQuery<
   S extends Schema,
   PN extends SObjectNames<S>,
+  PR extends Record,
+  PQRT extends QueryResponseTarget,
   CRN extends ChildRelationshipNames<S, PN> = ChildRelationshipNames<S, PN>,
   CN extends ChildRelationshipSObjectName<
     S,
     PN,
     CRN
   > = ChildRelationshipSObjectName<S, PN, CRN>,
-  PR extends Record = Record,
-  PQRT extends QueryResponseTarget = QueryResponseTarget,
   CR extends Record = Record
 > {
   _relName: CRN;
-  _query: Query<S, CN>;
+  _query: Query<S, CN, CR>;
   _parent: Query<S, PN, PR, PQRT>;
 
   /**
@@ -928,7 +986,7 @@ export class SubQuery<
   constructor(
     conn: Connection<S>,
     relName: CRN,
-    config: QueryConfigParam<S, CN>,
+    config: QueryConfig<S, CN>,
     parent: Query<S, PN, PR, PQRT>,
   ) {
     this._relName = relName;
@@ -944,16 +1002,25 @@ export class SubQuery<
     FP extends FieldPathSpecifier<S, CN> = FieldPathSpecifier<S, CN>,
     FPC extends FieldProjectionConfig = FieldPathScopedProjection<S, CN, FP>
   >(
-    fields: QueryFieldsParam<S, CN, FP>,
-  ): SubQuery<S, PN, CRN, CN, PR, PQRT, SObjectRecord<S, CN, FPC, R>> {
-    this._query = this._query.select(fields);
-    return this;
+    fields: QueryField<S, CN, FP>,
+  ): SubQuery<S, PN, PR, PQRT, CRN, CN, SObjectRecord<S, CN, FPC, R>> {
+    // force convert query record type without changing instance
+    this._query = this._query.select(fields) as any;
+    return (this as any) as SubQuery<
+      S,
+      PN,
+      PR,
+      PQRT,
+      CRN,
+      CN,
+      SObjectRecord<S, CN, FPC, R>
+    >;
   }
 
   /**
    *
    */
-  where(conditions: QueryCondition): this {
+  where(conditions: QueryCondition<S, CN> | string): this {
     this._query = this._query.where(conditions);
     return this;
   }
@@ -982,7 +1049,7 @@ export class SubQuery<
   /**
    * Set query sort with direction
    */
-  sort(sort: SortConfig, dir?: SortDir) {
+  sort(sort: Sort, dir?: SortDir) {
     this._query = this._query.sort(sort, dir);
     return this;
   }
@@ -1003,7 +1070,9 @@ export class SubQuery<
   /**
    * Back the context to parent query object
    */
-  end() {
-    return this._parent;
+  end<
+    PR1 extends Record = PR & SObjectChildRelationship<S, PN, CRN, CR>
+  >(): Query<S, PN, PR1, PQRT> {
+    return (this._parent as any) as Query<S, PN, PR1, PQRT>;
   }
 }

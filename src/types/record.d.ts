@@ -2,9 +2,9 @@ import { Record } from './type';
 import {
   Schema,
   SObjectDefinition,
+  ParentReferenceNames,
   ParentReferenceSObjectName,
   SObjectNames,
-  ParentReferenceNames,
 } from './schema';
 import {
   FieldProjectionConfig,
@@ -12,7 +12,12 @@ import {
   FieldPathSpecifier,
   FieldProjectionConfigObject,
 } from './projection';
-import { StringKeys, PickIfMatch, ConditionalPartial } from './util';
+import {
+  StringKeys,
+  PickIfMatch,
+  ConditionalPartial,
+  IsEqualType,
+} from './util';
 
 /**
  *
@@ -48,14 +53,16 @@ type RecordWithChildRelations<
     IsPartial
   >;
 
+type ChildRelationRecordSet<R extends Record> = {
+  totalSize: number;
+  done: boolean;
+  records: R[];
+};
+
 type ChildRelationObject<
   CO extends SObjectDefinition,
   IsPartial extends boolean = false
-> = {
-  totalSize: number;
-  done: boolean;
-  records: RecordWithParentRefs<CO, IsPartial>[];
-};
+> = ChildRelationRecordSet<RecordWithParentRefs<CO, IsPartial>>;
 
 /**
  *
@@ -124,13 +131,22 @@ type RecordFieldProjection<
       RecordFieldProjectionForString<S, SO, FPCS> &
       RecordFieldProjectionForObjectConfig<S, SO, FPCO>;
 
+export type SObjectChildRelationship<
+  S extends Schema,
+  N extends string,
+  CRN extends string,
+  CR extends Record
+> = { [K in CRN]: ChildRelationRecordSet<CR> | null };
+
 export type SObjectRecord<
   S extends Schema,
   N extends string,
   FPC extends FieldProjectionConfig = '*',
   R extends Record = Record,
   Option extends Partial<{ Extend: boolean }> = {}
-> = Record extends R
+> = IsEqualType<N, SObjectNames<S>> extends true
+  ? R
+  : IsEqualType<R, Record> extends true
   ? RecordFieldProjection<S, N, FPC> & Record
   : Option['Extend'] extends true
   ? RecordFieldProjection<S, N, FPC> & Record & R
