@@ -211,14 +211,11 @@ export default class HttpApi<S extends Schema> extends EventEmitter {
     }
     if (response.statusCode === 300) {
       // Multiple Choices
-      throw new (class extends Error {
-        content: any;
-        constructor(name: string, message: string, content: Optional<string>) {
-          super(message);
-          this.name = name;
-          this.content = content;
-        }
-      })('MULTIPLE_CHOICES', 'Multiple records found', body);
+      throw new HttpApiError(
+        'Multiple records found',
+        'MULTIPLE_CHOICES',
+        body,
+      );
     }
     return body;
   }
@@ -276,13 +273,20 @@ export default class HttpApi<S extends Schema> extends EventEmitter {
             errorCode: `ERROR_HTTP_${response.statusCode}`,
             message: response.body,
           };
-    return new (class extends Error {
-      errorCode: string;
-      constructor({ message, errorCode }: SaveError) {
-        super(message);
-        this.name = errorCode || this.name;
-        this.errorCode = this.name;
-      }
-    })(error);
+    return new HttpApiError(error.message, error.errorCode);
+  }
+}
+
+/**
+ *
+ */
+class HttpApiError extends Error {
+  errorCode: string;
+  content: any;
+  constructor(message: string, errorCode?: string | undefined, content?: any) {
+    super(message);
+    this.name = errorCode || this.name;
+    this.errorCode = this.name;
+    this.content = content;
   }
 }
