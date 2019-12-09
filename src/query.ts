@@ -362,7 +362,7 @@ export default class Query<
   /**
    * Synonym of Query#sort()
    */
-  orderby = this.sort;
+  orderby: typeof Query.prototype.sort = this.sort;
 
   /**
    * Include child relationship query and move down to the child query context
@@ -1108,7 +1108,7 @@ export class SubQuery<
   /**
    * Synonym of SubQuery#sort()
    */
-  orderby = this.sort;
+  orderby: typeof SubQuery.prototype.sort = this.sort;
 
   /**
    *
