@@ -6,13 +6,7 @@ import { Logger, getLogger } from './util/logger';
 import { StreamPromise } from './util/promise';
 import Connection from './connection';
 import Transport from './transport';
-import {
-  HttpRequest,
-  HttpResponse,
-  SaveError,
-  Optional,
-  Schema,
-} from './types';
+import { HttpRequest, HttpResponse, Optional, Schema } from './types';
 
 /** @private */
 function parseJSON(str: string) {
