@@ -4,7 +4,7 @@ import {
   ConnectionConfig,
   PersistConnectionConfig,
   ClientConfig,
-} from './registry';
+} from './types';
 import { Connection } from '../core';
 
 /**

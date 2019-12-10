@@ -7,7 +7,7 @@ import VERSION from './VERSION';
 import Connection from './connection';
 import OAuth2 from './oauth2';
 import SfDate from './date';
-import { Registry, EmptyRegistry } from './registry';
+import registry, { Registry } from './registry';
 
 const jsforce = new (class extends EventEmitter {
   VERSION: typeof VERSION = VERSION;
@@ -15,7 +15,7 @@ const jsforce = new (class extends EventEmitter {
   OAuth2: typeof OAuth2 = OAuth2;
   SfDate: typeof SfDate = SfDate;
   Date: typeof SfDate = SfDate;
-  registry: Registry = new EmptyRegistry();
+  registry: Registry = registry;
 })();
 
 export { VERSION, Connection, OAuth2, SfDate as Date, SfDate };

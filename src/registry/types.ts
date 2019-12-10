@@ -7,6 +7,8 @@ import Connection from '../connection';
 export type ConnectionConfig = {
   instanceUrl?: string;
   accessToken?: string;
+  refreshToken?: string;
+  loginUrl?: string;
   oauth2?: ClientConfig;
 };
 
@@ -17,7 +19,9 @@ export type PersistConnectionConfig = {
 };
 
 export type ClientConfig = {
-  clientId: string;
+  clientId?: string;
+  clientSecret?: string;
+  redirectUri?: string;
   loginUrl?: string;
 };
 

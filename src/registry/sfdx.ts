@@ -1,6 +1,6 @@
 import { execSync } from 'child_process';
-import { Registry, ConnectionConfig, ClientConfig } from './registry';
-import { Connection } from 'src/core';
+import { Registry, ConnectionConfig, ClientConfig } from './types';
+import { Connection } from '..';
 
 type SfdxCommandOutput = {
   status: number;
