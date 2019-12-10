@@ -4,37 +4,67 @@
 import { Logger, getLogger } from './util/logger';
 import {
   Record,
-  UnsavedRecord,
   DescribeLayoutResult,
   DescribeCompactLayoutsResult,
   DescribeApprovalLayoutsResult,
   Optional,
+  DmlOptions,
+  SaveResult,
+  RetrieveOptions,
+  Schema,
+  SObjectNames,
+  SObjectRecord,
+  SObjectInputRecord,
+  SObjectUpdateRecord,
+  ChildRelationshipNames,
+  ChildRelationshipSObjectName,
+  SObjectFieldNames,
+  FieldProjectionConfig,
+  FieldPathSpecifier,
+  FieldPathScopedProjection,
 } from './types';
 import Connection from './connection';
 import RecordReference from './record-reference';
-import Query, { ResponseTargets } from './query';
+import Query, {
+  ResponseTargets,
+  QueryOptions,
+  QueryField,
+  QueryCondition,
+  QueryConfig,
+} from './query';
 import QuickAction from './quick-action';
-import { QueryFieldsParam, QueryOptions, QueryConfigParam } from './query';
-import { QueryCondition, SortConfig } from './soql-builder';
 import { CachedFunction } from './cache';
 
-export type FindOptions = Partial<
-  QueryOptions & {
-    limit: number;
-    offset: number;
-    sort: SortConfig;
-    includes: { [name: string]: QueryConfigParam };
-  }
+type ChildQueryConfigParam<
+  S extends Schema,
+  N extends SObjectNames<S>,
+  CRN extends ChildRelationshipNames<S, N>,
+  CN extends SObjectNames<S> = ChildRelationshipSObjectName<S, N, CRN>
+> = QueryConfig<S, CN>;
+
+export type FindOptions<S extends Schema, N extends SObjectNames<S>> = Partial<
+  QueryOptions &
+    Pick<QueryConfig<S, N>, 'sort' | 'includes'> & {
+      limit: number;
+      offset: number;
+    }
 >;
 
 /**
  * A class for organizing all SObject access
  */
-export default class SObject {
+export default class SObject<
+  S extends Schema,
+  N extends SObjectNames<S>,
+  FieldNames extends SObjectFieldNames<S, N> = SObjectFieldNames<S, N>,
+  RetrieveRecord extends SObjectRecord<S, N, '*'> = SObjectRecord<S, N, '*'>,
+  InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>,
+  UpdateRecord extends SObjectUpdateRecord<S, N> = SObjectUpdateRecord<S, N>
+> {
   static _logger = getLogger('sobject');
 
-  type: string;
-  _conn: Connection;
+  type: N;
+  _conn: Connection<S>;
   _logger: Logger;
 
   // layouts: (ln?: string) => Promise<DescribeLayoutResult>;
@@ -47,12 +77,12 @@ export default class SObject {
   approvalLayouts$: CachedFunction<
     () => Promise<DescribeApprovalLayoutsResult>
   >;
-  approvalLayouts$$: CachedFunction<() => DescribeCompactLayoutsResult>;
+  approvalLayouts$$: CachedFunction<() => DescribeApprovalLayoutsResult>;
 
   /**
    *
    */
-  constructor(conn: Connection, type: string) {
+  constructor(conn: Connection<S>, type: N) {
     this.type = type;
     this._conn = conn;
     this._logger = conn._logLevel
@@ -109,7 +139,13 @@ export default class SObject {
   /**
    * Create records
    */
-  create(records: UnsavedRecord | UnsavedRecord[], options?: Object) {
+  create(records: InputRecord, options?: DmlOptions): Promise<SaveResult>;
+  create(records: InputRecord[], options?: DmlOptions): Promise<SaveResult[]>;
+  create(
+    records: InputRecord | InputRecord[],
+    options?: DmlOptions,
+  ): Promise<SaveResult | SaveResult[]>;
+  async create(records: InputRecord | InputRecord[], options?: DmlOptions) {
     return this._conn.create(this.type, records, options);
   }
 
@@ -121,6 +157,12 @@ export default class SObject {
   /**
    * Retrieve specified records
    */
+  retrieve(ids: string, options?: RetrieveOptions): Promise<RetrieveRecord>;
+  retrieve(ids: string[], options?: RetrieveOptions): Promise<RetrieveRecord[]>;
+  retrieve(
+    ids: string | string[],
+    options?: RetrieveOptions,
+  ): Promise<RetrieveRecord | RetrieveRecord[]>;
   retrieve(ids: string | string[], options?: Object) {
     return this._conn.retrieve(this.type, ids, options);
   }
@@ -128,21 +170,52 @@ export default class SObject {
   /**
    * Update records
    */
-  update(records: Record | Record[], options?: Object) {
+  update(records: UpdateRecord, options?: DmlOptions): Promise<SaveResult>;
+  update(records: UpdateRecord[], options?: DmlOptions): Promise<SaveResult[]>;
+  update(
+    records: UpdateRecord | UpdateRecord[],
+    options?: DmlOptions,
+  ): Promise<SaveResult | SaveResult[]>;
+  update(records: UpdateRecord | UpdateRecord[], options?: DmlOptions) {
     return this._conn.update(this.type, records, options);
   }
 
   /**
    * Upsert records
    */
-  upsert(records: Record | Record[], extIdField: string, options?: Object) {
+  upsert(
+    records: InputRecord,
+    extIdField: FieldNames,
+    options?: DmlOptions,
+  ): Promise<SaveResult>;
+  upsert(
+    records: InputRecord[],
+    extIdField: FieldNames,
+    options?: DmlOptions,
+  ): Promise<SaveResult[]>;
+  upsert(
+    records: InputRecord | InputRecord[],
+    extIdField: FieldNames,
+    options?: DmlOptions,
+  ): Promise<SaveResult | SaveResult[]>;
+  upsert(
+    records: Record | Record[],
+    extIdField: FieldNames,
+    options?: DmlOptions,
+  ) {
     return this._conn.upsert(this.type, records, extIdField, options);
   }
 
   /**
    * Delete records
    */
-  destroy(ids: string | string[], options?: Object) {
+  destroy(ids: string, options?: DmlOptions): Promise<SaveResult>;
+  destroy(ids: string[], options?: DmlOptions): Promise<SaveResult[]>;
+  destroy(
+    ids: string | string[],
+    options?: DmlOptions,
+  ): Promise<SaveResult | SaveResult[]>;
+  destroy(ids: string | string[], options?: DmlOptions) {
     return this._conn.destroy(this.type, ids, options);
   }
 
@@ -180,7 +253,7 @@ export default class SObject {
   /**
    * Get record representation instance by given id
    */
-  record(id: string) {
+  record(id: string): RecordReference<S, N> {
     return new RecordReference(this._conn, this.type, id);
   }
 
@@ -249,57 +322,80 @@ export default class SObject {
   /**
    * Find and fetch records which matches given conditions
    */
+  find<R extends Record = Record>(
+    conditions?: Optional<QueryCondition<S, N>>,
+  ): Query<S, N, SObjectRecord<S, N, '*', R>, 'Records'>;
+  find<
+    R extends Record = Record,
+    FP extends FieldPathSpecifier<S, N> = FieldPathSpecifier<S, N>,
+    FPC extends FieldProjectionConfig = FieldPathScopedProjection<S, N, FP>
+  >(
+    conditions: Optional<QueryCondition<S, N>>,
+    fields?: Optional<QueryField<S, N, FP>>,
+    options?: FindOptions<S, N>,
+  ): Query<S, N, SObjectRecord<S, N, FPC, R>, 'Records'>;
   find(
-    conditions?: Optional<QueryCondition>,
-    fields?: Optional<QueryFieldsParam>,
-    options: FindOptions = {},
-  ): Query {
+    conditions?: Optional<QueryCondition<S, N>>,
+    fields?: Optional<QueryField<S, N, FieldPathSpecifier<S, N>>>,
+    options: FindOptions<S, N> = {},
+  ): Query<S, N, any, 'Records'> {
     const { sort, limit, offset, ...qoptions } = options;
-    const config: QueryConfigParam = {
-      fields: fields === null ? undefined : fields,
+    const config: QueryConfig<S, N> = {
+      fields: fields == null ? undefined : fields,
       includes: options.includes,
       table: this.type,
-      conditions: conditions === null ? undefined : conditions,
+      conditions: conditions == null ? undefined : conditions,
       sort,
       limit,
       offset,
     };
-    const query = new Query(this._conn, config, null, qoptions);
-    query.setResponseTarget(ResponseTargets.Records);
-    return query;
+    const query = new Query<S, N>(this._conn, config, qoptions);
+    return query.setResponseTarget(ResponseTargets.Records);
   }
 
   /**
    * Fetch one record which matches given conditions
    */
+  findOne<R extends Record = Record>(
+    conditions?: Optional<QueryCondition<S, N>>,
+  ): Query<S, N, SObjectRecord<S, N, '*', R>, 'SingleRecord'>;
+  findOne<
+    R extends Record = Record,
+    FP extends FieldPathSpecifier<S, N> = FieldPathSpecifier<S, N>,
+    FPC extends FieldProjectionConfig = FieldPathScopedProjection<S, N, FP>
+  >(
+    conditions: Optional<QueryCondition<S, N>>,
+    fields?: Optional<QueryField<S, N, FP>>,
+    options?: FindOptions<S, N>,
+  ): Query<S, N, SObjectRecord<S, N, FPC, R>, 'SingleRecord'>;
   findOne(
-    conditions?: QueryCondition,
-    fields?: QueryFieldsParam,
-    options: Partial<QueryOptions> = {},
-  ): Query {
-    const query = this.find(
-      conditions,
-      fields,
-      Object.assign({}, options, { limit: 1 }),
-    );
-    query.setResponseTarget(ResponseTargets.SingleRecord);
-    return query;
+    conditions?: Optional<QueryCondition<S, N>>,
+    fields?: Optional<QueryField<S, N, FieldPathSpecifier<S, N>>>,
+    options: FindOptions<S, N> = {},
+  ): Query<S, N, any, 'SingleRecord'> {
+    const query = this.find(conditions, fields, { ...options, limit: 1 });
+    return query.setResponseTarget(ResponseTargets.SingleRecord);
   }
 
   /**
    * Find and fetch records only by specifying fields to fetch.
    */
-  select(fields: QueryFieldsParam) {
+  select<
+    R extends Record = Record,
+    FP extends FieldPathSpecifier<S, N> = FieldPathSpecifier<S, N>,
+    FPC extends FieldProjectionConfig = FieldPathScopedProjection<S, N, FP>
+  >(
+    fields: QueryField<S, N, FP>,
+  ): Query<S, N, SObjectRecord<S, N, FPC, R>, 'Records'> {
     return this.find(null, fields);
   }
 
   /**
    * Count num of records which matches given conditions
    */
-  count(conditions?: Optional<QueryCondition>) {
-    const query = this.find(conditions, { 'count()': true });
-    query.setResponseTarget(ResponseTargets.Count);
-    return query;
+  count(conditions?: Optional<QueryCondition<S, N>>) {
+    const query = this.find(conditions, 'count()');
+    return query.setResponseTarget(ResponseTargets.Count);
   }
 
   /**

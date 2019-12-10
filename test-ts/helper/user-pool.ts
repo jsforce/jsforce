@@ -1,15 +1,15 @@
-import { Connection } from '../..';
+import { Connection, Schema } from '../../src';
 import { delay } from '../util';
 
 /**
  *
  */
-export default class UserPool {
+export default class UserPool<S extends Schema = Schema> {
   _config: any; // TODO: remove any
-  _conn: Connection;
+  _conn: Connection<S>;
   _login: Promise<any> | void;
 
-  constructor(config: any, conn: Connection) {
+  constructor(config: any, conn: Connection<S>) {
     // TODO: remove any
     this._config = config;
     this._conn = conn;

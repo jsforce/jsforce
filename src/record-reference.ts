@@ -2,20 +2,32 @@
  *
  */
 import Connection from './connection';
-import { UnsavedRecord } from './types';
+import {
+  RetrieveOptions,
+  DmlOptions,
+  Schema,
+  SObjectNames,
+  SObjectInputRecord,
+  SObjectUpdateRecord,
+} from './types';
 
 /**
  * Remote reference to record information
  */
-export default class RecordReference {
-  type: string;
+export default class RecordReference<
+  S extends Schema,
+  N extends SObjectNames<S>,
+  InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>,
+  RetrieveRecord extends SObjectUpdateRecord<S, N> = SObjectUpdateRecord<S, N>
+> {
+  type: N;
   id: string;
-  _conn: Connection;
+  _conn: Connection<S>;
 
   /**
    *
    */
-  constructor(conn: Connection, type: string, id: string) {
+  constructor(conn: Connection<S>, type: N, id: string) {
     this._conn = conn;
     this.type = type;
     this.id = id;
@@ -24,22 +36,23 @@ export default class RecordReference {
   /**
    * Retrieve record field information
    */
-  retrieve(options?: Object) {
-    return this._conn.retrieve(this.type, this.id, options);
+  async retrieve(options?: RetrieveOptions) {
+    const rec = await this._conn.retrieve(this.type, this.id, options);
+    return rec as RetrieveRecord;
   }
 
   /**
    * Update record field information
    */
-  update(record: UnsavedRecord, options?: Object) {
-    const _record = Object.assign({}, record, { Id: this.id });
-    return this._conn.update(this.type, _record, options);
+  async update(record: InputRecord, options?: DmlOptions) {
+    const record_ = { ...record, Id: this.id };
+    return this._conn.update(this.type, record_, options);
   }
 
   /**
    * Delete record field
    */
-  destroy(options?: Object) {
+  destroy(options?: DmlOptions) {
     return this._conn.destroy(this.type, this.id, options);
   }
 

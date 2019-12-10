@@ -4,18 +4,18 @@
  */
 import jsforce from '../core';
 import Connection from '../connection';
-import { HttpRequest, HttpMethods } from '../types';
+import { HttpRequest, HttpMethods, Schema } from '../types';
 
 /**
  * API class for Apex REST endpoint call
  */
-export default class Apex {
-  _conn: Connection;
+export default class Apex<S extends Schema> {
+  _conn: Connection<S>;
 
   /**
    *
    */
-  constructor(conn: Connection) {
+  constructor(conn: Connection<S>) {
     this._conn = conn;
   }
 

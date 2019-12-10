@@ -2,9 +2,10 @@ import assert from 'assert';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject, isString, isNumber, isUndefined } from './util';
+import { Record } from '../src';
 
 const connMgr = new ConnectionManager(config);
-const conn: any = connMgr.createConnection();
+const conn = connMgr.createConnection();
 
 /**
  *
@@ -39,7 +40,7 @@ describe('describe sobject', () => {
     assert.ok(isObject(res.sobjects[0]));
     assert.ok(isString(res.sobjects[0].name));
     assert.ok(isString(res.sobjects[0].label));
-    assert.ok(isUndefined(res.sobjects[0].fields));
+    assert.ok(isUndefined((res.sobjects[0] as any).fields));
     const res2 = await conn.describeGlobal$();
     assert.ok(res === res2);
     const res3 = conn.describeGlobal$$();
@@ -50,7 +51,7 @@ describe('describe sobject', () => {
     assert.ok(isObject(res4.sobjects[0]));
     assert.ok(isString(res4.sobjects[0].name));
     assert.ok(isString(res4.sobjects[0].label));
-    assert.ok(isUndefined(res4.sobjects[0].fields));
+    assert.ok(isUndefined((res4.sobjects[0] as any).fields));
   });
 });
 
@@ -91,18 +92,18 @@ describe('recent records', () => {
 
   //
   test('create, update, delete account records', async () => {
-    const accs = [{ Name: 'Hello' }, { Name: 'World' }];
+    const accs: Record[] = [{ Name: 'Hello' }, { Name: 'World' }];
     const rets = await conn.sobject('Account').create(accs);
-    const id1 = rets[0].id;
-    const id2 = rets[1].id;
+    const id1 = rets[0].success ? rets[0].id : null;
+    const id2 = rets[1].id ? rets[1].id : null;
     await Promise.all([
       conn
         .sobject('Account')
-        .record(id1)
+        .record(id1 as string)
         .update({ Name: 'Hello2' }),
       conn
         .sobject('Account')
-        .record(id2)
+        .record(id2 as string)
         .destroy(),
     ]);
     assert.ok(true);
@@ -171,10 +172,13 @@ describe('limit info', () => {
   test('get current limit information and check api usage and its limit in the org', () => {
     const limitInfo = conn.limitInfo;
     assert.ok(isObject(limitInfo.apiUsage));
-    assert.ok(isNumber(limitInfo.apiUsage.used));
-    assert.ok(isNumber(limitInfo.apiUsage.limit));
-    assert.ok(limitInfo.apiUsage.used > 0);
-    assert.ok(limitInfo.apiUsage.limit >= limitInfo.apiUsage.used);
+    // TODO: delete if check when assertions in control flow analysis is introduced to TS
+    if (limitInfo.apiUsage) {
+      assert.ok(isNumber(limitInfo.apiUsage.used));
+      assert.ok(isNumber(limitInfo.apiUsage.limit));
+      assert.ok(limitInfo.apiUsage.used > 0);
+      assert.ok(limitInfo.apiUsage.limit >= limitInfo.apiUsage.used);
+    }
   });
 
   //

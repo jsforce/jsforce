@@ -1,4 +1,4 @@
-import { Connection } from '../..';
+import { Connection, Schema } from '../../src';
 import UserPool from './user-pool';
 import { getConnectionConfig as getNodeConnectionConfig } from './node/connection';
 import { getConnectionConfig as getBrowserConnectionConfig } from './browser/connection';
@@ -26,11 +26,11 @@ export default class ConnectionManager {
     this._idmap = {};
   }
 
-  createConnection() {
-    return new Connection(getConnectionConfig(this._config));
+  createConnection<S extends Schema = Schema>() {
+    return new Connection<S>(getConnectionConfig(this._config));
   }
 
-  async establishConnection(conn: Connection) {
+  async establishConnection<S extends Schema>(conn: Connection<S>) {
     const userPool = this._userPool;
     const config = this._config;
     const username = await (userPool ? userPool.checkout() : config.username);
@@ -39,7 +39,7 @@ export default class ConnectionManager {
     await conn.login(username, config.password);
   }
 
-  async closeConnection(conn: Connection) {
+  async closeConnection<S extends Schema>(conn: Connection<S>) {
     const userPool = this._userPool;
     try {
       await conn.apex.delete('/JSforceTestData/');

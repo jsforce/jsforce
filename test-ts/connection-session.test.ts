@@ -2,13 +2,13 @@ import assert from 'assert';
 import { delay } from './util';
 import authorize from './helper/webauth';
 import config from './config';
-import { Connection } from '..';
+import { Connection } from '../src';
 
 /**
  *
  */
 describe('login', () => {
-  let conn: any; // TODO: remove any
+  let conn: Connection;
 
   //
   test('login by username and password', async () => {
@@ -50,7 +50,7 @@ describe('login', () => {
  *
  */
 describe('logout', () => {
-  let sessionInfo: any; // TODO: remove any
+  let sessionInfo: { sessionId: string; serverUrl: string };
 
   //
   test('logout from soap session', async () => {
@@ -60,7 +60,7 @@ describe('logout', () => {
     });
     await conn1.loginBySoap(config.username, config.password);
     sessionInfo = {
-      sessionId: conn1.accessToken,
+      sessionId: conn1.accessToken!,
       serverUrl: conn1.instanceUrl,
     };
     await conn1.logout();
@@ -89,7 +89,7 @@ describe('logout', () => {
  *
  */
 describe('oauth2 session', () => {
-  let sessionInfo: any; // TODO: remove any
+  let sessionInfo: { accessToken: string; instanceUrl: string };
 
   //
   test('logout oauth2 session', async () => {
@@ -103,7 +103,7 @@ describe('oauth2 session', () => {
     });
     await conn.loginByOAuth2(config.username, config.password);
     sessionInfo = {
-      accessToken: conn.accessToken,
+      accessToken: conn.accessToken!,
       instanceUrl: conn.instanceUrl,
     };
     await conn.logout();
@@ -131,7 +131,7 @@ describe('oauth2 session', () => {
  *
  */
 describe('oauth2 refresh', () => {
-  let conn: any; // TODO: remove any
+  let conn: Connection;
 
   //
   test('authorize web server flow to get access tokens', async () => {
@@ -157,12 +157,11 @@ describe('oauth2 refresh', () => {
 
   //
   test('make access token invalid and return responses', async () => {
-    let accessToken;
+    let accessToken: string | undefined = undefined;
     let refreshCount = 0;
     conn.accessToken = 'invalid access token';
     conn.removeAllListeners('refresh');
-    conn.on('refresh', (at: any) => {
-      // TODO: remove any
+    conn.on('refresh', (at: string) => {
       accessToken = at;
       refreshCount += 1;
     });
@@ -174,17 +173,16 @@ describe('oauth2 refresh', () => {
 
   //
   test('make access token invalid and call in parallel and return responses', async () => {
-    let accessToken;
+    let accessToken: string | undefined = undefined;
     let refreshCount = 0;
     conn.accessToken = 'invalid access token';
     conn.removeAllListeners('refresh');
-    conn.on('refresh', (at: any) => {
-      // TODO: remove any
+    conn.on('refresh', (at: string) => {
       accessToken = at;
       refreshCount += 1;
     });
     const results = await Promise.all([
-      conn.query('SELECT Id FROM User'),
+      Promise.resolve(conn.query('SELECT Id FROM User')),
       conn.describeGlobal(),
       conn.sobject('User').describe(),
     ]);

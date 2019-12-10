@@ -6,7 +6,7 @@ import { Logger, getLogger } from './util/logger';
 import { StreamPromise } from './util/promise';
 import Connection from './connection';
 import Transport from './transport';
-import { HttpRequest, HttpResponse, SaveError, Optional } from './types';
+import { HttpRequest, HttpResponse, Optional, Schema } from './types';
 
 /** @private */
 function parseJSON(str: string) {
@@ -42,16 +42,16 @@ function parseText(str: string) {
 /**
  * HTTP based API class with authorization hook
  */
-export default class HttpApi extends EventEmitter {
+export default class HttpApi<S extends Schema> extends EventEmitter {
   static _logger = getLogger('http-api');
 
-  _conn: Connection;
+  _conn: Connection<S>;
   _logger: Logger;
   _transport: Transport;
   _responseType: string | void;
   _noContentResponse: string | void;
 
-  constructor(conn: Connection, options: any) {
+  constructor(conn: Connection<S>, options: any) {
     super();
     this._conn = conn;
     this._logger = conn._logLevel
@@ -205,14 +205,11 @@ export default class HttpApi extends EventEmitter {
     }
     if (response.statusCode === 300) {
       // Multiple Choices
-      throw new (class extends Error {
-        content: any;
-        constructor(name: string, message: string, content: Optional<string>) {
-          super(message);
-          this.name = name;
-          this.content = content;
-        }
-      })('MULTIPLE_CHOICES', 'Multiple records found', body);
+      throw new HttpApiError(
+        'Multiple records found',
+        'MULTIPLE_CHOICES',
+        body,
+      );
     }
     return body;
   }
@@ -270,13 +267,20 @@ export default class HttpApi extends EventEmitter {
             errorCode: `ERROR_HTTP_${response.statusCode}`,
             message: response.body,
           };
-    return new (class extends Error {
-      errorCode: string;
-      constructor({ message, errorCode }: SaveError) {
-        super(message);
-        this.name = errorCode || this.name;
-        this.errorCode = this.name;
-      }
-    })(error);
+    return new HttpApiError(error.message, error.errorCode);
+  }
+}
+
+/**
+ *
+ */
+class HttpApiError extends Error {
+  errorCode: string;
+  content: any;
+  constructor(message: string, errorCode?: string | undefined, content?: any) {
+    super(message);
+    this.name = errorCode || this.name;
+    this.errorCode = this.name;
+    this.content = content;
   }
 }

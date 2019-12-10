@@ -5,14 +5,14 @@
 import SfDate from './date';
 import { Optional } from './types';
 
-export type QueryCondition =
+export type Condition =
   | string
   | { [field: string]: any }
   | Array<{ [field: string]: any }>;
 
-export type SortDir = 'ASC' | 'DESC' | 1 | -1;
+export type SortDir = 'ASC' | 'DESC' | 'asc' | 'desc' | 1 | -1;
 
-export type SortConfig =
+export type Sort =
   | string
   | Array<[string, SortDir]>
   | { [field: string]: SortDir };
@@ -21,8 +21,8 @@ export type QueryConfig = {
   fields?: string[];
   includes?: { [field: string]: QueryConfig };
   table?: string;
-  conditions?: QueryCondition;
-  sort?: SortConfig;
+  conditions?: Condition;
+  sort?: Sort;
   limit?: number;
   offset?: number;
 };
@@ -128,7 +128,7 @@ function createFieldExpression(field: string, value: any): Optional<string> {
 }
 
 /** @private **/
-function createOrderByClause(sort: SortConfig = []): string {
+function createOrderByClause(sort: Sort = []): string {
   let _sort: Array<[string, SortDir]> = [];
   if (typeof sort === 'string') {
     if (/,|\s+(asc|desc)\s*$/.test(sort)) {
@@ -178,14 +178,14 @@ type LogicalOperator = 'AND' | 'OR' | 'NOT';
 
 /** @private **/
 function createConditionClause(
-  conditions: QueryCondition = {},
+  conditions: Condition = {},
   operator: LogicalOperator = 'AND',
   depth: number = 0,
 ): string {
   if (typeof conditions === 'string') {
     return conditions;
   }
-  let conditionList: Array<{ key: string; value: QueryCondition }> = [];
+  let conditionList: Array<{ key: string; value: Condition }> = [];
   if (!Array.isArray(conditions)) {
     // if passed in hash object
     const conditionsMap = conditions;
