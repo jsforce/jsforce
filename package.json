@@ -22,8 +22,8 @@
       "url": "http://github.com/jsforce/jsforce/raw/master/LICENSE"
     }
   ],
-  "module": "./module",
   "main": "./index",
+  "module": "./module/index",
   "types": "./lib.es6/index",
   "scripts": {
     "clean": "rimraf lib.es6/* module/*",
@@ -110,5 +110,12 @@
     "through2": "^2.0.3",
     "ts-node": "^8.3.0",
     "typescript": "^3.5.3"
+  },
+  "browser": {
+    "./lib.es6/registry": "./lib.es6/browser/registry.js",
+    "./lib.es6/registry/index.js": "./lib.es6/browser/registry.js",
+    "./module/registry": "./module/browser/registry.js",
+    "./module/registry/index.js": "./module/browser/registry.js",
+    "request": "./lib.es6/browser/request.js"
   }
 }
