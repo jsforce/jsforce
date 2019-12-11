@@ -2,7 +2,7 @@
  * @file Registry for connection information, cached in local file system
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
-import Connection from '../connection';
+import { Connection, Schema } from '..';
 
 export type ConnectionConfig = {
   instanceUrl?: string;
@@ -36,7 +36,9 @@ export type RegistryConfig = {
  */
 export interface Registry {
   getConnectionNames(): Promise<string[]>;
-  getConnection(name?: string): Promise<Connection | null | undefined>;
+  getConnection<S extends Schema = Schema>(
+    name?: string,
+  ): Promise<Connection<S> | null | undefined>;
   getConnectionConfig(
     name?: string,
   ): Promise<ConnectionConfig | null | undefined>;

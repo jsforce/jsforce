@@ -1,6 +1,6 @@
 import { exec } from 'child_process';
 import { Registry, ConnectionConfig, ClientConfig } from './types';
-import { Connection } from '..';
+import { Connection, Schema } from '..';
 
 type SfdxCommandOutput = {
   status: number;
@@ -103,9 +103,9 @@ export class SfdxRegistry implements Registry {
     ];
   }
 
-  async getConnection(name?: string) {
+  async getConnection<S extends Schema = Schema>(name?: string) {
     const connConfig = await this.getConnectionConfig(name);
-    return new Connection(connConfig);
+    return new Connection<S>(connConfig);
   }
 
   async _getOrgInfo(username?: string) {

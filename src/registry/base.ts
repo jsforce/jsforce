@@ -5,7 +5,7 @@ import {
   PersistConnectionConfig,
   ClientConfig,
 } from './types';
-import { Connection } from '../core';
+import { Connection, Schema } from '..';
 
 /**
  *
@@ -32,9 +32,9 @@ export class BaseRegistry implements Registry {
     return Object.keys(this._getConnections());
   }
 
-  async getConnection(name: string) {
+  async getConnection<S extends Schema = Schema>(name: string) {
     const config = await this.getConnectionConfig(name);
-    return config ? new Connection(config) : null;
+    return config ? new Connection<S>(config) : null;
   }
 
   async getConnectionConfig(name?: string) {
