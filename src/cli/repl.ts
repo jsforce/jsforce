@@ -3,6 +3,7 @@
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  * @private
  */
+import { EventEmitter } from 'events';
 import { REPLServer, start as startRepl } from 'repl';
 import { Transform } from 'stream';
 import jsforce from '..';
@@ -231,8 +232,8 @@ export default class Repl {
     }
     replServer.defineCommand('connections', {
       help: 'List currenty registered Salesforce connections',
-      action: () => {
-        cli.listConnections();
+      action: async () => {
+        await cli.listConnections();
         replServer.displayPrompt();
       },
     });
@@ -377,8 +378,18 @@ export default class Repl {
     }
 
     const conn = cli.getCurrentConnection();
-    // define connection prototype functions as proxy
-    for (const prop in conn) {
+    // list all props in connection instance, other than EventEmitter or object built-in methods
+    const props: { [prop: string]: boolean } = {};
+    let o: object = conn;
+    while (o && o !== EventEmitter.prototype && o !== Object.prototype) {
+      for (const p of Object.getOwnPropertyNames(o)) {
+        if (p !== 'constructor') {
+          props[p] = true;
+        }
+      }
+      o = Object.getPrototypeOf(o);
+    }
+    for (const prop of Object.keys(props)) {
       if (typeof (global as any)[prop] !== 'undefined') {
         // avoid global override
         continue;
