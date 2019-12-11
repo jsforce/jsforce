@@ -18,6 +18,15 @@ import { ClientConfig } from '../registry/types';
 
 const registry = jsforce.registry;
 
+interface CliCommand extends Command {
+  connection?: string;
+  username?: string;
+  password?: string;
+  loginUrl?: string;
+  sandbox?: boolean;
+  evalScript?: string;
+}
+
 /**
  *
  */
@@ -31,7 +40,7 @@ export class Cli {
   /**
    *
    */
-  readCommand(): Command {
+  readCommand(): CliCommand {
     return new Command()
       .option('-u, --username [username]', 'Salesforce username')
       .option(
@@ -42,10 +51,9 @@ export class Cli {
         '-c, --connection [connection]',
         'Connection name stored in connection registry',
       )
-      .option('-e, --evalScript [evalScript]', 'Script to evaluate')
       .option('-l, --loginUrl [loginUrl]', 'Salesforce login url')
       .option('--sandbox', 'Login to Salesforce sandbox')
-      .option('--coffee', 'Using CoffeeScript')
+      .option('-e, --evalScript [evalScript]', 'Script to evaluate')
       .version(version)
       .parse(process.argv);
   }
@@ -53,18 +61,8 @@ export class Cli {
   async start() {
     const program = this.readCommand();
     this._outputEnabled = !program.evalScript;
-    const options = {
-      username: program.username,
-      password: program.password,
-    };
-    const loginUrl = program.loginUrl
-      ? program.loginUrl
-      : program.sandbox
-      ? 'sandbox'
-      : null;
-    this.setLoginServer(loginUrl);
     try {
-      await this.connect(program.connection, options);
+      await this.connect(program);
       if (program.evalScript) {
         this._repl.start({
           interactive: false,
@@ -129,20 +127,32 @@ export class Cli {
   /**
    *
    */
-  async connect(
-    name: string,
-    options: { username?: string; password?: string },
-  ) {
-    this._connName = name;
-    options = options || {};
-    let connConfig = await registry.getConnectionConfig(name);
+  async connect(params: {
+    username?: string;
+    password?: string;
+    connection?: string;
+    loginUrl?: string;
+    sandbox?: boolean;
+  }) {
+    const options = {
+      username: params.username,
+      password: params.password,
+    };
+    const loginUrl = params.loginUrl
+      ? params.loginUrl
+      : params.sandbox
+      ? 'sandbox'
+      : null;
+    this.setLoginServer(loginUrl);
+    this._connName = params.connection;
+    let connConfig = await registry.getConnectionConfig(params.connection);
     let username = options.username;
     if (!connConfig) {
       connConfig = {};
       if (this._defaultLoginUrl) {
         connConfig.loginUrl = this._defaultLoginUrl;
       }
-      username = name;
+      username = params.connection;
     }
     this._conn = new Connection(connConfig);
     const password = options.password;
