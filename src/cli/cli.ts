@@ -18,8 +18,6 @@ import { ClientConfig } from '../registry/types';
 
 const registry = jsforce.registry;
 
-console.log({ registry });
-
 /**
  *
  */
@@ -137,7 +135,7 @@ export class Cli {
   ) {
     this._connName = name;
     options = options || {};
-    let connConfig = registry.getConnectionConfig(name);
+    let connConfig = await registry.getConnectionConfig(name);
     let username = options.username;
     if (!connConfig) {
       connConfig = {};
@@ -216,7 +214,7 @@ export class Cli {
    */
   async authorize(clientName: string) {
     const name = clientName || 'default';
-    var oauth2Config = registry.getClient(name);
+    var oauth2Config = await registry.getClientConfig(name);
     if (!oauth2Config || !oauth2Config.clientId) {
       if (name === 'default' || name === 'sandbox') {
         this.print(
@@ -281,7 +279,7 @@ export class Cli {
     if (clientName === 'sandbox') {
       clientConfig.loginUrl = 'https://test.salesforce.com';
     }
-    registry.registerClient(clientName, clientConfig);
+    await registry.registerClientConfig(clientName, clientConfig);
     this.print('Client information downloaded successfully.');
     return this.authorize(clientName);
   }
@@ -336,7 +334,8 @@ export class Cli {
       redirectUri: 'Input redirect URI : ',
       loginUrl: 'Input login URL (default is https://login.salesforce.com) : ',
     };
-    if (registry.getClient(name)) {
+    const registered = await registry.getClientConfig(name);
+    if (registered) {
       const msg = `Client '${name}' is already registered. Are you sure you want to override ? [yN] : `;
       const ok = await this.promptConfirm(msg);
       if (!ok) {
@@ -358,15 +357,15 @@ export class Cli {
       }
       return cconfig;
     }, Promise.resolve(clientConfig));
-    registry.registerClient(name, clientConfig);
+    await registry.registerClientConfig(name, clientConfig);
     this.print('Client registered successfully.');
   }
 
   /**
    *
    */
-  listConnections() {
-    var names = registry.getConnectionNames();
+  async listConnections() {
+    const names = await registry.getConnectionNames();
     for (var i = 0; i < names.length; i++) {
       var name = names[i];
       this.print((name === this._connName ? '* ' : '  ') + name);
@@ -376,14 +375,14 @@ export class Cli {
   /**
    *
    */
-  getConnectionNames() {
+  async getConnectionNames() {
     return registry.getConnectionNames();
   }
 
   /**
    *
    */
-  getClientNames() {
+  async getClientNames() {
     return registry.getClientNames();
   }
 

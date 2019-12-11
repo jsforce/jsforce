@@ -1,4 +1,4 @@
-import { execSync } from 'child_process';
+import { exec } from 'child_process';
 import { Registry, ConnectionConfig, ClientConfig } from './types';
 import { Connection } from '..';
 
@@ -36,17 +36,20 @@ function isNotNullOrUndefined<T>(v: T | null | undefined): v is T {
  */
 export class SfdxRegistry implements Registry {
   _cliPath: string | undefined;
+  _orgList: Promise<SfdxOrgList> | undefined;
+  _orgInfoMap: { [name: string]: Promise<SfdxOrgInfo> } = {};
+  _defaultOrgInfo: Promise<SfdxOrgInfo> | undefined;
 
   constructor({ cliPath }: { cliPath?: string }) {
     this._cliPath = cliPath;
   }
 
-  _execCommand(
+  _createCommand(
     command: string,
     options: { [option: string]: any } = {},
     args: string[] = [],
   ) {
-    const cmd = `${
+    return `${
       this._cliPath ? this._cliPath + '/' : ''
     }sfdx ${command} ${Object.keys(options)
       .map(
@@ -56,10 +59,26 @@ export class SfdxRegistry implements Registry {
           }`,
       )
       .join(' ')} --json ${args.join(' ')}`;
-    const buf = execSync(cmd);
+  }
+
+  async _execCommand<T>(
+    command: string,
+    options: { [option: string]: any } = {},
+    args: string[] = [],
+  ) {
+    const cmd = this._createCommand(command, options, args);
+    const buf = await new Promise<string>((resolve, reject) => {
+      exec(cmd, (err, ret) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(ret);
+        }
+      });
+    });
     const ret = JSON.parse(buf.toString()) as SfdxCommandOutput;
     if (ret.status === 0 && ret.result) {
-      return ret.result;
+      return ret.result as T;
     } else {
       const err = new Error(ret.message as string);
       err.name = ret.name as string;
@@ -67,50 +86,91 @@ export class SfdxRegistry implements Registry {
     }
   }
 
-  getConnectionNames() {
-    const ret = this._execCommand('force:org:list') as SfdxOrgList;
+  async _getOrgList() {
+    if (!this._orgList) {
+      this._orgList = this._execCommand<SfdxOrgList>('force:org:list');
+    }
+    return this._orgList;
+  }
+
+  async getConnectionNames() {
+    const { nonScratchOrgs, scratchOrgs } = await this._getOrgList();
     return [
-      ...ret.nonScratchOrgs.map((o) => o.alias).filter(isNotNullOrUndefined),
-      ...ret.scratchOrgs.map((o) => o.alias).filter(isNotNullOrUndefined),
-      ...ret.nonScratchOrgs.map((o) => o.username),
-      ...ret.scratchOrgs.map((o) => o.username),
+      ...nonScratchOrgs.map((o) => o.alias).filter(isNotNullOrUndefined),
+      ...scratchOrgs.map((o) => o.alias).filter(isNotNullOrUndefined),
+      ...nonScratchOrgs.map((o) => o.username),
+      ...scratchOrgs.map((o) => o.username),
     ];
   }
 
-  getConnection(name?: string) {
-    const connConfig = this.getConnectionConfig(name);
+  async getConnection(name?: string) {
+    const connConfig = await this.getConnectionConfig(name);
     return new Connection(connConfig);
   }
 
-  getConnectionConfig(name?: string) {
-    const { accessToken, instanceUrl, loginUrl } = this._execCommand(
-      'force:org:display',
-      name ? { u: name } : {},
-    ) as SfdxOrgInfo;
+  async _getOrgInfo(username?: string) {
+    const options = username ? { u: username } : {};
+    if (!username || !this._orgInfoMap[username]) {
+      const pOrgInfo = this._execCommand<SfdxOrgInfo>(
+        'force:org:display',
+        options,
+      );
+      this._memoOrgInfo(pOrgInfo, username);
+    }
+    const orgInfo = username
+      ? this._orgInfoMap[username]
+      : this._defaultOrgInfo;
+    if (!orgInfo) {
+      throw new Error('no orginfo found');
+    }
+    return orgInfo;
+  }
+
+  _memoOrgInfo(pOrgInfo: Promise<SfdxOrgInfo>, username?: string) {
+    const pOrgInfo_ = pOrgInfo.then((orgInfo) => {
+      this._orgInfoMap[orgInfo.username] = pOrgInfo_;
+      if (orgInfo.alias) {
+        this._orgInfoMap[orgInfo.alias] = pOrgInfo_;
+      }
+      return orgInfo;
+    });
+    if (username) {
+      this._orgInfoMap[username] = pOrgInfo_;
+    } else {
+      this._defaultOrgInfo = pOrgInfo_;
+    }
+  }
+
+  async getConnectionConfig(name?: string) {
+    const orgInfo = await this._getOrgInfo(name);
+    if (!orgInfo) {
+      return;
+    }
+    const { accessToken, instanceUrl, loginUrl } = orgInfo;
     return { accessToken, instanceUrl, loginUrl };
   }
 
-  saveConnectionConfig(_name: string, _connConfig: ConnectionConfig) {
+  async saveConnectionConfig(_name: string, _connConfig: ConnectionConfig) {
     // nothing to do
   }
 
-  setDefaultConnection(_name: string) {
+  async setDefaultConnection(_name: string) {
     // nothing to do
   }
 
-  removeConnectionConfig(name: string) {
-    this._execCommand('force:org:delete', { u: name });
+  async removeConnectionConfig(name: string) {
+    await this._execCommand('force:org:delete', { u: name });
   }
 
-  getClient(_name: string) {
+  async getClientConfig(_name: string) {
     return null;
   }
 
-  getClientNames() {
+  async getClientNames() {
     return [];
   }
 
-  registerClient(_name: string, _clientConfig: ClientConfig) {
+  async registerClientConfig(_name: string, _clientConfig: ClientConfig) {
     // nothing to do
   }
 }

@@ -28,16 +28,16 @@ export class BaseRegistry implements Registry {
     );
   }
 
-  getConnectionNames() {
+  async getConnectionNames() {
     return Object.keys(this._getConnections());
   }
 
-  getConnection(name: string) {
-    const config = this.getConnectionConfig(name);
+  async getConnection(name: string) {
+    const config = await this.getConnectionConfig(name);
     return config ? new Connection(config) : null;
   }
 
-  getConnectionConfig(name?: string) {
+  async getConnectionConfig(name?: string) {
     if (!name) {
       name = this._registryConfig['default'];
     }
@@ -50,13 +50,13 @@ export class BaseRegistry implements Registry {
     if (client) {
       return {
         ...connConfig_,
-        oauth2: { ...this.getClient(client) },
+        oauth2: { ...(await this.getClientConfig(client)) },
       };
     }
     return connConfig_;
   }
 
-  saveConnectionConfig(name: string, connConfig: ConnectionConfig) {
+  async saveConnectionConfig(name: string, connConfig: ConnectionConfig) {
     const connections = this._getConnections();
     const { oauth2, ...connConfig_ } = connConfig;
     let persistConnConfig: PersistConnectionConfig = connConfig_;
@@ -85,28 +85,28 @@ export class BaseRegistry implements Registry {
     return null;
   }
 
-  setDefaultConnection(name: string) {
+  async setDefaultConnection(name: string) {
     this._registryConfig['default'] = name;
     this._saveConfig();
   }
 
-  removeConnectionConfig(name: string) {
+  async removeConnectionConfig(name: string) {
     const connections = this._getConnections();
     delete connections[name];
     this._saveConfig();
   }
 
-  getClient(name: string) {
+  async getClientConfig(name: string) {
     const clients = this._getClients();
     const clientConfig = clients[name];
     return clientConfig && { ...clientConfig };
   }
 
-  getClientNames() {
+  async getClientNames() {
     return Object.keys(this._getClients());
   }
 
-  registerClient(name: string, clientConfig: ClientConfig) {
+  async registerClientConfig(name: string, clientConfig: ClientConfig) {
     const clients = this._getClients();
     clients[name] = clientConfig;
     this._saveConfig();

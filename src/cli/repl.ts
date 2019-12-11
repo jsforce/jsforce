@@ -74,6 +74,11 @@ function promisify(
   value: any,
   callback: Function,
 ) {
+  // callback immediately if no value passed
+  if (!callback && isFunction(value)) {
+    callback = value;
+    return callback();
+  }
   if (err) {
     throw err;
   }
@@ -327,9 +332,9 @@ export default class Repl {
     if (command[0] === '.' && tokens.length === 2) {
       let candidates: string[] = [];
       if (command === '.connect' || command === '.disconnect') {
-        candidates = this._cli.getConnectionNames();
+        candidates = await this._cli.getConnectionNames();
       } else if (command === '.authorize') {
-        candidates = this._cli.getClientNames();
+        candidates = await this._cli.getClientNames();
       } else if (command === '.use') {
         candidates = ['production', 'sandbox'];
       }

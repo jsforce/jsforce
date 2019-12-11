@@ -35,13 +35,18 @@ export type RegistryConfig = {
  *
  */
 export interface Registry {
-  getConnectionNames(): string[];
-  getConnection(name?: string): Connection | null | undefined;
-  getConnectionConfig(name?: string): ConnectionConfig | null | undefined;
-  saveConnectionConfig(name: string, connConfig: ConnectionConfig): void;
-  setDefaultConnection(name: string): void;
-  removeConnectionConfig(name: string): void;
-  getClient(name: string): ClientConfig | null | undefined;
-  getClientNames(): string[];
-  registerClient(name: string, clientConfig: ClientConfig): void;
+  getConnectionNames(): Promise<string[]>;
+  getConnection(name?: string): Promise<Connection | null | undefined>;
+  getConnectionConfig(
+    name?: string,
+  ): Promise<ConnectionConfig | null | undefined>;
+  saveConnectionConfig(
+    name: string,
+    connConfig: ConnectionConfig,
+  ): Promise<void>;
+  setDefaultConnection(name: string): Promise<void>;
+  removeConnectionConfig(name: string): Promise<void>;
+  getClientConfig(name: string): Promise<ClientConfig | null | undefined>;
+  getClientNames(): Promise<string[]>;
+  registerClientConfig(name: string, clientConfig: ClientConfig): Promise<void>;
 }
