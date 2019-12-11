@@ -24,6 +24,13 @@ export type OAuth2Config = {
   httpProxy?: string;
 };
 
+export type AuthzRequestParams = {
+  scope?: string;
+  state?: string;
+} & {
+  [attr: string]: string;
+};
+
 export type TokenResponse = {
   id: string;
   access_token: string;
@@ -90,7 +97,7 @@ export default class OAuth2 {
   /**
    * Get Salesforce OAuth2 authorization page URL to redirect user agent.
    */
-  getAuthorizationUrl(params: { scope?: string; state?: string } = {}) {
+  getAuthorizationUrl(params: AuthzRequestParams = {}) {
     const _params = {
       ...params,
       response_type: 'code',

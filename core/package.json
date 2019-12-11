@@ -1,0 +1,5 @@
+{
+  "main": "../lib.es6/core",
+  "module": "../module/core",
+  "types": "../lib.es6/core"
+}

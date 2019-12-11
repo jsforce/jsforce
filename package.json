@@ -22,8 +22,8 @@
       "url": "http://github.com/jsforce/jsforce/raw/master/LICENSE"
     }
   ],
-  "module": "./module",
   "main": "./index",
+  "module": "./module/index",
   "types": "./lib.es6/index",
   "scripts": {
     "clean": "rimraf lib.es6/* module/*",
@@ -62,19 +62,20 @@
   },
   "dependencies": {
     "@babel/runtime-corejs2": "^7.0.0",
-    "base64-url": "^2.2.0",
-    "co-prompt": "^1.0.0",
+    "base64url": "^3.0.1",
     "coffeescript": "^1.10.0",
-    "commander": "^2.9.0",
+    "commander": "^2.20.3",
     "csv-parse": "^4.4.3",
     "csv-stringify": "^5.3.0",
     "faye": "^1.2.0",
     "inherits": "^2.0.1",
+    "inquirer": "^7.0.0",
     "lodash": "^4.17.14",
     "multistream": "^2.0.5",
-    "opn": "^5.3.0",
+    "open": "^7.0.0",
     "promise": "^7.1.1",
     "readable-stream": "^2.1.0",
+    "regenerator-runtime": "^0.13.3",
     "request": "^2.72.0",
     "xml2js": "^0.4.16"
   },
@@ -86,6 +87,7 @@
     "@babel/preset-env": "^7.5.5",
     "@babel/preset-typescript": "^7.3.3",
     "@babel/register": "^7.5.5",
+    "@types/inquirer": "^6.5.0",
     "@types/jest": "^24.0.15",
     "@types/node": "^12.6.8",
     "@types/puppeteer": "^1.12.4",
@@ -108,5 +110,12 @@
     "through2": "^2.0.3",
     "ts-node": "^8.3.0",
     "typescript": "^3.5.3"
+  },
+  "browser": {
+    "./lib.es6/registry": "./lib.es6/browser/registry.js",
+    "./lib.es6/registry/index.js": "./lib.es6/browser/registry.js",
+    "./module/registry": "./module/browser/registry.js",
+    "./module/registry/index.js": "./module/browser/registry.js",
+    "request": "./lib.es6/browser/request.js"
   }
 }
