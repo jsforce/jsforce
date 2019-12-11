@@ -241,9 +241,11 @@ export default class Repl {
       help: 'Connect to Salesforce instance',
       action: async (...args: string[]) => {
         const [name, password] = args;
-        const options = password ? { username: name, password: password } : {};
+        const params = password
+          ? { connection: name, username: name, password: password }
+          : { connection: name, username: name };
         try {
-          await cli.connect(name, options);
+          await cli.connect(params);
         } catch (err) {
           console.error(err.message);
         }
@@ -297,7 +299,7 @@ export default class Repl {
     replServer.defineCommand('open', {
       help: 'Open Salesforce web page using established connection',
       action: (url) => {
-        cli.openUrl(url);
+        cli.openUrlUsingSession(url);
         replServer.displayPrompt();
       },
     });
