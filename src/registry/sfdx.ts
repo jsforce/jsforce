@@ -1,5 +1,6 @@
 import { exec } from 'child_process';
 import { Registry, ConnectionConfig, ClientConfig } from './types';
+import jsforce from '../core';
 import { Connection, Schema } from '..';
 
 type SfdxCommandOutput = {
@@ -105,7 +106,7 @@ export class SfdxRegistry implements Registry {
 
   async getConnection<S extends Schema = Schema>(name?: string) {
     const connConfig = await this.getConnectionConfig(name);
-    return new Connection<S>(connConfig);
+    return new jsforce.Connection<S>(connConfig) as Connection<S>;
   }
 
   async _getOrgInfo(username?: string) {

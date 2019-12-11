@@ -2,7 +2,8 @@
  * @file Registry for connection information, cached in local file system
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
-import { Connection, Schema } from '..';
+import { Connection } from '../jsforce';
+import { Schema } from '../types';
 
 export type ConnectionConfig = {
   instanceUrl?: string;
