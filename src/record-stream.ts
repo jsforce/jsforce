@@ -72,11 +72,7 @@ function createPipelineStream(s1: Writable, s2: Writable) {
     source.unpipe(pipeline);
     source.pipe(s1).pipe(s2);
   });
-  pipeline.pipe = (dest: Writable, options?: any) =>
-    s2.pipe(
-      dest,
-      options,
-    );
+  pipeline.pipe = (dest: Writable, options?: any) => s2.pipe(dest, options);
   return pipeline as Transform;
 }
 
