@@ -145,7 +145,7 @@ export default class SObject<
     records: InputRecord | InputRecord[],
     options?: DmlOptions,
   ): Promise<SaveResult | SaveResult[]>;
-  async create(records: InputRecord | InputRecord[], options?: DmlOptions) {
+  create(records: InputRecord | InputRecord[], options?: DmlOptions) {
     return this._conn.create(this.type, records, options);
   }
 
@@ -199,7 +199,7 @@ export default class SObject<
     options?: DmlOptions,
   ): Promise<SaveResult | SaveResult[]>;
   upsert(
-    records: Record | Record[],
+    records: InputRecord | InputRecord[],
     extIdField: FieldNames,
     options?: DmlOptions,
   ) {

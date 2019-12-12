@@ -147,7 +147,7 @@ if (isNodeJS()) {
         batch.on('response', resolve);
         batch.on('error', reject);
       }),
-      new Promise((resolve) => {
+      new Promise<void>((resolve) => {
         batch.job.on('close', resolve); // await job close
       }),
     ]);

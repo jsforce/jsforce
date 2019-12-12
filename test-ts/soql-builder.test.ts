@@ -281,7 +281,10 @@ describe('soql-builder', () => {
       conditions: {
         'Owner.Name': { $like: 'A%' },
       },
-      sort: [['CreatedDate', 'desc'], ['Name', 'asc']] as any, // TODO: remove any
+      sort: [
+        ['CreatedDate', 'desc'],
+        ['Name', 'asc'],
+      ] as any, // TODO: remove any
       limit: 10,
     });
     assert.ok(
