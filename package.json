@@ -44,21 +44,23 @@
   },
   "files": [
     "README.md",
-    "bower.json",
     "LICENSE",
     "package.json",
+    "api",
     "bin",
     "build",
+    "core",
     "lib",
     "test",
-    "core.js",
+    "index.d.ts",
     "index.js"
   ],
   "engines": {
-    "node": ">=4.0"
+    "node": ">=8.0"
   },
   "bin": {
-    "jsforce": "./bin/jsforce"
+    "jsforce": "./bin/jsforce",
+    "jsforce-gen-schema": "./bin/jsforce-gen-schema"
   },
   "dependencies": {
     "@babel/runtime-corejs2": "^7.7.6",
