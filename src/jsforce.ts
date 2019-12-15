@@ -2,8 +2,13 @@
  *
  */
 import Apex from './api/apex';
-import ConnectionCore from './connection';
-import jsforce, { OAuth2, Date, SfDate, VERSION } from './core';
+import jsforce, {
+  Connection as ConnectionCore,
+  OAuth2,
+  Date,
+  SfDate,
+  VERSION,
+} from './core';
 import { Schema } from './types';
 
 export { OAuth2, Date, SfDate, VERSION };

@@ -105,8 +105,8 @@ export class SfdxRegistry implements Registry {
   }
 
   async getConnection<S extends Schema = Schema>(name?: string) {
-    const connConfig = await this.getConnectionConfig(name);
-    return new jsforce.Connection<S>(connConfig) as Connection<S>;
+    const config = await this.getConnectionConfig(name);
+    return config ? new jsforce.Connection<S>(config) : null;
   }
 
   async _getOrgInfo(username?: string) {
@@ -145,7 +145,7 @@ export class SfdxRegistry implements Registry {
   async getConnectionConfig(name?: string) {
     const orgInfo = await this._getOrgInfo(name);
     if (!orgInfo) {
-      return;
+      return null;
     }
     const { accessToken, instanceUrl, loginUrl } = orgInfo;
     return { accessToken, instanceUrl, loginUrl };

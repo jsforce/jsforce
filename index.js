@@ -1,2 +1,1 @@
-const jsforce = require('./lib.es6');
-module.exports = jsforce;
+module.exports = require('./lib.es6').default;

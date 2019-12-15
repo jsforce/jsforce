@@ -47,6 +47,7 @@ import { QueryOptions } from './query';
 import SObject from './sobject';
 import QuickAction from './quick-action';
 import { formatDate } from './util/formatter';
+import Apex from './api/apex';
 
 /**
  * type definitions
@@ -247,6 +248,10 @@ export default class Connection<
   // describeGlobal: () => Promise<DescribeGlobalResult>;
   describeGlobal$: CachedFunction<() => Promise<DescribeGlobalResult>>;
   describeGlobal$$: CachedFunction<() => DescribeGlobalResult>;
+
+  // API libs are not instantiated here so that core module to remain without dependencies to them
+  // It is responsible for develpers to import api libs explicitly if they are using 'jsforce/core' instead of 'jsforce'.
+  apex: Apex<S> = (undefined as any) as Apex<S>;
 
   /**
    *

@@ -35,7 +35,7 @@ export class BaseRegistry implements Registry {
 
   async getConnection<S extends Schema = Schema>(name: string) {
     const config = await this.getConnectionConfig(name);
-    return config ? (new jsforce.Connection<S>(config) as Connection<S>) : null;
+    return config ? new jsforce.Connection<S>(config) : null;
   }
 
   async getConnectionConfig(name?: string) {
