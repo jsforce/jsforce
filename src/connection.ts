@@ -251,7 +251,11 @@ export default class Connection<
 
   // API libs are not instantiated here so that core module to remain without dependencies to them
   // It is responsible for develpers to import api libs explicitly if they are using 'jsforce/core' instead of 'jsforce'.
-  apex: Apex<S> = (undefined as any) as Apex<S>;
+  get apex(): Apex<S> {
+    throw new Error(
+      "API module 'apex' is not loaded, load 'jsforce/api/apex' explicitly",
+    );
+  }
 
   /**
    *

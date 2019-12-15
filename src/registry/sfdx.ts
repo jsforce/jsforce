@@ -1,7 +1,7 @@
 import { exec } from 'child_process';
 import { Registry, ConnectionConfig, ClientConfig } from './types';
 import jsforce from '../core';
-import { Connection, Schema } from '..';
+import { Schema } from '..';
 
 type SfdxCommandOutput = {
   status: number;
