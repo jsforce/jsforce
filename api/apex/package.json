@@ -1,0 +1,5 @@
+{
+  "main": "../../lib.es6/api/apex",
+  "module": "../../module/api/apex",
+  "types": "../../lib.es6/api/apex"
+}

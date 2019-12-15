@@ -6,7 +6,7 @@ import {
   ClientConfig,
 } from './types';
 import jsforce from '../core';
-import { Connection, Schema } from '..';
+import { Schema } from '..';
 
 /**
  *
@@ -35,7 +35,7 @@ export class BaseRegistry implements Registry {
 
   async getConnection<S extends Schema = Schema>(name: string) {
     const config = await this.getConnectionConfig(name);
-    return config ? (new jsforce.Connection<S>(config) as Connection<S>) : null;
+    return config ? new jsforce.Connection<S>(config) : null;
   }
 
   async getConnectionConfig(name?: string) {

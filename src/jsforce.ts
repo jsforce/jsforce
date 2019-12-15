@@ -1,17 +1,21 @@
+import EventEmitter from 'events';
+import VERSION from './VERSION';
+import Connection from './connection';
+import OAuth2 from './oauth2';
+import SfDate from './date';
+import registry, { Registry } from './registry';
+
 /**
  *
  */
-import Apex from './api/apex';
-import ConnectionCore from './connection';
-import jsforce, { OAuth2, Date, SfDate, VERSION } from './core';
-import { Schema } from './types';
-
-export { OAuth2, Date, SfDate, VERSION };
-
-export class Connection<S extends Schema = Schema> extends ConnectionCore<S> {
-  apex: Apex<S> = new Apex(this);
+class JSforce extends EventEmitter {
+  VERSION: typeof VERSION = VERSION;
+  Connection: typeof Connection = Connection;
+  OAuth2: typeof OAuth2 = OAuth2;
+  SfDate: typeof SfDate = SfDate;
+  Date: typeof SfDate = SfDate;
+  registry: Registry = registry;
 }
 
-jsforce.Connection = Connection;
-
+const jsforce = new JSforce();
 export default jsforce;

@@ -2,6 +2,7 @@
  *
  */
 import EventEmitter from 'events';
+import jsforce from './jsforce';
 import {
   HttpRequest,
   HttpResponse,
@@ -47,6 +48,7 @@ import { QueryOptions } from './query';
 import SObject from './sobject';
 import QuickAction from './quick-action';
 import { formatDate } from './util/formatter';
+import Apex from './api/apex';
 
 /**
  * type definitions
@@ -248,6 +250,14 @@ export default class Connection<
   describeGlobal$: CachedFunction<() => Promise<DescribeGlobalResult>>;
   describeGlobal$$: CachedFunction<() => DescribeGlobalResult>;
 
+  // API libs are not instantiated here so that core module to remain without dependencies to them
+  // It is responsible for develpers to import api libs explicitly if they are using 'jsforce/core' instead of 'jsforce'.
+  get apex(): Apex<S> {
+    throw new Error(
+      "API module 'apex' is not loaded, load 'jsforce/api/apex' explicitly",
+    );
+  }
+
   /**
    *
    */
@@ -339,6 +349,8 @@ export default class Connection<
       serverUrl,
       signedRequest,
     });
+
+    jsforce.emit('connection:new', this);
   }
 
   /* @private */
