@@ -24,41 +24,43 @@
   ],
   "main": "./index",
   "module": "./module/index",
-  "types": "./lib.es6/index",
+  "types": "./lib/index",
   "scripts": {
-    "clean": "rimraf lib.es6/* module/*",
+    "clean": "rimraf lib/* module/*",
     "build:types": "run-p build:types:es5 build:types:module",
-    "build:types:es5": "npm run build:types:src -- --outDir lib.es6",
+    "build:types:es5": "npm run build:types:src -- --outDir lib",
     "build:types:module": "npm run build:types:src -- --outDir module",
     "build:types:src": "tsc --emitDeclarationOnly --declaration -p src",
     "build": "run-p build:types build:es5 build:module",
-    "build:es5": "NODE_ENV=production npm run build:src -- -d lib.es6",
+    "build:es5": "NODE_ENV=production npm run build:src -- -d lib",
     "build:module": "NODE_ENV=module npm run build:src -- -d module",
     "build:src": "babel src --extensions \".ts\"",
-    "lint": "eslint --ext .ts,.js src test-ts",
+    "lint": "eslint --ext .ts,.js src test",
     "typecheck": "tsc --noEmit",
     "test": "jest `if (test \"${SF_POOL_USERNAME}\" = \"\"); then echo \"-w 1\"; else echo \"-w 5\"; fi`"
   },
   "directories": {
-    "test": "test-ts/"
+    "test": "test/"
   },
   "files": [
     "README.md",
-    "bower.json",
     "LICENSE",
     "package.json",
+    "api",
     "bin",
     "build",
+    "core",
     "lib",
     "test",
-    "core.js",
+    "index.d.ts",
     "index.js"
   ],
   "engines": {
-    "node": ">=4.0"
+    "node": ">=8.0"
   },
   "bin": {
-    "jsforce": "./bin/jsforce"
+    "jsforce": "./bin/jsforce",
+    "jsforce-gen-schema": "./bin/jsforce-gen-schema"
   },
   "dependencies": {
     "@babel/runtime-corejs2": "^7.7.6",
@@ -108,10 +110,10 @@
     "typescript": "^3.7.3"
   },
   "browser": {
-    "./lib.es6/registry": "./lib.es6/browser/registry.js",
-    "./lib.es6/registry/index.js": "./lib.es6/browser/registry.js",
+    "./lib/registry": "./lib/browser/registry.js",
+    "./lib/registry/index.js": "./lib/browser/registry.js",
     "./module/registry": "./module/browser/registry.js",
     "./module/registry/index.js": "./module/browser/registry.js",
-    "request": "./lib.es6/browser/request.js"
+    "request": "./lib/browser/request.js"
   }
 }
