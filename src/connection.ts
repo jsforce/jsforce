@@ -2,6 +2,7 @@
  *
  */
 import EventEmitter from 'events';
+import jsforce from './jsforce';
 import {
   HttpRequest,
   HttpResponse,
@@ -348,6 +349,8 @@ export default class Connection<
       serverUrl,
       signedRequest,
     });
+
+    jsforce.emit('connection:new', this);
   }
 
   /* @private */

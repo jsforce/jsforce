@@ -2,7 +2,7 @@
  * @file Manages Salesforce Apex REST endpoint calls
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
-import jsforce from '../core';
+import jsforce from '../jsforce';
 import Connection from '../connection';
 import { HttpRequest, HttpMethods, Schema } from '../types';
 
@@ -102,5 +102,11 @@ export default class Apex<S extends Schema> {
  * Register hook in connection instantiation for dynamically adding this API module features
  */
 jsforce.on('connection:new', (conn) => {
-  conn.apex = new Apex(conn); // eslint-disable-line no-param-reassign
+  Object.defineProperty(conn, 'apex', {
+    get() {
+      return new Apex(conn);
+    },
+    enumerable: true,
+    configurable: true,
+  });
 });
