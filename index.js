@@ -1,1 +1,1 @@
-module.exports = require('./lib.es6').default;
+module.exports = require('./lib').default;

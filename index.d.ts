@@ -1,1 +1,1 @@
-export * from './lib.es6';
+export * from './lib';

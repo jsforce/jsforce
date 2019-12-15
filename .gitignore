@@ -9,7 +9,7 @@ lib-cov
 pids
 logs
 results
-lib.es6
+lib
 module
 
 node_modules
