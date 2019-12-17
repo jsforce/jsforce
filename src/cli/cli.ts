@@ -153,7 +153,7 @@ export class Cli {
     this._conn = new Connection(connConfig);
     const password = options.password;
     if (username) {
-      await this.loginByPassword(username, password, 2);
+      await this.startPasswordAuth(username, password);
       this.saveCurrentConnection();
     } else {
       if (this._connName && this._conn.accessToken) {
@@ -169,9 +169,24 @@ export class Cli {
           if (this._conn.oauth2) {
             throw new Error('Please re-authorize connection.');
           } else {
-            await this.loginByPassword(this._connName, undefined, 2);
+            await this.startPasswordAuth(this._connName);
           }
         }
+      }
+    }
+  }
+
+  /**
+   *
+   */
+  async startPasswordAuth(username: string, password?: string) {
+    try {
+      await this.loginByPassword(username, password, 2);
+    } catch (err) {
+      if (err.message === 'canceled') {
+        console.error('Password authentication canceled: Not logged in');
+      } else {
+        throw err;
       }
     }
   }
@@ -184,7 +199,10 @@ export class Cli {
     password: string | undefined,
     retryCount: number,
   ): Promise<{ id: string }> {
-    if (!password) {
+    if (password === '') {
+      throw new Error('canceled');
+    }
+    if (password == null) {
       const pass = await this.promptPassword('Password: ');
       return this.loginByPassword(username, pass, retryCount);
     }
@@ -197,7 +215,7 @@ export class Cli {
       if (retryCount > 0) {
         return this.loginByPassword(username, undefined, retryCount - 1);
       } else {
-        throw new Error();
+        throw new Error('canceled');
       }
     }
   }
