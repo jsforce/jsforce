@@ -72,7 +72,7 @@ export class Cli {
         this._repl.start();
       }
     } catch (err) {
-      console.error(err.message);
+      console.error(err);
       process.exit();
     }
   }
@@ -127,32 +127,28 @@ export class Cli {
   /**
    *
    */
-  async connect(params: {
+  async connect(options: {
     username?: string;
     password?: string;
     connection?: string;
     loginUrl?: string;
     sandbox?: boolean;
   }) {
-    const options = {
-      username: params.username,
-      password: params.password,
-    };
-    const loginUrl = params.loginUrl
-      ? params.loginUrl
-      : params.sandbox
+    const loginServer = options.loginUrl
+      ? options.loginUrl
+      : options.sandbox
       ? 'sandbox'
       : null;
-    this.setLoginServer(loginUrl);
-    this._connName = params.connection;
-    let connConfig = await registry.getConnectionConfig(params.connection);
+    this.setLoginServer(loginServer);
+    this._connName = options.connection;
+    let connConfig = await registry.getConnectionConfig(options.connection);
     let username = options.username;
     if (!connConfig) {
       connConfig = {};
       if (this._defaultLoginUrl) {
         connConfig.loginUrl = this._defaultLoginUrl;
       }
-      username = params.connection;
+      username = username || options.connection;
     }
     this._conn = new Connection(connConfig);
     const password = options.password;
@@ -401,7 +397,7 @@ export class Cli {
    */
   async prompt(type: string, message: string) {
     this._repl.pause();
-    const answers: Array<{ value: string }> = await inquirer.prompt([
+    const answer: { value: string } = await inquirer.prompt([
       {
         type,
         name: 'value',
@@ -409,7 +405,7 @@ export class Cli {
       },
     ]);
     this._repl.resume();
-    return answers[0].value;
+    return answer.value;
   }
 
   /**
