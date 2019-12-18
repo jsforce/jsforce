@@ -139,8 +139,8 @@ export default class SObject<
   /**
    * Create records
    */
-  create(records: InputRecord, options?: DmlOptions): Promise<SaveResult>;
   create(records: InputRecord[], options?: DmlOptions): Promise<SaveResult[]>;
+  create(records: InputRecord, options?: DmlOptions): Promise<SaveResult>;
   create(
     records: InputRecord | InputRecord[],
     options?: DmlOptions,
@@ -157,21 +157,21 @@ export default class SObject<
   /**
    * Retrieve specified records
    */
-  retrieve(ids: string, options?: RetrieveOptions): Promise<RetrieveRecord>;
   retrieve(ids: string[], options?: RetrieveOptions): Promise<RetrieveRecord[]>;
+  retrieve(ids: string, options?: RetrieveOptions): Promise<RetrieveRecord>;
   retrieve(
     ids: string | string[],
     options?: RetrieveOptions,
   ): Promise<RetrieveRecord | RetrieveRecord[]>;
-  retrieve(ids: string | string[], options?: Object) {
+  retrieve(ids: string | string[], options?: RetrieveOptions) {
     return this._conn.retrieve(this.type, ids, options);
   }
 
   /**
    * Update records
    */
-  update(records: UpdateRecord, options?: DmlOptions): Promise<SaveResult>;
   update(records: UpdateRecord[], options?: DmlOptions): Promise<SaveResult[]>;
+  update(records: UpdateRecord, options?: DmlOptions): Promise<SaveResult>;
   update(
     records: UpdateRecord | UpdateRecord[],
     options?: DmlOptions,
@@ -184,15 +184,15 @@ export default class SObject<
    * Upsert records
    */
   upsert(
-    records: InputRecord,
-    extIdField: FieldNames,
-    options?: DmlOptions,
-  ): Promise<SaveResult>;
-  upsert(
     records: InputRecord[],
     extIdField: FieldNames,
     options?: DmlOptions,
   ): Promise<SaveResult[]>;
+  upsert(
+    records: InputRecord,
+    extIdField: FieldNames,
+    options?: DmlOptions,
+  ): Promise<SaveResult>;
   upsert(
     records: InputRecord | InputRecord[],
     extIdField: FieldNames,
@@ -209,8 +209,8 @@ export default class SObject<
   /**
    * Delete records
    */
-  destroy(ids: string, options?: DmlOptions): Promise<SaveResult>;
   destroy(ids: string[], options?: DmlOptions): Promise<SaveResult[]>;
+  destroy(ids: string, options?: DmlOptions): Promise<SaveResult>;
   destroy(
     ids: string | string[],
     options?: DmlOptions,

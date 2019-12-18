@@ -751,11 +751,12 @@ export default class Connection<
   /**
    *
    */
-  queryMore(
-    locator: string,
-    options?: QueryOptions,
-  ): Query<S, SObjectNames<S>> {
-    return new Query(this, { locator }, options);
+  queryMore(locator: string, options?: QueryOptions) {
+    return new Query<S, SObjectNames<S>, Record, 'QueryResult'>(
+      this,
+      { locator },
+      options,
+    );
   }
 
   /* */
@@ -865,15 +866,15 @@ export default class Connection<
   create<
     N extends SObjectNames<S>,
     InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>
-  >(type: N, records: InputRecord, options?: DmlOptions): Promise<SaveResult>;
-  create<
-    N extends SObjectNames<S>,
-    InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>
   >(
     type: N,
     records: InputRecord[],
     options?: DmlOptions,
   ): Promise<SaveResult[]>;
+  create<
+    N extends SObjectNames<S>,
+    InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>
+  >(type: N, record: InputRecord, options?: DmlOptions): Promise<SaveResult>;
   create<
     N extends SObjectNames<S>,
     InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>
@@ -996,15 +997,15 @@ export default class Connection<
   update<
     N extends SObjectNames<S>,
     UpdateRecord extends SObjectUpdateRecord<S, N> = SObjectUpdateRecord<S, N>
-  >(type: N, records: UpdateRecord, options?: DmlOptions): Promise<SaveResult>;
-  update<
-    N extends SObjectNames<S>,
-    UpdateRecord extends SObjectUpdateRecord<S, N> = SObjectUpdateRecord<S, N>
   >(
     type: N,
     records: UpdateRecord[],
     options?: DmlOptions,
   ): Promise<SaveResult[]>;
+  update<
+    N extends SObjectNames<S>,
+    UpdateRecord extends SObjectUpdateRecord<S, N> = SObjectUpdateRecord<S, N>
+  >(type: N, record: UpdateRecord, options?: DmlOptions): Promise<SaveResult>;
   update<
     N extends SObjectNames<S>,
     UpdateRecord extends SObjectUpdateRecord<S, N> = SObjectUpdateRecord<S, N>
@@ -1139,20 +1140,20 @@ export default class Connection<
     FieldNames extends SObjectFieldNames<S, N> = SObjectFieldNames<S, N>
   >(
     type: N,
-    records: InputRecord,
+    records: InputRecord[],
     extIdField: FieldNames,
     options?: DmlOptions,
-  ): Promise<SaveResult>;
+  ): Promise<SaveResult[]>;
   upsert<
     N extends SObjectNames<S>,
     InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>,
     FieldNames extends SObjectFieldNames<S, N> = SObjectFieldNames<S, N>
   >(
     type: N,
-    records: InputRecord[],
+    record: InputRecord,
     extIdField: FieldNames,
     options?: DmlOptions,
-  ): Promise<SaveResult[]>;
+  ): Promise<SaveResult>;
   upsert<
     N extends SObjectNames<S>,
     InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>,
@@ -1219,14 +1220,14 @@ export default class Connection<
    */
   destroy<N extends SObjectNames<S>>(
     type: N,
-    ids: string,
-    options?: DmlOptions,
-  ): Promise<SaveResult>;
-  destroy<N extends SObjectNames<S>>(
-    type: N,
     ids: string[],
     options?: DmlOptions,
   ): Promise<SaveResult[]>;
+  destroy<N extends SObjectNames<S>>(
+    type: N,
+    id: string,
+    options?: DmlOptions,
+  ): Promise<SaveResult>;
   destroy<N extends SObjectNames<S>>(
     type: N,
     ids: string | string[],
