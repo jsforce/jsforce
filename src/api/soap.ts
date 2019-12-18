@@ -5,7 +5,7 @@
 import { registerModule } from '../jsforce';
 import Connection from '../connection';
 import SOAP from '../soap';
-import { Schema, SaveResult, Record } from '../types';
+import { Schema, Record } from '../types';
 
 /**
  *
@@ -216,6 +216,12 @@ type ResetPasswordResult = ApiSchemaType<
   typeof SoapApiSchemas.ResetPasswordResult
 >;
 
+type SaveResult = ApiSchemaType<typeof SoapApiSchemas.SaveResult>;
+
+type UpsertResult = ApiSchemaType<typeof SoapApiSchemas.SaveResult>;
+
+type DeleteResult = ApiSchemaType<typeof SoapApiSchemas.DeleteResult>;
+
 function toSoapRecord(records: Record | Record[]): Record | Record[] {
   return (Array.isArray(records) ? records : [records]).map((record) => {
     const { type, attributes, ...rec } = record;
@@ -254,8 +260,8 @@ export default class SoapApi<S extends Schema> {
   /**
    * Converts a Lead into an Account, Contact, or (optionally) an Opportunity.
    */
-  convertLead(leadConvert: LeadConvert): Promise<LeadConvertResult>;
   convertLead(leadConverts: LeadConvert[]): Promise<LeadConvertResult[]>;
+  convertLead(leadConvert: LeadConvert): Promise<LeadConvertResult>;
   async convertLead(leadConverts: LeadConvert | LeadConvert[]) {
     const schema = Array.isArray(leadConverts)
       ? [SoapApiSchemas.LeadConvertResult]
@@ -266,8 +272,8 @@ export default class SoapApi<S extends Schema> {
   /**
    * Merge up to three records into one
    */
-  merge(mergeRequest: MergeRequest): Promise<MergeResult>;
   merge(mergeRequests: MergeRequest[]): Promise<MergeResult[]>;
+  merge(mergeRequest: MergeRequest): Promise<MergeResult>;
   async merge(mergeRequests: MergeRequest | MergeRequest[]) {
     const schema = Array.isArray(mergeRequests)
       ? [SoapApiSchemas.MergeResult]
@@ -332,11 +338,10 @@ export default class SoapApi<S extends Schema> {
   /**
    * Adds one or more new records to your organization’s data
    */
-  create(sObject: Record): Promise<SaveResult>;
   create(sObject: Record[]): Promise<SaveResult[]>;
-  async create(
-    sObjects: Record | Record[],
-  ): Promise<SaveResult | SaveResult[]> {
+  create(sObject: Record): Promise<SaveResult>;
+  create(sObjects: Record | Record[]): Promise<SaveResult | SaveResult[]>;
+  create(sObjects: Record | Record[]) {
     const schema = Array.isArray(sObjects)
       ? [SoapApiSchemas.SaveResult]
       : SoapApiSchemas.SaveResult;
@@ -351,11 +356,10 @@ export default class SoapApi<S extends Schema> {
   /**
    * Updates one or more existing records in your organization’s data.
    */
-  update(sObject: Record): Promise<SaveResult>;
   update(sObject: Record[]): Promise<SaveResult[]>;
-  async update(
-    sObjects: Record | Record[],
-  ): Promise<SaveResult | SaveResult[]> {
+  update(sObject: Record): Promise<SaveResult>;
+  update(sObjects: Record | Record[]): Promise<SaveResult | SaveResult[]>;
+  update(sObjects: Record | Record[]) {
     const schema = Array.isArray(sObjects)
       ? [SoapApiSchemas.SaveResult]
       : SoapApiSchemas.SaveResult;
@@ -369,15 +373,17 @@ export default class SoapApi<S extends Schema> {
 
   /**
    * Creates new records and updates existing records in your organization’s data.
-   *
-   * @param {Array.<Object>} sObjects - Records to upsert
-   * @param {Callback.<SoapApi~UpsertResult>} [callback] - Callback function
-   * @returns {Promise.<SoapApi~UpsertResult>}
    */
   upsert(
     externalIdFieldName: string,
+    sObjects: Record[],
+  ): Promise<UpsertResult[]>;
+  upsert(externalIdFieldName: string, sObject: Record): Promise<UpsertResult>;
+  upsert(
+    externalIdFieldName: string,
     sObjects: Record | Record[],
-  ): Promise<SaveResult | SaveResult[]> {
+  ): Promise<UpsertResult | UpsertResult[]>;
+  upsert(externalIdFieldName: string, sObjects: Record | Record[]) {
     const schema = Array.isArray(sObjects)
       ? [SoapApiSchemas.UpsertResult]
       : SoapApiSchemas.UpsertResult;
@@ -392,11 +398,10 @@ export default class SoapApi<S extends Schema> {
 
   /**
    * Deletes one or more records from your organization’s data
-   *
-   * @param {Array.<Object>} ids - Id of records to delete
-   * @param {Callback.<SoapApi~DeleteResult>} [callback] - Callback function
-   * @returns {Promise.<SoapApi~DeleteResult>}
    */
+  delete(ids: string | string[]): Promise<DeleteResult[]>;
+  delete(id: string): Promise<DeleteResult>;
+  delete(ids: string | string[]): Promise<DeleteResult | DeleteResult[]>;
   delete(ids: string | string[]) {
     const schema = Array.isArray(ids)
       ? [SoapApiSchemas.DeleteResult]
