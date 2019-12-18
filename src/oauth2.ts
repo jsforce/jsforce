@@ -107,7 +107,7 @@ export default class OAuth2 {
     return (
       this.authzServiceUrl +
       (this.authzServiceUrl.indexOf('?') >= 0 ? '&' : '?') +
-      querystring.stringify(_params)
+      querystring.stringify(_params as { [name: string]: any })
     );
   }
 
