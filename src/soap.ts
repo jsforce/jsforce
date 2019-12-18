@@ -4,14 +4,20 @@
  */
 import HttpApi from './http-api';
 import Connection from './connection';
-import { Schema, HttpResponse, HttpRequest } from './types';
-import { isObject } from './util/function';
+import {
+  Schema,
+  HttpResponse,
+  HttpRequest,
+  NillableElem,
+  SoapSchemaDef,
+} from './types';
+import { isMapObject, isObject } from './util/function';
 
 /**
  *
  */
-function isMapObject(o: unknown): o is { [name: string]: unknown } {
-  return isObject(o);
+export function nillable<T>(v: T): NillableElem<T> {
+  return v as NillableElem<T>;
 }
 
 /**
@@ -19,10 +25,12 @@ function isMapObject(o: unknown): o is { [name: string]: unknown } {
  */
 function convertType(
   value: unknown,
-  schema?: unknown,
+  schema?: SoapSchemaDef,
 ): object | string | number | boolean | null {
   if (Array.isArray(value)) {
-    return value.map((v) => convertType(v, schema && (schema as object[])[0]));
+    return value.map((v) =>
+      convertType(v, schema && (schema as SoapSchemaDef[])[0]),
+    );
   } else if (isMapObject(value)) {
     if (isMapObject(value.$) && value.$['xsi:nil'] === 'true') {
       return null;
@@ -148,7 +156,7 @@ export default class SOAP<S extends Schema> extends HttpApi<S> {
   /**
    * Invoke SOAP call using method and arguments
    */
-  async invoke(method: string, args: object, schema?: object) {
+  async invoke(method: string, args: object, schema?: SoapSchemaDef) {
     const res = await this.request({
       method: 'POST',
       url: this._endpointUrl,
