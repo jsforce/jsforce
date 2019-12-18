@@ -17,5 +17,20 @@ class JSforce extends EventEmitter {
   registry: Registry = registry;
 }
 
+export function registerModule(
+  name: string,
+  factory: (conn: Connection) => any,
+) {
+  jsforce.on('connection:new', (conn: Connection) => {
+    Object.defineProperty(conn, name, {
+      get() {
+        return factory(conn);
+      },
+      enumerable: true,
+      configurable: true,
+    });
+  });
+}
+
 const jsforce = new JSforce();
 export default jsforce;
