@@ -50,6 +50,7 @@ import QuickAction from './quick-action';
 import { formatDate } from './util/formatter';
 import Apex from './api/apex';
 import Metadata from './api/metadata';
+import SoapApi from './api/soap';
 
 /**
  * type definitions
@@ -267,6 +268,10 @@ export default class Connection<
   }
   get metadata(): Metadata<S> {
     return raiseNoModuleError('metadata');
+  }
+
+  get soap(): SoapApi<S> {
+    return raiseNoModuleError('soap');
   }
 
   /**
