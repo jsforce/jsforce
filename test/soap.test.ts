@@ -1,10 +1,10 @@
 import assert from 'assert';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
-import { isString, isBoolean, isUndefined } from './util';
+import { isString, isBoolean } from './util';
 
 const connMgr = new ConnectionManager(config);
-const conn: any = connMgr.createConnection();
+const conn = connMgr.createConnection();
 
 /**
  *
@@ -123,7 +123,7 @@ describe('convert and merge', () => {
     assert.ok(ret.success === true);
     assert.ok(isString(ret.accountId));
     assert.ok(isString(ret.contactId));
-    assert.ok(ret.opportunityId === null || isUndefined(ret.OpportunityId));
+    assert.ok(ret.opportunityId == null);
     contactIds.push(ret.contactId);
   });
 

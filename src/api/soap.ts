@@ -25,16 +25,32 @@ type ApiSchemaDef =
   | 'boolean'
   | null;
 
+type UndefKey<T extends {}, K extends keyof T = keyof T> = K extends keyof T
+  ? undefined extends T[K]
+    ? K
+    : never
+  : never;
+
+type PartialForUndefined<
+  T extends {},
+  UK extends keyof T = UndefKey<T>,
+  RK extends keyof T = Exclude<keyof T, UK>
+> = Partial<Pick<T, UK>> & Pick<T, RK>;
+
 type ApiSchemaType<T extends ApiSchemaDef> = IsNillable<T> extends true
   ? ApiSchemaTypeInternal<NonNillable<T>> | null | undefined
   : ApiSchemaTypeInternal<T>;
 
-type ApiSchemaTypeInternal<T extends ApiSchemaDef> = T extends any[]
+type ApiSchemaTypeInternal<T extends ApiSchemaDef> = T extends readonly [any]
+  ? Array<ApiSchemaType<T[number]>>
+  : T extends readonly any[]
   ? Array<ApiSchemaType<T[number]>>
   : T extends { [key: string]: ApiSchemaDef }
-  ? {
-      [K in keyof T]: ApiSchemaType<T[K]>;
-    }
+  ? PartialForUndefined<
+      {
+        [K in keyof T]: ApiSchemaType<T[K]>;
+      }
+    >
   : T extends 'string'
   ? string
   : T extends 'number'
@@ -58,7 +74,7 @@ const SoapApiError = {
 
 const SoapApiSchemas = {
   LeadConvert: {
-    convertStatus: 'string',
+    convertedStatus: 'string',
     leadId: 'string',
     accountId: nillable('string'),
     contactId: nillable('string'),
@@ -83,8 +99,8 @@ const SoapApiSchemas = {
     success: 'boolean',
     errors: [SoapApiError],
     id: nillable('string'),
-    mergedRecordIds: nillable(['string']),
-    updatedRelatedIds: nillable(['string']),
+    mergedRecordIds: ['string'],
+    updatedRelatedIds: ['string'],
   },
   EmptyRecycleBinResult: {
     success: 'boolean',
@@ -271,7 +287,7 @@ export default class SoapApi<S extends Schema> {
   /**
    * Returns information about the standard and custom apps available to the logged-in user
    */
-  async describeTabs(): Promise<DescribeTabSetResult> {
+  async describeTabs(): Promise<DescribeTabSetResult[]> {
     return this._invoke('describeTabs', {}, [
       SoapApiSchemas.DescribeTabSetResult,
     ]);
