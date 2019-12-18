@@ -751,11 +751,12 @@ export default class Connection<
   /**
    *
    */
-  queryMore(
-    locator: string,
-    options?: QueryOptions,
-  ): Query<S, SObjectNames<S>> {
-    return new Query(this, { locator }, options);
+  queryMore(locator: string, options?: QueryOptions) {
+    return new Query<S, SObjectNames<S>, Record, 'QueryResult'>(
+      this,
+      { locator },
+      options,
+    );
   }
 
   /* */
