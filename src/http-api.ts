@@ -2,6 +2,7 @@
  *
  */
 import EventEmitter from 'events';
+import xml2js from 'xml2js';
 import { Logger, getLogger } from './util/logger';
 import { StreamPromise } from './util/promise';
 import Connection from './connection';
@@ -14,17 +15,8 @@ function parseJSON(str: string) {
 }
 
 /** @private */
-function parseXML(str: string) {
-  // TODO xml impl
-  /*
-  var ret = {};
-  require('xml2js').parseString(str, { explicitArray: false }, function(err, result) {
-    ret = { error: err, result : result };
-  });
-  if (ret.error) { throw ret.error; }
-  return ret.result;
-  */
-  return str;
+async function parseXML(str: string) {
+  return xml2js.parseStringPromise(str, { explicitArray: false });
 }
 
 /** @private */
@@ -128,7 +120,8 @@ export default class HttpApi<S extends Schema> extends EventEmitter {
         const err = this.getError(response);
         throw err;
       }
-      return this.getResponseBody(response);
+      const body = await this.getResponseBody(response);
+      return body;
     });
   }
 
@@ -172,7 +165,7 @@ export default class HttpApi<S extends Schema> extends EventEmitter {
   /**
    * @private
    */
-  parseResponseBody(response: HttpResponse) {
+  async parseResponseBody(response: HttpResponse) {
     const contentType = this.getResponseContentType(response) || '';
     const parseBody = /^(text|application)\/xml(;|$)/.test(contentType)
       ? parseXML
@@ -192,12 +185,12 @@ export default class HttpApi<S extends Schema> extends EventEmitter {
    * Get response body
    * @protected
    */
-  getResponseBody(response: HttpResponse) {
+  async getResponseBody(response: HttpResponse) {
     if (response.statusCode === 204) {
       // No Content
       return this._noContentResponse;
     }
-    const body = this.parseResponseBody(response);
+    const body = await this.parseResponseBody(response);
     let err;
     if (this.hasErrorInResponseBody(body)) {
       err = this.getError(response, body);

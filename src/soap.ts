@@ -197,8 +197,8 @@ export default class SOAP<S extends Schema> extends HttpApi<S> {
   }
 
   /** @override **/
-  getResponseBody(response: HttpResponse) {
-    const body = super.getResponseBody(response);
+  async getResponseBody(response: HttpResponse) {
+    const body = await super.getResponseBody(response);
     return lookupValue(body, [/:Envelope$/, /:Body$/, /.+/]);
   }
 

@@ -93,6 +93,7 @@
     "@types/puppeteer": "^2.0.0",
     "@types/request": "^2.48.3",
     "@types/through2": "^2.0.34",
+    "@types/xml2js": "^0.4.5",
     "@typescript-eslint/eslint-plugin": "^2.11.0",
     "@typescript-eslint/parser": "^2.11.0",
     "babel-preset-power-assert": "^3.0.0",
