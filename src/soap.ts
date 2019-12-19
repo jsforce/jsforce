@@ -23,23 +23,23 @@ export function nillable<T>(v: T): NillableElem<T> {
 /**
  *
  */
-function convertType(
+export function convertTypeUsingSchema(
   value: unknown,
   schema?: SoapSchemaDef,
-): object | string | number | boolean | null {
+): any {
   if (Array.isArray(value)) {
     return value.map((v) =>
-      convertType(v, schema && (schema as SoapSchemaDef[])[0]),
+      convertTypeUsingSchema(v, schema && (schema as SoapSchemaDef[])[0]),
     );
   } else if (isMapObject(value)) {
     if (isMapObject(value.$) && value.$['xsi:nil'] === 'true') {
       return null;
     } else if (Array.isArray(schema)) {
-      return [convertType(value, schema[0])];
+      return [convertTypeUsingSchema(value, schema[0])];
     } else {
       const o: { [key: string]: any } = {};
       for (const key of Object.keys(value)) {
-        o[key] = convertType(
+        o[key] = convertTypeUsingSchema(
           value[key],
           schema && (schema as { [key: string]: any })[key],
         );
@@ -48,17 +48,21 @@ function convertType(
     }
   } else {
     if (Array.isArray(schema)) {
-      return [convertType(value, schema[0])];
+      return [convertTypeUsingSchema(value, schema[0])];
     } else if (isObject(schema)) {
       return {};
     } else {
+      const nillable = typeof schema === 'string' && schema[0] === '?';
       switch (schema) {
         case 'string':
-          return String(value);
+        case '?string':
+          return value != null ? String(value) : nillable ? null : '';
         case 'number':
-          return Number(value);
+        case '?number':
+          return value != null ? Number(value) : nillable ? null : 0;
         case 'boolean':
-          return value === 'true';
+        case '?boolean':
+          return value != null ? value === 'true' : nillable ? null : false;
         default:
           return value as any;
       }
@@ -166,7 +170,7 @@ export default class SOAP<S extends Schema> extends HttpApi<S> {
       },
       _message: { [method]: args },
     } as HttpRequest);
-    return schema ? convertType(res, schema) : res;
+    return schema ? convertTypeUsingSchema(res, schema) : res;
   }
 
   /** @override */
