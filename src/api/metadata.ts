@@ -249,40 +249,43 @@ export default class Metadata<S extends Schema> {
   /**
    * Deploy components into an organization using zipped file representations
    */
-  async deploy(
+  deploy(
     zipInput: Readable | Buffer | string,
     options: Partial<DeployOptions> = {},
   ) {
-    const zipContentB64 = await new Promise((resolve, reject) => {
-      if (
-        isObject(zipInput) &&
-        'pipe' in zipInput &&
-        typeof zipInput.pipe === 'function'
-      ) {
-        const bufs: Buffer[] = [];
-        zipInput.on('data', (d) => bufs.push(d));
-        zipInput.on('error', reject);
-        zipInput.on('end', () => {
-          resolve(Buffer.concat(bufs).toString('base64'));
-        });
-        // zipInput.resume();
-      } else if (zipInput instanceof Buffer) {
-        resolve(zipInput.toString('base64'));
-      } else if (zipInput instanceof String || typeof zipInput === 'string') {
-        resolve(zipInput);
-      } else {
-        throw 'Unexpected zipInput type';
-      }
-    });
+    const res = (async () => {
+      const zipContentB64 = await new Promise((resolve, reject) => {
+        if (
+          isObject(zipInput) &&
+          'pipe' in zipInput &&
+          typeof zipInput.pipe === 'function'
+        ) {
+          const bufs: Buffer[] = [];
+          zipInput.on('data', (d) => bufs.push(d));
+          zipInput.on('error', reject);
+          zipInput.on('end', () => {
+            resolve(Buffer.concat(bufs).toString('base64'));
+          });
+          // zipInput.resume();
+        } else if (zipInput instanceof Buffer) {
+          resolve(zipInput.toString('base64'));
+        } else if (zipInput instanceof String || typeof zipInput === 'string') {
+          resolve(zipInput);
+        } else {
+          throw 'Unexpected zipInput type';
+        }
+      });
 
-    const res = this._invoke(
-      'deploy',
-      {
-        ZipFile: zipContentB64,
-        DeployOptions: options,
-      },
-      ApiSchemas.DeployResult,
-    );
+      return this._invoke(
+        'deploy',
+        {
+          ZipFile: zipContentB64,
+          DeployOptions: options,
+        },
+        ApiSchemas.DeployResult,
+      );
+    })();
+
     return new DeployResultLocator(this, res);
   }
 

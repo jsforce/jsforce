@@ -8,7 +8,7 @@ import { isObject, isString } from './util';
 import { isNodeJS } from './helper/env';
 
 const connMgr = new ConnectionManager(config);
-const conn: any = connMgr.createConnection();
+const conn = connMgr.createConnection();
 conn.metadata.pollTimeout = 40 * 1000; // adjust poll timeout to test timeout.
 
 // TODO: remove the overriding of connection version when updated the default API version.
