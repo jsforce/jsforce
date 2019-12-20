@@ -175,10 +175,9 @@ export default class SOAP<S extends Schema> extends HttpApi<S> {
 
   /** @override */
   beforeSend(request: HttpRequest & { _message: object }) {
-    return {
-      ...request,
-      body: this._createEnvelope(request._message),
-    };
+    const body = this._createEnvelope(request._message);
+    delete request._message;
+    request.body = body;
   }
 
   /** @override **/
