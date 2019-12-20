@@ -117,7 +117,7 @@ export default class HttpApi<S extends Schema> extends EventEmitter {
         return this.request(request);
       }
       if (this.isErrorResponse(response)) {
-        const err = this.getError(response);
+        const err = await this.getError(response);
         throw err;
       }
       const body = await this.getResponseBody(response);
@@ -193,7 +193,7 @@ export default class HttpApi<S extends Schema> extends EventEmitter {
     const body = await this.parseResponseBody(response);
     let err;
     if (this.hasErrorInResponseBody(body)) {
-      err = this.getError(response, body);
+      err = await this.getError(response, body);
       throw err;
     }
     if (response.statusCode === 300) {
@@ -244,10 +244,10 @@ export default class HttpApi<S extends Schema> extends EventEmitter {
    * Get error message in response
    * @protected
    */
-  getError(response: HttpResponse, body?: any): Error {
+  async getError(response: HttpResponse, body?: any): Promise<Error> {
     let error;
     try {
-      error = this.parseError(body || this.parseResponseBody(response));
+      error = this.parseError(body || (await this.parseResponseBody(response)));
     } catch (e) {
       // eslint-disable no-empty
     }
