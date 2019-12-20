@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import xml2js from 'xml2js';
-import { nillable, convertTypeUsingSchema } from '../../soap';
+import { convertTypeUsingSchema } from '../../soap';
 import { SoapSchemaType } from '../../types';
 import { isMapObject } from '../../util/function';
 
@@ -21,19 +21,21 @@ const WSDLSimpleTypeSchema = {
 
 const WSDLComplexTypeSchema = {
   $: { name: 'string' },
-  'xsd:sequence': nillable({
-    'xsd:element': [
-      {
-        $: {
-          name: 'string',
-          type: 'string',
-          minOccurs: nillable('number'),
-          maxOccurs: nillable('string'),
-          nillable: nillable('boolean'),
+  'xsd:sequence': {
+    '?': {
+      'xsd:element': [
+        {
+          $: {
+            name: 'string',
+            type: 'string',
+            minOccurs: '?number',
+            maxOccurs: '?string',
+            nillable: '?boolean',
+          },
         },
-      },
-    ],
-  } as const),
+      ],
+    },
+  },
 } as const;
 
 const WSDLSchema = {
@@ -129,10 +131,15 @@ function extractComplexTypes(wsdl: WSDL) {
     const schema: { [name: string]: any } = {};
     for (const el of complexType['xsd:sequence']?.['xsd:element'] ?? []) {
       let type = toJsType(el.$.type, simpleTypes);
-      schema[el.$.name] =
-        el.$.maxOccurs === 'unbounded'
-          ? [type]
-          : (type = el.$.minOccurs === 0 || el.$.nillable ? `?${type}` : type);
+      const isArray = el.$.maxOccurs === 'unbounded';
+      const nillable = (!isArray && el.$.minOccurs === 0) || el.$.nillable;
+      schema[el.$.name] = isArray
+        ? nillable
+          ? ['?', type]
+          : [type]
+        : nillable
+        ? `?${type}`
+        : type;
       // console.log(el.$.name, el);
     }
     schemas[complexType.$.name] = schema;
@@ -154,8 +161,10 @@ function resolveSchemaReference(schemas: { [name: string]: any }) {
         v[k] = resolveSchemaRef(v[k]);
       }
     } else if (typeof v === 'string' && /^\??tns:/.test(v)) {
-      const ref = v.replace(/^\??tns:/, '');
-      return schemas[ref];
+      const nillable = v[0] === '?';
+      const refName = v.replace(/^\??tns:/, '');
+      const ref = schemas[refName];
+      return nillable ? { '?': ref } : ref;
     }
     return v;
   }
@@ -203,7 +212,8 @@ async function dumpSchema(schemas: { [name: string]: any }, outFile: string) {
     } else if (isMapObject(o)) {
       println('{');
       for (const name of Object.keys(o)) {
-        print(`${name}: `, indent + 2);
+        const nameId = /^[\w_]+$/.test(name) ? name : `"${name}"`;
+        print(`${nameId}: `, indent + 2);
         writeSchema(o[name], indent + 2);
         println(',');
       }
