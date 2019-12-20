@@ -305,6 +305,13 @@ export const ApiSchemas = {
     folder: '?string',
     type: 'string',
   },
+  ReadResult: {
+    records: [
+      {
+        fullName: '?string',
+      },
+    ],
+  },
   RetrieveRequest: {
     apiVersion: 'number',
     packageNames: ['string'],
@@ -352,6 +359,8 @@ export type DescribeMetadataResult = SoapSchemaType<
 export type ListMetadataQuery = SoapSchemaType<
   typeof ApiSchemas.ListMetadataQuery
 >;
+
+export type ReadResult = SoapSchemaType<typeof ApiSchemas.ReadResult>;
 
 export type RetrieveRequest = SoapSchemaType<typeof ApiSchemas.RetrieveRequest>;
 
