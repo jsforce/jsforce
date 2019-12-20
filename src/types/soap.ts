@@ -1,16 +1,12 @@
 /**
  *
  */
-export type NillableElem<T> = T & { _nillable: never };
-
-type IsNillableElem<T> = T extends { _nillable: never } ? true : false;
-
-type NonNillableElem<T> = T extends infer U & { _nillable: never } ? U : T;
-
 export type SoapSchemaDef =
-  | { [key: string]: SoapSchemaDef }
-  | Array<SoapSchemaDef>
-  | ReadonlyArray<SoapSchemaDef>
+  | readonly ['?', SoapSchemaDef]
+  | readonly [SoapSchemaDef]
+  | readonly SoapSchemaDef[]
+  | { readonly '?': { readonly [key: string]: SoapSchemaDef } }
+  | { readonly [key: string]: SoapSchemaDef }
   | 'string'
   | 'number'
   | 'boolean'
@@ -32,22 +28,30 @@ type PartialForUndefined<
   UK extends keyof T = UndefKey<T>,
   RK extends keyof T = Exclude<keyof T, UK>
 > = [UK] extends [never]
-  ? T
+  ? { -readonly [K in RK]-?: T[K] }
   : [RK] extends [never]
-  ? Partial<T>
-  : Partial<Pick<T, UK>> & Pick<T, RK>;
+  ? { -readonly [K in UK]+?: T[K] }
+  : { -readonly [K in UK]+?: T[K] } & { -readonly [K in RK]-?: T[K] };
 
-export type SoapSchemaType<T extends SoapSchemaDef> = IsNillableElem<
-  T
-> extends true
-  ? SoapSchemaTypeInternal<NonNillableElem<T>> | null | undefined
-  : SoapSchemaTypeInternal<T>;
-
-type SoapSchemaTypeInternal<T extends SoapSchemaDef> = T extends readonly [any]
-  ? Array<SoapSchemaType<T[number]>>
+export type SoapSchemaType<T extends SoapSchemaDef> = T extends readonly [
+  '?',
+  any,
+]
+  ? Array<SoapSchemaType<T[1]>> | null | undefined
+  : T extends readonly [any]
+  ? Array<SoapSchemaType<T[0]>>
   : T extends readonly any[]
   ? Array<SoapSchemaType<T[number]>>
-  : T extends { [key: string]: any }
+  : T extends { readonly '?': { readonly [key: string]: any } }
+  ?
+      | PartialForUndefined<
+          {
+            [K in keyof T['?']]: SoapSchemaType<T['?'][K]>;
+          }
+        >
+      | null
+      | undefined
+  : T extends { readonly [key: string]: any }
   ? PartialForUndefined<
       {
         [K in keyof T]: SoapSchemaType<T[K]>;

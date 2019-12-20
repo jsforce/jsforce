@@ -4,21 +4,8 @@
  */
 import HttpApi from './http-api';
 import Connection from './connection';
-import {
-  Schema,
-  HttpResponse,
-  HttpRequest,
-  NillableElem,
-  SoapSchemaDef,
-} from './types';
+import { Schema, HttpResponse, HttpRequest, SoapSchemaDef } from './types';
 import { isMapObject, isObject } from './util/function';
-
-/**
- *
- */
-export function nillable<T>(v: T): NillableElem<T> {
-  return v as NillableElem<T>;
-}
 
 /**
  *
@@ -27,45 +14,50 @@ export function convertTypeUsingSchema(
   value: unknown,
   schema?: SoapSchemaDef,
 ): any {
-  if (Array.isArray(value)) {
-    return value.map((v) =>
-      convertTypeUsingSchema(v, schema && (schema as SoapSchemaDef[])[0]),
-    );
-  } else if (isMapObject(value)) {
-    if (isMapObject(value.$) && value.$['xsi:nil'] === 'true') {
-      return null;
-    } else if (Array.isArray(schema)) {
-      return [convertTypeUsingSchema(value, schema[0])];
-    } else {
-      const o: { [key: string]: any } = {};
-      for (const key of Object.keys(value)) {
-        o[key] = convertTypeUsingSchema(
-          value[key],
-          schema && (schema as { [key: string]: any })[key],
-        );
-      }
-      return o;
+  if (Array.isArray(schema)) {
+    const nillable = schema.length === 2 && schema[0] === '?';
+    const schema_ = nillable ? schema[1] : schema[0];
+    if (value == null) {
+      return nillable ? null : [];
     }
+    return (Array.isArray(value) ? value : [value]).map((v) =>
+      convertTypeUsingSchema(v, schema_),
+    );
+  } else if (isMapObject(schema)) {
+    const nillable = '?' in schema;
+    const schema_ =
+      '?' in schema ? (schema['?'] as { [key: string]: any }) : schema;
+    if (
+      nillable &&
+      (value == null ||
+        (isMapObject(value) &&
+          isMapObject(value.$) &&
+          value.$['xsi:nil'] === 'true'))
+    ) {
+      return null;
+    }
+    const obj = isMapObject(value) ? value : {};
+    return Object.keys(schema_).reduce(
+      (o, k) => ({
+        ...o,
+        [k]: convertTypeUsingSchema(obj[k], schema_[k]),
+      }),
+      obj,
+    );
   } else {
-    if (Array.isArray(schema)) {
-      return [convertTypeUsingSchema(value, schema[0])];
-    } else if (isObject(schema)) {
-      return {};
-    } else {
-      const nillable = typeof schema === 'string' && schema[0] === '?';
-      switch (schema) {
-        case 'string':
-        case '?string':
-          return value != null ? String(value) : nillable ? null : '';
-        case 'number':
-        case '?number':
-          return value != null ? Number(value) : nillable ? null : 0;
-        case 'boolean':
-        case '?boolean':
-          return value != null ? value === 'true' : nillable ? null : false;
-        default:
-          return value as any;
-      }
+    const nillable = typeof schema === 'string' && schema[0] === '?';
+    switch (schema) {
+      case 'string':
+      case '?string':
+        return value != null ? String(value) : nillable ? null : '';
+      case 'number':
+      case '?number':
+        return value != null ? Number(value) : nillable ? null : 0;
+      case 'boolean':
+      case '?boolean':
+        return value != null ? value === 'true' : nillable ? null : false;
+      default:
+        return value as any;
     }
   }
 }
