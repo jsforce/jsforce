@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import assert from 'assert';
-import { Connection } from '..';
+import { Connection } from '../src';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject, isString } from './util';
@@ -175,8 +175,8 @@ describe('CRUD based call', () => {
       assert.ok(isString(result.fullName));
     }
     fullNames = results
-      .filter((m: any) => m.fullName.match(/^JSforceTestObject.+__c$/))
-      .map((m: any) => m.fullName);
+      .filter((m) => m.fullName.match(/^JSforceTestObject.+__c$/))
+      .map((m) => m.fullName);
   });
 
   /**
@@ -252,7 +252,7 @@ describe('session refresh', () => {
    */
   test('refresh metadata API session and list metadata even if the session has been expired', async () => {
     let refreshCalled = false;
-    const conn2: any = new Connection({
+    const conn2 = new Connection({
       // TODO: remove any
       instanceUrl: conn.instanceUrl,
       accessToken: 'invalid_token',

@@ -14,6 +14,8 @@ import {
   SaveResult,
   UpsertResult,
   ListMetadataQuery,
+  FileProperties,
+  DescribeMetadataResult,
   RetrieveRequest,
   DeployOptions,
   RetrieveResult,
@@ -187,7 +189,7 @@ export default class Metadata<S extends Schema> {
    * custom objects, custom fields on standard objects, tab sets that define an app,
    * and many other components.
    */
-  describe(asOfVersion?: string) {
+  describe(asOfVersion?: string): Promise<DescribeMetadataResult> {
     if (!asOfVersion) {
       asOfVersion = this._conn.version;
     }
@@ -201,6 +203,18 @@ export default class Metadata<S extends Schema> {
   /**
    * Retrieves property information about metadata components in your organization
    */
+  list(
+    queries: ListMetadataQuery,
+    asOfVersion?: string,
+  ): Promise<FileProperties[]>;
+  list(
+    queries: ListMetadataQuery[],
+    asOfVersion?: string,
+  ): Promise<FileProperties>;
+  list(
+    queries: ListMetadataQuery | ListMetadataQuery[],
+    asOfVersion?: string,
+  ): Promise<FileProperties | FileProperties[]>;
   list(queries: ListMetadataQuery | ListMetadataQuery[], asOfVersion?: string) {
     if (!asOfVersion) {
       asOfVersion = this._conn.version;
@@ -292,7 +306,10 @@ export default class Metadata<S extends Schema> {
   /**
    * Checks the status of declarative metadata call deploy()
    */
-  checkDeployStatus(asyncProcessId: string, includeDetails: boolean = false) {
+  checkDeployStatus(
+    asyncProcessId: string,
+    includeDetails: boolean = false,
+  ): Promise<DeployResult> {
     return this._invoke(
       'checkDeployStatus',
       {
@@ -458,4 +475,4 @@ export class DeployResultLocator<S extends Schema> extends AsyncResultLocator<
 /*
  * Register hook in connection instantiation for dynamically adding this API module features
  */
-registerModule('apex', (conn) => new Metadata(conn));
+registerModule('metadata', (conn) => new Metadata(conn));
