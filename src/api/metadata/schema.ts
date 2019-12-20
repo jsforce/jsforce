@@ -45,142 +45,146 @@ export const ApiSchemas = {
         },
       ],
       retrieveResult: {
-        done: 'boolean',
-        errorMessage: '?string',
-        errorStatusCode: '?string',
-        fileProperties: [
-          {
-            createdById: 'string',
-            createdByName: 'string',
-            createdDate: 'string',
-            fileName: 'string',
-            fullName: 'string',
-            id: 'string',
-            lastModifiedById: 'string',
-            lastModifiedByName: 'string',
-            lastModifiedDate: 'string',
-            manageableState: '?string',
-            namespacePrefix: '?string',
-            type: 'string',
-          },
-        ],
-        id: 'string',
-        messages: [
-          {
-            fileName: 'string',
-            problem: 'string',
-          },
-        ],
-        status: 'string',
-        success: 'boolean',
-        zipFile: 'string',
+        '?': {
+          done: 'boolean',
+          errorMessage: '?string',
+          errorStatusCode: '?string',
+          fileProperties: [
+            {
+              createdById: 'string',
+              createdByName: 'string',
+              createdDate: 'string',
+              fileName: 'string',
+              fullName: 'string',
+              id: 'string',
+              lastModifiedById: 'string',
+              lastModifiedByName: 'string',
+              lastModifiedDate: 'string',
+              manageableState: '?string',
+              namespacePrefix: '?string',
+              type: 'string',
+            },
+          ],
+          id: 'string',
+          messages: [
+            {
+              fileName: 'string',
+              problem: 'string',
+            },
+          ],
+          status: 'string',
+          success: 'boolean',
+          zipFile: 'string',
+        },
       },
       runTestResult: {
-        apexLogId: '?string',
-        codeCoverage: [
-          {
-            dmlInfo: [
-              {
-                column: 'number',
-                line: 'number',
-                numExecutions: 'number',
-                time: 'number',
-              },
-            ],
-            id: 'string',
-            locationsNotCovered: [
-              {
-                column: 'number',
-                line: 'number',
-                numExecutions: 'number',
-                time: 'number',
-              },
-            ],
-            methodInfo: [
-              {
-                column: 'number',
-                line: 'number',
-                numExecutions: 'number',
-                time: 'number',
-              },
-            ],
-            name: 'string',
-            namespace: '?string',
-            numLocations: 'number',
-            numLocationsNotCovered: 'number',
-            soqlInfo: [
-              {
-                column: 'number',
-                line: 'number',
-                numExecutions: 'number',
-                time: 'number',
-              },
-            ],
-            soslInfo: [
-              {
-                column: 'number',
-                line: 'number',
-                numExecutions: 'number',
-                time: 'number',
-              },
-            ],
-            type: 'string',
-          },
-        ],
-        codeCoverageWarnings: [
-          {
-            id: 'string',
-            message: 'string',
-            name: '?string',
-            namespace: '?string',
-          },
-        ],
-        failures: [
-          {
-            id: 'string',
-            message: 'string',
-            methodName: '?string',
-            name: 'string',
-            namespace: '?string',
-            packageName: 'string',
-            seeAllData: '?boolean',
-            stackTrace: '?string',
-            time: 'number',
-            type: 'string',
-          },
-        ],
-        flowCoverage: [
-          {
-            elementsNotCovered: ['string'],
-            flowId: 'string',
-            flowName: 'string',
-            flowNamespace: '?string',
-            numElements: 'number',
-            numElementsNotCovered: 'number',
-            processType: 'string',
-          },
-        ],
-        flowCoverageWarnings: [
-          {
-            flowId: '?string',
-            flowName: '?string',
-            flowNamespace: '?string',
-            message: 'string',
-          },
-        ],
-        numFailures: 'number',
-        numTestsRun: 'number',
-        successes: [
-          {
-            id: 'string',
-            methodName: 'string',
-            name: 'string',
-            namespace: '?string',
-            seeAllData: '?boolean',
-            time: 'number',
-          },
-        ],
-        totalTime: 'number',
+        '?': {
+          apexLogId: '?string',
+          codeCoverage: [
+            {
+              dmlInfo: [
+                {
+                  column: 'number',
+                  line: 'number',
+                  numExecutions: 'number',
+                  time: 'number',
+                },
+              ],
+              id: 'string',
+              locationsNotCovered: [
+                {
+                  column: 'number',
+                  line: 'number',
+                  numExecutions: 'number',
+                  time: 'number',
+                },
+              ],
+              methodInfo: [
+                {
+                  column: 'number',
+                  line: 'number',
+                  numExecutions: 'number',
+                  time: 'number',
+                },
+              ],
+              name: 'string',
+              namespace: '?string',
+              numLocations: 'number',
+              numLocationsNotCovered: 'number',
+              soqlInfo: [
+                {
+                  column: 'number',
+                  line: 'number',
+                  numExecutions: 'number',
+                  time: 'number',
+                },
+              ],
+              soslInfo: [
+                {
+                  column: 'number',
+                  line: 'number',
+                  numExecutions: 'number',
+                  time: 'number',
+                },
+              ],
+              type: 'string',
+            },
+          ],
+          codeCoverageWarnings: [
+            {
+              id: 'string',
+              message: 'string',
+              name: '?string',
+              namespace: '?string',
+            },
+          ],
+          failures: [
+            {
+              id: 'string',
+              message: 'string',
+              methodName: '?string',
+              name: 'string',
+              namespace: '?string',
+              packageName: 'string',
+              seeAllData: '?boolean',
+              stackTrace: '?string',
+              time: 'number',
+              type: 'string',
+            },
+          ],
+          flowCoverage: [
+            {
+              elementsNotCovered: ['string'],
+              flowId: 'string',
+              flowName: 'string',
+              flowNamespace: '?string',
+              numElements: 'number',
+              numElementsNotCovered: 'number',
+              processType: 'string',
+            },
+          ],
+          flowCoverageWarnings: [
+            {
+              flowId: '?string',
+              flowName: '?string',
+              flowNamespace: '?string',
+              message: 'string',
+            },
+          ],
+          numFailures: 'number',
+          numTestsRun: 'number',
+          successes: [
+            {
+              id: 'string',
+              methodName: 'string',
+              name: 'string',
+              namespace: '?string',
+              seeAllData: '?boolean',
+              time: 'number',
+            },
+          ],
+          totalTime: 'number',
+        },
       },
     },
     done: 'boolean',
@@ -306,7 +310,9 @@ export const ApiSchemas = {
     packageNames: ['string'],
     singlePackage: 'boolean',
     specificFiles: ['string'],
-    unpackaged: {},
+    unpackaged: {
+      '?': {},
+    },
   },
   UpsertResult: {
     created: 'boolean',

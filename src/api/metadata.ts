@@ -83,7 +83,11 @@ export default class Metadata<S extends Schema> {
       xmlns: 'http://soap.sforce.com/2006/04/metadata',
       endpointUrl: `${this._conn.instanceUrl}/services/Soap/m/${this._conn.version}`,
     });
-    const res = await soapEndpoint.invoke(method, message, schema);
+    const res = await soapEndpoint.invoke(
+      method,
+      message,
+      schema ? { result: schema } : undefined,
+    );
     return res.result;
   }
 
