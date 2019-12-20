@@ -11,6 +11,7 @@ import { isObject } from '../util/function';
 import { Schema, SoapSchemaDef } from '../types';
 import {
   ApiSchemas,
+  ReadResult,
   SaveResult,
   UpsertResult,
   ListMetadataQuery,
@@ -117,10 +118,14 @@ export default class Metadata<S extends Schema> {
     fullNames: string | string[],
   ): Promise<MetadataInfo | MetadataInfo[]>;
   async read(type: string, fullNames: string | string[]) {
-    const res = await this._invoke('readMetadata', { type, fullNames });
+    const res: ReadResult = await this._invoke(
+      'readMetadata',
+      { type, fullNames },
+      ApiSchemas.ReadResult,
+    );
     return Array.isArray(fullNames)
       ? res.records.map(convertToMetadataInfo)
-      : convertToMetadataInfo(res.records);
+      : convertToMetadataInfo(res.records[0]);
   }
 
   /**
@@ -208,25 +213,15 @@ export default class Metadata<S extends Schema> {
    * Retrieves property information about metadata components in your organization
    */
   list(
-    queries: ListMetadataQuery,
-    asOfVersion?: string,
-  ): Promise<FileProperties[]>;
-  list(
-    queries: ListMetadataQuery[],
-    asOfVersion?: string,
-  ): Promise<FileProperties>;
-  list(
     queries: ListMetadataQuery | ListMetadataQuery[],
     asOfVersion?: string,
-  ): Promise<FileProperties | FileProperties[]>;
-  list(queries: ListMetadataQuery | ListMetadataQuery[], asOfVersion?: string) {
+  ): Promise<FileProperties[]> {
     if (!asOfVersion) {
       asOfVersion = this._conn.version;
     }
-    const schema = Array.isArray(queries)
-      ? [ApiSchemas.FileProperties]
-      : ApiSchemas.FileProperties;
-    return this._invoke('listMetadata', { queries, asOfVersion }, schema);
+    return this._invoke('listMetadata', { queries, asOfVersion }, [
+      ApiSchemas.FileProperties,
+    ]);
   }
 
   /**
