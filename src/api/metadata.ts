@@ -436,7 +436,7 @@ export class RetrieveResultLocator<S extends Schema> extends AsyncResultLocator<
       reading = true;
       try {
         const result = await this.complete();
-        resultStream.push(new Buffer(result.zipFile, 'base64'));
+        resultStream.push(Buffer.from(result.zipFile, 'base64'));
         resultStream.push(null);
       } catch (e) {
         resultStream.emit('error', e);
