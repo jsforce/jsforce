@@ -330,6 +330,11 @@ async function dumpSchema(schemas: { [name: string]: any }, outFile: string) {
       println(';');
       println();
     }
+    println('export type ApiSchemaTypes = {');
+    for (const name of Object.keys(schemas)) {
+      println(`${name}: ${name};`, 2);
+    }
+    println('};');
   }
 }
 
