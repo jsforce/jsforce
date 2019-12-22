@@ -8,7 +8,7 @@ import { registerModule } from '../jsforce';
 import Connection from '../connection';
 import SOAP from '../soap';
 import { isObject } from '../util/function';
-import { Schema, SoapSchemaDef } from '../types';
+import { Schema, SoapSchemaDef, SoapSchema } from '../types';
 import {
   ApiSchemas,
   ReadResult,
@@ -79,7 +79,11 @@ export default class Metadata<S extends Schema> {
    *
    * @private
    */
-  async _invoke(method: string, message: object, schema?: SoapSchemaDef) {
+  async _invoke(
+    method: string,
+    message: object,
+    schema?: SoapSchema | SoapSchemaDef,
+  ) {
     const soapEndpoint = new SOAP(this._conn, {
       xmlns: 'http://soap.sforce.com/2006/04/metadata',
       endpointUrl: `${this._conn.instanceUrl}/services/Soap/m/${this._conn.version}`,
@@ -87,7 +91,8 @@ export default class Metadata<S extends Schema> {
     const res = await soapEndpoint.invoke(
       method,
       message,
-      schema ? { result: schema } : undefined,
+      schema ? ({ result: schema } as SoapSchema) : undefined,
+      ApiSchemas,
     );
     return res.result;
   }
