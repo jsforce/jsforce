@@ -11,6 +11,7 @@ import { isObject } from '../util/function';
 import { Schema, SoapSchemaDef, SoapSchema } from '../types';
 import {
   ApiSchemas,
+  Metadata,
   ReadResult,
   SaveResult,
   UpsertResult,
@@ -23,14 +24,7 @@ import {
   DeployResult,
   AsyncResult,
 } from './metadata/schema';
-
-/**
- *
- */
-type MetadataInfo = {
-  fullName: string;
-  [prop: string]: any;
-};
+export * from './metadata/schema';
 
 /**
  *
@@ -43,18 +37,15 @@ function convertToMetadataInfo(rec: any) {
 /**
  *
  */
-function assignTypeWithMetadata(
-  metadata: MetadataInfo | MetadataInfo[],
-  type: string,
-) {
-  const convert = (md: MetadataInfo) => ({ ['@xsi:type']: type, ...md });
+function assignTypeWithMetadata(metadata: Metadata | Metadata[], type: string) {
+  const convert = (md: Metadata) => ({ ['@xsi:type']: type, ...md });
   return Array.isArray(metadata) ? metadata.map(convert) : convert(metadata);
 }
 
 /**
  * Class for Salesforce Metadata API
  */
-export default class Metadata<S extends Schema> {
+export default class MetadataApi<S extends Schema> {
   _conn: Connection<S>;
 
   /**
@@ -100,13 +91,19 @@ export default class Metadata<S extends Schema> {
   /**
    * Add one or more new metadata components to the organization.
    */
-  create(type: string, metadata: MetadataInfo[]): Promise<SaveResult[]>;
-  create(type: string, metadata: MetadataInfo): Promise<SaveResult>;
-  create(
+  create<M extends Metadata = Metadata>(
     type: string,
-    metadata: MetadataInfo | MetadataInfo[],
+    metadata: M[],
+  ): Promise<SaveResult[]>;
+  create<M extends Metadata = Metadata>(
+    type: string,
+    metadata: M,
+  ): Promise<SaveResult>;
+  create<M extends Metadata = Metadata>(
+    type: string,
+    metadata: M | M[],
   ): Promise<SaveResult | SaveResult[]>;
-  create(type: string, metadata: MetadataInfo | MetadataInfo[]) {
+  create(type: string, metadata: Metadata | Metadata[]) {
     const isArray = Array.isArray(metadata);
     metadata = assignTypeWithMetadata(metadata, type);
     const schema = isArray ? [ApiSchemas.SaveResult] : ApiSchemas.SaveResult;
@@ -116,12 +113,18 @@ export default class Metadata<S extends Schema> {
   /**
    * Read specified metadata components in the organization.
    */
-  read(type: string, fullNames: string[]): Promise<MetadataInfo[]>;
-  read(type: string, fullNames: string): Promise<MetadataInfo>;
-  read(
+  read<M extends Metadata = Metadata>(
+    type: string,
+    fullNames: string[],
+  ): Promise<M[]>;
+  read<M extends Metadata = Metadata>(
+    type: string,
+    fullNames: string,
+  ): Promise<M>;
+  read<M extends Metadata = Metadata>(
     type: string,
     fullNames: string | string[],
-  ): Promise<MetadataInfo | MetadataInfo[]>;
+  ): Promise<M | M[]>;
   async read(type: string, fullNames: string | string[]) {
     const res: ReadResult = await this._invoke(
       'readMetadata',
@@ -136,13 +139,19 @@ export default class Metadata<S extends Schema> {
   /**
    * Update one or more metadata components in the organization.
    */
-  update(type: string, metadata: MetadataInfo[]): Promise<SaveResult[]>;
-  update(type: string, metadata: MetadataInfo): Promise<SaveResult>;
-  update(
+  update<M extends Metadata = Metadata>(
     type: string,
-    metadata: MetadataInfo | MetadataInfo[],
+    metadata: M[],
+  ): Promise<SaveResult[]>;
+  update<M extends Metadata = Metadata>(
+    type: string,
+    metadata: M,
+  ): Promise<SaveResult>;
+  update<M extends Metadata = Metadata>(
+    type: string,
+    metadata: M | M[],
   ): Promise<SaveResult | SaveResult[]>;
-  update(type: string, metadata: MetadataInfo | MetadataInfo[]) {
+  update(type: string, metadata: Metadata | Metadata[]) {
     const isArray = Array.isArray(metadata);
     metadata = assignTypeWithMetadata(metadata, type);
     const schema = isArray ? [ApiSchemas.SaveResult] : ApiSchemas.SaveResult;
@@ -152,13 +161,19 @@ export default class Metadata<S extends Schema> {
   /**
    * Upsert one or more components in your organization's data.
    */
-  upsert(type: string, metadata: MetadataInfo[]): Promise<UpsertResult[]>;
-  upsert(type: string, metadata: MetadataInfo): Promise<UpsertResult>;
-  upsert(
+  upsert<M extends Metadata = Metadata>(
     type: string,
-    metadata: MetadataInfo | MetadataInfo[],
+    metadata: M[],
+  ): Promise<UpsertResult[]>;
+  upsert<M extends Metadata = Metadata>(
+    type: string,
+    metadata: M,
+  ): Promise<UpsertResult>;
+  upsert<M extends Metadata = Metadata>(
+    type: string,
+    metadata: M | M[],
   ): Promise<UpsertResult | UpsertResult[]>;
-  upsert(type: string, metadata: MetadataInfo | MetadataInfo[]) {
+  upsert(type: string, metadata: Metadata | Metadata[]) {
     const isArray = Array.isArray(metadata);
     metadata = assignTypeWithMetadata(metadata, type);
     const schema = isArray
@@ -334,14 +349,14 @@ export class AsyncResultLocator<
   S extends Schema,
   R extends {} = AsyncResult
 > extends EventEmitter {
-  _meta: Metadata<S>;
+  _meta: MetadataApi<S>;
   _promise: Promise<AsyncResult>;
   _id: string | undefined;
 
   /**
    *
    */
-  constructor(meta: Metadata<S>, promise: Promise<AsyncResult>) {
+  constructor(meta: MetadataApi<S>, promise: Promise<AsyncResult>) {
     super();
     this._meta = meta;
     this._promise = promise;
@@ -479,4 +494,4 @@ export class DeployResultLocator<S extends Schema> extends AsyncResultLocator<
 /*
  * Register hook in connection instantiation for dynamically adding this API module features
  */
-registerModule('metadata', (conn) => new Metadata(conn));
+registerModule('metadata', (conn) => new MetadataApi(conn));
