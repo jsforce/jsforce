@@ -4,15 +4,39 @@
  */
 import HttpApi from './http-api';
 import Connection from './connection';
-import { Schema, HttpResponse, HttpRequest, SoapSchemaDef } from './types';
+import {
+  Schema,
+  HttpResponse,
+  HttpRequest,
+  SoapSchema,
+  SoapSchemaDef,
+} from './types';
 import { isMapObject, isObject } from './util/function';
 
 /**
  *
  */
-export function convertTypeUsingSchema(
+function getPropsSchema(
+  schema: SoapSchemaDef,
+  schemaDict: { [name: string]: SoapSchemaDef },
+): SoapSchemaDef['props'] {
+  if (schema.extends && schemaDict[schema.extends]) {
+    const extendSchema = schemaDict[schema.extends];
+    return {
+      ...getPropsSchema(extendSchema, schemaDict),
+      ...schema.props,
+    };
+  }
+  return schema.props;
+}
+
+/**
+ *
+ */
+export function castTypeUsingSchema(
   value: unknown,
-  schema?: SoapSchemaDef,
+  schema?: SoapSchema | SoapSchemaDef,
+  schemaDict: { [name: string]: SoapSchemaDef } = {},
 ): any {
   if (Array.isArray(schema)) {
     const nillable = schema.length === 2 && schema[0] === '?';
@@ -21,9 +45,14 @@ export function convertTypeUsingSchema(
       return nillable ? null : [];
     }
     return (Array.isArray(value) ? value : [value]).map((v) =>
-      convertTypeUsingSchema(v, schema_),
+      castTypeUsingSchema(v, schema_, schemaDict),
     );
   } else if (isMapObject(schema)) {
+    // if schema is Schema Definition, not schema element
+    if ('type' in schema && 'props' in schema && isMapObject(schema.props)) {
+      const props = getPropsSchema(schema as SoapSchemaDef, schemaDict);
+      return castTypeUsingSchema(value, props, schemaDict);
+    }
     const nillable = '?' in schema;
     const schema_ =
       '?' in schema ? (schema['?'] as { [key: string]: any }) : schema;
@@ -40,24 +69,40 @@ export function convertTypeUsingSchema(
     return Object.keys(schema_).reduce(
       (o, k) => ({
         ...o,
-        [k]: convertTypeUsingSchema(obj[k], schema_[k]),
+        [k]: castTypeUsingSchema(obj[k], schema_[k], schemaDict),
       }),
       obj,
     );
   } else {
     const nillable = typeof schema === 'string' && schema[0] === '?';
-    switch (schema) {
+    const type =
+      typeof schema === 'string'
+        ? nillable
+          ? schema.substring(1)
+          : schema
+        : 'any';
+    switch (type) {
       case 'string':
-      case '?string':
         return value != null ? String(value) : nillable ? null : '';
       case 'number':
-      case '?number':
         return value != null ? Number(value) : nillable ? null : 0;
       case 'boolean':
-      case '?boolean':
         return value != null ? value === 'true' : nillable ? null : false;
-      default:
+      case 'null':
+        return null;
+      default: {
+        if (schemaDict[type]) {
+          const cvalue = castTypeUsingSchema(
+            value,
+            schemaDict[type],
+            schemaDict,
+          );
+          const isEmpty =
+            isMapObject(cvalue) && Object.keys(cvalue).length === 0;
+          return isEmpty && nillable ? null : cvalue;
+        }
         return value as any;
+      }
     }
   }
 }
@@ -152,7 +197,12 @@ export default class SOAP<S extends Schema> extends HttpApi<S> {
   /**
    * Invoke SOAP call using method and arguments
    */
-  async invoke(method: string, args: object, schema?: SoapSchemaDef) {
+  async invoke(
+    method: string,
+    args: object,
+    schema?: SoapSchema | SoapSchemaDef,
+    schemaDict?: { [name: string]: SoapSchemaDef },
+  ) {
     const res = await this.request({
       method: 'POST',
       url: this._endpointUrl,
@@ -162,7 +212,7 @@ export default class SOAP<S extends Schema> extends HttpApi<S> {
       },
       _message: { [method]: args },
     } as HttpRequest);
-    return schema ? convertTypeUsingSchema(res, schema) : res;
+    return schema ? castTypeUsingSchema(res, schema, schemaDict) : res;
   }
 
   /** @override */
