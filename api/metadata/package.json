@@ -1,0 +1,5 @@
+{
+  "main": "../../lib/api/metadata",
+  "module": "../../module/api/metadata",
+  "types": "../../lib/api/metadata"
+}
