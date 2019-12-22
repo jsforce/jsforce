@@ -9647,7 +9647,7 @@ export type Metadata = {
   fullName?: string | null | undefined;
 };
 
-export type AccountRelationshipShareRule = {
+export type AccountRelationshipShareRule = Metadata & {
   accessLevel: string;
   accountToCriteriaField: string;
   description?: string | null | undefined;
@@ -9657,7 +9657,7 @@ export type AccountRelationshipShareRule = {
   type: string;
 };
 
-export type AccountSettings = {
+export type AccountSettings = Metadata & {
   enableAccountHistoryTracking?: boolean | null | undefined;
   enableAccountInsightsInMobile?: boolean | null | undefined;
   enableAccountOwnerReport?: boolean | null | undefined;
@@ -9667,7 +9667,7 @@ export type AccountSettings = {
   showViewHierarchyLink?: boolean | null | undefined;
 };
 
-export type ActionLinkGroupTemplate = {
+export type ActionLinkGroupTemplate = Metadata & {
   actionLinkTemplates: ActionLinkTemplate[];
   category: string;
   executionsAllowed: string;
@@ -9691,7 +9691,7 @@ export type ActionLinkTemplate = {
   userVisibility: string;
 };
 
-export type ActionPlanTemplate = {
+export type ActionPlanTemplate = Metadata & {
   actionPlanTemplateItem: ActionPlanTemplateItem[];
   description?: string | null | undefined;
   name: string;
@@ -9713,13 +9713,13 @@ export type ActionPlanTemplateItemValue = {
   valueLiteral?: string | null | undefined;
 };
 
-export type ActionsSettings = {
+export type ActionsSettings = Metadata & {
   enableDefaultQuickActionsOn?: boolean | null | undefined;
   enableMdpEnabled?: boolean | null | undefined;
   enableThirdPartyActions?: boolean | null | undefined;
 };
 
-export type ActivitiesSettings = {
+export type ActivitiesSettings = Metadata & {
   allowUsersToRelateMultipleContactsToTasksAndEvents?:
     | boolean
     | null
@@ -9747,7 +9747,7 @@ export type ActivitiesSettings = {
   showMyTasksHoverLinks?: boolean | null | undefined;
 };
 
-export type AddressSettings = {
+export type AddressSettings = Metadata & {
   countriesAndStates: CountriesAndStates;
 };
 
@@ -9775,7 +9775,7 @@ export type State = {
   visible: boolean;
 };
 
-export type AnalyticSnapshot = {
+export type AnalyticSnapshot = Metadata & {
   description?: string | null | undefined;
   groupColumn?: string | null | undefined;
   mappings: AnalyticSnapshotMapping[];
@@ -9792,7 +9792,7 @@ export type AnalyticSnapshotMapping = {
   targetField: string;
 };
 
-export type AnalyticsSettings = {
+export type AnalyticsSettings = Metadata & {
   alwaysGenPreviews?: boolean | null | undefined;
   analyticsAdoptionMetadata?: boolean | null | undefined;
   canAccessAnalyticsViaAPI?: boolean | null | undefined;
@@ -9827,7 +9827,7 @@ export type AnalyticsSettings = {
   enableWaveTrendedDatasetCleanup?: boolean | null | undefined;
 };
 
-export type AnimationRule = {
+export type AnimationRule = Metadata & {
   animationFrequency: string;
   developerName: string;
   isActive: boolean;
@@ -9839,7 +9839,7 @@ export type AnimationRule = {
   targetFieldChangeToValues: string;
 };
 
-export type ApexSettings = {
+export type ApexSettings = Metadata & {
   enableAggregateCodeCoverageOnly?: boolean | null | undefined;
   enableApexAccessRightsPref?: boolean | null | undefined;
   enableApexApprovalLockUnlock?: boolean | null | undefined;
@@ -9855,15 +9855,15 @@ export type ApexSettings = {
   enableNonCertifiedApexMdCrud?: boolean | null | undefined;
 };
 
-export type ApexTestSuite = {
+export type ApexTestSuite = Metadata & {
   testClassName: string[];
 };
 
-export type AppExperienceSettings = {
+export type AppExperienceSettings = Metadata & {
   doesHideAllAppsInAppLauncher?: boolean | null | undefined;
 };
 
-export type AppMenu = {
+export type AppMenu = Metadata & {
   appMenuItems: AppMenuItem[];
 };
 
@@ -9872,7 +9872,7 @@ export type AppMenuItem = {
   type: string;
 };
 
-export type AppointmentSchedulingPolicy = {
+export type AppointmentSchedulingPolicy = Metadata & {
   appointmentStartTimeInterval: string;
   masterLabel: string;
   shouldConsiderCalendarEvents: boolean;
@@ -9885,7 +9885,7 @@ export type AppointmentSchedulingPolicy = {
   shouldUseSecondaryMembers: boolean;
 };
 
-export type ApprovalProcess = {
+export type ApprovalProcess = Metadata & {
   active: boolean;
   allowRecall?: boolean | null | undefined;
   allowedSubmitters: ApprovalSubmitter[];
@@ -9962,7 +9962,7 @@ export type FilterItem = {
   valueField?: string | null | undefined;
 };
 
-export type DuplicateRuleFilterItem = {
+export type DuplicateRuleFilterItem = FilterItem & {
   sortOrder: number;
   table: string;
 };
@@ -9976,11 +9976,11 @@ export type NextAutomatedApprover = {
   userHierarchyField: string;
 };
 
-export type ArchiveSettings = {
+export type ArchiveSettings = Metadata & {
   enableEntityArchivingEnabled?: boolean | null | undefined;
 };
 
-export type AssignmentRule = {
+export type AssignmentRule = Metadata & {
   active?: boolean | null | undefined;
   ruleEntry: RuleEntry[];
 };
@@ -10016,11 +10016,11 @@ export type EscalationAction = {
   notifyToTemplate?: string | null | undefined;
 };
 
-export type AssignmentRules = {
+export type AssignmentRules = Metadata & {
   assignmentRule: AssignmentRule[];
 };
 
-export type Audience = {
+export type Audience = Metadata & {
   audienceName: string;
   container: string;
   criteria: AudienceCriteria;
@@ -10066,7 +10066,7 @@ export type PersonalizationTargetInfo = {
   targetValue: string;
 };
 
-export type AuraDefinitionBundle = {
+export type AuraDefinitionBundle = Metadata & {
   SVGContent?: string | null | undefined;
   apiVersion?: number | null | undefined;
   controllerContent?: string | null | undefined;
@@ -10089,7 +10089,7 @@ export type PackageVersion = {
   namespace: string;
 };
 
-export type AuthProvider = {
+export type AuthProvider = Metadata & {
   appleTeam?: string | null | undefined;
   authorizeUrl?: string | null | undefined;
   consumerKey?: string | null | undefined;
@@ -10118,21 +10118,21 @@ export type AuthProvider = {
   userInfoUrl?: string | null | undefined;
 };
 
-export type AutoResponseRule = {
+export type AutoResponseRule = Metadata & {
   active?: boolean | null | undefined;
   ruleEntry: RuleEntry[];
 };
 
-export type AutoResponseRules = {
+export type AutoResponseRules = Metadata & {
   autoResponseRule: AutoResponseRule[];
 };
 
-export type BlockchainSettings = {
+export type BlockchainSettings = Metadata & {
   enableBcp?: boolean | null | undefined;
   enableBcpCoin?: boolean | null | undefined;
 };
 
-export type Bot = {
+export type Bot = Metadata & {
   botMlDomain: LocalMlDomain;
   botUser?: string | null | undefined;
   botVersions: BotVersion[];
@@ -10184,7 +10184,7 @@ export type SynonymGroup = {
   terms: string[];
 };
 
-export type BotVersion = {
+export type BotVersion = Metadata & {
   botDialogGroups: BotDialogGroup[];
   botDialogs: BotDialog[];
   conversationVariables: ConversationVariable[];
@@ -10331,11 +10331,11 @@ export type ConversationContextVariableMapping = {
   messageType: string;
 };
 
-export type BotSettings = {
+export type BotSettings = Metadata & {
   enableBots?: boolean | null | undefined;
 };
 
-export type BrandingSet = {
+export type BrandingSet = Metadata & {
   brandingSetProperty: BrandingSetProperty[];
   description?: string | null | undefined;
   masterLabel: string;
@@ -10347,7 +10347,7 @@ export type BrandingSetProperty = {
   propertyValue?: string | null | undefined;
 };
 
-export type BusinessHoursEntry = {
+export type BusinessHoursEntry = Metadata & {
   active?: boolean | null | undefined;
   default: boolean;
   fridayEndTime?: string | null | undefined;
@@ -10368,7 +10368,7 @@ export type BusinessHoursEntry = {
   wednesdayStartTime?: string | null | undefined;
 };
 
-export type BusinessHoursSettings = {
+export type BusinessHoursSettings = Metadata & {
   businessHours: BusinessHoursEntry[];
   holidays: Holiday[];
 };
@@ -10392,13 +10392,13 @@ export type Holiday = {
   startTime?: string | null | undefined;
 };
 
-export type BusinessProcess = {
+export type BusinessProcess = Metadata & {
   description?: string | null | undefined;
   isActive?: boolean | null | undefined;
   values: PicklistValue[];
 };
 
-export type PicklistValue = {
+export type PicklistValue = Metadata & {
   color?: string | null | undefined;
   default: boolean;
   description?: string | null | undefined;
@@ -10416,7 +10416,7 @@ export type PicklistValue = {
   won?: boolean | null | undefined;
 };
 
-export type CMSConnectSource = {
+export type CMSConnectSource = Metadata & {
   cmsConnectAsset: CMSConnectAsset[];
   cmsConnectLanguage: CMSConnectLanguage[];
   cmsConnectPersonalization: CMSConnectPersonalization;
@@ -10469,7 +10469,7 @@ export type CMSConnectResourceDefinition = {
   rootNodePath?: string | null | undefined;
 };
 
-export type CallCenter = {
+export type CallCenter = Metadata & {
   adapterUrl?: string | null | undefined;
   customSettings?: string | null | undefined;
   displayName: string;
@@ -10491,7 +10491,7 @@ export type CallCenterItem = {
   value: string;
 };
 
-export type CampaignInfluenceModel = {
+export type CampaignInfluenceModel = Metadata & {
   isActive?: boolean | null | undefined;
   isDefaultModel: boolean;
   isModelLocked: boolean;
@@ -10500,7 +10500,7 @@ export type CampaignInfluenceModel = {
   recordPreference?: string | null | undefined;
 };
 
-export type CampaignSettings = {
+export type CampaignSettings = Metadata & {
   enableAutoCampInfluenceDisabled?: boolean | null | undefined;
   enableB2bmaCampaignInfluence2?: boolean | null | undefined;
   enableCampaignHistoryTrackEnabled?: boolean | null | undefined;
@@ -10509,7 +10509,7 @@ export type CampaignSettings = {
   enableSuppressNoValueCI2?: boolean | null | undefined;
 };
 
-export type CanvasMetadata = {
+export type CanvasMetadata = Metadata & {
   accessMethod: string;
   canvasOptions?: string | null | undefined;
   canvasUrl: string;
@@ -10518,13 +10518,13 @@ export type CanvasMetadata = {
   samlInitiationMethod?: string | null | undefined;
 };
 
-export type CaseClassificationSettings = {
+export type CaseClassificationSettings = Metadata & {
   caseClassificationRecommendations?: boolean | null | undefined;
   reRunAttributeBasedRules?: boolean | null | undefined;
   runAssignmentRules?: boolean | null | undefined;
 };
 
-export type CaseSettings = {
+export type CaseSettings = Metadata & {
   caseAssignNotificationTemplate?: string | null | undefined;
   caseAutoProcUser?: boolean | null | undefined;
   caseCloseNotificationTemplate?: string | null | undefined;
@@ -10608,13 +10608,13 @@ export type WebToCaseSettings = {
   enableWebToCase?: boolean | null | undefined;
 };
 
-export type CaseSubjectParticle = {
+export type CaseSubjectParticle = Metadata & {
   index: number;
   textField?: string | null | undefined;
   type: string;
 };
 
-export type ChannelLayout = {
+export type ChannelLayout = Metadata & {
   enabledChannels: string[];
   label: string;
   layoutItems: ChannelLayoutItem[];
@@ -10625,7 +10625,7 @@ export type ChannelLayoutItem = {
   field: string;
 };
 
-export type ChatterAnswersSettings = {
+export type ChatterAnswersSettings = Metadata & {
   emailFollowersOnBestAnswer?: boolean | null | undefined;
   emailFollowersOnReply?: boolean | null | undefined;
   emailOwnerOnPrivateReply?: boolean | null | undefined;
@@ -10640,7 +10640,7 @@ export type ChatterAnswersSettings = {
   showInPortals?: boolean | null | undefined;
 };
 
-export type ChatterEmailsMDSettings = {
+export type ChatterEmailsMDSettings = Metadata & {
   enableChatterDigestEmailsApiOnly?: boolean | null | undefined;
   enableChatterEmailAttachment?: boolean | null | undefined;
   enableCollaborationEmail?: boolean | null | undefined;
@@ -10649,7 +10649,7 @@ export type ChatterEmailsMDSettings = {
   enableEmailToChatter?: boolean | null | undefined;
 };
 
-export type ChatterExtension = {
+export type ChatterExtension = Metadata & {
   compositionComponent: string;
   description: string;
   extensionName: string;
@@ -10662,7 +10662,7 @@ export type ChatterExtension = {
   type: string;
 };
 
-export type ChatterSettings = {
+export type ChatterSettings = Metadata & {
   allowChatterGroupArchiving?: boolean | null | undefined;
   allowRecordsInChatterGroup?: boolean | null | undefined;
   allowSharingInChatterGroup?: boolean | null | undefined;
@@ -10680,7 +10680,7 @@ export type ChatterSettings = {
   unlistedGroupsEnabled?: boolean | null | undefined;
 };
 
-export type CleanDataService = {
+export type CleanDataService = Metadata & {
   cleanRules: CleanRule[];
   description: string;
   masterLabel: string;
@@ -10721,7 +10721,7 @@ export type FieldMappingField = {
   priority: number;
 };
 
-export type CommandAction = {
+export type CommandAction = Metadata & {
   actionType: string;
   description?: string | null | undefined;
   intents: CommandActionIntent[];
@@ -10748,7 +10748,7 @@ export type CommandActionParam = {
   type: string;
 };
 
-export type CommunitiesSettings = {
+export type CommunitiesSettings = Metadata & {
   canModerateAllFeedPosts?: boolean | null | undefined;
   canModerateInternalFeedPosts?: boolean | null | undefined;
   embeddedVisualforcePages?: boolean | null | undefined;
@@ -10768,7 +10768,7 @@ export type CommunitiesSettings = {
   enableUsernameUniqForOrgPref?: boolean | null | undefined;
 };
 
-export type Community = {
+export type Community = Metadata & {
   active?: boolean | null | undefined;
   chatterAnswersFacebookSsoUrl?: string | null | undefined;
   communityFeedPage?: string | null | undefined;
@@ -10801,7 +10801,7 @@ export type IdeaReputationLevel = {
   value: number;
 };
 
-export type CommunityTemplateDefinition = {
+export type CommunityTemplateDefinition = Metadata & {
   baseTemplate?: string | null | undefined;
   bundlesInfo: CommunityTemplateBundleInfo[];
   category: string;
@@ -10823,7 +10823,7 @@ export type CommunityTemplateBundleInfo = {
   type: string;
 };
 
-export type CommunityThemeBundleInfo = {};
+export type CommunityThemeBundleInfo = CommunityTemplateBundleInfo & {};
 
 export type NavigationLinkSet = {
   navigationMenuItem: NavigationMenuItem[];
@@ -10854,7 +10854,7 @@ export type CommunityTemplatePageSetting = {
   themeLayout: string;
 };
 
-export type CommunityThemeDefinition = {
+export type CommunityThemeDefinition = Metadata & {
   bundlesInfo: CommunityThemeBundleInfo[];
   customThemeLayoutType: CommunityCustomThemeLayoutType[];
   defaultBrandingSet?: string | null | undefined;
@@ -10884,12 +10884,12 @@ export type CommunityThemeSetting = {
   themeLayoutType?: string | null | undefined;
 };
 
-export type CompactLayout = {
+export type CompactLayout = Metadata & {
   fields: string[];
   label: string;
 };
 
-export type CompanySettings = {
+export type CompanySettings = Metadata & {
   enableCustomFiscalYear: boolean;
   fiscalYear: FiscalYearSettings;
 };
@@ -10899,7 +10899,7 @@ export type FiscalYearSettings = {
   startMonth?: string | null | undefined;
 };
 
-export type ConnectedApp = {
+export type ConnectedApp = Metadata & {
   attributes: ConnectedAppAttribute[];
   canvas: CanvasMetadata;
   canvasConfig: ConnectedAppCanvasConfig;
@@ -10990,12 +10990,12 @@ export type ConnectedAppSamlConfig = {
   samlSubjectType: string;
 };
 
-export type ConnectedAppSettings = {
+export type ConnectedAppSettings = Metadata & {
   enableAdminApprovedAppsOnly?: boolean | null | undefined;
   enableSkipUserProvisioningWizardWelcomePage?: boolean | null | undefined;
 };
 
-export type ContentSettings = {
+export type ContentSettings = Metadata & {
   enableChatterFileLink?: boolean | null | undefined;
   enableContent?: boolean | null | undefined;
   enableContentAutoAssign?: boolean | null | undefined;
@@ -11015,7 +11015,7 @@ export type ContentSettings = {
   skipContentAssetTriggersOnDeploy?: boolean | null | undefined;
 };
 
-export type ContractSettings = {
+export type ContractSettings = Metadata & {
   autoCalculateEndDate?: boolean | null | undefined;
   autoExpirationDelay?: string | null | undefined;
   autoExpirationRecipient?: string | null | undefined;
@@ -11024,18 +11024,18 @@ export type ContractSettings = {
   notifyOwnersOnContractExpiration?: boolean | null | undefined;
 };
 
-export type CorsWhitelistOrigin = {
+export type CorsWhitelistOrigin = Metadata & {
   urlPattern: string;
 };
 
-export type CspTrustedSite = {
+export type CspTrustedSite = Metadata & {
   context?: string | null | undefined;
   description?: string | null | undefined;
   endpointUrl: string;
   isActive: boolean;
 };
 
-export type CurrencySettings = {
+export type CurrencySettings = Metadata & {
   enableCurrencyEffectiveDates?: boolean | null | undefined;
   enableCurrencySymbolWithMultiCurrency?: boolean | null | undefined;
   enableMultiCurrency?: boolean | null | undefined;
@@ -11043,7 +11043,7 @@ export type CurrencySettings = {
   isParenCurrencyConvDisabled?: boolean | null | undefined;
 };
 
-export type CustomApplication = {
+export type CustomApplication = Metadata & {
   actionOverrides: AppActionOverride[];
   brand: AppBrand;
   consoleConfig: ServiceCloudConsoleConfig;
@@ -11066,7 +11066,7 @@ export type CustomApplication = {
   workspaceConfig: AppWorkspaceConfig;
 };
 
-export type AppActionOverride = {
+export type AppActionOverride = ActionOverride & {
   pageOrSobjectType: string;
 };
 
@@ -11112,7 +11112,7 @@ export type KeyboardShortcuts = {
   defaultShortcuts: DefaultShortcut[];
 };
 
-export type CustomShortcut = {
+export type CustomShortcut = DefaultShortcut & {
   description?: string | null | undefined;
   eventName: string;
 };
@@ -11163,7 +11163,7 @@ export type AppPreferences = {
   saveUserSessions: boolean;
 };
 
-export type AppProfileActionOverride = {
+export type AppProfileActionOverride = ProfileActionOverride & {
   profile: string;
 };
 
@@ -11185,7 +11185,7 @@ export type WorkspaceMapping = {
   tab: string;
 };
 
-export type CustomApplicationComponent = {
+export type CustomApplicationComponent = Metadata & {
   buttonIconUrl?: string | null | undefined;
   buttonStyle?: string | null | undefined;
   buttonText?: string | null | undefined;
@@ -11198,7 +11198,7 @@ export type CustomApplicationComponent = {
   width?: number | null | undefined;
 };
 
-export type CustomFeedFilter = {
+export type CustomFeedFilter = Metadata & {
   criteria: FeedFilterCriterion[];
   description?: string | null | undefined;
   isProtected?: boolean | null | undefined;
@@ -11211,7 +11211,7 @@ export type FeedFilterCriterion = {
   relatedSObjectType?: string | null | undefined;
 };
 
-export type CustomField = {
+export type CustomField = Metadata & {
   businessOwnerGroup?: string | null | undefined;
   businessOwnerUser?: string | null | undefined;
   businessStatus?: string | null | undefined;
@@ -11294,7 +11294,7 @@ export type ValueSetValuesDefinition = {
   value: CustomValue[];
 };
 
-export type CustomValue = {
+export type CustomValue = Metadata & {
   color?: string | null | undefined;
   default: boolean;
   description?: string | null | undefined;
@@ -11302,7 +11302,7 @@ export type CustomValue = {
   label?: string | null | undefined;
 };
 
-export type StandardValue = {
+export type StandardValue = CustomValue & {
   allowEmail?: boolean | null | undefined;
   closed?: boolean | null | undefined;
   converted?: boolean | null | undefined;
@@ -11321,7 +11321,7 @@ export type ValueSettings = {
   valueName: string;
 };
 
-export type CustomHelpMenuSection = {
+export type CustomHelpMenuSection = Metadata & {
   customHelpMenuItems: CustomHelpMenuItem[];
   masterLabel: string;
 };
@@ -11332,7 +11332,7 @@ export type CustomHelpMenuItem = {
   sortOrder: number;
 };
 
-export type CustomLabel = {
+export type CustomLabel = Metadata & {
   categories?: string | null | undefined;
   language: string;
   protected: boolean;
@@ -11340,11 +11340,11 @@ export type CustomLabel = {
   value: string;
 };
 
-export type CustomLabels = {
+export type CustomLabels = Metadata & {
   labels: CustomLabel[];
 };
 
-export type CustomMetadata = {
+export type CustomMetadata = Metadata & {
   description?: string | null | undefined;
   label?: string | null | undefined;
   protected?: boolean | null | undefined;
@@ -11356,7 +11356,7 @@ export type CustomMetadataValue = {
   value?: any | null | undefined;
 };
 
-export type CustomNotificationType = {
+export type CustomNotificationType = Metadata & {
   customNotifTypeName: string;
   description?: string | null | undefined;
   desktop: boolean;
@@ -11364,7 +11364,7 @@ export type CustomNotificationType = {
   mobile: boolean;
 };
 
-export type CustomObject = {
+export type CustomObject = Metadata & {
   actionOverrides: ActionOverride[];
   allowInChatterGroups?: boolean | null | undefined;
   articleTypeChannelDisplay: ArticleTypeChannelDisplay;
@@ -11429,7 +11429,7 @@ export type ArticleTypeTemplate = {
   template: string;
 };
 
-export type FieldSet = {
+export type FieldSet = Metadata & {
   availableFields: FieldSetItem[];
   description: string;
   displayedFields: FieldSetItem[];
@@ -11448,7 +11448,7 @@ export type HistoryRetentionPolicy = {
   description?: string | null | undefined;
 };
 
-export type Index = {
+export type Index = Metadata & {
   fields: IndexField[];
   label: string;
 };
@@ -11458,7 +11458,7 @@ export type IndexField = {
   sortDirection: string;
 };
 
-export type ListView = {
+export type ListView = Metadata & {
   booleanFilter?: string | null | undefined;
   columns: string[];
   division?: string | null | undefined;
@@ -11506,7 +11506,7 @@ export type ProfileSearchLayouts = {
   profileName?: string | null | undefined;
 };
 
-export type RecordType = {
+export type RecordType = Metadata & {
   active: boolean;
   businessProcess?: string | null | undefined;
   compactLayoutAssignment?: string | null | undefined;
@@ -11533,7 +11533,7 @@ export type SearchLayouts = {
   searchResultsCustomButtons: string[];
 };
 
-export type SharingReason = {
+export type SharingReason = Metadata & {
   label: string;
 };
 
@@ -11541,7 +11541,7 @@ export type SharingRecalculation = {
   className: string;
 };
 
-export type ValidationRule = {
+export type ValidationRule = Metadata & {
   active: boolean;
   description?: string | null | undefined;
   errorConditionFormula: string;
@@ -11549,7 +11549,7 @@ export type ValidationRule = {
   errorMessage: string;
 };
 
-export type WebLink = {
+export type WebLink = Metadata & {
   availability: string;
   description?: string | null | undefined;
   displayType: string;
@@ -11573,7 +11573,7 @@ export type WebLink = {
   width?: number | null | undefined;
 };
 
-export type CustomObjectTranslation = {
+export type CustomObjectTranslation = Metadata & {
   caseValues: ObjectNameCaseValue[];
   fieldSets: FieldSetTranslation[];
   fields: CustomFieldTranslation[];
@@ -11673,7 +11673,7 @@ export type WorkflowTaskTranslation = {
   subject?: string | null | undefined;
 };
 
-export type CustomPageWebLink = {
+export type CustomPageWebLink = Metadata & {
   availability: string;
   description?: string | null | undefined;
   displayType: string;
@@ -11697,7 +11697,7 @@ export type CustomPageWebLink = {
   width?: number | null | undefined;
 };
 
-export type CustomPermission = {
+export type CustomPermission = Metadata & {
   connectedApp?: string | null | undefined;
   description?: string | null | undefined;
   label: string;
@@ -11709,7 +11709,7 @@ export type CustomPermissionDependencyRequired = {
   dependency: boolean;
 };
 
-export type CustomSite = {
+export type CustomSite = Metadata & {
   active: boolean;
   allowHomePage: boolean;
   allowStandardAnswersPages?: boolean | null | undefined;
@@ -11772,7 +11772,7 @@ export type SiteRedirectMapping = {
   target: string;
 };
 
-export type CustomTab = {
+export type CustomTab = Metadata & {
   actionOverrides: ActionOverride[];
   auraComponent?: string | null | undefined;
   customObject?: boolean | null | undefined;
@@ -11791,7 +11791,7 @@ export type CustomTab = {
   urlEncodingKey?: string | null | undefined;
 };
 
-export type Dashboard = {
+export type Dashboard = Metadata & {
   backgroundEndColor: string;
   backgroundFadeDirection: string;
   backgroundStartColor: string;
@@ -11951,7 +11951,7 @@ export type DashboardComponentSection = {
   components: DashboardComponent[];
 };
 
-export type DataCategoryGroup = {
+export type DataCategoryGroup = Metadata & {
   active: boolean;
   dataCategory: DataCategory;
   description?: string | null | undefined;
@@ -11969,7 +11969,7 @@ export type ObjectUsage = {
   object: string[];
 };
 
-export type DataDotComSettings = {
+export type DataDotComSettings = Metadata & {
   enableAccountExportButtonOff?: boolean | null | undefined;
   enableAccountImportButtonOff?: boolean | null | undefined;
   enableAllowDupeContactFromLead?: boolean | null | undefined;
@@ -11979,7 +11979,7 @@ export type DataDotComSettings = {
   enableContactImportButtonOff?: boolean | null | undefined;
 };
 
-export type DelegateGroup = {
+export type DelegateGroup = Metadata & {
   customObjects: string[];
   groups: string[];
   label: string;
@@ -11989,25 +11989,25 @@ export type DelegateGroup = {
   roles: string[];
 };
 
-export type DeploymentSettings = {
+export type DeploymentSettings = Metadata & {
   doesSkipAsyncApexValidation?: boolean | null | undefined;
 };
 
-export type DevHubSettings = {
+export type DevHubSettings = Metadata & {
   enableShapeExportPref?: boolean | null | undefined;
 };
 
-export type DiscoverySettings = {
+export type DiscoverySettings = Metadata & {
   enableEinsteinAnswersPref?: boolean | null | undefined;
 };
 
-export type DocumentType = {
+export type DocumentType = Metadata & {
   description: string;
   isActive: boolean;
   masterLabel: string;
 };
 
-export type DuplicateRule = {
+export type DuplicateRule = Metadata & {
   actionOnInsert: string;
   actionOnUpdate: string;
   alertText?: string | null | undefined;
@@ -12044,14 +12044,14 @@ export type ObjectMappingField = {
   outputField: string;
 };
 
-export type EACSettings = {
+export type EACSettings = Metadata & {
   enableEACForEveryonePref?: boolean | null | undefined;
   enableInboxActivitySharing?: boolean | null | undefined;
   enableInsightsInTimeline?: boolean | null | undefined;
   enableInsightsInTimelineEacStd?: boolean | null | undefined;
 };
 
-export type EmailAdministrationSettings = {
+export type EmailAdministrationSettings = Metadata & {
   enableComplianceBcc?: boolean | null | undefined;
   enableEmailConsentManagement?: boolean | null | undefined;
   enableEmailSenderIdCompliance?: boolean | null | undefined;
@@ -12074,7 +12074,7 @@ export type EmailAdministrationSettings = {
   sendTextOnlySystemEmails?: boolean | null | undefined;
 };
 
-export type EmailIntegrationSettings = {
+export type EmailIntegrationSettings = Metadata & {
   doesEmailLogAsEmailMessageInOutlook?: boolean | null | undefined;
   doesGmailStayConnectedToSalesforce?: boolean | null | undefined;
   enableContactAndEventSync?: boolean | null | undefined;
@@ -12088,7 +12088,7 @@ export type EmailIntegrationSettings = {
   shouldUseTrustedDomainsList?: boolean | null | undefined;
 };
 
-export type EmailServicesFunction = {
+export type EmailServicesFunction = Metadata & {
   apexClass: string;
   attachmentOption: string;
   authenticationFailureAction: string;
@@ -12114,12 +12114,12 @@ export type EmailServicesAddress = {
   runAsUser: string;
 };
 
-export type EmailTemplateSettings = {
+export type EmailTemplateSettings = Metadata & {
   enableLwcEmailTemplateBuilder?: boolean | null | undefined;
   enableTemplateEnhancedFolderPref?: boolean | null | undefined;
 };
 
-export type EmbeddedServiceBranding = {
+export type EmbeddedServiceBranding = Metadata & {
   contrastInvertedColor?: string | null | undefined;
   contrastPrimaryColor?: string | null | undefined;
   embeddedServiceConfig: string;
@@ -12132,7 +12132,7 @@ export type EmbeddedServiceBranding = {
   width?: number | null | undefined;
 };
 
-export type EmbeddedServiceConfig = {
+export type EmbeddedServiceConfig = Metadata & {
   areGuestUsersAllowed?: boolean | null | undefined;
   authMethod?: string | null | undefined;
   embeddedServiceAppointmentSettings: EmbeddedServiceAppointmentSettings;
@@ -12167,7 +12167,7 @@ export type EmbeddedServiceCustomLabel = {
   labelKey?: string | null | undefined;
 };
 
-export type EmbeddedServiceFlowConfig = {
+export type EmbeddedServiceFlowConfig = Metadata & {
   enabled: boolean;
 };
 
@@ -12187,7 +12187,7 @@ export type EmbeddedServiceLayoutRule = {
   appointmentStatus: string;
 };
 
-export type EmbeddedServiceLiveAgent = {
+export type EmbeddedServiceLiveAgent = Metadata & {
   avatarImg?: string | null | undefined;
   embeddedServiceConfig: string;
   embeddedServiceQuickActions: EmbeddedServiceQuickAction[];
@@ -12217,7 +12217,7 @@ export type EmbeddedServiceQuickAction = {
   quickActionType?: string | null | undefined;
 };
 
-export type EmbeddedServiceMenuSettings = {
+export type EmbeddedServiceMenuSettings = Metadata & {
   branding?: string | null | undefined;
   embeddedServiceMenuItems: EmbeddedServiceMenuItem[];
   isEnabled?: boolean | null | undefined;
@@ -12232,18 +12232,18 @@ export type EmbeddedServiceMenuItem = {
   phoneNumber?: string | null | undefined;
 };
 
-export type EncryptionKeySettings = {
+export type EncryptionKeySettings = Metadata & {
   canOptOutOfDerivationWithBYOK?: boolean | null | undefined;
   enableCacheOnlyKeys?: boolean | null | undefined;
   enableReplayDetection?: boolean | null | undefined;
 };
 
-export type EnhancedNotesSettings = {
+export type EnhancedNotesSettings = Metadata & {
   enableEnhancedNotes?: boolean | null | undefined;
   enableTasksOnEnhancedNotes?: boolean | null | undefined;
 };
 
-export type EntitlementProcess = {
+export type EntitlementProcess = Metadata & {
   SObjectType?: string | null | undefined;
   active?: boolean | null | undefined;
   businessHours?: string | null | undefined;
@@ -12281,7 +12281,7 @@ export type EntitlementProcessMilestoneTimeTrigger = {
   workflowTimeTriggerUnit: string;
 };
 
-export type EntitlementSettings = {
+export type EntitlementSettings = Metadata & {
   assetLookupLimitedToActiveEntitlementsOnAccount?: boolean | null | undefined;
   assetLookupLimitedToActiveEntitlementsOnContact?: boolean | null | undefined;
   assetLookupLimitedToSameAccount?: boolean | null | undefined;
@@ -12297,7 +12297,7 @@ export type EntitlementSettings = {
   ignoreMilestoneBusinessHours?: boolean | null | undefined;
 };
 
-export type EntitlementTemplate = {
+export type EntitlementTemplate = Metadata & {
   businessHours?: string | null | undefined;
   casesPerEntitlement?: number | null | undefined;
   entitlementProcess?: string | null | undefined;
@@ -12306,7 +12306,7 @@ export type EntitlementTemplate = {
   type?: string | null | undefined;
 };
 
-export type EntityImplements = {
+export type EntityImplements = Metadata & {
   fieldMap: FieldImplements[];
   interface?: string | null | undefined;
   isDefault?: boolean | null | undefined;
@@ -12317,25 +12317,25 @@ export type FieldImplements = {
   interfaceField?: string | null | undefined;
 };
 
-export type EscalationRule = {
+export type EscalationRule = Metadata & {
   active?: boolean | null | undefined;
   ruleEntry: RuleEntry[];
 };
 
-export type EscalationRules = {
+export type EscalationRules = Metadata & {
   escalationRule: EscalationRule[];
 };
 
-export type EssentialsSettings = {
+export type EssentialsSettings = Metadata & {
   emailConnectorEnabled?: boolean | null | undefined;
   essentialsAppEnabled?: boolean | null | undefined;
 };
 
-export type EssentialsTrialOrgSettings = {
+export type EssentialsTrialOrgSettings = Metadata & {
   enableSampleDataDeleted?: boolean | null | undefined;
 };
 
-export type EventSettings = {
+export type EventSettings = Metadata & {
   enableApexLimitEvents?: boolean | null | undefined;
   enableDeleteMonitoringData?: boolean | null | undefined;
   enableDynamicStreamingChannel?: boolean | null | undefined;
@@ -12346,11 +12346,11 @@ export type EventSettings = {
   enableTransactionSecurityPolicies?: boolean | null | undefined;
 };
 
-export type ExperienceBundleSettings = {
+export type ExperienceBundleSettings = Metadata & {
   enableExperienceBundleMetadata?: boolean | null | undefined;
 };
 
-export type ExternalDataSource = {
+export type ExternalDataSource = Metadata & {
   authProvider?: string | null | undefined;
   certificate?: string | null | undefined;
   customConfiguration?: string | null | undefined;
@@ -12377,7 +12377,7 @@ export type CustomHttpHeader = {
   isActive?: boolean | null | undefined;
 };
 
-export type ExternalServiceRegistration = {
+export type ExternalServiceRegistration = Metadata & {
   description?: string | null | undefined;
   label: string;
   namedCredential?: string | null | undefined;
@@ -12387,11 +12387,11 @@ export type ExternalServiceRegistration = {
   status: string;
 };
 
-export type ExternalServicesSettings = {
+export type ExternalServicesSettings = Metadata & {
   enableEnhancedExternalServices?: boolean | null | undefined;
 };
 
-export type FieldServiceSettings = {
+export type FieldServiceSettings = Metadata & {
   capacityUsageCalcClassId?: string | null | undefined;
   doesAllowEditSaForCrew?: boolean | null | undefined;
   doesShareSaParentWoWithAr?: boolean | null | undefined;
@@ -12406,7 +12406,7 @@ export type FieldServiceSettings = {
   workOrderSearchFields: string[];
 };
 
-export type FileUploadAndDownloadSecuritySettings = {
+export type FileUploadAndDownloadSecuritySettings = Metadata & {
   dispositions: FileTypeDispositionAssignmentBean[];
   noHtmlUploadAsAttachment: boolean;
 };
@@ -12417,13 +12417,13 @@ export type FileTypeDispositionAssignmentBean = {
   securityRiskFileType: boolean;
 };
 
-export type FilesConnectSettings = {
+export type FilesConnectSettings = Metadata & {
   enableContentHubAllowed?: boolean | null | undefined;
   enableContentHubCvtLinksAllowed?: boolean | null | undefined;
   enableContentHubEOSearchLayout?: boolean | null | undefined;
 };
 
-export type FlexiPage = {
+export type FlexiPage = Metadata & {
   description?: string | null | undefined;
   flexiPageRegions: FlexiPageRegion[];
   masterLabel: string;
@@ -12468,7 +12468,7 @@ export type UiFormulaCriterion = {
   rightValue?: string | null | undefined;
 };
 
-export type PlatformActionList = {
+export type PlatformActionList = Metadata & {
   actionListContext: string;
   platformActionListItems: PlatformActionListItem[];
   relatedSourceEntity?: string | null | undefined;
@@ -12494,7 +12494,7 @@ export type FlexiPageTemplateInstance = {
   properties: ComponentInstanceProperty[];
 };
 
-export type Flow = {
+export type Flow = Metadata & {
   actionCalls: FlowActionCall[];
   apexPluginCalls: FlowApexPluginCall[];
   assignments: FlowAssignment[];
@@ -12527,7 +12527,7 @@ export type Flow = {
   waits: FlowWait[];
 };
 
-export type FlowActionCall = {
+export type FlowActionCall = FlowNode & {
   actionName: string;
   actionType: string;
   connector: FlowConnector;
@@ -12536,13 +12536,13 @@ export type FlowActionCall = {
   outputParameters: FlowActionCallOutputParameter[];
 };
 
-export type FlowNode = {
+export type FlowNode = FlowElement & {
   label?: string | null | undefined;
   locationX: number;
   locationY: number;
 };
 
-export type FlowElement = {
+export type FlowElement = FlowBaseElement & {
   description?: string | null | undefined;
   name?: string | null | undefined;
 };
@@ -12565,33 +12565,33 @@ export type FlowElementReferenceOrValue = {
   stringValue?: string | null | undefined;
 };
 
-export type FlowActionCallInputParameter = {
+export type FlowActionCallInputParameter = FlowBaseElement & {
   name: string;
   value: FlowElementReferenceOrValue;
 };
 
-export type FlowActionCallOutputParameter = {
+export type FlowActionCallOutputParameter = FlowBaseElement & {
   assignToReference: string;
   name: string;
 };
 
-export type FlowApexPluginCallInputParameter = {
+export type FlowApexPluginCallInputParameter = FlowBaseElement & {
   name: string;
   value: FlowElementReferenceOrValue;
 };
 
-export type FlowApexPluginCallOutputParameter = {
+export type FlowApexPluginCallOutputParameter = FlowBaseElement & {
   assignToReference: string;
   name: string;
 };
 
-export type FlowAssignmentItem = {
+export type FlowAssignmentItem = FlowBaseElement & {
   assignToReference: string;
   operator: string;
   value: FlowElementReferenceOrValue;
 };
 
-export type FlowChoiceUserInput = {
+export type FlowChoiceUserInput = FlowBaseElement & {
   isRequired?: boolean | null | undefined;
   promptText?: string | null | undefined;
   validationRule: FlowInputValidationRule;
@@ -12602,93 +12602,93 @@ export type FlowInputValidationRule = {
   formulaExpression: string;
 };
 
-export type FlowCondition = {
+export type FlowCondition = FlowBaseElement & {
   leftValueReference: string;
   operator: string;
   rightValue: FlowElementReferenceOrValue;
 };
 
-export type FlowConnector = {
+export type FlowConnector = FlowBaseElement & {
   targetReference: string;
 };
 
-export type FlowInputFieldAssignment = {
+export type FlowInputFieldAssignment = FlowBaseElement & {
   field: string;
   value: FlowElementReferenceOrValue;
 };
 
-export type FlowOutputFieldAssignment = {
+export type FlowOutputFieldAssignment = FlowBaseElement & {
   assignToReference: string;
   field: string;
 };
 
-export type FlowRecordFilter = {
+export type FlowRecordFilter = FlowBaseElement & {
   field: string;
   operator: string;
   value: FlowElementReferenceOrValue;
 };
 
-export type FlowScreenFieldInputParameter = {
+export type FlowScreenFieldInputParameter = FlowBaseElement & {
   name: string;
   value: FlowElementReferenceOrValue;
 };
 
-export type FlowScreenFieldOutputParameter = {
+export type FlowScreenFieldOutputParameter = FlowBaseElement & {
   assignToReference: string;
   name: string;
 };
 
-export type FlowScreenRule = {
+export type FlowScreenRule = FlowBaseElement & {
   conditionLogic?: string | null | undefined;
   conditions: FlowCondition[];
   label: string;
   ruleActions: FlowScreenRuleAction[];
 };
 
-export type FlowScreenRuleAction = {
+export type FlowScreenRuleAction = FlowBaseElement & {
   attribute: string;
   fieldReference: string;
   value: FlowElementReferenceOrValue;
 };
 
-export type FlowSubflowInputAssignment = {
+export type FlowSubflowInputAssignment = FlowBaseElement & {
   name: string;
   value: FlowElementReferenceOrValue;
 };
 
-export type FlowSubflowOutputAssignment = {
+export type FlowSubflowOutputAssignment = FlowBaseElement & {
   assignToReference: string;
   name: string;
 };
 
-export type FlowVisibilityRule = {
+export type FlowVisibilityRule = FlowBaseElement & {
   conditionLogic?: string | null | undefined;
   conditions: FlowCondition[];
 };
 
-export type FlowWaitEventInputParameter = {
+export type FlowWaitEventInputParameter = FlowBaseElement & {
   name: string;
   value: FlowElementReferenceOrValue;
 };
 
-export type FlowWaitEventOutputParameter = {
+export type FlowWaitEventOutputParameter = FlowBaseElement & {
   assignToReference: string;
   name: string;
 };
 
-export type FlowChoice = {
+export type FlowChoice = FlowElement & {
   choiceText: string;
   dataType: string;
   userInput: FlowChoiceUserInput;
   value: FlowElementReferenceOrValue;
 };
 
-export type FlowConstant = {
+export type FlowConstant = FlowElement & {
   dataType: string;
   value: FlowElementReferenceOrValue;
 };
 
-export type FlowDynamicChoiceSet = {
+export type FlowDynamicChoiceSet = FlowElement & {
   dataType: string;
   displayField: string;
   filters: FlowRecordFilter[];
@@ -12702,20 +12702,20 @@ export type FlowDynamicChoiceSet = {
   valueField?: string | null | undefined;
 };
 
-export type FlowFormula = {
+export type FlowFormula = FlowElement & {
   dataType?: string | null | undefined;
   expression: string;
   scale?: number | null | undefined;
 };
 
-export type FlowRule = {
+export type FlowRule = FlowElement & {
   conditionLogic: string;
   conditions: FlowCondition[];
   connector: FlowConnector;
   label: string;
 };
 
-export type FlowScreenField = {
+export type FlowScreenField = FlowElement & {
   choiceReferences: string[];
   dataType?: string | null | undefined;
   defaultSelectedChoiceReference?: string | null | undefined;
@@ -12734,17 +12734,17 @@ export type FlowScreenField = {
   visibilityRule: FlowVisibilityRule;
 };
 
-export type FlowStage = {
+export type FlowStage = FlowElement & {
   isActive: boolean;
   label: string;
   stageOrder: number;
 };
 
-export type FlowTextTemplate = {
+export type FlowTextTemplate = FlowElement & {
   text: string;
 };
 
-export type FlowVariable = {
+export type FlowVariable = FlowElement & {
   apexClass?: string | null | undefined;
   dataType: string;
   isCollection?: boolean | null | undefined;
@@ -12755,7 +12755,7 @@ export type FlowVariable = {
   value: FlowElementReferenceOrValue;
 };
 
-export type FlowWaitEvent = {
+export type FlowWaitEvent = FlowElement & {
   conditionLogic?: string | null | undefined;
   conditions: FlowCondition[];
   connector: FlowConnector;
@@ -12765,7 +12765,7 @@ export type FlowWaitEvent = {
   outputParameters: FlowWaitEventOutputParameter[];
 };
 
-export type FlowApexPluginCall = {
+export type FlowApexPluginCall = FlowNode & {
   apexClass: string;
   connector: FlowConnector;
   faultConnector: FlowConnector;
@@ -12773,18 +12773,18 @@ export type FlowApexPluginCall = {
   outputParameters: FlowApexPluginCallOutputParameter[];
 };
 
-export type FlowAssignment = {
+export type FlowAssignment = FlowNode & {
   assignmentItems: FlowAssignmentItem[];
   connector: FlowConnector;
 };
 
-export type FlowDecision = {
+export type FlowDecision = FlowNode & {
   defaultConnector: FlowConnector;
   defaultConnectorLabel?: string | null | undefined;
   rules: FlowRule[];
 };
 
-export type FlowLoop = {
+export type FlowLoop = FlowNode & {
   assignNextValueToReference: string;
   collectionReference: string;
   iterationOrder?: string | null | undefined;
@@ -12792,7 +12792,7 @@ export type FlowLoop = {
   noMoreValuesConnector: FlowConnector;
 };
 
-export type FlowRecordCreate = {
+export type FlowRecordCreate = FlowNode & {
   assignRecordIdToReference?: string | null | undefined;
   connector: FlowConnector;
   faultConnector: FlowConnector;
@@ -12801,7 +12801,7 @@ export type FlowRecordCreate = {
   object?: string | null | undefined;
 };
 
-export type FlowRecordDelete = {
+export type FlowRecordDelete = FlowNode & {
   connector: FlowConnector;
   faultConnector: FlowConnector;
   filters: FlowRecordFilter[];
@@ -12809,7 +12809,7 @@ export type FlowRecordDelete = {
   object?: string | null | undefined;
 };
 
-export type FlowRecordLookup = {
+export type FlowRecordLookup = FlowNode & {
   assignNullValuesIfNoRecordsFound?: boolean | null | undefined;
   connector: FlowConnector;
   faultConnector: FlowConnector;
@@ -12824,7 +12824,7 @@ export type FlowRecordLookup = {
   storeOutputAutomatically?: boolean | null | undefined;
 };
 
-export type FlowRecordUpdate = {
+export type FlowRecordUpdate = FlowNode & {
   connector: FlowConnector;
   faultConnector: FlowConnector;
   filters: FlowRecordFilter[];
@@ -12833,7 +12833,7 @@ export type FlowRecordUpdate = {
   object?: string | null | undefined;
 };
 
-export type FlowScreen = {
+export type FlowScreen = FlowNode & {
   allowBack?: boolean | null | undefined;
   allowFinish?: boolean | null | undefined;
   allowPause?: boolean | null | undefined;
@@ -12846,7 +12846,7 @@ export type FlowScreen = {
   showHeader?: boolean | null | undefined;
 };
 
-export type FlowStart = {
+export type FlowStart = FlowNode & {
   connector: FlowConnector;
   filters: FlowRecordFilter[];
   object?: string | null | undefined;
@@ -12860,25 +12860,25 @@ export type FlowSchedule = {
   startTime?: string | null | undefined;
 };
 
-export type FlowStep = {
+export type FlowStep = FlowNode & {
   connectors: FlowConnector[];
 };
 
-export type FlowSubflow = {
+export type FlowSubflow = FlowNode & {
   connector: FlowConnector;
   flowName: string;
   inputAssignments: FlowSubflowInputAssignment[];
   outputAssignments: FlowSubflowOutputAssignment[];
 };
 
-export type FlowWait = {
+export type FlowWait = FlowNode & {
   defaultConnector: FlowConnector;
   defaultConnectorLabel: string;
   faultConnector: FlowConnector;
   waitEvents: FlowWaitEvent[];
 };
 
-export type FlowCategory = {
+export type FlowCategory = Metadata & {
   description?: string | null | undefined;
   flowCategoryItems: FlowCategoryItems[];
   masterLabel: string;
@@ -12888,13 +12888,13 @@ export type FlowCategoryItems = {
   flow: string;
 };
 
-export type FlowDefinition = {
+export type FlowDefinition = Metadata & {
   activeVersionNumber?: number | null | undefined;
   description?: string | null | undefined;
   masterLabel?: string | null | undefined;
 };
 
-export type FlowSettings = {
+export type FlowSettings = Metadata & {
   enableFlowBREncodedFixEnabled?: boolean | null | undefined;
   enableFlowDeployAsActiveEnabled?: boolean | null | undefined;
   enableFlowFieldFilterEnabled?: boolean | null | undefined;
@@ -12911,7 +12911,7 @@ export type FlowSettings = {
   isManageFlowRequiredForAutomationCharts?: boolean | null | undefined;
 };
 
-export type Folder = {
+export type Folder = Metadata & {
   accessType?: string | null | undefined;
   folderShares: FolderShare[];
   name: string;
@@ -12925,15 +12925,15 @@ export type FolderShare = {
   sharedToType: string;
 };
 
-export type DashboardFolder = {};
+export type DashboardFolder = Folder & {};
 
-export type DocumentFolder = {};
+export type DocumentFolder = Folder & {};
 
-export type EmailFolder = {};
+export type EmailFolder = Folder & {};
 
-export type ReportFolder = {};
+export type ReportFolder = Folder & {};
 
-export type ForecastingSettings = {
+export type ForecastingSettings = Metadata & {
   defaultToPersonalCurrency?: boolean | null | undefined;
   enableForecasts?: boolean | null | undefined;
   forecastingCategoryMappings: ForecastingCategoryMapping[];
@@ -13006,13 +13006,13 @@ export type QuotasSettings = {
   showQuotas: boolean;
 };
 
-export type Form = {
+export type Form = Metadata & {
   description?: string | null | undefined;
   formSections: FormSection[];
   masterLabel: string;
 };
 
-export type FormSection = {
+export type FormSection = Metadata & {
   formColumns: FormColumn[];
   masterLabel: string;
   tabOrderType: string;
@@ -13029,18 +13029,18 @@ export type FormItem = {
   helpText?: string | null | undefined;
 };
 
-export type FormulaSettings = {
+export type FormulaSettings = Metadata & {
   enableDSTAwareDatevalue?: boolean | null | undefined;
 };
 
-export type GlobalValueSet = {
+export type GlobalValueSet = Metadata & {
   customValue: CustomValue[];
   description?: string | null | undefined;
   masterLabel: string;
   sorted: boolean;
 };
 
-export type GlobalValueSetTranslation = {
+export type GlobalValueSetTranslation = Metadata & {
   valueTranslation: ValueTranslation[];
 };
 
@@ -13049,7 +13049,7 @@ export type ValueTranslation = {
   translation?: string | null | undefined;
 };
 
-export type GoogleAppsSettings = {
+export type GoogleAppsSettings = Metadata & {
   enableGmailButtons?: boolean | null | undefined;
   enableGmailButtonsAndLinks?: boolean | null | undefined;
   enableGmailLinks?: boolean | null | undefined;
@@ -13061,19 +13061,19 @@ export type GoogleAppsSettings = {
   googleAppsDomainValidated?: boolean | null | undefined;
 };
 
-export type Group = {
+export type Group = Metadata & {
   doesIncludeBosses?: boolean | null | undefined;
   name: string;
 };
 
-export type HighVelocitySalesSettings = {
+export type HighVelocitySalesSettings = Metadata & {
   enableDispositionCategory?: boolean | null | undefined;
   enableEngagementWaveAnalyticsPref?: boolean | null | undefined;
   enableHighVelocitySales?: boolean | null | undefined;
   enableHighVelocitySalesSetup?: boolean | null | undefined;
 };
 
-export type HomePageComponent = {
+export type HomePageComponent = Metadata & {
   body?: string | null | undefined;
   height?: number | null | undefined;
   links: string[];
@@ -13084,12 +13084,12 @@ export type HomePageComponent = {
   width?: string | null | undefined;
 };
 
-export type HomePageLayout = {
+export type HomePageLayout = Metadata & {
   narrowComponents: string[];
   wideComponents: string[];
 };
 
-export type IdeasSettings = {
+export type IdeasSettings = Metadata & {
   enableChatterProfile?: boolean | null | undefined;
   enableHtmlIdea?: boolean | null | undefined;
   enableIdeaMultipleCategory?: boolean | null | undefined;
@@ -13101,12 +13101,12 @@ export type IdeasSettings = {
   ideasProfilePage?: string | null | undefined;
 };
 
-export type IndustriesManufacturingSettings = {
+export type IndustriesManufacturingSettings = Metadata & {
   enableIndManufacturing?: boolean | null | undefined;
   enableIndustriesMfgAccountForecast?: boolean | null | undefined;
 };
 
-export type IndustriesSettings = {
+export type IndustriesSettings = Metadata & {
   allowMultipleProducersToWorkOnSamePolicy?: boolean | null | undefined;
   enableAccessToMasterListOfCoverageTypes?: boolean | null | undefined;
   enableBlockResourceAvailabilityOrgPref?: boolean | null | undefined;
@@ -13122,13 +13122,13 @@ export type IndustriesSettings = {
   enableSentimentAnalysis?: boolean | null | undefined;
 };
 
-export type InstalledPackage = {
+export type InstalledPackage = Metadata & {
   activateRSS: boolean;
   password?: string | null | undefined;
   versionNumber: string;
 };
 
-export type IntegrationHubSettings = {
+export type IntegrationHubSettings = Metadata & {
   canonicalName?: string | null | undefined;
   canonicalNameBindingChar?: string | null | undefined;
   description?: string | null | undefined;
@@ -13147,7 +13147,7 @@ export type IntegrationHubSettings = {
   versionSetUuid?: string | null | undefined;
 };
 
-export type IntegrationHubSettingsType = {
+export type IntegrationHubSettingsType = Metadata & {
   canonicalName?: string | null | undefined;
   canonicalNameBindingChar?: string | null | undefined;
   description?: string | null | undefined;
@@ -13164,21 +13164,21 @@ export type IntegrationHubSettingsType = {
   versionSetUuid?: string | null | undefined;
 };
 
-export type InvocableActionSettings = {
+export type InvocableActionSettings = Metadata & {
   isPartialSaveAllowed?: boolean | null | undefined;
 };
 
-export type IoTSettings = {
+export type IoTSettings = Metadata & {
   enableIoT?: boolean | null | undefined;
   enableIoTInsightsPilot?: boolean | null | undefined;
   enableIoTUsageEmail?: boolean | null | undefined;
 };
 
-export type IsvHammerSettings = {
+export type IsvHammerSettings = Metadata & {
   enableIsvHammerSubIsOptedOut?: boolean | null | undefined;
 };
 
-export type KeywordList = {
+export type KeywordList = Metadata & {
   description?: string | null | undefined;
   keywords: Keyword[];
   masterLabel: string;
@@ -13188,7 +13188,7 @@ export type Keyword = {
   keyword: string;
 };
 
-export type KnowledgeSettings = {
+export type KnowledgeSettings = Metadata & {
   answers: KnowledgeAnswerSettings;
   cases: KnowledgeCaseSettings;
   defaultLanguage?: string | null | undefined;
@@ -13282,7 +13282,7 @@ export type KnowledgeWorkOrderLineItemField = {
   name?: string | null | undefined;
 };
 
-export type LanguageSettings = {
+export type LanguageSettings = Metadata & {
   enableCanadaIcuFormat?: boolean | null | undefined;
   enableEndUserLanguages?: boolean | null | undefined;
   enableICULocaleDateFormat?: boolean | null | undefined;
@@ -13291,7 +13291,7 @@ export type LanguageSettings = {
   useLanguageFallback?: boolean | null | undefined;
 };
 
-export type Layout = {
+export type Layout = Metadata & {
   customButtons: string[];
   customConsoleComponents: CustomConsoleComponents;
   emailDefault?: boolean | null | undefined;
@@ -13478,7 +13478,7 @@ export type SummaryLayoutItem = {
   posZ?: number | null | undefined;
 };
 
-export type LeadConfigSettings = {
+export type LeadConfigSettings = Metadata & {
   doesEnableLeadConvertDefaultSubjectBlankTaskCreation?:
     | boolean
     | null
@@ -13492,13 +13492,13 @@ export type LeadConfigSettings = {
   shouldLeadConvertRequireValidation?: boolean | null | undefined;
 };
 
-export type LeadConvertSettings = {
+export type LeadConvertSettings = Metadata & {
   allowOwnerChange?: boolean | null | undefined;
   objectMapping: ObjectMapping[];
   opportunityCreationOptions?: string | null | undefined;
 };
 
-export type Letterhead = {
+export type Letterhead = Metadata & {
   available: boolean;
   backgroundColor: string;
   bodyColor: string;
@@ -13524,7 +13524,7 @@ export type LetterheadHeaderFooter = {
   verticalAlignment?: string | null | undefined;
 };
 
-export type LicenseDefinition = {
+export type LicenseDefinition = Metadata & {
   aggregationGroup: string;
   description?: string | null | undefined;
   isPublished: boolean;
@@ -13544,7 +13544,7 @@ export type LicensedCustomPermissions = {
   licenseDefinition: string;
 };
 
-export type LightningBolt = {
+export type LightningBolt = Metadata & {
   category: string;
   lightningBoltFeatures: LightningBoltFeatures[];
   lightningBoltImages: LightningBoltImages[];
@@ -13570,7 +13570,7 @@ export type LightningBoltItems = {
   type: string;
 };
 
-export type LightningComponentBundle = {
+export type LightningComponentBundle = Metadata & {
   apiVersion?: number | null | undefined;
   description?: string | null | undefined;
   isExplicitImport?: boolean | null | undefined;
@@ -13595,7 +13595,7 @@ export type Targets = {
   target: string[];
 };
 
-export type LightningExperienceSettings = {
+export type LightningExperienceSettings = Metadata & {
   enableAccessCheckCrucPref?: boolean | null | undefined;
   enableApiUserLtngOutAccessPref?: boolean | null | undefined;
   enableAuraCDNPref?: boolean | null | undefined;
@@ -13616,14 +13616,14 @@ export type LightningExperienceSettings = {
   enableUsersAreLightningOnly?: boolean | null | undefined;
 };
 
-export type LightningExperienceTheme = {
+export type LightningExperienceTheme = Metadata & {
   defaultBrandingSet: string;
   description?: string | null | undefined;
   masterLabel: string;
   shouldOverrideLoadingImage?: boolean | null | undefined;
 };
 
-export type LightningMessageChannel = {
+export type LightningMessageChannel = Metadata & {
   description?: string | null | undefined;
   isExposed?: boolean | null | undefined;
   lightningMessageFields: LightningMessageField[];
@@ -13635,7 +13635,7 @@ export type LightningMessageField = {
   fieldName: string;
 };
 
-export type LightningOnboardingConfig = {
+export type LightningOnboardingConfig = Metadata & {
   collaborationGroup?: string | null | undefined;
   customQuestion: string;
   feedbackFormDaysFrequency: number;
@@ -13644,12 +13644,12 @@ export type LightningOnboardingConfig = {
   sendFeedbackToSalesforce: boolean;
 };
 
-export type LiveAgentSettings = {
+export type LiveAgentSettings = Metadata & {
   enableLiveAgent?: boolean | null | undefined;
   enableQuickTextEnabled?: boolean | null | undefined;
 };
 
-export type LiveChatAgentConfig = {
+export type LiveChatAgentConfig = Metadata & {
   assignments: AgentConfigAssignments;
   autoGreeting?: string | null | undefined;
   capacity?: number | null | undefined;
@@ -13705,7 +13705,7 @@ export type AgentConfigSkills = {
   skill: string[];
 };
 
-export type LiveChatButton = {
+export type LiveChatButton = Metadata & {
   animation?: string | null | undefined;
   autoGreeting?: string | null | undefined;
   chasitorIdleTimeout?: number | null | undefined;
@@ -13752,7 +13752,7 @@ export type LiveChatButtonSkills = {
   skill: string[];
 };
 
-export type LiveChatDeployment = {
+export type LiveChatDeployment = Metadata & {
   brandingImage?: string | null | undefined;
   connectionTimeoutDuration?: number | null | undefined;
   connectionWarningDuration?: number | null | undefined;
@@ -13770,7 +13770,7 @@ export type LiveChatDeploymentDomainWhitelist = {
   domain: string[];
 };
 
-export type LiveChatSensitiveDataRule = {
+export type LiveChatSensitiveDataRule = Metadata & {
   actionType: string;
   description?: string | null | undefined;
   enforceOn: number;
@@ -13780,16 +13780,16 @@ export type LiveChatSensitiveDataRule = {
   replacement?: string | null | undefined;
 };
 
-export type LiveMessageSettings = {
+export type LiveMessageSettings = Metadata & {
   enableLiveMessage?: boolean | null | undefined;
 };
 
-export type MacroSettings = {
+export type MacroSettings = Metadata & {
   enableAdvancedSearch?: boolean | null | undefined;
   macrosInFolders?: boolean | null | undefined;
 };
 
-export type ManagedContentType = {
+export type ManagedContentType = Metadata & {
   description?: string | null | undefined;
   developerName: string;
   managedContentNodeTypes: ManagedContentNodeType[];
@@ -13806,7 +13806,7 @@ export type ManagedContentNodeType = {
   placeholderText?: string | null | undefined;
 };
 
-export type ManagedTopic = {
+export type ManagedTopic = Metadata & {
   managedTopicType: string;
   name: string;
   parentName: string;
@@ -13814,16 +13814,16 @@ export type ManagedTopic = {
   topicDescription: string;
 };
 
-export type ManagedTopics = {
+export type ManagedTopics = Metadata & {
   managedTopic: ManagedTopic[];
 };
 
-export type MapsAndLocationSettings = {
+export type MapsAndLocationSettings = Metadata & {
   enableAddressAutoComplete?: boolean | null | undefined;
   enableMapsAndLocation?: boolean | null | undefined;
 };
 
-export type MatchingRule = {
+export type MatchingRule = Metadata & {
   booleanFilter?: string | null | undefined;
   description?: string | null | undefined;
   label: string;
@@ -13837,15 +13837,15 @@ export type MatchingRuleItem = {
   matchingMethod: string;
 };
 
-export type MatchingRules = {
+export type MatchingRules = Metadata & {
   matchingRules: MatchingRule[];
 };
 
-export type MetadataWithContent = {
+export type MetadataWithContent = Metadata & {
   content?: string | null | undefined;
 };
 
-export type AccessControlPolicy = {
+export type AccessControlPolicy = MetadataWithContent & {
   active: boolean;
   deploymentStatus: string;
   description?: string | null | undefined;
@@ -13854,20 +13854,20 @@ export type AccessControlPolicy = {
   version: number;
 };
 
-export type ApexClass = {
+export type ApexClass = MetadataWithContent & {
   apiVersion: number;
   packageVersions: PackageVersion[];
   status: string;
 };
 
-export type ApexComponent = {
+export type ApexComponent = MetadataWithContent & {
   apiVersion?: number | null | undefined;
   description?: string | null | undefined;
   label: string;
   packageVersions: PackageVersion[];
 };
 
-export type ApexPage = {
+export type ApexPage = MetadataWithContent & {
   apiVersion: number;
   availableInTouch?: boolean | null | undefined;
   confirmationTokenRequired?: boolean | null | undefined;
@@ -13876,13 +13876,13 @@ export type ApexPage = {
   packageVersions: PackageVersion[];
 };
 
-export type ApexTrigger = {
+export type ApexTrigger = MetadataWithContent & {
   apiVersion: number;
   packageVersions: PackageVersion[];
   status: string;
 };
 
-export type Certificate = {
+export type Certificate = MetadataWithContent & {
   caSigned: boolean;
   encryptedWithPlatformEncryption?: boolean | null | undefined;
   expirationDate?: string | null | undefined;
@@ -13891,7 +13891,7 @@ export type Certificate = {
   privateKeyExportable?: boolean | null | undefined;
 };
 
-export type ContentAsset = {
+export type ContentAsset = MetadataWithContent & {
   format?: string | null | undefined;
   isVisibleByExternalUsers?: boolean | null | undefined;
   language: string;
@@ -13924,7 +13924,7 @@ export type ContentAssetVersion = {
   zipEntry?: string | null | undefined;
 };
 
-export type Document = {
+export type Document = MetadataWithContent & {
   description?: string | null | undefined;
   internalUseOnly: boolean;
   keywords?: string | null | undefined;
@@ -13932,7 +13932,7 @@ export type Document = {
   public: boolean;
 };
 
-export type EclairGeoData = {
+export type EclairGeoData = MetadataWithContent & {
   maps: EclairMap[];
   masterLabel: string;
 };
@@ -13947,7 +13947,7 @@ export type EclairMap = {
   projection: string;
 };
 
-export type EmailTemplate = {
+export type EmailTemplate = MetadataWithContent & {
   apiVersion?: number | null | undefined;
   attachedDocuments: string[];
   attachments: Attachment[];
@@ -13970,7 +13970,7 @@ export type Attachment = {
   name: string;
 };
 
-export type NetworkBranding = {
+export type NetworkBranding = MetadataWithContent & {
   loginBackgroundImageUrl?: string | null | undefined;
   loginFooterText?: string | null | undefined;
   loginLogo?: string | null | undefined;
@@ -13993,12 +13993,12 @@ export type NetworkBranding = {
   zeronaryComplementColor: string;
 };
 
-export type Orchestration = {
+export type Orchestration = MetadataWithContent & {
   context: string;
   masterLabel: string;
 };
 
-export type Scontrol = {
+export type Scontrol = MetadataWithContent & {
   contentSource: string;
   description?: string | null | undefined;
   encodingKey: string;
@@ -14008,18 +14008,18 @@ export type Scontrol = {
   supportsCaching: boolean;
 };
 
-export type SiteDotCom = {
+export type SiteDotCom = MetadataWithContent & {
   label: string;
   siteType: string;
 };
 
-export type StaticResource = {
+export type StaticResource = MetadataWithContent & {
   cacheControl: string;
   contentType: string;
   description?: string | null | undefined;
 };
 
-export type UiPlugin = {
+export type UiPlugin = MetadataWithContent & {
   description?: string | null | undefined;
   extensionPointIdentifier: string;
   isEnabled: boolean;
@@ -14027,20 +14027,20 @@ export type UiPlugin = {
   masterLabel: string;
 };
 
-export type WaveDashboard = {
+export type WaveDashboard = MetadataWithContent & {
   application: string;
   description?: string | null | undefined;
   masterLabel: string;
   templateAssetSourceName?: string | null | undefined;
 };
 
-export type WaveDataflow = {
+export type WaveDataflow = MetadataWithContent & {
   dataflowType?: string | null | undefined;
   description?: string | null | undefined;
   masterLabel: string;
 };
 
-export type WaveLens = {
+export type WaveLens = MetadataWithContent & {
   application: string;
   datasets: string[];
   description?: string | null | undefined;
@@ -14049,26 +14049,26 @@ export type WaveLens = {
   visualizationType: string;
 };
 
-export type WaveRecipe = {
+export type WaveRecipe = MetadataWithContent & {
   dataflow: string;
   masterLabel: string;
   securityPredicate?: string | null | undefined;
   targetDatasetAlias: string;
 };
 
-export type MilestoneType = {
+export type MilestoneType = Metadata & {
   description?: string | null | undefined;
   recurrenceType?: string | null | undefined;
 };
 
-export type MlDomain = {
+export type MlDomain = Metadata & {
   description?: string | null | undefined;
   label: string;
   mlIntents: MlIntent[];
   mlSlotClasses: MlSlotClass[];
 };
 
-export type MobileApplicationDetail = {
+export type MobileApplicationDetail = Metadata & {
   applicationBinaryFile?: string | null | undefined;
   applicationBinaryFileName?: string | null | undefined;
   applicationBundleIdentifier?: string | null | undefined;
@@ -14083,7 +14083,7 @@ export type MobileApplicationDetail = {
   version: string;
 };
 
-export type MobileSettings = {
+export type MobileSettings = Metadata & {
   dashboardMobile: DashboardMobileSettings;
   enableImportContactFromDevice?: boolean | null | undefined;
   enableLightningOnMobile?: boolean | null | undefined;
@@ -14097,7 +14097,7 @@ export type DashboardMobileSettings = {
   enableDashboardIPadApp?: boolean | null | undefined;
 };
 
-export type ModerationRule = {
+export type ModerationRule = Metadata & {
   action: string;
   actionLimit?: number | null | undefined;
   active: boolean;
@@ -14117,7 +14117,7 @@ export type ModeratedEntityField = {
   keywordList?: string | null | undefined;
 };
 
-export type MyDomainSettings = {
+export type MyDomainSettings = Metadata & {
   canOnlyLoginWithMyDomainUrl?: boolean | null | undefined;
   doesApiLoginRequireOrgDomain?: boolean | null | undefined;
   enableNativeBrowserForAuthOnAndroid?: boolean | null | undefined;
@@ -14126,12 +14126,12 @@ export type MyDomainSettings = {
   useStabilizedSandboxMyDomainHostnames?: boolean | null | undefined;
 };
 
-export type NameSettings = {
+export type NameSettings = Metadata & {
   enableMiddleName?: boolean | null | undefined;
   enableNameSuffix?: boolean | null | undefined;
 };
 
-export type NamedCredential = {
+export type NamedCredential = Metadata & {
   allowMergeFieldsInBody?: boolean | null | undefined;
   allowMergeFieldsInHeader?: boolean | null | undefined;
   authProvider?: string | null | undefined;
@@ -14160,14 +14160,14 @@ export type NamedCredential = {
   username?: string | null | undefined;
 };
 
-export type NavigationMenu = {
+export type NavigationMenu = Metadata & {
   container: string;
   containerType: string;
   label: string;
   navigationMenuItem: NavigationMenuItem[];
 };
 
-export type Network = {
+export type Network = Metadata & {
   allowInternalUserLogin?: boolean | null | undefined;
   allowMembersToFlag?: boolean | null | undefined;
   allowedExtensions?: string | null | undefined;
@@ -14305,12 +14305,12 @@ export type NetworkTabSet = {
   standardTab: string[];
 };
 
-export type NotificationsSettings = {
+export type NotificationsSettings = Metadata & {
   enableMobileAppPushNotifications?: boolean | null | undefined;
   enableNotifications?: boolean | null | undefined;
 };
 
-export type OauthCustomScope = {
+export type OauthCustomScope = Metadata & {
   description: string;
   developerName: string;
   isProtected?: boolean | null | undefined;
@@ -14318,18 +14318,18 @@ export type OauthCustomScope = {
   masterLabel: string;
 };
 
-export type ObjectLinkingSettings = {
+export type ObjectLinkingSettings = Metadata & {
   enableObjectLinking?: boolean | null | undefined;
 };
 
-export type OmniChannelSettings = {
+export type OmniChannelSettings = Metadata & {
   enableOmniAutoLoginPrompt?: boolean | null | undefined;
   enableOmniChannel?: boolean | null | undefined;
   enableOmniSecondaryRoutingPriority?: boolean | null | undefined;
   enableOmniSkillsRouting?: boolean | null | undefined;
 };
 
-export type OpportunitySettings = {
+export type OpportunitySettings = Metadata & {
   autoActivateNewReminders?: boolean | null | undefined;
   customizableProductSchedulesEnabled?: boolean | null | undefined;
   doesAutoAddSplitOwnerAsOpportunityTeamMember?: boolean | null | undefined;
@@ -14348,7 +14348,7 @@ export type FindSimilarOppFilter = {
   similarOpportunitiesMatchFields: string[];
 };
 
-export type OrchestrationContext = {
+export type OrchestrationContext = Metadata & {
   datasets: OrchestrationContextDataset[];
   description?: string | null | undefined;
   events: OrchestrationContextEvent[];
@@ -14372,18 +14372,18 @@ export type OrchestrationContextEvent = {
   platformEventPrimaryKey: string;
 };
 
-export type OrderManagementSettings = {
+export type OrderManagementSettings = Metadata & {
   enableOrderManagement?: boolean | null | undefined;
 };
 
-export type OrderSettings = {
+export type OrderSettings = Metadata & {
   enableNegativeQuantity?: boolean | null | undefined;
   enableOrders?: boolean | null | undefined;
   enableReductionOrders?: boolean | null | undefined;
   enableZeroQuantity?: boolean | null | undefined;
 };
 
-export type OrgPreferenceSettings = {
+export type OrgPreferenceSettings = Metadata & {
   preferences: OrganizationSettingsDetail[];
 };
 
@@ -14392,7 +14392,7 @@ export type OrganizationSettingsDetail = {
   settingValue: boolean;
 };
 
-export type OrgSettings = {
+export type OrgSettings = Metadata & {
   enableCustomerSuccessPortal?: boolean | null | undefined;
   enableExtendedMailMerge?: boolean | null | undefined;
   enableIncludeContractStatus?: boolean | null | undefined;
@@ -14404,7 +14404,7 @@ export type OrgSettings = {
   saveMailMergeDocsAsSalesforceDocs?: boolean | null | undefined;
 };
 
-export type Package = {
+export type Package = Metadata & {
   apiAccessLevel?: string | null | undefined;
   description?: string | null | undefined;
   namespacePrefix?: string | null | undefined;
@@ -14432,12 +14432,12 @@ export type PackageTypeMembers = {
   name: string;
 };
 
-export type PardotEinsteinSettings = {
+export type PardotEinsteinSettings = Metadata & {
   enableCampaignInsight?: boolean | null | undefined;
   enableEngagementScore?: boolean | null | undefined;
 };
 
-export type PardotSettings = {
+export type PardotSettings = Metadata & {
   enableB2bmaAppEnabled?: boolean | null | undefined;
   enableEngagementHistoryDashboards?: boolean | null | undefined;
   enablePardotAppV1Enabled?: boolean | null | undefined;
@@ -14445,12 +14445,12 @@ export type PardotSettings = {
   enableProspectActivityDataset?: boolean | null | undefined;
 };
 
-export type PartyDataModelSettings = {
+export type PartyDataModelSettings = Metadata & {
   enableAutoSelectIndividualOnMerge?: boolean | null | undefined;
   enableConsentManagement?: boolean | null | undefined;
 };
 
-export type PathAssistant = {
+export type PathAssistant = Metadata & {
   active: boolean;
   entityName: string;
   fieldName: string;
@@ -14465,12 +14465,12 @@ export type PathAssistantStep = {
   picklistValueName: string;
 };
 
-export type PathAssistantSettings = {
+export type PathAssistantSettings = Metadata & {
   canOverrideAutoPathCollapseWithUserPref?: boolean | null | undefined;
   pathAssistantEnabled?: boolean | null | undefined;
 };
 
-export type PermissionSet = {
+export type PermissionSet = Metadata & {
   applicationVisibilities: PermissionSetApplicationVisibility[];
   classAccesses: PermissionSetApexClassAccess[];
   customMetadataTypeAccesses: PermissionSetCustomMetadataTypeAccess[];
@@ -14555,11 +14555,11 @@ export type PermissionSetUserPermission = {
   name: string;
 };
 
-export type MutingPermissionSet = {
+export type MutingPermissionSet = PermissionSet & {
   label: string;
 };
 
-export type PermissionSetGroup = {
+export type PermissionSetGroup = Metadata & {
   description?: string | null | undefined;
   label: string;
   mutingPermissionSets: string[];
@@ -14567,15 +14567,15 @@ export type PermissionSetGroup = {
   status?: string | null | undefined;
 };
 
-export type PersonListSettings = {
+export type PersonListSettings = Metadata & {
   enablePersonList: boolean;
 };
 
-export type PicklistSettings = {
+export type PicklistSettings = Metadata & {
   isPicklistApiNameEditDisabled?: boolean | null | undefined;
 };
 
-export type PlatformCachePartition = {
+export type PlatformCachePartition = Metadata & {
   description?: string | null | undefined;
   isDefaultPartition: boolean;
   masterLabel: string;
@@ -14589,7 +14589,7 @@ export type PlatformCachePartitionType = {
   cacheType: string;
 };
 
-export type PlatformEncryptionSettings = {
+export type PlatformEncryptionSettings = Metadata & {
   canEncryptManagedPackageFields?: boolean | null | undefined;
   enableDeterministicEncryption?: boolean | null | undefined;
   enableEncryptFieldHistory?: boolean | null | undefined;
@@ -14598,17 +14598,17 @@ export type PlatformEncryptionSettings = {
   isUseHighAssuranceKeysRequired?: boolean | null | undefined;
 };
 
-export type PlatformEventChannel = {
+export type PlatformEventChannel = Metadata & {
   channelType: string;
   label: string;
 };
 
-export type PlatformEventChannelMember = {
+export type PlatformEventChannelMember = Metadata & {
   eventChannel: string;
   selectedEntity: string;
 };
 
-export type Portal = {
+export type Portal = Metadata & {
   active: boolean;
   admin?: string | null | undefined;
   defaultLanguage?: string | null | undefined;
@@ -14636,18 +14636,18 @@ export type Portal = {
   type: string;
 };
 
-export type PostTemplate = {
+export type PostTemplate = Metadata & {
   default?: boolean | null | undefined;
   description?: string | null | undefined;
   fields: string[];
   label: string;
 };
 
-export type PresenceDeclineReason = {
+export type PresenceDeclineReason = Metadata & {
   label: string;
 };
 
-export type PresenceUserConfig = {
+export type PresenceUserConfig = Metadata & {
   assignments: PresenceConfigAssignments;
   capacity: number;
   declineReasons: string[];
@@ -14674,13 +14674,13 @@ export type PresenceConfigUserAssignments = {
   user: string[];
 };
 
-export type PrivacySettings = {
+export type PrivacySettings = Metadata & {
   enableConsentAuditTrail?: boolean | null | undefined;
   enableConsentEventStream?: boolean | null | undefined;
   enableDefaultMetadataValues?: boolean | null | undefined;
 };
 
-export type PrivateConnection = {
+export type PrivateConnection = Metadata & {
   description?: string | null | undefined;
   direction: string;
   externalConnectionProperties: ExternalConnectionProperty[];
@@ -14694,14 +14694,14 @@ export type ExternalConnectionProperty = {
   propertyValue: string;
 };
 
-export type ProductSettings = {
+export type ProductSettings = Metadata & {
   enableCascadeActivateToRelatedPrices?: boolean | null | undefined;
   enableMySettings?: boolean | null | undefined;
   enableQuantitySchedule?: boolean | null | undefined;
   enableRevenueSchedule?: boolean | null | undefined;
 };
 
-export type Profile = {
+export type Profile = Metadata & {
   applicationVisibilities: ProfileApplicationVisibility[];
   categoryGroupVisibilities: ProfileCategoryGroupVisibility[];
   classAccesses: ProfileApexClassAccess[];
@@ -14817,7 +14817,7 @@ export type ProfileUserPermission = {
   name: string;
 };
 
-export type ProfilePasswordPolicy = {
+export type ProfilePasswordPolicy = Metadata & {
   forgotPasswordRedirect?: boolean | null | undefined;
   lockoutInterval: number;
   maxLoginAttempts: number;
@@ -14831,7 +14831,7 @@ export type ProfilePasswordPolicy = {
   profile: string;
 };
 
-export type ProfileSessionSetting = {
+export type ProfileSessionSetting = Metadata & {
   externalCommunityUserIdentityVerif: boolean;
   forceLogout: boolean;
   profile: string;
@@ -14841,7 +14841,7 @@ export type ProfileSessionSetting = {
   sessionTimeoutWarning: boolean;
 };
 
-export type Prompt = {
+export type Prompt = Metadata & {
   masterLabel: string;
   promptVersions: PromptVersion[];
 };
@@ -14878,7 +14878,7 @@ export type PromptVersion = {
   versionNumber: number;
 };
 
-export type Queue = {
+export type Queue = Metadata & {
   doesSendEmailToMembers?: boolean | null | undefined;
   email?: string | null | undefined;
   name: string;
@@ -14919,7 +14919,7 @@ export type QueueSobject = {
   sobjectType: string;
 };
 
-export type QueueRoutingConfig = {
+export type QueueRoutingConfig = Metadata & {
   capacityPercentage?: number | null | undefined;
   capacityWeight?: number | null | undefined;
   dropAdditionalSkillsTimeout?: number | null | undefined;
@@ -14932,7 +14932,7 @@ export type QueueRoutingConfig = {
   userOverflowAssignee?: string | null | undefined;
 };
 
-export type QuickAction = {
+export type QuickAction = Metadata & {
   canvas?: string | null | undefined;
   description?: string | null | undefined;
   fieldOverrides: FieldOverride[];
@@ -14982,12 +14982,12 @@ export type QuickActionSendEmailOptions = {
   ignoreDefaultEmailTemplateSubject: boolean;
 };
 
-export type QuoteSettings = {
+export type QuoteSettings = Metadata & {
   enableQuote: boolean;
   enableQuotesWithoutOppEnabled?: boolean | null | undefined;
 };
 
-export type RecommendationStrategy = {
+export type RecommendationStrategy = Metadata & {
   actionContext: StrategyAction[];
   contextRecordType?: string | null | undefined;
   description?: string | null | undefined;
@@ -15019,11 +15019,11 @@ export type StrategyActionArg = {
   value: string;
 };
 
-export type StrategyNodeFilter = {
+export type StrategyNodeFilter = StrategyNodeUnionBase & {
   expression: string;
 };
 
-export type StrategyNodeUnionBase = {
+export type StrategyNodeUnionBase = StrategyNodeBase & {
   limit?: number | null | undefined;
 };
 
@@ -15034,9 +15034,9 @@ export type StrategyNodeBase = {
   name: string;
 };
 
-export type StrategyNodeExclusive = {};
+export type StrategyNodeExclusive = StrategyNodeUnionBase & {};
 
-export type StrategyNodeIf = {
+export type StrategyNodeIf = StrategyNodeUnionBase & {
   childNodeExpression: IfExpression[];
   onlyFirstMatch?: boolean | null | undefined;
 };
@@ -15046,7 +15046,7 @@ export type IfExpression = {
   expression: string;
 };
 
-export type StrategyNodeInvocableAction = {
+export type StrategyNodeInvocableAction = StrategyNodeUnionBase & {
   action: string;
   argument: StrategyNodeInvocableActionArg[];
   isGenerator: boolean;
@@ -15058,7 +15058,7 @@ export type StrategyNodeInvocableActionArg = {
   value: string;
 };
 
-export type StrategyNodeMap = {
+export type StrategyNodeMap = StrategyNodeUnionBase & {
   mapExpression: MapExpression[];
 };
 
@@ -15068,13 +15068,13 @@ export type MapExpression = {
   type: string;
 };
 
-export type StrategyNodeRecommendationLimit = {
+export type StrategyNodeRecommendationLimit = StrategyNodeUnionBase & {
   filterMode: string[];
   lookbackDuration?: number | null | undefined;
   maxRecommendationCount?: number | null | undefined;
 };
 
-export type StrategyNodeRecommendationLoad = {
+export type StrategyNodeRecommendationLoad = StrategyNodeUnionBase & {
   condition: RecommendationLoadCondition[];
   conditionLogic?: string | null | undefined;
 };
@@ -15090,7 +15090,7 @@ export type RecommendationConditionValue = {
   value?: string | null | undefined;
 };
 
-export type StrategyNodeSort = {
+export type StrategyNodeSort = StrategyNodeUnionBase & {
   field: StrategyNodeSortField[];
 };
 
@@ -15100,9 +15100,9 @@ export type StrategyNodeSortField = {
   order?: string | null | undefined;
 };
 
-export type StrategyNodeUnion = {};
+export type StrategyNodeUnion = StrategyNodeUnionBase & {};
 
-export type RecordActionDeployment = {
+export type RecordActionDeployment = Metadata & {
   channelConfigurations: RecordActionDeploymentChannel[];
   deploymentContexts: RecordActionDeploymentContext[];
   hasGuidedActions?: boolean | null | undefined;
@@ -15146,19 +15146,19 @@ export type RecordActionSelectableItem = {
   type: string;
 };
 
-export type RecordPageSettings = {
+export type RecordPageSettings = Metadata & {
   enableActivityRelatedList?: boolean | null | undefined;
   enableFullRecordView?: boolean | null | undefined;
 };
 
-export type RemoteSiteSetting = {
+export type RemoteSiteSetting = Metadata & {
   description?: string | null | undefined;
   disableProtocolSecurity: boolean;
   isActive: boolean;
   url: string;
 };
 
-export type Report = {
+export type Report = Metadata & {
   aggregates: ReportAggregate[];
   block: Report[];
   blockInfo: ReportBlockInfo;
@@ -15361,7 +15361,7 @@ export type ReportTimeFrameFilter = {
   startDate?: string | null | undefined;
 };
 
-export type ReportType = {
+export type ReportType = Metadata & {
   autogenerated?: boolean | null | undefined;
   baseObject: string;
   category: string;
@@ -15390,7 +15390,7 @@ export type ReportTypeColumn = {
   table: string;
 };
 
-export type RestrictionRule = {
+export type RestrictionRule = Metadata & {
   active: boolean;
   description: string;
   enforcementType: string;
@@ -15401,11 +15401,11 @@ export type RestrictionRule = {
   version: number;
 };
 
-export type RetailExecutionSettings = {
+export type RetailExecutionSettings = Metadata & {
   enableRetailExecution?: boolean | null | undefined;
 };
 
-export type RoleOrTerritory = {
+export type RoleOrTerritory = Metadata & {
   caseAccessLevel?: string | null | undefined;
   contactAccessLevel?: string | null | undefined;
   description?: string | null | undefined;
@@ -15414,16 +15414,16 @@ export type RoleOrTerritory = {
   opportunityAccessLevel?: string | null | undefined;
 };
 
-export type Role = {
+export type Role = RoleOrTerritory & {
   parentRole?: string | null | undefined;
 };
 
-export type Territory = {
+export type Territory = RoleOrTerritory & {
   accountAccessLevel?: string | null | undefined;
   parentTerritory?: string | null | undefined;
 };
 
-export type SamlSsoConfig = {
+export type SamlSsoConfig = Metadata & {
   attributeName?: string | null | undefined;
   attributeNameIdFormat?: string | null | undefined;
   decryptionCertificate?: string | null | undefined;
@@ -15449,14 +15449,14 @@ export type SamlSsoConfig = {
   validationCert: string;
 };
 
-export type SchemaSettings = {
+export type SchemaSettings = Metadata & {
   enableAdvancedCMTSecurity?: boolean | null | undefined;
   enableAdvancedCSSecurity?: boolean | null | undefined;
   enableListCustomSettingCreation?: boolean | null | undefined;
   enableSOSLOnCustomSettings?: boolean | null | undefined;
 };
 
-export type SearchSettings = {
+export type SearchSettings = Metadata & {
   documentContentSearchEnabled: boolean;
   enableAdvancedSearchInAlohaSidebar?: boolean | null | undefined;
   enableEinsteinSearchPersonalization?: boolean | null | undefined;
@@ -15484,7 +15484,7 @@ export type ObjectSearchSetting = {
   resultsPerPageCount: number;
 };
 
-export type SecuritySettings = {
+export type SecuritySettings = Metadata & {
   canUsersGrantLoginAccess?: boolean | null | undefined;
   enableAdminLoginAsAnyUser?: boolean | null | undefined;
   enableAuditFieldsInactiveOwner?: boolean | null | undefined;
@@ -15576,7 +15576,7 @@ export type SingleSignOnSettings = {
   enableSamlLogin?: boolean | null | undefined;
 };
 
-export type ServiceChannel = {
+export type ServiceChannel = Metadata & {
   interactionComponent?: string | null | undefined;
   label: string;
   relatedEntityType: string;
@@ -15589,7 +15589,7 @@ export type ServiceChannelFieldPriority = {
   value: string;
 };
 
-export type ServicePresenceStatus = {
+export type ServicePresenceStatus = Metadata & {
   channels: ServiceChannelStatus;
   label: string;
 };
@@ -15598,7 +15598,7 @@ export type ServiceChannelStatus = {
   channel: string[];
 };
 
-export type SharingBaseRule = {
+export type SharingBaseRule = Metadata & {
   accessLevel: string;
   accountSettings: AccountSharingRuleSettings;
   description?: string | null | undefined;
@@ -15612,30 +15612,30 @@ export type AccountSharingRuleSettings = {
   opportunityAccessLevel: string;
 };
 
-export type SharingCriteriaRule = {
+export type SharingCriteriaRule = SharingBaseRule & {
   booleanFilter?: string | null | undefined;
   criteriaItems: FilterItem[];
 };
 
-export type SharingGuestRule = {
+export type SharingGuestRule = SharingBaseRule & {
   booleanFilter?: string | null | undefined;
   criteriaItems: FilterItem[];
 };
 
-export type SharingOwnerRule = {
+export type SharingOwnerRule = SharingBaseRule & {
   sharedFrom: SharedTo;
 };
 
-export type SharingTerritoryRule = {};
+export type SharingTerritoryRule = SharingOwnerRule & {};
 
-export type SharingRules = {
+export type SharingRules = Metadata & {
   sharingCriteriaRules: SharingCriteriaRule[];
   sharingGuestRules: SharingGuestRule[];
   sharingOwnerRules: SharingOwnerRule[];
   sharingTerritoryRules: SharingTerritoryRule[];
 };
 
-export type SharingSet = {
+export type SharingSet = Metadata & {
   accessMappings: AccessMapping[];
   description?: string | null | undefined;
   name: string;
@@ -15649,7 +15649,7 @@ export type AccessMapping = {
   userField: string;
 };
 
-export type SharingSettings = {
+export type SharingSettings = Metadata & {
   enableAccountRoleOptimization?: boolean | null | undefined;
   enableAssetSharing?: boolean | null | undefined;
   enableCommunityUserVisibility?: boolean | null | undefined;
@@ -15665,13 +15665,13 @@ export type SharingSettings = {
   enableTerritoryForecastManager?: boolean | null | undefined;
 };
 
-export type SiteSettings = {
+export type SiteSettings = Metadata & {
   enableProxyLoginICHeader?: boolean | null | undefined;
   enableTopicsInSites?: boolean | null | undefined;
   enableVisualforceApiAccessAllowed?: boolean | null | undefined;
 };
 
-export type Skill = {
+export type Skill = Metadata & {
   assignments: SkillAssignments;
   description?: string | null | undefined;
   label: string;
@@ -15690,7 +15690,7 @@ export type SkillUserAssignments = {
   user: string[];
 };
 
-export type SocialCustomerServiceSettings = {
+export type SocialCustomerServiceSettings = Metadata & {
   caseSubjectOption: string;
   enableSocialApprovals?: boolean | null | undefined;
   enableSocialCaseAssignmentRules?: boolean | null | undefined;
@@ -15700,7 +15700,7 @@ export type SocialCustomerServiceSettings = {
   enableSocialReceiveParentPost?: boolean | null | undefined;
 };
 
-export type SocialProfileSettings = {
+export type SocialProfileSettings = Metadata & {
   enableSocialProfiles?: boolean | null | undefined;
   isFacebookSocialProfilesDisabled?: boolean | null | undefined;
   isLinkedInSocialProfilesDisabled?: boolean | null | undefined;
@@ -15708,33 +15708,33 @@ export type SocialProfileSettings = {
   isYouTubeSocialProfilesDisabled?: boolean | null | undefined;
 };
 
-export type StandardValueSet = {
+export type StandardValueSet = Metadata & {
   groupingStringEnum?: string | null | undefined;
   sorted: boolean;
   standardValue: StandardValue[];
 };
 
-export type StandardValueSetTranslation = {
+export type StandardValueSetTranslation = Metadata & {
   valueTranslation: ValueTranslation[];
 };
 
-export type SurveySettings = {
+export type SurveySettings = Metadata & {
   enableSurvey?: boolean | null | undefined;
   enableSurveyOwnerCanManageResponse?: boolean | null | undefined;
 };
 
-export type SynonymDictionary = {
+export type SynonymDictionary = Metadata & {
   groups: SynonymGroup[];
   isProtected?: boolean | null | undefined;
   label: string;
 };
 
-export type SystemNotificationSettings = {
+export type SystemNotificationSettings = Metadata & {
   disableDowntimeNotifications?: boolean | null | undefined;
   disableMaintenanceNotifications?: boolean | null | undefined;
 };
 
-export type Territory2 = {
+export type Territory2 = Metadata & {
   accountAccessLevel?: string | null | undefined;
   caseAccessLevel?: string | null | undefined;
   contactAccessLevel?: string | null | undefined;
@@ -15757,13 +15757,13 @@ export type Territory2RuleAssociation = {
   ruleName: string;
 };
 
-export type Territory2Model = {
+export type Territory2Model = Metadata & {
   customFields: FieldValue[];
   description?: string | null | undefined;
   name: string;
 };
 
-export type Territory2Rule = {
+export type Territory2Rule = Metadata & {
   active: boolean;
   booleanFilter?: string | null | undefined;
   name: string;
@@ -15777,7 +15777,7 @@ export type Territory2RuleItem = {
   value?: string | null | undefined;
 };
 
-export type Territory2Settings = {
+export type Territory2Settings = Metadata & {
   defaultAccountAccessLevel?: string | null | undefined;
   defaultCaseAccessLevel?: string | null | undefined;
   defaultContactAccessLevel?: string | null | undefined;
@@ -15792,13 +15792,13 @@ export type Territory2SettingsOpportunityFilter = {
   runOnCreate: boolean;
 };
 
-export type Territory2Type = {
+export type Territory2Type = Metadata & {
   description?: string | null | undefined;
   name: string;
   priority: number;
 };
 
-export type TimeSheetTemplate = {
+export type TimeSheetTemplate = Metadata & {
   active: boolean;
   description?: string | null | undefined;
   frequency: string;
@@ -15813,16 +15813,16 @@ export type TimeSheetTemplateAssignment = {
   assignedTo?: string | null | undefined;
 };
 
-export type TopicsForObjects = {
+export type TopicsForObjects = Metadata & {
   enableTopics: boolean;
   entityApiName: string;
 };
 
-export type TrailheadSettings = {
+export type TrailheadSettings = Metadata & {
   enableMyTrailheadPref?: boolean | null | undefined;
 };
 
-export type TransactionSecurityPolicy = {
+export type TransactionSecurityPolicy = Metadata & {
   action: TransactionSecurityAction;
   active: boolean;
   apexClass?: string | null | undefined;
@@ -15851,7 +15851,7 @@ export type TransactionSecurityNotification = {
   user: string;
 };
 
-export type Translations = {
+export type Translations = Metadata & {
   customApplications: CustomApplicationTranslation[];
   customDataTypeTranslations: CustomDataTypeTranslation[];
   customLabels: CustomLabelTranslation[];
@@ -15977,7 +15977,7 @@ export type ScontrolTranslation = {
   name: string;
 };
 
-export type UIObjectRelationConfig = {
+export type UIObjectRelationConfig = Metadata & {
   UIObjectRelationFieldConfigs: UIObjectRelationFieldConfig[];
   contextObject: string;
   contextObjectRecordType?: string | null | undefined;
@@ -15998,7 +15998,7 @@ export type UIObjectRelationFieldConfig = {
   rowOrder: number;
 };
 
-export type UserCriteria = {
+export type UserCriteria = Metadata & {
   creationAgeInSeconds?: number | null | undefined;
   description?: string | null | undefined;
   lastChatterActivityAgeInSeconds?: number | null | undefined;
@@ -16007,7 +16007,7 @@ export type UserCriteria = {
   userTypes: string[];
 };
 
-export type UserEngagementSettings = {
+export type UserEngagementSettings = Metadata & {
   canGovCloudUseAdoptionApps?: boolean | null | undefined;
   doesScheduledSwitcherRunDaily?: boolean | null | undefined;
   enableCustomHelpGlobalSection?: boolean | null | undefined;
@@ -16038,7 +16038,7 @@ export type UserEngagementSettings = {
   optimizerAppEnabled?: boolean | null | undefined;
 };
 
-export type UserInterfaceSettings = {
+export type UserInterfaceSettings = Metadata & {
   alternateAlohaListView?: boolean | null | undefined;
   enableAsyncRelatedLists?: boolean | null | undefined;
   enableClickjackUserPageHeaderless?: boolean | null | undefined;
@@ -16057,7 +16057,7 @@ export type UserInterfaceSettings = {
   enableTabOrganizer?: boolean | null | undefined;
 };
 
-export type UserManagementSettings = {
+export type UserManagementSettings = Metadata & {
   enableCanAnswerContainUsername?: boolean | null | undefined;
   enableCanSaveUserPerm?: boolean | null | undefined;
   enableConcealPersonalInfo?: boolean | null | undefined;
@@ -16069,7 +16069,7 @@ export type UserManagementSettings = {
   enableUserSelfDeactivate?: boolean | null | undefined;
 };
 
-export type VoiceSettings = {
+export type VoiceSettings = Metadata & {
   enableCallDisposition?: boolean | null | undefined;
   enableVoiceCallList?: boolean | null | undefined;
   enableVoiceCallRecording?: boolean | null | undefined;
@@ -16080,7 +16080,7 @@ export type VoiceSettings = {
   enableVoiceMailDrop?: boolean | null | undefined;
 };
 
-export type WaveApplication = {
+export type WaveApplication = Metadata & {
   assetIcon?: string | null | undefined;
   description?: string | null | undefined;
   folder: string;
@@ -16090,14 +16090,14 @@ export type WaveApplication = {
   templateVersion?: string | null | undefined;
 };
 
-export type WaveDataset = {
+export type WaveDataset = Metadata & {
   application: string;
   description?: string | null | undefined;
   masterLabel: string;
   templateAssetSourceName?: string | null | undefined;
 };
 
-export type WaveTemplateBundle = {
+export type WaveTemplateBundle = Metadata & {
   assetIcon?: string | null | undefined;
   assetVersion?: number | null | undefined;
   description?: string | null | undefined;
@@ -16105,7 +16105,7 @@ export type WaveTemplateBundle = {
   templateType: string;
 };
 
-export type WaveXmd = {
+export type WaveXmd = Metadata & {
   application?: string | null | undefined;
   dataset: string;
   datasetConnector?: string | null | undefined;
@@ -16253,7 +16253,7 @@ export type WaveXmdOrganization = {
   sortIndex: number;
 };
 
-export type WorkDotComSettings = {
+export type WorkDotComSettings = Metadata & {
   enableCoachingManagerGroupAccess?: boolean | null | undefined;
   enableGoalManagerGroupAccess?: boolean | null | undefined;
   enableProfileSkills?: boolean | null | undefined;
@@ -16270,7 +16270,7 @@ export type WorkDotComSettings = {
   enableWorkUseObjectivesForGoals?: boolean | null | undefined;
 };
 
-export type Workflow = {
+export type Workflow = Metadata & {
   alerts: WorkflowAlert[];
   fieldUpdates: WorkflowFieldUpdate[];
   flowActions: WorkflowFlowAction[];
@@ -16281,7 +16281,7 @@ export type Workflow = {
   tasks: WorkflowTask[];
 };
 
-export type WorkflowAlert = {
+export type WorkflowAlert = WorkflowAction & {
   ccEmails: string[];
   description: string;
   protected: boolean;
@@ -16291,9 +16291,9 @@ export type WorkflowAlert = {
   template: string;
 };
 
-export type WorkflowAction = {};
+export type WorkflowAction = Metadata & {};
 
-export type WorkflowFieldUpdate = {
+export type WorkflowFieldUpdate = WorkflowAction & {
   description?: string | null | undefined;
   field: string;
   formula?: string | null | undefined;
@@ -16308,7 +16308,7 @@ export type WorkflowFieldUpdate = {
   targetObject?: string | null | undefined;
 };
 
-export type WorkflowFlowAction = {
+export type WorkflowFlowAction = WorkflowAction & {
   description?: string | null | undefined;
   flow: string;
   flowInputs: WorkflowFlowActionParameter[];
@@ -16322,7 +16322,7 @@ export type WorkflowFlowActionParameter = {
   value?: string | null | undefined;
 };
 
-export type WorkflowKnowledgePublish = {
+export type WorkflowKnowledgePublish = WorkflowAction & {
   action: string;
   description?: string | null | undefined;
   label: string;
@@ -16330,7 +16330,7 @@ export type WorkflowKnowledgePublish = {
   protected: boolean;
 };
 
-export type WorkflowOutboundMessage = {
+export type WorkflowOutboundMessage = WorkflowAction & {
   apiVersion: number;
   description?: string | null | undefined;
   endpointUrl: string;
@@ -16342,7 +16342,7 @@ export type WorkflowOutboundMessage = {
   useDeadLetterQueue?: boolean | null | undefined;
 };
 
-export type WorkflowSend = {
+export type WorkflowSend = WorkflowAction & {
   action: string;
   description?: string | null | undefined;
   label: string;
@@ -16350,7 +16350,7 @@ export type WorkflowSend = {
   protected: boolean;
 };
 
-export type WorkflowTask = {
+export type WorkflowTask = WorkflowAction & {
   assignedTo?: string | null | undefined;
   assignedToType: string;
   description?: string | null | undefined;
@@ -16369,7 +16369,7 @@ export type WorkflowEmailRecipient = {
   type: string;
 };
 
-export type WorkflowRule = {
+export type WorkflowRule = Metadata & {
   actions: WorkflowActionReference[];
   active: boolean;
   booleanFilter?: string | null | undefined;

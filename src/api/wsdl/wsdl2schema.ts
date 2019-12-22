@@ -265,10 +265,21 @@ async function dumpSchema(schemas: { [name: string]: any }, outFile: string) {
     }
   }
 
-  function writeTypeDef(o: any, indent: number = 0) {
+  function writeTypeDef(
+    o: any,
+    schemas: { [name: string]: SoapSchemaDef },
+    indent: number = 0,
+  ) {
     if (typeof o === 'string') {
       print(o);
     } else if (isMapObject(o)) {
+      if ('type' in o && 'props' in o) {
+        if ('extends' in o && typeof o.extends === 'string') {
+          print(`${o.extends} & `);
+        }
+        writeTypeDef(o.props, schemas, indent);
+        return;
+      }
       const keys = Object.keys(o);
       if (keys.length > 0) {
         println('{');
@@ -295,7 +306,7 @@ async function dumpSchema(schemas: { [name: string]: any }, outFile: string) {
             nillable = true;
           }
           print(`${prop}${nillable ? '?' : ''}: `, indent + 2);
-          writeTypeDef(value, indent + 2);
+          writeTypeDef(value, schemas, indent + 2);
           if (isArray) {
             print('[]');
           }
@@ -315,7 +326,7 @@ async function dumpSchema(schemas: { [name: string]: any }, outFile: string) {
     for (const name of Object.keys(schemas)) {
       const schema = schemas[name];
       print(`export type ${name} = `);
-      writeTypeDef(schema.props);
+      writeTypeDef(schema, schemas);
       println(';');
       println();
     }
