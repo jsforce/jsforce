@@ -1,12 +1,19 @@
 /**
  *
  */
-export type SoapSchemaDef =
-  | readonly ['?', SoapSchemaDef]
-  | readonly [SoapSchemaDef]
-  | readonly SoapSchemaDef[]
-  | { readonly '?': { readonly [key: string]: SoapSchemaDef } }
-  | { readonly [key: string]: SoapSchemaDef }
+export type SoapSchemaDef = {
+  type: string;
+  extends?: string;
+  props: { readonly [key: string]: SoapSchema };
+};
+
+export type SoapSchema =
+  | readonly ['?', SoapSchema]
+  | readonly [SoapSchema]
+  | readonly SoapSchema[]
+  | { readonly '?': { readonly [key: string]: SoapSchema } }
+  | { readonly [key: string]: SoapSchema }
+  /*
   | 'string'
   | 'number'
   | 'boolean'
@@ -15,6 +22,8 @@ export type SoapSchemaDef =
   | '?number'
   | '?boolean'
   | '?any'
+  */
+  | string
   | null;
 
 type UndefKey<T extends {}, K extends keyof T = keyof T> = K extends keyof T
@@ -33,20 +42,31 @@ type PartialForUndefined<
   ? { -readonly [K in UK]+?: T[K] }
   : { -readonly [K in UK]+?: T[K] } & { -readonly [K in RK]-?: T[K] };
 
-export type SoapSchemaType<T extends SoapSchemaDef> = T extends readonly [
-  '?',
-  any,
-]
-  ? Array<SoapSchemaType<T[1]>> | null | undefined
+type SchemaTypeDict = { [name: string]: {} };
+
+export type SoapSchemaType<
+  T extends SoapSchemaDef,
+  TypeDict extends SchemaTypeDict = SchemaTypeDict
+> = T['extends'] extends string
+  ? TypeDict[T['extends']] &
+      SoapSchemaElementType<T['props'], TypeDict, T['type']>
+  : SoapSchemaElementType<T['props'], TypeDict, T['type']>;
+
+export type SoapSchemaElementType<
+  T extends SoapSchema,
+  TypeDict extends SchemaTypeDict = SchemaTypeDict,
+  N extends string = ''
+> = T extends readonly ['?', any]
+  ? Array<SoapSchemaElementType<T[1], TypeDict, N>> | null | undefined
   : T extends readonly [any]
-  ? Array<SoapSchemaType<T[0]>>
+  ? Array<SoapSchemaElementType<T[0], TypeDict, N>>
   : T extends readonly any[]
-  ? Array<SoapSchemaType<T[number]>>
+  ? Array<SoapSchemaElementType<T[number], TypeDict, N>>
   : T extends { readonly '?': { readonly [key: string]: any } }
   ?
       | PartialForUndefined<
           {
-            [K in keyof T['?']]: SoapSchemaType<T['?'][K]>;
+            [K in keyof T['?']]: SoapSchemaElementType<T['?'][K], TypeDict, N>;
           }
         >
       | null
@@ -54,7 +74,7 @@ export type SoapSchemaType<T extends SoapSchemaDef> = T extends readonly [
   : T extends { readonly [key: string]: any }
   ? PartialForUndefined<
       {
-        [K in keyof T]: SoapSchemaType<T[K]>;
+        [K in keyof T]: SoapSchemaElementType<T[K], TypeDict, N>;
       }
     >
   : T extends 'string'
@@ -73,6 +93,10 @@ export type SoapSchemaType<T extends SoapSchemaDef> = T extends readonly [
   ? boolean | null | undefined
   : T extends '?any'
   ? any | null | undefined
+  : T extends N
+  ? any
+  : T extends keyof TypeDict
+  ? TypeDict[T]
   : T extends null
   ? null
   : never;
