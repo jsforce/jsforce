@@ -19,6 +19,7 @@ import {
   FieldPathSpecifier,
   FieldPathScopedProjection,
   SObjectRecord,
+  SObjectInputRecord,
   SObjectUpdateRecord,
   SaveResult,
   DateString,
@@ -914,16 +915,16 @@ export default class Query<
   /**
    * Bulk update queried records, using given mapping function/object
    */
-  update<UR extends SObjectUpdateRecord<S, N>>(
+  update<UR extends SObjectInputRecord<S, N>>(
     mapping: ((rec: R) => UR) | UR,
     type: N,
     options?: QueryUpdateOptions,
   ): Promise<SaveResult[]>;
-  update<UR extends SObjectUpdateRecord<S, N>>(
+  update<UR extends SObjectInputRecord<S, N>>(
     mapping: ((rec: R) => UR) | UR,
     options?: QueryUpdateOptions,
   ): Promise<SaveResult[]>;
-  update<UR extends SObjectUpdateRecord<S, N>>(
+  update<UR extends SObjectInputRecord<S, N>>(
     mapping: ((rec: R) => UR) | UR,
     type?: N | QueryUpdateOptions,
     options?: QueryUpdateOptions,

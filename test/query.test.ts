@@ -35,7 +35,7 @@ test('query accounts with scanAll option and return all records', async () => {
     .create({ Name: 'Deleting Account #1' });
   await conn
     .sobject('Account')
-    .record(ret.id)
+    .record(ret.id!) // TODO: remove "!" when assertion funcion is introduced
     .destroy();
   const query = conn.query(
     'SELECT Id, IsDeleted, Name FROM Account WHERE IsDeleted = true',
@@ -54,7 +54,7 @@ test('query big table and execute queryMore and fetch all records', async () => 
   );
   let records = result.records;
   while (!result.done) {
-    result = await conn.queryMore(result.nextRecordsUrl);
+    result = await conn.queryMore(result.nextRecordsUrl!); // TODO: remove "!" when assrtion functionn is introduced
     records = [...records, ...result.records];
   }
   assert.ok(records.length === result.totalSize);
