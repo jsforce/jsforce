@@ -29,11 +29,18 @@ function toSoapRecord(records: Record | Record[]): Record | Record[] {
   return (Array.isArray(records) ? records : [records]).map((record) => {
     const { type, attributes, ...rec } = record;
     const t = type || attributes?.type;
-    if (t) {
-      return { type: t, ...rec };
-    } else {
-      return record;
+    if (!t) {
+      throw new Error('Given record is not including sObject type information');
     }
+    const fieldsToNull = Object.keys(rec).filter(
+      (field) => record[field] === null,
+    );
+    for (const field of fieldsToNull) {
+      delete rec[field];
+    }
+    return fieldsToNull.length > 0
+      ? { type: t, fieldsToNull, ...rec }
+      : { type: t, ...rec };
   });
 }
 
