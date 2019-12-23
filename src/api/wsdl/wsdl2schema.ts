@@ -133,21 +133,13 @@ async function readWSDLFile(filePath: string) {
 function getTypeInfo(el: WSDLElement, simpleTypes: { [name: string]: string }) {
   let type = toJsType(el.$.type, simpleTypes);
   const isArray = el.$.maxOccurs === 'unbounded';
-  const isObject =
-    !isArray &&
-    type !== 'string' &&
-    type !== 'number' &&
-    type !== 'boolean' &&
-    type !== 'any';
   const nillable = (!isArray && el.$.minOccurs === 0) || el.$.nillable;
   return isArray
     ? nillable
       ? ['?', type]
       : [type]
     : nillable
-    ? isObject
-      ? { '?': type }
-      : `?${type}`
+    ? `?${type}`
     : type;
 }
 
