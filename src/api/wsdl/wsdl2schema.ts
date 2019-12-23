@@ -298,12 +298,13 @@ async function dumpSchema(schemas: { [name: string]: any }, outFile: string) {
             }
           } else if (isMapObject(value)) {
             if ('?' in value) {
+              nillable = true;
               value = value['?'];
             }
           }
           if (typeof value === 'string' && value[0] === '?') {
-            value = value.substring(1);
             nillable = true;
+            value = value.substring(1);
           }
           print(`${prop}${nillable ? '?' : ''}: `, indent + 2);
           writeTypeDef(value, schemas, indent + 2);
