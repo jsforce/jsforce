@@ -66,13 +66,21 @@ export function castTypeUsingSchema(
       return null;
     }
     const obj = isMapObject(value) ? value : {};
-    return Object.keys(schema_).reduce(
-      (o, k) => ({
+    return Object.keys(schema_).reduce((o, k) => {
+      const s = schema_[k];
+      const v = obj[k];
+      const nillable =
+        (Array.isArray(s) && s.length === 2 && s[0] === '?') ||
+        (isMapObject(s) && '?' in s) ||
+        (typeof s === 'string' && s[0] === '?');
+      if (typeof v === 'undefined' && nillable) {
+        return o;
+      }
+      return {
         ...o,
-        [k]: castTypeUsingSchema(obj[k], schema_[k], schemaDict),
-      }),
-      obj,
-    );
+        [k]: castTypeUsingSchema(v, s, schemaDict),
+      };
+    }, obj);
   } else {
     const nillable = typeof schema === 'string' && schema[0] === '?';
     const type =
