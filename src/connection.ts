@@ -49,6 +49,7 @@ import SObject from './sobject';
 import QuickAction from './quick-action';
 import { formatDate } from './util/formatter';
 import Apex from './api/apex';
+import Metadata from './api/metadata';
 
 /**
  * type definitions
@@ -207,6 +208,15 @@ function toSaveResult(id: Optional<string>, err: SaveError): SaveResult {
   };
 }
 
+/**
+ *
+ */
+function raiseNoModuleError(name: string): never {
+  throw new Error(
+    `API module '${name}' is not loaded, load 'jsforce/api/${name}' explicitly`,
+  );
+}
+
 /*
  * Constant of maximum records num in DML operation (update/delete)
  */
@@ -253,9 +263,10 @@ export default class Connection<
   // API libs are not instantiated here so that core module to remain without dependencies to them
   // It is responsible for develpers to import api libs explicitly if they are using 'jsforce/core' instead of 'jsforce'.
   get apex(): Apex<S> {
-    throw new Error(
-      "API module 'apex' is not loaded, load 'jsforce/api/apex' explicitly",
-    );
+    return raiseNoModuleError('apex');
+  }
+  get metadata(): Metadata<S> {
+    return raiseNoModuleError('metadata');
   }
 
   /**

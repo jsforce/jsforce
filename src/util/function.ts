@@ -9,6 +9,14 @@ export function isObject(v: any): v is object {
 /**
  *
  */
+export function isMapObject(v: any): v is { [name: string]: unknown } {
+  const t = typeof v;
+  return v != null && t == 'object';
+}
+
+/**
+ *
+ */
 export function isFunction(v: any): v is (...args: any[]) => any {
   return typeof v == 'function';
 }

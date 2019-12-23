@@ -1,14 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 import assert from 'assert';
-import { Connection } from '..';
+import { Connection } from '../src';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject, isString } from './util';
 import { isNodeJS } from './helper/env';
 
 const connMgr = new ConnectionManager(config);
-const conn: any = connMgr.createConnection();
+const conn = connMgr.createConnection();
 conn.metadata.pollTimeout = 40 * 1000; // adjust poll timeout to test timeout.
 
 // TODO: remove the overriding of connection version when updated the default API version.
@@ -155,9 +155,9 @@ describe('CRUD based call', () => {
       assert.ok(result.success === true);
       assert.ok(isString(result.fullName));
       assert.ok(result.fullName === oldName);
-      result = await conn.metadata.read('CustomObject', newName);
-      assert.ok(isString(result.fullName));
-      assert.ok(result.fullName === newName);
+      const co = await conn.metadata.read('CustomObject', newName);
+      assert.ok(isString(co.fullName));
+      assert.ok(co.fullName === newName);
     } finally {
       conn.version = origVersion; // eslint-disable-line require-atomic-updates
     }
@@ -175,8 +175,8 @@ describe('CRUD based call', () => {
       assert.ok(isString(result.fullName));
     }
     fullNames = results
-      .filter((m: any) => m.fullName.match(/^JSforceTestObject.+__c$/))
-      .map((m: any) => m.fullName);
+      .filter((m) => m.fullName.match(/^JSforceTestObject.+__c$/))
+      .map((m) => m.fullName);
   });
 
   /**
@@ -252,7 +252,7 @@ describe('session refresh', () => {
    */
   test('refresh metadata API session and list metadata even if the session has been expired', async () => {
     let refreshCalled = false;
-    const conn2: any = new Connection({
+    const conn2 = new Connection({
       // TODO: remove any
       instanceUrl: conn.instanceUrl,
       accessToken: 'invalid_token',
