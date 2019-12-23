@@ -48,12 +48,8 @@ export const ApiSchemas = {
     props: {
       componentFailures: ['DeployMessage'],
       componentSuccesses: ['DeployMessage'],
-      retrieveResult: {
-        '?': 'RetrieveResult',
-      },
-      runTestResult: {
-        '?': 'RunTestsResult',
-      },
+      retrieveResult: '?RetrieveResult',
+      runTestResult: '?RunTestsResult',
     },
   },
   DeployMessage: {
@@ -516,35 +512,21 @@ export const ApiSchemas = {
       active: 'boolean',
       allowRecall: '?boolean',
       allowedSubmitters: ['ApprovalSubmitter'],
-      approvalPageFields: {
-        '?': 'ApprovalPageField',
-      },
+      approvalPageFields: '?ApprovalPageField',
       approvalStep: ['ApprovalStep'],
       description: '?string',
       emailTemplate: '?string',
       enableMobileDeviceAccess: '?boolean',
-      entryCriteria: {
-        '?': 'ApprovalEntryCriteria',
-      },
-      finalApprovalActions: {
-        '?': 'ApprovalAction',
-      },
+      entryCriteria: '?ApprovalEntryCriteria',
+      finalApprovalActions: '?ApprovalAction',
       finalApprovalRecordLock: '?boolean',
-      finalRejectionActions: {
-        '?': 'ApprovalAction',
-      },
+      finalRejectionActions: '?ApprovalAction',
       finalRejectionRecordLock: '?boolean',
-      initialSubmissionActions: {
-        '?': 'ApprovalAction',
-      },
+      initialSubmissionActions: '?ApprovalAction',
       label: 'string',
-      nextAutomatedApprover: {
-        '?': 'NextAutomatedApprover',
-      },
+      nextAutomatedApprover: '?NextAutomatedApprover',
       postTemplate: '?string',
-      recallActions: {
-        '?': 'ApprovalAction',
-      },
+      recallActions: '?ApprovalAction',
       recordEditability: 'string',
       showApprovalHistory: '?boolean',
     },
@@ -567,23 +549,15 @@ export const ApiSchemas = {
     type: 'ApprovalStep',
     props: {
       allowDelegate: '?boolean',
-      approvalActions: {
-        '?': 'ApprovalAction',
-      },
+      approvalActions: '?ApprovalAction',
       assignedApprover: 'ApprovalStepApprover',
       description: '?string',
-      entryCriteria: {
-        '?': 'ApprovalEntryCriteria',
-      },
+      entryCriteria: '?ApprovalEntryCriteria',
       ifCriteriaNotMet: '?string',
       label: 'string',
       name: 'string',
-      rejectBehavior: {
-        '?': 'ApprovalStepRejectBehavior',
-      },
-      rejectionActions: {
-        '?': 'ApprovalAction',
-      },
+      rejectBehavior: '?ApprovalStepRejectBehavior',
+      rejectionActions: '?ApprovalAction',
     },
   },
   ApprovalAction: {
@@ -717,9 +691,7 @@ export const ApiSchemas = {
       description: '?string',
       formula: '?string',
       formulaFilterType: '?string',
-      targets: {
-        '?': 'PersonalizationTargetInfos',
-      },
+      targets: '?PersonalizationTargetInfos',
     },
     extends: 'Metadata',
   },
@@ -733,9 +705,7 @@ export const ApiSchemas = {
     type: 'AudienceCriterion',
     props: {
       criteriaNumber: '?number',
-      criterionValue: {
-        '?': 'AudienceCriteriaValue',
-      },
+      criterionValue: '?AudienceCriteriaValue',
       operator: '?string',
       type: 'string',
     },
@@ -857,9 +827,7 @@ export const ApiSchemas = {
   Bot: {
     type: 'Bot',
     props: {
-      botMlDomain: {
-        '?': 'LocalMlDomain',
-      },
+      botMlDomain: '?LocalMlDomain',
       botUser: '?string',
       botVersions: ['BotVersion'],
       contextVariables: ['ConversationContextVariable'],
@@ -914,9 +882,7 @@ export const ApiSchemas = {
   MlSlotClassValue: {
     type: 'MlSlotClassValue',
     props: {
-      synonymGroup: {
-        '?': 'SynonymGroup',
-      },
+      synonymGroup: '?SynonymGroup',
       value: 'string',
     },
   },
@@ -964,24 +930,14 @@ export const ApiSchemas = {
     type: 'BotStep',
     props: {
       booleanFilter: '?string',
-      botInvocation: {
-        '?': 'BotInvocation',
-      },
+      botInvocation: '?BotInvocation',
       botMessages: ['BotMessage'],
-      botNavigation: {
-        '?': 'BotNavigation',
-      },
+      botNavigation: '?BotNavigation',
       botStepConditions: ['BotStepCondition'],
       botSteps: ['BotStep'],
-      botVariableOperation: {
-        '?': 'BotVariableOperation',
-      },
-      conversationRecordLookup: {
-        '?': 'ConversationRecordLookup',
-      },
-      conversationSystemMessage: {
-        '?': 'ConversationSystemMessage',
-      },
+      botVariableOperation: '?BotVariableOperation',
+      conversationRecordLookup: '?ConversationRecordLookup',
+      conversationSystemMessage: '?ConversationSystemMessage',
       type: 'string',
     },
   },
@@ -1035,15 +991,11 @@ export const ApiSchemas = {
   BotVariableOperation: {
     type: 'BotVariableOperation',
     props: {
-      botInvocation: {
-        '?': 'BotInvocation',
-      },
+      botInvocation: '?BotInvocation',
       botMessages: ['BotMessage'],
       botQuickReplyOptions: ['BotQuickReplyOption'],
       botVariableOperands: ['BotVariableOperand'],
-      invalidInputBotNavigation: {
-        '?': 'BotNavigation',
-      },
+      invalidInputBotNavigation: '?BotNavigation',
       quickReplyOptionTemplate: '?string',
       quickReplyType: '?string',
       quickReplyWidgetType: '?string',
@@ -1241,9 +1193,7 @@ export const ApiSchemas = {
     props: {
       cmsConnectAsset: ['CMSConnectAsset'],
       cmsConnectLanguage: ['CMSConnectLanguage'],
-      cmsConnectPersonalization: {
-        '?': 'CMSConnectPersonalization',
-      },
+      cmsConnectPersonalization: '?CMSConnectPersonalization',
       cmsConnectResourceType: ['CMSConnectResourceType'],
       connectionType: 'string',
       cssScope: '?string',
@@ -1395,9 +1345,7 @@ export const ApiSchemas = {
       defaultCaseOwnerType: '?string',
       defaultCaseUser: '?string',
       emailActionDefaultsHandlerClass: '?string',
-      emailToCase: {
-        '?': 'EmailToCaseSettings',
-      },
+      emailToCase: '?EmailToCaseSettings',
       enableCaseFeed: '?boolean',
       enableCollapseEmailThread: '?boolean',
       enableDraftEmails: '?boolean',
@@ -1420,9 +1368,7 @@ export const ApiSchemas = {
       systemUserEmail: '?string',
       useSystemEmailAddress: '?boolean',
       useSystemUserAsDefaultCaseUser: '?boolean',
-      webToCase: {
-        '?': 'WebToCaseSettings',
-      },
+      webToCase: '?WebToCaseSettings',
     },
     extends: 'Metadata',
   },
@@ -1695,9 +1641,7 @@ export const ApiSchemas = {
       enablePrivateQuestions: '?boolean',
       expertsGroup: '?string',
       portal: '?string',
-      reputationLevels: {
-        '?': 'ReputationLevels',
-      },
+      reputationLevels: '?ReputationLevels',
       showInPortal: '?boolean',
       site: '?string',
     },
@@ -1767,14 +1711,10 @@ export const ApiSchemas = {
     props: {
       defaultListViewId: '?string',
       label: 'string',
-      menuItemBranding: {
-        '?': 'NavigationMenuItemBranding',
-      },
+      menuItemBranding: '?NavigationMenuItemBranding',
       position: 'number',
       publiclyAvailable: '?boolean',
-      subMenu: {
-        '?': 'NavigationSubMenu',
-      },
+      subMenu: '?NavigationSubMenu',
       target: '?string',
       targetPreference: '?string',
       type: 'string',
@@ -1850,9 +1790,7 @@ export const ApiSchemas = {
     type: 'CompanySettings',
     props: {
       enableCustomFiscalYear: 'boolean',
-      fiscalYear: {
-        '?': 'FiscalYearSettings',
-      },
+      fiscalYear: '?FiscalYearSettings',
     },
     extends: 'Metadata',
   },
@@ -1867,12 +1805,8 @@ export const ApiSchemas = {
     type: 'ConnectedApp',
     props: {
       attributes: ['ConnectedAppAttribute'],
-      canvas: {
-        '?': 'CanvasMetadata',
-      },
-      canvasConfig: {
-        '?': 'ConnectedAppCanvasConfig',
-      },
+      canvas: '?CanvasMetadata',
+      canvasConfig: '?ConnectedAppCanvasConfig',
       contactEmail: 'string',
       contactPhone: '?string',
       description: '?string',
@@ -1881,20 +1815,14 @@ export const ApiSchemas = {
       ipRanges: ['ConnectedAppIpRange'],
       label: 'string',
       logoUrl: '?string',
-      mobileAppConfig: {
-        '?': 'ConnectedAppMobileDetailConfig',
-      },
+      mobileAppConfig: '?ConnectedAppMobileDetailConfig',
       mobileStartUrl: '?string',
-      oauthConfig: {
-        '?': 'ConnectedAppOauthConfig',
-      },
+      oauthConfig: '?ConnectedAppOauthConfig',
       permissionSetName: ['string'],
       plugin: '?string',
       pluginExecutionUser: '?string',
       profileName: ['string'],
-      samlConfig: {
-        '?': 'ConnectedAppSamlConfig',
-      },
+      samlConfig: '?ConnectedAppSamlConfig',
       startUrl: '?string',
     },
     extends: 'Metadata',
@@ -1949,9 +1877,7 @@ export const ApiSchemas = {
       certificate: '?string',
       consumerKey: '?string',
       consumerSecret: '?string',
-      idTokenConfig: {
-        '?': 'ConnectedAppOauthIdToken',
-      },
+      idTokenConfig: '?ConnectedAppOauthIdToken',
       isAdminApproved: '?boolean',
       scopes: ['string'],
       singleLogoutUrl: '?string',
@@ -2058,12 +1984,8 @@ export const ApiSchemas = {
     type: 'CustomApplication',
     props: {
       actionOverrides: ['AppActionOverride'],
-      brand: {
-        '?': 'AppBrand',
-      },
-      consoleConfig: {
-        '?': 'ServiceCloudConsoleConfig',
-      },
+      brand: '?AppBrand',
+      consoleConfig: '?ServiceCloudConsoleConfig',
       defaultLandingTab: '?string',
       description: '?string',
       formFactors: ['string'],
@@ -2073,18 +1995,14 @@ export const ApiSchemas = {
       label: '?string',
       logo: '?string',
       navType: '?string',
-      preferences: {
-        '?': 'AppPreferences',
-      },
+      preferences: '?AppPreferences',
       profileActionOverrides: ['AppProfileActionOverride'],
       setupExperience: '?string',
       subscriberTabs: ['string'],
       tabs: ['string'],
       uiType: '?string',
       utilityBar: '?string',
-      workspaceConfig: {
-        '?': 'AppWorkspaceConfig',
-      },
+      workspaceConfig: '?AppWorkspaceConfig',
     },
     extends: 'Metadata',
   },
@@ -2119,23 +2037,17 @@ export const ApiSchemas = {
   ServiceCloudConsoleConfig: {
     type: 'ServiceCloudConsoleConfig',
     props: {
-      componentList: {
-        '?': 'AppComponentList',
-      },
+      componentList: '?AppComponentList',
       detailPageRefreshMethod: 'string',
       footerColor: '?string',
       headerColor: '?string',
       keyboardShortcuts: 'KeyboardShortcuts',
       listPlacement: 'ListPlacement',
       listRefreshMethod: 'string',
-      liveAgentConfig: {
-        '?': 'LiveAgentConfig',
-      },
+      liveAgentConfig: '?LiveAgentConfig',
       primaryTabColor: '?string',
       pushNotifications: ['PushNotification'],
-      tabLimitConfig: {
-        '?': 'TabLimitConfig',
-      },
+      tabLimitConfig: '?TabLimitConfig',
       whitelistedDomains: ['string'],
     },
   },
@@ -2313,9 +2225,7 @@ export const ApiSchemas = {
       isSortingDisabled: '?boolean',
       label: '?string',
       length: '?number',
-      lookupFilter: {
-        '?': 'LookupFilter',
-      },
+      lookupFilter: '?LookupFilter',
       maskChar: '?string',
       maskType: '?string',
       metadataRelationshipControllingField: '?string',
@@ -2343,9 +2253,7 @@ export const ApiSchemas = {
       translateData: '?boolean',
       type: '?string',
       unique: '?boolean',
-      valueSet: {
-        '?': 'ValueSet',
-      },
+      valueSet: '?ValueSet',
       visibleLines: '?number',
       writeRequiresMasterRead: '?boolean',
     },
@@ -2368,9 +2276,7 @@ export const ApiSchemas = {
     props: {
       controllingField: '?string',
       restricted: '?boolean',
-      valueSetDefinition: {
-        '?': 'ValueSetValuesDefinition',
-      },
+      valueSetDefinition: '?ValueSetValuesDefinition',
       valueSetName: '?string',
       valueSettings: ['ValueSettings'],
     },
@@ -2484,9 +2390,7 @@ export const ApiSchemas = {
     props: {
       actionOverrides: ['ActionOverride'],
       allowInChatterGroups: '?boolean',
-      articleTypeChannelDisplay: {
-        '?': 'ArticleTypeChannelDisplay',
-      },
+      articleTypeChannelDisplay: '?ArticleTypeChannelDisplay',
       businessProcesses: ['BusinessProcess'],
       compactLayoutAssignment: '?string',
       compactLayouts: ['CompactLayout'],
@@ -2516,25 +2420,19 @@ export const ApiSchemas = {
       fieldSets: ['FieldSet'],
       fields: ['CustomField'],
       gender: '?string',
-      historyRetentionPolicy: {
-        '?': 'HistoryRetentionPolicy',
-      },
+      historyRetentionPolicy: '?HistoryRetentionPolicy',
       household: '?boolean',
       indexes: ['Index'],
       label: '?string',
       listViews: ['ListView'],
-      nameField: {
-        '?': 'CustomField',
-      },
+      nameField: '?CustomField',
       pluralLabel: '?string',
       profileSearchLayouts: ['ProfileSearchLayouts'],
       publishBehavior: '?string',
       recordTypeTrackFeedHistory: '?boolean',
       recordTypeTrackHistory: '?boolean',
       recordTypes: ['RecordType'],
-      searchLayouts: {
-        '?': 'SearchLayouts',
-      },
+      searchLayouts: '?SearchLayouts',
       sharingModel: '?string',
       sharingReasons: ['SharingReason'],
       sharingRecalculations: ['SharingRecalculation'],
@@ -2611,9 +2509,7 @@ export const ApiSchemas = {
       label: 'string',
       language: '?string',
       queue: '?string',
-      sharedTo: {
-        '?': 'SharedTo',
-      },
+      sharedTo: '?SharedTo',
     },
     extends: 'Metadata',
   },
@@ -2788,9 +2684,7 @@ export const ApiSchemas = {
       gender: '?string',
       help: '?string',
       label: '?string',
-      lookupFilter: {
-        '?': 'LookupFilterTranslation',
-      },
+      lookupFilter: '?LookupFilterTranslation',
       name: 'string',
       picklistValues: ['PicklistValueTranslation'],
       relationshipLabel: '?string',
@@ -3024,25 +2918,17 @@ export const ApiSchemas = {
       dashboardChartTheme: '?string',
       dashboardColorPalette: '?string',
       dashboardFilters: ['DashboardFilter'],
-      dashboardGridLayout: {
-        '?': 'DashboardGridLayout',
-      },
+      dashboardGridLayout: '?DashboardGridLayout',
       dashboardResultRefreshedDate: '?string',
       dashboardResultRunningUser: '?string',
       dashboardType: '?string',
       description: '?string',
       folderName: '?string',
       isGridLayout: '?boolean',
-      leftSection: {
-        '?': 'DashboardComponentSection',
-      },
-      middleSection: {
-        '?': 'DashboardComponentSection',
-      },
+      leftSection: '?DashboardComponentSection',
+      middleSection: '?DashboardComponentSection',
       numSubscriptions: '?number',
-      rightSection: {
-        '?': 'DashboardComponentSection',
-      },
+      rightSection: '?DashboardComponentSection',
       runningUser: '?string',
       textColor: 'string',
       title: 'string',
@@ -3102,16 +2988,12 @@ export const ApiSchemas = {
       drillToDetailEnabled: '?boolean',
       enableHover: '?boolean',
       expandOthers: '?boolean',
-      flexComponentProperties: {
-        '?': 'DashboardFlexTableComponentProperties',
-      },
+      flexComponentProperties: '?DashboardFlexTableComponentProperties',
       footer: '?string',
       gaugeMax: '?number',
       gaugeMin: '?number',
       groupingColumn: ['string'],
-      groupingSortProperties: {
-        '?': 'DashboardComponentGroupingSortProperties',
-      },
+      groupingSortProperties: '?DashboardComponentGroupingSortProperties',
       header: '?string',
       indicatorBreakpoint1: '?number',
       indicatorBreakpoint2: '?number',
@@ -3168,9 +3050,7 @@ export const ApiSchemas = {
     props: {
       decimalPrecision: '?number',
       flexTableColumn: ['DashboardComponentColumn'],
-      flexTableSortInfo: {
-        '?': 'DashboardComponentSortInfo',
-      },
+      flexTableSortInfo: '?DashboardComponentSortInfo',
       hideChatterPhotos: '?boolean',
     },
   },
@@ -3225,9 +3105,7 @@ export const ApiSchemas = {
       dataCategory: 'DataCategory',
       description: '?string',
       label: 'string',
-      objectUsage: {
-        '?': 'ObjectUsage',
-      },
+      objectUsage: '?ObjectUsage',
     },
     extends: 'Metadata',
   },
@@ -3308,9 +3186,7 @@ export const ApiSchemas = {
       actionOnUpdate: 'string',
       alertText: '?string',
       description: '?string',
-      duplicateRuleFilter: {
-        '?': 'DuplicateRuleFilter',
-      },
+      duplicateRuleFilter: '?DuplicateRuleFilter',
       duplicateRuleMatchRules: ['?', 'DuplicateRuleMatchRule'],
       isActive: 'boolean',
       masterLabel: 'string',
@@ -3333,9 +3209,7 @@ export const ApiSchemas = {
     props: {
       matchRuleSObjectType: 'string',
       matchingRule: 'string',
-      objectMapping: {
-        '?': 'ObjectMapping',
-      },
+      objectMapping: '?ObjectMapping',
     },
   },
   ObjectMapping: {
@@ -3466,14 +3340,10 @@ export const ApiSchemas = {
     props: {
       areGuestUsersAllowed: '?boolean',
       authMethod: '?string',
-      embeddedServiceAppointmentSettings: {
-        '?': 'EmbeddedServiceAppointmentSettings',
-      },
+      embeddedServiceAppointmentSettings: '?EmbeddedServiceAppointmentSettings',
       embeddedServiceCustomComponents: ['EmbeddedServiceCustomComponent'],
       embeddedServiceCustomLabels: ['EmbeddedServiceCustomLabel'],
-      embeddedServiceFlowConfig: {
-        '?': 'EmbeddedServiceFlowConfig',
-      },
+      embeddedServiceFlowConfig: '?EmbeddedServiceFlowConfig',
       embeddedServiceFlows: ['EmbeddedServiceFlow'],
       embeddedServiceLayouts: ['EmbeddedServiceLayout'],
       masterLabel: 'string',
@@ -3855,12 +3725,8 @@ export const ApiSchemas = {
       flexiPageRegions: ['FlexiPageRegion'],
       masterLabel: 'string',
       parentFlexiPage: '?string',
-      platformActionlist: {
-        '?': 'PlatformActionList',
-      },
-      quickActionList: {
-        '?': 'QuickActionList',
-      },
+      platformActionlist: '?PlatformActionList',
+      quickActionList: '?QuickActionList',
       sobjectType: '?string',
       template: 'FlexiPageTemplateInstance',
       type: 'string',
@@ -3884,9 +3750,7 @@ export const ApiSchemas = {
     props: {
       componentInstanceProperties: ['ComponentInstanceProperty'],
       componentName: 'string',
-      visibilityRule: {
-        '?': 'UiFormulaRule',
-      },
+      visibilityRule: '?UiFormulaRule',
     },
   },
   ComponentInstanceProperty: {
@@ -3974,9 +3838,7 @@ export const ApiSchemas = {
       recordUpdates: ['FlowRecordUpdate'],
       screens: ['FlowScreen'],
       stages: ['FlowStage'],
-      start: {
-        '?': 'FlowStart',
-      },
+      start: '?FlowStart',
       startElementReference: '?string',
       status: '?string',
       steps: ['FlowStep'],
@@ -3992,12 +3854,8 @@ export const ApiSchemas = {
     props: {
       actionName: 'string',
       actionType: 'string',
-      connector: {
-        '?': 'FlowConnector',
-      },
-      faultConnector: {
-        '?': 'FlowConnector',
-      },
+      connector: '?FlowConnector',
+      faultConnector: '?FlowConnector',
       inputParameters: ['FlowActionCallInputParameter'],
       outputParameters: ['FlowActionCallOutputParameter'],
     },
@@ -4030,9 +3888,7 @@ export const ApiSchemas = {
     type: 'FlowMetadataValue',
     props: {
       name: 'string',
-      value: {
-        '?': 'FlowElementReferenceOrValue',
-      },
+      value: '?FlowElementReferenceOrValue',
     },
   },
   FlowElementReferenceOrValue: {
@@ -4050,9 +3906,7 @@ export const ApiSchemas = {
     type: 'FlowActionCallInputParameter',
     props: {
       name: 'string',
-      value: {
-        '?': 'FlowElementReferenceOrValue',
-      },
+      value: '?FlowElementReferenceOrValue',
     },
     extends: 'FlowBaseElement',
   },
@@ -4068,9 +3922,7 @@ export const ApiSchemas = {
     type: 'FlowApexPluginCallInputParameter',
     props: {
       name: 'string',
-      value: {
-        '?': 'FlowElementReferenceOrValue',
-      },
+      value: '?FlowElementReferenceOrValue',
     },
     extends: 'FlowBaseElement',
   },
@@ -4087,9 +3939,7 @@ export const ApiSchemas = {
     props: {
       assignToReference: 'string',
       operator: 'string',
-      value: {
-        '?': 'FlowElementReferenceOrValue',
-      },
+      value: '?FlowElementReferenceOrValue',
     },
     extends: 'FlowBaseElement',
   },
@@ -4098,9 +3948,7 @@ export const ApiSchemas = {
     props: {
       isRequired: '?boolean',
       promptText: '?string',
-      validationRule: {
-        '?': 'FlowInputValidationRule',
-      },
+      validationRule: '?FlowInputValidationRule',
     },
     extends: 'FlowBaseElement',
   },
@@ -4116,9 +3964,7 @@ export const ApiSchemas = {
     props: {
       leftValueReference: 'string',
       operator: 'string',
-      rightValue: {
-        '?': 'FlowElementReferenceOrValue',
-      },
+      rightValue: '?FlowElementReferenceOrValue',
     },
     extends: 'FlowBaseElement',
   },
@@ -4133,9 +3979,7 @@ export const ApiSchemas = {
     type: 'FlowInputFieldAssignment',
     props: {
       field: 'string',
-      value: {
-        '?': 'FlowElementReferenceOrValue',
-      },
+      value: '?FlowElementReferenceOrValue',
     },
     extends: 'FlowBaseElement',
   },
@@ -4152,9 +3996,7 @@ export const ApiSchemas = {
     props: {
       field: 'string',
       operator: 'string',
-      value: {
-        '?': 'FlowElementReferenceOrValue',
-      },
+      value: '?FlowElementReferenceOrValue',
     },
     extends: 'FlowBaseElement',
   },
@@ -4162,9 +4004,7 @@ export const ApiSchemas = {
     type: 'FlowScreenFieldInputParameter',
     props: {
       name: 'string',
-      value: {
-        '?': 'FlowElementReferenceOrValue',
-      },
+      value: '?FlowElementReferenceOrValue',
     },
     extends: 'FlowBaseElement',
   },
@@ -4191,9 +4031,7 @@ export const ApiSchemas = {
     props: {
       attribute: 'string',
       fieldReference: 'string',
-      value: {
-        '?': 'FlowElementReferenceOrValue',
-      },
+      value: '?FlowElementReferenceOrValue',
     },
     extends: 'FlowBaseElement',
   },
@@ -4201,9 +4039,7 @@ export const ApiSchemas = {
     type: 'FlowSubflowInputAssignment',
     props: {
       name: 'string',
-      value: {
-        '?': 'FlowElementReferenceOrValue',
-      },
+      value: '?FlowElementReferenceOrValue',
     },
     extends: 'FlowBaseElement',
   },
@@ -4227,9 +4063,7 @@ export const ApiSchemas = {
     type: 'FlowWaitEventInputParameter',
     props: {
       name: 'string',
-      value: {
-        '?': 'FlowElementReferenceOrValue',
-      },
+      value: '?FlowElementReferenceOrValue',
     },
     extends: 'FlowBaseElement',
   },
@@ -4246,12 +4080,8 @@ export const ApiSchemas = {
     props: {
       choiceText: 'string',
       dataType: 'string',
-      userInput: {
-        '?': 'FlowChoiceUserInput',
-      },
-      value: {
-        '?': 'FlowElementReferenceOrValue',
-      },
+      userInput: '?FlowChoiceUserInput',
+      value: '?FlowElementReferenceOrValue',
     },
     extends: 'FlowElement',
   },
@@ -4259,9 +4089,7 @@ export const ApiSchemas = {
     type: 'FlowConstant',
     props: {
       dataType: 'string',
-      value: {
-        '?': 'FlowElementReferenceOrValue',
-      },
+      value: '?FlowElementReferenceOrValue',
     },
     extends: 'FlowElement',
   },
@@ -4296,9 +4124,7 @@ export const ApiSchemas = {
     props: {
       conditionLogic: 'string',
       conditions: ['FlowCondition'],
-      connector: {
-        '?': 'FlowConnector',
-      },
+      connector: '?FlowConnector',
       label: 'string',
     },
     extends: 'FlowElement',
@@ -4309,9 +4135,7 @@ export const ApiSchemas = {
       choiceReferences: ['string'],
       dataType: '?string',
       defaultSelectedChoiceReference: '?string',
-      defaultValue: {
-        '?': 'FlowElementReferenceOrValue',
-      },
+      defaultValue: '?FlowElementReferenceOrValue',
       extensionName: '?string',
       fieldText: '?string',
       fieldType: 'string',
@@ -4322,12 +4146,8 @@ export const ApiSchemas = {
       outputParameters: ['FlowScreenFieldOutputParameter'],
       scale: '?number',
       storeOutputAutomatically: '?boolean',
-      validationRule: {
-        '?': 'FlowInputValidationRule',
-      },
-      visibilityRule: {
-        '?': 'FlowVisibilityRule',
-      },
+      validationRule: '?FlowInputValidationRule',
+      visibilityRule: '?FlowVisibilityRule',
     },
     extends: 'FlowElement',
   },
@@ -4357,9 +4177,7 @@ export const ApiSchemas = {
       isOutput: '?boolean',
       objectType: '?string',
       scale: '?number',
-      value: {
-        '?': 'FlowElementReferenceOrValue',
-      },
+      value: '?FlowElementReferenceOrValue',
     },
     extends: 'FlowElement',
   },
@@ -4380,12 +4198,8 @@ export const ApiSchemas = {
     type: 'FlowApexPluginCall',
     props: {
       apexClass: 'string',
-      connector: {
-        '?': 'FlowConnector',
-      },
-      faultConnector: {
-        '?': 'FlowConnector',
-      },
+      connector: '?FlowConnector',
+      faultConnector: '?FlowConnector',
       inputParameters: ['FlowApexPluginCallInputParameter'],
       outputParameters: ['FlowApexPluginCallOutputParameter'],
     },
@@ -4395,18 +4209,14 @@ export const ApiSchemas = {
     type: 'FlowAssignment',
     props: {
       assignmentItems: ['FlowAssignmentItem'],
-      connector: {
-        '?': 'FlowConnector',
-      },
+      connector: '?FlowConnector',
     },
     extends: 'FlowNode',
   },
   FlowDecision: {
     type: 'FlowDecision',
     props: {
-      defaultConnector: {
-        '?': 'FlowConnector',
-      },
+      defaultConnector: '?FlowConnector',
       defaultConnectorLabel: '?string',
       rules: ['FlowRule'],
     },
@@ -4418,12 +4228,8 @@ export const ApiSchemas = {
       assignNextValueToReference: 'string',
       collectionReference: 'string',
       iterationOrder: '?string',
-      nextValueConnector: {
-        '?': 'FlowConnector',
-      },
-      noMoreValuesConnector: {
-        '?': 'FlowConnector',
-      },
+      nextValueConnector: '?FlowConnector',
+      noMoreValuesConnector: '?FlowConnector',
     },
     extends: 'FlowNode',
   },
@@ -4431,12 +4237,8 @@ export const ApiSchemas = {
     type: 'FlowRecordCreate',
     props: {
       assignRecordIdToReference: '?string',
-      connector: {
-        '?': 'FlowConnector',
-      },
-      faultConnector: {
-        '?': 'FlowConnector',
-      },
+      connector: '?FlowConnector',
+      faultConnector: '?FlowConnector',
       inputAssignments: ['FlowInputFieldAssignment'],
       inputReference: '?string',
       object: '?string',
@@ -4446,12 +4248,8 @@ export const ApiSchemas = {
   FlowRecordDelete: {
     type: 'FlowRecordDelete',
     props: {
-      connector: {
-        '?': 'FlowConnector',
-      },
-      faultConnector: {
-        '?': 'FlowConnector',
-      },
+      connector: '?FlowConnector',
+      faultConnector: '?FlowConnector',
       filters: ['FlowRecordFilter'],
       inputReference: '?string',
       object: '?string',
@@ -4462,12 +4260,8 @@ export const ApiSchemas = {
     type: 'FlowRecordLookup',
     props: {
       assignNullValuesIfNoRecordsFound: '?boolean',
-      connector: {
-        '?': 'FlowConnector',
-      },
-      faultConnector: {
-        '?': 'FlowConnector',
-      },
+      connector: '?FlowConnector',
+      faultConnector: '?FlowConnector',
       filters: ['FlowRecordFilter'],
       getFirstRecordOnly: '?boolean',
       object: 'string',
@@ -4483,12 +4277,8 @@ export const ApiSchemas = {
   FlowRecordUpdate: {
     type: 'FlowRecordUpdate',
     props: {
-      connector: {
-        '?': 'FlowConnector',
-      },
-      faultConnector: {
-        '?': 'FlowConnector',
-      },
+      connector: '?FlowConnector',
+      faultConnector: '?FlowConnector',
       filters: ['FlowRecordFilter'],
       inputAssignments: ['FlowInputFieldAssignment'],
       inputReference: '?string',
@@ -4502,9 +4292,7 @@ export const ApiSchemas = {
       allowBack: '?boolean',
       allowFinish: '?boolean',
       allowPause: '?boolean',
-      connector: {
-        '?': 'FlowConnector',
-      },
+      connector: '?FlowConnector',
       fields: ['FlowScreenField'],
       helpText: '?string',
       pausedText: '?string',
@@ -4517,14 +4305,10 @@ export const ApiSchemas = {
   FlowStart: {
     type: 'FlowStart',
     props: {
-      connector: {
-        '?': 'FlowConnector',
-      },
+      connector: '?FlowConnector',
       filters: ['FlowRecordFilter'],
       object: '?string',
-      schedule: {
-        '?': 'FlowSchedule',
-      },
+      schedule: '?FlowSchedule',
       triggerType: '?string',
     },
     extends: 'FlowNode',
@@ -4547,9 +4331,7 @@ export const ApiSchemas = {
   FlowSubflow: {
     type: 'FlowSubflow',
     props: {
-      connector: {
-        '?': 'FlowConnector',
-      },
+      connector: '?FlowConnector',
       flowName: 'string',
       inputAssignments: ['FlowSubflowInputAssignment'],
       outputAssignments: ['FlowSubflowOutputAssignment'],
@@ -4559,13 +4341,9 @@ export const ApiSchemas = {
   FlowWait: {
     type: 'FlowWait',
     props: {
-      defaultConnector: {
-        '?': 'FlowConnector',
-      },
+      defaultConnector: '?FlowConnector',
       defaultConnectorLabel: 'string',
-      faultConnector: {
-        '?': 'FlowConnector',
-      },
+      faultConnector: '?FlowConnector',
       waitEvents: ['FlowWaitEvent'],
     },
     extends: 'FlowNode',
@@ -4621,9 +4399,7 @@ export const ApiSchemas = {
       folderShares: ['FolderShare'],
       name: 'string',
       publicFolderAccess: '?string',
-      sharedTo: {
-        '?': 'SharedTo',
-      },
+      sharedTo: '?SharedTo',
     },
     extends: 'Metadata',
   },
@@ -5008,12 +4784,8 @@ export const ApiSchemas = {
   KnowledgeSettings: {
     type: 'KnowledgeSettings',
     props: {
-      answers: {
-        '?': 'KnowledgeAnswerSettings',
-      },
-      cases: {
-        '?': 'KnowledgeCaseSettings',
-      },
+      answers: '?KnowledgeAnswerSettings',
+      cases: '?KnowledgeCaseSettings',
       defaultLanguage: '?string',
       enableChatterQuestionKBDeflection: '?boolean',
       enableCreateEditOnArticlesTab: '?boolean',
@@ -5024,16 +4796,12 @@ export const ApiSchemas = {
       enableKnowledgeTitleAutoComplete: '?boolean',
       enableLightningKbAutoLoadRichTextField: '?boolean',
       enableLightningKnowledge: '?boolean',
-      languages: {
-        '?': 'KnowledgeLanguageSettings',
-      },
+      languages: '?KnowledgeLanguageSettings',
       showArticleSummariesCustomerPortal: '?boolean',
       showArticleSummariesInternalApp: '?boolean',
       showArticleSummariesPartnerPortal: '?boolean',
       showValidationStatusField: '?boolean',
-      suggestedArticles: {
-        '?': 'KnowledgeSuggestedArticlesSettings',
-      },
+      suggestedArticles: '?KnowledgeSuggestedArticlesSettings',
     },
     extends: 'Metadata',
   },
@@ -5049,15 +4817,9 @@ export const ApiSchemas = {
     type: 'KnowledgeCaseSettings',
     props: {
       articlePDFCreationProfile: '?string',
-      articlePublicSharingCommunities: {
-        '?': 'KnowledgeCommunitiesSettings',
-      },
-      articlePublicSharingSites: {
-        '?': 'KnowledgeSitesSettings',
-      },
-      articlePublicSharingSitesChatterAnswers: {
-        '?': 'KnowledgeSitesSettings',
-      },
+      articlePublicSharingCommunities: '?KnowledgeCommunitiesSettings',
+      articlePublicSharingSites: '?KnowledgeSitesSettings',
+      articlePublicSharingSitesChatterAnswers: '?KnowledgeSitesSettings',
       assignTo: '?string',
       customizationClass: '?string',
       defaultContributionArticleType: '?string',
@@ -5100,16 +4862,10 @@ export const ApiSchemas = {
   KnowledgeSuggestedArticlesSettings: {
     type: 'KnowledgeSuggestedArticlesSettings',
     props: {
-      caseFields: {
-        '?': 'KnowledgeCaseFieldsSettings',
-      },
+      caseFields: '?KnowledgeCaseFieldsSettings',
       useSuggestedArticlesForCase: '?boolean',
-      workOrderFields: {
-        '?': 'KnowledgeWorkOrderFieldsSettings',
-      },
-      workOrderLineItemFields: {
-        '?': 'KnowledgeWorkOrderLineItemFieldsSettings',
-      },
+      workOrderFields: '?KnowledgeWorkOrderFieldsSettings',
+      workOrderLineItemFields: '?KnowledgeWorkOrderLineItemFieldsSettings',
     },
   },
   KnowledgeCaseFieldsSettings: {
@@ -5164,29 +4920,17 @@ export const ApiSchemas = {
     type: 'Layout',
     props: {
       customButtons: ['string'],
-      customConsoleComponents: {
-        '?': 'CustomConsoleComponents',
-      },
+      customConsoleComponents: '?CustomConsoleComponents',
       emailDefault: '?boolean',
       excludeButtons: ['string'],
-      feedLayout: {
-        '?': 'FeedLayout',
-      },
+      feedLayout: '?FeedLayout',
       headers: ['string'],
       layoutSections: ['LayoutSection'],
-      miniLayout: {
-        '?': 'MiniLayout',
-      },
+      miniLayout: '?MiniLayout',
       multilineLayoutFields: ['string'],
-      platformActionList: {
-        '?': 'PlatformActionList',
-      },
-      quickActionList: {
-        '?': 'QuickActionList',
-      },
-      relatedContent: {
-        '?': 'RelatedContent',
-      },
+      platformActionList: '?PlatformActionList',
+      quickActionList: '?QuickActionList',
+      relatedContent: '?RelatedContent',
       relatedLists: ['RelatedListItem'],
       relatedObjects: ['string'],
       runAssignmentRulesDefault: '?boolean',
@@ -5197,21 +4941,15 @@ export const ApiSchemas = {
       showRunAssignmentRulesCheckbox: '?boolean',
       showSolutionSection: '?boolean',
       showSubmitAndAttachButton: '?boolean',
-      summaryLayout: {
-        '?': 'SummaryLayout',
-      },
+      summaryLayout: '?SummaryLayout',
     },
     extends: 'Metadata',
   },
   CustomConsoleComponents: {
     type: 'CustomConsoleComponents',
     props: {
-      primaryTabComponents: {
-        '?': 'PrimaryTabComponents',
-      },
-      subtabComponents: {
-        '?': 'SubtabComponents',
-      },
+      primaryTabComponents: '?PrimaryTabComponents',
+      subtabComponents: '?SubtabComponents',
     },
   },
   PrimaryTabComponents: {
@@ -5313,9 +5051,7 @@ export const ApiSchemas = {
   LayoutItem: {
     type: 'LayoutItem',
     props: {
-      analyticsCloudComponent: {
-        '?': 'AnalyticsCloudComponentLayoutItem',
-      },
+      analyticsCloudComponent: '?AnalyticsCloudComponentLayoutItem',
       behavior: '?string',
       canvas: '?string',
       component: '?string',
@@ -5324,9 +5060,7 @@ export const ApiSchemas = {
       field: '?string',
       height: '?number',
       page: '?string',
-      reportChartComponent: {
-        '?': 'ReportChartComponentLayoutItem',
-      },
+      reportChartComponent: '?ReportChartComponentLayoutItem',
       scontrol: '?string',
       showLabel: '?boolean',
       showScrollbars: '?boolean',
@@ -5535,15 +5269,11 @@ export const ApiSchemas = {
       description: '?string',
       isExplicitImport: '?boolean',
       isExposed: '?boolean',
-      lwcResources: {
-        '?': 'LwcResources',
-      },
+      lwcResources: '?LwcResources',
       masterLabel: '?string',
       runtimeNamespace: '?string',
       targetConfigs: '?string',
-      targets: {
-        '?': 'Targets',
-      },
+      targets: '?Targets',
     },
     extends: 'Metadata',
   },
@@ -5640,9 +5370,7 @@ export const ApiSchemas = {
   LiveChatAgentConfig: {
     type: 'LiveChatAgentConfig',
     props: {
-      assignments: {
-        '?': 'AgentConfigAssignments',
-      },
+      assignments: '?AgentConfigAssignments',
       autoGreeting: '?string',
       capacity: '?number',
       criticalWaitTime: '?number',
@@ -5667,27 +5395,17 @@ export const ApiSchemas = {
       supervisorDefaultAgentStatusFilter: '?string',
       supervisorDefaultButtonFilter: '?string',
       supervisorDefaultSkillFilter: '?string',
-      supervisorSkills: {
-        '?': 'SupervisorAgentConfigSkills',
-      },
-      transferableButtons: {
-        '?': 'AgentConfigButtons',
-      },
-      transferableSkills: {
-        '?': 'AgentConfigSkills',
-      },
+      supervisorSkills: '?SupervisorAgentConfigSkills',
+      transferableButtons: '?AgentConfigButtons',
+      transferableSkills: '?AgentConfigSkills',
     },
     extends: 'Metadata',
   },
   AgentConfigAssignments: {
     type: 'AgentConfigAssignments',
     props: {
-      profiles: {
-        '?': 'AgentConfigProfileAssignments',
-      },
-      users: {
-        '?': 'AgentConfigUserAssignments',
-      },
+      profiles: '?AgentConfigProfileAssignments',
+      users: '?AgentConfigUserAssignments',
     },
   },
   AgentConfigProfileAssignments: {
@@ -5729,9 +5447,7 @@ export const ApiSchemas = {
       chasitorIdleTimeoutWarning: '?number',
       chatPage: '?string',
       customAgentName: '?string',
-      deployments: {
-        '?': 'LiveChatButtonDeployments',
-      },
+      deployments: '?LiveChatButtonDeployments',
       enableQueue: '?boolean',
       inviteEndPosition: '?string',
       inviteImage: '?string',
@@ -5757,9 +5473,7 @@ export const ApiSchemas = {
       pushTimeOut: '?number',
       routingType: 'string',
       site: '?string',
-      skills: {
-        '?': 'LiveChatButtonSkills',
-      },
+      skills: '?LiveChatButtonSkills',
       timeToRemoveInvite: '?number',
       type: 'string',
       windowLanguage: '?string',
@@ -5785,9 +5499,7 @@ export const ApiSchemas = {
       connectionTimeoutDuration: '?number',
       connectionWarningDuration: '?number',
       displayQueuePosition: '?boolean',
-      domainWhiteList: {
-        '?': 'LiveChatDeploymentDomainWhitelist',
-      },
+      domainWhiteList: '?LiveChatDeploymentDomainWhitelist',
       enablePrechatApi: '?boolean',
       enableTranscriptSave: '?boolean',
       label: 'string',
@@ -5984,9 +5696,7 @@ export const ApiSchemas = {
       language: 'string',
       masterLabel: 'string',
       originNetwork: '?string',
-      relationships: {
-        '?': 'ContentAssetRelationships',
-      },
+      relationships: '?ContentAssetRelationships',
       versions: 'ContentAssetVersions',
     },
     extends: 'MetadataWithContent',
@@ -5996,9 +5706,7 @@ export const ApiSchemas = {
     props: {
       insightsApplication: ['ContentAssetLink'],
       network: ['ContentAssetLink'],
-      organization: {
-        '?': 'ContentAssetLink',
-      },
+      organization: '?ContentAssetLink',
       workspace: ['ContentAssetLink'],
     },
   },
@@ -6238,9 +5946,7 @@ export const ApiSchemas = {
   MobileSettings: {
     type: 'MobileSettings',
     props: {
-      dashboardMobile: {
-        '?': 'DashboardMobileSettings',
-      },
+      dashboardMobile: '?DashboardMobileSettings',
       enableImportContactFromDevice: '?boolean',
       enableLightningOnMobile: '?boolean',
       enableOfflineDraftsEnabled: '?boolean',
@@ -6351,9 +6057,7 @@ export const ApiSchemas = {
       allowedExtensions: '?string',
       caseCommentEmailTemplate: '?string',
       changePasswordTemplate: 'string',
-      communityRoles: {
-        '?': 'CommunityRoles',
-      },
+      communityRoles: '?CommunityRoles',
       description: '?string',
       disableReputationRecordConversations: '?boolean',
       emailFooterLogo: '?string',
@@ -6383,29 +6087,15 @@ export const ApiSchemas = {
       lockoutTemplate: '?string',
       logoutUrl: '?string',
       maxFileSizeKb: '?number',
-      navigationLinkSet: {
-        '?': 'NavigationLinkSet',
-      },
-      networkMemberGroups: {
-        '?': 'NetworkMemberGroup',
-      },
-      networkPageOverrides: {
-        '?': 'NetworkPageOverride',
-      },
+      navigationLinkSet: '?NavigationLinkSet',
+      networkMemberGroups: '?NetworkMemberGroup',
+      networkPageOverrides: '?NetworkPageOverride',
       newSenderAddress: '?string',
       picassoSite: '?string',
-      recommendationAudience: {
-        '?': 'RecommendationAudience',
-      },
-      recommendationDefinition: {
-        '?': 'RecommendationDefinition',
-      },
-      reputationLevels: {
-        '?': 'ReputationLevelDefinitions',
-      },
-      reputationPointsRules: {
-        '?': 'ReputationPointsRules',
-      },
+      recommendationAudience: '?RecommendationAudience',
+      recommendationDefinition: '?RecommendationDefinition',
+      reputationLevels: '?ReputationLevelDefinitions',
+      reputationPointsRules: '?ReputationPointsRules',
       selfRegProfile: '?string',
       selfRegistration: '?boolean',
       sendWelcomeEmail: '?boolean',
@@ -6469,9 +6159,7 @@ export const ApiSchemas = {
       actionUrl: '?string',
       description: '?string',
       linkText: '?string',
-      scheduledRecommendations: {
-        '?': 'ScheduledRecommendation',
-      },
+      scheduledRecommendations: '?ScheduledRecommendation',
       setupName: '?string',
       title: '?string',
     },
@@ -6500,9 +6188,7 @@ export const ApiSchemas = {
   ReputationLevel: {
     type: 'ReputationLevel',
     props: {
-      branding: {
-        '?': 'ReputationBranding',
-      },
+      branding: '?ReputationBranding',
       label: '?string',
       lowerThreshold: 'number',
     },
@@ -6582,9 +6268,7 @@ export const ApiSchemas = {
       enableOpportunityInsightsInMobile: '?boolean',
       enableOpportunityTeam: '?boolean',
       enableUpdateReminders: '?boolean',
-      findSimilarOppFilter: {
-        '?': 'FindSimilarOppFilter',
-      },
+      findSimilarOppFilter: '?FindSimilarOppFilter',
       promptToAddProducts: '?boolean',
     },
     extends: 'Metadata',
@@ -7005,9 +6689,7 @@ export const ApiSchemas = {
   PresenceUserConfig: {
     type: 'PresenceUserConfig',
     props: {
-      assignments: {
-        '?': 'PresenceConfigAssignments',
-      },
+      assignments: '?PresenceConfigAssignments',
       capacity: 'number',
       declineReasons: ['string'],
       enableAutoAccept: '?boolean',
@@ -7024,12 +6706,8 @@ export const ApiSchemas = {
   PresenceConfigAssignments: {
     type: 'PresenceConfigAssignments',
     props: {
-      profiles: {
-        '?': 'PresenceConfigProfileAssignments',
-      },
-      users: {
-        '?': 'PresenceConfigUserAssignments',
-      },
+      profiles: '?PresenceConfigProfileAssignments',
+      users: '?PresenceConfigUserAssignments',
     },
   },
   PresenceConfigProfileAssignments: {
@@ -7096,9 +6774,7 @@ export const ApiSchemas = {
       fieldPermissions: ['ProfileFieldLevelSecurity'],
       flowAccesses: ['ProfileFlowAccess'],
       layoutAssignments: ['ProfileLayoutAssignment'],
-      loginHours: {
-        '?': 'ProfileLoginHours',
-      },
+      loginHours: '?ProfileLoginHours',
       loginIpRanges: ['ProfileLoginIpRange'],
       objectPermissions: ['ProfileObjectPermissions'],
       pageAccesses: ['ProfileApexPageAccess'],
@@ -7300,9 +6976,7 @@ export const ApiSchemas = {
       targetPageType: 'string',
       timesToDisplay: 'number',
       title: 'string',
-      uiFormulaRule: {
-        '?': 'UiFormulaRule',
-      },
+      uiFormulaRule: '?UiFormulaRule',
       userAccess: 'string',
       versionNumber: 'number',
     },
@@ -7313,9 +6987,7 @@ export const ApiSchemas = {
       doesSendEmailToMembers: '?boolean',
       email: '?string',
       name: 'string',
-      queueMembers: {
-        '?': 'QueueMembers',
-      },
+      queueMembers: '?QueueMembers',
       queueRoutingConfig: '?string',
       queueSobject: ['QueueSobject'],
     },
@@ -7324,21 +6996,11 @@ export const ApiSchemas = {
   QueueMembers: {
     type: 'QueueMembers',
     props: {
-      publicGroups: {
-        '?': 'PublicGroups',
-      },
-      roleAndSubordinates: {
-        '?': 'RoleAndSubordinates',
-      },
-      roleAndSubordinatesInternal: {
-        '?': 'RoleAndSubordinatesInternal',
-      },
-      roles: {
-        '?': 'Roles',
-      },
-      users: {
-        '?': 'Users',
-      },
+      publicGroups: '?PublicGroups',
+      roleAndSubordinates: '?RoleAndSubordinates',
+      roleAndSubordinatesInternal: '?RoleAndSubordinatesInternal',
+      roles: '?Roles',
+      users: '?Users',
     },
   },
   PublicGroups: {
@@ -7408,12 +7070,8 @@ export const ApiSchemas = {
       mobExtDisplayMode: '?string',
       optionsCreateFeedItem: 'boolean',
       page: '?string',
-      quickActionLayout: {
-        '?': 'QuickActionLayout',
-      },
-      quickActionSendEmailOptions: {
-        '?': 'QuickActionSendEmailOptions',
-      },
+      quickActionLayout: '?QuickActionLayout',
+      quickActionSendEmailOptions: '?QuickActionSendEmailOptions',
       standardLabel: '?string',
       successMessage: '?string',
       targetObject: '?string',
@@ -7642,9 +7300,7 @@ export const ApiSchemas = {
       hasGuidedActions: '?boolean',
       hasRecommendations: '?boolean',
       masterLabel: 'string',
-      recommendation: {
-        '?': 'RecordActionRecommendation',
-      },
+      recommendation: '?RecordActionRecommendation',
       selectableItems: ['RecordActionSelectableItem'],
     },
     extends: 'Metadata',
@@ -7716,13 +7372,9 @@ export const ApiSchemas = {
     props: {
       aggregates: ['ReportAggregate'],
       block: ['Report'],
-      blockInfo: {
-        '?': 'ReportBlockInfo',
-      },
+      blockInfo: '?ReportBlockInfo',
       buckets: ['ReportBucketField'],
-      chart: {
-        '?': 'ReportChart',
-      },
+      chart: '?ReportChart',
       colorRanges: ['ReportColorRange'],
       columns: ['ReportColumn'],
       crossFilters: ['ReportCrossFilter'],
@@ -7731,17 +7383,13 @@ export const ApiSchemas = {
       dataCategoryFilters: ['ReportDataCategoryFilter'],
       description: '?string',
       division: '?string',
-      filter: {
-        '?': 'ReportFilter',
-      },
+      filter: '?ReportFilter',
       folderName: '?string',
       format: 'string',
       formattingRules: ['ReportFormattingRule'],
       groupingsAcross: ['ReportGrouping'],
       groupingsDown: ['ReportGrouping'],
-      historicalSelector: {
-        '?': 'ReportHistoricalSelector',
-      },
+      historicalSelector: '?ReportHistoricalSelector',
       name: 'string',
       numSubscriptions: '?number',
       params: ['ReportParam'],
@@ -7756,9 +7404,7 @@ export const ApiSchemas = {
       sortColumn: '?string',
       sortOrder: '?string',
       territoryHierarchyFilter: '?string',
-      timeFrameFilter: {
-        '?': 'ReportTimeFrameFilter',
-      },
+      timeFrameFilter: '?ReportTimeFrameFilter',
       userFilter: '?string',
     },
     extends: 'Metadata',
@@ -7975,9 +7621,7 @@ export const ApiSchemas = {
       category: 'string',
       deployed: 'boolean',
       description: '?string',
-      join: {
-        '?': 'ObjectRelationship',
-      },
+      join: '?ObjectRelationship',
       label: 'string',
       sections: ['ReportLayoutSection'],
     },
@@ -7986,9 +7630,7 @@ export const ApiSchemas = {
   ObjectRelationship: {
     type: 'ObjectRelationship',
     props: {
-      join: {
-        '?': 'ObjectRelationship',
-      },
+      join: '?ObjectRelationship',
       outerJoin: 'boolean',
       relationship: 'string',
     },
@@ -8141,18 +7783,10 @@ export const ApiSchemas = {
       enableRequireHttpsConnection: '?boolean',
       isTLSv12Required: '?boolean',
       isTLSv12RequiredCommunities: '?boolean',
-      networkAccess: {
-        '?': 'NetworkAccess',
-      },
-      passwordPolicies: {
-        '?': 'PasswordPolicies',
-      },
-      sessionSettings: {
-        '?': 'SessionSettings',
-      },
-      singleSignOnSettings: {
-        '?': 'SingleSignOnSettings',
-      },
+      networkAccess: '?NetworkAccess',
+      passwordPolicies: '?PasswordPolicies',
+      sessionSettings: '?SessionSettings',
+      singleSignOnSettings: '?SingleSignOnSettings',
     },
     extends: 'Metadata',
   },
@@ -8262,9 +7896,7 @@ export const ApiSchemas = {
   ServicePresenceStatus: {
     type: 'ServicePresenceStatus',
     props: {
-      channels: {
-        '?': 'ServiceChannelStatus',
-      },
+      channels: '?ServiceChannelStatus',
       label: 'string',
     },
     extends: 'Metadata',
@@ -8279,9 +7911,7 @@ export const ApiSchemas = {
     type: 'SharingBaseRule',
     props: {
       accessLevel: 'string',
-      accountSettings: {
-        '?': 'AccountSharingRuleSettings',
-      },
+      accountSettings: '?AccountSharingRuleSettings',
       description: '?string',
       label: 'string',
       sharedTo: 'SharedTo',
@@ -8384,9 +8014,7 @@ export const ApiSchemas = {
   Skill: {
     type: 'Skill',
     props: {
-      assignments: {
-        '?': 'SkillAssignments',
-      },
+      assignments: '?SkillAssignments',
       description: '?string',
       label: 'string',
     },
@@ -8395,12 +8023,8 @@ export const ApiSchemas = {
   SkillAssignments: {
     type: 'SkillAssignments',
     props: {
-      profiles: {
-        '?': 'SkillProfileAssignments',
-      },
-      users: {
-        '?': 'SkillUserAssignments',
-      },
+      profiles: '?SkillProfileAssignments',
+      users: '?SkillUserAssignments',
     },
   },
   SkillProfileAssignments: {
@@ -8546,9 +8170,7 @@ export const ApiSchemas = {
       defaultContactAccessLevel: '?string',
       defaultOpportunityAccessLevel: '?string',
       enableTerritoryManagement2: '?boolean',
-      opportunityFilterSettings: {
-        '?': 'Territory2SettingsOpportunityFilter',
-      },
+      opportunityFilterSettings: '?Territory2SettingsOpportunityFilter',
     },
     extends: 'Metadata',
   },
@@ -8723,18 +8345,14 @@ export const ApiSchemas = {
     props: {
       choiceText: '?string',
       name: 'string',
-      userInput: {
-        '?': 'FlowChoiceUserInputTranslation',
-      },
+      userInput: '?FlowChoiceUserInputTranslation',
     },
   },
   FlowChoiceUserInputTranslation: {
     type: 'FlowChoiceUserInputTranslation',
     props: {
       promptText: '?string',
-      validationRule: {
-        '?': 'FlowInputValidationRuleTranslation',
-      },
+      validationRule: '?FlowInputValidationRuleTranslation',
     },
   },
   FlowInputValidationRuleTranslation: {
@@ -8758,9 +8376,7 @@ export const ApiSchemas = {
       fieldText: '?string',
       helpText: '?string',
       name: 'string',
-      validationRule: {
-        '?': 'FlowInputValidationRuleTranslation',
-      },
+      validationRule: '?FlowInputValidationRuleTranslation',
     },
   },
   FlowStageTranslation: {
@@ -9401,9 +9017,7 @@ export const ApiSchemas = {
       apiDeletable: 'boolean',
       apiReadable: 'boolean',
       apiUpdatable: 'boolean',
-      parentField: {
-        '?': 'ValueTypeField',
-      },
+      parentField: '?ValueTypeField',
       valueTypeFields: ['ValueTypeField'],
     },
   },
@@ -9451,9 +9065,7 @@ export const ApiSchemas = {
       packageNames: ['string'],
       singlePackage: 'boolean',
       specificFiles: ['string'],
-      unpackaged: {
-        '?': 'Package',
-      },
+      unpackaged: '?Package',
     },
   },
   UpsertResult: {
@@ -9511,8 +9123,8 @@ export type DeployResult = {
 export type DeployDetails = {
   componentFailures: DeployMessage[];
   componentSuccesses: DeployMessage[];
-  retrieveResult: RetrieveResult;
-  runTestResult: RunTestsResult;
+  retrieveResult?: RetrieveResult | null | undefined;
+  runTestResult?: RunTestsResult | null | undefined;
 };
 
 export type DeployMessage = {
@@ -9889,21 +9501,21 @@ export type ApprovalProcess = Metadata & {
   active: boolean;
   allowRecall?: boolean | null | undefined;
   allowedSubmitters: ApprovalSubmitter[];
-  approvalPageFields: ApprovalPageField;
+  approvalPageFields?: ApprovalPageField | null | undefined;
   approvalStep: ApprovalStep[];
   description?: string | null | undefined;
   emailTemplate?: string | null | undefined;
   enableMobileDeviceAccess?: boolean | null | undefined;
-  entryCriteria: ApprovalEntryCriteria;
-  finalApprovalActions: ApprovalAction;
+  entryCriteria?: ApprovalEntryCriteria | null | undefined;
+  finalApprovalActions?: ApprovalAction | null | undefined;
   finalApprovalRecordLock?: boolean | null | undefined;
-  finalRejectionActions: ApprovalAction;
+  finalRejectionActions?: ApprovalAction | null | undefined;
   finalRejectionRecordLock?: boolean | null | undefined;
-  initialSubmissionActions: ApprovalAction;
+  initialSubmissionActions?: ApprovalAction | null | undefined;
   label: string;
-  nextAutomatedApprover: NextAutomatedApprover;
+  nextAutomatedApprover?: NextAutomatedApprover | null | undefined;
   postTemplate?: string | null | undefined;
-  recallActions: ApprovalAction;
+  recallActions?: ApprovalAction | null | undefined;
   recordEditability: string;
   showApprovalHistory?: boolean | null | undefined;
 };
@@ -9919,15 +9531,15 @@ export type ApprovalPageField = {
 
 export type ApprovalStep = {
   allowDelegate?: boolean | null | undefined;
-  approvalActions: ApprovalAction;
+  approvalActions?: ApprovalAction | null | undefined;
   assignedApprover: ApprovalStepApprover;
   description?: string | null | undefined;
-  entryCriteria: ApprovalEntryCriteria;
+  entryCriteria?: ApprovalEntryCriteria | null | undefined;
   ifCriteriaNotMet?: string | null | undefined;
   label: string;
   name: string;
-  rejectBehavior: ApprovalStepRejectBehavior;
-  rejectionActions: ApprovalAction;
+  rejectBehavior?: ApprovalStepRejectBehavior | null | undefined;
+  rejectionActions?: ApprovalAction | null | undefined;
 };
 
 export type ApprovalAction = {
@@ -10027,7 +9639,7 @@ export type Audience = Metadata & {
   description?: string | null | undefined;
   formula?: string | null | undefined;
   formulaFilterType?: string | null | undefined;
-  targets: PersonalizationTargetInfos;
+  targets?: PersonalizationTargetInfos | null | undefined;
 };
 
 export type AudienceCriteria = {
@@ -10036,7 +9648,7 @@ export type AudienceCriteria = {
 
 export type AudienceCriterion = {
   criteriaNumber?: number | null | undefined;
-  criterionValue: AudienceCriteriaValue;
+  criterionValue?: AudienceCriteriaValue | null | undefined;
   operator?: string | null | undefined;
   type: string;
 };
@@ -10133,7 +9745,7 @@ export type BlockchainSettings = Metadata & {
 };
 
 export type Bot = Metadata & {
-  botMlDomain: LocalMlDomain;
+  botMlDomain?: LocalMlDomain | null | undefined;
   botUser?: string | null | undefined;
   botVersions: BotVersion[];
   contextVariables: ConversationContextVariable[];
@@ -10175,7 +9787,7 @@ export type MlSlotClass = {
 };
 
 export type MlSlotClassValue = {
-  synonymGroup: SynonymGroup;
+  synonymGroup?: SynonymGroup | null | undefined;
   value: string;
 };
 
@@ -10212,14 +9824,14 @@ export type BotDialog = {
 
 export type BotStep = {
   booleanFilter?: string | null | undefined;
-  botInvocation: BotInvocation;
+  botInvocation?: BotInvocation | null | undefined;
   botMessages: BotMessage[];
-  botNavigation: BotNavigation;
+  botNavigation?: BotNavigation | null | undefined;
   botStepConditions: BotStepCondition[];
   botSteps: BotStep[];
-  botVariableOperation: BotVariableOperation;
-  conversationRecordLookup: ConversationRecordLookup;
-  conversationSystemMessage: ConversationSystemMessage;
+  botVariableOperation?: BotVariableOperation | null | undefined;
+  conversationRecordLookup?: ConversationRecordLookup | null | undefined;
+  conversationSystemMessage?: ConversationSystemMessage | null | undefined;
   type: string;
 };
 
@@ -10259,11 +9871,11 @@ export type BotStepCondition = {
 };
 
 export type BotVariableOperation = {
-  botInvocation: BotInvocation;
+  botInvocation?: BotInvocation | null | undefined;
   botMessages: BotMessage[];
   botQuickReplyOptions: BotQuickReplyOption[];
   botVariableOperands: BotVariableOperand[];
-  invalidInputBotNavigation: BotNavigation;
+  invalidInputBotNavigation?: BotNavigation | null | undefined;
   quickReplyOptionTemplate?: string | null | undefined;
   quickReplyType?: string | null | undefined;
   quickReplyWidgetType?: string | null | undefined;
@@ -10419,7 +10031,7 @@ export type PicklistValue = Metadata & {
 export type CMSConnectSource = Metadata & {
   cmsConnectAsset: CMSConnectAsset[];
   cmsConnectLanguage: CMSConnectLanguage[];
-  cmsConnectPersonalization: CMSConnectPersonalization;
+  cmsConnectPersonalization?: CMSConnectPersonalization | null | undefined;
   cmsConnectResourceType: CMSConnectResourceType[];
   connectionType: string;
   cssScope?: string | null | undefined;
@@ -10539,7 +10151,7 @@ export type CaseSettings = Metadata & {
   defaultCaseOwnerType?: string | null | undefined;
   defaultCaseUser?: string | null | undefined;
   emailActionDefaultsHandlerClass?: string | null | undefined;
-  emailToCase: EmailToCaseSettings;
+  emailToCase?: EmailToCaseSettings | null | undefined;
   enableCaseFeed?: boolean | null | undefined;
   enableCollapseEmailThread?: boolean | null | undefined;
   enableDraftEmails?: boolean | null | undefined;
@@ -10562,7 +10174,7 @@ export type CaseSettings = Metadata & {
   systemUserEmail?: string | null | undefined;
   useSystemEmailAddress?: boolean | null | undefined;
   useSystemUserAsDefaultCaseUser?: boolean | null | undefined;
-  webToCase: WebToCaseSettings;
+  webToCase?: WebToCaseSettings | null | undefined;
 };
 
 export type FeedItemSettings = {
@@ -10781,7 +10393,7 @@ export type Community = Metadata & {
   enablePrivateQuestions?: boolean | null | undefined;
   expertsGroup?: string | null | undefined;
   portal?: string | null | undefined;
-  reputationLevels: ReputationLevels;
+  reputationLevels?: ReputationLevels | null | undefined;
   showInPortal?: boolean | null | undefined;
   site?: string | null | undefined;
 };
@@ -10832,10 +10444,10 @@ export type NavigationLinkSet = {
 export type NavigationMenuItem = {
   defaultListViewId?: string | null | undefined;
   label: string;
-  menuItemBranding: NavigationMenuItemBranding;
+  menuItemBranding?: NavigationMenuItemBranding | null | undefined;
   position: number;
   publiclyAvailable?: boolean | null | undefined;
-  subMenu: NavigationSubMenu;
+  subMenu?: NavigationSubMenu | null | undefined;
   target?: string | null | undefined;
   targetPreference?: string | null | undefined;
   type: string;
@@ -10891,7 +10503,7 @@ export type CompactLayout = Metadata & {
 
 export type CompanySettings = Metadata & {
   enableCustomFiscalYear: boolean;
-  fiscalYear: FiscalYearSettings;
+  fiscalYear?: FiscalYearSettings | null | undefined;
 };
 
 export type FiscalYearSettings = {
@@ -10901,8 +10513,8 @@ export type FiscalYearSettings = {
 
 export type ConnectedApp = Metadata & {
   attributes: ConnectedAppAttribute[];
-  canvas: CanvasMetadata;
-  canvasConfig: ConnectedAppCanvasConfig;
+  canvas?: CanvasMetadata | null | undefined;
+  canvasConfig?: ConnectedAppCanvasConfig | null | undefined;
   contactEmail: string;
   contactPhone?: string | null | undefined;
   description?: string | null | undefined;
@@ -10911,14 +10523,14 @@ export type ConnectedApp = Metadata & {
   ipRanges: ConnectedAppIpRange[];
   label: string;
   logoUrl?: string | null | undefined;
-  mobileAppConfig: ConnectedAppMobileDetailConfig;
+  mobileAppConfig?: ConnectedAppMobileDetailConfig | null | undefined;
   mobileStartUrl?: string | null | undefined;
-  oauthConfig: ConnectedAppOauthConfig;
+  oauthConfig?: ConnectedAppOauthConfig | null | undefined;
   permissionSetName: string[];
   plugin?: string | null | undefined;
   pluginExecutionUser?: string | null | undefined;
   profileName: string[];
-  samlConfig: ConnectedAppSamlConfig;
+  samlConfig?: ConnectedAppSamlConfig | null | undefined;
   startUrl?: string | null | undefined;
 };
 
@@ -10962,7 +10574,7 @@ export type ConnectedAppOauthConfig = {
   certificate?: string | null | undefined;
   consumerKey?: string | null | undefined;
   consumerSecret?: string | null | undefined;
-  idTokenConfig: ConnectedAppOauthIdToken;
+  idTokenConfig?: ConnectedAppOauthIdToken | null | undefined;
   isAdminApproved?: boolean | null | undefined;
   scopes: string[];
   singleLogoutUrl?: string | null | undefined;
@@ -11045,8 +10657,8 @@ export type CurrencySettings = Metadata & {
 
 export type CustomApplication = Metadata & {
   actionOverrides: AppActionOverride[];
-  brand: AppBrand;
-  consoleConfig: ServiceCloudConsoleConfig;
+  brand?: AppBrand | null | undefined;
+  consoleConfig?: ServiceCloudConsoleConfig | null | undefined;
   defaultLandingTab?: string | null | undefined;
   description?: string | null | undefined;
   formFactors: string[];
@@ -11056,14 +10668,14 @@ export type CustomApplication = Metadata & {
   label?: string | null | undefined;
   logo?: string | null | undefined;
   navType?: string | null | undefined;
-  preferences: AppPreferences;
+  preferences?: AppPreferences | null | undefined;
   profileActionOverrides: AppProfileActionOverride[];
   setupExperience?: string | null | undefined;
   subscriberTabs: string[];
   tabs: string[];
   uiType?: string | null | undefined;
   utilityBar?: string | null | undefined;
-  workspaceConfig: AppWorkspaceConfig;
+  workspaceConfig?: AppWorkspaceConfig | null | undefined;
 };
 
 export type AppActionOverride = ActionOverride & {
@@ -11088,17 +10700,17 @@ export type AppBrand = {
 };
 
 export type ServiceCloudConsoleConfig = {
-  componentList: AppComponentList;
+  componentList?: AppComponentList | null | undefined;
   detailPageRefreshMethod: string;
   footerColor?: string | null | undefined;
   headerColor?: string | null | undefined;
   keyboardShortcuts: KeyboardShortcuts;
   listPlacement: ListPlacement;
   listRefreshMethod: string;
-  liveAgentConfig: LiveAgentConfig;
+  liveAgentConfig?: LiveAgentConfig | null | undefined;
   primaryTabColor?: string | null | undefined;
   pushNotifications: PushNotification[];
-  tabLimitConfig: TabLimitConfig;
+  tabLimitConfig?: TabLimitConfig | null | undefined;
   whitelistedDomains: string[];
 };
 
@@ -11238,7 +10850,7 @@ export type CustomField = Metadata & {
   isSortingDisabled?: boolean | null | undefined;
   label?: string | null | undefined;
   length?: number | null | undefined;
-  lookupFilter: LookupFilter;
+  lookupFilter?: LookupFilter | null | undefined;
   maskChar?: string | null | undefined;
   maskType?: string | null | undefined;
   metadataRelationshipControllingField?: string | null | undefined;
@@ -11266,7 +10878,7 @@ export type CustomField = Metadata & {
   translateData?: boolean | null | undefined;
   type?: string | null | undefined;
   unique?: boolean | null | undefined;
-  valueSet: ValueSet;
+  valueSet?: ValueSet | null | undefined;
   visibleLines?: number | null | undefined;
   writeRequiresMasterRead?: boolean | null | undefined;
 };
@@ -11284,7 +10896,7 @@ export type LookupFilter = {
 export type ValueSet = {
   controllingField?: string | null | undefined;
   restricted?: boolean | null | undefined;
-  valueSetDefinition: ValueSetValuesDefinition;
+  valueSetDefinition?: ValueSetValuesDefinition | null | undefined;
   valueSetName?: string | null | undefined;
   valueSettings: ValueSettings[];
 };
@@ -11367,7 +10979,7 @@ export type CustomNotificationType = Metadata & {
 export type CustomObject = Metadata & {
   actionOverrides: ActionOverride[];
   allowInChatterGroups?: boolean | null | undefined;
-  articleTypeChannelDisplay: ArticleTypeChannelDisplay;
+  articleTypeChannelDisplay?: ArticleTypeChannelDisplay | null | undefined;
   businessProcesses: BusinessProcess[];
   compactLayoutAssignment?: string | null | undefined;
   compactLayouts: CompactLayout[];
@@ -11397,19 +11009,19 @@ export type CustomObject = Metadata & {
   fieldSets: FieldSet[];
   fields: CustomField[];
   gender?: string | null | undefined;
-  historyRetentionPolicy: HistoryRetentionPolicy;
+  historyRetentionPolicy?: HistoryRetentionPolicy | null | undefined;
   household?: boolean | null | undefined;
   indexes: Index[];
   label?: string | null | undefined;
   listViews: ListView[];
-  nameField: CustomField;
+  nameField?: CustomField | null | undefined;
   pluralLabel?: string | null | undefined;
   profileSearchLayouts: ProfileSearchLayouts[];
   publishBehavior?: string | null | undefined;
   recordTypeTrackFeedHistory?: boolean | null | undefined;
   recordTypeTrackHistory?: boolean | null | undefined;
   recordTypes: RecordType[];
-  searchLayouts: SearchLayouts;
+  searchLayouts?: SearchLayouts | null | undefined;
   sharingModel?: string | null | undefined;
   sharingReasons: SharingReason[];
   sharingRecalculations: SharingRecalculation[];
@@ -11467,7 +11079,7 @@ export type ListView = Metadata & {
   label: string;
   language?: string | null | undefined;
   queue?: string | null | undefined;
-  sharedTo: SharedTo;
+  sharedTo?: SharedTo | null | undefined;
 };
 
 export type ListViewFilter = {
@@ -11608,7 +11220,7 @@ export type CustomFieldTranslation = {
   gender?: string | null | undefined;
   help?: string | null | undefined;
   label?: string | null | undefined;
-  lookupFilter: LookupFilterTranslation;
+  lookupFilter?: LookupFilterTranslation | null | undefined;
   name: string;
   picklistValues: PicklistValueTranslation[];
   relationshipLabel?: string | null | undefined;
@@ -11800,17 +11412,17 @@ export type Dashboard = Metadata & {
   dashboardChartTheme?: string | null | undefined;
   dashboardColorPalette?: string | null | undefined;
   dashboardFilters: DashboardFilter[];
-  dashboardGridLayout: DashboardGridLayout;
+  dashboardGridLayout?: DashboardGridLayout | null | undefined;
   dashboardResultRefreshedDate?: string | null | undefined;
   dashboardResultRunningUser?: string | null | undefined;
   dashboardType?: string | null | undefined;
   description?: string | null | undefined;
   folderName?: string | null | undefined;
   isGridLayout?: boolean | null | undefined;
-  leftSection: DashboardComponentSection;
-  middleSection: DashboardComponentSection;
+  leftSection?: DashboardComponentSection | null | undefined;
+  middleSection?: DashboardComponentSection | null | undefined;
   numSubscriptions?: number | null | undefined;
-  rightSection: DashboardComponentSection;
+  rightSection?: DashboardComponentSection | null | undefined;
   runningUser?: string | null | undefined;
   textColor: string;
   title: string;
@@ -11859,12 +11471,18 @@ export type DashboardComponent = {
   drillToDetailEnabled?: boolean | null | undefined;
   enableHover?: boolean | null | undefined;
   expandOthers?: boolean | null | undefined;
-  flexComponentProperties: DashboardFlexTableComponentProperties;
+  flexComponentProperties?:
+    | DashboardFlexTableComponentProperties
+    | null
+    | undefined;
   footer?: string | null | undefined;
   gaugeMax?: number | null | undefined;
   gaugeMin?: number | null | undefined;
   groupingColumn: string[];
-  groupingSortProperties: DashboardComponentGroupingSortProperties;
+  groupingSortProperties?:
+    | DashboardComponentGroupingSortProperties
+    | null
+    | undefined;
   header?: string | null | undefined;
   indicatorBreakpoint1?: number | null | undefined;
   indicatorBreakpoint2?: number | null | undefined;
@@ -11913,7 +11531,7 @@ export type DashboardTableColumn = {
 export type DashboardFlexTableComponentProperties = {
   decimalPrecision?: number | null | undefined;
   flexTableColumn: DashboardComponentColumn[];
-  flexTableSortInfo: DashboardComponentSortInfo;
+  flexTableSortInfo?: DashboardComponentSortInfo | null | undefined;
   hideChatterPhotos?: boolean | null | undefined;
 };
 
@@ -11956,7 +11574,7 @@ export type DataCategoryGroup = Metadata & {
   dataCategory: DataCategory;
   description?: string | null | undefined;
   label: string;
-  objectUsage: ObjectUsage;
+  objectUsage?: ObjectUsage | null | undefined;
 };
 
 export type DataCategory = {
@@ -12012,7 +11630,7 @@ export type DuplicateRule = Metadata & {
   actionOnUpdate: string;
   alertText?: string | null | undefined;
   description?: string | null | undefined;
-  duplicateRuleFilter: DuplicateRuleFilter;
+  duplicateRuleFilter?: DuplicateRuleFilter | null | undefined;
   duplicateRuleMatchRules?: DuplicateRuleMatchRule[] | null | undefined;
   isActive: boolean;
   masterLabel: string;
@@ -12030,7 +11648,7 @@ export type DuplicateRuleFilter = {
 export type DuplicateRuleMatchRule = {
   matchRuleSObjectType: string;
   matchingRule: string;
-  objectMapping: ObjectMapping;
+  objectMapping?: ObjectMapping | null | undefined;
 };
 
 export type ObjectMapping = {
@@ -12135,10 +11753,13 @@ export type EmbeddedServiceBranding = Metadata & {
 export type EmbeddedServiceConfig = Metadata & {
   areGuestUsersAllowed?: boolean | null | undefined;
   authMethod?: string | null | undefined;
-  embeddedServiceAppointmentSettings: EmbeddedServiceAppointmentSettings;
+  embeddedServiceAppointmentSettings?:
+    | EmbeddedServiceAppointmentSettings
+    | null
+    | undefined;
   embeddedServiceCustomComponents: EmbeddedServiceCustomComponent[];
   embeddedServiceCustomLabels: EmbeddedServiceCustomLabel[];
-  embeddedServiceFlowConfig: EmbeddedServiceFlowConfig;
+  embeddedServiceFlowConfig?: EmbeddedServiceFlowConfig | null | undefined;
   embeddedServiceFlows: EmbeddedServiceFlow[];
   embeddedServiceLayouts: EmbeddedServiceLayout[];
   masterLabel: string;
@@ -12428,8 +12049,8 @@ export type FlexiPage = Metadata & {
   flexiPageRegions: FlexiPageRegion[];
   masterLabel: string;
   parentFlexiPage?: string | null | undefined;
-  platformActionlist: PlatformActionList;
-  quickActionList: QuickActionList;
+  platformActionlist?: PlatformActionList | null | undefined;
+  quickActionList?: QuickActionList | null | undefined;
   sobjectType?: string | null | undefined;
   template: FlexiPageTemplateInstance;
   type: string;
@@ -12448,7 +12069,7 @@ export type FlexiPageRegion = {
 export type ComponentInstance = {
   componentInstanceProperties: ComponentInstanceProperty[];
   componentName: string;
-  visibilityRule: UiFormulaRule;
+  visibilityRule?: UiFormulaRule | null | undefined;
 };
 
 export type ComponentInstanceProperty = {
@@ -12517,7 +12138,7 @@ export type Flow = Metadata & {
   recordUpdates: FlowRecordUpdate[];
   screens: FlowScreen[];
   stages: FlowStage[];
-  start: FlowStart;
+  start?: FlowStart | null | undefined;
   startElementReference?: string | null | undefined;
   status?: string | null | undefined;
   steps: FlowStep[];
@@ -12530,8 +12151,8 @@ export type Flow = Metadata & {
 export type FlowActionCall = FlowNode & {
   actionName: string;
   actionType: string;
-  connector: FlowConnector;
-  faultConnector: FlowConnector;
+  connector?: FlowConnector | null | undefined;
+  faultConnector?: FlowConnector | null | undefined;
   inputParameters: FlowActionCallInputParameter[];
   outputParameters: FlowActionCallOutputParameter[];
 };
@@ -12553,7 +12174,7 @@ export type FlowBaseElement = {
 
 export type FlowMetadataValue = {
   name: string;
-  value: FlowElementReferenceOrValue;
+  value?: FlowElementReferenceOrValue | null | undefined;
 };
 
 export type FlowElementReferenceOrValue = {
@@ -12567,7 +12188,7 @@ export type FlowElementReferenceOrValue = {
 
 export type FlowActionCallInputParameter = FlowBaseElement & {
   name: string;
-  value: FlowElementReferenceOrValue;
+  value?: FlowElementReferenceOrValue | null | undefined;
 };
 
 export type FlowActionCallOutputParameter = FlowBaseElement & {
@@ -12577,7 +12198,7 @@ export type FlowActionCallOutputParameter = FlowBaseElement & {
 
 export type FlowApexPluginCallInputParameter = FlowBaseElement & {
   name: string;
-  value: FlowElementReferenceOrValue;
+  value?: FlowElementReferenceOrValue | null | undefined;
 };
 
 export type FlowApexPluginCallOutputParameter = FlowBaseElement & {
@@ -12588,13 +12209,13 @@ export type FlowApexPluginCallOutputParameter = FlowBaseElement & {
 export type FlowAssignmentItem = FlowBaseElement & {
   assignToReference: string;
   operator: string;
-  value: FlowElementReferenceOrValue;
+  value?: FlowElementReferenceOrValue | null | undefined;
 };
 
 export type FlowChoiceUserInput = FlowBaseElement & {
   isRequired?: boolean | null | undefined;
   promptText?: string | null | undefined;
-  validationRule: FlowInputValidationRule;
+  validationRule?: FlowInputValidationRule | null | undefined;
 };
 
 export type FlowInputValidationRule = {
@@ -12605,7 +12226,7 @@ export type FlowInputValidationRule = {
 export type FlowCondition = FlowBaseElement & {
   leftValueReference: string;
   operator: string;
-  rightValue: FlowElementReferenceOrValue;
+  rightValue?: FlowElementReferenceOrValue | null | undefined;
 };
 
 export type FlowConnector = FlowBaseElement & {
@@ -12614,7 +12235,7 @@ export type FlowConnector = FlowBaseElement & {
 
 export type FlowInputFieldAssignment = FlowBaseElement & {
   field: string;
-  value: FlowElementReferenceOrValue;
+  value?: FlowElementReferenceOrValue | null | undefined;
 };
 
 export type FlowOutputFieldAssignment = FlowBaseElement & {
@@ -12625,12 +12246,12 @@ export type FlowOutputFieldAssignment = FlowBaseElement & {
 export type FlowRecordFilter = FlowBaseElement & {
   field: string;
   operator: string;
-  value: FlowElementReferenceOrValue;
+  value?: FlowElementReferenceOrValue | null | undefined;
 };
 
 export type FlowScreenFieldInputParameter = FlowBaseElement & {
   name: string;
-  value: FlowElementReferenceOrValue;
+  value?: FlowElementReferenceOrValue | null | undefined;
 };
 
 export type FlowScreenFieldOutputParameter = FlowBaseElement & {
@@ -12648,12 +12269,12 @@ export type FlowScreenRule = FlowBaseElement & {
 export type FlowScreenRuleAction = FlowBaseElement & {
   attribute: string;
   fieldReference: string;
-  value: FlowElementReferenceOrValue;
+  value?: FlowElementReferenceOrValue | null | undefined;
 };
 
 export type FlowSubflowInputAssignment = FlowBaseElement & {
   name: string;
-  value: FlowElementReferenceOrValue;
+  value?: FlowElementReferenceOrValue | null | undefined;
 };
 
 export type FlowSubflowOutputAssignment = FlowBaseElement & {
@@ -12668,7 +12289,7 @@ export type FlowVisibilityRule = FlowBaseElement & {
 
 export type FlowWaitEventInputParameter = FlowBaseElement & {
   name: string;
-  value: FlowElementReferenceOrValue;
+  value?: FlowElementReferenceOrValue | null | undefined;
 };
 
 export type FlowWaitEventOutputParameter = FlowBaseElement & {
@@ -12679,13 +12300,13 @@ export type FlowWaitEventOutputParameter = FlowBaseElement & {
 export type FlowChoice = FlowElement & {
   choiceText: string;
   dataType: string;
-  userInput: FlowChoiceUserInput;
-  value: FlowElementReferenceOrValue;
+  userInput?: FlowChoiceUserInput | null | undefined;
+  value?: FlowElementReferenceOrValue | null | undefined;
 };
 
 export type FlowConstant = FlowElement & {
   dataType: string;
-  value: FlowElementReferenceOrValue;
+  value?: FlowElementReferenceOrValue | null | undefined;
 };
 
 export type FlowDynamicChoiceSet = FlowElement & {
@@ -12711,7 +12332,7 @@ export type FlowFormula = FlowElement & {
 export type FlowRule = FlowElement & {
   conditionLogic: string;
   conditions: FlowCondition[];
-  connector: FlowConnector;
+  connector?: FlowConnector | null | undefined;
   label: string;
 };
 
@@ -12719,7 +12340,7 @@ export type FlowScreenField = FlowElement & {
   choiceReferences: string[];
   dataType?: string | null | undefined;
   defaultSelectedChoiceReference?: string | null | undefined;
-  defaultValue: FlowElementReferenceOrValue;
+  defaultValue?: FlowElementReferenceOrValue | null | undefined;
   extensionName?: string | null | undefined;
   fieldText?: string | null | undefined;
   fieldType: string;
@@ -12730,8 +12351,8 @@ export type FlowScreenField = FlowElement & {
   outputParameters: FlowScreenFieldOutputParameter[];
   scale?: number | null | undefined;
   storeOutputAutomatically?: boolean | null | undefined;
-  validationRule: FlowInputValidationRule;
-  visibilityRule: FlowVisibilityRule;
+  validationRule?: FlowInputValidationRule | null | undefined;
+  visibilityRule?: FlowVisibilityRule | null | undefined;
 };
 
 export type FlowStage = FlowElement & {
@@ -12752,7 +12373,7 @@ export type FlowVariable = FlowElement & {
   isOutput?: boolean | null | undefined;
   objectType?: string | null | undefined;
   scale?: number | null | undefined;
-  value: FlowElementReferenceOrValue;
+  value?: FlowElementReferenceOrValue | null | undefined;
 };
 
 export type FlowWaitEvent = FlowElement & {
@@ -12767,19 +12388,19 @@ export type FlowWaitEvent = FlowElement & {
 
 export type FlowApexPluginCall = FlowNode & {
   apexClass: string;
-  connector: FlowConnector;
-  faultConnector: FlowConnector;
+  connector?: FlowConnector | null | undefined;
+  faultConnector?: FlowConnector | null | undefined;
   inputParameters: FlowApexPluginCallInputParameter[];
   outputParameters: FlowApexPluginCallOutputParameter[];
 };
 
 export type FlowAssignment = FlowNode & {
   assignmentItems: FlowAssignmentItem[];
-  connector: FlowConnector;
+  connector?: FlowConnector | null | undefined;
 };
 
 export type FlowDecision = FlowNode & {
-  defaultConnector: FlowConnector;
+  defaultConnector?: FlowConnector | null | undefined;
   defaultConnectorLabel?: string | null | undefined;
   rules: FlowRule[];
 };
@@ -12788,22 +12409,22 @@ export type FlowLoop = FlowNode & {
   assignNextValueToReference: string;
   collectionReference: string;
   iterationOrder?: string | null | undefined;
-  nextValueConnector: FlowConnector;
-  noMoreValuesConnector: FlowConnector;
+  nextValueConnector?: FlowConnector | null | undefined;
+  noMoreValuesConnector?: FlowConnector | null | undefined;
 };
 
 export type FlowRecordCreate = FlowNode & {
   assignRecordIdToReference?: string | null | undefined;
-  connector: FlowConnector;
-  faultConnector: FlowConnector;
+  connector?: FlowConnector | null | undefined;
+  faultConnector?: FlowConnector | null | undefined;
   inputAssignments: FlowInputFieldAssignment[];
   inputReference?: string | null | undefined;
   object?: string | null | undefined;
 };
 
 export type FlowRecordDelete = FlowNode & {
-  connector: FlowConnector;
-  faultConnector: FlowConnector;
+  connector?: FlowConnector | null | undefined;
+  faultConnector?: FlowConnector | null | undefined;
   filters: FlowRecordFilter[];
   inputReference?: string | null | undefined;
   object?: string | null | undefined;
@@ -12811,8 +12432,8 @@ export type FlowRecordDelete = FlowNode & {
 
 export type FlowRecordLookup = FlowNode & {
   assignNullValuesIfNoRecordsFound?: boolean | null | undefined;
-  connector: FlowConnector;
-  faultConnector: FlowConnector;
+  connector?: FlowConnector | null | undefined;
+  faultConnector?: FlowConnector | null | undefined;
   filters: FlowRecordFilter[];
   getFirstRecordOnly?: boolean | null | undefined;
   object: string;
@@ -12825,8 +12446,8 @@ export type FlowRecordLookup = FlowNode & {
 };
 
 export type FlowRecordUpdate = FlowNode & {
-  connector: FlowConnector;
-  faultConnector: FlowConnector;
+  connector?: FlowConnector | null | undefined;
+  faultConnector?: FlowConnector | null | undefined;
   filters: FlowRecordFilter[];
   inputAssignments: FlowInputFieldAssignment[];
   inputReference?: string | null | undefined;
@@ -12837,7 +12458,7 @@ export type FlowScreen = FlowNode & {
   allowBack?: boolean | null | undefined;
   allowFinish?: boolean | null | undefined;
   allowPause?: boolean | null | undefined;
-  connector: FlowConnector;
+  connector?: FlowConnector | null | undefined;
   fields: FlowScreenField[];
   helpText?: string | null | undefined;
   pausedText?: string | null | undefined;
@@ -12847,10 +12468,10 @@ export type FlowScreen = FlowNode & {
 };
 
 export type FlowStart = FlowNode & {
-  connector: FlowConnector;
+  connector?: FlowConnector | null | undefined;
   filters: FlowRecordFilter[];
   object?: string | null | undefined;
-  schedule: FlowSchedule;
+  schedule?: FlowSchedule | null | undefined;
   triggerType?: string | null | undefined;
 };
 
@@ -12865,16 +12486,16 @@ export type FlowStep = FlowNode & {
 };
 
 export type FlowSubflow = FlowNode & {
-  connector: FlowConnector;
+  connector?: FlowConnector | null | undefined;
   flowName: string;
   inputAssignments: FlowSubflowInputAssignment[];
   outputAssignments: FlowSubflowOutputAssignment[];
 };
 
 export type FlowWait = FlowNode & {
-  defaultConnector: FlowConnector;
+  defaultConnector?: FlowConnector | null | undefined;
   defaultConnectorLabel: string;
-  faultConnector: FlowConnector;
+  faultConnector?: FlowConnector | null | undefined;
   waitEvents: FlowWaitEvent[];
 };
 
@@ -12916,7 +12537,7 @@ export type Folder = Metadata & {
   folderShares: FolderShare[];
   name: string;
   publicFolderAccess?: string | null | undefined;
-  sharedTo: SharedTo;
+  sharedTo?: SharedTo | null | undefined;
 };
 
 export type FolderShare = {
@@ -13189,8 +12810,8 @@ export type Keyword = {
 };
 
 export type KnowledgeSettings = Metadata & {
-  answers: KnowledgeAnswerSettings;
-  cases: KnowledgeCaseSettings;
+  answers?: KnowledgeAnswerSettings | null | undefined;
+  cases?: KnowledgeCaseSettings | null | undefined;
   defaultLanguage?: string | null | undefined;
   enableChatterQuestionKBDeflection?: boolean | null | undefined;
   enableCreateEditOnArticlesTab?: boolean | null | undefined;
@@ -13201,12 +12822,12 @@ export type KnowledgeSettings = Metadata & {
   enableKnowledgeTitleAutoComplete?: boolean | null | undefined;
   enableLightningKbAutoLoadRichTextField?: boolean | null | undefined;
   enableLightningKnowledge?: boolean | null | undefined;
-  languages: KnowledgeLanguageSettings;
+  languages?: KnowledgeLanguageSettings | null | undefined;
   showArticleSummariesCustomerPortal?: boolean | null | undefined;
   showArticleSummariesInternalApp?: boolean | null | undefined;
   showArticleSummariesPartnerPortal?: boolean | null | undefined;
   showValidationStatusField?: boolean | null | undefined;
-  suggestedArticles: KnowledgeSuggestedArticlesSettings;
+  suggestedArticles?: KnowledgeSuggestedArticlesSettings | null | undefined;
 };
 
 export type KnowledgeAnswerSettings = {
@@ -13217,9 +12838,15 @@ export type KnowledgeAnswerSettings = {
 
 export type KnowledgeCaseSettings = {
   articlePDFCreationProfile?: string | null | undefined;
-  articlePublicSharingCommunities: KnowledgeCommunitiesSettings;
-  articlePublicSharingSites: KnowledgeSitesSettings;
-  articlePublicSharingSitesChatterAnswers: KnowledgeSitesSettings;
+  articlePublicSharingCommunities?:
+    | KnowledgeCommunitiesSettings
+    | null
+    | undefined;
+  articlePublicSharingSites?: KnowledgeSitesSettings | null | undefined;
+  articlePublicSharingSitesChatterAnswers?:
+    | KnowledgeSitesSettings
+    | null
+    | undefined;
   assignTo?: string | null | undefined;
   customizationClass?: string | null | undefined;
   defaultContributionArticleType?: string | null | undefined;
@@ -13252,10 +12879,13 @@ export type KnowledgeLanguage = {
 };
 
 export type KnowledgeSuggestedArticlesSettings = {
-  caseFields: KnowledgeCaseFieldsSettings;
+  caseFields?: KnowledgeCaseFieldsSettings | null | undefined;
   useSuggestedArticlesForCase?: boolean | null | undefined;
-  workOrderFields: KnowledgeWorkOrderFieldsSettings;
-  workOrderLineItemFields: KnowledgeWorkOrderLineItemFieldsSettings;
+  workOrderFields?: KnowledgeWorkOrderFieldsSettings | null | undefined;
+  workOrderLineItemFields?:
+    | KnowledgeWorkOrderLineItemFieldsSettings
+    | null
+    | undefined;
 };
 
 export type KnowledgeCaseFieldsSettings = {
@@ -13293,17 +12923,17 @@ export type LanguageSettings = Metadata & {
 
 export type Layout = Metadata & {
   customButtons: string[];
-  customConsoleComponents: CustomConsoleComponents;
+  customConsoleComponents?: CustomConsoleComponents | null | undefined;
   emailDefault?: boolean | null | undefined;
   excludeButtons: string[];
-  feedLayout: FeedLayout;
+  feedLayout?: FeedLayout | null | undefined;
   headers: string[];
   layoutSections: LayoutSection[];
-  miniLayout: MiniLayout;
+  miniLayout?: MiniLayout | null | undefined;
   multilineLayoutFields: string[];
-  platformActionList: PlatformActionList;
-  quickActionList: QuickActionList;
-  relatedContent: RelatedContent;
+  platformActionList?: PlatformActionList | null | undefined;
+  quickActionList?: QuickActionList | null | undefined;
+  relatedContent?: RelatedContent | null | undefined;
   relatedLists: RelatedListItem[];
   relatedObjects: string[];
   runAssignmentRulesDefault?: boolean | null | undefined;
@@ -13314,12 +12944,12 @@ export type Layout = Metadata & {
   showRunAssignmentRulesCheckbox?: boolean | null | undefined;
   showSolutionSection?: boolean | null | undefined;
   showSubmitAndAttachButton?: boolean | null | undefined;
-  summaryLayout: SummaryLayout;
+  summaryLayout?: SummaryLayout | null | undefined;
 };
 
 export type CustomConsoleComponents = {
-  primaryTabComponents: PrimaryTabComponents;
-  subtabComponents: SubtabComponents;
+  primaryTabComponents?: PrimaryTabComponents | null | undefined;
+  subtabComponents?: SubtabComponents | null | undefined;
 };
 
 export type PrimaryTabComponents = {
@@ -13399,7 +13029,10 @@ export type LayoutColumn = {
 };
 
 export type LayoutItem = {
-  analyticsCloudComponent: AnalyticsCloudComponentLayoutItem;
+  analyticsCloudComponent?:
+    | AnalyticsCloudComponentLayoutItem
+    | null
+    | undefined;
   behavior?: string | null | undefined;
   canvas?: string | null | undefined;
   component?: string | null | undefined;
@@ -13408,7 +13041,7 @@ export type LayoutItem = {
   field?: string | null | undefined;
   height?: number | null | undefined;
   page?: string | null | undefined;
-  reportChartComponent: ReportChartComponentLayoutItem;
+  reportChartComponent?: ReportChartComponentLayoutItem | null | undefined;
   scontrol?: string | null | undefined;
   showLabel?: boolean | null | undefined;
   showScrollbars?: boolean | null | undefined;
@@ -13575,11 +13208,11 @@ export type LightningComponentBundle = Metadata & {
   description?: string | null | undefined;
   isExplicitImport?: boolean | null | undefined;
   isExposed?: boolean | null | undefined;
-  lwcResources: LwcResources;
+  lwcResources?: LwcResources | null | undefined;
   masterLabel?: string | null | undefined;
   runtimeNamespace?: string | null | undefined;
   targetConfigs?: string | null | undefined;
-  targets: Targets;
+  targets?: Targets | null | undefined;
 };
 
 export type LwcResources = {
@@ -13650,7 +13283,7 @@ export type LiveAgentSettings = Metadata & {
 };
 
 export type LiveChatAgentConfig = Metadata & {
-  assignments: AgentConfigAssignments;
+  assignments?: AgentConfigAssignments | null | undefined;
   autoGreeting?: string | null | undefined;
   capacity?: number | null | undefined;
   criticalWaitTime?: number | null | undefined;
@@ -13675,14 +13308,14 @@ export type LiveChatAgentConfig = Metadata & {
   supervisorDefaultAgentStatusFilter?: string | null | undefined;
   supervisorDefaultButtonFilter?: string | null | undefined;
   supervisorDefaultSkillFilter?: string | null | undefined;
-  supervisorSkills: SupervisorAgentConfigSkills;
-  transferableButtons: AgentConfigButtons;
-  transferableSkills: AgentConfigSkills;
+  supervisorSkills?: SupervisorAgentConfigSkills | null | undefined;
+  transferableButtons?: AgentConfigButtons | null | undefined;
+  transferableSkills?: AgentConfigSkills | null | undefined;
 };
 
 export type AgentConfigAssignments = {
-  profiles: AgentConfigProfileAssignments;
-  users: AgentConfigUserAssignments;
+  profiles?: AgentConfigProfileAssignments | null | undefined;
+  users?: AgentConfigUserAssignments | null | undefined;
 };
 
 export type AgentConfigProfileAssignments = {
@@ -13712,7 +13345,7 @@ export type LiveChatButton = Metadata & {
   chasitorIdleTimeoutWarning?: number | null | undefined;
   chatPage?: string | null | undefined;
   customAgentName?: string | null | undefined;
-  deployments: LiveChatButtonDeployments;
+  deployments?: LiveChatButtonDeployments | null | undefined;
   enableQueue?: boolean | null | undefined;
   inviteEndPosition?: string | null | undefined;
   inviteImage?: string | null | undefined;
@@ -13738,7 +13371,7 @@ export type LiveChatButton = Metadata & {
   pushTimeOut?: number | null | undefined;
   routingType: string;
   site?: string | null | undefined;
-  skills: LiveChatButtonSkills;
+  skills?: LiveChatButtonSkills | null | undefined;
   timeToRemoveInvite?: number | null | undefined;
   type: string;
   windowLanguage?: string | null | undefined;
@@ -13757,7 +13390,7 @@ export type LiveChatDeployment = Metadata & {
   connectionTimeoutDuration?: number | null | undefined;
   connectionWarningDuration?: number | null | undefined;
   displayQueuePosition?: boolean | null | undefined;
-  domainWhiteList: LiveChatDeploymentDomainWhitelist;
+  domainWhiteList?: LiveChatDeploymentDomainWhitelist | null | undefined;
   enablePrechatApi?: boolean | null | undefined;
   enableTranscriptSave?: boolean | null | undefined;
   label: string;
@@ -13897,14 +13530,14 @@ export type ContentAsset = MetadataWithContent & {
   language: string;
   masterLabel: string;
   originNetwork?: string | null | undefined;
-  relationships: ContentAssetRelationships;
+  relationships?: ContentAssetRelationships | null | undefined;
   versions: ContentAssetVersions;
 };
 
 export type ContentAssetRelationships = {
   insightsApplication: ContentAssetLink[];
   network: ContentAssetLink[];
-  organization: ContentAssetLink;
+  organization?: ContentAssetLink | null | undefined;
   workspace: ContentAssetLink[];
 };
 
@@ -14084,7 +13717,7 @@ export type MobileApplicationDetail = Metadata & {
 };
 
 export type MobileSettings = Metadata & {
-  dashboardMobile: DashboardMobileSettings;
+  dashboardMobile?: DashboardMobileSettings | null | undefined;
   enableImportContactFromDevice?: boolean | null | undefined;
   enableLightningOnMobile?: boolean | null | undefined;
   enableOfflineDraftsEnabled?: boolean | null | undefined;
@@ -14173,7 +13806,7 @@ export type Network = Metadata & {
   allowedExtensions?: string | null | undefined;
   caseCommentEmailTemplate?: string | null | undefined;
   changePasswordTemplate: string;
-  communityRoles: CommunityRoles;
+  communityRoles?: CommunityRoles | null | undefined;
   description?: string | null | undefined;
   disableReputationRecordConversations?: boolean | null | undefined;
   emailFooterLogo?: string | null | undefined;
@@ -14203,15 +13836,15 @@ export type Network = Metadata & {
   lockoutTemplate?: string | null | undefined;
   logoutUrl?: string | null | undefined;
   maxFileSizeKb?: number | null | undefined;
-  navigationLinkSet: NavigationLinkSet;
-  networkMemberGroups: NetworkMemberGroup;
-  networkPageOverrides: NetworkPageOverride;
+  navigationLinkSet?: NavigationLinkSet | null | undefined;
+  networkMemberGroups?: NetworkMemberGroup | null | undefined;
+  networkPageOverrides?: NetworkPageOverride | null | undefined;
   newSenderAddress?: string | null | undefined;
   picassoSite?: string | null | undefined;
-  recommendationAudience: RecommendationAudience;
-  recommendationDefinition: RecommendationDefinition;
-  reputationLevels: ReputationLevelDefinitions;
-  reputationPointsRules: ReputationPointsRules;
+  recommendationAudience?: RecommendationAudience | null | undefined;
+  recommendationDefinition?: RecommendationDefinition | null | undefined;
+  reputationLevels?: ReputationLevelDefinitions | null | undefined;
+  reputationPointsRules?: ReputationPointsRules | null | undefined;
   selfRegProfile?: string | null | undefined;
   selfRegistration?: boolean | null | undefined;
   sendWelcomeEmail?: boolean | null | undefined;
@@ -14260,7 +13893,7 @@ export type RecommendationDefinitionDetail = {
   actionUrl?: string | null | undefined;
   description?: string | null | undefined;
   linkText?: string | null | undefined;
-  scheduledRecommendations: ScheduledRecommendation;
+  scheduledRecommendations?: ScheduledRecommendation | null | undefined;
   setupName?: string | null | undefined;
   title?: string | null | undefined;
 };
@@ -14281,7 +13914,7 @@ export type ReputationLevelDefinitions = {
 };
 
 export type ReputationLevel = {
-  branding: ReputationBranding;
+  branding?: ReputationBranding | null | undefined;
   label?: string | null | undefined;
   lowerThreshold: number;
 };
@@ -14339,7 +13972,7 @@ export type OpportunitySettings = Metadata & {
   enableOpportunityInsightsInMobile?: boolean | null | undefined;
   enableOpportunityTeam?: boolean | null | undefined;
   enableUpdateReminders?: boolean | null | undefined;
-  findSimilarOppFilter: FindSimilarOppFilter;
+  findSimilarOppFilter?: FindSimilarOppFilter | null | undefined;
   promptToAddProducts?: boolean | null | undefined;
 };
 
@@ -14648,7 +14281,7 @@ export type PresenceDeclineReason = Metadata & {
 };
 
 export type PresenceUserConfig = Metadata & {
-  assignments: PresenceConfigAssignments;
+  assignments?: PresenceConfigAssignments | null | undefined;
   capacity: number;
   declineReasons: string[];
   enableAutoAccept?: boolean | null | undefined;
@@ -14662,8 +14295,8 @@ export type PresenceUserConfig = Metadata & {
 };
 
 export type PresenceConfigAssignments = {
-  profiles: PresenceConfigProfileAssignments;
-  users: PresenceConfigUserAssignments;
+  profiles?: PresenceConfigProfileAssignments | null | undefined;
+  users?: PresenceConfigUserAssignments | null | undefined;
 };
 
 export type PresenceConfigProfileAssignments = {
@@ -14713,7 +14346,7 @@ export type Profile = Metadata & {
   fieldPermissions: ProfileFieldLevelSecurity[];
   flowAccesses: ProfileFlowAccess[];
   layoutAssignments: ProfileLayoutAssignment[];
-  loginHours: ProfileLoginHours;
+  loginHours?: ProfileLoginHours | null | undefined;
   loginIpRanges: ProfileLoginIpRange[];
   objectPermissions: ProfileObjectPermissions[];
   pageAccesses: ProfileApexPageAccess[];
@@ -14873,7 +14506,7 @@ export type PromptVersion = {
   targetPageType: string;
   timesToDisplay: number;
   title: string;
-  uiFormulaRule: UiFormulaRule;
+  uiFormulaRule?: UiFormulaRule | null | undefined;
   userAccess: string;
   versionNumber: number;
 };
@@ -14882,17 +14515,17 @@ export type Queue = Metadata & {
   doesSendEmailToMembers?: boolean | null | undefined;
   email?: string | null | undefined;
   name: string;
-  queueMembers: QueueMembers;
+  queueMembers?: QueueMembers | null | undefined;
   queueRoutingConfig?: string | null | undefined;
   queueSobject: QueueSobject[];
 };
 
 export type QueueMembers = {
-  publicGroups: PublicGroups;
-  roleAndSubordinates: RoleAndSubordinates;
-  roleAndSubordinatesInternal: RoleAndSubordinatesInternal;
-  roles: Roles;
-  users: Users;
+  publicGroups?: PublicGroups | null | undefined;
+  roleAndSubordinates?: RoleAndSubordinates | null | undefined;
+  roleAndSubordinatesInternal?: RoleAndSubordinatesInternal | null | undefined;
+  roles?: Roles | null | undefined;
+  users?: Users | null | undefined;
 };
 
 export type PublicGroups = {
@@ -14945,8 +14578,8 @@ export type QuickAction = Metadata & {
   mobExtDisplayMode?: string | null | undefined;
   optionsCreateFeedItem: boolean;
   page?: string | null | undefined;
-  quickActionLayout: QuickActionLayout;
-  quickActionSendEmailOptions: QuickActionSendEmailOptions;
+  quickActionLayout?: QuickActionLayout | null | undefined;
+  quickActionSendEmailOptions?: QuickActionSendEmailOptions | null | undefined;
   standardLabel?: string | null | undefined;
   successMessage?: string | null | undefined;
   targetObject?: string | null | undefined;
@@ -15108,7 +14741,7 @@ export type RecordActionDeployment = Metadata & {
   hasGuidedActions?: boolean | null | undefined;
   hasRecommendations?: boolean | null | undefined;
   masterLabel: string;
-  recommendation: RecordActionRecommendation;
+  recommendation?: RecordActionRecommendation | null | undefined;
   selectableItems: RecordActionSelectableItem[];
 };
 
@@ -15161,9 +14794,9 @@ export type RemoteSiteSetting = Metadata & {
 export type Report = Metadata & {
   aggregates: ReportAggregate[];
   block: Report[];
-  blockInfo: ReportBlockInfo;
+  blockInfo?: ReportBlockInfo | null | undefined;
   buckets: ReportBucketField[];
-  chart: ReportChart;
+  chart?: ReportChart | null | undefined;
   colorRanges: ReportColorRange[];
   columns: ReportColumn[];
   crossFilters: ReportCrossFilter[];
@@ -15172,13 +14805,13 @@ export type Report = Metadata & {
   dataCategoryFilters: ReportDataCategoryFilter[];
   description?: string | null | undefined;
   division?: string | null | undefined;
-  filter: ReportFilter;
+  filter?: ReportFilter | null | undefined;
   folderName?: string | null | undefined;
   format: string;
   formattingRules: ReportFormattingRule[];
   groupingsAcross: ReportGrouping[];
   groupingsDown: ReportGrouping[];
-  historicalSelector: ReportHistoricalSelector;
+  historicalSelector?: ReportHistoricalSelector | null | undefined;
   name: string;
   numSubscriptions?: number | null | undefined;
   params: ReportParam[];
@@ -15193,7 +14826,7 @@ export type Report = Metadata & {
   sortColumn?: string | null | undefined;
   sortOrder?: string | null | undefined;
   territoryHierarchyFilter?: string | null | undefined;
-  timeFrameFilter: ReportTimeFrameFilter;
+  timeFrameFilter?: ReportTimeFrameFilter | null | undefined;
   userFilter?: string | null | undefined;
 };
 
@@ -15367,13 +15000,13 @@ export type ReportType = Metadata & {
   category: string;
   deployed: boolean;
   description?: string | null | undefined;
-  join: ObjectRelationship;
+  join?: ObjectRelationship | null | undefined;
   label: string;
   sections: ReportLayoutSection[];
 };
 
 export type ObjectRelationship = {
-  join: ObjectRelationship;
+  join?: ObjectRelationship | null | undefined;
   outerJoin: boolean;
   relationship: string;
 };
@@ -15492,10 +15125,10 @@ export type SecuritySettings = Metadata & {
   enableRequireHttpsConnection?: boolean | null | undefined;
   isTLSv12Required?: boolean | null | undefined;
   isTLSv12RequiredCommunities?: boolean | null | undefined;
-  networkAccess: NetworkAccess;
-  passwordPolicies: PasswordPolicies;
-  sessionSettings: SessionSettings;
-  singleSignOnSettings: SingleSignOnSettings;
+  networkAccess?: NetworkAccess | null | undefined;
+  passwordPolicies?: PasswordPolicies | null | undefined;
+  sessionSettings?: SessionSettings | null | undefined;
+  singleSignOnSettings?: SingleSignOnSettings | null | undefined;
 };
 
 export type NetworkAccess = {
@@ -15590,7 +15223,7 @@ export type ServiceChannelFieldPriority = {
 };
 
 export type ServicePresenceStatus = Metadata & {
-  channels: ServiceChannelStatus;
+  channels?: ServiceChannelStatus | null | undefined;
   label: string;
 };
 
@@ -15600,7 +15233,7 @@ export type ServiceChannelStatus = {
 
 export type SharingBaseRule = Metadata & {
   accessLevel: string;
-  accountSettings: AccountSharingRuleSettings;
+  accountSettings?: AccountSharingRuleSettings | null | undefined;
   description?: string | null | undefined;
   label: string;
   sharedTo: SharedTo;
@@ -15672,14 +15305,14 @@ export type SiteSettings = Metadata & {
 };
 
 export type Skill = Metadata & {
-  assignments: SkillAssignments;
+  assignments?: SkillAssignments | null | undefined;
   description?: string | null | undefined;
   label: string;
 };
 
 export type SkillAssignments = {
-  profiles: SkillProfileAssignments;
-  users: SkillUserAssignments;
+  profiles?: SkillProfileAssignments | null | undefined;
+  users?: SkillUserAssignments | null | undefined;
 };
 
 export type SkillProfileAssignments = {
@@ -15783,7 +15416,10 @@ export type Territory2Settings = Metadata & {
   defaultContactAccessLevel?: string | null | undefined;
   defaultOpportunityAccessLevel?: string | null | undefined;
   enableTerritoryManagement2?: boolean | null | undefined;
-  opportunityFilterSettings: Territory2SettingsOpportunityFilter;
+  opportunityFilterSettings?:
+    | Territory2SettingsOpportunityFilter
+    | null
+    | undefined;
 };
 
 export type Territory2SettingsOpportunityFilter = {
@@ -15913,12 +15549,12 @@ export type FlowTranslation = {
 export type FlowChoiceTranslation = {
   choiceText?: string | null | undefined;
   name: string;
-  userInput: FlowChoiceUserInputTranslation;
+  userInput?: FlowChoiceUserInputTranslation | null | undefined;
 };
 
 export type FlowChoiceUserInputTranslation = {
   promptText?: string | null | undefined;
-  validationRule: FlowInputValidationRuleTranslation;
+  validationRule?: FlowInputValidationRuleTranslation | null | undefined;
 };
 
 export type FlowInputValidationRuleTranslation = {
@@ -15936,7 +15572,7 @@ export type FlowScreenFieldTranslation = {
   fieldText?: string | null | undefined;
   helpText?: string | null | undefined;
   name: string;
-  validationRule: FlowInputValidationRuleTranslation;
+  validationRule?: FlowInputValidationRuleTranslation | null | undefined;
 };
 
 export type FlowStageTranslation = {
@@ -16452,7 +16088,7 @@ export type DescribeValueTypeResult = {
   apiDeletable: boolean;
   apiReadable: boolean;
   apiUpdatable: boolean;
-  parentField: ValueTypeField;
+  parentField?: ValueTypeField | null | undefined;
   valueTypeFields: ValueTypeField[];
 };
 
@@ -16490,7 +16126,7 @@ export type RetrieveRequest = {
   packageNames: string[];
   singlePackage: boolean;
   specificFiles: string[];
-  unpackaged: Package;
+  unpackaged?: Package | null | undefined;
 };
 
 export type UpsertResult = {
