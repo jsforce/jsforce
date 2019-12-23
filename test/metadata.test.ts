@@ -155,9 +155,9 @@ describe('CRUD based call', () => {
       assert.ok(result.success === true);
       assert.ok(isString(result.fullName));
       assert.ok(result.fullName === oldName);
-      result = await conn.metadata.read('CustomObject', newName);
-      assert.ok(isString(result.fullName));
-      assert.ok(result.fullName === newName);
+      const co = await conn.metadata.read('CustomObject', newName);
+      assert.ok(isString(co.fullName));
+      assert.ok(co.fullName === newName);
     } finally {
       conn.version = origVersion; // eslint-disable-line require-atomic-updates
     }

@@ -23,20 +23,53 @@ import {
   RetrieveResult,
   DeployResult,
   AsyncResult,
+  ApiSchemaTypes,
 } from './metadata/schema';
 export * from './metadata/schema';
 
 /**
  *
  */
-function convertToMetadataInfo(rec: any) {
-  const { $, ...md } = rec;
-  return md;
-}
+type MetadataType_<
+  K extends keyof ApiSchemaTypes = keyof ApiSchemaTypes
+> = K extends keyof ApiSchemaTypes
+  ? ApiSchemaTypes[K] extends Metadata
+    ? K
+    : never
+  : never;
+
+export type MetadataType = MetadataType_;
+
+export type MetadataDefinition<
+  T extends string,
+  M extends Metadata = Metadata
+> = Metadata extends M
+  ? T extends keyof ApiSchemaTypes & MetadataType
+    ? ApiSchemaTypes[T] extends Metadata
+      ? ApiSchemaTypes[T]
+      : Metadata
+    : Metadata
+  : M;
+
+type DeepPartial<T> = T extends any[]
+  ? DeepPartial<T[number]>[]
+  : T extends object
+  ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : T;
+
+export type InputMetadataDefinition<
+  T extends string,
+  M extends Metadata = Metadata
+> = DeepPartial<MetadataDefinition<T, M>>;
 
 /**
  *
  */
+function deallocateTypeWithMetadata<M extends Metadata>(metadata: M): M {
+  const { $, ...md } = metadata as any;
+  return md;
+}
+
 function assignTypeWithMetadata(metadata: Metadata | Metadata[], type: string) {
   const convert = (md: Metadata) => ({ ['@xsi:type']: type, ...md });
   return Array.isArray(metadata) ? metadata.map(convert) : convert(metadata);
@@ -91,18 +124,21 @@ export default class MetadataApi<S extends Schema> {
   /**
    * Add one or more new metadata components to the organization.
    */
-  create<M extends Metadata = Metadata>(
-    type: string,
-    metadata: M[],
-  ): Promise<SaveResult[]>;
-  create<M extends Metadata = Metadata>(
-    type: string,
-    metadata: M,
-  ): Promise<SaveResult>;
-  create<M extends Metadata = Metadata>(
-    type: string,
-    metadata: M | M[],
-  ): Promise<SaveResult | SaveResult[]>;
+  create<
+    M extends Metadata = Metadata,
+    T extends MetadataType = MetadataType,
+    MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>
+  >(type: T, metadata: MD[]): Promise<SaveResult[]>;
+  create<
+    M extends Metadata = Metadata,
+    T extends MetadataType = MetadataType,
+    MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>
+  >(type: T, metadata: MD): Promise<SaveResult>;
+  create<
+    M extends Metadata = Metadata,
+    T extends MetadataType = MetadataType,
+    MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>
+  >(type: T, metadata: MD | MD[]): Promise<SaveResult | SaveResult[]>;
   create(type: string, metadata: Metadata | Metadata[]) {
     const isArray = Array.isArray(metadata);
     metadata = assignTypeWithMetadata(metadata, type);
@@ -113,43 +149,61 @@ export default class MetadataApi<S extends Schema> {
   /**
    * Read specified metadata components in the organization.
    */
-  read<M extends Metadata = Metadata>(
-    type: string,
-    fullNames: string[],
-  ): Promise<M[]>;
-  read<M extends Metadata = Metadata>(
-    type: string,
-    fullNames: string,
-  ): Promise<M>;
-  read<M extends Metadata = Metadata>(
-    type: string,
-    fullNames: string | string[],
-  ): Promise<M | M[]>;
+  read<
+    M extends Metadata = Metadata,
+    T extends MetadataType = MetadataType,
+    MD extends MetadataDefinition<T, M> = MetadataDefinition<T, M>
+  >(type: T, fullNames: string[]): Promise<MD[]>;
+  read<
+    M extends Metadata = Metadata,
+    T extends MetadataType = MetadataType,
+    MD extends MetadataDefinition<T, M> = MetadataDefinition<T, M>
+  >(type: T, fullNames: string): Promise<MD>;
+  read<
+    M extends Metadata = Metadata,
+    T extends MetadataType = MetadataType,
+    MD extends MetadataDefinition<T, M> = MetadataDefinition<T, M>
+  >(type: T, fullNames: string | string[]): Promise<MD | MD[]>;
   async read(type: string, fullNames: string | string[]) {
+    const ReadResultSchema =
+      type in ApiSchemas
+        ? ({
+            type: ApiSchemas.ReadResult.type,
+            props: {
+              records: [type],
+            },
+          } as const)
+        : ApiSchemas.ReadResult;
     const res: ReadResult = await this._invoke(
       'readMetadata',
       { type, fullNames },
-      ApiSchemas.ReadResult,
+      ReadResultSchema,
     );
     return Array.isArray(fullNames)
-      ? res.records.map(convertToMetadataInfo)
-      : convertToMetadataInfo(res.records[0]);
+      ? res.records.map(deallocateTypeWithMetadata)
+      : deallocateTypeWithMetadata(res.records[0]);
   }
 
   /**
    * Update one or more metadata components in the organization.
    */
-  update<M extends Metadata = Metadata>(
-    type: string,
-    metadata: M[],
-  ): Promise<SaveResult[]>;
-  update<M extends Metadata = Metadata>(
-    type: string,
-    metadata: M,
-  ): Promise<SaveResult>;
-  update<M extends Metadata = Metadata>(
-    type: string,
-    metadata: M | M[],
+  update<
+    M extends Metadata = Metadata,
+    T extends string = string,
+    MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>
+  >(type: T, metadata: Partial<MD>[]): Promise<SaveResult[]>;
+  update<
+    M extends Metadata = Metadata,
+    T extends string = string,
+    MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>
+  >(type: T, metadata: Partial<MD>): Promise<SaveResult>;
+  update<
+    M extends Metadata = Metadata,
+    T extends string = string,
+    MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>
+  >(
+    type: T,
+    metadata: Partial<MD> | Partial<MD>[],
   ): Promise<SaveResult | SaveResult[]>;
   update(type: string, metadata: Metadata | Metadata[]) {
     const isArray = Array.isArray(metadata);
@@ -161,18 +215,21 @@ export default class MetadataApi<S extends Schema> {
   /**
    * Upsert one or more components in your organization's data.
    */
-  upsert<M extends Metadata = Metadata>(
-    type: string,
-    metadata: M[],
-  ): Promise<UpsertResult[]>;
-  upsert<M extends Metadata = Metadata>(
-    type: string,
-    metadata: M,
-  ): Promise<UpsertResult>;
-  upsert<M extends Metadata = Metadata>(
-    type: string,
-    metadata: M | M[],
-  ): Promise<UpsertResult | UpsertResult[]>;
+  upsert<
+    M extends Metadata = Metadata,
+    T extends string = string,
+    MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>
+  >(type: T, metadata: MD[]): Promise<UpsertResult[]>;
+  upsert<
+    M extends Metadata = Metadata,
+    T extends string = string,
+    MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>
+  >(type: T, metadata: MD): Promise<UpsertResult>;
+  upsert<
+    M extends Metadata = Metadata,
+    T extends string = string,
+    MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>
+  >(type: T, metadata: MD | MD[]): Promise<UpsertResult | UpsertResult[]>;
   upsert(type: string, metadata: Metadata | Metadata[]) {
     const isArray = Array.isArray(metadata);
     metadata = assignTypeWithMetadata(metadata, type);
