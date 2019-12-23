@@ -79,9 +79,16 @@ export default class SoapApi<S extends Schema> {
   /**
    * Converts a Lead into an Account, Contact, or (optionally) an Opportunity.
    */
-  convertLead(leadConverts: LeadConvert[]): Promise<LeadConvertResult[]>;
-  convertLead(leadConvert: LeadConvert): Promise<LeadConvertResult>;
-  async convertLead(leadConverts: LeadConvert | LeadConvert[]) {
+  convertLead(
+    leadConverts: Partial<LeadConvert>[],
+  ): Promise<LeadConvertResult[]>;
+  convertLead(leadConvert: Partial<LeadConvert>): Promise<LeadConvertResult>;
+  convertLead(
+    leadConvert: Partial<LeadConvert> | Partial<LeadConvert>[],
+  ): Promise<LeadConvertResult | LeadConvertResult[]>;
+  async convertLead(
+    leadConverts: Partial<LeadConvert> | Partial<LeadConvert>[],
+  ) {
     const schema = Array.isArray(leadConverts)
       ? [ApiSchemas.LeadConvertResult]
       : ApiSchemas.LeadConvertResult;
@@ -91,9 +98,12 @@ export default class SoapApi<S extends Schema> {
   /**
    * Merge up to three records into one
    */
-  merge(mergeRequests: MergeRequest[]): Promise<MergeResult[]>;
-  merge(mergeRequest: MergeRequest): Promise<MergeResult>;
-  async merge(mergeRequests: MergeRequest | MergeRequest[]) {
+  merge(mergeRequests: Partial<MergeRequest>[]): Promise<MergeResult[]>;
+  merge(mergeRequest: Partial<MergeRequest>): Promise<MergeResult>;
+  merge(
+    mergeRequest: Partial<MergeRequest> | Partial<MergeRequest>[],
+  ): Promise<MergeResult | MergeResult[]>;
+  async merge(mergeRequests: Partial<MergeRequest> | Partial<MergeRequest>[]) {
     const schema = Array.isArray(mergeRequests)
       ? [ApiSchemas.MergeResult]
       : ApiSchemas.MergeResult;
