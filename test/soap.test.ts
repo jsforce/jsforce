@@ -89,10 +89,9 @@ describe('convert and merge', () => {
       conn370.metadata.read('CustomField', 'Lead.Status'),
     ]);
     leadIds = rets.map((r) => r.id!);
-    convertedStatus = ((statusField as any).picklist
-      .picklistValues as PicklistValue[])
-      .filter((pv) => pv.converted)
-      .map((pv) => pv.fullName!)[0];
+    convertedStatus = (statusField as any).picklist.picklistValues
+      .filter((pv: any) => pv.converted === 'true')
+      .map((pv: any) => pv.fullName)[0];
   });
 
   /**
