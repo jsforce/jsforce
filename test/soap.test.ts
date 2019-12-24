@@ -1,10 +1,10 @@
 import assert from 'assert';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
-import { isString, isBoolean, isUndefined } from './util';
+import { isString, isBoolean } from './util';
 
 const connMgr = new ConnectionManager(config);
-const conn: any = connMgr.createConnection();
+const conn = connMgr.createConnection();
 
 /**
  *
@@ -79,7 +79,7 @@ describe('convert and merge', () => {
   beforeAll(async () => {
     // Because ver >= 38.0 metadata API doesn't return picklist values in standard field,
     // fix the version to 37.0
-    const conn370: any = connMgr.createConnection();
+    const conn370 = connMgr.createConnection();
     conn370.version = '37.0';
     conn370.accessToken = conn.accessToken;
     conn370.instanceUrl = conn.instanceUrl;
@@ -87,10 +87,10 @@ describe('convert and merge', () => {
       conn.sobject('Lead').create(leads),
       conn370.metadata.read('CustomField', 'Lead.Status'),
     ]);
-    leadIds = rets.map((r: any) => r.id); // TODO: remove any
-    convertedStatus = statusField.picklist.picklistValues
-      .filter((pv: any) => pv.converted === 'true') // TODO: remove any
-      .map((pv: any) => pv.fullName)[0]; // TODO: remove any
+    leadIds = rets.map((r) => r.id!);
+    convertedStatus = (statusField as any).picklist.picklistValues
+      .filter((pv: any) => pv.converted === 'true')
+      .map((pv: any) => pv.fullName)[0];
   });
 
   /**
@@ -105,9 +105,9 @@ describe('convert and merge', () => {
     assert.ok(isString(ret.accountId));
     assert.ok(isString(ret.contactId));
     assert.ok(isString(ret.opportunityId));
-    accountIds.push(ret.accountId);
-    contactIds.push(ret.contactId);
-    oppIds.push(ret.opportunityId);
+    accountIds.push(ret.accountId!); // TODO: remove "!" when assertion function is introduced
+    contactIds.push(ret.contactId!); // TODO: remove "!" when assertion function is introduced
+    oppIds.push(ret.opportunityId!); // TODO: remove "!" when assertion function is introduced
   });
 
   /**
@@ -123,8 +123,8 @@ describe('convert and merge', () => {
     assert.ok(ret.success === true);
     assert.ok(isString(ret.accountId));
     assert.ok(isString(ret.contactId));
-    assert.ok(ret.opportunityId === null || isUndefined(ret.OpportunityId));
-    contactIds.push(ret.contactId);
+    assert.ok(ret.opportunityId == null);
+    contactIds.push(ret.contactId!); // TODO: remove "!" when assertion function is introduced
   });
 
   /**

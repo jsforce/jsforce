@@ -7,16 +7,24 @@ import { isMapObject } from '../../util/function';
 /**
  *
  */
+const WSDLRestrictionSchema = {
+  $: { base: 'string' },
+  enumeration: [
+    {
+      $: { value: 'string' },
+    },
+  ],
+  'xsd:enumeration': [
+    {
+      $: { value: 'string' },
+    },
+  ],
+} as const;
+
 const WSDLSimpleTypeSchema = {
   $: { name: 'string' },
-  'xsd:restriction': {
-    $: { base: 'string' },
-    'xsd:enumeration': [
-      {
-        $: { value: 'string' },
-      },
-    ],
-  },
+  restriction: WSDLRestrictionSchema,
+  'xsd:restriction': WSDLRestrictionSchema,
 } as const;
 
 const WSDLElementSchema = {
@@ -30,31 +38,43 @@ const WSDLElementSchema = {
 } as const;
 
 const WSDLSequenceSchema = {
+  element: ['?', WSDLElementSchema],
   'xsd:element': ['?', WSDLElementSchema],
+} as const;
+
+const WSDLExtensionSchema = {
+  $: { base: 'string' },
+  sequence: { '?': WSDLSequenceSchema },
+  'xsd:sequence': { '?': WSDLSequenceSchema },
+} as const;
+
+const WSDLComplexContentSchema = {
+  extension: { '?': WSDLExtensionSchema },
+  'xsd:extension': { '?': WSDLExtensionSchema },
 } as const;
 
 const WSDLComplexTypeSchema = {
   $: { name: 'string' },
+  sequence: { '?': WSDLSequenceSchema },
   'xsd:sequence': { '?': WSDLSequenceSchema },
-  'xsd:complexContent': {
-    '?': {
-      'xsd:extension': {
-        $: { base: 'string' },
-        'xsd:sequence': WSDLSequenceSchema,
-      },
-    },
-  },
+  complexContent: { '?': WSDLComplexContentSchema },
+  'xsd:complexContent': { '?': WSDLComplexContentSchema },
+} as const;
+
+const WSDLSchemaSchema = {
+  $: 'any',
+  complexType: ['?', 'any'],
+  simpleType: ['?', 'any'],
+  'xsd:complexType': ['?', 'any'],
+  'xsd:simpleType': ['?', 'any'],
 } as const;
 
 const WSDLSchema = {
   definitions: {
     $: 'any',
     types: {
-      'xsd:schema': {
-        $: 'any',
-        'xsd:complexType': ['any'],
-        'xsd:simpleType': ['any'],
-      },
+      schema: ['?', WSDLSchemaSchema],
+      'xsd:schema': ['?', WSDLSchemaSchema],
     },
     message: ['any'],
     portType: {
@@ -98,20 +118,20 @@ function toJsType(xsdType: string, simpleTypes: { [type: string]: string }) {
     case 'xsd:base64Binary':
       return 'string';
     case 'xsd:int':
+    case 'xsd:long':
     case 'xsd:double':
       return 'number';
     case 'xsd:anyType':
       return 'any';
     default: {
       const [ns, type] = xsdType.split(':');
-      if (ns === 'tns' && simpleTypes[type]) {
+      if (simpleTypes[type]) {
         return simpleTypes[type];
       }
-      if (ns === 'xsd' || ns === 'tns') {
+      if (ns) {
         return type;
-      } else {
-        return xsdType;
       }
+      return xsdType;
     }
   }
 }
@@ -147,40 +167,56 @@ function getTypeInfo(el: WSDLElement, simpleTypes: { [name: string]: string }) {
  *
  */
 function extractComplexTypes(wsdl: WSDL) {
+  console.log(wsdl.definitions.types['xsd:schema']);
   let schemas: { [name: string]: SoapSchemaDef } = {};
   const simpleTypes: { [type: string]: string } = {};
-  for (const st of wsdl.definitions.types['xsd:schema']['xsd:simpleType']) {
-    const simpleType: WSDLSimpleType = castTypeUsingSchema(
-      st,
-      WSDLSimpleTypeSchema,
-    );
-    const base = simpleType['xsd:restriction'].$.base.split(':')[1];
-    simpleTypes[simpleType.$.name] = base;
-  }
-  for (const ct of wsdl.definitions.types['xsd:schema']['xsd:complexType']) {
-    const complexType: WSDLComplexType = castTypeUsingSchema(
-      ct,
-      WSDLComplexTypeSchema,
-    );
-    const schema: {
-      type: string;
-      extends?: string;
-      props: { [name: string]: any };
-    } = {
-      type: complexType.$.name,
-      props: {},
-    };
-    for (const el of complexType['xsd:sequence']?.['xsd:element'] ?? []) {
-      schema.props[el.$.name] = getTypeInfo(el, simpleTypes);
+  const types = wsdl.definitions.types;
+  for (const sc of types.schema ?? types['xsd:schema'] ?? []) {
+    for (const st of sc.simpleType ?? sc['xsd:simpleType'] ?? []) {
+      const simpleType: WSDLSimpleType = castTypeUsingSchema(
+        st,
+        WSDLSimpleTypeSchema,
+      );
+      const rs = simpleType.restriction ?? simpleType['xsd:restriction'];
+      const base = rs.$.base.split(':')[1];
+      simpleTypes[simpleType.$.name] = base;
     }
-    if (complexType['xsd:complexContent']) {
-      const extension = complexType['xsd:complexContent']['xsd:extension'];
-      schema.extends = extension.$.base.split(':')[1];
-      for (const el of extension['xsd:sequence']['xsd:element'] ?? []) {
+  }
+  console.log({ simpleTypes });
+  for (const sc of types.schema ?? types['xsd:schema'] ?? []) {
+    for (const ct of sc.complexType ?? sc['xsd:complexType'] ?? []) {
+      const complexType: WSDLComplexType = castTypeUsingSchema(
+        ct,
+        WSDLComplexTypeSchema,
+      );
+      const schema: {
+        type: string;
+        extends?: string;
+        props: { [name: string]: any };
+      } = {
+        type: complexType.$.name,
+        props: {},
+      };
+      const seq = complexType.sequence ?? complexType['xsd:sequence'];
+      const els = seq?.element ?? seq?.['xsd:element'];
+      for (const el of els ?? []) {
         schema.props[el.$.name] = getTypeInfo(el, simpleTypes);
       }
+      const cc =
+        complexType.complexContent ?? complexType['xsd:complexContent'];
+      if (cc) {
+        const extension = cc.extension ?? cc['xsd:extension'];
+        if (extension) {
+          schema.extends = extension.$.base.split(':')[1];
+          const seq = extension.sequence ?? extension['xsd:sequence'];
+          const els = seq?.element ?? seq?.['xsd:element'];
+          for (const el of els ?? []) {
+            schema.props[el.$.name] = getTypeInfo(el, simpleTypes);
+          }
+        }
+      }
+      schemas[complexType.$.name] = schema;
     }
-    schemas[complexType.$.name] = schema;
   }
   return schemas;
 }

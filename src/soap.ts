@@ -30,6 +30,15 @@ function getPropsSchema(
   return schema.props;
 }
 
+function isNillValue(value: unknown) {
+  return (
+    value == null ||
+    (isMapObject(value) &&
+      isMapObject(value.$) &&
+      value.$['xsi:nil'] === 'true')
+  );
+}
+
 /**
  *
  */
@@ -56,13 +65,7 @@ export function castTypeUsingSchema(
     const nillable = '?' in schema;
     const schema_ =
       '?' in schema ? (schema['?'] as { [key: string]: any }) : schema;
-    if (
-      nillable &&
-      (value == null ||
-        (isMapObject(value) &&
-          isMapObject(value.$) &&
-          value.$['xsi:nil'] === 'true'))
-    ) {
+    if (nillable && isNillValue(value)) {
       return null;
     }
     const obj = isMapObject(value) ? value : {};
@@ -91,11 +94,15 @@ export function castTypeUsingSchema(
         : 'any';
     switch (type) {
       case 'string':
-        return value != null ? String(value) : nillable ? null : '';
+        return isNillValue(value) ? (nillable ? null : '') : String(value);
       case 'number':
-        return value != null ? Number(value) : nillable ? null : 0;
+        return isNillValue(value) ? (nillable ? null : 0) : Number(value);
       case 'boolean':
-        return value != null ? value === 'true' : nillable ? null : false;
+        return isNillValue(value)
+          ? nillable
+            ? null
+            : false
+          : value === 'true';
       case 'null':
         return null;
       default: {
