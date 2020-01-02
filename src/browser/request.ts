@@ -69,6 +69,8 @@ export default function request(
       if (callback) {
         callback(null, response, response.body);
       }
+      str.emit('response', response);
+      str.emit('complete', response);
       str.end();
     }
   };
