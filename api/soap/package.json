@@ -1,0 +1,5 @@
+{
+  "main": "../../lib/api/soap",
+  "module": "../../module/api/soap",
+  "types": "../../lib/api/soap"
+}
