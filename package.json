@@ -51,6 +51,7 @@
     "build",
     "core",
     "lib",
+    "src",
     "test",
     "index.d.ts",
     "index.js"
