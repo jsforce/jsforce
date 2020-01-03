@@ -773,7 +773,7 @@ RetrieveResultLocator.prototype.stream = function() {
       if (err) {
         resultStream.emit('error', err);
       } else {
-        resultStream.push(new Buffer(result.zipFile, 'base64'));
+        resultStream.push(Buffer.from(result.zipFile, 'base64'));
         resultStream.push(null);
       }
     });
@@ -2575,7 +2575,7 @@ Buffer.prototype.fill = function fill (val, start, end, encoding) {
   } else {
     var bytes = Buffer.isBuffer(val)
       ? val
-      : new Buffer(val, encoding)
+      : Buffer.from(val, encoding)
     var len = bytes.length
     if (len === 0) {
       throw new TypeError('The value "' + val +
