@@ -163,15 +163,22 @@ type RecordTypeInfo = {
   urls: { [key: string]: string };
 };
 
-type DescribeSObjectResult_ = {
+type ScopeInfo = {
+  label: string;
+  name: string;
+};
+
+type DescribeGlobalSObjectResult = {
   activateable: boolean;
   createable: boolean;
   custom: boolean;
   customSetting: boolean;
+  deepCloneable: boolean;
   deletable: boolean;
   deprecatedAndHidden: boolean;
   feedEnabled: boolean;
   hasSubtypes: boolean;
+  isInterface: boolean;
   isSubtype: boolean;
   keyPrefix: Optional<string>;
   label: string;
@@ -190,21 +197,24 @@ type DescribeSObjectResult_ = {
   urls: { [key: string]: string };
 };
 
-export type DescribeSObjectResult = DescribeSObjectResult_ & {
+export type DescribeSObjectResult = DescribeGlobalSObjectResult & {
   actionOverrides: ActionOverride[];
   childRelationships: ChildRelationship[];
   compactLayoutable: boolean;
   fields: Field[];
+  listviewable: boolean;
+  lookupLayoutable: boolean;
   namedLayoutInfos: NamedLayoutInfo[];
   networkScopeFieldName: Optional<string>;
   recordTypeInfos: RecordTypeInfo[];
   searchLayoutable: boolean;
+  supportedScopes: Optional<ScopeInfo[]>;
 };
 
 export type DescribeGlobalResult = {
   encoding: string;
   maxBatchSize: number;
-  sobjects: DescribeSObjectResult_[];
+  sobjects: DescribeGlobalSObjectResult[];
 };
 
 type DescribeColor = {
@@ -330,10 +340,11 @@ type RelatedContent = {
 type RelatedListColumn = {
   field: string;
   fieldApiName: string;
-  format: string;
+  format: Optional<string>;
   label: string;
   lookupId: Optional<string>;
   name: string;
+  sortable: boolean;
 };
 
 type RelatedListSort = {
@@ -342,12 +353,14 @@ type RelatedListSort = {
 };
 
 type RelatedList = {
+  accessLevelRequiredForCreate: Optional<string>;
   buttons: DescribeLayoutButton[];
   columns: RelatedListColumn[];
   custom: boolean;
+  field: string;
   label: string;
   limitRows: number;
-  name: Optional<string>;
+  name: string;
   sobject: Optional<string>;
   sort: RelatedListSort[];
 };
@@ -362,10 +375,11 @@ type DescribeLayoutSaveOption = {
 };
 
 type DescribeLayout = {
-  buttonLayoutSection: DescribeLayoutButtonSection;
+  buttonLayoutSection: Optional<DescribeLayoutButtonSection>;
   detailLayoutSections: DescribeLayoutSection[];
   editLayoutSections: DescribeLayoutSection[];
-  highlightsPanelLayoutSection: DescribeLayoutSection[];
+  feedView: Optional<DescribeLayoutFeedView>;
+  highlightsPanelLayoutSection: Optional<DescribeLayoutSection>;
   multirowEditLayoutSections: DescribeLayoutSection[];
   id: string;
   quickActionList: DescribeQuickActionListResult;
@@ -387,7 +401,6 @@ type DescribeLayoutFeedView = {
 type RecordTypeMapping = any; // TODO
 
 export type DescribeLayoutResult = {
-  feedView: Optional<DescribeLayoutFeedView[]>;
   layouts: DescribeLayout[];
   recordTypeMappings: RecordTypeMapping[];
   recordTypeSelectorRequired: boolean[];
@@ -429,14 +442,14 @@ export type DescribeApprovalLayoutsResult = {
 };
 
 export type DescribeTab = {
-  colors: Optional<DescribeColor[]>;
+  colors: DescribeColor[];
   custom: boolean;
   iconUrl: string;
-  icons: Optional<DescribeIcon[]>;
+  icons: DescribeIcon[];
   label: string;
   miniIconUrl: string;
   name: string;
-  sobjectName: string;
+  sobjectName: Optional<string>;
   url: string;
 };
 
