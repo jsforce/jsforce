@@ -33,7 +33,7 @@ export type HttpResponse = {
 export type Record = {
   [field: string]: any;
   Id?: string;
-  attributes?: { type: string; url: string };
+  attributes?: { type: string; [prop: string]: any };
 };
 
 export type SavedRecord = Record & { Id: string };
