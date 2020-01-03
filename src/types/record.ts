@@ -16,7 +16,6 @@ import {
   StringKeys,
   PickIfMatch,
   ConditionalPartial,
-  DeepPartial,
   IsEqualType,
 } from './util';
 
@@ -165,10 +164,9 @@ export type SObjectRecord<
   ? RecordFieldProjection<S, N, FPC> & Record & R
   : R;
 
-export type SObjectInputRecord<
-  S extends Schema,
-  N extends string
-> = DeepPartial<SObjectRecord<S, N>>;
+export type SObjectInputRecord<S extends Schema, N extends string> = Partial<
+  SObjectRecord<S, N>
+>;
 
 export type SObjectUpdateRecord<
   S extends Schema,

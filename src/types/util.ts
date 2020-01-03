@@ -17,9 +17,3 @@ export type ConditionalPartial<
   O,
   IsPartial extends boolean
 > = IsPartial extends true ? Partial<O> : O;
-
-export type DeepPartial<O> = O extends Array<infer R>
-  ? Array<DeepPartial<R>>
-  : O extends {}
-  ? { [K in keyof O]?: DeepPartial<O[K]> }
-  : O;
