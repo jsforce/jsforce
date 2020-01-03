@@ -33,7 +33,7 @@ export type HttpResponse = {
 export type Record = {
   [field: string]: any;
   Id?: string;
-  attributes?: { type: string; url: string };
+  attributes?: { type: string; [prop: string]: any };
 };
 
 export type SavedRecord = Record & { Id: string };
@@ -140,9 +140,9 @@ type ActionOverride = {
 
 type ChildRelationship = {
   cascadeDelete: boolean;
-  childSObject: Optional<string>;
+  childSObject: string;
   deprecatedAndHidden: boolean;
-  field: Optional<string>;
+  field: string;
   junctionIdListNames: string[];
   junctionReferenceTo: string[];
   relationshipName: Optional<string>;
