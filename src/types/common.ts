@@ -338,7 +338,7 @@ type RelatedContent = {
 };
 
 type RelatedListColumn = {
-  field: string;
+  field: Optional<string>;
   fieldApiName: string;
   format: Optional<string>;
   label: string;
@@ -357,7 +357,7 @@ type RelatedList = {
   buttons: DescribeLayoutButton[];
   columns: RelatedListColumn[];
   custom: boolean;
-  field: string;
+  field: Optional<string>;
   label: string;
   limitRows: number;
   name: string;
