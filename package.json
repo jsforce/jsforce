@@ -64,6 +64,7 @@
     "jsforce-gen-schema": "./bin/jsforce-gen-schema"
   },
   "dependencies": {
+    "@babel/runtime-corejs3": "^7.8.3",
     "@babel/runtime": "^7.8.3",
     "base64url": "^3.0.1",
     "commander": "^4.0.1",
