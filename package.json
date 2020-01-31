@@ -45,7 +45,6 @@
     "bin",
     "build",
     "lib",
-    "test",
     "core.js",
     "index.js"
   ],
