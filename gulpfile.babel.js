@@ -6,7 +6,7 @@ import source from 'vinyl-source-stream';
 import buffer from 'vinyl-buffer';
 import sourcemaps from 'gulp-sourcemaps';
 import rename from 'gulp-rename';
-import uglify from 'gulp-uglify';
+import terser from 'gulp-terser';
 
 let coreModules;
 const commonModules = [
@@ -61,7 +61,7 @@ scriptTasks.forEach(({ name, entries, standalone, transform = () => [], output }
       .pipe(buffer())
       .pipe(sourcemaps.init({ loadMaps: true }))
       .pipe(rename(output + '.min.js'))
-      .pipe(uglify())
+      .pipe(terser())
       .pipe(sourcemaps.write('.'))
       .pipe(gulp.dest('./build'));
   });
@@ -116,6 +116,27 @@ gulp.task('build:test', () => {
     .pipe(source('./test.js'))
     .pipe(gulp.dest('./build'));
 });
+
+if (require('./package.json').devDependencies['require-swapper']) {
+  let shouldWarn = false;
+  gulp.on('error', ({ error }) => {
+    if (error.stack.includes('/esprima/') && error.stack.includes('/require-swapper/')) {
+      // Only warn once.
+      shouldWarn = true;
+    }
+  });
+
+  process.on('exit', () => {
+    if (shouldWarn) {
+      console.error(`
+  WARNING: mixmaxhq/jsforce has been altered to pin the version of esprima that require-swapper
+  depends on to 4.x. This change was made in https://github.com/mixmaxhq/jsforce/pull/80, and may
+  break if the require-swapper dependency gets altered. The error message indicates that
+  require-swapper likely broke on our use of ES6 features.
+`);
+    }
+  });
+}
 
 
 gulp.task('build:all', gulp.parallel('build', 'build:test'));
