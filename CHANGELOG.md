@@ -4,13 +4,18 @@
 
 * Bugfix required for Salesforce modules `queryBetweenDateRange` function: https://github.com/mixmaxhq/jsforce/pull/82
 
+## 1.8.3
+
+* fix faulty publish of mixmaxhq/jsforce
+
+## 1.8.2
+
+* fix bad dereference of oauthRefresh result
+
 # Original changelog
 
 ## 1.5.0 (Aug 12, 2015)
 * Change API version to 34.0
-* 1.8.3 fix faulty publish of mixmaxhq/jsforce
-* 1.8.2 fix bad dereference of oauthRefresh result
-
 * Add version info in jsforce object root (#254)
 * Change to accept options in all type of bulkload operation (#235)
 * Fix to bubble up errors in bulk API execution (#231)
