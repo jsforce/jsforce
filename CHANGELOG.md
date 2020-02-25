@@ -1,3 +1,11 @@
+# Mixmax changelog (since forking)
+
+## 1.8.4
+
+* Bugfix required for Salesforce modules `queryBetweenDateRange` function: https://github.com/mixmaxhq/jsforce/pull/82
+
+# Original changelog
+
 ## 1.5.0 (Aug 12, 2015)
 * Change API version to 34.0
 * 1.8.3 fix faulty publish of mixmaxhq/jsforce
@@ -19,7 +27,7 @@
 
 
 ## 1.4.1 (Feb 25, 2015)
-* Fix error in bulk API hard delete (#167) 
+* Fix error in bulk API hard delete (#167)
 * Fix version num in bower.json
 
 
