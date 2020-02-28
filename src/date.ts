@@ -84,6 +84,30 @@ export default class SfDate {
   }
 
   /**
+   * Convert JavaScript date object to ISO8601 time format
+   * (e.g. 12:34:56.789Z)
+   */
+  static toTimeLiteral(time: string | number | Date) {
+    let _date = new Date(0);
+    if (typeof time === 'string') {
+      _date = SfDate.parseTime(time);
+    } else if (typeof time === 'number') {
+      _date = new Date(time);
+    } else {
+      _date = time;
+    }
+    const hh = _date.getUTCHours();
+    const mi = _date.getUTCMinutes();
+    const ss = _date.getUTCSeconds();
+    const sss = _date.getUTCMilliseconds();
+    const tstr = `${zeroPad(hh)}:${zeroPad(mi)}:${zeroPad(ss)}.${zeroPad(
+      sss,
+      3,
+    )}Z`;
+    return new SfDate(tstr);
+  }
+
+  /**
    * Parse IS08601 date(time) formatted string and return date instance
    */
   static parseDate(str: string): Date {
@@ -118,6 +142,27 @@ export default class SfDate {
       return d;
     }
     throw new Error(`Invalid date format is specified : ${str}`);
+  }
+
+  /**
+   * Parse IS08601 time formatted string and convert to parse string
+   */
+  static parseTime(str: string): Date {
+    const regexp = /^([\d]{2}):?([\d]{2}):?([\d]{2})(.([\d]{3}))?Z?$/;
+    const m = str.match(regexp);
+    if (m) {
+      const d = new Date(0);
+      let hh = parseInt(m[1], 10);
+      const mi = parseInt(m[2], 10);
+      const ss = parseInt(m[3], 10);
+      const sss = parseInt(m[5] || '0', 10);
+      d.setUTCHours(hh);
+      d.setUTCMinutes(mi);
+      d.setUTCSeconds(ss);
+      d.setUTCMilliseconds(sss);
+      return d;
+    }
+    throw new Error(`Invalid time format is specified : ${str}`);
   }
 
   static YESTERDAY = new SfDate('YESTERDAY');
