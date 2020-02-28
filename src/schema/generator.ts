@@ -77,7 +77,7 @@ function getTSTypeString(type: string): string {
     ? 'number'
     : type === 'boolean'
     ? 'boolean'
-    : type === 'date' || type === 'datetime'
+    : type === 'date' || type === 'datetime' || type === 'time'
     ? 'DateString'
     : type === 'base64'
     ? 'BlobString'
