@@ -1,11 +1,15 @@
 /**
  *
  */
-export function zeroPad(num: number): string {
-  if (num < 10) {
-    return `0${num}`;
+export function zeroPad(num: number, digits: number = 2): string {
+  let nstr = '';
+  for (let d = digits - 1; d > 0; d--) {
+    if (num >= 10 ** d) {
+      break;
+    }
+    nstr += '0';
   }
-  return String(num);
+  return nstr + String(num);
 }
 
 /**
