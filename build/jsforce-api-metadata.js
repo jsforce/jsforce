@@ -745,7 +745,7 @@ inherits(RetrieveResultLocator, AsyncResultLocator);
  * Check and wait until the async request becomes in completed status,
  * and retrieve the result data.
  *
- * @memthod Metadata~RetrieveResultLocator#complete
+ * @method Metadata~RetrieveResultLocator#complete
  * @param {Callback.<Metadata~RetrieveResult>} [callback] - Callback function
  * @returns {Promise.<Metadata~RetrieveResult>}
  */
