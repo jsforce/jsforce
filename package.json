@@ -62,7 +62,7 @@
     "commander": "^2.9.0",
     "csv-parse": "^4.6.3",
     "csv-stringify": "^1.0.4",
-    "faye": "^1.2.0",
+    "faye": "^1.2.5",
     "inherits": "^2.0.1",
     "lodash": "^4.17.14",
     "multistream": "^2.0.5",
