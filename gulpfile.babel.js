@@ -6,7 +6,7 @@ import source from 'vinyl-source-stream';
 import buffer from 'vinyl-buffer';
 import sourcemaps from 'gulp-sourcemaps';
 import rename from 'gulp-rename';
-import uglify from 'gulp-uglify';
+import terser from 'gulp-terser';
 
 let coreModules;
 const commonModules = [
@@ -61,7 +61,7 @@ scriptTasks.forEach(({ name, entries, standalone, transform = () => [], output }
       .pipe(buffer())
       .pipe(sourcemaps.init({ loadMaps: true }))
       .pipe(rename(output + '.min.js'))
-      .pipe(uglify())
+      .pipe(terser())
       .pipe(sourcemaps.write('.'))
       .pipe(gulp.dest('./build'));
   });
