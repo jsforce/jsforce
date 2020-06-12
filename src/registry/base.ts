@@ -1,3 +1,4 @@
+import Connection from '../connection';
 import {
   RegistryConfig,
   Registry,
@@ -5,8 +6,7 @@ import {
   PersistConnectionConfig,
   ClientConfig,
 } from './types';
-import jsforce from '../core';
-import { Schema } from '..';
+import { Schema } from '../types';
 
 /**
  *
@@ -35,7 +35,7 @@ export class BaseRegistry implements Registry {
 
   async getConnection<S extends Schema = Schema>(name: string) {
     const config = await this.getConnectionConfig(name);
-    return config ? new jsforce.Connection<S>(config) : null;
+    return config ? new Connection<S>(config) : null;
   }
 
   async getConnectionConfig(name?: string) {
