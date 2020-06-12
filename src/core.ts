@@ -1,9 +1,9 @@
-import VERSION from './VERSION';
+import jsforce from './jsforce';
 import Connection from './connection';
 import OAuth2 from './oauth2';
 import SfDate from './date';
 import registry, { Registry } from './registry';
-import jsforce from './jsforce';
+import VERSION from './VERSION';
 
 export * from './types';
 export {
