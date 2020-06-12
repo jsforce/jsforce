@@ -22,9 +22,11 @@ export function registerModule(
   factory: (conn: Connection) => any,
 ) {
   jsforce.on('connection:new', (conn: Connection) => {
+    let obj: any = undefined;
     Object.defineProperty(conn, name, {
       get() {
-        return factory(conn);
+        obj = obj ?? factory(conn);
+        return obj;
       },
       enumerable: true,
       configurable: true,
