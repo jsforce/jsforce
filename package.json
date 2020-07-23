@@ -10,7 +10,7 @@
     "database.com"
   ],
   "homepage": "http://github.com/jsforce/jsforce",
-  "version": "1.9.3",
+  "version": "1.9.4",
   "repository": {
     "type": "git",
     "url": "git://github.com/jsforce/jsforce.git"
@@ -62,7 +62,7 @@
     "commander": "^2.9.0",
     "csv-parse": "^4.10.1",
     "csv-stringify": "^1.0.4",
-    "faye": "^1.2.0",
+    "faye": "^1.3.0",
     "inherits": "^2.0.1",
     "lodash": "^4.17.14",
     "multistream": "^2.0.5",
