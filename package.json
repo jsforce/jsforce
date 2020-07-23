@@ -32,9 +32,7 @@
     "test:all": "npm run test:node && npm run test:browser",
     "test:node": "mocha --retries 2 --reporter spec --require intelli-espower-loader --exit",
     "test:browser": "testem",
-    "prepublish": "node -e \"if(process.env.npm_package_version!==require('./lib/VERSION')){console.error('The pacakge.json version is not matching to ./lib/VERSION.js');process.exit(1)}\"",
-    "snyk-protect": "snyk protect",
-    "prepare": "npm run snyk-protect"
+    "prepublish": "node -e \"if(process.env.npm_package_version!==require('./lib/VERSION')){console.error('The pacakge.json version is not matching to ./lib/VERSION.js');process.exit(1)}\""
   },
   "directories": {
     "test": "test/"
@@ -72,7 +70,6 @@
     "promise": "^8.1.0",
     "readable-stream": "^3.6.0",
     "request": "^2.88.2",
-    "snyk": "^1.320.2",
     "xml2js": "^0.4.23"
   },
   "devDependencies": {
@@ -109,6 +106,5 @@
     "./core": "./lib/browser/core",
     "./core.js": "./lib/browser/core",
     "request": "./lib/browser/request.js"
-  },
-  "snyk": true
+  }
 }
