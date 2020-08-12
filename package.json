@@ -84,7 +84,7 @@
     "envify": "^3.4.1",
     "espower-loader": "^1.2.2",
     "espowerify": "^1.1.0",
-    "gulp": "^4.0.0",
+    "gulp": "^4.0.2",
     "gulp-rename": "^1.4.0",
     "gulp-sourcemaps": "^1.12.1",
     "gulp-uglify": "^1.5.4",
