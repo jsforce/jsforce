@@ -30,6 +30,17 @@ describe("connection-meta", function() {
    *
    */
   describe("describe Account", function() {
+    it("should return undefined when not modified recently enough", function(done) {
+      var options = {
+        type: 'Account',
+        ifModifiedSince: new Date().toUTCString()
+      };
+      conn.describe(options, function(err, meta) {
+        if (err) { throw err; }
+        assert.ok(meta === undefined);
+      }.check(done));
+    });
+
     it("should return metadata information", function(done) {
       conn.sobject('Account').describe(function(err, meta) {
         if (err) { throw err; }
@@ -45,6 +56,57 @@ describe("connection-meta", function() {
           assert.ok(meta.name === "Account");
           assert.ok(_.isArray(meta.fields));
         }.check(done));
+      });
+    });
+  });
+
+  /**
+   *
+   */
+  describe("connection-batch-meta", function () {
+    this.timeout(40000); // set timeout to 40 sec.
+
+    var conn = testEnv.createConnection();
+
+    /**
+     *
+     */
+    before(function (done) {
+      this.timeout(600000); // set timeout to 10 min.
+      testEnv.establishConnection(conn, done);
+    });
+
+    /**
+     *
+     */
+    describe("describe Account, Contact", function () {
+      it("should return metadata information", function (done) {
+        conn.batchDescribe(
+          ["Account", "Contact"],
+          0,
+          function (err, meta) {
+            if (err) {
+              throw err;
+            }
+            assert.ok(_.isArray(meta));
+            assert.ok(meta[0].name === "Account");
+            assert.ok(meta[1].name === "Contact");
+          }.check(done)
+        );
+      });
+    });
+
+    describe("then describe cached Contact", function () {
+      it("should return metadata information", function (done) {
+        conn.sobject("Contact").describe$(
+          function (err, meta) {
+            if (err) {
+              throw err;
+            }
+            assert.ok(meta.name === "Contact");
+            assert.ok(_.isArray(meta.fields));
+          }.check(done)
+        );
       });
     });
   });
