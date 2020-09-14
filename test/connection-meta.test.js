@@ -79,7 +79,7 @@ describe("connection-meta", function() {
     /**
      *
      */
-    describe("describe Account, Contact", function () {
+    describe("batch describe", function () {
       it("should return metadata information", function (done) {
         conn.batchDescribe(
           ["Account", "Contact"],
@@ -94,19 +94,36 @@ describe("connection-meta", function() {
           }.check(done)
         );
       });
-    });
 
-    describe("then describe cached Contact", function () {
-      it("should return metadata information", function (done) {
-        conn.sobject("Contact").describe$(
-          function (err, meta) {
+      it("should return first 25 results from given index of a large array of types", function (done) {
+        conn.describeGlobal(function(err, res) {
+          var types = res.sobjects.map(sobject => sobject.name);
+          assert.ok(types.length > 34);
+          conn.batchDescribe(types, 10, function(err, meta) {
             if (err) {
-              throw err;
+               throw err;
             }
-            assert.ok(meta.name === "Contact");
-            assert.ok(_.isArray(meta.fields));
-          }.check(done)
-        );
+            assert.ok(_.isArray(meta));
+            assert.ok(meta.length === 25);
+            meta.forEach((sobject, index) => {
+              assert(sobject.name === types[index + 10]);
+            });
+          }.check(done));
+        });
+      });
+  
+      describe("then describe cached Contact", function () {
+        it("should return metadata information", function (done) {
+          conn.sobject("Contact").describe$(
+            function (err, meta) {
+              if (err) {
+                throw err;
+              }
+              assert.ok(meta.name === "Contact");
+              assert.ok(_.isArray(meta.fields));
+            }.check(done)
+          );
+        });
       });
     });
   });
