@@ -82,8 +82,7 @@ describe("connection-meta", function() {
     describe("batch describe", function () {
       it("should return metadata information", function (done) {
         conn.batchDescribe(
-          ["Account", "Contact"],
-          0,
+          { types: ['Account', 'Contact'] },
           function (err, meta) {
             if (err) {
               throw err;
@@ -95,18 +94,37 @@ describe("connection-meta", function() {
         );
       });
 
-      it("should return first 25 results from given index of a large array of types", function (done) {
+      it("should return first 25 results from large array of types when not autofetch", function (done) {
         conn.describeGlobal(function(err, res) {
           var types = res.sobjects.map(sobject => sobject.name);
-          assert.ok(types.length > 34);
-          conn.batchDescribe(types, 10, function(err, meta) {
+          assert.ok(types.length > 30);
+          var typesToFetch = types.slice(0, 30);
+          conn.batchDescribe({types: typesToFetch, autofetch: false}, function(err, meta) {
             if (err) {
                throw err;
             }
             assert.ok(_.isArray(meta));
             assert.ok(meta.length === 25);
             meta.forEach((sobject, index) => {
-              assert(sobject.name === types[index + 10]);
+              assert(sobject.name === typesToFetch[index]);
+            });
+          }.check(done));
+        });
+      });
+  
+      it("should return first all results from large array of types when autofetch", function (done) {
+        conn.describeGlobal(function(err, res) {
+          var types = res.sobjects.map(sobject => sobject.name);
+          assert.ok(types.length > 30);
+          var typesToFetch = types.slice(0, 30);
+          conn.batchDescribe({types: typesToFetch, autofetch: true}, function(err, meta) {
+            if (err) {
+               throw err;
+            }
+            assert.ok(_.isArray(meta));
+            assert.ok(meta.length === 30);
+            meta.forEach((sobject, index) => {
+              assert(sobject.name === typesToFetch[index]);
             });
           }.check(done));
         });
