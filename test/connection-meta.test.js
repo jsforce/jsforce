@@ -96,7 +96,7 @@ describe("connection-meta", function() {
 
       it("should return first 25 results from large array of types when not autofetch", function (done) {
         conn.describeGlobal(function(err, res) {
-          var types = res.sobjects.map(sobject => sobject.name);
+          var types = res.sobjects.map(function (sobject) { return sobject.name; });
           assert.ok(types.length > 30);
           var typesToFetch = types.slice(0, 30);
           conn.batchDescribe({types: typesToFetch, autofetch: false}, function(err, meta) {
@@ -105,16 +105,16 @@ describe("connection-meta", function() {
             }
             assert.ok(_.isArray(meta));
             assert.ok(meta.length === 25);
-            meta.forEach((sobject, index) => {
+            meta.forEach(function (sobject, index) {
               assert(sobject.name === typesToFetch[index]);
             });
           }.check(done));
         });
       });
   
-      it("should return first all results from large array of types when autofetch", function (done) {
+      it("should return all results from large array of types when autofetch", function (done) {
         conn.describeGlobal(function(err, res) {
-          var types = res.sobjects.map(sobject => sobject.name);
+          var types = res.sobjects.map(function (sobject) { return sobject.name; });
           assert.ok(types.length > 30);
           var typesToFetch = types.slice(0, 30);
           conn.batchDescribe({types: typesToFetch, autofetch: true}, function(err, meta) {
@@ -123,7 +123,7 @@ describe("connection-meta", function() {
             }
             assert.ok(_.isArray(meta));
             assert.ok(meta.length === 30);
-            meta.forEach((sobject, index) => {
+            meta.forEach(function (sobject, index) {
               assert(sobject.name === typesToFetch[index]);
             });
           }.check(done));
