@@ -130,6 +130,24 @@ describe("connection-meta", function() {
         });
       });
   
+      it("should return all results from large array of types when multiple batches of requests are made", function (done) {
+        conn.describeGlobal(function(err, res) {
+          var types = res.sobjects.map(function (sobject) { return sobject.name; });
+          assert.ok(types.length > 60);
+          var typesToFetch = types.slice(0, 60);
+          conn.batchDescribe({types: typesToFetch, autofetch: true, maxConcurrentRequests: 2}, function(err, meta) {
+            if (err) {
+               throw err;
+            }
+            assert.ok(_.isArray(meta));
+            assert.ok(meta.length === 60);
+            meta.forEach(function (sobject, index) {
+              assert(sobject.name === typesToFetch[index]);
+            });
+          }.check(done));
+        });
+      });
+  
       describe("then describe cached Contact", function () {
         it("should return metadata information", function (done) {
           conn.sobject("Contact").describe$(
