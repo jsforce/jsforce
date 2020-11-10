@@ -1,4 +1,5 @@
 import { exec } from 'child_process';
+import stripAnsi from 'strip-ansi';
 import Connection from '../connection';
 import { Registry, ConnectionConfig, ClientConfig } from './types';
 import { Schema } from '../types';
@@ -70,14 +71,20 @@ export class SfdxRegistry implements Registry {
     const cmd = this._createCommand(command, options, args);
     const buf = await new Promise<string>((resolve, reject) => {
       exec(cmd, (err, ret) => {
-        if (err) {
+        if (err && !ret) {
           reject(err);
         } else {
           resolve(ret);
         }
       });
     });
-    const ret = JSON.parse(buf.toString()) as SfdxCommandOutput;
+    const body = stripAnsi(buf.toString());
+    let ret: SfdxCommandOutput;
+    try {
+      ret = JSON.parse(body) as SfdxCommandOutput;
+    } catch (e) {
+      throw new Error(`Unexpectedd output from Sfdx cli: ${body}`);
+    }
     if (ret.status === 0 && ret.result) {
       return ret.result as T;
     } else {
