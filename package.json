@@ -64,8 +64,8 @@
     "jsforce-gen-schema": "./bin/jsforce-gen-schema"
   },
   "dependencies": {
-    "@babel/runtime-corejs3": "^7.8.3",
     "@babel/runtime": "^7.8.3",
+    "@babel/runtime-corejs3": "^7.8.3",
     "base64url": "^3.0.1",
     "commander": "^4.0.1",
     "core-js": "^3.6.4",
@@ -78,6 +78,7 @@
     "open": "^7.0.0",
     "regenerator-runtime": "^0.13.3",
     "request": "^2.88.0",
+    "strip-ansi": "^6.0.0",
     "xml2js": "^0.4.22"
   },
   "devDependencies": {
