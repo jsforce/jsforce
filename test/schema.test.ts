@@ -37,18 +37,21 @@ describe('default schema', () => {
 
   test('record', () => {
     type Account = SObjectRecord<S, 'Account'>;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type t1 =
       | AssertTrue<Has<Account['Id'], string>>
       | AssertTrue<IsNullable<Account['Id']>>;
     const acc: Account = { Id: '000001', Name: 'Account #1' };
     assert.ok(acc.Id != null);
     type Contact = SObjectInputRecord<S, 'Account'>;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type t2 =
       | AssertTrue<Has<Contact['Id'], string>>
       | AssertTrue<IsNullable<Contact['Id']>>;
     const con: Contact = { Id: '000001', Name: 'Contact #1' };
     assert.ok(con.Id != null);
     type Case = SObjectUpdateRecord<S, 'Case'>;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type t3 = AssertTrue<IsExact<Case['Id'], string>>;
     const cas: Case = { Id: '000001', Subject: 'Case #1' };
     assert.ok(cas.Id != null);
@@ -67,12 +70,14 @@ describe('standard schema', () => {
 
   test('record', () => {
     type Account_All = SObjectRecord<S, 'Account'>;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type t1 =
       | AssertTrue<IsExact<Account_All['Id'], string>>
       | AssertTrue<IsExact<Account_All['Name'], string>>
       | AssertTrue<IsExact<Account_All['NumberOfEmployees'], number | null>>;
     /* partial */
     type Account = SObjectRecord<S, 'Account', null>;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type t2 =
       | AssertTrue<Has<Account['Id'], string>>
       | AssertTrue<IsNullable<Account['Id']>>
@@ -85,12 +90,14 @@ describe('standard schema', () => {
     const acc: Account = { Id: '000001', Name: 'Account #1' };
     assert.ok(acc.Id != null);
     type Contact = SObjectInputRecord<S, 'Account'>;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type t3 =
       | AssertTrue<Has<Contact['Id'], string>>
       | AssertTrue<IsNullable<Contact['Id']>>;
     const con: Contact = { Id: '000001', Name: 'Contact #1' };
     assert.ok(con.Id != null);
     type Case = SObjectUpdateRecord<S, 'Case'>;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type t4 =
       | AssertTrue<IsExact<Case['Id'], string>>
       | AssertTrue<Has<Case['CaseNumber'], string>>
@@ -103,6 +110,7 @@ describe('standard schema', () => {
 
   test('query', async () => {
     const qr = await conn.query('SELECT Id, Name FROM Account');
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type t1 = AssertTrue<Has<typeof qr, { done: boolean; records: Record[] }>>;
     const recs1 = await conn
       .sobject('Account')
@@ -111,6 +119,7 @@ describe('standard schema', () => {
       .limit(10);
     type Account_All = SObjectRecord<S, 'Account'>;
     type FoundRec1 = typeof recs1[number];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type t2 = AssertTrue<IsExact<FoundRec1, Account_All>>;
 
     //
@@ -120,6 +129,7 @@ describe('standard schema', () => {
       .sort({ LastActivityDate: 'DESC' })
       .limit(10);
     type FoundRec2 = typeof recs2[number];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type t3 =
       | AssertTrue<Has<FoundRec2, Record>>
       | AssertTrue<IsExact<FoundRec2['Id'], string>>
@@ -134,6 +144,7 @@ describe('standard schema', () => {
       .findOne({ Email: 'abc@example.org' });
     type Contact_All = SObjectRecord<S, 'Contact'>;
     type FoundRec3 = typeof rec3;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type t4 =
       | AssertTrue<IsNullable<FoundRec3>>
       | AssertTrue<Has<FoundRec3, Contact_All>>;
@@ -150,6 +161,7 @@ describe('standard schema', () => {
         'CreatedDate',
       ]);
     type FoundRec4 = NonNullable<typeof rec4>;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type t5 =
       | AssertTrue<IsNullable<typeof rec4>>
       | AssertTrue<Has<FoundRec4, Record>>
@@ -173,6 +185,7 @@ describe('standard schema', () => {
       .where({ IsClosed: false })
       .limit(10);
     type FoundRec5 = typeof recs5[number];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type t6 =
       | AssertTrue<Has<FoundRec5, Record>>
       | AssertTrue<IsExact<FoundRec5['Id'], string>>
@@ -200,12 +213,14 @@ describe('standard schema', () => {
       ])
       .end();
     type FoundRec6 = typeof recs6[number];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type t7 =
       | AssertTrue<Has<FoundRec6['ActivityHistories'], { totalSize: number }>>
       | AssertTrue<IsNullable<FoundRec6['ActivityHistories']>>;
     type FoundRec6ActivityHistory = NonNullable<
       FoundRec6['ActivityHistories']
     >['records'][number];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type t8 =
       | AssertTrue<IsExact<FoundRec6ActivityHistory['Id'], string>>
       | AssertTrue<Has<FoundRec6ActivityHistory['Subject'], string>>
@@ -226,12 +241,14 @@ describe('standard schema', () => {
         'Name',
         { Owner: ['Id', 'Username'] },
       ]);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type t9 = AssertTrue<
       IsExact<typeof recs7[number], { Id: string; Name: string }>
     >;
 
     //
     const cnt = await conn.sobject('Task').count({ IsClosed: false });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type t10 = AssertTrue<IsExact<typeof cnt, number>>;
 
     assert.ok(true);

@@ -68,6 +68,7 @@ type ChildRelationObject<
  *
  */
 type RecordFieldProjectionForAsterOrNull<
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   S extends Schema,
   SO extends SObjectDefinition,
   FPCAN extends '*' | null
@@ -78,6 +79,7 @@ type RecordFieldProjectionForAsterOrNull<
   : RecordWithChildRelations<SO, true>;
 
 type RecordFieldProjectionForString<
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   S extends Schema,
   SO extends SObjectDefinition,
   FPCS extends string

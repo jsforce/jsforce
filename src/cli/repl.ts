@@ -206,7 +206,7 @@ export default class Repl {
         'eval',
         outputToStdout(options.prettyPrint),
       );
-      this._replServer = injectAfter(this._replServer, 'eval', function() {
+      this._replServer = injectAfter(this._replServer, 'eval', function () {
         process.exit();
       });
     }

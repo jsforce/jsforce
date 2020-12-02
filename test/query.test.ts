@@ -152,11 +152,7 @@ test('query table and convert to readable stream and get CSV text', async () => 
     next();
   };
   await new Promise((resolve, reject) => {
-    query
-      .stream('csv')
-      .pipe(csvOut)
-      .on('finish', resolve)
-      .on('error', reject);
+    query.stream('csv').pipe(csvOut).on('finish', resolve).on('error', reject);
   });
   assert.ok(isString(result));
   const header = result.split('\n')[0];

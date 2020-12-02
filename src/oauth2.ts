@@ -68,10 +68,7 @@ export default class OAuth2 {
       httpProxy,
     } = config;
     if (authzServiceUrl && tokenServiceUrl) {
-      this.loginUrl = authzServiceUrl
-        .split('/')
-        .slice(0, 3)
-        .join('/');
+      this.loginUrl = authzServiceUrl.split('/').slice(0, 3).join('/');
       this.authzServiceUrl = authzServiceUrl;
       this.tokenServiceUrl = tokenServiceUrl;
       this.revokeServiceUrl =
