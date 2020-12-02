@@ -381,10 +381,7 @@ export default class Connection<
       userInfo,
     } = options;
     this.instanceUrl = serverUrl
-      ? serverUrl
-          .split('/')
-          .slice(0, 3)
-          .join('/')
+      ? serverUrl.split('/').slice(0, 3).join('/')
       : instanceUrl || this.instanceUrl;
     this.accessToken = sessionId || accessToken || this.accessToken;
     this.refreshToken = refreshToken || this.refreshToken;
@@ -544,10 +541,7 @@ export default class Connection<
     const idUrl = [this.loginUrl, 'id', organizationId, userId].join('/');
     const userInfo = { id: userId, organizationId, url: idUrl };
     this._establish({
-      serverUrl: serverUrl
-        .split('/')
-        .slice(0, 3)
-        .join('/'),
+      serverUrl: serverUrl.split('/').slice(0, 3).join('/'),
       sessionId,
       userInfo,
     });

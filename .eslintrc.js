@@ -11,6 +11,7 @@ module.exports = {
     es6: true,
   },
   rules: {
+    'no-undef': 0,
     'no-unused-vars': 0,
     'no-dupe-class-members': 0,
     '@typescript-eslint/no-unused-vars': [

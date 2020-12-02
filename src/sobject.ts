@@ -16,8 +16,6 @@ import {
   SObjectRecord,
   SObjectInputRecord,
   SObjectUpdateRecord,
-  ChildRelationshipNames,
-  ChildRelationshipSObjectName,
   SObjectFieldNames,
   FieldProjectionConfig,
   FieldPathSpecifier,
@@ -34,13 +32,6 @@ import Query, {
 } from './query';
 import QuickAction from './quick-action';
 import { CachedFunction } from './cache';
-
-type ChildQueryConfigParam<
-  S extends Schema,
-  N extends SObjectNames<S>,
-  CRN extends ChildRelationshipNames<S, N>,
-  CN extends SObjectNames<S> = ChildRelationshipSObjectName<S, N, CRN>
-> = QueryConfig<S, CN>;
 
 export type FindOptions<S extends Schema, N extends SObjectNames<S>> = Partial<
   QueryOptions &
