@@ -24,16 +24,23 @@
   ],
   "main": "./index",
   "module": "./module/index",
+  "browser": {
+    "./": "./browser/index.js",
+    "./index.js": "./browser/index.js",
+    "./core": "./browser/core.js",
+    "./core.js": "./browser/core.js",
+    "./browser/registry": "./browser/browser/registry.js",
+    "./browser/registry/index.js": "./browser/browser/registry.js",
+    "request": "./browser/browser/request.js"
+  },
   "types": "./lib/index",
   "scripts": {
-    "clean": "rimraf lib/* module/*",
-    "build:types": "run-p build:types:es5 build:types:module",
-    "build:types:es5": "npm run build:types:src -- --outDir lib",
-    "build:types:module": "npm run build:types:src -- --outDir module",
-    "build:types:src": "tsc --emitDeclarationOnly --declaration -p src",
-    "build": "run-p build:types build:es5 build:module",
-    "build:es5": "NODE_ENV=production npm run build:src -- -d lib",
-    "build:module": "NODE_ENV=module npm run build:src -- -d module",
+    "clean": "rimraf lib/* module/* browser/*",
+    "build": "run-p build:types build:lib build:module build:browser",
+    "build:types": "tsc --emitDeclarationOnly --declaration -p src --outDir lib",
+    "build:lib": "cross-env BABEL_ENV=production npm run build:src -- -d lib",
+    "build:module": "cross-env BABEL_ENV=module npm run build:src -- -d module",
+    "build:browser": "cross-env BABEL_ENV=browser npm run build:src -- -d browser",
     "build:src": "babel src --extensions \".ts\"",
     "lint": "eslint --ext .ts,.js src test",
     "typecheck": "tsc --noEmit",
@@ -49,6 +56,7 @@
     "api",
     "bin",
     "build",
+    "browser",
     "core",
     "lib",
     "src",
@@ -116,12 +124,5 @@
     "through2": "^3.0.1",
     "ts-node": "^9.0.0",
     "typescript": "^4.1.2"
-  },
-  "browser": {
-    "./lib/registry": "./lib/browser/registry.js",
-    "./lib/registry/index.js": "./lib/browser/registry.js",
-    "./module/registry": "./module/browser/registry.js",
-    "./module/registry/index.js": "./module/browser/registry.js",
-    "request": "./lib/browser/request.js"
   }
 }
