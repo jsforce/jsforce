@@ -44,10 +44,7 @@ describe('single record crud', () => {
       .record(account.Id as string)
       .update({ Name: 'Hello2' });
     assert.ok(ret.success);
-    const record = await conn
-      .sobject('Account')
-      .record(accountId)
-      .retrieve();
+    const record = await conn.sobject('Account').record(accountId).retrieve();
     assert.ok(record.Name === 'Hello2');
     assert.ok(isObject(record.attributes));
   });
