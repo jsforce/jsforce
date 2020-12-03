@@ -1,5 +1,6 @@
 {
   "main": "../../lib/api/soap",
   "module": "../../module/api/soap",
+  "browser": "../../browser/api/soap",
   "types": "../../lib/api/soap"
 }
