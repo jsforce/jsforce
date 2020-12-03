@@ -20,11 +20,11 @@ async function loginAndApprove(
     // authorization page
     await page.click('#oaapprove');
     await page.waitForNavigation({ waitUntil: 'networkidle2' });
-    await page.waitFor(1000);
+    await page.waitForTimeout(1000);
     return loginAndApprove(page, username, password);
   } else if (url.indexOf('/?ec=302') > 0) {
     // login page
-    await page.waitFor(0);
+    await page.waitForTimeout(0);
     await page.type('#username', username);
     await page.type('#password', password);
     await page.click('[name=Login]');
@@ -37,7 +37,7 @@ async function loginAndApprove(
     // authorization error
     throw new Error('invalid authorization error');
   } else {
-    await page.waitFor(1000);
+    await page.waitForTimeout(1000);
     return loginAndApprove(page, username, password);
   }
 }
