@@ -1,5 +1,6 @@
 {
   "main": "../../lib/api/metadata",
   "module": "../../module/api/metadata",
+  "browser": "../../browser/api/metadata",
   "types": "../../lib/api/metadata"
 }

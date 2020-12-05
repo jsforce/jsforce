@@ -9,6 +9,8 @@ lib-cov
 pids
 logs
 results
+
+browser
 lib
 module
 

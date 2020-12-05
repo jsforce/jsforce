@@ -1,5 +1,6 @@
 {
   "main": "../../lib/api/apex",
   "module": "../../module/api/apex",
+  "browser": "../../browser/api/apex",
   "types": "../../lib/api/apex"
 }
