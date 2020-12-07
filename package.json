@@ -31,7 +31,8 @@
     "./core.js": "./browser/core.js",
     "./browser/registry": "./browser/browser/registry.js",
     "./browser/registry/index.js": "./browser/browser/registry.js",
-    "request": "./browser/browser/request.js"
+    "./browser/request": "./browser/browser/request.js",
+    "./browser/request.js": "./browser/browser/request.js"
   },
   "types": "./lib/index",
   "scripts": {
