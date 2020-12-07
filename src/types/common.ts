@@ -24,6 +24,12 @@ export type HttpRequest = {
   body?: string;
 };
 
+export type HttpRequestOptions = {
+  httpProxy?: string;
+  timeout?: number;
+  followRedirect?: boolean | ((redirectUrl: string) => HttpRequest | null);
+};
+
 export type HttpResponse = {
   statusCode: number;
   headers: { [name: string]: string };
