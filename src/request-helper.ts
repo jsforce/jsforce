@@ -1,6 +1,6 @@
 import { PassThrough } from 'stream';
 import { concatStreamsAsDuplex, readAll } from './util/stream';
-import { HttpRequest } from './types';
+import { HttpRequest, HttpRequestOptions, HttpResponse } from './types';
 
 /**
  *
@@ -25,4 +25,50 @@ export function createHttpRequestHandlerStreams(req: HttpRequest) {
     }
   });
   return { input, output, stream: duplex };
+}
+
+const redirectStatuses = new Set([301, 302, 303, 307, 308]);
+
+/**
+ *
+ */
+export function isRedirect(status: number) {
+  return redirectStatuses.has(status);
+}
+
+/**
+ *
+ */
+const MAX_REDIRECT_COUNT = 10;
+
+/**
+ *
+ */
+export function performRedirectRequest(
+  req: HttpRequest,
+  res: Omit<HttpResponse, 'body'>,
+  followRedirect: NonNullable<HttpRequestOptions['followRedirect']>,
+  counter: number,
+  redirectCallback: (req: HttpRequest) => void,
+) {
+  if (counter >= MAX_REDIRECT_COUNT) {
+    throw new Error('Reached to maximum redirect count');
+  }
+  const redirectUrl = res.headers['location'];
+  if (!redirectUrl) {
+    throw new Error('No redirect URI found');
+  }
+  const getRedirectRequest =
+    typeof followRedirect === 'function'
+      ? followRedirect
+      : () => ({
+          method: 'GET' as const,
+          url: redirectUrl,
+          headers: req.headers,
+        });
+  const nextReqParams = getRedirectRequest(redirectUrl);
+  if (!nextReqParams) {
+    throw new Error('Cannot handle redirect for ' + redirectUrl);
+  }
+  redirectCallback(nextReqParams);
 }
