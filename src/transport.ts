@@ -2,8 +2,8 @@
  *
  */
 import { Duplex } from 'stream';
-import _request from 'request';
-import { HttpRequest, HttpResponse } from './types';
+import request, { setDefaults } from './request';
+import { HttpRequest, HttpRequestOptions, HttpResponse } from './types';
 import { StreamPromise, StreamPromiseBuilder } from './util/promise';
 import jsonp from './browser/jsonp';
 import canvas from './browser/canvas';
@@ -20,26 +20,12 @@ function normalizeApiHost(apiHost: string) {
   return apiHost;
 }
 
-// set options if defaults setting is available in request, which is not available in xhr module.
-const request = _request.defaults
-  ? (() => {
-      const defaults: {
-        followAllRedirects?: boolean;
-        proxy?: string;
-        timeout?: number;
-      } = {
-        followAllRedirects: true,
-      };
-      if (process.env.HTTP_PROXY) {
-        defaults.proxy = process.env.HTTP_PROXY;
-      }
-      const timeout = parseInt(process.env.HTTP_TIMEOUT || '0', 10);
-      if (timeout) {
-        defaults.timeout = timeout;
-      }
-      return _request.defaults(defaults);
-    })()
-  : _request;
+setDefaults({
+  httpProxy: process.env.HTTP_PROXY ?? undefined,
+  timeout: process.env.HTTP_TIMEOUT
+    ? parseInt(process.env.HTTP_TIMEOUT, 10)
+    : undefined,
+});
 
 const baseUrl =
   typeof window !== 'undefined' && window.location && window.location.host
@@ -55,12 +41,15 @@ const baseUrl =
 export default class Transport {
   /**
    */
-  httpRequest(params: HttpRequest): StreamPromise<HttpResponse> {
+  httpRequest(
+    req: HttpRequest,
+    options: HttpRequestOptions = {},
+  ): StreamPromise<HttpResponse> {
     const streamBuilder: StreamPromiseBuilder<HttpResponse> = async (
       setStream,
     ) => {
       const createStream = this.getRequestStreamCreator();
-      const stream = createStream(params);
+      const stream = createStream(req, options);
       setStream(stream);
       return new Promise<HttpResponse>((resolve, reject) => {
         stream
@@ -74,8 +63,11 @@ export default class Transport {
   /**
    * @protected
    */
-  getRequestStreamCreator(): (req: HttpRequest) => Duplex {
-    return (params) => (request(params, () => {}) as any) as Duplex;
+  getRequestStreamCreator(): (
+    req: HttpRequest,
+    options: HttpRequestOptions,
+  ) => Duplex {
+    return request;
   }
 }
 
@@ -91,7 +83,10 @@ export class JsonpTransport extends Transport {
     this._jsonpParam = jsonpParam;
   }
 
-  getRequestStreamCreator(): (req: HttpRequest) => Duplex {
+  getRequestStreamCreator(): (
+    req: HttpRequest,
+    options: HttpRequestOptions,
+  ) => Duplex {
     const jsonpRequest = jsonp.createRequest(this._jsonpParam);
     return (params) => jsonpRequest(params);
   }
@@ -109,49 +104,63 @@ export class CanvasTransport extends Transport {
     this._signedRequest = signedRequest;
   }
 
-  getRequestStreamCreator(): (req: HttpRequest) => Duplex {
+  getRequestStreamCreator(): (
+    req: HttpRequest,
+    options: HttpRequestOptions,
+  ) => Duplex {
     const canvasRequest = canvas.createRequest(this._signedRequest);
     return (params) => canvasRequest(params);
   }
 }
 
+/* @private */
+function createXdProxyRequest(req: HttpRequest, proxyUrl: string): HttpRequest {
+  const headers: { [name: string]: string } = {
+    'salesforceproxy-endpoint': req.url,
+  };
+  if (req.headers) {
+    for (const name of Object.keys(req.headers)) {
+      headers[name] = req.headers[name];
+    }
+  }
+  const nocache = `${Date.now()}.${String(Math.random()).substring(2)}`;
+  return {
+    method: req.method,
+    url: `${proxyUrl}?${nocache}`,
+    headers,
+    ...(req.body != null ? { body: req.body } : {}),
+  };
+}
+
 /**
- * Class for HTTP request transport using AJAX proxy service
+ * Class for HTTP request transport using cross-domain AJAX proxy service
  */
 export class ProxyTransport extends Transport {
-  _proxyUrl: string;
+  _xdProxyUrl: string;
 
-  constructor(proxyUrl: string) {
+  constructor(xdProxyUrl: string) {
     super();
-    this._proxyUrl = proxyUrl;
+    this._xdProxyUrl = xdProxyUrl;
   }
 
   /**
    * Make HTTP request via AJAX proxy
    */
-  httpRequest(params: HttpRequest) {
-    let url = params.url;
-    if (url.indexOf('/') === 0) {
-      url = baseUrl + url;
-    }
-    const headers: { [name: string]: string } = {
-      'salesforceproxy-endpoint': url,
-    };
-    if (params.headers) {
-      for (const name of Object.keys(params.headers)) {
-        headers[name] = params.headers[name];
-      }
-    }
-    const nocache = `${Date.now()}.${String(Math.random()).substring(2)}`;
-    const proxyParams: HttpRequest = {
-      method: params.method,
-      url: `${this._proxyUrl}?${nocache}`,
-      headers,
-    };
-    if (params.body || params.body === '') {
-      proxyParams.body = params.body;
-    }
-    return super.httpRequest(proxyParams);
+  httpRequest(req: HttpRequest, _options: HttpRequestOptions = {}) {
+    const xdProxyUrl = this._xdProxyUrl;
+    const { url, body, ...rreq } = req;
+    const canonicalUrl = url.indexOf('/') === 0 ? baseUrl + url : url;
+    const xdProxyReq = createXdProxyRequest(
+      { ...rreq, url: canonicalUrl, body },
+      xdProxyUrl,
+    );
+    return super.httpRequest(xdProxyReq, {
+      followRedirect: (redirectUrl) =>
+        createXdProxyRequest(
+          { ...rreq, method: 'GET', url: redirectUrl },
+          xdProxyUrl,
+        ),
+    });
   }
 }
 
@@ -169,8 +178,8 @@ export class HttpProxyTransport extends Transport {
   /**
    * Make HTTP request via proxy server
    */
-  httpRequest(params: HttpRequest) {
-    const proxyParams = Object.assign({}, params, { proxy: this._httpProxy });
-    return super.httpRequest(proxyParams);
+  httpRequest(req: HttpRequest, options_: HttpRequestOptions = {}) {
+    const options = { ...options_, httpProxy: this._httpProxy };
+    return super.httpRequest(req, options);
   }
 }
