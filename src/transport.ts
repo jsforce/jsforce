@@ -135,7 +135,7 @@ function createXdProxyRequest(req: HttpRequest, proxyUrl: string): HttpRequest {
 /**
  * Class for HTTP request transport using cross-domain AJAX proxy service
  */
-export class ProxyTransport extends Transport {
+export class XdProxyTransport extends Transport {
   _xdProxyUrl: string;
 
   constructor(xdProxyUrl: string) {
