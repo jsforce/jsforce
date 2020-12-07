@@ -2,7 +2,7 @@
  *
  */
 import querystring from 'querystring';
-import Transport, { ProxyTransport, HttpProxyTransport } from './transport';
+import Transport, { XdProxyTransport, HttpProxyTransport } from './transport';
 import { Optional } from './types';
 
 const defaultOAuth2Config = {
@@ -83,7 +83,7 @@ export default class OAuth2 {
     this.clientSecret = clientSecret;
     this.redirectUri = redirectUri;
     if (proxyUrl) {
-      this._transport = new ProxyTransport(proxyUrl);
+      this._transport = new XdProxyTransport(proxyUrl);
     } else if (httpProxy) {
       this._transport = new HttpProxyTransport(httpProxy);
     } else {
