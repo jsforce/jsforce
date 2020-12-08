@@ -80,6 +80,7 @@ async function startFetchRequest(
     ...rreq,
     ...(body ? { body } : {}),
     redirect: 'manual',
+    ...({ allowHTTP1ForStreamingUpload: true } as any), // Chrome allows request stream only in HTTP2/QUIC unless this opt-in flag
   });
   const headers: { [key: string]: any } = {};
   for (const headerName of res.headers.keys()) {
