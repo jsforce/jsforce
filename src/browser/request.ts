@@ -2,6 +2,7 @@ import { EventEmitter } from 'events';
 import { Readable, Writable } from 'stream';
 import {
   createHttpRequestHandlerStreams,
+  executeWithTimeout,
   isRedirect,
   performRedirectRequest,
 } from '../request-helper';
@@ -76,12 +77,20 @@ async function startFetchRequest(
         ? toWhatwgReadableStream(input)
         : await readAll(input)
       : undefined;
-  const res = await fetch(url, {
-    ...rreq,
-    ...(body ? { body } : {}),
-    redirect: 'manual',
-    ...({ allowHTTP1ForStreamingUpload: true } as any), // Chrome allows request stream only in HTTP2/QUIC unless this opt-in flag
-  });
+  const controller =
+    typeof AbortController !== 'undefined' ? new AbortController() : undefined;
+  const res = await executeWithTimeout(
+    () =>
+      fetch(url, {
+        ...rreq,
+        ...(body ? { body } : {}),
+        redirect: 'manual',
+        ...(controller ? { signal: controller.signal } : {}),
+        ...({ allowHTTP1ForStreamingUpload: true } as any), // Chrome allows request stream only in HTTP2/QUIC unless this opt-in flag
+      }),
+    options.timeout,
+    () => controller?.abort(),
+  );
   const headers: { [key: string]: any } = {};
   for (const headerName of res.headers.keys()) {
     headers[headerName.toLowerCase()] = res.headers.get(headerName);
@@ -141,64 +150,75 @@ async function startXmlHttpRequest(
   emitter: EventEmitter,
   counter: number = 0,
 ) {
-  const { method, url, headers } = request;
+  const { method, url, headers: reqHeaders } = request;
   const { followRedirect } = options;
-  const xhr = new XMLHttpRequest();
-  xhr.open(method, url);
-  if (headers) {
-    for (const header in request.headers) {
-      xhr.setRequestHeader(header, request.headers[header]);
-    }
-  }
-  const body =
+  const reqBody =
     input && /^(post|put|patch)$/.test(method) ? await readAll(input) : null;
-  xhr.send(body);
-  xhr.onreadystatechange = () => {
-    if (xhr.readyState === 4) {
-      const headerNames = getResponseHeaderNames(xhr);
-      const headers = headerNames.reduce(
-        (headers, headerName) => ({
-          ...headers,
-          [headerName]: xhr.getResponseHeader(headerName) || '',
-        }),
-        {} as { [name: string]: string },
-      );
-      const response = {
-        statusCode: xhr.status,
-        headers: headers,
-      };
-      if (followRedirect && isRedirect(response.statusCode)) {
-        try {
-          performRedirectRequest(
-            request,
-            response,
-            followRedirect,
-            counter,
-            (req) =>
-              startXmlHttpRequest(
-                req,
-                options,
-                undefined,
-                output,
-                emitter,
-                counter + 1,
-              ),
-          );
-        } catch (err) {
-          emitter.emit('error', err);
+  const xhr = new XMLHttpRequest();
+  await executeWithTimeout(
+    () => {
+      xhr.open(method, url);
+      if (reqHeaders) {
+        for (const header in reqHeaders) {
+          xhr.setRequestHeader(header, reqHeaders[header]);
         }
-        return;
       }
-      let body = xhr.response;
-      if (!response.statusCode) {
-        response.statusCode = 400;
-        body = 'Access Declined';
+      if (options.timeout) {
+        xhr.timeout = options.timeout;
       }
-      emitter.emit('response', response);
-      output.write(body);
-      output.end();
-    }
+      xhr.send(reqBody);
+      return new Promise<void>((resolve, reject) => {
+        xhr.onload = () => resolve();
+        xhr.onerror = reject;
+        xhr.ontimeout = reject;
+        xhr.onabort = reject;
+      });
+    },
+    options.timeout,
+    () => xhr.abort(),
+  );
+  const headerNames = getResponseHeaderNames(xhr);
+  const headers = headerNames.reduce(
+    (headers, headerName) => ({
+      ...headers,
+      [headerName]: xhr.getResponseHeader(headerName) || '',
+    }),
+    {} as { [name: string]: string },
+  );
+  const response = {
+    statusCode: xhr.status,
+    headers: headers,
   };
+  if (followRedirect && isRedirect(response.statusCode)) {
+    try {
+      performRedirectRequest(
+        request,
+        response,
+        followRedirect,
+        counter,
+        (req) =>
+          startXmlHttpRequest(
+            req,
+            options,
+            undefined,
+            output,
+            emitter,
+            counter + 1,
+          ),
+      );
+    } catch (err) {
+      emitter.emit('error', err);
+    }
+    return;
+  }
+  let body = xhr.response;
+  if (!response.statusCode) {
+    response.statusCode = 400;
+    body = 'Access Declined';
+  }
+  emitter.emit('response', response);
+  output.write(body);
+  output.end();
 }
 
 /**

@@ -1,9 +1,11 @@
 import EventEmitter from 'events';
 import { Duplex, Readable, Writable } from 'stream';
 import fetch from 'node-fetch';
+import AbortController from 'abort-controller';
 import createHttpsProxyAgent from 'https-proxy-agent';
 import {
   createHttpRequestHandlerStreams,
+  executeWithTimeout,
   isRedirect,
   performRedirectRequest,
 } from './request-helper';
@@ -35,14 +37,21 @@ async function startFetchRequest(
   const { httpProxy, followRedirect } = options;
   const agent = httpProxy ? createHttpsProxyAgent(httpProxy) : undefined;
   const { url, body, ...rrequest } = request;
-  const res = await fetch(url, {
-    ...rrequest,
-    ...(input && /^(post|put|patch)$/i.test(request.method)
-      ? { body: input }
-      : {}),
-    redirect: 'manual',
-    agent,
-  });
+  const controller = new AbortController();
+  const res = await executeWithTimeout(
+    () =>
+      fetch(url, {
+        ...rrequest,
+        ...(input && /^(post|put|patch)$/i.test(request.method)
+          ? { body: input }
+          : {}),
+        redirect: 'manual',
+        signal: controller.signal,
+        agent,
+      }),
+    options.timeout,
+    () => controller.abort(),
+  );
   const headers: { [key: string]: any } = {};
   for (const headerName of res.headers.keys()) {
     headers[headerName.toLowerCase()] = res.headers.get(headerName);
