@@ -31,7 +31,8 @@
     "./core.js": "./browser/core.js",
     "./browser/registry": "./browser/browser/registry.js",
     "./browser/registry/index.js": "./browser/browser/registry.js",
-    "request": "./browser/browser/request.js"
+    "./browser/request": "./browser/browser/request.js",
+    "./browser/request.js": "./browser/browser/request.js"
   },
   "types": "./lib/index",
   "scripts": {
@@ -74,6 +75,7 @@
   "dependencies": {
     "@babel/runtime": "^7.12.5",
     "@babel/runtime-corejs3": "^7.12.5",
+    "abort-controller": "^3.0.0",
     "base64url": "^3.0.1",
     "commander": "^4.0.1",
     "core-js": "^3.6.4",
@@ -81,8 +83,10 @@
     "csv-stringify": "^5.3.4",
     "faye": "^1.2.4",
     "fs-extra": "^8.1.0",
+    "https-proxy-agent": "^5.0.0",
     "inquirer": "^7.0.0",
     "multistream": "^4.0.0",
+    "node-fetch": "^2.6.1",
     "open": "^7.0.0",
     "regenerator-runtime": "^0.13.3",
     "request": "^2.88.0",
@@ -103,6 +107,7 @@
     "@types/inquirer": "^6.5.0",
     "@types/jest": "^26.0.16",
     "@types/node": "^12.12.20",
+    "@types/node-fetch": "^2.5.7",
     "@types/puppeteer": "^5.4.0",
     "@types/request": "^2.48.3",
     "@types/through2": "^2.0.34",
