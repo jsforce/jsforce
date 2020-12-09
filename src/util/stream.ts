@@ -1,11 +1,29 @@
 import { Duplex, Readable, Writable } from 'stream';
 
-export async function readAll(r: Readable) {
-  const bufs: string[] = [];
+class MemoryWriteStream extends Writable {
+  _buf: Buffer;
+
+  constructor() {
+    super();
+    this._buf = Buffer.alloc(0);
+  }
+
+  _writev(data: Array<{ chunk: Buffer; encoding: any }>, callback: any) {
+    this._buf = Buffer.concat([this._buf, ...data.map(({ chunk }) => chunk)]);
+    callback();
+  }
+
+  toString() {
+    return this._buf.toString();
+  }
+}
+
+export async function readAll(rs: Readable) {
   return new Promise<string>((resolve, reject) => {
-    r.on('data', (data) => bufs.push(data));
-    r.on('end', () => resolve(bufs.join('')));
-    r.on('error', (err) => reject(err));
+    const ws = new MemoryWriteStream();
+    rs.on('error', reject)
+      .pipe(ws)
+      .on('finish', () => resolve(ws.toString()));
   });
 }
 
