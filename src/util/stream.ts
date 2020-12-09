@@ -23,7 +23,15 @@ class MemoryWriteStream extends Writable {
     this._buf = Buffer.alloc(0);
   }
 
-  _writev(data: Array<{ chunk: Buffer; encoding: any }>, callback: any) {
+  _write(chunk: Buffer, encoding: string, callback: Function) {
+    this._buf = Buffer.concat([this._buf, chunk]);
+    callback();
+  }
+
+  _writev(
+    data: Array<{ chunk: Buffer; encoding: string }>,
+    callback: Function,
+  ) {
     this._buf = Buffer.concat([this._buf, ...data.map(({ chunk }) => chunk)]);
     callback();
   }
