@@ -153,7 +153,7 @@ async function startXmlHttpRequest(
   const { method, url, headers: reqHeaders } = request;
   const { followRedirect } = options;
   const reqBody =
-    input && /^(post|put|patch)$/.test(method) ? await readAll(input) : null;
+    input && /^(post|put|patch)$/i.test(method) ? await readAll(input) : null;
   const xhr = new XMLHttpRequest();
   await executeWithTimeout(
     () => {
