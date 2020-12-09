@@ -168,6 +168,7 @@ async function startXmlHttpRequest(
       if (options.timeout) {
         xhr.timeout = options.timeout;
       }
+      xhr.responseType = 'arraybuffer';
       xhr.send(reqBody);
       return new Promise<void>((resolve, reject) => {
         xhr.onload = () => resolve();
@@ -213,10 +214,12 @@ async function startXmlHttpRequest(
     }
     return;
   }
-  let body = xhr.response;
+  let body: Buffer;
   if (!response.statusCode) {
     response.statusCode = 400;
-    body = 'Access Declined';
+    body = Buffer.from('Access Declined');
+  } else {
+    body = Buffer.from(xhr.response);
   }
   emitter.emit('response', response);
   output.write(body);
