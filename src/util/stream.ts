@@ -42,38 +42,46 @@ export async function readAll(rs: Readable) {
   });
 }
 
-function readStream(srcs: Readable, dsts: Readable, n: number) {
-  let chunk;
-  while (null !== (chunk = srcs.read(n))) {
-    const ret = dsts.push(chunk);
-    if (!ret) {
-      break;
+class DuplexifiedStream extends Duplex {
+  _writable: Writable;
+  _readable: Readable;
+
+  constructor(ws: Writable, rs: Readable) {
+    super();
+    this._writable = ws;
+    this._readable = rs;
+    ws.once('finish', () => {
+      this.end();
+    });
+    this.once('finish', () => {
+      ws.end();
+    });
+    rs.on('readable', () => {
+      this._readStream();
+    });
+    rs.once('end', () => {
+      this.push(null);
+    });
+    ws.on('error', (err) => this.emit('error', err));
+    rs.on('error', (err) => this.emit('error', err));
+  }
+
+  _write(chunk: any, encoding: any, callback: any) {
+    this._writable.write(chunk, encoding, callback);
+  }
+
+  _read(n: number) {
+    this._readStream(n);
+  }
+
+  _readStream(n?: number) {
+    let data;
+    while ((data = this._readable.read(n)) !== null) {
+      this.push(data);
     }
   }
 }
 
-function connectStream(srcs: Readable, dsts: Readable, n: number) {
-  srcs
-    .on('readable', () => readStream(srcs, dsts, n))
-    .on('end', () => dsts.push(null));
-}
-
-export function concatStreamsAsDuplex(ins: Writable, outs: Readable): Duplex {
-  let outsConnected = false;
-  return new Duplex({
-    write(chunk, encoding, callback) {
-      return ins.write(chunk, encoding, callback);
-    },
-    final(callback) {
-      return ins.end(callback);
-    },
-    read(n) {
-      if (!outsConnected) {
-        outsConnected = true;
-        connectStream(outs, this, n);
-        return;
-      }
-      readStream(outs, this, n);
-    },
-  });
+export function concatStreamsAsDuplex(ws: Writable, rs: Readable): Duplex {
+  return new DuplexifiedStream(ws, rs);
 }
