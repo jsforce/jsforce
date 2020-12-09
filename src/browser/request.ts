@@ -133,7 +133,9 @@ async function startFetchRequest(
  *
  */
 function getResponseHeaderNames(xhr: XMLHttpRequest) {
-  const headerLines = (xhr.getAllResponseHeaders() || '').split(/[\r\n]+/);
+  const headerLines = (xhr.getAllResponseHeaders() || '')
+    .split(/[\r\n]+/)
+    .filter((l) => l.trim() !== '');
   return headerLines.map((headerLine) =>
     headerLine.split(/\s*:/)[0].toLowerCase(),
   );
