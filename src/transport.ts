@@ -4,7 +4,7 @@
 import { Duplex } from 'stream';
 import request, { setDefaults } from './request';
 import { HttpRequest, HttpRequestOptions, HttpResponse } from './types';
-import { StreamPromise, StreamPromiseBuilder } from './util/promise';
+import { StreamPromise } from './util/promise';
 import jsonp from './browser/jsonp';
 import canvas from './browser/canvas';
 
@@ -45,19 +45,16 @@ export default class Transport {
     req: HttpRequest,
     options: HttpRequestOptions = {},
   ): StreamPromise<HttpResponse> {
-    const streamBuilder: StreamPromiseBuilder<HttpResponse> = async (
-      setStream,
-    ) => {
+    return StreamPromise.create(() => {
       const createStream = this.getRequestStreamCreator();
       const stream = createStream(req, options);
-      setStream(stream);
-      return new Promise<HttpResponse>((resolve, reject) => {
+      const promise = new Promise<HttpResponse>((resolve, reject) => {
         stream
           .on('complete', (res: HttpResponse) => resolve(res))
           .on('error', reject);
       });
-    };
-    return StreamPromise.create(streamBuilder);
+      return { stream, promise };
+    });
   }
 
   /**
