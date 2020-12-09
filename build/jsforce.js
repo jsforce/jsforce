@@ -4516,18 +4516,10 @@ var events  = require('events'),
 var defaults = {
   loginUrl: "https://login.salesforce.com",
   instanceUrl: "",
-  version: "42.0"
+  version: "42.0",
+  max_dml_count : 200,
+  max_batch_request: 25
 };
-
-/*
- * Constant of maximum records num in DML operation (update/delete)
- */
-var MAX_DML_COUNT = 200;
-
-/*
- * Constant of maximum number of requests that can be batched
- */
-var MAX_BATCH_REQUESTS = 25;
 
 /**
  * Connection class to keep the API session information and manage requests
@@ -4549,6 +4541,7 @@ var MAX_BATCH_REQUESTS = 25;
  * @param {String} [options.proxyUrl] - Cross-domain proxy server URL, used in browser client, non Visualforce app.
  * @param {String} [options.httpProxy] - URL of HTTP proxy server, used in server client.
  * @param {Object} [options.callOptions] - Call options used in each SOAP/REST API request. See manual.
+ * @param {Number} [options.max_dml_count] - Constant of maximum records num in DML operation (update/delete)
  */
 var Connection = module.exports = function(options) {
   options = options || {};
@@ -4573,6 +4566,8 @@ var Connection = module.exports = function(options) {
   this.loginUrl = options.loginUrl || oauth2.loginUrl || defaults.loginUrl;
   this.version = options.version || defaults.version;
   this.maxRequest = options.maxRequest || this.maxRequest || 10;
+  this.max_dml_count = options.max_dml_count || defaults.max_dml_count;
+  this.max_batch_request = options.max_batch_request || defaults.max_batch_request;
 
   /** @private */
   if (options.proxyUrl) {
@@ -4671,8 +4666,8 @@ var Connection = module.exports = function(options) {
     key: function(options) {
       var types = options.types;
       var autofetch = options.autofetch || false;
-      var typesToFetch = types.length > MAX_BATCH_REQUESTS 
-        ? (autofetch ? types : types.slice(0, MAX_BATCH_REQUESTS))
+      var typesToFetch = types.length > this.max_batch_request 
+        ? (autofetch ? types : types.slice(0, this.max_batch_request))
         : types;
       var keys = [];
       typesToFetch.forEach(function (type) { keys.push('describe.' + type); });
@@ -5301,10 +5296,10 @@ Connection.prototype._createMany = function(type, records, options) {
   if (records.length === 0) {
     return Promise.resolve([]);
   }
-  if (records.length > MAX_DML_COUNT && options.allowRecursive) {
+  if (records.length > this.max_dml_count && options.allowRecursive) {
     var self = this;
-    return self._createMany(type, records.slice(0, MAX_DML_COUNT), options).then(function(rets1) {
-      return self._createMany(type, records.slice(MAX_DML_COUNT), options).then(function(rets2) {
+    return self._createMany(type, records.slice(0, this.max_dml_count), options).then(function(rets1) {
+      return self._createMany(type, records.slice(this.max_dml_count), options).then(function(rets2) {
         return rets1.concat(rets2);
       });
     });
@@ -5420,10 +5415,10 @@ Connection.prototype._updateMany = function(type, records, options) {
   if (records.length === 0) {
     return Promise.resolve([]);
   }
-  if (records.length > MAX_DML_COUNT && options.allowRecursive) {
+  if (records.length > this.max_dml_count && options.allowRecursive) {
     var self = this;
-    return self._updateMany(type, records.slice(0, MAX_DML_COUNT), options).then(function(rets1) {
-      return self._updateMany(type, records.slice(MAX_DML_COUNT), options).then(function(rets2) {
+    return self._updateMany(type, records.slice(0, this.max_dml_count), options).then(function(rets1) {
+      return self._updateMany(type, records.slice(this.max_dml_count), options).then(function(rets2) {
         return rets1.concat(rets2);
       });
     });
@@ -5617,10 +5612,10 @@ Connection.prototype._destroyMany = function(type, ids, options) {
   if (ids.length === 0) {
     return Promise.resolve([]);
   }
-  if (ids.length > MAX_DML_COUNT && options.allowRecursive) {
+  if (ids.length > this.max_dml_count && options.allowRecursive) {
     var self = this;
-    return self._destroyMany(type, ids.slice(0, MAX_DML_COUNT), options).then(function(rets1) {
-      return self._destroyMany(type, ids.slice(MAX_DML_COUNT), options).then(function(rets2) {
+    return self._destroyMany(type, ids.slice(0, this.max_dml_count), options).then(function(rets1) {
+      return self._destroyMany(type, ids.slice(this.max_dml_count), options).then(function(rets2) {
         return rets1.concat(rets2);
       });
     });
