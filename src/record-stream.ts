@@ -201,7 +201,7 @@ export class Serializable<R extends Record = Record> extends RecordStream<R> {
   /**
    * Create readable data stream which emits serialized record data
    */
-  stream(type: string = 'csv', options: Object = {}): Readable {
+  stream(type: string = 'csv', options: Object = {}): Duplex {
     const converter: Optional<StreamConverter> = DataStreamConverters[type];
     if (!converter) {
       throw new Error(`Converting [${type}] data stream is not supported.`);
@@ -221,7 +221,7 @@ export class Parsable<R extends Record = Record> extends RecordStream<R> {
   /**
    * Create writable data stream which accepts serialized record data
    */
-  stream(type: string = 'csv', options: Object = {}): Writable {
+  stream(type: string = 'csv', options: Object = {}): Duplex {
     const converter: Optional<StreamConverter> = DataStreamConverters[type];
     if (!converter) {
       throw new Error(`Converting [${type}] data stream is not supported.`);
