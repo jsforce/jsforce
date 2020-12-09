@@ -8,6 +8,7 @@ import { StreamPromise } from './util/promise';
 import Connection from './connection';
 import Transport from './transport';
 import { HttpRequest, HttpResponse, Optional, Schema } from './types';
+import { createLazyStream } from './util/stream';
 
 /** @private */
 function parseJSON(str: string) {
@@ -58,70 +59,78 @@ export default class HttpApi<S extends Schema> extends EventEmitter {
    * Callout to API endpoint using http
    */
   request(request: HttpRequest): StreamPromise<any> {
-    return StreamPromise.create(async (setStream) => {
-      const refreshDelegate = this.getRefreshDelegate();
-      /* TODO decide remove or not this section */
-      /*
-      // remember previous instance url in case it changes after a refresh
-      const lastInstanceUrl = conn.instanceUrl;
+    return StreamPromise.create(() => {
+      const { stream, setStream } = createLazyStream();
+      const promise = (async () => {
+        const refreshDelegate = this.getRefreshDelegate();
+        /* TODO decide remove or not this section */
+        /*
+        // remember previous instance url in case it changes after a refresh
+        const lastInstanceUrl = conn.instanceUrl;
 
-      // check to see if the token refresh has changed the instance url
-      if(lastInstanceUrl !== conn.instanceUrl){
-        // if the instance url has changed
-        // then replace the current request urls instance url fragment
-        // with the updated instance url
-        request.url = request.url.replace(lastInstanceUrl,conn.instanceUrl);
-      }
-      */
-      if (refreshDelegate && refreshDelegate.isRefreshing()) {
-        await refreshDelegate.waitRefresh();
-        const bodyPromise = this.request(request);
-        setStream(bodyPromise.stream());
-        const body = await bodyPromise;
+        // check to see if the token refresh has changed the instance url
+        if(lastInstanceUrl !== conn.instanceUrl){
+          // if the instance url has changed
+          // then replace the current request urls instance url fragment
+          // with the updated instance url
+          request.url = request.url.replace(lastInstanceUrl,conn.instanceUrl);
+        }
+        */
+        if (refreshDelegate && refreshDelegate.isRefreshing()) {
+          await refreshDelegate.waitRefresh();
+          const bodyPromise = this.request(request);
+          setStream(bodyPromise.stream());
+          const body = await bodyPromise;
+          return body;
+        }
+
+        // hook before sending
+        this.beforeSend(request);
+
+        this.emit('request', request);
+        this._logger.debug(
+          `<request> method=${request.method}, url=${request.url}`,
+        );
+        const requestTime = Date.now();
+        const requestPromise = this._transport.httpRequest(request);
+
+        setStream(requestPromise.stream());
+
+        let response: HttpResponse | void;
+        try {
+          response = await requestPromise;
+        } catch (err) {
+          this._logger.error(err);
+          throw err;
+        } finally {
+          const responseTime = Date.now();
+          this._logger.debug(
+            `elappsed time: ${responseTime - requestTime} msec`,
+          );
+        }
+        if (!response) {
+          return;
+        }
+        this._logger.debug(
+          `<response> status=${String(response.statusCode)}, url=${
+            request.url
+          }`,
+        );
+        this.emit('response', response);
+        // Refresh token if session has been expired and requires authentication
+        // when session refresh delegate is available
+        if (this.isSessionExpired(response) && refreshDelegate) {
+          await refreshDelegate.refresh(requestTime);
+          return this.request(request);
+        }
+        if (this.isErrorResponse(response)) {
+          const err = await this.getError(response);
+          throw err;
+        }
+        const body = await this.getResponseBody(response);
         return body;
-      }
-
-      // hook before sending
-      this.beforeSend(request);
-
-      this.emit('request', request);
-      this._logger.debug(
-        `<request> method=${request.method}, url=${request.url}`,
-      );
-      const requestTime = Date.now();
-      const requestPromise = this._transport.httpRequest(request);
-
-      setStream(requestPromise.stream());
-
-      let response: HttpResponse | void;
-      try {
-        response = await requestPromise;
-      } catch (err) {
-        this._logger.error(err);
-        throw err;
-      } finally {
-        const responseTime = Date.now();
-        this._logger.debug(`elappsed time: ${responseTime - requestTime} msec`);
-      }
-      if (!response) {
-        return;
-      }
-      this._logger.debug(
-        `<response> status=${String(response.statusCode)}, url=${request.url}`,
-      );
-      this.emit('response', response);
-      // Refresh token if session has been expired and requires authentication
-      // when session refresh delegate is available
-      if (this.isSessionExpired(response) && refreshDelegate) {
-        await refreshDelegate.refresh(requestTime);
-        return this.request(request);
-      }
-      if (this.isErrorResponse(response)) {
-        const err = await this.getError(response);
-        throw err;
-      }
-      const body = await this.getResponseBody(response);
-      return body;
+      })();
+      return { stream, promise };
     });
   }
 
