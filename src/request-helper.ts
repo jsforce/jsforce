@@ -72,3 +72,33 @@ export function performRedirectRequest(
   }
   redirectCallback(nextReqParams);
 }
+
+/**
+ *
+ */
+export async function executeWithTimeout<T>(
+  execFn: () => Promise<T>,
+  msec: number | undefined,
+  cancelCallback?: () => void,
+): Promise<T> {
+  let timeout = false;
+  let pid =
+    msec != null
+      ? setTimeout(() => {
+          timeout = true;
+          cancelCallback?.();
+        }, msec)
+      : undefined;
+  let res;
+  try {
+    res = await execFn();
+  } finally {
+    if (pid) {
+      clearTimeout(pid);
+    }
+  }
+  if (timeout) {
+    throw new Error('Request Timeout');
+  }
+  return res;
+}
