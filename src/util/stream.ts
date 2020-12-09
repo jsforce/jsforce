@@ -1,4 +1,19 @@
-import { Duplex, Readable, Writable } from 'stream';
+import { Duplex, PassThrough, Readable, Writable } from 'stream';
+
+export function createLazyStream() {
+  const ins = new PassThrough();
+  const outs = new PassThrough();
+  const stream = concatStreamsAsDuplex(ins, outs);
+  let piped = false;
+  const setStream = (str: Duplex) => {
+    if (piped) {
+      throw new Error('stream is already piped to actual stream');
+    }
+    piped = true;
+    ins.pipe(str).pipe(outs);
+  };
+  return { stream, setStream };
+}
 
 class MemoryWriteStream extends Writable {
   _buf: Buffer;
