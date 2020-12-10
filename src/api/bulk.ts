@@ -393,9 +393,7 @@ class Batch<S extends Schema, Opr extends BulkOperation> extends Writable {
   id: string | undefined;
   _bulk: Bulk<S>;
   _uploadStream: Serializable;
-  _uploadDataStream: Readable;
   _downloadStream: Parsable;
-  _downloadDataStream: Writable;
   _dataStream: Duplex;
   _result: Promise<BatchResult<Opr>> | undefined;
 
@@ -413,15 +411,9 @@ class Batch<S extends Schema, Opr extends BulkOperation> extends Writable {
     //
     const converterOptions = { nullValue: '#N/A' };
     const uploadStream = (this._uploadStream = new Serializable());
-    const uploadDataStream = (this._uploadDataStream = uploadStream.stream(
-      'csv',
-      converterOptions,
-    ));
+    const uploadDataStream = uploadStream.stream('csv', converterOptions);
     const downloadStream = (this._downloadStream = new Parsable());
-    const downloadDataStream = (this._downloadDataStream = downloadStream.stream(
-      'csv',
-      converterOptions,
-    ));
+    const downloadDataStream = downloadStream.stream('csv', converterOptions);
 
     this.on('finish', () => uploadStream.end());
     uploadDataStream.once('readable', async () => {
