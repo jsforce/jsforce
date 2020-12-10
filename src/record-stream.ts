@@ -202,7 +202,9 @@ export class Serializable<R extends Record = Record> extends RecordStream<R> {
     if (!converter) {
       throw new Error(`Converting [${type}] data stream is not supported.`);
     }
-    return this.pipe(converter.serialize(options));
+    const dataStream = new PassThrough();
+    this.pipe(converter.serialize(options)).pipe(dataStream);
+    return dataStream;
   }
 }
 
