@@ -85,7 +85,7 @@
     "fs-extra": "^8.1.0",
     "https-proxy-agent": "^5.0.0",
     "inquirer": "^7.0.0",
-    "multistream": "^4.0.0",
+    "multistream": "^3.1.0",
     "node-fetch": "^2.6.1",
     "open": "^7.0.0",
     "regenerator-runtime": "^0.13.3",
