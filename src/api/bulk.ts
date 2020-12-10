@@ -769,9 +769,33 @@ export default class Bulk<S extends Schema> {
   load<Opr extends BulkOperation>(
     type: string,
     operation: Opr,
-    options: BulkOptions = {},
+    input?: Record[] | Readable | string,
+  ): Batch<S, Opr>;
+  load<Opr extends BulkOperation>(
+    type: string,
+    operation: Opr,
+    optionsOrInput?: BulkOptions | Record[] | Readable | string,
+    input?: Record[] | Readable | string,
+  ): Batch<S, Opr>;
+  load<Opr extends BulkOperation>(
+    type: string,
+    operation: Opr,
+    optionsOrInput?: BulkOptions | Record[] | Readable | string,
     input?: Record[] | Readable | string,
   ) {
+    let options: BulkOptions = {};
+    if (
+      typeof optionsOrInput === 'string' ||
+      Array.isArray(optionsOrInput) ||
+      (isObject(optionsOrInput) &&
+        'pipe' in optionsOrInput &&
+        typeof optionsOrInput.pipe === 'function')
+    ) {
+      // when options is not plain hash object, it is omitted
+      input = optionsOrInput;
+    } else {
+      options = optionsOrInput as BulkOptions;
+    }
     const job = this.createJob(type, operation, options);
     job.once('error', (error: Error) => {
       if (batch) {
@@ -811,7 +835,7 @@ export default class Bulk<S extends Schema> {
     const dataStream = recordStream.stream('csv');
     (async () => {
       try {
-        const results = await this.load(type, 'query', undefined, soql);
+        const results = await this.load(type, 'query', soql);
         const streams = results.map((result) =>
           this.job(result.jobId)
             .batch(result.batchId)
