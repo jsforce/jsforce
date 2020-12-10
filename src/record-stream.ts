@@ -5,6 +5,7 @@
 import { Readable, Writable, Duplex, Transform, PassThrough } from 'stream';
 import { Record, Optional } from './types';
 import { serializeCSVStream, parseCSVStream } from './csv';
+import { concatStreamsAsDuplex } from './util/stream';
 
 /**
  * type defs
@@ -66,19 +67,14 @@ function convertRecordForSerialization(
 /**
  * @private
  */
-function createPipelineStream(s1: Writable, s2: Writable) {
-  const pipeline: any = new PassThrough();
-  pipeline.on('pipe', (source: Readable) => {
-    source.unpipe(pipeline);
-    source.pipe(s1).pipe(s2);
-  });
-  pipeline.pipe = (dest: Writable, options?: any) => s2.pipe(dest, options);
-  return pipeline as Transform;
+function createPipelineStream(s1: Duplex, s2: Duplex) {
+  s1.pipe(s2);
+  return concatStreamsAsDuplex(s1, s2, { writableObjectMode: true });
 }
 
 type StreamConverter = {
-  serialize: (options?: RecordStreamSerializeOption) => Transform;
-  parse: (options?: RecordStreamParseOption) => Transform;
+  serialize: (options?: RecordStreamSerializeOption) => Duplex;
+  parse: (options?: RecordStreamParseOption) => Duplex;
 };
 
 /**
