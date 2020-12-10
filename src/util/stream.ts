@@ -54,8 +54,15 @@ class DuplexifiedStream extends Duplex {
   _writable: Writable;
   _readable: Readable;
 
-  constructor(ws: Writable, rs: Readable) {
-    super();
+  constructor(
+    ws: Writable,
+    rs: Readable,
+    opts: { writableObjectMode?: boolean; readableObjectMode?: boolean } = {},
+  ) {
+    super({
+      writableObjectMode: opts.writableObjectMode ?? ws.writableObjectMode,
+      readableObjectMode: opts.readableObjectMode ?? rs.readableObjectMode,
+    });
     this._writable = ws;
     this._readable = rs;
     ws.once('finish', () => {
@@ -90,6 +97,10 @@ class DuplexifiedStream extends Duplex {
   }
 }
 
-export function concatStreamsAsDuplex(ws: Writable, rs: Readable): Duplex {
-  return new DuplexifiedStream(ws, rs);
+export function concatStreamsAsDuplex(
+  ws: Writable,
+  rs: Readable,
+  opts?: { writableObjectMode?: boolean; readableObjectMode?: boolean },
+): Duplex {
+  return new DuplexifiedStream(ws, rs, opts);
 }
