@@ -7,6 +7,7 @@ import { Logger, getLogger } from './util/logger';
 import { StreamPromise } from './util/promise';
 import Connection from './connection';
 import Transport from './transport';
+import { parseCSV } from './csv';
 import { HttpRequest, HttpResponse, Optional, Schema } from './types';
 import { createLazyStream } from './util/stream';
 
@@ -18,13 +19,6 @@ function parseJSON(str: string) {
 /** @private */
 async function parseXML(str: string) {
   return xml2js.parseStringPromise(str, { explicitArray: false });
-}
-
-/** @private */
-function parseCSV(str: string) {
-  // TODO csv impl
-  // return require('./csv').parseCSV(str);
-  return str;
 }
 
 /** @private */
