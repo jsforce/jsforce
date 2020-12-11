@@ -22,7 +22,7 @@ import { isFunction, isObject } from '../util/function';
 
 /*--------------------------------------------*/
 
-type BulkOperation =
+export type BulkOperation =
   | 'insert'
   | 'update'
   | 'upsert'
@@ -31,15 +31,15 @@ type BulkOperation =
   | 'query'
   | 'queryAll';
 
-type BulkOptions = {
+export type BulkOptions = {
   extIdField?: string;
   concurrencyMode?: 'Serial' | 'Parallel';
   assignmentRuleId?: string;
 };
 
-type JobState = 'Open' | 'Closed' | 'Aborted' | 'Failed' | 'Unknown';
+export type JobState = 'Open' | 'Closed' | 'Aborted' | 'Failed' | 'Unknown';
 
-type JobInfo = {
+export type JobInfo = {
   id: string;
   object: string;
   operation: BulkOperation;
@@ -50,14 +50,14 @@ type JobInfoResponse = {
   jobInfo: JobInfo;
 };
 
-type BatchState =
+export type BatchState =
   | 'Queued'
   | 'InProgress'
   | 'Completed'
   | 'Failed'
   | 'NotProcessed';
 
-type BatchInfo = {
+export type BatchInfo = {
   id: string;
   jobId: string;
   state: BatchState;
@@ -77,23 +77,25 @@ type BatchInfoListResponse = {
   };
 };
 
-type BulkQueryBatchResult = Array<{
+export type BulkQueryBatchResult = Array<{
   id: string;
   batchId: string;
   jobId: string;
 }>;
 
-type BulkLoadBatchResult = Array<{
+export type BulkIngestBatchResult = Array<{
   id: string | null;
   success: boolean;
   errors: string[];
 }>;
 
-type BatchResult<Opr extends BulkOperation> = Opr extends 'query' | 'queryAll'
+export type BatchResult<Opr extends BulkOperation> = Opr extends
+  | 'query'
+  | 'queryAll'
   ? BulkQueryBatchResult
-  : BulkLoadBatchResult;
+  : BulkIngestBatchResult;
 
-type BulkLoadResultResponse = Array<{
+type BulkIngestResultResponse = Array<{
   Id: string;
   Success: string;
   Error: string;
@@ -116,7 +118,10 @@ type BulkRequest = {
 /**
  * Class for Bulk API Job
  */
-class Job<S extends Schema, Opr extends BulkOperation> extends EventEmitter {
+export class Job<
+  S extends Schema,
+  Opr extends BulkOperation
+> extends EventEmitter {
   type: string | null;
   operation: Opr | null;
   options: BulkOptions;
@@ -386,9 +391,12 @@ class PollingTimeoutError extends Error {
 
 /*--------------------------------------------*/
 /**
- * Batch (extends RecordStream)
+ * Batch (extends Writable)
  */
-class Batch<S extends Schema, Opr extends BulkOperation> extends Writable {
+export class Batch<
+  S extends Schema,
+  Opr extends BulkOperation
+> extends Writable {
   job: Job<S, Opr>;
   id: string | undefined;
   _bulk: Bulk<S>;
@@ -622,12 +630,12 @@ class Batch<S extends Schema, Opr extends BulkOperation> extends Writable {
 
     try {
       const resp = await bulk._request<
-        BulkLoadResultResponse | BulkQueryResultResponse
+        BulkIngestResultResponse | BulkQueryResultResponse
       >({
         method: 'GET',
         path: '/job/' + jobId + '/batch/' + batchId + '/result',
       });
-      let results: BulkLoadBatchResult | BulkQueryBatchResult;
+      let results: BulkIngestBatchResult | BulkQueryBatchResult;
       if (job.operation === 'query' || job.operation === 'queryAll') {
         const res = resp as BulkQueryResultResponse;
         let resultId = res['result-list'].result;
@@ -636,7 +644,7 @@ class Batch<S extends Schema, Opr extends BulkOperation> extends Writable {
           : [resultId]
         ).map((id) => ({ id, batchId, jobId }));
       } else {
-        const res = resp as BulkLoadResultResponse;
+        const res = resp as BulkIngestResultResponse;
         results = res.map((ret) => ({
           id: ret.Id || null,
           success: ret.Success === 'true',
