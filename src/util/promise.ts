@@ -1,56 +1,31 @@
 /**
  *
  */
-import { Duplex, Transform } from 'stream';
-
-type SetStreamFunc = (stream: Duplex) => void;
+import { Duplex } from 'stream';
 
 /**
  *
  */
-export type StreamPromiseBuilder<T> = (callback: SetStreamFunc) => Promise<T>;
+export type StreamPromiseBuilder<T> = () => {
+  stream: Duplex;
+  promise: Promise<T>;
+};
 
 /**
  *
  */
 export class StreamPromise<T> extends Promise<T> {
   stream() {
+    // dummy
     return new Duplex();
-  } // dummy
+  }
 
-  static create<T>(asyncFn: StreamPromiseBuilder<T>) {
-    let streamCallback = (_s: any) => {};
-    const streamReady = new Promise<Duplex>((resolve) => {
-      streamCallback = resolve;
-    });
-    const promise = asyncFn(streamCallback);
+  static create<T>(builder: StreamPromiseBuilder<T>) {
+    const { stream, promise } = builder();
     const streamPromise = new StreamPromise<T>((resolve, reject) => {
       promise.then(resolve, reject);
     });
-    streamPromise.stream = () =>
-      new Transform({
-        transform(data, encoding, cb) {
-          (async () => {
-            const stream = await streamReady;
-            stream.write(data, encoding);
-            cb();
-          })();
-        },
-        flush(cb) {
-          (async () => {
-            const stream = await streamReady;
-            stream.end();
-            stream
-              .on('data', (data) => {
-                this.push(data);
-              })
-              .on('end', () => {
-                this.push(null);
-                cb();
-              });
-          })();
-        },
-      });
+    streamPromise.stream = () => stream;
     return streamPromise;
   }
 }

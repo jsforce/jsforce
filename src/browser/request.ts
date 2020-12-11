@@ -1,85 +1,251 @@
-import { Duplex } from 'stream';
-import { HttpRequest, HttpResponse } from '../types';
+import { EventEmitter } from 'events';
+import { Readable, Writable } from 'stream';
+import {
+  createHttpRequestHandlerStreams,
+  executeWithTimeout,
+  isRedirect,
+  performRedirectRequest,
+} from '../request-helper';
+import { readAll } from '../util/stream';
+import { HttpRequest, HttpRequestOptions } from '../types';
 
 /**
  *
  */
-export default function request(
-  params: HttpRequest,
-  callback: (
-    err: Error | null | undefined,
-    response: HttpResponse,
-    body: string,
-  ) => any,
-) {
-  const xhr = new XMLHttpRequest();
-  xhr.open(params.method, params.url);
-  if (params.headers) {
-    for (const header in params.headers) {
-      xhr.setRequestHeader(header, params.headers[header]);
+const supportsReadableStream = (() => {
+  try {
+    if (
+      typeof Request !== 'undefined' &&
+      typeof ReadableStream !== 'undefined'
+    ) {
+      return !new Request('', {
+        body: new ReadableStream(),
+        method: 'POST',
+      }).headers.has('Content-Type');
     }
+  } catch (e) {
+    return false;
   }
-  xhr.setRequestHeader('Accept', '*/*');
-  let response: HttpResponse;
-  const str = new Duplex();
-  str._read = (_size) => {
-    if (response) {
-      str.push(response.body);
-    }
-  };
-  const bufs: any[] = [];
-  var sent = false;
-  str._write = (chunk, encoding, callback) => {
-    bufs.push(chunk.toString(encoding === 'buffer' ? 'binary' : encoding));
-    callback();
-  };
-  str.on('finish', () => {
-    if (!sent) {
-      xhr.send(bufs.join(''));
-      sent = true;
-    }
+  return false;
+})();
+
+/**
+ *
+ */
+function toWhatwgReadableStream(ins: Readable): ReadableStream {
+  return new ReadableStream({
+    start(controller) {
+      ins.on('data', (chunk) => controller.enqueue(chunk));
+      ins.on('end', () => controller.close());
+    },
   });
-  if (
-    params.body ||
-    params.body === '' ||
-    !/^(put|post|patch)$/i.test(params.method)
-  ) {
-    xhr.send(params.body);
-    sent = true;
-  }
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4) {
-      const headerNames = getResponseHeaderNames(xhr);
-      const headers = headerNames.reduce(
-        (headers, headerName) => ({
-          ...headers,
-          [headerName]: xhr.getResponseHeader(headerName) || '',
-        }),
-        {} as { [name: string]: string },
-      );
-      response = {
-        statusCode: xhr.status,
-        headers: headers,
-        body: xhr.response,
-      };
-      if (!response.statusCode) {
-        response.statusCode = 400;
-        response.body = 'Access Declined';
-      }
-      if (callback) {
-        callback(null, response, response.body);
-      }
-      str.emit('response', response);
-      str.emit('complete', response);
-      str.end();
-    }
-  };
-  return str;
 }
 
+/**
+ *
+ */
+async function readWhatwgReadableStream(rs: ReadableStream, outs: Writable) {
+  const reader = rs.getReader();
+  async function readAndWrite() {
+    const { done, value } = await reader.read();
+    if (done) {
+      outs.end();
+      return false;
+    }
+    outs.write(value);
+    return true;
+  }
+  while (await readAndWrite());
+}
+
+/**
+ *
+ */
+async function startFetchRequest(
+  request: HttpRequest,
+  options: HttpRequestOptions,
+  input: Readable | undefined,
+  output: Writable,
+  emitter: EventEmitter,
+  counter: number = 0,
+) {
+  const { followRedirect } = options;
+  const { url, body: reqBody, ...rreq } = request;
+  const body =
+    input && /^(post|put|patch)$/i.test(request.method)
+      ? supportsReadableStream
+        ? toWhatwgReadableStream(input)
+        : await readAll(input)
+      : undefined;
+  const controller =
+    typeof AbortController !== 'undefined' ? new AbortController() : undefined;
+  const res = await executeWithTimeout(
+    () =>
+      fetch(url, {
+        ...rreq,
+        ...(body ? { body } : {}),
+        redirect: 'manual',
+        ...(controller ? { signal: controller.signal } : {}),
+        ...({ allowHTTP1ForStreamingUpload: true } as any), // Chrome allows request stream only in HTTP2/QUIC unless this opt-in flag
+      }),
+    options.timeout,
+    () => controller?.abort(),
+  );
+  const headers: { [key: string]: any } = {};
+  for (const headerName of res.headers.keys()) {
+    headers[headerName.toLowerCase()] = res.headers.get(headerName);
+  }
+  const response = {
+    statusCode: res.status,
+    headers,
+  };
+  if (followRedirect && isRedirect(response.statusCode)) {
+    try {
+      performRedirectRequest(
+        request,
+        response,
+        followRedirect,
+        counter,
+        (req) =>
+          startFetchRequest(
+            req,
+            options,
+            undefined,
+            output,
+            emitter,
+            counter + 1,
+          ),
+      );
+    } catch (err) {
+      emitter.emit('error', err);
+    }
+    return;
+  }
+  emitter.emit('response', response);
+  if (res.body) {
+    readWhatwgReadableStream(res.body, output);
+  } else {
+    output.end();
+  }
+}
+
+/**
+ *
+ */
 function getResponseHeaderNames(xhr: XMLHttpRequest) {
   const headerLines = (xhr.getAllResponseHeaders() || '').split(/[\r\n]+/);
   return headerLines.map((headerLine) =>
     headerLine.split(/\s*:/)[0].toLowerCase(),
   );
+}
+
+/**
+ *
+ */
+async function startXmlHttpRequest(
+  request: HttpRequest,
+  options: HttpRequestOptions,
+  input: Readable | undefined,
+  output: Writable,
+  emitter: EventEmitter,
+  counter: number = 0,
+) {
+  const { method, url, headers: reqHeaders } = request;
+  const { followRedirect } = options;
+  const reqBody =
+    input && /^(post|put|patch)$/.test(method) ? await readAll(input) : null;
+  const xhr = new XMLHttpRequest();
+  await executeWithTimeout(
+    () => {
+      xhr.open(method, url);
+      if (reqHeaders) {
+        for (const header in reqHeaders) {
+          xhr.setRequestHeader(header, reqHeaders[header]);
+        }
+      }
+      if (options.timeout) {
+        xhr.timeout = options.timeout;
+      }
+      xhr.send(reqBody);
+      return new Promise<void>((resolve, reject) => {
+        xhr.onload = () => resolve();
+        xhr.onerror = reject;
+        xhr.ontimeout = reject;
+        xhr.onabort = reject;
+      });
+    },
+    options.timeout,
+    () => xhr.abort(),
+  );
+  const headerNames = getResponseHeaderNames(xhr);
+  const headers = headerNames.reduce(
+    (headers, headerName) => ({
+      ...headers,
+      [headerName]: xhr.getResponseHeader(headerName) || '',
+    }),
+    {} as { [name: string]: string },
+  );
+  const response = {
+    statusCode: xhr.status,
+    headers: headers,
+  };
+  if (followRedirect && isRedirect(response.statusCode)) {
+    try {
+      performRedirectRequest(
+        request,
+        response,
+        followRedirect,
+        counter,
+        (req) =>
+          startXmlHttpRequest(
+            req,
+            options,
+            undefined,
+            output,
+            emitter,
+            counter + 1,
+          ),
+      );
+    } catch (err) {
+      emitter.emit('error', err);
+    }
+    return;
+  }
+  let body = xhr.response;
+  if (!response.statusCode) {
+    response.statusCode = 400;
+    body = 'Access Declined';
+  }
+  emitter.emit('response', response);
+  output.write(body);
+  output.end();
+}
+
+/**
+ *
+ */
+let defaults: HttpRequestOptions = {};
+
+/**
+ *
+ */
+export function setDefaults(defaults_: HttpRequestOptions) {
+  defaults = defaults_;
+}
+
+/**
+ *
+ */
+export default function request(
+  req: HttpRequest,
+  options_: HttpRequestOptions = {},
+) {
+  const options = { ...defaults, ...options_ };
+  const { input, output, stream } = createHttpRequestHandlerStreams(req);
+  if (typeof window !== 'undefined' && typeof window.fetch === 'function') {
+    startFetchRequest(req, options, input, output, stream);
+  } else {
+    startXmlHttpRequest(req, options, input, output, stream);
+  }
+  return stream;
 }

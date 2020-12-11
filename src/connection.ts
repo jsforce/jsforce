@@ -31,7 +31,7 @@ import {
 import { StreamPromise } from './util/promise';
 import Transport, {
   CanvasTransport,
-  ProxyTransport,
+  XdProxyTransport,
   HttpProxyTransport,
 } from './transport';
 import { Logger, getLogger } from './util/logger';
@@ -310,7 +310,7 @@ export default class Connection<
       : Connection._logger;
     this._logLevel = logLevel;
     this._transport = proxyUrl
-      ? new ProxyTransport(proxyUrl)
+      ? new XdProxyTransport(proxyUrl)
       : httpProxy
       ? new HttpProxyTransport(httpProxy)
       : new Transport();
