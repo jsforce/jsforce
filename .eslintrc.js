@@ -1,11 +1,6 @@
 module.exports = {
-  extends: [
-    'eslint:recommended',
-    'plugin:prettier/recommended',
-  ],
-  plugins: [
-    '@typescript-eslint',
-  ],
+  extends: ['eslint:recommended', 'plugin:prettier/recommended'],
+  plugins: ['@typescript-eslint'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     sourceType: 'module',
@@ -16,16 +11,23 @@ module.exports = {
     es6: true,
   },
   rules: {
+    'no-undef': 0,
     'no-unused-vars': 0,
     'no-dupe-class-members': 0,
-    '@typescript-eslint/no-unused-vars': [2, {
-      argsIgnorePattern: '^_',
-      ignoreRestSiblings: true,
-    }],
-    'prettier/prettier': [2, {
-      arrowParens: 'always',
-      singleQuote: true,
-      trailingComma: 'all',
-    }],
+    '@typescript-eslint/no-unused-vars': [
+      2,
+      {
+        argsIgnorePattern: '^_',
+        ignoreRestSiblings: true,
+      },
+    ],
+    'prettier/prettier': [
+      2,
+      {
+        arrowParens: 'always',
+        singleQuote: true,
+        trailingComma: 'all',
+      },
+    ],
   },
 };

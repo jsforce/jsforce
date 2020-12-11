@@ -134,7 +134,7 @@ if (isNodeJS()) {
       .find({ Name: { $like: 'Bulk Account%' } });
     const data = `Id\n${records.map((r: any) => r.Id).join('\n')}\n`;
     const deleteFileName = path.join(__dirname, 'data/Account_delete.csv');
-    await new Promise((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       fs.writeFile(deleteFileName, data, (err) =>
         err ? reject(err) : resolve(),
       );

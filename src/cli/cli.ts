@@ -253,10 +253,7 @@ export class Cli {
     const oauth2 = new OAuth2(oauth2Config);
     const verifier = base64url.encode(crypto.randomBytes(32));
     const challenge = base64url.encode(
-      crypto
-        .createHash('sha256')
-        .update(verifier)
-        .digest(),
+      crypto.createHash('sha256').update(verifier).digest(),
     );
     const state = base64url.encode(crypto.randomBytes(32));
     const authzUrl = oauth2.getAuthorizationUrl({

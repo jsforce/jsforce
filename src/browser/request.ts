@@ -47,7 +47,7 @@ export default function request(
     xhr.send(params.body);
     sent = true;
   }
-  xhr.onreadystatechange = function() {
+  xhr.onreadystatechange = function () {
     if (xhr.readyState === 4) {
       const headerNames = getResponseHeaderNames(xhr);
       const headers = headerNames.reduce(

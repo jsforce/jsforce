@@ -245,7 +245,7 @@ async function dumpSchema(schemas: { [name: string]: any }, outFile: string) {
   const println = (str: string = '', indent: number = 0) => {
     print(str + '\n', indent);
   };
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     out.on('error', reject);
     out.on('finish', () => resolve());
     println(GENERATED_MESSAGE_COMMENT);
