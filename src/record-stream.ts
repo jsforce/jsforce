@@ -141,7 +141,7 @@ export default class RecordStream<
 
   /* @override */
   addListener = this.on;
-  
+
   /* --------------------------------------------------- */
 
   /**
@@ -202,16 +202,22 @@ export default class RecordStream<
  * @extends {RecordStream}
  */
 export class Serializable<R extends Record = Record> extends RecordStream<R> {
+  _dataStreams: { [type: string]: Duplex } = {};
+
   /**
-   * Create readable data stream which emits serialized record data
+   * Get readable data stream which emits serialized record data
    */
   stream(type: string = 'csv', options: Object = {}): Duplex {
+    if (this._dataStreams[type]) {
+      return this._dataStreams[type];
+    }
     const converter: Optional<StreamConverter> = DataStreamConverters[type];
     if (!converter) {
       throw new Error(`Converting [${type}] data stream is not supported.`);
     }
     const dataStream = new PassThrough();
     this.pipe(converter.serialize(options)).pipe(dataStream);
+    this._dataStreams[type] = dataStream;
     return dataStream;
   }
 }
@@ -221,13 +227,17 @@ export class Serializable<R extends Record = Record> extends RecordStream<R> {
  * @extends {RecordStream}
  */
 export class Parsable<R extends Record = Record> extends RecordStream<R> {
+  _dataStreams: { [type: string]: Duplex } = {};
   _execParse: boolean = false;
   _incomings: Array<[Readable, Writable]> = [];
 
   /**
-   * Create writable data stream which accepts serialized record data
+   * Get writable data stream which accepts serialized record data
    */
   stream(type: string = 'csv', options: Object = {}): Duplex {
+    if (this._dataStreams[type]) {
+      return this._dataStreams[type];
+    }
     const converter: Optional<StreamConverter> = DataStreamConverters[type];
     if (!converter) {
       throw new Error(`Converting [${type}] data stream is not supported.`);
@@ -243,6 +253,7 @@ export class Parsable<R extends Record = Record> extends RecordStream<R> {
     } else {
       this._incomings.push([dataStream, parserStream]);
     }
+    this._dataStreams[type] = dataStream;
     return dataStream;
   }
 
