@@ -503,7 +503,6 @@ class Batch<S extends Schema, Opr extends BulkOperation> extends Writable {
       // if input has stream.Readable interface
       input.pipe(this._dataStream);
     } else {
-      var data;
       if (Array.isArray(input)) {
         for (const record of input) {
           for (const key of Object.keys(record)) {
@@ -515,8 +514,7 @@ class Batch<S extends Schema, Opr extends BulkOperation> extends Writable {
         }
         this.end();
       } else if (typeof input === 'string') {
-        data = input;
-        this._dataStream.write(data, 'utf8');
+        this._dataStream.write(input, 'utf8');
         this._dataStream.end();
       }
     }
