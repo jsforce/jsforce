@@ -134,6 +134,14 @@ export default class RecordStream<
     return this.pipe(RecordStream.filter<R>(fn));
   }
 
+  /* @override */
+  on(ev: string, fn: (...args: any[]) => void) {
+    return super.on(ev === 'record' ? 'data' : ev, fn);
+  }
+
+  /* @override */
+  addListener = this.on;
+  
   /* --------------------------------------------------- */
 
   /**
