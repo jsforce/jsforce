@@ -262,7 +262,7 @@ export class Job<
     const logger = bulk._logger;
 
     this._jobInfo = (async () => {
-      const jobId = await this._waitIdAssignment();
+      const jobId = await this.ready();
       const res = await bulk._request<JobInfoResponse>({
         method: 'GET',
         path: '/job/' + jobId,
@@ -282,7 +282,7 @@ export class Job<
   /**
    * Wait till the job is assigned to server
    */
-  _waitIdAssignment(): Promise<string> {
+  ready(): Promise<string> {
     return this.id
       ? Promise.resolve(this.id)
       : this.open().then(({ id }) => id);
@@ -294,7 +294,7 @@ export class Job<
   async list() {
     const bulk = this._bulk;
     const logger = bulk._logger;
-    const jobId = await this._waitIdAssignment();
+    const jobId = await this.ready();
     const res = await bulk._request<BatchInfoListResponse>({
       method: 'GET',
       path: '/job/' + jobId + '/batch',
@@ -351,7 +351,7 @@ export class Job<
     const logger = bulk._logger;
 
     this._jobInfo = (async () => {
-      const jobId = await this._waitIdAssignment();
+      const jobId = await this.ready();
       const body = ` 
 <?xml version="1.0" encoding="UTF-8"?>
   <jobInfo xmlns="http://www.force.com/2009/06/asyncapi/dataload">
@@ -427,9 +427,14 @@ export class Batch<
 
     this.on('finish', () => uploadStream.end());
     uploadDataStream.once('readable', async () => {
-      await this.job.open();
-      // pipe upload data to batch API request stream
-      uploadDataStream.pipe(this._createRequestStream());
+      try {
+        // ensure the job is opened in server or job id is already assigned
+        await this.job.ready();
+        // pipe upload data to batch API request stream
+        uploadDataStream.pipe(this._createRequestStream());
+      } catch (err) {
+        this.emit('error', err);
+      }
     });
 
     // duplex data stream, opened access to API programmers by Batch#stream()
@@ -797,16 +802,8 @@ export default class Bulk<S extends Schema> {
       options = optionsOrInput as BulkOptions;
     }
     const job = this.createJob(type, operation, options);
-    job.once('error', (error: Error) => {
-      if (batch) {
-        batch.emit('error', error); // pass job error to batch
-      }
-    });
-    let batch: Batch<S, Opr> | null = job.createBatch();
-    const cleanup = function () {
-      batch = null;
-      job.close();
-    };
+    const batch = job.createBatch();
+    const cleanup = () => job.close();
     const cleanupOnError = (err: Error) => {
       if (err.name !== 'PollingTimeout') {
         cleanup();
