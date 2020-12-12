@@ -48,6 +48,7 @@ import { QueryOptions } from './query';
 import SObject from './sobject';
 import QuickAction from './quick-action';
 import { formatDate } from './util/formatter';
+import Analytics from './api/analytics';
 import Apex from './api/apex';
 import Bulk from './api/bulk';
 import Metadata from './api/metadata';
@@ -264,6 +265,10 @@ export default class Connection<
 
   // API libs are not instantiated here so that core module to remain without dependencies to them
   // It is responsible for develpers to import api libs explicitly if they are using 'jsforce/core' instead of 'jsforce'.
+  get analytics(): Analytics<S> {
+    return raiseNoModuleError('analytics');
+  }
+
   get apex(): Apex<S> {
     return raiseNoModuleError('apex');
   }
