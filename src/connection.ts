@@ -48,6 +48,7 @@ import { QueryOptions } from './query';
 import SObject from './sobject';
 import QuickAction from './quick-action';
 import { formatDate } from './util/formatter';
+import Analytics from './api/analytics';
 import Apex from './api/apex';
 import Bulk from './api/bulk';
 import Metadata from './api/metadata';
@@ -264,6 +265,10 @@ export default class Connection<
 
   // API libs are not instantiated here so that core module to remain without dependencies to them
   // It is responsible for develpers to import api libs explicitly if they are using 'jsforce/core' instead of 'jsforce'.
+  get analytics(): Analytics<S> {
+    return raiseNoModuleError('analytics');
+  }
+
   get apex(): Apex<S> {
     return raiseNoModuleError('apex');
   }
@@ -628,17 +633,18 @@ export default class Connection<
    * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
    * , or relative path from version root ('/sobjects/Account/describe').
    */
-  request(
+  request<R = any>(
     request: string | HttpRequest,
     options: Object = {},
-  ): StreamPromise<any> {
+  ): StreamPromise<R> {
     // if request is simple string, regard it as url in GET method
-    let _request: HttpRequest =
+    let request_: HttpRequest =
       typeof request === 'string' ? { method: 'GET', url: request } : request;
     // if url is given in relative path, prepend base url or instance url before.
-    _request = Object.assign({}, _request, {
-      url: this._normalizeUrl(_request.url),
-    });
+    request_ = {
+      ...request_,
+      url: this._normalizeUrl(request_.url),
+    };
     const httpApi = new HttpApi(this, options);
     // log api usage and its quota
     httpApi.on('response', (response: HttpResponse) => {
@@ -656,7 +662,7 @@ export default class Connection<
         }
       }
     });
-    return httpApi.request(_request);
+    return httpApi.request<R>(request_);
   }
 
   /**
@@ -666,9 +672,9 @@ export default class Connection<
    * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
    * , or relative path from version root ('/sobjects/Account/describe').
    */
-  requestGet(url: string, options?: Object) {
+  requestGet<R = any>(url: string, options?: Object) {
     const request: HttpRequest = { method: 'GET', url };
-    return this.request(request, options);
+    return this.request<R>(request, options);
   }
 
   /**
@@ -678,14 +684,14 @@ export default class Connection<
    * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
    * , or relative path from version root ('/sobjects/Account/describe').
    */
-  requestPost(url: string, body: Object, options?: Object) {
+  requestPost<R = any>(url: string, body: Object, options?: Object) {
     const request: HttpRequest = {
       method: 'POST',
       url,
       body: JSON.stringify(body),
       headers: { 'content-type': 'application/json' },
     };
-    return this.request(request, options);
+    return this.request<R>(request, options);
   }
 
   /**
@@ -695,14 +701,14 @@ export default class Connection<
    * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
    * , or relative path from version root ('/sobjects/Account/describe').
    */
-  requestPut(url: string, body: Object, options?: Object) {
+  requestPut<R>(url: string, body: Object, options?: Object) {
     const request: HttpRequest = {
       method: 'PUT',
       url,
       body: JSON.stringify(body),
       headers: { 'content-type': 'application/json' },
     };
-    return this.request(request, options);
+    return this.request<R>(request, options);
   }
 
   /**
@@ -712,14 +718,14 @@ export default class Connection<
    * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
    * , or relative path from version root ('/sobjects/Account/describe').
    */
-  requestPatch(url: string, body: Object, options?: Object) {
+  requestPatch<R = any>(url: string, body: Object, options?: Object) {
     const request: HttpRequest = {
       method: 'PATCH',
       url,
       body: JSON.stringify(body),
       headers: { 'content-type': 'application/json' },
     };
-    return this.request(request, options);
+    return this.request<R>(request, options);
   }
 
   /**
@@ -729,9 +735,9 @@ export default class Connection<
    * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
    * , or relative path from version root ('/sobjects/Account/describe').
    */
-  requestDelete(url: string, options?: Object) {
+  requestDelete<R>(url: string, options?: Object) {
     const request: HttpRequest = { method: 'DELETE', url };
-    return this.request(request, options);
+    return this.request<R>(request, options);
   }
 
   /** @private **/
