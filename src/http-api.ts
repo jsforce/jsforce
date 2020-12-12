@@ -52,8 +52,8 @@ export default class HttpApi<S extends Schema> extends EventEmitter {
   /**
    * Callout to API endpoint using http
    */
-  request<T = any>(request: HttpRequest): StreamPromise<T> {
-    return StreamPromise.create<T>(() => {
+  request<R = any>(request: HttpRequest): StreamPromise<T> {
+    return StreamPromise.create<R>(() => {
       const { stream, setStream } = createLazyStream();
       const promise = (async () => {
         const refreshDelegate = this.getRefreshDelegate();
