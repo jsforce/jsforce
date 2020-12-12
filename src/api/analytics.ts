@@ -6,35 +6,40 @@ import { registerModule } from '../jsforce';
 import Connection from '../connection';
 import { Schema } from '../types';
 import {
+  ReportMetadata,
+  ReportExecuteResult,
+  ReportRetrieveResult,
+  ReportDescribeResult,
+  ReportInfo,
+  ReportInstanceInfo,
   DashboardMetadata,
   DashboardResult,
   DashboardStatusResult,
   DashboardRefreshResult,
-  DashboardListItem,
+  DashboardInfo,
 } from './analytics/types';
+import { QueryExplainResult } from '../query';
 
 /*----------------------------------------------------------------------------------*/
-export type ReportListItem = {
-  id: string;
-  name: string;
-  url: string;
-  describeUrl: string;
-  instancesUrl: string;
+export {
+  ReportMetadata,
+  ReportExecuteResult,
+  ReportRetrieveResult,
+  ReportDescribeResult,
+  ReportInfo,
+  ReportInstanceInfo,
+  DashboardMetadata,
+  DashboardResult,
+  DashboardStatusResult,
+  DashboardRefreshResult,
+  DashboardInfo,
 };
-
-export type ReportMetadata = {}; // TODO: Give correct type
 
 export type ReportExecuteOptions = {
   details?: boolean;
-  metadata?: ReportMetadata;
-};
-
-export {
-  DashboardMetadata,
-  DashboardResult,
-  DashboardStatusResult,
-  DashboardRefreshResult,
-  DashboardListItem,
+  metadata?: {
+    reportMetadata: Partial<ReportMetadata>;
+  };
 };
 
 /*----------------------------------------------------------------------------------*/
@@ -67,7 +72,7 @@ export class ReportInstance<S extends Schema> {
       'instances',
       this.id,
     ].join('/');
-    return this._conn.request(url);
+    return this._conn.request<ReportRetrieveResult>(url);
   }
 }
 
@@ -98,7 +103,7 @@ export class Report<S extends Schema> {
       this.id,
       'describe',
     ].join('/');
-    return this._conn.request(url);
+    return this._conn.request<ReportDescribeResult>(url);
   }
 
   /**
@@ -108,7 +113,7 @@ export class Report<S extends Schema> {
     const url = [this._conn._baseUrl(), 'analytics', 'reports', this.id].join(
       '/',
     );
-    return this._conn.request({ method: 'DELETE', url });
+    return this._conn.request<void>({ method: 'DELETE', url });
   }
 
   /**
@@ -130,7 +135,7 @@ export class Report<S extends Schema> {
       '?cloneId=' +
       this.id;
     const config = { reportMetadata: { name } };
-    return this._conn.request({
+    return this._conn.request<ReportDescribeResult>({
       method: 'POST',
       url,
       headers: { 'Content-Type': 'application/json' },
@@ -143,7 +148,7 @@ export class Report<S extends Schema> {
    */
   explain() {
     const url = '/query/?explain=' + this.id;
-    return this._conn.request(url);
+    return this._conn.request<QueryExplainResult>(url);
   }
 
   /**
@@ -154,7 +159,7 @@ export class Report<S extends Schema> {
       [this._conn._baseUrl(), 'analytics', 'reports', this.id].join('/') +
       '?includeDetails=' +
       (options.details ? 'true' : 'false');
-    return this._conn.request({
+    return this._conn.request<ReportExecuteResult>({
       url,
       ...(options.metadata
         ? {
@@ -188,7 +193,7 @@ export class Report<S extends Schema> {
         this.id,
         'instances',
       ].join('/') + (options.details ? '?includeDetails=true' : '');
-    return this._conn.request({
+    return this._conn.request<ReportInstanceInfo>({
       method: 'POST',
       url,
       ...(options.metadata
@@ -218,7 +223,7 @@ export class Report<S extends Schema> {
       this.id,
       'instances',
     ].join('/');
-    return this._conn.request(url);
+    return this._conn.request<ReportInstanceInfo[]>(url);
   }
 }
 
@@ -384,7 +389,7 @@ export default class Analytics<S extends Schema> {
    */
   reports() {
     const url = [this._conn._baseUrl(), 'analytics', 'reports'].join('/');
-    return this._conn.request<ReportListItem[]>(url);
+    return this._conn.request<ReportInfo[]>(url);
   }
 
   /**
@@ -399,7 +404,7 @@ export default class Analytics<S extends Schema> {
    */
   dashboards() {
     var url = [this._conn._baseUrl(), 'analytics', 'dashboards'].join('/');
-    return this._conn.request<DashboardListItem[]>(url);
+    return this._conn.request<DashboardInfo[]>(url);
   }
 }
 

@@ -73,7 +73,7 @@ describe('report', () => {
     assert.ok(isObject(result.factMap));
     assert.ok(isObject(result.factMap['T!T']));
     assert.ok(isUndefined(result.factMap['T!T'].rows));
-    assert.ok(isObject(result.factMap['T!T'].aggregates));
+    assert.ok(Array.isArray(result.factMap['T!T'].aggregates));
   });
 
   /**
@@ -90,7 +90,7 @@ describe('report', () => {
     assert.ok(isObject(result.factMap));
     assert.ok(isObject(result.factMap['T!T']));
     assert.ok(Array.isArray(result.factMap['T!T'].rows));
-    assert.ok(isObject(result.factMap['T!T'].aggregates));
+    assert.ok(Array.isArray(result.factMap['T!T'].aggregates));
   });
 
   /**
@@ -103,7 +103,7 @@ describe('report', () => {
         reportFilters: [
           {
             column: 'COMPANY',
-            operator: 'contains',
+            operator: 'contains' as const,
             value: ',Inc.',
           },
         ],
@@ -119,7 +119,7 @@ describe('report', () => {
     assert.ok(isObject(result.factMap));
     assert.ok(isObject(result.factMap['T!T']));
     assert.ok(Array.isArray(result.factMap['T!T'].rows));
-    assert.ok(isObject(result.factMap['T!T'].aggregates));
+    assert.ok(Array.isArray(result.factMap['T!T'].aggregates));
   });
 
   /**
