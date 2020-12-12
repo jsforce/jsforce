@@ -130,6 +130,7 @@ export class Job<
   _bulk: Bulk<S>;
   _batches: { [id: string]: Batch<S, Opr> };
   _jobInfo: Promise<JobInfo> | undefined;
+  _error: Error | undefined;
 
   /**
    *
@@ -149,6 +150,8 @@ export class Job<
     this.id = jobId ?? null;
     this.state = this.id ? 'Open' : 'Unknown';
     this._batches = {};
+    // default error handler to keep the latest error
+    this.on('error', (error) => (this._error = error));
   }
 
   /**
@@ -406,6 +409,7 @@ export class Batch<
   _downloadStream: Parsable;
   _dataStream: Duplex;
   _result: Promise<BatchResult<Opr>> | undefined;
+  _error: Error | undefined;
 
   /**
    *
@@ -415,6 +419,9 @@ export class Batch<
     this.job = job;
     this.id = id;
     this._bulk = job._bulk;
+
+    // default error handler to keep the latest error
+    this.on('error', (error) => (this._error = error));
 
     //
     // setup data streams
