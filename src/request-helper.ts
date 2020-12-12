@@ -10,7 +10,7 @@ export function createHttpRequestHandlerStreams(req: HttpRequest) {
   const input = new PassThrough();
   const output = new PassThrough();
   const duplex = concatStreamsAsDuplex(input, output);
-  if (reqBody) {
+  if (typeof reqBody !== 'undefined') {
     setTimeout(() => {
       duplex.end(reqBody, 'utf8');
     }, 0);
