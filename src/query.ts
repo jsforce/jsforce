@@ -130,6 +130,22 @@ export type QueryResult<R extends Record> = {
   nextRecordsUrl?: string;
 };
 
+export type QueryExplainResult = {
+  plans: Array<{
+    cardinality: number;
+    fields: string[];
+    leadingOperationType: 'Index' | 'Other' | 'Sharing' | 'TableScan';
+    notes: Array<{
+      description: string;
+      fields: string[];
+      tableEnumOrId: string;
+    }>;
+    relativeCost: number;
+    sobjectCardinality: number;
+    sobjectType: string;
+  }>;
+};
+
 const ResponseTargetValues = [
   'QueryResult',
   'Records',
@@ -768,7 +784,7 @@ export default class Query<
     const soql = await this.toSOQL();
     this._logger.debug(`SOQL = ${soql}`);
     const url = `/query/?explain=${encodeURIComponent(soql)}`;
-    return this._conn.request(url);
+    return this._conn.request<QueryExplainResult>(url);
   }
 
   /**
