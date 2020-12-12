@@ -311,6 +311,9 @@ export class Job<
    * Close opened job
    */
   async close() {
+    if (!this.id) {
+      return;
+    }
     try {
       const jobInfo = await this._changeState('Closed');
       this.id = null;
@@ -324,12 +327,11 @@ export class Job<
 
   /**
    * Set the status to abort
-   *
-   * @method Bulk~Job#abort
-   * @param {Callback.<Bulk~JobInfo>} [callback] - Callback function
-   * @returns {Promise.<Bulk~JobInfo>}
    */
   async abort() {
+    if (!this.id) {
+      return;
+    }
     try {
       const jobInfo = await this._changeState('Aborted');
       this.id = null;
