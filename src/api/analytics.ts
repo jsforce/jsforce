@@ -63,7 +63,7 @@ export class ReportInstance<S extends Schema> {
   /**
    * Retrieve report result asynchronously executed
    */
-  retrieve() {
+  retrieve(): Promise<ReportRetrieveResult> {
     const url = [
       this._conn._baseUrl(),
       'analytics',
@@ -95,7 +95,7 @@ export class Report<S extends Schema> {
   /**
    * Describe report metadata
    */
-  describe() {
+  describe(): Promise<ReportDescribeResult> {
     var url = [
       this._conn._baseUrl(),
       'analytics',
@@ -109,7 +109,7 @@ export class Report<S extends Schema> {
   /**
    * Destroy a report
    */
-  destroy() {
+  destroy(): Promise<void> {
     const url = [this._conn._baseUrl(), 'analytics', 'reports', this.id].join(
       '/',
     );
@@ -129,7 +129,7 @@ export class Report<S extends Schema> {
   /**
    * Clones a given report
    */
-  clone(name: string) {
+  clone(name: string): Promise<ReportDescribeResult> {
     const url =
       [this._conn._baseUrl(), 'analytics', 'reports'].join('/') +
       '?cloneId=' +
@@ -146,7 +146,7 @@ export class Report<S extends Schema> {
   /**
    * Explain plan for executing report
    */
-  explain() {
+  explain(): Promise<QueryExplainResult> {
     const url = '/query/?explain=' + this.id;
     return this._conn.request<QueryExplainResult>(url);
   }
@@ -154,7 +154,7 @@ export class Report<S extends Schema> {
   /**
    * Run report synchronously
    */
-  execute(options: ReportExecuteOptions = {}) {
+  execute(options: ReportExecuteOptions = {}): Promise<ReportExecuteResult> {
     const url =
       [this._conn._baseUrl(), 'analytics', 'reports', this.id].join('/') +
       '?includeDetails=' +
@@ -184,7 +184,9 @@ export class Report<S extends Schema> {
   /**
    * Run report asynchronously
    */
-  executeAsync(options: ReportExecuteOptions = {}) {
+  executeAsync(
+    options: ReportExecuteOptions = {},
+  ): Promise<ReportInstanceInfo> {
     const url =
       [
         this._conn._baseUrl(),
@@ -215,7 +217,7 @@ export class Report<S extends Schema> {
   /**
    * List report instances which had been executed asynchronously
    */
-  instances() {
+  instances(): Promise<ReportInstanceInfo[]> {
     const url = [
       this._conn._baseUrl(),
       'analytics',
@@ -250,7 +252,7 @@ export class Dashboard<S extends Schema> {
    * @param {Callback.<Analytics-DashboardMetadata>} [callback] - Callback function
    * @returns {Promise.<Analytics-DashboardMetadata>}
    */
-  describe() {
+  describe(): Promise<DashboardMetadata> {
     const url = [
       this._conn._baseUrl(),
       'analytics',
@@ -264,7 +266,7 @@ export class Dashboard<S extends Schema> {
   /**
    * Get details about dashboard components
    */
-  components(componentIds?: string | string[]) {
+  components(componentIds?: string | string[]): Promise<DashboardResult> {
     const url = [
       this._conn._baseUrl(),
       'analytics',
@@ -289,7 +291,7 @@ export class Dashboard<S extends Schema> {
   /**
    * Get dashboard status
    */
-  status() {
+  status(): Promise<DashboardStatusResult> {
     const url = [
       this._conn._baseUrl(),
       'analytics',
@@ -303,7 +305,7 @@ export class Dashboard<S extends Schema> {
   /**
    * Refresh a dashboard
    */
-  refresh() {
+  refresh(): Promise<DashboardRefreshResult> {
     const url = [
       this._conn._baseUrl(),
       'analytics',
@@ -323,7 +325,7 @@ export class Dashboard<S extends Schema> {
   clone(
     config: { name: string; folderId?: string } | string,
     folderId?: string,
-  ) {
+  ): Promise<DashboardMetadata> {
     const url =
       [this._conn._baseUrl(), 'analytics', 'dashboards'].join('/') +
       '?cloneId=' +
@@ -342,7 +344,7 @@ export class Dashboard<S extends Schema> {
   /**
    * Destroy a dashboard
    */
-  destroy() {
+  destroy(): Promise<void> {
     const url = [
       this._conn._baseUrl(),
       'analytics',
