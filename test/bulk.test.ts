@@ -1,14 +1,15 @@
 import assert from 'assert';
 import fs from 'fs';
 import path from 'path';
-import { Connection, Date as SfDate } from '..';
+import { Connection, Date as SfDate } from '../src';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject, isString } from './util';
 import { isNodeJS } from './helper/env';
+import { Record } from '../src/types';
 
 const connMgr = new ConnectionManager(config);
-const conn: any = connMgr.createConnection(); // TODO: remove any
+const conn = connMgr.createConnection();
 conn.bulk.pollTimeout = 40 * 1000; // adjust poll timeout to test timeout.
 
 /**
@@ -49,11 +50,9 @@ test('bulk insert records and return result status', async () => {
 test('bulk update and return updated status', async () => {
   let records = await conn
     .sobject('Account')
-    .find({ Name: { $like: 'Bulk Account%' } }, { Id: 1, Name: 1 })
+    .find({ Name: { $like: 'Bulk Account%' } }, ['Id', 'Name'])
     .execute();
-  records = records.map((rec: any) =>
-    Object.assign({}, rec, { Name: `${rec.Name} (Updated)` }),
-  ); // TODO: remove any
+  records = records.map((rec) => ({ ...rec, Name: `${rec.Name} (Updated)` }));
   const rets = await conn.bulk.load('Account', 'update', records);
   assert.ok(Array.isArray(rets));
   for (const ret of rets) {
@@ -166,10 +165,10 @@ if (isNodeJS()) {
     const fstream = fs.createWriteStream(file);
     const count = await conn.sobject(config.bigTable).count({});
     const records = await new Promise<any[]>((resolve, reject) => {
-      const recs: any[] = []; // TODO: remove any
+      const recs: Record[] = [];
       conn.bulk
         .query(`SELECT Id, Name FROM ${config.bigTable}`)
-        .on('record', (rec: any) => recs.push(rec)) // TODO: remove any
+        .on('record', (rec) => recs.push(rec))
         .on('error', reject)
         .stream()
         .pipe(fstream)
@@ -197,17 +196,16 @@ test('call bulk api from invalid session conn with refresh fn, and return result
     Name: `Session Expiry Test #${i}`,
   }));
   const insRets = await conn.bulk.load('Account', 'insert', accounts);
-  const deleteRecords = insRets.map((r: any) => ({ Id: r.id })); // TODO: remove any
+  const deleteRecords = insRets.map((r) => ({ Id: r.id ?? undefined }));
   let refreshCalled = false;
-  const conn2: any = new Connection({
-    // TODO: remove any
+  const conn2 = new Connection({
     instanceUrl: conn.instanceUrl,
     accessToken: 'invalid_token',
     logLevel: config.logLevel,
     proxyUrl: config.proxyUrl,
     refreshFn: (c, callback) => {
       refreshCalled = true;
-      setTimeout(() => callback(null, conn.accessToken), 500);
+      setTimeout(() => callback(null, conn.accessToken ?? undefined), 500);
     },
   });
   const rets = await conn2.bulk.load('Account', 'delete', deleteRecords);
@@ -223,8 +221,7 @@ test('call bulk api from invalid session conn with refresh fn, and return result
  *
  */
 test('call bulk api from invalid session conn without refresh fn, and raise error', async () => {
-  const conn3: any = new Connection({
-    // TODO: remove any
+  const conn3 = new Connection({
     instanceUrl: conn.instanceUrl,
     accessToken: 'invalid_token',
     logLevel: config.logLevel,

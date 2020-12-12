@@ -10,7 +10,7 @@ import csvStringifySync from 'csv-stringify/lib/es5/sync';
 /**
  * @private
  */
-export function parseCSV(str: string, options: ParseOpts): Object[] {
+export function parseCSV(str: string, options?: ParseOpts): Object[] {
   return csvParseSync(str, { ...options, columns: true });
 }
 
@@ -32,5 +32,5 @@ export function parseCSVStream(options?: ParseOpts): Transform {
  * @private
  */
 export function serializeCSVStream(options?: StringifyOpts): Transform {
-  return csvStringify({ ...options, header: true }) as Transform;
+  return csvStringify({ ...options, header: true });
 }

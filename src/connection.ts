@@ -49,6 +49,7 @@ import SObject from './sobject';
 import QuickAction from './quick-action';
 import { formatDate } from './util/formatter';
 import Apex from './api/apex';
+import Bulk from './api/bulk';
 import Metadata from './api/metadata';
 import SoapApi from './api/soap';
 
@@ -266,6 +267,11 @@ export default class Connection<
   get apex(): Apex<S> {
     return raiseNoModuleError('apex');
   }
+
+  get bulk(): Bulk<S> {
+    return raiseNoModuleError('bulk');
+  }
+
   get metadata(): Metadata<S> {
     return raiseNoModuleError('metadata');
   }

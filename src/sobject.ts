@@ -32,6 +32,7 @@ import Query, {
 } from './query';
 import QuickAction from './quick-action';
 import { CachedFunction } from './cache';
+import { Readable } from 'stream';
 
 export type FindOptions<S extends Schema, N extends SObjectNames<S>> = Partial<
   QueryOptions &
@@ -219,6 +220,67 @@ export default class SObject<
    * Synonym of SObject#destroy()
    */
   del = this.destroy;
+
+  /**
+   * Call Bulk#load() to execute bulkload, returning batch object
+   */
+  bulkload(
+    operation: 'insert' | 'update' | 'upsert' | 'delete' | 'hardDelete',
+    optionsOrInput?: Object | Record[] | Readable | string,
+    input?: Record[] | Readable | string,
+  ) {
+    return this._conn.bulk.load(this.type, operation, optionsOrInput, input);
+  }
+
+  /**
+   * Bulkly insert input data using bulk API
+   */
+  createBulk(input?: Record[] | Readable | string) {
+    return this.bulkload('insert', input);
+  }
+
+  /**
+   * Synonym of SObject#createBulk()
+   */
+  insertBulk = this.createBulk;
+
+  /**
+   * Bulkly update records by input data using bulk API
+   */
+  updateBulk(input?: Record[] | Readable | string) {
+    return this.bulkload('update', input);
+  }
+
+  /**
+   * Bulkly upsert records by input data using bulk API
+   */
+  upsertBulk(input?: Record[] | Readable | string, extIdField?: string) {
+    return this.bulkload('upsert', { extIdField }, input);
+  }
+
+  /**
+   * Bulkly delete records specified by input data using bulk API
+   */
+  destroyBulk(input?: Record[] | Readable | string) {
+    return this.bulkload('delete', input);
+  }
+
+  /**
+   * Synonym of SObject#destroyBulk()
+   */
+  deleteBulk = this.destroyBulk;
+
+  /**
+   * Bulkly hard delete records specified in input data using bulk API
+   */
+  destroyHardBulk(input: Record[] | Readable) {
+    return this.bulkload('hardDelete', input);
+  }
+
+  /**
+   * Synonym of SObject#destroyHardBulk()
+   */
+  deleteHardBulk = this.destroyHardBulk;
 
   /**
    * Describe SObject metadata

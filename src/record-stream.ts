@@ -5,6 +5,7 @@
 import { Readable, Writable, Duplex, Transform, PassThrough } from 'stream';
 import { Record, Optional } from './types';
 import { serializeCSVStream, parseCSVStream } from './csv';
+import { concatStreamsAsDuplex } from './util/stream';
 
 /**
  * type defs
@@ -66,19 +67,14 @@ function convertRecordForSerialization(
 /**
  * @private
  */
-function createPipelineStream(s1: Writable, s2: Writable) {
-  const pipeline: any = new PassThrough();
-  pipeline.on('pipe', (source: Readable) => {
-    source.unpipe(pipeline);
-    source.pipe(s1).pipe(s2);
-  });
-  pipeline.pipe = (dest: Writable, options?: any) => s2.pipe(dest, options);
-  return pipeline as Transform;
+function createPipelineStream(s1: Duplex, s2: Duplex) {
+  s1.pipe(s2);
+  return concatStreamsAsDuplex(s1, s2, { writableObjectMode: true });
 }
 
 type StreamConverter = {
-  serialize: (options?: RecordStreamSerializeOption) => Transform;
-  parse: (options?: RecordStreamParseOption) => Transform;
+  serialize: (options?: RecordStreamSerializeOption) => Duplex;
+  parse: (options?: RecordStreamParseOption) => Duplex;
 };
 
 /**
@@ -137,6 +133,14 @@ export default class RecordStream<
   filter(fn: (rec: R) => boolean): Duplex {
     return this.pipe(RecordStream.filter<R>(fn));
   }
+
+  /* @override */
+  on(ev: string, fn: (...args: any[]) => void) {
+    return super.on(ev === 'record' ? 'data' : ev, fn);
+  }
+
+  /* @override */
+  addListener = this.on;
 
   /* --------------------------------------------------- */
 
@@ -198,15 +202,23 @@ export default class RecordStream<
  * @extends {RecordStream}
  */
 export class Serializable<R extends Record = Record> extends RecordStream<R> {
+  _dataStreams: { [type: string]: Duplex } = {};
+
   /**
-   * Create readable data stream which emits serialized record data
+   * Get readable data stream which emits serialized record data
    */
-  stream(type: string = 'csv', options: Object = {}): Readable {
+  stream(type: string = 'csv', options: Object = {}): Duplex {
+    if (this._dataStreams[type]) {
+      return this._dataStreams[type];
+    }
     const converter: Optional<StreamConverter> = DataStreamConverters[type];
     if (!converter) {
       throw new Error(`Converting [${type}] data stream is not supported.`);
     }
-    return this.pipe(converter.serialize(options));
+    const dataStream = new PassThrough();
+    this.pipe(converter.serialize(options)).pipe(dataStream);
+    this._dataStreams[type] = dataStream;
+    return dataStream;
   }
 }
 
@@ -215,13 +227,17 @@ export class Serializable<R extends Record = Record> extends RecordStream<R> {
  * @extends {RecordStream}
  */
 export class Parsable<R extends Record = Record> extends RecordStream<R> {
+  _dataStreams: { [type: string]: Duplex } = {};
   _execParse: boolean = false;
   _incomings: Array<[Readable, Writable]> = [];
 
   /**
-   * Create writable data stream which accepts serialized record data
+   * Get writable data stream which accepts serialized record data
    */
-  stream(type: string = 'csv', options: Object = {}): Writable {
+  stream(type: string = 'csv', options: Object = {}): Duplex {
+    if (this._dataStreams[type]) {
+      return this._dataStreams[type];
+    }
     const converter: Optional<StreamConverter> = DataStreamConverters[type];
     if (!converter) {
       throw new Error(`Converting [${type}] data stream is not supported.`);
@@ -237,6 +253,7 @@ export class Parsable<R extends Record = Record> extends RecordStream<R> {
     } else {
       this._incomings.push([dataStream, parserStream]);
     }
+    this._dataStreams[type] = dataStream;
     return dataStream;
   }
 
