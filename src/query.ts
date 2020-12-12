@@ -868,7 +868,7 @@ export default class Query<
           batch.write(record);
         } else {
           records.push(record);
-          if (thresholdNum < 0 || records.length > thresholdNum) {
+          if (thresholdNum >= 0 && records.length > thresholdNum) {
             // Use bulk delete instead of SObject REST API
             batch = createBatch();
             for (const record of records) {
@@ -964,7 +964,7 @@ export default class Query<
         } else {
           records.push(record as SObjectUpdateRecord<S, N>);
         }
-        if (thresholdNum < 0 || records.length > thresholdNum) {
+        if (thresholdNum >= 0 && records.length > thresholdNum) {
           // Use bulk update instead of SObject REST API
           batch = createBatch();
           for (const record of records) {
