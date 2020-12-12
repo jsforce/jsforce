@@ -289,31 +289,31 @@ describe('dashboard', () => {
       dashboardMetadata.components[1].id,
       dashboardMetadata.components[2].id,
     ];
-    const meta = await conn.analytics.dashboard(dashboardId).components(ids);
-    assert.ok(meta.componentData.length === 3);
+    const result = await conn.analytics.dashboard(dashboardId).components(ids);
+    assert.ok(result.componentData.length === 3);
   });
 
   /**
    *
    */
-  test('get status of dashboard and return dashboard status metadata', async () => {
-    const meta = await conn.analytics.dashboard(dashboardId).status();
-    assert.ok(isObject(meta));
-    assert.ok(Array.isArray(meta.componentStatus));
+  test('get status of dashboard and return dashboard status', async () => {
+    const result = await conn.analytics.dashboard(dashboardId).status();
+    assert.ok(isObject(result));
+    assert.ok(Array.isArray(result.componentStatus));
   });
 
   /**
    *
    */
   test('clone dashboard and return cloned dashboard', async () => {
-    const result = await conn.analytics.dashboard(dashboardId).clone({
+    const meta = await conn.analytics.dashboard(dashboardId).clone({
       name: 'Lead List Dashboard Clone',
       folderId: dashboardFolderId,
     });
-    assert.ok(isObject(result.attributes));
-    cloneDashboardId = result.attributes.dashboardId;
+    assert.ok(isObject(meta.attributes));
+    cloneDashboardId = meta.attributes.dashboardId;
     assert.ok(cloneDashboardId !== dashboardId);
-    assert.ok(result.name === 'Lead List Dashboard Clone');
+    assert.ok(meta.name === 'Lead List Dashboard Clone');
   });
 
   /**
@@ -321,9 +321,9 @@ describe('dashboard', () => {
    */
   test('refresh dashboard and return refreshed dashboard metadata', async () => {
     // refresh cloned dashboard, in order to prevent frequent refresh error.
-    const meta = await conn.analytics.dashboard(cloneDashboardId).refresh();
-    assert.ok(isObject(meta));
-    assert.ok(isString(meta.statusUrl));
+    const result = await conn.analytics.dashboard(cloneDashboardId).refresh();
+    assert.ok(isObject(result));
+    assert.ok(isString(result.statusUrl));
   });
 
   /**

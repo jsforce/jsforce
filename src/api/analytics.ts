@@ -5,13 +5,36 @@
 import { registerModule } from '../jsforce';
 import Connection from '../connection';
 import { Schema } from '../types';
+import {
+  DashboardMetadata,
+  DashboardResult,
+  DashboardStatusResult,
+  DashboardRefreshResult,
+  DashboardListItem,
+} from './analytics/types';
 
 /*----------------------------------------------------------------------------------*/
+export type ReportListItem = {
+  id: string;
+  name: string;
+  url: string;
+  describeUrl: string;
+  instancesUrl: string;
+};
+
 export type ReportMetadata = {}; // TODO: Give correct type
 
 export type ReportExecuteOptions = {
   details?: boolean;
   metadata?: ReportMetadata;
+};
+
+export {
+  DashboardMetadata,
+  DashboardResult,
+  DashboardStatusResult,
+  DashboardRefreshResult,
+  DashboardListItem,
 };
 
 /*----------------------------------------------------------------------------------*/
@@ -230,7 +253,7 @@ export class Dashboard<S extends Schema> {
       this.id,
       'describe',
     ].join('/');
-    return this._conn.request(url);
+    return this._conn.request<DashboardMetadata>(url);
   }
 
   /**
@@ -250,9 +273,9 @@ export class Dashboard<S extends Schema> {
         ? [componentIds]
         : undefined,
     };
-    return this._conn.request({
+    return this._conn.request<DashboardResult>({
       method: 'POST',
-      url: url,
+      url,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(config),
     });
@@ -260,10 +283,6 @@ export class Dashboard<S extends Schema> {
 
   /**
    * Get dashboard status
-   *
-   * @method Analytics~Dashboard#status
-   * @param {Callback.<Analytics-DashboardStatusMetadata>} [callback] - Callback function
-   * @returns {Promise.<Analytics-DashboardStatusMetadata>}
    */
   status() {
     const url = [
@@ -273,7 +292,7 @@ export class Dashboard<S extends Schema> {
       this.id,
       'status',
     ].join('/');
-    return this._conn.request(url);
+    return this._conn.request<DashboardStatusResult>(url);
   }
 
   /**
@@ -286,7 +305,11 @@ export class Dashboard<S extends Schema> {
       'dashboards',
       this.id,
     ].join('/');
-    return this._conn.request({ method: 'PUT', url, body: '' });
+    return this._conn.request<DashboardRefreshResult>({
+      method: 'PUT',
+      url,
+      body: '',
+    });
   }
 
   /**
@@ -303,7 +326,7 @@ export class Dashboard<S extends Schema> {
     if (typeof config === 'string') {
       config = { name: config, folderId };
     }
-    return this._conn.request({
+    return this._conn.request<DashboardMetadata>({
       method: 'POST',
       url,
       headers: { 'Content-Type': 'application/json' },
@@ -321,7 +344,7 @@ export class Dashboard<S extends Schema> {
       'dashboards',
       this.id,
     ].join('/');
-    return this._conn.request({ method: 'DELETE', url });
+    return this._conn.request<void>({ method: 'DELETE', url });
   }
 
   /**
@@ -361,7 +384,7 @@ export default class Analytics<S extends Schema> {
    */
   reports() {
     const url = [this._conn._baseUrl(), 'analytics', 'reports'].join('/');
-    return this._conn.request(url);
+    return this._conn.request<ReportListItem[]>(url);
   }
 
   /**
@@ -376,7 +399,7 @@ export default class Analytics<S extends Schema> {
    */
   dashboards() {
     var url = [this._conn._baseUrl(), 'analytics', 'dashboards'].join('/');
-    return this._conn.request(url);
+    return this._conn.request<DashboardListItem[]>(url);
   }
 }
 
