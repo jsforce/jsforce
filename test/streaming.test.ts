@@ -53,7 +53,7 @@ test('subscribe to generic streaming channel and recieve custom streaming event'
   try {
     await conn.sobject('StreamingChannel').create({ Name: channelName });
 
-    let subscr;
+    let subscr: Subscription | undefined;
     const msgArrived = new Promise<GenericStreamingMessage>((resolve) => {
       subscr = conn.streaming.channel(channelName).subscribe(resolve);
     });
