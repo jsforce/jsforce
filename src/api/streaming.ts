@@ -7,6 +7,7 @@ import { Client, Subscription } from 'faye';
 import { registerModule } from '../jsforce';
 import Connection from '../connection';
 import { Record, Schema } from '../types';
+import * as StreamingExtension from './streaming/extension';
 
 /**
  *
@@ -15,7 +16,7 @@ export type StreamingMessage<R extends Record> = {
   event: {
     type: string;
     createdDate: string;
-    replayId: string;
+    replayId: number;
   };
   sobject: R;
 };
@@ -23,7 +24,7 @@ export type StreamingMessage<R extends Record> = {
 export type GenericStreamingMessage = {
   event: {
     createdDate: string;
-    replayId: string;
+    replayId: number;
   };
   payload: string;
 };
@@ -223,6 +224,8 @@ export default class Streaming<S extends Schema> extends EventEmitter {
    * Example usage:
    *
    * ```javascript
+   * const jsforce = require('jsforce');
+   *
    * // Establish a Salesforce connection. (Details elided)
    * const conn = new jsforce.Connection({ … });
    *
@@ -238,6 +241,9 @@ export default class Streaming<S extends Schema> extends EventEmitter {
    * Example with extensions, using Replay & Auth Failure extensions in a server-side Node.js app:
    *
    * ```javascript
+   * const jsforce = require('jsforce');
+   * const { StreamingExtension } = require('jsforce/api/streaming');
+   *
    * // Establish a Salesforce connection. (Details elided)
    * const conn = new jsforce.Connection({ … });
    *
@@ -245,9 +251,9 @@ export default class Streaming<S extends Schema> extends EventEmitter {
    * const replayId = -2; // -2 is all retained events
    *
    * const exitCallback = () => process.exit(1);
-   * const authFailureExt = new jsforce.StreamingExtension.AuthFailure(exitCallback);
+   * const authFailureExt = new StreamingExtension.AuthFailure(exitCallback);
    *
-   * const replayExt = new jsforce.StreamingExtension.Replay(channel, replayId);
+   * const replayExt = new StreamingExtension.Replay(channel, replayId);
    *
    * const fayeClient = conn.streaming.createClient([
    *   authFailureExt,
@@ -265,6 +271,8 @@ export default class Streaming<S extends Schema> extends EventEmitter {
     return this._createClient(null, extensions);
   }
 }
+
+export { StreamingExtension };
 
 /*--------------------------------------------*/
 /*
