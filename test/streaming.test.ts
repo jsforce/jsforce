@@ -2,9 +2,14 @@ import assert from 'assert';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject, isString, delay } from './util';
+import type {
+  StreamingMessage,
+  GenericStreamingMessage,
+  Subscription,
+} from '../src/api/streaming';
 
 const connMgr = new ConnectionManager(config);
-const conn: any = connMgr.createConnection(); // TODO: remove any
+const conn = connMgr.createConnection();
 
 /**
  *
@@ -17,11 +22,11 @@ beforeAll(async () => {
  *
  */
 test('subscribe to topic, create account, and receive event of account has been created', async () => {
-  let subscr: any; // TODO: remove any
-  const msgArrived = new Promise<any>((resolve) => {
-    // TODO: remove any
+  type Account = { Id: string; Name: string };
+  let subscr: Subscription | undefined;
+  const msgArrived = new Promise<StreamingMessage<Account>>((resolve) => {
     subscr = conn.streaming
-      .topic('JSforceTestAccountUpdates')
+      .topic<Account>('JSforceTestAccountUpdates')
       .subscribe(resolve);
   });
   await delay(5000);
@@ -48,9 +53,8 @@ test('subscribe to generic streaming channel and recieve custom streaming event'
   try {
     await conn.sobject('StreamingChannel').create({ Name: channelName });
 
-    let subscr: any; // TODO: remove any
-    const msgArrived = new Promise<any>((resolve) => {
-      // TODO: remove any
+    let subscr: Subscription | undefined;
+    const msgArrived = new Promise<GenericStreamingMessage>((resolve) => {
       subscr = conn.streaming.channel(channelName).subscribe(resolve);
     });
     await delay(5000);

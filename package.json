@@ -81,7 +81,7 @@
     "core-js": "^3.6.4",
     "csv-parse": "^4.8.2",
     "csv-stringify": "^5.3.4",
-    "faye": "^1.2.4",
+    "faye": "^1.4.0",
     "fs-extra": "^8.1.0",
     "https-proxy-agent": "^5.0.0",
     "inquirer": "^7.0.0",

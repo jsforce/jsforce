@@ -53,6 +53,7 @@ import Apex from './api/apex';
 import Bulk from './api/bulk';
 import Metadata from './api/metadata';
 import SoapApi from './api/soap';
+import Streaming from './api/streaming';
 
 /**
  * type definitions
@@ -283,6 +284,10 @@ export default class Connection<
 
   get soap(): SoapApi<S> {
     return raiseNoModuleError('soap');
+  }
+
+  get streaming(): Streaming<S> {
+    return raiseNoModuleError('streaming');
   }
 
   /**
