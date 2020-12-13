@@ -4,7 +4,7 @@ import config from './config';
 import { isObject, isString, isUndefined } from './util';
 
 const connMgr = new ConnectionManager(config);
-const conn: any = connMgr.createConnection(); // TODO: remove any typing
+const conn = connMgr.createConnection();
 
 /**
  *
