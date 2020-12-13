@@ -51,6 +51,7 @@ import { formatDate } from './util/formatter';
 import Analytics from './api/analytics';
 import Apex from './api/apex';
 import Bulk from './api/bulk';
+import Chatter from './api/chatter';
 import Metadata from './api/metadata';
 import SoapApi from './api/soap';
 import Streaming from './api/streaming';
@@ -276,6 +277,10 @@ export default class Connection<
 
   get bulk(): Bulk<S> {
     return raiseNoModuleError('bulk');
+  }
+
+  get chatter(): Chatter<S> {
+    return raiseNoModuleError('chatter');
   }
 
   get metadata(): Metadata<S> {
