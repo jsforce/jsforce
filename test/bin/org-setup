@@ -14,7 +14,7 @@ var conn = new jsforce.Connection({ logLevel: process.env.DEBUG });
 conn.login(process.env.SF_USERNAME, process.env.SF_PASSWORD)
   .then(function() {
     console.log('Deploying test suite package...');
-    conn.metadata.pollTimeout = 60*1000;
+    conn.metadata.pollTimeout = 10*60*1000;
     return conn.metadata.deploy(archive).complete(true);
   })
   .then(function(res) {
