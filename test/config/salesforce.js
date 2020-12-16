@@ -13,4 +13,5 @@ module.exports = {
   upsertField :   "ExtId__c",
   proxyUrl :      process.env.SF_AJAX_PROXY_URL,
   logLevel :      process.env.DEBUG,
+  privateKey :    process.env.JWT_PRIVATE_KEY,
 };
