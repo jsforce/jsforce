@@ -1,0 +1,6 @@
+{
+  "main": "../../lib/api/bulk",
+  "module": "../../module/api/bulk",
+  "browser": "../../browser/api/bulk",
+  "types": "../../lib/api/bulk"
+}

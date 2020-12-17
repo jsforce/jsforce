@@ -1,0 +1,6 @@
+{
+  "main": "../../lib/api/streaming",
+  "module": "../../module/api/streaming",
+  "browser": "../../browser/api/streaming",
+  "types": "../../lib/api/streaming"
+}
