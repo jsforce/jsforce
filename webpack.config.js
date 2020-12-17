@@ -14,11 +14,13 @@ module.exports = {
     library: 'jsforce',
   },
   module: {
-    rules: [{
-      test: /\.js$/,
-      use: ['source-map-loader'],
-      enforce: 'pre',
-    }],
+    rules: [
+      {
+        test: /\.js$/,
+        use: ['source-map-loader'],
+        enforce: 'pre',
+      },
+    ],
   },
   devtool: 'source-map',
   optimization: {
