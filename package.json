@@ -61,9 +61,11 @@
     "build",
     "browser",
     "core",
+    "dist",
     "lib",
+    "module",
     "src",
-    "test",
+    "typings",
     "index.js"
   ],
   "engines": {
