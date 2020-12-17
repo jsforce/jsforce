@@ -64,7 +64,6 @@
     "lib",
     "src",
     "test",
-    "index.d.ts",
     "index.js"
   ],
   "engines": {
