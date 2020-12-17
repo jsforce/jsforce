@@ -60,7 +60,7 @@ import Tooling from './api/tooling';
 /**
  * type definitions
  */
-export type ConnectionConfig<S extends Schema> = {
+export type ConnectionConfig<S extends Schema = Schema> = {
   version?: string;
   loginUrl?: string;
   accessToken?: string;

@@ -32,10 +32,15 @@ export type AuthzRequestParams = {
 };
 
 export type TokenResponse = {
+  token_type: 'Bearer';
   id: string;
   access_token: string;
-  refresh_token: string;
+  refresh_token?: string;
+  signature: string;
+  issued_at: string;
   instance_url: string;
+  sfdc_community_url?: string;
+  sfdc_community_id?: string;
 };
 
 /**
