@@ -1,67 +1,65 @@
 #!/usr/bin/env node
-var jsforce = require('../../lib/jsforce');
-var archiver = require('archiver');
+const jsforce = require('../..');
+const archiver = require('archiver');
 
-var archive = archiver('zip');
-archive.bulk({
-  expand: true,
-  cwd: __dirname + '/../package',
-  src: [ 'JSforceTestSuite/**' ]
-});
-archive.finalize();
-
-var conn = new jsforce.Connection({ logLevel: process.env.DEBUG });
-conn.login(process.env.SF_USERNAME, process.env.SF_PASSWORD)
-  .then(function() {
-    console.log('Deploying test suite package...');
-    conn.metadata.pollTimeout = 60*1000;
-    return conn.metadata.deploy(archive).complete(true);
-  })
-  .then(function(res) {
-    console.log('Package deployment Status: ', res.status);
-    if (res.status !== 'Succeeded') {
-      console.log(res.details);
-      throw new Error('Deployment Not Successfully Finished: ' +res.status);
-    }
-  })
-  .then(function() {
-    return conn.sobject('BigTable__c').count();
-  })
-  .then(function(count) {
-    if (count===0) {
-      console.log('Creating BigTable records...');
-      var records = new Array(551).join('_').split('').map(function(){
+async function main() {
+  // deploy JSforce Test package metadata
+  const archive = archiver('zip');
+  archive.glob('JSforceTestSuite/**', {
+    cwd: __dirname + '/../package',
+  });
+  archive.finalize();
+  const conn = new jsforce.Connection({ logLevel: process.env.DEBUG });
+  await conn.login(process.env.SF_USERNAME, process.env.SF_PASSWORD);
+  console.log('Deploying test suite package...');
+  conn.metadata.pollTimeout = 60 * 1000;
+  const res = await conn.metadata.deploy(archive).complete(true);
+  console.log('Package deployment Status: ', res.status);
+  if (res.status !== 'Succeeded') {
+    console.log(res.details.componentFailures);
+    throw new Error('Deployment Not Successfully Finished: ' + res.status);
+  }
+  // generate row entries in BigTable
+  const bigTableCount = await conn.sobject('BigTable__c').count();
+  if (bigTableCount === 0) {
+    console.log('Creating BigTable records...');
+    const records = new Array(551)
+      .join('_')
+      .split('')
+      .map(function () {
         return { OwnerId: conn.userInfo.id };
       });
-      return jsforce.Promise.all(
-        conn.bulk.load('BigTable__c', 'insert', records),
-        conn.bulk.load('BigTable__c', 'insert', records),
-        conn.bulk.load('BigTable__c', 'insert', records),
-        conn.bulk.load('BigTable__c', 'insert', records)
-      ).then(function() {
-        console.log('Records inserted to BigTable')
-      })
-    }
-  })
-  .then(function() {
-    return conn.sobject('PushTopic').count({ Name: 'JSforceTestAccountUpdates' });
-  })
-  .then(function(count) {
-    if (count === 0) {
-      return conn.sobject('PushTopic').create({
-        Name: 'JSforceTestAccountUpdates',
-        Query: 'SELECT Id, Name FROM Account',
-        ApiVersion: conn.version,
-        NotifyForFields: 'Referenced',
-        NotifyForOperationCreate: true,
-        NotifyForOperationUpdate: true,
-        NotifyForOperationDelete: false,
-        NotifyForOperationUndelete: false
-      }).then(function() {
-        console.log('PushTopic created for Streaming API');
-      });
-    }
-  })
-  .catch(function(err) {
+    await Promise.all(
+      conn.bulk.load('BigTable__c', 'insert', records),
+      conn.bulk.load('BigTable__c', 'insert', records),
+      conn.bulk.load('BigTable__c', 'insert', records),
+      conn.bulk.load('BigTable__c', 'insert', records),
+    );
+    console.log('Records inserted to BigTable');
+  }
+  // setup PushTopic
+  const pushTopicCount = await conn
+    .sobject('PushTopic')
+    .count({ Name: 'JSforceTestAccountUpdates' });
+  if (pushTopicCount === 0) {
+    await conn.sobject('PushTopic').create({
+      Name: 'JSforceTestAccountUpdates',
+      Query: 'SELECT Id, Name FROM Account',
+      ApiVersion: conn.version,
+      NotifyForFields: 'Referenced',
+      NotifyForOperationCreate: true,
+      NotifyForOperationUpdate: true,
+      NotifyForOperationDelete: false,
+      NotifyForOperationUndelete: false,
+    });
+    console.log('PushTopic created for Streaming API');
+  }
+}
+
+(async () => {
+  try {
+    await main();
+  } catch (err) {
     console.error(err);
-  });
+  }
+})();

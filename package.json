@@ -115,6 +115,7 @@
     "@types/xml2js": "^0.4.5",
     "@typescript-eslint/eslint-plugin": "^4.9.0",
     "@typescript-eslint/parser": "^4.9.0",
+    "archiver": "^5.1.0",
     "babel-preset-power-assert": "^3.0.0",
     "conditional-type-checks": "^1.0.5",
     "cross-env": "^7.0.3",
