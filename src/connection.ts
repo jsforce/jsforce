@@ -55,6 +55,7 @@ import Chatter from './api/chatter';
 import Metadata from './api/metadata';
 import SoapApi from './api/soap';
 import Streaming from './api/streaming';
+import Tooling from './api/tooling';
 
 /**
  * type definitions
@@ -293,6 +294,10 @@ export default class Connection<
 
   get streaming(): Streaming<S> {
     return raiseNoModuleError('streaming');
+  }
+
+  get tooling(): Tooling<S> {
+    return raiseNoModuleError('tooling');
   }
 
   /**
