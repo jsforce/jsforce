@@ -1,0 +1,6 @@
+{
+  "main": "../../lib/api/tooling",
+  "module": "../../module/api/tooling",
+  "browser": "../../browser/api/tooling",
+  "types": "../../lib/api/tooling"
+}

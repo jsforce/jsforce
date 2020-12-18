@@ -3,6 +3,7 @@ import Connection from './connection';
 import OAuth2 from './oauth2';
 import SfDate from './date';
 import registry, { Registry } from './registry';
+import browser, { BrowserClient } from './browser/client';
 import VERSION from './VERSION';
 
 export * from './types';
@@ -13,6 +14,8 @@ export {
   SfDate as Date,
   SfDate,
   Registry,
+  BrowserClient,
   registry,
+  browser,
 };
 export default jsforce;

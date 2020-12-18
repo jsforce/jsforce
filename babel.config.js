@@ -21,7 +21,6 @@ module.exports = {
       },
     ],
   ],
-  sourceMaps: 'inline',
   env: {
     module: {
       presets: [

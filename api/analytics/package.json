@@ -1,0 +1,6 @@
+{
+  "main": "../../lib/api/analytics",
+  "module": "../../module/api/analytics",
+  "browser": "../../browser/api/analytics",
+  "types": "../../lib/api/analytics"
+}

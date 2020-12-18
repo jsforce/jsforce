@@ -1,0 +1,6 @@
+{
+  "main": "../../lib/api/chatter",
+  "module": "../../module/api/chatter",
+  "browser": "../../browser/api/chatter",
+  "types": "../../lib/api/chatter"
+}
