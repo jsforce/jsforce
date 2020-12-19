@@ -297,9 +297,15 @@ export default class Query<
         ? (fields as Array<string | FP>)
             .map(toFieldArray)
             .reduce((fs, f) => [...fs, ...f], [] as string[])
-        : Object.entries(fields as { [name: string]: any })
-            .filter(([_f, v]) => v)
-            .map(([f]) => f);
+        : Object.entries(fields as { [name: string]: QueryField<S, N, FP> })
+            .map(([f, v]) => {
+              if (typeof v === 'number' || typeof v === 'boolean') {
+                return v ? [f] : [];
+              } else {
+                return toFieldArray(v).map((p) => `${f}.${p}`);
+              }
+            })
+            .reduce((fs, f) => [...fs, ...f], [] as string[]);
     }
     if (fields) {
       this._config.fields = toFieldArray(fields);
