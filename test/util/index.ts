@@ -4,7 +4,11 @@ export function delay(msec: number) {
   });
 }
 
-export function isObject(o: any): o is Object {
+export function isObject(o: any): o is object {
+  return typeof o === 'object' && o !== null;
+}
+
+export function isMapObject(o: any): o is { [name: string]: any } {
   return typeof o === 'object' && o !== null;
 }
 

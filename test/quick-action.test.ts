@@ -1,10 +1,11 @@
 import assert from 'assert';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
-import { isObject, isString } from './util';
+import { isObject, isString, isMapObject } from './util';
+import { QuickAction } from '..';
 
 const connMgr = new ConnectionManager(config);
-const conn: any = connMgr.createConnection(); // TODO: remove any
+const conn = connMgr.createConnection();
 
 /**
  *
@@ -41,7 +42,7 @@ test('list sobject actions and return global actions', async () => {
   }
 });
 
-let action: any; // TODO: remove any
+let action: QuickAction<any>;
 
 /**
  *
@@ -63,7 +64,7 @@ test('describe global action info and return global actions', async () => {
  */
 test('get default values of the action and return default field values', async () => {
   const res = await action.defaultValues();
-  assert.ok(isObject(res));
+  assert.ok(isMapObject(res));
   // assert.ok(res.Subject === null);
   assert.ok(res.Description === null);
   assert.ok(res.WhoId === null);
@@ -77,10 +78,11 @@ test('get default values of the action for an account record and return default 
   const ret = await conn
     .sobject('Account')
     .create({ Name: 'JSforce QuickAction Test' });
+  assert.ok(ret.success);
   const accId = ret.id;
   try {
     const res = await action.defaultValues(accId);
-    assert.ok(isObject(res));
+    assert.ok(isMapObject(res));
     // assert.ok(res.Subject === null);
     assert.ok(res.Description === null);
     assert.ok(res.WhoId === null);
@@ -97,6 +99,7 @@ test('execute action for record', async () => {
   const ret = await conn
     .sobject('Account')
     .create({ Name: 'JSforce QuickAction Test' });
+  assert.ok(ret.success);
   const accId = ret.id;
   const record = {
     Subject: 'My Task Test',
