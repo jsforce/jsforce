@@ -47,6 +47,7 @@ import Query from './query';
 import { QueryOptions } from './query';
 import SObject from './sobject';
 import QuickAction from './quick-action';
+import Process from './process';
 import { formatDate } from './util/formatter';
 import Analytics from './api/analytics';
 import Apex from './api/apex';
@@ -1537,4 +1538,9 @@ export default class Connection<
   quickAction(actionName: string): QuickAction<S> {
     return new QuickAction(this, `/quickActions/${actionName}`);
   }
+
+  /**
+   * Module which manages process rules and approval processes
+   */
+  process = new Process(this);
 }
