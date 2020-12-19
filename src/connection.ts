@@ -27,6 +27,8 @@ import {
   SObjectInputRecord,
   SObjectUpdateRecord,
   SObjectFieldNames,
+  UserInfo,
+  LimitInfo,
 } from './types';
 import { StreamPromise } from './util/promise';
 import Transport, {
@@ -77,19 +79,6 @@ export type ConnectionConfig<S extends Schema = Schema> = {
   logLevel?: LogLevelConfig;
   callOptions?: { [name: string]: string };
   refreshFn?: SessionRefreshFunc<S>;
-};
-
-export type UserInfo = {
-  id: string;
-  organizationId: string;
-  url: string;
-};
-
-export type LimitInfo = {
-  apiUsage?: {
-    used: number;
-    limit: number;
-  };
 };
 
 export type ConnectionEstablishOptions = {

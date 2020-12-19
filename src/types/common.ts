@@ -508,3 +508,16 @@ export type OrganizationLimitsInfo = {
     Remaining: number;
   };
 };
+
+export type UserInfo = {
+  id: string;
+  organizationId: string;
+  url: string;
+};
+
+export type LimitInfo = {
+  apiUsage?: {
+    used: number;
+    limit: number;
+  };
+};

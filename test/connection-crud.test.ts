@@ -2,7 +2,7 @@ import assert from 'assert';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject } from './util';
-import { Record, SavedRecord } from '../src/types';
+import { Record, SavedRecord } from '..';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();

@@ -6,7 +6,7 @@ import type {
   StreamingMessage,
   GenericStreamingMessage,
   Subscription,
-} from '../src/api/streaming';
+} from '../api/streaming';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();

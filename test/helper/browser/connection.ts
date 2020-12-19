@@ -1,5 +1,6 @@
-export function getConnectionConfig(config: any) {
-  // TODO: remove any
+import { ConnectionManagerConfig } from '../connection-manager';
+
+export function getConnectionConfig(config: ConnectionManagerConfig) {
   return {
     loginUrl: config.loginUrl,
     proxyUrl: config.proxyUrl,

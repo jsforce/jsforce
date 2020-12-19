@@ -1,10 +1,10 @@
 import stream from 'stream';
 import through2 from 'through2';
 import assert from 'assert';
-import { SfDate } from '../src';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isString, isNumber } from './util';
+import { SfDate } from '..';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection(); // TODO: remove any

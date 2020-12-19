@@ -1,16 +1,21 @@
-import { Connection, Schema } from '../../src';
+import { Connection, Schema } from '../..';
 import { delay } from '../util';
+
+export type UserPoolConfig = {
+  poolUsername?: string;
+  poolPassword?: string;
+  poolClient?: string;
+};
 
 /**
  *
  */
 export default class UserPool<S extends Schema = Schema> {
-  _config: any; // TODO: remove any
+  _config: UserPoolConfig;
   _conn: Connection<S>;
   _login: Promise<any> | void;
 
-  constructor(config: any, conn: Connection<S>) {
-    // TODO: remove any
+  constructor(config: UserPoolConfig, conn: Connection<S>) {
     this._config = config;
     this._conn = conn;
     const { poolUsername, poolPassword } = config;
@@ -19,7 +24,7 @@ export default class UserPool<S extends Schema = Schema> {
     }
   }
 
-  async checkout(): Promise<void> {
+  async checkout(): Promise<string> {
     const config = this._config;
     const conn = this._conn;
     await this._login;
@@ -35,7 +40,7 @@ export default class UserPool<S extends Schema = Schema> {
     return this.checkout();
   }
 
-  async checkin(username: string): Promise<any> {
+  async checkin(username: string): Promise<void> {
     return this._conn.apex.delete(`/JSforceTestUserPool/${username}`);
   }
 }

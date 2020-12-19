@@ -2,7 +2,7 @@ import assert from 'assert';
 import { delay } from './util';
 import authorize from './helper/webauth';
 import config from './config';
-import { Connection } from '../src';
+import { Connection } from '..';
 
 /**
  *
