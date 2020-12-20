@@ -477,15 +477,49 @@ export type DescribeQuickActionResult = {
 
 type DescribeQuickActionDefaultValue = any; // TODO
 
+type QuickActionLayout = {
+  collapsed: boolean;
+  columns: number;
+  heading: string | null;
+  layoutRows: any[];
+  layoutSectionId: string | null;
+  parentLayoutId: string | null;
+  rows: number;
+  tabOrder: string; // 'LeftToRight',
+  useCollapsibleSection: boolean;
+  useHeading: boolean;
+};
+
 export type DescribeQuickActionDetailResult = DescribeQuickActionResult & {
-  canvasApplicationId: Optional<string>;
-  canvasApplicationName: Optional<string>;
-  colors: Optional<DescribeColor[]>;
-  defaultValues: Optional<DescribeQuickActionDefaultValue[]>;
-  height: Optional<number>;
-  iconName: Optional<string>;
-  iconUrl: Optional<string>;
-  icons: Optional<DescribeIcon[]>;
+  canvasApplicationId: string | null;
+  canvasApplicationName: string | null;
+  colors: DescribeColor[];
+  contextSobjectType: string | null;
+  defaultValues: DescribeQuickActionDefaultValue[];
+  flowDevName: string | null;
+  flowRecordIdVar: string | null;
+  height: number;
+  iconName: string | null;
+  iconUrl: string | null;
+  icons: DescribeIcon[];
+  layout: QuickActionLayout;
+  lightningComponentBundleId: string | null;
+  lightningComponentBundleName: string | null;
+  lightningComponentQualifiedName: string | null;
+  lightningWebComponentBundleId: string | null;
+  lightningWebComponentBundleName: string | null;
+  lightningWebComponentQualifiedName: string | null;
+  miniIconUrl: string;
+  mobileExtensionId: string | null;
+  showQuickActionLcHeader: boolean;
+  showQuickActionVfHeader: boolean;
+  targetParentField: string | null;
+  targetRecordTypeId: string | null;
+  targetSobjectType: string;
+  type: string;
+  visualforcePageName: string | null;
+  visualforcePageUrl: string | null;
+  width: number | null;
 };
 
 export type DeletedResult = {
@@ -506,5 +540,18 @@ export type OrganizationLimitsInfo = {
   [key: string]: {
     Max: number;
     Remaining: number;
+  };
+};
+
+export type UserInfo = {
+  id: string;
+  organizationId: string;
+  url: string;
+};
+
+export type LimitInfo = {
+  apiUsage?: {
+    used: number;
+    limit: number;
   };
 };

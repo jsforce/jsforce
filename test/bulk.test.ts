@@ -1,12 +1,11 @@
 import assert from 'assert';
 import fs from 'fs';
 import path from 'path';
-import { Connection, Date as SfDate } from '../src';
+import { Connection, Date as SfDate, Record } from '..';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject, isString } from './util';
 import { isNodeJS } from './helper/env';
-import { Record } from '../src/types';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();

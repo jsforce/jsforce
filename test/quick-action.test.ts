@@ -2,9 +2,10 @@ import assert from 'assert';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject, isString } from './util';
+import { QuickAction } from '..';
 
 const connMgr = new ConnectionManager(config);
-const conn: any = connMgr.createConnection(); // TODO: remove any
+const conn = connMgr.createConnection();
 
 /**
  *
@@ -41,7 +42,7 @@ test('list sobject actions and return global actions', async () => {
   }
 });
 
-let action: any; // TODO: remove any
+let action: QuickAction<any>;
 
 /**
  *
@@ -77,6 +78,7 @@ test('get default values of the action for an account record and return default 
   const ret = await conn
     .sobject('Account')
     .create({ Name: 'JSforce QuickAction Test' });
+  assert.ok(ret.success);
   const accId = ret.id;
   try {
     const res = await action.defaultValues(accId);
@@ -97,6 +99,7 @@ test('execute action for record', async () => {
   const ret = await conn
     .sobject('Account')
     .create({ Name: 'JSforce QuickAction Test' });
+  assert.ok(ret.success);
   const accId = ret.id;
   const record = {
     Subject: 'My Task Test',

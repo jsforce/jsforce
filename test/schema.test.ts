@@ -17,7 +17,7 @@ import {
   Record,
   DateString,
   Address,
-} from '../src';
+} from '..';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection<StandardSchema>();

@@ -47,6 +47,7 @@
     "build:bundle": "webpack",
     "lint": "eslint --ext .ts,.js src test",
     "typecheck": "tsc --noEmit",
+    "pretest": "run-s build:transpile",
     "test": "jest `if (test \"${SF_POOL_USERNAME}\" = \"\"); then echo \"-w 1\"; else echo \"-w 5\"; fi`"
   },
   "directories": {

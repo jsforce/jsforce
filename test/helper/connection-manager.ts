@@ -1,5 +1,5 @@
-import { Connection, Schema } from '../../src';
-import UserPool from './user-pool';
+import { Connection, ConnectionConfig, Schema } from '../..';
+import UserPool, { UserPoolConfig } from './user-pool';
 import { getConnectionConfig as getNodeConnectionConfig } from './node/connection';
 import { getConnectionConfig as getBrowserConnectionConfig } from './browser/connection';
 import { isNodeJS } from './env';
@@ -8,16 +8,21 @@ const getConnectionConfig = isNodeJS()
   ? getNodeConnectionConfig
   : getBrowserConnectionConfig;
 
+export type ConnectionManagerConfig = UserPoolConfig &
+  ConnectionConfig & {
+    username: string;
+    password: string;
+  };
+
 /**
  *
  */
 export default class ConnectionManager {
-  _config: any; // TODO: remove any
+  _config: ConnectionManagerConfig;
   _userPool: UserPool | void;
   _idmap: { [id: string]: string };
 
-  constructor(config: any) {
-    // TODO: remove any
+  constructor(config: ConnectionManagerConfig) {
     this._config = config;
     if (config.poolUsername && config.poolPassword) {
       const conn = this.createConnection();

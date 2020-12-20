@@ -2,7 +2,7 @@ import assert from 'assert';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject, isString, isNumber, isBoolean, isUndefined } from './util';
-import { Record } from '../src';
+import { Record } from '..';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();
