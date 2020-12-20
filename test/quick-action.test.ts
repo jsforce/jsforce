@@ -1,7 +1,7 @@
 import assert from 'assert';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
-import { isObject, isString, isMapObject } from './util';
+import { isObject, isString } from './util';
 import { QuickAction } from '..';
 
 const connMgr = new ConnectionManager(config);
@@ -64,7 +64,7 @@ test('describe global action info and return global actions', async () => {
  */
 test('get default values of the action and return default field values', async () => {
   const res = await action.defaultValues();
-  assert.ok(isMapObject(res));
+  assert.ok(isObject(res));
   // assert.ok(res.Subject === null);
   assert.ok(res.Description === null);
   assert.ok(res.WhoId === null);
@@ -82,7 +82,7 @@ test('get default values of the action for an account record and return default 
   const accId = ret.id;
   try {
     const res = await action.defaultValues(accId);
-    assert.ok(isMapObject(res));
+    assert.ok(isObject(res));
     // assert.ok(res.Subject === null);
     assert.ok(res.Description === null);
     assert.ok(res.WhoId === null);
