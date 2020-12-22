@@ -1,6 +1,6 @@
-import fs from 'fs';
 import path from 'path';
 import assert from 'assert';
+import fs from './helper/fs';
 import { Connection } from '..';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
