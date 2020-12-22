@@ -21,7 +21,7 @@ let acc: Record;
 /**
  *
  */
-test('find records and return records', async () => {
+it('should find records and return records', async () => {
   const records = await Account.find();
   assert.ok(Array.isArray(records));
 });
@@ -29,7 +29,7 @@ test('find records and return records', async () => {
 /**
  *
  */
-test('find and return records with direct callback', async () => {
+it('should find and return records with direct callback', async () => {
   const records = await Account.find({}, { Name: 1 });
   assert.ok(Array.isArray(records));
   acc = records[0]; // keep sample account record
@@ -38,7 +38,7 @@ test('find and return records with direct callback', async () => {
 /**
  *
  */
-test('find with conditions', async () => {
+it('should find with conditions', async () => {
   const likeStr = `${acc.Name[0]}%`;
   const records = await Account.find({ Name: { $like: likeStr } }, { Name: 1 });
   assert.ok(Array.isArray(records));
@@ -48,7 +48,7 @@ test('find with conditions', async () => {
 /**
  *
  */
-test('find one record and return a record', async () => {
+it('should find one record and return a record', async () => {
   const record = await Account.findOne({ Id: acc.Id });
   assert.ok(isObject(record));
   // TODO: delete if check when assertions in control flow analysis is introduced to TS
@@ -60,7 +60,7 @@ test('find one record and return a record', async () => {
 /**
  *
  */
-test('count records and return total size count', async () => {
+it('should count records and return total size count', async () => {
   const likeStr = `${acc.Name[0]}%`;
   const count = await Account.count({ Name: { $like: likeStr } });
   assert.ok(isNumber(count));
@@ -70,7 +70,7 @@ test('count records and return total size count', async () => {
 /**
  *
  */
-test('find records with sort option and return sorted records', async () => {
+it('should find records with sort option and return sorted records', async () => {
   const records = await Opportunity.find({}, { CloseDate: 1 })
     .sort('CloseDate', 'desc')
     .exec();
@@ -84,7 +84,7 @@ test('find records with sort option and return sorted records', async () => {
 /**
  *
  */
-test('find records with multiple sort options and return sorted records', async () => {
+it('should find records with multiple sort options and return sorted records', async () => {
   const records = await Opportunity.find(
     {},
     { 'Account.Name': 1, CloseDate: 1 },
@@ -106,7 +106,7 @@ test('find records with multiple sort options and return sorted records', async 
 /**
  *
  */
-test('find records with multiple sort options and limit option and return sorted records', async () => {
+it('should find records with multiple sort options and limit option and return sorted records', async () => {
   const records = await Opportunity.find({}, { 'Owner.Name': 1, CloseDate: 1 })
     .sort({ 'Owner.Name': 1, CloseDate: -1 })
     .limit(10)
@@ -127,7 +127,7 @@ test('find records with multiple sort options and limit option and return sorted
 /**
  *
  */
-test('select records and return records', async () => {
+it('should select records and return records', async () => {
   const records = await Opportunity.select('Id,Owner.Name,CloseDate')
     .limit(10)
     .exec();
@@ -145,7 +145,7 @@ test('select records and return records', async () => {
 /**
  *
  */
-test('select records with asterisk and return records', async () => {
+it('should select records with asterisk and return records', async () => {
   const records = await Opportunity.select('*, Account.*, Owner.Name').exec();
   assert.ok(Array.isArray(records));
   for (const record of records) {
@@ -162,7 +162,7 @@ test('select records with asterisk and return records', async () => {
 /**
  *
  */
-test('select records including child objects and return records with child records', async () => {
+it('should select records including child objects and return records with child records', async () => {
   const records = await Account.find(null, 'Id')
     .include('Contacts')
     .select('*')
@@ -209,7 +209,7 @@ test('select records including child objects and return records with child recor
 /**
  *
  */
-test('list layout for SObject and return Account layout information', async () => {
+it('should list layout for SObject and return Account layout information', async () => {
   const res = await Account.layouts();
   assert.ok(Array.isArray(res.layouts));
   for (const layout of res.layouts) {
@@ -228,7 +228,7 @@ test('list layout for SObject and return Account layout information', async () =
 /**
  *
  */
-test('list layouts (cache-first) and return Account layout information', async () => {
+it('should list layouts (cache-first) and return Account layout information', async () => {
   const res = await Account.layouts$();
   assert.ok(Array.isArray(res.layouts));
   for (const layout of res.layouts) {
@@ -247,7 +247,7 @@ test('list layouts (cache-first) and return Account layout information', async (
 /**
  *
  */
-test('get cached layouts and return Account layout information immediately', () => {
+it('should get cached layouts and return Account layout information immediately', () => {
   const res = Account.layouts$$();
   assert.ok(Array.isArray(res.layouts));
   for (const layout of res.layouts) {
@@ -266,7 +266,7 @@ test('get cached layouts and return Account layout information immediately', () 
 /**
  *
  */
-test('list named layout for SObject and return User named layout information', async () => {
+it('should list named layout for SObject and return User named layout information', async () => {
   const res = await conn.sobject('User').layouts('UserAlt');
   assert.ok(Array.isArray(res.layouts));
   for (const layout of res.layouts) {
@@ -282,7 +282,7 @@ test('list named layout for SObject and return User named layout information', a
   assert.ok(Array.isArray(res.recordTypeSelectorRequired));
 });
 
-test('list named layouts (cache-first) and return User named layout information', async () => {
+it('should list named layouts (cache-first) and return User named layout information', async () => {
   const res = await conn.sobject('User').layouts$('UserAlt');
   assert.ok(Array.isArray(res.layouts));
   for (const layout of res.layouts) {
@@ -298,7 +298,7 @@ test('list named layouts (cache-first) and return User named layout information'
   assert.ok(Array.isArray(res.recordTypeSelectorRequired));
 });
 
-test('get cached named layouts and return User named layout information immediately', () => {
+it('should get cached named layouts and return User named layout information immediately', () => {
   const res = conn.sobject('User').layouts$$('UserAlt');
   assert.ok(Array.isArray(res.layouts));
   for (const layout of res.layouts) {
@@ -317,7 +317,7 @@ test('get cached named layouts and return User named layout information immediat
 /**
  *
  */
-test('list compact layout for SObject and return Account comact layout information', async () => {
+it('should list compact layout for SObject and return Account comact layout information', async () => {
   const res = await Account.compactLayouts();
   assert.ok(Array.isArray(res.compactLayouts));
   for (const clayout of res.compactLayouts) {
@@ -335,7 +335,7 @@ test('list compact layout for SObject and return Account comact layout informati
 /**
  *
  */
-test('list compact layouts (cache-first) and return Account comact layout information', async () => {
+it('should list compact layouts (cache-first) and return Account comact layout information', async () => {
   const res = await Account.compactLayouts$();
   assert.ok(Array.isArray(res.compactLayouts));
   for (const clayout of res.compactLayouts) {
@@ -353,7 +353,7 @@ test('list compact layouts (cache-first) and return Account comact layout inform
 /**
  *
  */
-test('get cached compact layouts and return Account comapct layout information immediately', () => {
+it('should get cached compact layouts and return Account comapct layout information immediately', () => {
   const res = Account.compactLayouts$$();
   assert.ok(Array.isArray(res.compactLayouts));
   for (const clayout of res.compactLayouts) {
@@ -371,7 +371,7 @@ test('get cached compact layouts and return Account comapct layout information i
 /**
  *
  */
-test('list approval layout for SObject and return Account approval layout information', async () => {
+it('should list approval layout for SObject and return Account approval layout information', async () => {
   const res = await Account.approvalLayouts();
   assert.ok(Array.isArray(res.approvalLayouts));
   for (const alayout of res.approvalLayouts) {
@@ -385,7 +385,7 @@ test('list approval layout for SObject and return Account approval layout inform
 /**
  *
  */
-test('list approval layouts (cache-first) and return Account approval layout information', async () => {
+it('should list approval layouts (cache-first) and return Account approval layout information', async () => {
   const res = await Account.approvalLayouts$();
   assert.ok(Array.isArray(res.approvalLayouts));
   for (const alayout of res.approvalLayouts) {
@@ -399,7 +399,7 @@ test('list approval layouts (cache-first) and return Account approval layout inf
 /**
  *
  */
-test('get cached approval layouts and return Account approval layout information immediately', () => {
+it('should get cached approval layouts and return Account approval layout information immediately', () => {
   const res = Account.approvalLayouts$$();
   assert.ok(Array.isArray(res.approvalLayouts));
   for (const alayout of res.approvalLayouts) {
@@ -415,7 +415,7 @@ let listviewId: string;
 /**
  *
  */
-test('listup list views and return list views definitions on the sobject', async () => {
+it('should listup list views and return list views definitions on the sobject', async () => {
   const result = await Account.listviews();
   assert.ok(isObject(result));
   assert.ok(Array.isArray(result.listviews));
@@ -434,7 +434,7 @@ test('listup list views and return list views definitions on the sobject', async
 /**
  *
  */
-test('describe list view and return described list view info for given list view id', async () => {
+it('should describe list view and return described list view info for given list view id', async () => {
   const result = await Account.listview(listviewId).describe();
   assert.ok(isObject(result));
   assert.ok(isString(result.id));
@@ -454,7 +454,7 @@ test('describe list view and return described list view info for given list view
 /**
  *
  */
-test('get result of list view and return executed result of list view for given list view id', async () => {
+it('should get result of list view and return executed result of list view for given list view id', async () => {
   const result = await Account.listview(listviewId).results();
   assert.ok(isObject(result));
   assert.ok(isBoolean(result.done));
@@ -475,7 +475,7 @@ test('get result of list view and return executed result of list view for given 
 /**
  *
  */
-test('explain query plan of list view and get explain result', async () => {
+it('should explain query plan of list view and get explain result', async () => {
   const result = await Account.listview(listviewId).explain();
   assert.ok(Array.isArray(result.plans));
   for (const plan of result.plans) {

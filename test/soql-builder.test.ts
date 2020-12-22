@@ -7,7 +7,7 @@ import { SfDate } from '..';
  */
 describe('soql-builder', () => {
   //
-  test('build simple query', () => {
+  it('should build simple query', () => {
     const soql = createSOQL({
       fields: ['Id', 'Name'],
       table: 'Account',
@@ -25,7 +25,7 @@ describe('soql-builder', () => {
   /**
    *
    */
-  test('build query with OR operator', () => {
+  it('should build query with OR operator', () => {
     const soql = createSOQL({
       fields: ['Id', 'Name'],
       table: 'Account',
@@ -41,7 +41,7 @@ describe('soql-builder', () => {
   });
 
   //
-  test('build query with nested OR operator', () => {
+  it('should build query with nested OR operator', () => {
     const soql = createSOQL({
       fields: ['Id', 'Name'],
       table: 'Account',
@@ -58,7 +58,7 @@ describe('soql-builder', () => {
   });
 
   //
-  test('build query with nested OR/AND operator', () => {
+  it('should build query with nested OR/AND operator', () => {
     const soql = createSOQL({
       table: 'Opportunity',
       conditions: {
@@ -78,7 +78,7 @@ describe('soql-builder', () => {
   });
 
   //
-  test('build query with nested NOT/AND operator', () => {
+  it('should build query with nested NOT/AND operator', () => {
     const soql = createSOQL({
       table: 'Opportunity',
       conditions: {
@@ -99,7 +99,7 @@ describe('soql-builder', () => {
   });
 
   //
-  test('build query with nested NOT operator', () => {
+  it('should build query with nested NOT operator', () => {
     const soql = createSOQL({
       table: 'Opportunity',
       conditions: {
@@ -117,7 +117,7 @@ describe('soql-builder', () => {
   });
 
   //
-  test('build query with nested OR/NOT/AND operator', () => {
+  it('should build query with nested OR/NOT/AND operator', () => {
     const soql = createSOQL({
       table: 'Opportunity',
       conditions: {
@@ -143,7 +143,7 @@ describe('soql-builder', () => {
   });
 
   //
-  test('build query with Date field for date literal', () => {
+  it('should build query with Date field for date literal', () => {
     const soql = createSOQL({
       table: 'Opportunity',
       conditions: {
@@ -168,7 +168,7 @@ describe('soql-builder', () => {
   });
 
   //
-  test('build query with String field using $like/$nlike operator', () => {
+  it('should build query with String field using $like/$nlike operator', () => {
     const soql = createSOQL({
       table: 'Account',
       conditions: {
@@ -184,7 +184,7 @@ describe('soql-builder', () => {
   });
 
   //
-  test('build query using $in/$nin operator', () => {
+  it('should build query using $in/$nin operator', () => {
     const soql = createSOQL({
       table: 'Contact',
       conditions: {
@@ -202,7 +202,7 @@ describe('soql-builder', () => {
   });
 
   //
-  test('build query using $exists operator', () => {
+  it('should build query using $exists operator', () => {
     const soql = createSOQL({
       table: 'Task',
       conditions: {
@@ -216,7 +216,7 @@ describe('soql-builder', () => {
   });
 
   //
-  test('build query using $includes/$excludes operator', () => {
+  it('should build query using $includes/$excludes operator', () => {
     const soql = createSOQL({
       table: 'Contact',
       conditions: {
@@ -233,7 +233,7 @@ describe('soql-builder', () => {
   });
 
   //
-  test('build query for matching null', () => {
+  it('should build query for matching null', () => {
     const soql = createSOQL({
       table: 'Account',
       conditions: {
@@ -249,7 +249,7 @@ describe('soql-builder', () => {
   });
 
   //
-  test('build query with undefined condition', () => {
+  it('should build query with undefined condition', () => {
     const soql = createSOQL({
       table: 'Account',
       conditions: {
@@ -260,7 +260,7 @@ describe('soql-builder', () => {
   });
 
   //
-  test('build query with sort option', () => {
+  it('should build query with sort option', () => {
     const soql = createSOQL({
       table: 'Opportunity',
       sort: '-CreatedDate',
@@ -275,7 +275,7 @@ describe('soql-builder', () => {
   });
 
   //
-  test('build query with multiple sort option in array', () => {
+  it('should build query with multiple sort option in array', () => {
     const soql = createSOQL({
       table: 'Opportunity',
       conditions: {
@@ -297,7 +297,7 @@ describe('soql-builder', () => {
   });
 
   //
-  test('build query with multiple sort option in hash', () => {
+  it('should build query with multiple sort option in hash', () => {
     const soql = createSOQL({
       table: 'Opportunity',
       conditions: {

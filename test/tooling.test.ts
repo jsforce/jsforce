@@ -16,7 +16,7 @@ beforeAll(async () => {
 /**
  *
  */
-test('describe global', async () => {
+it('should describe global', async () => {
   const res = await conn.tooling.describeGlobal();
   assert.ok(isString(res.encoding));
   assert.ok(isNumber(res.maxBatchSize));
@@ -26,7 +26,7 @@ test('describe global', async () => {
 /**
  *
  */
-test('describe tooling sobject', async () => {
+it('should describe tooling sobject', async () => {
   const so = await conn.tooling.sobject('ApexClass').describe();
   assert.ok(isString(so.name));
   assert.ok(isString(so.label));
@@ -36,7 +36,7 @@ test('describe tooling sobject', async () => {
 /**
  *
  */
-test('find tooling sobject record', async () => {
+it('should find tooling sobject record', async () => {
   const rec = await conn.tooling.sobject('ApexClass').findOne();
   if (rec) {
     assert.ok(isString(rec.Id));
@@ -46,7 +46,7 @@ test('find tooling sobject record', async () => {
 /**
  *
  */
-test('execute anonymous apex and execute successfully', async () => {
+it('should execute anonymous apex and execute successfully', async () => {
   const body = ["System.debug('Hello, World');"].join('\n');
   const res = await conn.tooling.executeAnonymous(body);
   assert.ok(res.compiled === true);
@@ -56,7 +56,7 @@ test('execute anonymous apex and execute successfully', async () => {
 /**
  *
  */
-test('run tests asynchronously', async () => {
+it('should run tests asynchronously', async () => {
   const id = await conn.tooling.runTestsAsynchronous({
     classNames: 'JSforceTestLogicTest',
   });
@@ -66,7 +66,7 @@ test('run tests asynchronously', async () => {
 /**
  *
  */
-test('run tests synchronously', async () => {
+it('should run tests synchronously', async () => {
   const cls = await conn.tooling
     .sobject('ApexClass')
     .findOne({ Name: 'JSforceTestLogicTest' });
@@ -84,7 +84,7 @@ test('run tests synchronously', async () => {
 /**
  *
  */
-test('get completions and return completions', async () => {
+it('should get completions and return completions', async () => {
   const res = await conn.tooling.completions('apex');
   assert.ok(isObject(res));
   assert.ok(isObject(res.publicDeclarations));

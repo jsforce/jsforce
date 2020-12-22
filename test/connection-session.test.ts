@@ -11,7 +11,7 @@ describe('login', () => {
   let conn: Connection;
 
   //
-  test('login by username and password', async () => {
+  it('should login by username and password', async () => {
     conn = new Connection({
       logLevel: config.logLevel,
       proxyUrl: config.proxyUrl,
@@ -24,13 +24,13 @@ describe('login', () => {
   });
 
   //
-  test('execute query and return some records', async () => {
+  it('should execute query and return some records', async () => {
     const res = await conn.query('SELECT Id FROM User');
     assert.ok(Array.isArray(res.records));
   });
 
   //
-  test('catch/handle bad access token', async () => {
+  it('should catch/handle bad access token', async () => {
     let newAccessToken;
     let refreshCount = 0;
     conn.accessToken = 'invalid access token';
@@ -53,7 +53,7 @@ describe('logout', () => {
   let sessionInfo: { sessionId: string; serverUrl: string };
 
   //
-  test('logout from soap session', async () => {
+  it('should logout from soap session', async () => {
     const conn1 = new Connection({
       logLevel: config.logLevel,
       proxyUrl: config.proxyUrl,
@@ -68,7 +68,7 @@ describe('logout', () => {
   });
 
   //
-  test('connect with previous session info to raise auth error', async () => {
+  it('should connect with previous session info to raise auth error', async () => {
     const conn2 = new Connection({
       sessionId: sessionInfo.sessionId,
       serverUrl: sessionInfo.serverUrl,
@@ -92,7 +92,7 @@ describe('oauth2 session', () => {
   let sessionInfo: { accessToken: string; instanceUrl: string };
 
   //
-  test('logout oauth2 session', async () => {
+  it('should logout oauth2 session', async () => {
     const conn = new Connection({
       oauth2: {
         clientId: config.clientId,
@@ -111,7 +111,7 @@ describe('oauth2 session', () => {
   });
 
   //
-  test('connect with previous session info and raise auth error', async () => {
+  it('should connect with previous session info and raise auth error', async () => {
     const conn = new Connection({
       accessToken: sessionInfo.accessToken,
       instanceUrl: sessionInfo.instanceUrl,
@@ -134,7 +134,7 @@ describe('oauth2 refresh', () => {
   let conn: Connection;
 
   //
-  test('authorize web server flow to get access tokens', async () => {
+  it('should authorize web server flow to get access tokens', async () => {
     conn = new Connection({
       oauth2: {
         clientId: config.clientId,
@@ -156,7 +156,7 @@ describe('oauth2 refresh', () => {
   });
 
   //
-  test('make access token invalid and return responses', async () => {
+  it('should make access token invalid and return responses', async () => {
     let accessToken: string | undefined = undefined;
     let refreshCount = 0;
     conn.accessToken = 'invalid access token';
@@ -172,7 +172,7 @@ describe('oauth2 refresh', () => {
   });
 
   //
-  test('make access token invalid and call in parallel and return responses', async () => {
+  it('should make access token invalid and call in parallel and return responses', async () => {
     let accessToken: string | undefined = undefined;
     let refreshCount = 0;
     conn.accessToken = 'invalid access token';
@@ -195,7 +195,7 @@ describe('oauth2 refresh', () => {
   });
 
   //
-  test('expire both access token and refresh token and return error', async () => {
+  it('should expire both access token and refresh token and return error', async () => {
     conn.accessToken = 'invalid access token';
     conn.refreshToken = 'invalid refresh token';
     try {

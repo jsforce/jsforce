@@ -21,7 +21,7 @@ beforeAll(async () => {
 /**
  *
  */
-test('subscribe to topic, create account, and receive event of account has been created', async () => {
+it('should subscribe to topic, create account, and receive event of account has been created', async () => {
   type Account = { Id: string; Name: string };
   let subscr: Subscription | undefined;
   const msgArrived = new Promise<StreamingMessage<Account>>((resolve) => {
@@ -48,7 +48,7 @@ test('subscribe to topic, create account, and receive event of account has been 
 /**
  *
  */
-test('subscribe to generic streaming channel and recieve custom streaming event', async () => {
+it('should subscribe to generic streaming channel and recieve custom streaming event', async () => {
   const channelName = '/u/JSforceTestChannel';
   try {
     await conn.sobject('StreamingChannel').create({ Name: channelName });

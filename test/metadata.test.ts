@@ -55,7 +55,7 @@ describe('CRUD based call', () => {
   /**
    *
    */
-  test('create metadata synchronously and create custom objects', async () => {
+  it('should create metadata synchronously and create custom objects', async () => {
     const results = await conn.metadata.create('CustomObject', metadata);
     assert.ok(Array.isArray(results));
     assert.ok(results.length === metadata.length);
@@ -70,7 +70,7 @@ describe('CRUD based call', () => {
   /**
    *
    */
-  test('read metadata synchronously and return custom objects metadata', async () => {
+  it('should read metadata synchronously and return custom objects metadata', async () => {
     const results = await conn.metadata.read('CustomObject', fullNames);
     assert.ok(Array.isArray(results));
     assert.ok(results.length === fullNames.length);
@@ -85,7 +85,7 @@ describe('CRUD based call', () => {
   /**
    *
    */
-  test('update metadata synchronously return updated custom object metadata', async () => {
+  it('should update metadata synchronously return updated custom object metadata', async () => {
     rmetadata[0].label = 'Updated Test Object Sync 2';
     rmetadata[1].deploymentStatus = 'Deployed';
     const results = await conn.metadata.update('CustomObject', rmetadata);
@@ -101,7 +101,7 @@ describe('CRUD based call', () => {
   /**
    *
    */
-  test('upsert metadata synchronously and upsert custom objects', async () => {
+  it('should upsert metadata synchronously and upsert custom objects', async () => {
     const umetadata = [
       {
         fullName: 'JSforceTestObjectSync2__c',
@@ -141,7 +141,7 @@ describe('CRUD based call', () => {
   /**
    *
    */
-  test('rename metadata synchronously and rename a custom object', async () => {
+  it('should rename metadata synchronously and rename a custom object', async () => {
     const oldName = fullNames[0];
     const newName = oldName.replace(/__c$/, 'Updated__c');
     // Rename operation is not working before API version 35.0
@@ -166,7 +166,7 @@ describe('CRUD based call', () => {
   /**
    *
    */
-  test('list metadata synchronously and list custom objects', async () => {
+  it('should list metadata synchronously and list custom objects', async () => {
     const results = await conn.metadata.list({ type: 'CustomObject' });
     assert.ok(Array.isArray(results));
     for (const result of results) {
@@ -182,7 +182,7 @@ describe('CRUD based call', () => {
   /**
    *
    */
-  test('delete metadata synchronously and delete custom objects', async () => {
+  it('should delete metadata synchronously and delete custom objects', async () => {
     const results = await conn.metadata.delete('CustomObject', fullNames);
     assert.ok(Array.isArray(results));
     assert.ok(results.length === fullNames.length);
@@ -203,7 +203,7 @@ describe('file based call', () => {
    *
    */
   if (isNodeJS()) {
-    test('deploy metadata in packaged file and deploy package', async () => {
+    it('should deploy metadata in packaged file and deploy package', async () => {
       const zipStream = fs.createReadStream(
         path.join(__dirname, '/data/MyPackage.zip'),
       );
@@ -227,7 +227,7 @@ describe('file based call', () => {
   /**
    *
    */
-  test('retrieve metadata in packaged file and retrieve package', async () => {
+  it('should retrieve metadata in packaged file and retrieve package', async () => {
     const bufs: any[] = [];
     await new Promise((resolve, reject) => {
       conn.metadata
@@ -250,7 +250,7 @@ describe('session refresh', () => {
   /**
    *
    */
-  test('refresh metadata API session and list metadata even if the session has been expired', async () => {
+  it('should refresh metadata API session and list metadata even if the session has been expired', async () => {
     let refreshCalled = false;
     const conn2 = new Connection({
       // TODO: remove any

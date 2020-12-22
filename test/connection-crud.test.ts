@@ -22,7 +22,7 @@ describe('single record crud', () => {
   let account: Record;
 
   //
-  test('create account and get created obj', async () => {
+  it('should create account and get created obj', async () => {
     const ret = await conn.sobject('Account').create({ Name: 'Hello' });
     assert.ok(ret.success);
     assert.ok(typeof ret.id === 'string');
@@ -30,7 +30,7 @@ describe('single record crud', () => {
   });
 
   //
-  test('retrieve account and return a record', async () => {
+  it('should retrieve account and return a record', async () => {
     const record = await conn.sobject('Account').retrieve(accountId);
     assert.ok(typeof record.Id === 'string');
     assert.ok(isObject(record.attributes));
@@ -38,7 +38,7 @@ describe('single record crud', () => {
   });
 
   //
-  test('update account, get successful result, and retrieve the updated record', async () => {
+  it('should update account, get successful result, and retrieve the updated record', async () => {
     const ret = await conn
       .sobject('Account')
       .record(account.Id as string)
@@ -50,7 +50,7 @@ describe('single record crud', () => {
   });
 
   //
-  test('update account with options headers, get successfull result, and retrieve the updated record', async () => {
+  it('should update account with options headers, get successfull result, and retrieve the updated record', async () => {
     const options = {
       headers: {
         'SForce-Auto-Assign': 'FALSE',
@@ -78,7 +78,7 @@ describe('multiple records crud', () => {
   let accounts: Record[];
 
   //
-  test('create multiple accounts and get successfull results', async () => {
+  it('should create multiple accounts and get successfull results', async () => {
     const rets = await conn
       .sobject('Account')
       .create([{ Name: 'Account #1' }, { Name: 'Account #2' }]);
@@ -91,7 +91,7 @@ describe('multiple records crud', () => {
   });
 
   //
-  test('retrieve multiple accounts and get specified records', async () => {
+  it('should retrieve multiple accounts and get specified records', async () => {
     const records = await conn.sobject('Account').retrieve(accountIds);
     assert.ok(Array.isArray(records));
     records.forEach((record, i) => {
@@ -103,7 +103,7 @@ describe('multiple records crud', () => {
   });
 
   //
-  test('update multiple accounts, get successfull results, and get updated records', async () => {
+  it('should update multiple accounts, get successfull results, and get updated records', async () => {
     const rets = await conn
       .sobject('Account')
       .update(
@@ -124,7 +124,7 @@ describe('multiple records crud', () => {
   });
 
   //
-  test('delete multiple accounts, get successfull results, and not get any records', async () => {
+  it('should delete multiple accounts, get successfull results, and not get any records', async () => {
     const rets = await conn.sobject('Account').destroy(accountIds);
     assert.ok(Array.isArray(rets));
     rets.forEach((ret) => {
@@ -144,7 +144,7 @@ describe('upsert', () => {
   const extId = `ID${Date.now()}`;
   let recId: string;
   //
-  test('upsert not exisiting record and get successfull result', async () => {
+  it('should upsert not exisiting record and get successfull result', async () => {
     const rec = {
       Name: 'New Record',
       [config.upsertField]: extId,
@@ -157,7 +157,7 @@ describe('upsert', () => {
     recId = ret.id as string;
   });
 
-  test('upsert already existing record, get successfull result, and get updated record', async () => {
+  it('should upsert already existing record, get successfull result, and get updated record', async () => {
     const rec = { Name: 'Updated Record', [config.upsertField]: extId };
     const ret = await conn
       .sobject(config.upsertTable)
@@ -168,7 +168,7 @@ describe('upsert', () => {
     assert.ok(record.Name === 'Updated Record');
   });
 
-  test('upsert duplicated external id record and get multiple choise error', async () => {
+  it('should upsert duplicated external id record and get multiple choise error', async () => {
     const rec1 = { Name: 'Duplicated Record', [config.upsertField]: extId };
     await conn.sobject(config.upsertTable).create(rec1);
     try {

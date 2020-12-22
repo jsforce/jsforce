@@ -19,7 +19,7 @@ beforeAll(async () => {
 /**
  *
  */
-test('query accounts and return records', async () => {
+it('should query accounts and return records', async () => {
   const query = conn.query('SELECT Id, Name FROM Account');
   const result = await query.run();
   assert.ok(isNumber(result.totalSize));
@@ -28,7 +28,7 @@ test('query accounts and return records', async () => {
 /**
  *
  */
-test('query accounts with scanAll option and return all records', async () => {
+it('should query accounts with scanAll option and return all records', async () => {
   // create and delete record
   const ret = await conn
     .sobject('Account')
@@ -48,7 +48,7 @@ test('query accounts with scanAll option and return all records', async () => {
 /**
  *
  */
-test('query big table and execute queryMore and fetch all records', async () => {
+it('should query big table and execute queryMore and fetch all records', async () => {
   let result = await conn.query(
     `SELECT Id, Name FROM ${config.bigTable || 'Account'}`,
   );
@@ -63,7 +63,7 @@ test('query big table and execute queryMore and fetch all records', async () => 
 /**
  *
  */
-test('query big tables without autoFetch and scan records in one query fetch', async () => {
+it('should query big tables without autoFetch and scan records in one query fetch', async () => {
   const records: any[] = []; // TODO: remove any
   let query: any; // TODO: remove any
   await new Promise((resolve, reject) => {
@@ -85,7 +85,7 @@ test('query big tables without autoFetch and scan records in one query fetch', a
 /**
  *
  */
-test('query big tables with autoFetch and scan records up to maxFetch num', async () => {
+it('should query big tables with autoFetch and scan records up to maxFetch num', async () => {
   const records: any[] = []; // TODO: remove any
   let query: any; // TODO: remove any
   await new Promise((resolve, reject) => {
@@ -107,7 +107,7 @@ test('query big tables with autoFetch and scan records up to maxFetch num', asyn
 /**
  *
  */
-test('query big tables by piping randomly-waiting output record stream object and scan records via stream up to maxFetch num', async () => {
+it('should query big tables by piping randomly-waiting output record stream object and scan records via stream up to maxFetch num', async () => {
   const records: any[] = []; // TODO: remove any
   let query: any;
   await new Promise((resolve, reject) => {
@@ -143,7 +143,7 @@ test('query big tables by piping randomly-waiting output record stream object an
 /**
  *
  */
-test('query table and convert to readable stream and get CSV text', async () => {
+it('should query table and convert to readable stream and get CSV text', async () => {
   const query = conn.query('SELECT Id, Name FROM Account LIMIT 10');
   const csvOut = new stream.Writable();
   let result = '';
@@ -162,7 +162,7 @@ test('query table and convert to readable stream and get CSV text', async () => 
 /**
  *
  */
-test('explain query plan of soql query and get explain result', async () => {
+it('should explain query plan of soql query and get explain result', async () => {
   const query = conn.query(
     'SELECT Id, Name FROM Account ORDER BY CreatedDate DESC LIMIT 10',
   );
@@ -185,7 +185,7 @@ const accountNum = 20;
 /**
  *
  */
-test('setup for query and update / destroy test', async () => {
+it('should setup for query and update / destroy test', async () => {
   const records = Array.from({ length: accountNum }).map((_, i) => ({
     Name: `New Bulk Account #${i + 1}`,
     BillingState: 'CA',
@@ -198,7 +198,7 @@ test('setup for query and update / destroy test', async () => {
 /**
  *
  */
-test('update queried records using Query#update and return updated records', async () => {
+it('should update queried records using Query#update and return updated records', async () => {
   const rets = await conn
     .sobject('Account')
     .find({ Name: { $like: 'New Bulk Account%' } })
@@ -227,7 +227,7 @@ test('update queried records using Query#update and return updated records', asy
 /**
  *
  */
-test('update queried records using Query#update, for unmatching query, and return empty array records', async () => {
+it('should update queried records using Query#update, for unmatching query, and return empty array records', async () => {
   const rets = await conn
     .sobject('Account')
     .find({ CreatedDate: { $lt: new SfDate('1970-01-01T00:00:00Z') } }) // should not match any records
@@ -242,7 +242,7 @@ test('update queried records using Query#update, for unmatching query, and retur
 /**
  *
  */
-test('delete queried records using Query#destroy and return deleted status', async () => {
+it('should delete queried records using Query#destroy and return deleted status', async () => {
   const rets = await conn
     .sobject('Account')
     .find({ Name: { $like: 'New Bulk Account%' } })
@@ -258,7 +258,7 @@ test('delete queried records using Query#destroy and return deleted status', asy
 /**
  *
  */
-test('delete queried records using Query#destroy, for unmatching query, and return empty array records', async () => {
+it('should delete queried records using Query#destroy, for unmatching query, and return empty array records', async () => {
   const rets = await conn
     .sobject('Account')
     .find({ CreatedDate: { $lt: new SfDate('1970-01-01T00:00:00Z') } })
@@ -271,7 +271,7 @@ test('delete queried records using Query#destroy, for unmatching query, and retu
 // The num is over 200, but not falling back to bulk API because `allowBulk` option is set to false.
 const massiveAccountNum = 300;
 
-test('setup for query and update/destroy with allowBulk=false test', async () => {
+it('should setup for query and update/destroy with allowBulk=false test', async () => {
   const records = Array.from({ length: massiveAccountNum }).map((_, i) => ({
     Name: `New Bulk Account #${i + 1}`,
     BillingState: 'CA',
@@ -284,7 +284,7 @@ test('setup for query and update/destroy with allowBulk=false test', async () =>
 /**
  *
  */
-test('update queried records using Query#update, with allowBulk = false, and return updated records', async () => {
+it('should update queried records using Query#update, with allowBulk = false, and return updated records', async () => {
   const rets = await conn
     .sobject('Account')
     .find({ Name: { $like: 'New Bulk Account%' } })
@@ -316,7 +316,7 @@ test('update queried records using Query#update, with allowBulk = false, and ret
 /**
  *
  */
-test('delete queried records using Query#destroy, with allowBulk = false, and return deleted status', async () => {
+it('should delete queried records using Query#destroy, with allowBulk = false, and return deleted status', async () => {
   const rets = await conn
     .sobject('Account')
     .find({ Name: { $like: 'New Bulk Account%' } })
