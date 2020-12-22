@@ -1,12 +1,6 @@
 import { Connection, ConnectionConfig, Schema } from '../..';
 import UserPool, { UserPoolConfig } from './user-pool';
-import { getConnectionConfig as getNodeConnectionConfig } from './node/connection';
-import { getConnectionConfig as getBrowserConnectionConfig } from './browser/connection';
-import { isNodeJS } from './env';
-
-const getConnectionConfig = isNodeJS()
-  ? getNodeConnectionConfig
-  : getBrowserConnectionConfig;
+import { getConnectionConfig } from './connection';
 
 export type ConnectionManagerConfig = UserPoolConfig &
   ConnectionConfig & {
