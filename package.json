@@ -25,7 +25,7 @@
   "main": "./index",
   "module": "./module/index",
   "browser": {
-    "./": "./browser/index.js",
+    ".": "./browser/index.js",
     "./index.js": "./browser/index.js",
     "./core": "./browser/core.js",
     "./core.js": "./browser/core.js",
