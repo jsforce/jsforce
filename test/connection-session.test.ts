@@ -3,6 +3,7 @@ import { delay } from './util';
 import authorize from './helper/webauth';
 import config from './config';
 import { Connection } from '..';
+import { isNodeJS } from './helper/env';
 
 /**
  *
@@ -129,83 +130,90 @@ describe('oauth2 session', () => {
   });
 });
 
-/**
- *
- */
-describe('oauth2 refresh', () => {
-  let conn: Connection;
+if (isNodeJS()) {
+  /**
+   *
+   */
+  describe('oauth2 refresh', () => {
+    let conn: Connection;
 
-  //
-  it('should authorize web server flow to get access tokens', async () => {
-    conn = new Connection({
-      oauth2: {
-        clientId: config.clientId,
-        clientSecret: config.clientSecret,
-        redirectUri: config.redirectUri,
-      },
-      logLevel: config.logLevel,
+    //
+    it('should authorize web server flow to get access tokens', async () => {
+      conn = new Connection({
+        oauth2: {
+          clientId: config.clientId,
+          clientSecret: config.clientSecret,
+          redirectUri: config.redirectUri,
+        },
+        logLevel: config.logLevel,
+        proxyUrl: config.proxyUrl,
+      });
+      const authzUrl = conn.oauth2.getAuthorizationUrl();
+      const params = await authorize(
+        authzUrl,
+        config.username,
+        config.password,
+      );
+      const userInfo = await conn.authorize(params.code);
+      assert.ok(typeof userInfo.id === 'string');
+      assert.ok(typeof userInfo.organizationId === 'string');
+      assert.ok(typeof userInfo.url === 'string');
+      assert.ok(typeof conn.accessToken === 'string');
+      assert.ok(typeof conn.refreshToken === 'string');
+      const res = await conn.query('SELECT Id FROM User');
+      assert.ok(Array.isArray(res.records));
     });
-    const authzUrl = conn.oauth2.getAuthorizationUrl();
-    const params = await authorize(authzUrl, config.username, config.password);
-    const userInfo = await conn.authorize(params.code);
-    assert.ok(typeof userInfo.id === 'string');
-    assert.ok(typeof userInfo.organizationId === 'string');
-    assert.ok(typeof userInfo.url === 'string');
-    assert.ok(typeof conn.accessToken === 'string');
-    assert.ok(typeof conn.refreshToken === 'string');
-    const res = await conn.query('SELECT Id FROM User');
-    assert.ok(Array.isArray(res.records));
-  });
 
-  //
-  it('should make access token invalid and return responses', async () => {
-    let accessToken: string | undefined = undefined;
-    let refreshCount = 0;
-    conn.accessToken = 'invalid access token';
-    conn.removeAllListeners('refresh');
-    conn.on('refresh', (at: string) => {
-      accessToken = at;
-      refreshCount += 1;
+    //
+    it('should make access token invalid and return responses', async () => {
+      let accessToken: string | undefined = undefined;
+      let refreshCount = 0;
+      conn.accessToken = 'invalid access token';
+      conn.removeAllListeners('refresh');
+      conn.on('refresh', (at: string) => {
+        accessToken = at;
+        refreshCount += 1;
+      });
+      const res = await conn.query('SELECT Id FROM User');
+      assert.ok(refreshCount === 1);
+      assert.ok(typeof accessToken === 'string');
+      assert.ok(Array.isArray(res.records));
     });
-    const res = await conn.query('SELECT Id FROM User');
-    assert.ok(refreshCount === 1);
-    assert.ok(typeof accessToken === 'string');
-    assert.ok(Array.isArray(res.records));
-  });
 
-  //
-  it('should make access token invalid and call in parallel and return responses', async () => {
-    let accessToken: string | undefined = undefined;
-    let refreshCount = 0;
-    conn.accessToken = 'invalid access token';
-    conn.removeAllListeners('refresh');
-    conn.on('refresh', (at: string) => {
-      accessToken = at;
-      refreshCount += 1;
+    //
+    it('should make access token invalid and call in parallel and return responses', async () => {
+      let accessToken: string | undefined = undefined;
+      let refreshCount = 0;
+      conn.accessToken = 'invalid access token';
+      conn.removeAllListeners('refresh');
+      conn.on('refresh', (at: string) => {
+        accessToken = at;
+        refreshCount += 1;
+      });
+      const results = await Promise.all([
+        Promise.resolve(conn.query('SELECT Id FROM User')),
+        conn.describeGlobal(),
+        conn.sobject('User').describe(),
+      ]);
+      assert.ok(refreshCount === 1);
+      assert.ok(typeof accessToken === 'string');
+      assert.ok(Array.isArray(results));
+      assert.ok(Array.isArray(results[0].records));
+      assert.ok(Array.isArray(results[1].sobjects));
+      assert.ok(Array.isArray(results[2].fields));
     });
-    const results = await Promise.all([
-      Promise.resolve(conn.query('SELECT Id FROM User')),
-      conn.describeGlobal(),
-      conn.sobject('User').describe(),
-    ]);
-    assert.ok(refreshCount === 1);
-    assert.ok(typeof accessToken === 'string');
-    assert.ok(Array.isArray(results));
-    assert.ok(Array.isArray(results[0].records));
-    assert.ok(Array.isArray(results[1].sobjects));
-    assert.ok(Array.isArray(results[2].fields));
-  });
 
-  //
-  it('should expire both access token and refresh token and return error', async () => {
-    conn.accessToken = 'invalid access token';
-    conn.refreshToken = 'invalid refresh token';
-    try {
-      await conn.query('SELECT Id FROM User');
-      assert.fail();
-    } catch (err) {
-      assert.ok(err instanceof Error);
-      assert.ok(err.name === 'invalid_grant');
-    }
+    //
+    it('should expire both access token and refresh token and return error', async () => {
+      conn.accessToken = 'invalid access token';
+      conn.refreshToken = 'invalid refresh token';
+      try {
+        await conn.query('SELECT Id FROM User');
+        assert.fail();
+      } catch (err) {
+        assert.ok(err instanceof Error);
+        assert.ok(err.name === 'invalid_grant');
+      }
+    });
   });
-});
+}
