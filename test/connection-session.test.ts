@@ -100,6 +100,7 @@ describe('oauth2 session', () => {
         redirectUri: config.redirectUri,
       },
       logLevel: config.logLevel,
+      proxyUrl: config.proxyUrl,
     });
     await conn.loginByOAuth2(config.username, config.password);
     sessionInfo = {
@@ -116,6 +117,7 @@ describe('oauth2 session', () => {
       accessToken: sessionInfo.accessToken,
       instanceUrl: sessionInfo.instanceUrl,
       logLevel: config.logLevel,
+      proxyUrl: config.proxyUrl,
     });
     await delay(10000);
     try {
