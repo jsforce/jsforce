@@ -121,7 +121,11 @@ describe('approval process', () => {
  */
 afterAll(async () => {
   if (accountId) {
-    await conn.sobject('Account').destroy(accountId);
+    try {
+      await conn.sobject('Account').destroy(accountId);
+    } catch (e) {
+      // ignore errors
+    }
   }
   await connMgr.closeConnection(conn);
 });
