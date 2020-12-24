@@ -25,7 +25,9 @@ jobs:
             npm run typecheck
       - run:
           name: Test
-          command: npm test
+          command: |
+            npm run build:transpile
+            npm run test:node
   test_browser:
     executor: node10
     steps:
@@ -42,11 +44,11 @@ jobs:
       - run:
           name: Test
           command: |
-            npm run build:all
-            npm run test:browser -- ci
+            npm run build:transpile
+            npm run test:browser
 workflows:
   version: 2
   test:
     jobs:
       - test_node
-      # - test_browser
+      - test_browser
