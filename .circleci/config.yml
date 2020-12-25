@@ -26,7 +26,6 @@ jobs:
       - run:
           name: Test
           command: |
-            npm run build:transpile
             npm run test:node
   test_browser:
     executor: node10
@@ -44,7 +43,6 @@ jobs:
       - run:
           name: Test
           command: |
-            npm run build:transpile
             npm run test:browser
 workflows:
   version: 2

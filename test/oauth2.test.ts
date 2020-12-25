@@ -1,9 +1,9 @@
 import assert from 'assert';
+import { OAuth2 } from 'jsforce';
 import { isString } from './util';
 import { isNodeJS } from './helper/env';
 import authorize from './helper/webauth';
 import config from './config';
-import { OAuth2 } from '..';
 
 const oauth2 = new OAuth2(config);
 

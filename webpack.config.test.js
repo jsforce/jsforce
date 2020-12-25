@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 
 module.exports = {
+  mode: 'development',
   module: {
     rules: [
       {
@@ -18,6 +19,9 @@ module.exports = {
   },
   resolve: {
     extensions: ['.ts', '.js'],
+  },
+  externals: {
+    jsforce: 'jsforce',
   },
   devtool: 'inline-source-map',
   plugins: [

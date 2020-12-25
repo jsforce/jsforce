@@ -2,7 +2,7 @@ import assert from 'assert';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject } from './util';
-import { Record, SavedRecord } from '..';
+import type { Record, SavedRecord } from 'jsforce';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();

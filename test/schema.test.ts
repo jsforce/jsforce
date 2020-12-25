@@ -1,14 +1,14 @@
-import {
+import assert from 'assert';
+import ConnectionManager from './helper/connection-manager';
+import config from './config';
+import type {
   AssertTrue,
   Has,
   IsNullable,
   IsExact,
   IsAny,
 } from 'conditional-type-checks';
-import assert from 'assert';
-import ConnectionManager from './helper/connection-manager';
-import config from './config';
-import {
+import type {
   Schema,
   StandardSchema,
   SObjectRecord,
@@ -17,7 +17,7 @@ import {
   Record,
   DateString,
   Address,
-} from '..';
+} from 'jsforce';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection<StandardSchema>();

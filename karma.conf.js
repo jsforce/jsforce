@@ -16,7 +16,7 @@ module.exports = function (config) {
     frameworks: ['jasmine'],
 
     // list of files / patterns to load in the browser
-    files: ['test/**/*.test.ts'],
+    files: ['dist/jsforce.js', 'test/**/*.test.ts'],
 
     // list of files / patterns to exclude
     exclude: [],
