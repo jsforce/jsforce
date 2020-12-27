@@ -55,7 +55,7 @@ module.exports = function (config) {
 
     // Concurrency level
     // how many browser should be started simultaneous
-    concurrency: process.env.CI === 'true' ? 5 : 1,
+    concurrency: 1,
 
     // Webpack
     webpack: webpackConfig,
