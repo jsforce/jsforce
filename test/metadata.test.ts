@@ -230,10 +230,11 @@ describe('file based call', () => {
   it('should retrieve metadata in packaged file and retrieve package', async () => {
     const bufs: any[] = [];
     await new Promise((resolve, reject) => {
-      conn.metadata
+      const stream = conn.metadata
         .retrieve({ packageNames: ['My Test Package'] })
-        .stream()
-        .on('data', (d: any) => bufs.push(d))
+        .stream();
+      stream
+        .on('readable', () => bufs.push(stream.read()))
         .on('end', resolve)
         .on('error', reject);
     });
