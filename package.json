@@ -62,7 +62,6 @@
     "package.json",
     "api",
     "bin",
-    "build",
     "browser",
     "core",
     "dist",

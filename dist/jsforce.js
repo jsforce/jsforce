@@ -15973,6 +15973,20 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
       return new _query__WEBPACK_IMPORTED_MODULE_56__[/* default */ "b"](this, soql, options);
     }
     /**
+     * Execute search by SOSL
+     *
+     * @param {String} sosl - SOSL string
+     * @param {Callback.<Array.<RecordResult>>} [callback] - Callback function
+     * @returns {Promise.<Array.<RecordResult>>}
+     */
+
+  }, {
+    key: "search",
+    value: function search(sosl) {
+      var url = this._baseUrl() + '/search?q=' + encodeURIComponent(sosl);
+      return this.request(url);
+    }
+    /**
      *
      */
 

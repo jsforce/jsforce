@@ -1,23 +1,40 @@
-lib-cov
-*.seed
-*.log
-*.dat
-*.out
-*.pid
-*.gz
-
-pids
-logs
-results
-
 browser
 lib
 module
-
-node_modules
-npm-debug.log
 
 .npmignore
 .vscode
 .env
 .env*
+
+
+# Dependency directories
+node_modules
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Directory for instrumented libs
+lib-cov
+
+# Eclipse configs
+.project
+
+# Webstorm configs
+.idea/
+
+# MacOS folder atttribute tracking
+**/.DS_Store
+
+# tarball generated for publishing
+*.tgz
