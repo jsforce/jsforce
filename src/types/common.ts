@@ -62,6 +62,10 @@ export type SaveResult =
       errors: SaveError[];
     };
 
+export type SearchResult = {
+  searchRecords: Record[];
+};
+
 export type RetrieveOptions = {
   allOrNone?: boolean;
   fields?: string[];
