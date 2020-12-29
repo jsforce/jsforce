@@ -26,7 +26,7 @@ describe('process rule', () => {
   /**
    *
    */
-  test('retrieve all process rules and list process rules', async () => {
+  it('should retrieve all process rules and list process rules', async () => {
     const ruleSet = await conn.process.rule.list();
     for (const rules of Object.values(ruleSet)) {
       for (const rule of rules as any) {
@@ -40,7 +40,7 @@ describe('process rule', () => {
   /**
    *
    */
-  test('trigger process rule and trigger process rules', async () => {
+  it('should trigger process rule and trigger process rules', async () => {
     const result = await conn.process.rule.trigger(accountId);
     assert.ok(result.success);
     assert.ok(result.errors === null);
@@ -54,7 +54,7 @@ describe('approval process', () => {
   /**
    *
    */
-  test('retrieve all approval process definitions and list approval process definitions', async () => {
+  it('should retrieve all approval process definitions and list approval process definitions', async () => {
     const defsSet = await conn.process.rule.list();
     for (const approvals of Object.values(defsSet)) {
       for (const approval of approvals as any) {
@@ -71,7 +71,7 @@ describe('approval process', () => {
   /**
    *
    */
-  test('submit approval process and confirm approval request submitted', async () => {
+  it('should submit approval process and confirm approval request submitted', async () => {
     const result = await conn.process.approval.submit(
       accountId,
       'This is test approval request submission.',
@@ -89,7 +89,7 @@ describe('approval process', () => {
   /**
    *
    */
-  test('approve requested approval request', async () => {
+  it('should approve requested approval request', async () => {
     const result = await conn.process.approval.approve(workitemId, 'Approved.');
     assert.ok(result.success);
     assert.ok(result.errors === null);
@@ -104,7 +104,7 @@ describe('approval process', () => {
   /**
    *
    */
-  test('reject approval request', async () => {
+  it('should reject approval request', async () => {
     const result = await conn.process.approval.reject(workitemId, 'Rejected.');
     assert.ok(result.success);
     assert.ok(result.errors === null);
@@ -121,7 +121,11 @@ describe('approval process', () => {
  */
 afterAll(async () => {
   if (accountId) {
-    await conn.sobject('Account').destroy(accountId);
+    try {
+      await conn.sobject('Account').destroy(accountId);
+    } catch (e) {
+      // ignore errors
+    }
   }
   await connMgr.closeConnection(conn);
 });

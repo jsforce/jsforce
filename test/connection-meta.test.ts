@@ -2,7 +2,7 @@ import assert from 'assert';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject, isString, isNumber, isUndefined } from './util';
-import { Record } from '..';
+import type { Record } from 'jsforce';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();
@@ -19,7 +19,7 @@ beforeAll(async () => {
  */
 describe('describe sobject', () => {
   //
-  test('describe Account, get metadata information, and check the result is cached', async () => {
+  it('should describe Account, get metadata information, and check the result is cached', async () => {
     const so = await conn.sobject('Account').describe();
     assert.ok(so.name === 'Account');
     assert.ok(Array.isArray(so.fields));
@@ -34,7 +34,7 @@ describe('describe sobject', () => {
   });
 
   //
-  test('describe global, get information, and check the result is cached', async () => {
+  it('should describe global, get information, and check the result is cached', async () => {
     const res = await conn.describeGlobal();
     assert.ok(Array.isArray(res.sobjects));
     assert.ok(isObject(res.sobjects[0]));
@@ -60,14 +60,14 @@ describe('describe sobject', () => {
  */
 describe('recent records', () => {
   //
-  test('access account records for view', async () => {
+  it('should access account records for view', async () => {
     await conn.query(
       'SELECT Id, Name FROM Account ORDER BY CreatedDate DESC LIMIT 2 FOR VIEW',
     );
   });
 
   //
-  test('get recently accessed records in all objects and get successfull results', async () => {
+  it('should get recently accessed records in all objects and get successfull results', async () => {
     const records = await conn.recent(2);
     assert.ok(Array.isArray(records));
     records.forEach((record: any) => {
@@ -79,7 +79,7 @@ describe('recent records', () => {
   });
 
   //
-  test('get recently viewed accounts in Account object', async () => {
+  it('should get recently viewed accounts in Account object', async () => {
     const records = await conn.sobject('Account').recent();
     assert.ok(Array.isArray(records));
     records.forEach((record: any) => {
@@ -91,7 +91,7 @@ describe('recent records', () => {
   });
 
   //
-  test('create, update, delete account records', async () => {
+  it('should create, update, delete account records', async () => {
     const accs: Record[] = [{ Name: 'Hello' }, { Name: 'World' }];
     const rets = await conn.sobject('Account').create(accs);
     const id1 = rets[0].success ? rets[0].id : null;
@@ -110,17 +110,17 @@ describe('recent records', () => {
   });
 
   //
-  test('get updated accounts and return updated accounts', async () => {
+  it('should get updated accounts and return updated accounts', async () => {
     const end = new Date();
-    const start = new Date(end.getTime() - 1 * 24 * 60 * 60 * 1000); // 1 day before
+    const start = new Date(end.getTime() - 1 * 60 * 60 * 1000); // 1 hour before
     const result = await conn.sobject('Account').updated(start, end);
     assert.ok(Array.isArray(result.ids));
   });
 
   //
-  test('get updated account (with string input) and return updated accounts', async () => {
+  it('should get updated account (with string input) and return updated accounts', async () => {
     const end = new Date();
-    const start = new Date(end.getTime() - 1 * 24 * 60 * 60 * 1000); // 1 day before
+    const start = new Date(end.getTime() - 1 * 60 * 60 * 1000); // 1 hour before
     const result = await conn
       .sobject('Account')
       .updated(start.toString(), end.toString());
@@ -128,9 +128,9 @@ describe('recent records', () => {
   });
 
   //
-  test('get deleted account and return deleted account object', async () => {
+  it('should get deleted account and return deleted account object', async () => {
     const end = new Date();
-    const start = new Date(end.getTime() - 1 * 24 * 60 * 60 * 1000); // 1 day before
+    const start = new Date(end.getTime() - 1 * 60 * 60 * 1000); // 1 hour before
     const result = await conn.sobject('Account').deleted(start, end);
     assert.ok(Array.isArray(result.deletedRecords));
   });
@@ -138,9 +138,9 @@ describe('recent records', () => {
   /**
    *
    */
-  test('get deleted account (with string input) and return deleted account object', async () => {
+  it('should get deleted account (with string input) and return deleted account object', async () => {
     const end = new Date();
-    const start = new Date(end.getTime() - 1 * 24 * 60 * 60 * 1000); // 1 day before
+    const start = new Date(end.getTime() - 1 * 60 * 60 * 1000); // 1 hour before
     const result = await conn
       .sobject('Account')
       .deleted(start.toString(), end.toString());
@@ -153,7 +153,7 @@ describe('recent records', () => {
  */
 describe('identity', () => {
   //
-  test('get user identity information and return user identity information', async () => {
+  it('should get user identity information and return user identity information', async () => {
     const res = await conn.identity();
     assert.ok(isString(res.id) && res.id.indexOf('https://') === 0);
     assert.ok(isString(res.user_id));
@@ -169,7 +169,7 @@ describe('identity', () => {
  */
 describe('limit info', () => {
   //
-  test('get current limit information and check api usage and its limit in the org', () => {
+  it('should get current limit information and check api usage and its limit in the org', () => {
     const limitInfo = conn.limitInfo;
     assert.ok(isObject(limitInfo.apiUsage));
     // TODO: delete if check when assertions in control flow analysis is introduced to TS
@@ -182,7 +182,7 @@ describe('limit info', () => {
   });
 
   //
-  test('get system limits information from server limit info in the org', async () => {
+  it('should get system limits information from server limit info in the org', async () => {
     const limits = await conn.limits();
     assert.ok(isObject(limits));
     assert.ok(isObject(limits.DataStorageMB));
@@ -202,7 +202,7 @@ describe('limit info', () => {
  */
 describe('misc metadata', () => {
   //
-  test('get tabs list information and return tabs info in the org', async () => {
+  it('should get tabs list information and return tabs info in the org', async () => {
     const tabs = await conn.tabs();
     assert.ok(Array.isArray(tabs));
     tabs.forEach((tab: any) => {
@@ -214,7 +214,7 @@ describe('misc metadata', () => {
   });
 
   //
-  test('get theme information and return theme info in the org', async () => {
+  it('should get theme information and return theme info in the org', async () => {
     const theme = await conn.theme();
     assert.ok(isObject(theme));
     assert.ok(Array.isArray(theme.themeItems));

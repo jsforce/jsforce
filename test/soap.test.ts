@@ -18,7 +18,7 @@ beforeAll(async () => {
 /**
  *
  */
-test('describe tabs and return app and its including tabs', async () => {
+it('should describe tabs and return app and its including tabs', async () => {
   const apps = await conn.soap.describeTabs();
   assert.ok(apps.length > 0);
   for (const app of apps) {
@@ -96,7 +96,7 @@ describe('convert and merge', () => {
   /**
    *
    */
-  test('convert leads and return converted account/contact/opp information', async () => {
+  it('should convert leads and return converted account/contact/opp information', async () => {
     const ret = await conn.soap.convertLead({
       leadId: leadIds[0],
       convertedStatus,
@@ -113,7 +113,7 @@ describe('convert and merge', () => {
   /**
    *
    */
-  test('convert lead by specifying accountId and without creating opportunity', async () => {
+  it('should convert lead by specifying accountId and without creating opportunity', async () => {
     const ret = await conn.soap.convertLead({
       leadId: leadIds[1],
       accountId: accountIds[0],
@@ -130,7 +130,7 @@ describe('convert and merge', () => {
   /**
    *
    */
-  test('merge records', async () => {
+  it('should merge records', async () => {
     const masterRecord = Object.assign(
       { type: 'Lead' },
       { Id: leadIds[2] },

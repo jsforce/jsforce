@@ -40,7 +40,7 @@ describe('report', () => {
   /**
    *
    */
-  test('list recent reports and return report infomation list', async () => {
+  it('should list recent reports and return report infomation list', async () => {
     const reports = await conn.analytics.reports();
     assert.ok(Array.isArray(reports));
     for (const report of reports) {
@@ -53,7 +53,7 @@ describe('report', () => {
   /**
    *
    */
-  test('describe report and return report metadata', async () => {
+  it('should describe report and return report metadata', async () => {
     const meta = await conn.analytics.report(reportId).describe();
     assert.ok(isObject(meta));
     assert.ok(isObject(meta.reportMetadata));
@@ -64,7 +64,7 @@ describe('report', () => {
   /**
    *
    */
-  test('execute report synchronously and return report execution result', async () => {
+  it('should execute report synchronously and return report execution result', async () => {
     const result = await conn.analytics.report(reportId).execute();
     assert.ok(isObject(result));
     assert.ok(result.hasDetailRows === false);
@@ -79,7 +79,7 @@ describe('report', () => {
   /**
    *
    */
-  test('execute report synchronously with details and return report execution result', async () => {
+  it('should execute report synchronously with details and return report execution result', async () => {
     const result = await conn.analytics
       .report(reportId)
       .execute({ details: true });
@@ -96,7 +96,7 @@ describe('report', () => {
   /**
    *
    */
-  test('execute report synchronously with filters overrided and return report execution result', async () => {
+  it('should execute report synchronously with filters overrided and return report execution result', async () => {
     const metadata = {
       reportMetadata: {
         historicalSnapshotDates: [],
@@ -125,7 +125,7 @@ describe('report', () => {
   /**
    *
    */
-  test('execute report asynchronously and return report instance info', async () => {
+  it('should execute report asynchronously and return report instance info', async () => {
     const instance = await conn.analytics.report(reportId).executeAsync();
     assert.ok(isObject(instance));
     assert.ok(isString(instance.id));
@@ -137,7 +137,7 @@ describe('report', () => {
   /**
    *
    */
-  test('list asynchronously executed report instances and return report instance list', async () => {
+  it('should list asynchronously executed report instances and return report instance list', async () => {
     const instances = await conn.analytics.report(reportId).instances();
     assert.ok(Array.isArray(instances));
     for (const instance of instances) {
@@ -150,7 +150,7 @@ describe('report', () => {
   /**
    *
    */
-  test('retrieve asynchronously executed report result and return report execution result', async () => {
+  it('should retrieve asynchronously executed report result and return report execution result', async () => {
     const result = await conn.analytics
       .report(reportId)
       .instance(instanceId)
@@ -169,7 +169,7 @@ describe('report', () => {
   /**
    *
    */
-  test('explain query plan of report and get explain result', async () => {
+  it('should explain query plan of report and get explain result', async () => {
     const result = await conn.analytics.report(reportId).explain();
     assert.ok(Array.isArray(result.plans));
     for (const plan of result.plans) {
@@ -185,7 +185,7 @@ describe('report', () => {
   /**
    *
    */
-  test('clone report and get the cloned report', async () => {
+  it('should clone report and get the cloned report', async () => {
     const result = await conn.analytics
       .report(reportId)
       .clone('Lead List Report Clone');
@@ -198,7 +198,7 @@ describe('report', () => {
   /**
    *
    */
-  test('destroy report and confirm the report destroyed', async () => {
+  it('should destroy report and confirm the report destroyed', async () => {
     await conn.analytics.report(cloneId).destroy();
     try {
       await conn.analytics.report(cloneId).describe();
@@ -238,7 +238,7 @@ describe('dashboard', () => {
   /**
    *
    */
-  test('list recent dashboards and return dashboard infomation list', async () => {
+  it('should list recent dashboards and return dashboard infomation list', async () => {
     const dashboards = await conn.analytics.dashboards();
     assert.ok(Array.isArray(dashboards));
     for (const dashboard of dashboards) {
@@ -251,7 +251,7 @@ describe('dashboard', () => {
   /**
    *
    */
-  test('describe dashboard and return dashboard metadata', async () => {
+  it('should describe dashboard and return dashboard metadata', async () => {
     const meta = await conn.analytics.dashboard(dashboardId).describe();
     assert.ok(isObject(meta));
     assert.ok(Array.isArray(meta.components));
@@ -263,7 +263,7 @@ describe('dashboard', () => {
   /**
    *
    */
-  test('get all dashboard components and return all components', async () => {
+  it('should get all dashboard components and return all components', async () => {
     const meta = await conn.analytics.dashboard(dashboardId).components();
     assert.ok(
       dashboardMetadata.components.length === meta.componentData.length,
@@ -273,7 +273,7 @@ describe('dashboard', () => {
   /**
    *
    */
-  test('get one dashboard component and return one component', async () => {
+  it('should get one dashboard component and return one component', async () => {
     const meta = await conn.analytics
       .dashboard(dashboardId)
       .components(dashboardMetadata.components[0].id);
@@ -283,7 +283,7 @@ describe('dashboard', () => {
   /**
    *
    */
-  test('get three dashboard components and return three components', async () => {
+  it('should get three dashboard components and return three components', async () => {
     const ids = [
       dashboardMetadata.components[0].id,
       dashboardMetadata.components[1].id,
@@ -296,7 +296,7 @@ describe('dashboard', () => {
   /**
    *
    */
-  test('get status of dashboard and return dashboard status', async () => {
+  it('should get status of dashboard and return dashboard status', async () => {
     const result = await conn.analytics.dashboard(dashboardId).status();
     assert.ok(isObject(result));
     assert.ok(Array.isArray(result.componentStatus));
@@ -305,7 +305,7 @@ describe('dashboard', () => {
   /**
    *
    */
-  test('clone dashboard and return cloned dashboard', async () => {
+  it('should clone dashboard and return cloned dashboard', async () => {
     const meta = await conn.analytics.dashboard(dashboardId).clone({
       name: 'Lead List Dashboard Clone',
       folderId: dashboardFolderId,
@@ -319,7 +319,7 @@ describe('dashboard', () => {
   /**
    *
    */
-  test('refresh dashboard and return refreshed dashboard metadata', async () => {
+  it('should refresh dashboard and return refreshed dashboard metadata', async () => {
     // refresh cloned dashboard, in order to prevent frequent refresh error.
     const result = await conn.analytics.dashboard(cloneDashboardId).refresh();
     assert.ok(isObject(result));
@@ -329,7 +329,7 @@ describe('dashboard', () => {
   /**
    *
    */
-  test('destroy dashboard and confirm the dashboard destroyed', async () => {
+  it('should destroy dashboard and confirm the dashboard destroyed', async () => {
     await conn.analytics.dashboard(cloneDashboardId).destroy();
     try {
       await conn.analytics.dashboard(cloneDashboardId).describe();

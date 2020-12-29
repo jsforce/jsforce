@@ -4,7 +4,7 @@ import config from './config';
 import { isObject } from './util';
 
 const connMgr = new ConnectionManager(config);
-const conn = connMgr.createConnection(); // TODO: remove any
+const conn = connMgr.createConnection();
 
 /**
  *
@@ -18,7 +18,7 @@ let accountId: string;
 /**
  *
  */
-test('post account info and return created account id', async () => {
+it('should post account info and return created account id', async () => {
   const params = {
     name: 'My Apex Rest Test #1',
     phone: '654-321-0000',
@@ -32,7 +32,7 @@ test('post account info and return created account id', async () => {
 /**
  *
  */
-test('get account info and return created account', async () => {
+it('should get account info and return created account', async () => {
   const acc = await conn.apex.get(`/JSforceTestApexRest/${accountId}`);
   assert.ok(isObject(acc));
   assert.ok(acc.Name === 'My Apex Rest Test #1');
@@ -43,7 +43,7 @@ test('get account info and return created account', async () => {
 /**
  *
  */
-test('put account info and return updated account', async () => {
+it('should put account info and return updated account', async () => {
   const params = {
     account: {
       Name: 'My Apex Rest Test #1 (put)',
@@ -60,7 +60,7 @@ test('put account info and return updated account', async () => {
 /**
  *
  */
-test('patch account info and return updated account', async () => {
+it('should patch account info and return updated account', async () => {
   const params = {
     name: 'My Apex Rest Test #1 (patch)',
   };
@@ -77,7 +77,7 @@ test('patch account info and return updated account', async () => {
 /**
  *
  */
-test('delete account info and get no account for delete account id', async () => {
+it('should delete account info and get no account for delete account id', async () => {
   await conn.apex.delete(`/JSforceTestApexRest/${accountId}`);
   const records = await conn.sobject('Account').find({ Id: accountId });
   assert.ok(records.length === 0);

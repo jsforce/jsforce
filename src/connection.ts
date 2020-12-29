@@ -308,11 +308,15 @@ export default class Connection<
     this.loginUrl = loginUrl || defaultConnectionConfig.loginUrl;
     this.instanceUrl = instanceUrl || defaultConnectionConfig.instanceUrl;
     this.version = version || defaultConnectionConfig.version;
-    this.oauth2 = oauth2
-      ? oauth2 instanceof OAuth2
+    this.oauth2 =
+      oauth2 instanceof OAuth2
         ? oauth2
-        : new OAuth2(oauth2)
-      : new OAuth2({ loginUrl: this.loginUrl });
+        : new OAuth2({
+            loginUrl: this.loginUrl,
+            proxyUrl,
+            httpProxy,
+            ...oauth2,
+          });
     let refreshFn = config.refreshFn;
     if (!refreshFn && this.oauth2.clientId) {
       refreshFn = oauthRefreshFn;

@@ -26,15 +26,13 @@ async function main() {
     const records = new Array(551)
       .join('_')
       .split('')
-      .map(function () {
-        return { OwnerId: conn.userInfo.id };
-      });
-    await Promise.all(
+      .map(() => ({ OwnerId: conn.userInfo.id }));
+    await Promise.all([
       conn.bulk.load('BigTable__c', 'insert', records),
       conn.bulk.load('BigTable__c', 'insert', records),
       conn.bulk.load('BigTable__c', 'insert', records),
       conn.bulk.load('BigTable__c', 'insert', records),
-    );
+    ]);
     console.log('Records inserted to BigTable');
   }
   // setup PushTopic

@@ -16,7 +16,7 @@ beforeAll(async () => {
 /**
  *
  */
-test('get chatter api info', async () => {
+it('should get chatter api info', async () => {
   const result = await conn.chatter.resource('/').retrieve();
   assert.ok(isString(result.users));
   assert.ok(isString(result.groups));
@@ -30,7 +30,7 @@ describe('users and groups', () => {
   /**
    *
    */
-  test('get users list', async () => {
+  it('should get users list', async () => {
     const result = await conn.chatter.resource('/users').retrieve();
     assert.ok(isString(result.currentPageUrl));
     assert.ok(Array.isArray(result.users));
@@ -44,7 +44,7 @@ describe('users and groups', () => {
   /**
    *
    */
-  test('get current user info', async () => {
+  it('should get current user info', async () => {
     const result = await conn.chatter.resource('/users/me').retrieve();
     assert.ok(isString(result.id));
     assert.ok(isString(result.url) && result.url[0] === '/');
@@ -54,7 +54,7 @@ describe('users and groups', () => {
   /**
    *
    */
-  test('get groups list', async () => {
+  it('should get groups list', async () => {
     const result = await conn.chatter.resource('/groups').retrieve();
     assert.ok(isString(result.currentPageUrl));
     assert.ok(Array.isArray(result.groups));
@@ -73,7 +73,7 @@ describe('feeds', () => {
   /**
    *
    */
-  test('get feeds list', async () => {
+  it('should get feeds list', async () => {
     const result = await conn.chatter.resource('/feeds').retrieve();
     assert.ok(Array.isArray(result.feeds));
     assert.ok(Array.isArray(result.favorites));
@@ -94,7 +94,7 @@ describe('feed item', () => {
   /**
    *
    */
-  test('get items from feed items', async () => {
+  it('should get items from feed items', async () => {
     const result = await conn.chatter
       .resource('/feeds/company/feed-elements')
       .retrieve();
@@ -139,7 +139,7 @@ describe('feed item', () => {
   /**
    *
    */
-  test('create new feed item', async () => {
+  it('should create new feed item', async () => {
     const result = await conn.chatter.resource('/feed-elements').create({
       body: {
         messageSegments: [
@@ -162,7 +162,7 @@ describe('feed item', () => {
   /**
    *
    */
-  test('delete feed item', async () => {
+  it('should delete feed item', async () => {
     const result = await conn.chatter.resource(feedElementUrl).delete();
     assert.ok(isUndefined(result));
   });
@@ -198,7 +198,7 @@ describe('feed comment', () => {
   /**
    *
    */
-  test('create feed comment', async () => {
+  it('should create feed comment', async () => {
     const ret = await conn.chatter.resource(commentsUrl).create({
       body: {
         messageSegments: [
@@ -268,7 +268,7 @@ describe('like', () => {
   /**
    *
    */
-  test('add like to feed item and return result', async () => {
+  it('should add like to feed item and return result', async () => {
     const result = await conn.chatter.resource(itemLikesUrl).create('');
     assert.ok(isObject(result));
     assert.ok(isString(result.url));
@@ -278,7 +278,7 @@ describe('like', () => {
   /**
    *
    */
-  test('remove like from item post', async () => {
+  it('should remove like from item post', async () => {
     const ret = await conn.chatter.resource(itemLikeUrl).delete();
     assert.ok(isUndefined(ret));
   });
@@ -288,7 +288,7 @@ describe('like', () => {
   /**
    *
    */
-  test('add like to comment post and return result', async () => {
+  it('should add like to comment post and return result', async () => {
     const result = await conn.chatter.resource(commentLikesUrl).create('');
     assert.ok(isObject(result));
     assert.ok(isString(result.url));
@@ -298,7 +298,7 @@ describe('like', () => {
   /**
    *
    */
-  test('remove like from comment post', async () => {
+  it('should remove like from comment post', async () => {
     const ret = await conn.chatter.resource(commentLikeUrl).delete();
     assert.ok(isUndefined(ret));
   });
@@ -328,7 +328,7 @@ describe('batch', () => {
   /**
    *
    */
-  test('get all feed items', async () => {
+  it('should get all feed items', async () => {
     const resources = feeds.map((feed) =>
       conn.chatter.resource(feed.feedElementsUrl),
     );
@@ -349,7 +349,7 @@ describe('batch', () => {
   /**
    *
    */
-  test('create new item post and get feed items', async () => {
+  it('should create new item post and get feed items', async () => {
     const result = await conn.chatter.batch([
       conn.chatter.resource('/feed-elements').create({
         body: {

@@ -1,14 +1,14 @@
-import {
+import assert from 'assert';
+import ConnectionManager from './helper/connection-manager';
+import config from './config';
+import type {
   AssertTrue,
   Has,
   IsNullable,
   IsExact,
   IsAny,
 } from 'conditional-type-checks';
-import assert from 'assert';
-import ConnectionManager from './helper/connection-manager';
-import config from './config';
-import {
+import type {
   Schema,
   StandardSchema,
   SObjectRecord,
@@ -17,7 +17,7 @@ import {
   Record,
   DateString,
   Address,
-} from '..';
+} from 'jsforce';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection<StandardSchema>();
@@ -35,7 +35,7 @@ beforeAll(async () => {
 describe('default schema', () => {
   type S = Schema;
 
-  test('record', () => {
+  it('should record', () => {
     type Account = SObjectRecord<S, 'Account'>;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type t1 =
@@ -57,7 +57,7 @@ describe('default schema', () => {
     assert.ok(cas.Id != null);
   });
 
-  test('connection CRUD', async () => {
+  it('should connection CRUD', async () => {
     assert.ok(true);
   });
 });
@@ -68,7 +68,7 @@ describe('default schema', () => {
 describe('standard schema', () => {
   type S = StandardSchema;
 
-  test('record', () => {
+  it('should record', () => {
     type Account_All = SObjectRecord<S, 'Account'>;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type t1 =
@@ -108,7 +108,7 @@ describe('standard schema', () => {
     assert.ok(cas.Id != null);
   });
 
-  test('query', async () => {
+  it('should query', async () => {
     const qr = await conn.query('SELECT Id, Name FROM Account');
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type t1 = AssertTrue<Has<typeof qr, { done: boolean; records: Record[] }>>;

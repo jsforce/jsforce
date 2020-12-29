@@ -1,9 +1,9 @@
 import assert from 'assert';
+import { OAuth2 } from 'jsforce';
 import { isString } from './util';
 import { isNodeJS } from './helper/env';
 import authorize from './helper/webauth';
 import config from './config';
-import { OAuth2 } from '..';
 
 const oauth2 = new OAuth2(config);
 
@@ -16,7 +16,7 @@ if (isNodeJS()) {
     let refreshToken: string;
 
     //
-    test('start OAuth2 web server flow and receive authz code', async () => {
+    it('should start OAuth2 web server flow and receive authz code', async () => {
       const url = oauth2.getAuthorizationUrl({ state: 'hello' });
       const params = await authorize(url, config.username, config.password);
       assert.ok(isString(params.code));
@@ -25,7 +25,7 @@ if (isNodeJS()) {
     });
 
     //
-    test('request token from code and receive access/refresh token', async () => {
+    it('should request token from code and receive access/refresh token', async () => {
       const res = await oauth2.requestToken(code);
       assert.ok(isString(res.access_token));
       assert.ok(isString(res.refresh_token));
@@ -33,7 +33,7 @@ if (isNodeJS()) {
     });
 
     //
-    test('refresh access token and get new access token', async () => {
+    it('should refresh access token and get new access token', async () => {
       const res = await oauth2.refreshToken(refreshToken);
       assert.ok(isString(res.access_token));
     });
@@ -45,7 +45,7 @@ if (isNodeJS()) {
  */
 describe('username password flow', () => {
   //
-  test('start authenticate and receive access token', async () => {
+  it('should start authenticate and receive access token', async () => {
     const res = await oauth2.authenticate(config.username, config.password);
     assert.ok(isString(res.access_token));
   });

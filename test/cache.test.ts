@@ -25,12 +25,12 @@ describe('cache', () => {
     strategy: 'NOCACHE',
   });
 
-  test('call response-cached getTime function and return time', async () => {
+  it('should call response-cached getTime function and return time', async () => {
     t1 = await getTimeWithResCached();
     assert.ok(isNumber(t1));
   });
 
-  test('call response-cached function and get different time', async () => {
+  it('should call response-cached function and get different time', async () => {
     t2 = await getTimeWithResCached();
     assert.ok(isNumber(t2));
     assert.ok(t1 < t2);
@@ -41,7 +41,7 @@ describe('cache', () => {
     strategy: 'HIT',
   });
 
-  test('call cacheable getTime function and get time which equals to latest call result', async () => {
+  it('should call cacheable getTime function and get time which equals to latest call result', async () => {
     t3 = await getTimeCacheIfHit();
     assert.ok(isNumber(t3));
     assert.ok(t3 === t2);
@@ -53,13 +53,13 @@ describe('cache', () => {
     { key: 'getTime', strategy: 'IMMEDIATE' },
   );
 
-  test('call cached function with immediate lookup strategy and get same time which equals to latest fn call result', () => {
+  it('should call cached function with immediate lookup strategy and get same time which equals to latest fn call result', () => {
     t4 = getTimeCacheImmediate();
     assert.ok(isNumber(t4));
     assert.ok(t4 === t3);
   });
 
-  test('clear cache and call cache-first function and get time much newer than the latest', async () => {
+  it('should clear cache and call cache-first function and get time much newer than the latest', async () => {
     cache.clear();
     t5 = await getTimeCacheIfHit();
     assert.ok(isNumber(t5));
