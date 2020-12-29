@@ -189,6 +189,18 @@ describe('upsert', () => {
 /**
  *
  */
+describe('search', () => {
+  it('should search records', async () => {
+    const { searchRecords } = await conn.search(
+      'FIND {Ac*} IN ALL FIELDS RETURNING Account(Id, Name)',
+    );
+    assert.ok(searchRecords.length > 0);
+  });
+});
+
+/**
+ *
+ */
 afterAll(async () => {
   await connMgr.closeConnection(conn);
 });

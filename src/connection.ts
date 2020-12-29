@@ -16,6 +16,7 @@ import {
   DescribeQuickActionResult,
   UpdatedResult,
   DeletedResult,
+  SearchResult,
   OrganizationLimitsInfo,
   Optional,
   SignedRequestObject,
@@ -777,6 +778,18 @@ export default class Connection<
       soql,
       options,
     );
+  }
+
+  /**
+   * Execute search by SOSL
+   *
+   * @param {String} sosl - SOSL string
+   * @param {Callback.<Array.<RecordResult>>} [callback] - Callback function
+   * @returns {Promise.<Array.<RecordResult>>}
+   */
+  search(sosl: string) {
+    var url = this._baseUrl() + '/search?q=' + encodeURIComponent(sosl);
+    return this.request<SearchResult>(url);
   }
 
   /**
