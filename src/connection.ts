@@ -104,7 +104,7 @@ const defaultConnectionConfig: {
 } = {
   loginUrl: 'https://login.salesforce.com',
   instanceUrl: '',
-  version: '43.0',
+  version: '50.0',
   logLevel: 'NONE',
   maxRequest: 10,
 };
