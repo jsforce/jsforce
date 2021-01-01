@@ -10,6 +10,7 @@ import {
   Optional,
   DmlOptions,
   SaveResult,
+  UpsertResult,
   RetrieveOptions,
   Schema,
   SObjectNames,
@@ -179,17 +180,17 @@ export default class SObject<
     records: InputRecord[],
     extIdField: FieldNames,
     options?: DmlOptions,
-  ): Promise<SaveResult[]>;
+  ): Promise<UpsertResult[]>;
   upsert(
     records: InputRecord,
     extIdField: FieldNames,
     options?: DmlOptions,
-  ): Promise<SaveResult>;
+  ): Promise<UpsertResult>;
   upsert(
     records: InputRecord | InputRecord[],
     extIdField: FieldNames,
     options?: DmlOptions,
-  ): Promise<SaveResult | SaveResult[]>;
+  ): Promise<UpsertResult | UpsertResult[]>;
   upsert(
     records: InputRecord | InputRecord[],
     extIdField: FieldNames,

@@ -9,6 +9,7 @@ import {
   Callback,
   Record,
   SaveResult,
+  UpsertResult,
   DescribeGlobalResult,
   DescribeSObjectResult,
   DescribeTab,
@@ -104,7 +105,7 @@ const defaultConnectionConfig: {
 } = {
   loginUrl: 'https://login.salesforce.com',
   instanceUrl: '',
-  version: '43.0',
+  version: '50.0',
   logLevel: 'NONE',
   maxRequest: 10,
 };
@@ -197,9 +198,8 @@ function createUsernamePasswordRefreshFn<S extends Schema>(
 /**
  * @private
  */
-function toSaveResult(id: Optional<string>, err: SaveError): SaveResult {
+function toSaveResult(err: SaveError): SaveResult {
   return {
-    ...(id ? { id } : {}),
     success: false,
     errors: [err],
   };
@@ -978,7 +978,7 @@ export default class Connection<
           if (options.allOrNone || !err.errorCode) {
             throw err;
           }
-          return toSaveResult(null, err);
+          return toSaveResult(err);
         }),
       ),
     );
@@ -1120,7 +1120,7 @@ export default class Connection<
           if (options.allOrNone || !err.errorCode) {
             throw err;
           }
-          return toSaveResult(record.Id, err);
+          return toSaveResult(err);
         }),
       ),
     );
@@ -1187,7 +1187,7 @@ export default class Connection<
     records: InputRecord[],
     extIdField: FieldNames,
     options?: DmlOptions,
-  ): Promise<SaveResult[]>;
+  ): Promise<UpsertResult[]>;
   upsert<
     N extends SObjectNames<S>,
     InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>,
@@ -1197,7 +1197,7 @@ export default class Connection<
     record: InputRecord,
     extIdField: FieldNames,
     options?: DmlOptions,
-  ): Promise<SaveResult>;
+  ): Promise<UpsertResult>;
   upsert<
     N extends SObjectNames<S>,
     InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>,
@@ -1207,7 +1207,7 @@ export default class Connection<
     records: InputRecord | InputRecord[],
     extIdField: FieldNames,
     options?: DmlOptions,
-  ): Promise<SaveResult | SaveResult[]>;
+  ): Promise<UpsertResult | UpsertResult[]>;
   /**
    *
    * @param type
@@ -1252,7 +1252,7 @@ export default class Connection<
           if (!isArray || options.allOrNone || !err.errorCode) {
             throw err;
           }
-          return toSaveResult(null, err);
+          return toSaveResult(err);
         });
       }),
     );
@@ -1328,7 +1328,7 @@ export default class Connection<
           if (options.allOrNone || !err.errorCode) {
             throw err;
           }
-          return toSaveResult(id, err);
+          return toSaveResult(err);
         }),
       ),
     );
