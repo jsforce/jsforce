@@ -153,8 +153,9 @@ describe('upsert', () => {
       .sobject(config.upsertTable)
       .upsert(rec, config.upsertField);
     assert.ok(ret.success);
+    assert.ok(ret.created);
     assert.ok(typeof ret.id === 'string');
-    recId = ret.id as string;
+    recId = ret.id;
   });
 
   it('should upsert already existing record, get successfull result, and get updated record', async () => {
@@ -163,7 +164,8 @@ describe('upsert', () => {
       .sobject(config.upsertTable)
       .upsert(rec, config.upsertField);
     assert.ok(ret.success);
-    assert.ok(typeof ret.id === 'undefined');
+    assert.ok(!ret.created);
+    assert.ok(ret.id === recId);
     const record = await conn.sobject(config.upsertTable).retrieve(recId);
     assert.ok(record.Name === 'Updated Record');
   });
