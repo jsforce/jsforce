@@ -54,11 +54,25 @@ export type SaveResult =
   | {
       success: true;
       id: string;
-      errors?: SaveError[];
+      errors: never[];
     }
   | {
       success: false;
-      id?: string;
+      id?: undefined;
+      errors: SaveError[];
+    };
+
+export type UpsertResult =
+  | {
+      success: true;
+      id: string;
+      created: boolean;
+      errors: never[];
+    }
+  | {
+      success: false;
+      id?: undefined;
+      created?: undefined;
       errors: SaveError[];
     };
 
