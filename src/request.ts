@@ -1,4 +1,4 @@
-import EventEmitter from 'events';
+import { EventEmitter } from 'events';
 import { Duplex, Readable, Writable } from 'stream';
 import fetch from 'node-fetch';
 import AbortController from 'abort-controller';

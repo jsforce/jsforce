@@ -1,7 +1,7 @@
 /**
  *
  */
-import EventEmitter from 'events';
+import { EventEmitter } from 'events';
 import jsforce from './jsforce';
 import {
   HttpRequest,

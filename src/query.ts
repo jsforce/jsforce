@@ -2,7 +2,7 @@
  * @file Manages query for records in Salesforce
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
-import EventEmitter from 'events';
+import { EventEmitter } from 'events';
 import { Logger, getLogger } from './util/logger';
 import RecordStream, { Serializable } from './record-stream';
 import Connection from './connection';
