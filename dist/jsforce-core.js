@@ -4262,7 +4262,7 @@ var JSforce = /*#__PURE__*/function (_EventEmitter) {
   }
 
   return JSforce;
-}(events__WEBPACK_IMPORTED_MODULE_9___default.a);
+}(events__WEBPACK_IMPORTED_MODULE_9__["EventEmitter"]);
 
 function registerModule(name, factory) {
   jsforce.on('connection:new', function (conn) {
@@ -8349,7 +8349,7 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
   }]);
 
   return Connection;
-}(events__WEBPACK_IMPORTED_MODULE_48___default.a);
+}(events__WEBPACK_IMPORTED_MODULE_48__["EventEmitter"]);
 
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_41___default()(Connection, "_logger", Object(_util_logger__WEBPACK_IMPORTED_MODULE_51__[/* getLogger */ "a"])('connection'));
 
@@ -8750,7 +8750,6 @@ var reduce_default = /*#__PURE__*/__webpack_require__.n(reduce);
 
 // EXTERNAL MODULE: ./node_modules/events/events.js
 var events = __webpack_require__(38);
-var events_default = /*#__PURE__*/__webpack_require__.n(events);
 
 // EXTERNAL MODULE: ./browser/util/logger.js
 var logger = __webpack_require__(77);
@@ -10432,7 +10431,7 @@ var query_Query = /*#__PURE__*/function (_EventEmitter) {
   }]);
 
   return Query;
-}(events_default.a);
+}(events["EventEmitter"]);
 /*--------------------------------------------*/
 
 /**
@@ -17202,7 +17201,7 @@ exports.callbackify = callbackify;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony default export */ __webpack_exports__["a"] = ('2.0.0-beta.2');
+/* harmony default export */ __webpack_exports__["a"] = ('2.0.0-beta.3');
 
 
 /***/ }),
@@ -18726,7 +18725,7 @@ var HttpApi = /*#__PURE__*/function (_EventEmitter) {
   }]);
 
   return HttpApi;
-}(events__WEBPACK_IMPORTED_MODULE_19___default.a);
+}(events__WEBPACK_IMPORTED_MODULE_19__["EventEmitter"]);
 /**
  *
  */
@@ -24507,7 +24506,7 @@ var CacheEntry = /*#__PURE__*/function (_EventEmitter) {
   }]);
 
   return CacheEntry;
-}(events__WEBPACK_IMPORTED_MODULE_19___default.a);
+}(events__WEBPACK_IMPORTED_MODULE_19__["EventEmitter"]);
 /**
  * create and return cache key from namespace and serialized arguments.
  * @private
