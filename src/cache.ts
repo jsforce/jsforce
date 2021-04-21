@@ -2,7 +2,7 @@
  * @file Manages asynchronous method response cache
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
-import EventEmitter from 'events';
+import { EventEmitter } from 'events';
 
 /**
  * type def

@@ -2,7 +2,7 @@
  * @file Manages Streaming APIs
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
-import EventEmitter from 'events';
+import { EventEmitter } from 'events';
 import { Client, Subscription } from 'faye';
 import { registerModule } from '../jsforce';
 import Connection from '../connection';

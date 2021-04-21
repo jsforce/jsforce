@@ -1,7 +1,7 @@
 /**
  *
  */
-import EventEmitter from 'events';
+import { EventEmitter } from 'events';
 import xml2js from 'xml2js';
 import { Logger, getLogger } from './util/logger';
 import { StreamPromise } from './util/promise';

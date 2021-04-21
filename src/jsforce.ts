@@ -1,4 +1,4 @@
-import EventEmitter from 'events';
+import { EventEmitter } from 'events';
 import VERSION from './VERSION';
 import Connection from './connection';
 import OAuth2 from './oauth2';

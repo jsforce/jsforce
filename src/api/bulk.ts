@@ -2,7 +2,7 @@
  * @file Manages Salesforce Bulk API related operations
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
-import EventEmitter from 'events';
+import { EventEmitter } from 'events';
 import { Duplex, Readable, Writable } from 'stream';
 import joinStreams from 'multistream';
 import Connection from '../connection';
