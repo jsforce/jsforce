@@ -33,14 +33,13 @@ export default class ConnectionManager {
     const userPool = this._userPool;
     const config = this._config;
     const username = await (userPool ? userPool.checkout() : config.username);
+
     // eslint-disable-next-line no-param-reassign
     (conn as any).__username = username; // for later checkin
-    if (config.password) {
+    if (username && config.password) {
       await conn.login(username, config.password);
-    } else if (config.accessToken) {
-      conn.accessToken = config.accessToken;
     } else {
-      throw new Error('Either SF_PASSWORD or SF_ACCESS_TOKEN need to be set.');
+      throw new Error('Set SF_USERNAME and SF_PASSWORD.');
     }
   }
 

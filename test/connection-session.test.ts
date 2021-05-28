@@ -16,6 +16,7 @@ describe('login', () => {
     conn = new Connection({
       logLevel: config.logLevel,
       proxyUrl: config.proxyUrl,
+      loginUrl: config.loginUrl,
     });
     const userInfo = await conn.login(config.username, config.password);
     assert.ok(typeof conn.accessToken === 'string');
@@ -58,6 +59,7 @@ describe('logout', () => {
     const conn1 = new Connection({
       logLevel: config.logLevel,
       proxyUrl: config.proxyUrl,
+      loginUrl: config.loginUrl,
     });
     await conn1.loginBySoap(config.username, config.password);
     sessionInfo = {
@@ -75,6 +77,7 @@ describe('logout', () => {
       serverUrl: sessionInfo.serverUrl,
       logLevel: config.logLevel,
       proxyUrl: config.proxyUrl,
+      loginUrl: config.loginUrl,
     });
     await delay(10000);
     try {
@@ -89,7 +92,7 @@ describe('logout', () => {
 /**
  *
  */
-describe('oauth2 session', () => {
+(config.clientId ? describe : describe.skip)('oauth2 session', () => {
   let sessionInfo: { accessToken: string; instanceUrl: string };
 
   //
@@ -102,6 +105,7 @@ describe('oauth2 session', () => {
       },
       logLevel: config.logLevel,
       proxyUrl: config.proxyUrl,
+      loginUrl: config.loginUrl,
     });
     await conn.loginByOAuth2(config.username, config.password);
     sessionInfo = {
@@ -119,6 +123,7 @@ describe('oauth2 session', () => {
       instanceUrl: sessionInfo.instanceUrl,
       logLevel: config.logLevel,
       proxyUrl: config.proxyUrl,
+      loginUrl: config.loginUrl,
     });
     await delay(10000);
     try {
@@ -134,7 +139,7 @@ if (isNodeJS()) {
   /**
    *
    */
-  describe('oauth2 refresh', () => {
+  (config.clientId ? describe : describe.skip)('oauth2 refresh', () => {
     let conn: Connection;
 
     //
@@ -147,6 +152,7 @@ if (isNodeJS()) {
         },
         logLevel: config.logLevel,
         proxyUrl: config.proxyUrl,
+        loginUrl: config.loginUrl,
       });
       const authzUrl = conn.oauth2.getAuthorizationUrl();
       const params = await authorize(
