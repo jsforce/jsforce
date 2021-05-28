@@ -15,7 +15,7 @@ function createLiteralBuilder(literal: string) {
  * @constructor
  * @see http://www.salesforce.com/us/developer/docs/soql_sosl/Content/sforce_api_calls_soql_select_dateformats.htm
  */
-export default class SfDate {
+export class SfDate {
   private _literal: string;
 
   /**
@@ -207,3 +207,5 @@ export default class SfDate {
   static NEXT_N_FISCAL_YEARS = createLiteralBuilder('NEXT_N_FISCAL_YEARS');
   static LAST_N_FISCAL_YEARS = createLiteralBuilder('LAST_N_FISCAL_YEARS');
 }
+
+export default SfDate;

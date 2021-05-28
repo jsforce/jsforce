@@ -14,7 +14,7 @@ import {
 /**
  * Remote reference to record information
  */
-export default class RecordReference<
+export class RecordReference<
   S extends Schema,
   N extends SObjectNames<S>,
   InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>,
@@ -83,3 +83,5 @@ export default class RecordReference<
     return this._conn.request(url).stream();
   }
 }
+
+export default RecordReference;

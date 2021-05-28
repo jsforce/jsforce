@@ -78,7 +78,7 @@ function assignTypeWithMetadata(metadata: Metadata | Metadata[], type: string) {
 /**
  * Class for Salesforce Metadata API
  */
-export default class MetadataApi<S extends Schema> {
+export class MetadataApi<S extends Schema> {
   _conn: Connection<S>;
 
   /**
@@ -552,3 +552,5 @@ export class DeployResultLocator<S extends Schema> extends AsyncResultLocator<
  * Register hook in connection instantiation for dynamically adding this API module features
  */
 registerModule('metadata', (conn) => new MetadataApi(conn));
+
+export default MetadataApi;

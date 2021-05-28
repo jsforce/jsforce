@@ -199,7 +199,7 @@ export type SOAPOptions = {
  * @param {String} options.endpointUrl - SOAP endpoint URL
  * @param {String} [options.xmlns] - XML namespace for method call (default is "urn:partner.soap.sforce.com")
  */
-export default class SOAP<S extends Schema> extends HttpApi<S> {
+export class SOAP<S extends Schema> extends HttpApi<S> {
   _endpointUrl: string;
   _xmlns: string;
 
@@ -287,3 +287,5 @@ export default class SOAP<S extends Schema> extends HttpApi<S> {
     ].join('');
   }
 }
+
+export default SOAP;

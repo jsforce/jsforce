@@ -10,7 +10,13 @@ async function main() {
   });
   archive.finalize();
   const conn = new jsforce.Connection({ logLevel: process.env.DEBUG });
-  await conn.login(process.env.SF_USERNAME, process.env.SF_PASSWORD);
+  if (process.env.SF_PASSWORD) {
+    await conn.login(process.env.SF_USERNAME, process.env.SF_PASSWORD);
+  } else if (process.env.SF_ACCESS_TOKEN) {
+    conn.accessToken = process.env.SF_ACCESS_TOKEN;
+  } else {
+    throw new Error('Either SF_PASSWORD or SF_ACCESS_TOKEN need to be set.');
+  }
   console.log('Deploying test suite package...');
   conn.metadata.pollTimeout = 60 * 1000;
   const res = await conn.metadata.deploy(archive).complete(true);

@@ -193,7 +193,7 @@ const DEFAULT_BULK_THRESHOLD = 200;
 /**
  * Query
  */
-export default class Query<
+export class Query<
   S extends Schema,
   N extends SObjectNames<S>,
   R extends Record = Record,
@@ -602,7 +602,7 @@ export default class Query<
         encodeURIComponent(soql),
       ].join('');
     }
-    const data = await this._conn.request({ method: 'GET', url, headers });
+    const data = await this._conn.request<R>({ method: 'GET', url, headers });
     this.emit('fetch');
     this.totalSize = data.totalSize;
     let res;
@@ -1140,3 +1140,5 @@ export class SubQuery<
     return (this._parent as any) as Query<S, PN, PR1, PQRT>;
   }
 }
+
+export default Query;

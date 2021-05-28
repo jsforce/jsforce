@@ -369,7 +369,7 @@ export class Dashboard<S extends Schema> {
 /**
  * API class for Analytics API
  */
-export default class Analytics<S extends Schema> {
+export class Analytics<S extends Schema> {
   _conn: Connection<S>;
 
   /**
@@ -415,3 +415,5 @@ export default class Analytics<S extends Schema> {
  * Register hook in connection instantiation for dynamically adding this API module features
  */
 registerModule('analytics', (conn) => new Analytics(conn));
+
+export default Analytics;

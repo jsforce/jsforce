@@ -95,7 +95,6 @@
     "node-fetch": "^2.6.1",
     "open": "^7.0.0",
     "regenerator-runtime": "^0.13.3",
-    "request": "^2.88.0",
     "strip-ansi": "^6.0.0",
     "xml2js": "^0.4.22"
   },

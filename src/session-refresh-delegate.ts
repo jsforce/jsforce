@@ -17,7 +17,7 @@ export type SessionRefreshFunc<S extends Schema> = (
 /**
  *
  */
-export default class SessionRefreshDelegate<S extends Schema> {
+export class SessionRefreshDelegate<S extends Schema> {
   static _logger: Logger = getLogger('session-refresh-delegate');
 
   private _refreshFn: SessionRefreshFunc<S>;
@@ -77,3 +77,5 @@ export default class SessionRefreshDelegate<S extends Schema> {
     return this._refreshPromise;
   }
 }
+
+export default SessionRefreshDelegate;

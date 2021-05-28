@@ -1,4 +1,5 @@
 import { Optional } from './util';
+import { URLSearchParams } from 'url';
 
 /**
  * type defs
@@ -8,6 +9,14 @@ export type Callback<T, T2 = undefined> = (
   ret?: T,
   ret2?: T2,
 ) => any;
+
+export type HttpBody =
+  | Buffer
+  | URLSearchParams
+  | NodeJS.ReadableStream
+  | string
+  | null;
+//| Blob -- from fetch-blob - can add later if needed
 
 export type HttpMethods =
   | 'GET'
@@ -21,7 +30,7 @@ export type HttpRequest = {
   url: string;
   method: HttpMethods;
   headers?: { [name: string]: string };
-  body?: string | null;
+  body?: HttpBody;
 };
 
 export type HttpRequestOptions = {
@@ -559,6 +568,13 @@ export type OrganizationLimitsInfo = {
     Max: number;
     Remaining: number;
   };
+};
+
+export type IdentityInfo = {
+  user_id: string;
+  organization_id: string;
+  id: string;
+  username: string;
 };
 
 export type UserInfo = {

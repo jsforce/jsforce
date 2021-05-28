@@ -27,7 +27,7 @@ export type QuickActionResult = {
 /**
  * A class for quick action
  */
-export default class QuickAction<S extends Schema> {
+export class QuickAction<S extends Schema> {
   _conn: Connection<S>;
   _path: string;
 
@@ -69,3 +69,5 @@ export default class QuickAction<S extends Schema> {
     return resBody as QuickActionResult;
   }
 }
+
+export default QuickAction;

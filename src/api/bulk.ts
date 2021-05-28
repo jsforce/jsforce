@@ -736,7 +736,7 @@ class BulkApi<S extends Schema> extends HttpApi<S> {
  *
  * @class
  */
-export default class Bulk<S extends Schema> {
+export class Bulk<S extends Schema> {
   _conn: Connection<S>;
   _logger: Logger;
 
@@ -881,3 +881,5 @@ export default class Bulk<S extends Schema> {
  * Register hook in connection instantiation for dynamically adding this API module features
  */
 registerModule('bulk', (conn) => new Bulk(conn));
+
+export default Bulk;

@@ -46,7 +46,7 @@ export type FindOptions<S extends Schema, N extends SObjectNames<S>> = Partial<
 /**
  * A class for organizing all SObject access
  */
-export default class SObject<
+export class SObject<
   S extends Schema,
   N extends SObjectNames<S>,
   FieldNames extends SObjectFieldNames<S, N> = SObjectFieldNames<S, N>,
@@ -548,5 +548,7 @@ class ListView {
     return this._conn.request(url);
   }
 }
+
+export default SObject;
 
 // TODO Bulk

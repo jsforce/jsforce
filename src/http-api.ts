@@ -29,7 +29,7 @@ function parseText(str: string) {
 /**
  * HTTP based API class with authorization hook
  */
-export default class HttpApi<S extends Schema> extends EventEmitter {
+export class HttpApi<S extends Schema> extends EventEmitter {
   static _logger = getLogger('http-api');
 
   _conn: Connection<S>;
@@ -52,7 +52,7 @@ export default class HttpApi<S extends Schema> extends EventEmitter {
   /**
    * Callout to API endpoint using http
    */
-  request<R = any>(request: HttpRequest): StreamPromise<R> {
+  request<R = unknown>(request: HttpRequest): StreamPromise<R> {
     return StreamPromise.create<R>(() => {
       const { stream, setStream } = createLazyStream();
       const promise = (async () => {
@@ -280,3 +280,5 @@ class HttpApiError extends Error {
     this.content = content;
   }
 }
+
+export default HttpApi;

@@ -38,7 +38,7 @@ const baseUrl =
  * @class
  * @protected
  */
-export default class Transport {
+export class Transport {
   /**
    */
   httpRequest(
@@ -180,3 +180,5 @@ export class HttpProxyTransport extends Transport {
     return super.httpRequest(req, options);
   }
 }
+
+export default Transport;

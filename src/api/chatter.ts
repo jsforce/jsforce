@@ -190,7 +190,7 @@ export class Resource<S extends Schema, R> extends Request<S, R> {
 /**
  * API class for Chatter REST API call
  */
-export default class Chatter<S extends Schema> {
+export class Chatter<S extends Schema> {
   _conn: Connection<S>;
 
   /**
@@ -254,7 +254,7 @@ export default class Chatter<S extends Schema> {
   /**
    * Make a resource request to chatter API
    */
-  resource<R = any>(
+  resource<R = unknown>(
     url: string,
     queryParams?: { [name: string]: string | number | boolean | null } | null,
   ) {
@@ -310,3 +310,5 @@ function defer<T>() {
  * Register hook in connection instantiation for dynamically adding this API module features
  */
 registerModule('chatter', (conn) => new Chatter(conn));
+
+export default Chatter;

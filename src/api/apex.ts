@@ -9,7 +9,7 @@ import { HttpRequest, HttpMethods, Schema } from '../types';
 /**
  * API class for Apex REST endpoint call
  */
-export default class Apex<S extends Schema> {
+export class Apex<S extends Schema> {
   _conn: Connection<S>;
 
   /**
@@ -102,3 +102,5 @@ export default class Apex<S extends Schema> {
  * Register hook in connection instantiation for dynamically adding this API module features
  */
 registerModule('apex', (conn) => new Apex(conn));
+
+export default Apex;

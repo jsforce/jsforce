@@ -209,7 +209,7 @@ const describeCacheKey = (type?: string) =>
 /**
  * API class for Tooling API call
  */
-export default class Tooling<S extends Schema> {
+export class Tooling<S extends Schema> {
   _conn: Connection<S>;
 
   /**
@@ -362,7 +362,7 @@ export default class Tooling<S extends Schema> {
   /**
    *
    */
-  request<R = any>(request: string | HttpRequest, options?: Object) {
+  request<R = unknown>(request: string | HttpRequest, options?: Object) {
     return this._conn.request<R>(request, options);
   }
 
@@ -412,3 +412,5 @@ export default class Tooling<S extends Schema> {
  * Register hook in connection instantiation for dynamically adding this API module features
  */
 registerModule('tooling', (conn) => new Tooling(conn));
+
+export default Tooling;
