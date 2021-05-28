@@ -110,9 +110,7 @@ const DataStreamConverters: { [key: string]: StreamConverter } = {
  * @constructor
  * @extends stream.Transform
  */
-export class RecordStream<
-  R extends Record = Record
-> extends PassThrough {
+export class RecordStream<R extends Record = Record> extends PassThrough {
   /**
    *
    */

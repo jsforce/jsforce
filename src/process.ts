@@ -234,7 +234,9 @@ class ApprovalProcessRequest<S extends Schema> {
   ) {
     if (!this._promise) {
       // TODO fix type
-      this._promise = this._process.request([this]).then((rets: any) => rets[0]);
+      this._promise = this._process
+        .request([this])
+        .then((rets: any) => rets[0]);
     }
     this._promise.then(onResolve, onReject);
   }

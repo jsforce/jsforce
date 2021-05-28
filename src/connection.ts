@@ -223,9 +223,7 @@ const MAX_DML_COUNT = 200;
 /**
  *
  */
-export class Connection<
-  S extends Schema = Schema
-> extends EventEmitter {
+export class Connection<S extends Schema = Schema> extends EventEmitter {
   static _logger = getLogger('connection');
 
   version: string;
@@ -773,12 +771,11 @@ export class Connection<
   /**
    *
    */
-  query<T extends Record>(soql: string, options?: Partial<QueryOptions>): Query<S, SObjectNames<S>, T, 'QueryResult'> {
-    return new Query<S, SObjectNames<S>, T, 'QueryResult'>(
-      this,
-      soql,
-      options,
-    );
+  query<T extends Record>(
+    soql: string,
+    options?: Partial<QueryOptions>,
+  ): Query<S, SObjectNames<S>, T, 'QueryResult'> {
+    return new Query<S, SObjectNames<S>, T, 'QueryResult'>(this, soql, options);
   }
 
   /**

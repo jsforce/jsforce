@@ -15,7 +15,10 @@ const defaultOAuth2Config = {
 function base64UrlEscape(base64Encoded: string): string {
   // builtin node js base 64 encoding is not 64 url compatible.
   // See https://toolsn.ietf.org/html/rfc4648#section-5
-  return base64Encoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+  return base64Encoded
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=/g, '');
 }
 
 /**
@@ -109,7 +112,9 @@ export class OAuth2 {
     }
     if (useVerifier === true) {
       // Set a code verifier string for OAuth authorization
-      this.codeVerifier = base64UrlEscape(randomBytes(Math.ceil(128)).toString('base64'));
+      this.codeVerifier = base64UrlEscape(
+        randomBytes(Math.ceil(128)).toString('base64'),
+      );
     }
   }
 
@@ -120,7 +125,9 @@ export class OAuth2 {
     if (this.codeVerifier) {
       // code verifier must be a base 64 url encoded hash of 128 bytes of random data. Our random data is also
       // base 64 url encoded. See Connection.create();
-      const codeChallenge = base64UrlEscape(createHash('sha256').update(this.codeVerifier).digest('base64'));
+      const codeChallenge = base64UrlEscape(
+        createHash('sha256').update(this.codeVerifier).digest('base64'),
+      );
       params.code_challenge = codeChallenge;
     }
 
