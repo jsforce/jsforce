@@ -1442,16 +1442,16 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
     let url;
     if (type) {
       url = [this._baseUrl(), 'sobjects', type].join('/');
-      // TODO fix type
-      const { recentItems } = await this.request<any>(url);
+      const { recentItems } = await this.request<{ recentItems: Record[] }>(
+        url,
+      );
       return limit ? recentItems.slice(0, limit) : recentItems;
     }
     url = `${this._baseUrl()}/recent`;
     if (limit) {
       url += `?limit=${limit}`;
     }
-    // TODO fix type
-    return this.request<any>(url);
+    return this.request<Record[]>(url);
   }
 
   /**

@@ -28,7 +28,7 @@ export default class UserPool<S extends Schema = Schema> {
     const config = this._config;
     const conn = this._conn;
     await this._login;
-    const res = await conn.apex.post('/JSforceTestUserPool/', {
+    const res = await conn.apex.post<any>('/JSforceTestUserPool/', {
       clientName: config.poolClient,
     });
     if (res.username) {
@@ -41,6 +41,6 @@ export default class UserPool<S extends Schema = Schema> {
   }
 
   async checkin(username: string): Promise<void> {
-    return this._conn.apex.delete(`/JSforceTestUserPool/${username}`);
+    await this._conn.apex.delete(`/JSforceTestUserPool/${username}`);
   }
 }

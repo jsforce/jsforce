@@ -52,8 +52,8 @@ export class Apex<S extends Schema> {
   /**
    * Call Apex REST service in GET request
    */
-  get(path: string, options?: Object) {
-    return this._conn.request(
+  get<R = unknown>(path: string, options?: Object) {
+    return this._conn.request<R>(
       this._createRequestParams('GET', path, undefined, options),
     );
   }
@@ -61,32 +61,32 @@ export class Apex<S extends Schema> {
   /**
    * Call Apex REST service in POST request
    */
-  post(path: string, body?: Object, options?: Object) {
+  post<R = unknown>(path: string, body?: Object, options?: Object) {
     const params = this._createRequestParams('POST', path, body, options);
-    return this._conn.request(params);
+    return this._conn.request<R>(params);
   }
 
   /**
    * Call Apex REST service in PUT request
    */
-  put(path: string, body?: Object, options?: Object) {
+  put<R = unknown>(path: string, body?: Object, options?: Object) {
     const params = this._createRequestParams('PUT', path, body, options);
-    return this._conn.request(params);
+    return this._conn.request<R>(params);
   }
 
   /**
    * Call Apex REST service in PATCH request
    */
-  patch(path: string, body?: Object, options?: Object) {
+  patch<R = unknown>(path: string, body?: Object, options?: Object) {
     const params = this._createRequestParams('PATCH', path, body, options);
-    return this._conn.request(params);
+    return this._conn.request<R>(params);
   }
 
   /**
    * Call Apex REST service in DELETE request
    */
-  delete(path: string, options?: Object) {
-    return this._conn.request(
+  delete<R = unknown>(path: string, options?: Object) {
+    return this._conn.request<R>(
       this._createRequestParams('DELETE', path, undefined, options),
     );
   }

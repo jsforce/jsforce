@@ -545,7 +545,7 @@ class ListView {
    */
   explain() {
     const url = `/query/?explain=${this.id}`;
-    return this._conn.request(url);
+    return this._conn.request<any>(url);
   }
 }
 

@@ -48,7 +48,7 @@ export type HttpResponse = {
 export type Record = {
   [field: string]: any;
   Id?: string;
-  attributes?: { type: string; [prop: string]: any };
+  attributes?: { type: string; url: string; [prop: string]: any };
 };
 
 export type SavedRecord = Record & { Id: string };
@@ -570,11 +570,31 @@ export type OrganizationLimitsInfo = {
   };
 };
 
+// https://help.salesforce.com/articleView?id=sf.remoteaccess_using_openid.htm&type=5
 export type IdentityInfo = {
   user_id: string;
   organization_id: string;
   id: string;
   username: string;
+  display_name: string;
+  nick_name: string;
+  email: string;
+  photos: {
+    picture: string;
+    thumbnail: string;
+  };
+  urls: {
+    enterprise: string;
+    metadata: string;
+    partner: string;
+    rest: string;
+    sobjects: string;
+    search: string;
+    query: string;
+    profile: string;
+  };
+  user_type: string;
+  language: string;
 };
 
 export type UserInfo = {
@@ -588,4 +608,23 @@ export type LimitInfo = {
     used: number;
     limit: number;
   };
+};
+
+// https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_process_rules.htm
+export type ProcessRule = {
+  actions: {
+    id: string;
+    name: string;
+    type: string;
+  };
+  description: string | null;
+  id: string;
+  name: string;
+  namespacePrefix: string | null;
+  object: string;
+};
+
+// https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_process_rules.htm
+export type ProcessRules = {
+  [index: string]: ProcessRule;
 };

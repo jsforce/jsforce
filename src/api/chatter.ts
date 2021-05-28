@@ -247,7 +247,7 @@ export class Chatter<S extends Schema> {
   /**
    * Make a request for chatter API resource
    */
-  request<R>(req: ChatterRequestParams) {
+  request<R = unknown>(req: ChatterRequestParams) {
     return new Request<S, R>(this, req);
   }
 

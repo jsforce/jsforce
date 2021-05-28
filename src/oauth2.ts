@@ -110,7 +110,7 @@ export class OAuth2 {
     } else {
       this._transport = new Transport();
     }
-    if (useVerifier === true) {
+    if (useVerifier) {
       // Set a code verifier string for OAuth authorization
       this.codeVerifier = base64UrlEscape(
         randomBytes(Math.ceil(128)).toString('base64'),

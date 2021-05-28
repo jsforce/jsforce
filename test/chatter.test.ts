@@ -17,7 +17,7 @@ beforeAll(async () => {
  *
  */
 it('should get chatter api info', async () => {
-  const result = await conn.chatter.resource('/').retrieve();
+  const result = await conn.chatter.resource('/').retrieve<any>();
   assert.ok(isString(result.users));
   assert.ok(isString(result.groups));
   assert.ok(isString(result.feeds));
@@ -31,7 +31,7 @@ describe('users and groups', () => {
    *
    */
   it('should get users list', async () => {
-    const result = await conn.chatter.resource('/users').retrieve();
+    const result = await conn.chatter.resource('/users').retrieve<any>();
     assert.ok(isString(result.currentPageUrl));
     assert.ok(Array.isArray(result.users));
     for (const user of result.users) {
@@ -45,7 +45,7 @@ describe('users and groups', () => {
    *
    */
   it('should get current user info', async () => {
-    const result = await conn.chatter.resource('/users/me').retrieve();
+    const result = await conn.chatter.resource('/users/me').retrieve<any>();
     assert.ok(isString(result.id));
     assert.ok(isString(result.url) && result.url[0] === '/');
     assert.ok(isString(result.username));
@@ -55,7 +55,7 @@ describe('users and groups', () => {
    *
    */
   it('should get groups list', async () => {
-    const result = await conn.chatter.resource('/groups').retrieve();
+    const result = await conn.chatter.resource('/groups').retrieve<any>();
     assert.ok(isString(result.currentPageUrl));
     assert.ok(Array.isArray(result.groups));
     for (const group of result.groups) {
@@ -74,7 +74,7 @@ describe('feeds', () => {
    *
    */
   it('should get feeds list', async () => {
-    const result = await conn.chatter.resource('/feeds').retrieve();
+    const result = await conn.chatter.resource('/feeds').retrieve<any>();
     assert.ok(Array.isArray(result.feeds));
     assert.ok(Array.isArray(result.favorites));
     for (const feed of result.feeds) {
@@ -97,7 +97,7 @@ describe('feed item', () => {
   it('should get items from feed items', async () => {
     const result = await conn.chatter
       .resource('/feeds/company/feed-elements')
-      .retrieve();
+      .retrieve<any>();
     assert.ok(Array.isArray(result.elements));
     for (const element of result.elements) {
       assert.ok(isString(element.id));
@@ -318,7 +318,7 @@ describe('batch', () => {
    *
    */
   beforeAll(async () => {
-    const result = await conn.chatter.resource('/feeds').retrieve();
+    const result = await conn.chatter.resource('/feeds').retrieve<any>();
     // Exclude PendingReview feed type, which raise 403 error in feed-elements GET request
     feeds = result.feeds.filter(
       (feed: any) => feed.feedType !== 'PendingReview',
@@ -330,7 +330,7 @@ describe('batch', () => {
    */
   it('should get all feed items', async () => {
     const resources = feeds.map((feed) =>
-      conn.chatter.resource(feed.feedElementsUrl),
+      conn.chatter.resource<any>(feed.feedElementsUrl),
     );
     const ret = await conn.chatter.batch(resources);
     assert.ok(ret.hasErrors === false);
