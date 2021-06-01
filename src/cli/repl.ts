@@ -129,7 +129,7 @@ function defineProp(obj: Object, prop: string, getter: () => any) {
 /**
  *
  */
-export default class Repl {
+export class Repl {
   _cli: Cli;
   _in: Transform;
   _out: Transform;
@@ -413,3 +413,5 @@ export default class Repl {
     });
   }
 }
+
+export default Repl;

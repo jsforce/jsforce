@@ -30,6 +30,7 @@ import {
   SObjectUpdateRecord,
   SObjectFieldNames,
   UserInfo,
+  IdentityInfo,
   LimitInfo,
 } from './types';
 import { StreamPromise } from './util/promise';
@@ -222,9 +223,7 @@ const MAX_DML_COUNT = 200;
 /**
  *
  */
-export default class Connection<
-  S extends Schema = Schema
-> extends EventEmitter {
+export class Connection<S extends Schema = Schema> extends EventEmitter {
   static _logger = getLogger('connection');
 
   version: string;
@@ -643,7 +642,7 @@ export default class Connection<
    * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
    * , or relative path from version root ('/sobjects/Account/describe').
    */
-  request<R = any>(
+  request<R = unknown>(
     request: string | HttpRequest,
     options: Object = {},
   ): StreamPromise<R> {
@@ -682,7 +681,7 @@ export default class Connection<
    * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
    * , or relative path from version root ('/sobjects/Account/describe').
    */
-  requestGet<R = any>(url: string, options?: Object) {
+  requestGet<R = unknown>(url: string, options?: Object) {
     const request: HttpRequest = { method: 'GET', url };
     return this.request<R>(request, options);
   }
@@ -694,7 +693,7 @@ export default class Connection<
    * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
    * , or relative path from version root ('/sobjects/Account/describe').
    */
-  requestPost<R = any>(url: string, body: Object, options?: Object) {
+  requestPost<R = unknown>(url: string, body: Object, options?: Object) {
     const request: HttpRequest = {
       method: 'POST',
       url,
@@ -728,7 +727,7 @@ export default class Connection<
    * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
    * , or relative path from version root ('/sobjects/Account/describe').
    */
-  requestPatch<R = any>(url: string, body: Object, options?: Object) {
+  requestPatch<R = unknown>(url: string, body: Object, options?: Object) {
     const request: HttpRequest = {
       method: 'PATCH',
       url,
@@ -772,12 +771,11 @@ export default class Connection<
   /**
    *
    */
-  query(soql: string, options?: Partial<QueryOptions>) {
-    return new Query<S, SObjectNames<S>, Record, 'QueryResult'>(
-      this,
-      soql,
-      options,
-    );
+  query<T extends Record>(
+    soql: string,
+    options?: Partial<QueryOptions>,
+  ): Query<S, SObjectNames<S>, T, 'QueryResult'> {
+    return new Query<S, SObjectNames<S>, T, 'QueryResult'>(this, soql, options);
   }
 
   /**
@@ -1232,7 +1230,7 @@ export default class Connection<
         const url = [this._baseUrl(), 'sobjects', type, extIdField, extId].join(
           '/',
         );
-        return this.request(
+        return this.request<SaveResult>(
           {
             method: 'PATCH',
             url,
@@ -1412,18 +1410,18 @@ export default class Connection<
   async identity(options: { headers?: { [name: string]: string } } = {}) {
     let url = this.userInfo && this.userInfo.url;
     if (!url) {
-      const res = await this.request({
+      const res = await this.request<{ identity: string }>({
         method: 'GET',
         url: this._baseUrl(),
         headers: options.headers,
       });
-      url = res.identity as string;
+      url = res.identity;
     }
     url += '?format=json';
     if (this.accessToken) {
       url += `&oauth_token=${encodeURIComponent(this.accessToken)}`;
     }
-    const res = await this.request({ method: 'GET', url });
+    const res = await this.request<IdentityInfo>({ method: 'GET', url });
     this.userInfo = {
       id: res.user_id,
       organizationId: res.organization_id,
@@ -1444,14 +1442,16 @@ export default class Connection<
     let url;
     if (type) {
       url = [this._baseUrl(), 'sobjects', type].join('/');
-      const { recentItems } = await this.request(url);
+      const { recentItems } = await this.request<{ recentItems: Record[] }>(
+        url,
+      );
       return limit ? recentItems.slice(0, limit) : recentItems;
     }
     url = `${this._baseUrl()}/recent`;
     if (limit) {
       url += `?limit=${limit}`;
     }
-    return this.request(url);
+    return this.request<Record[]>(url);
   }
 
   /**
@@ -1550,3 +1550,5 @@ export default class Connection<
    */
   process = new Process(this);
 }
+
+export default Connection;

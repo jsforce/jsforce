@@ -126,7 +126,7 @@ class Channel<S extends Schema> {
 /**
  * Streaming API class
  */
-export default class Streaming<S extends Schema> extends EventEmitter {
+export class Streaming<S extends Schema> extends EventEmitter {
   _conn: Connection<S>;
   _topics: { [name: string]: Topic<S, Record> } = {};
   _fayeClients: { [clientType: string]: Client } = {};
@@ -279,3 +279,5 @@ export { StreamingExtension };
  * Register hook in connection instantiation for dynamically adding this API module features
  */
 registerModule('streaming', (conn) => new Streaming(conn));
+
+export default Streaming;

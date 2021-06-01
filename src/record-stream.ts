@@ -110,9 +110,7 @@ const DataStreamConverters: { [key: string]: StreamConverter } = {
  * @constructor
  * @extends stream.Transform
  */
-export default class RecordStream<
-  R extends Record = Record
-> extends PassThrough {
+export class RecordStream<R extends Record = Record> extends PassThrough {
   /**
    *
    */
@@ -273,3 +271,5 @@ export class Parsable<R extends Record = Record> extends RecordStream<R> {
   /* @override */
   addListener = this.on;
 }
+
+export default RecordStream;

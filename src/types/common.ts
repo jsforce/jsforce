@@ -1,4 +1,5 @@
 import { Optional } from './util';
+import { URLSearchParams } from 'url';
 
 /**
  * type defs
@@ -8,6 +9,14 @@ export type Callback<T, T2 = undefined> = (
   ret?: T,
   ret2?: T2,
 ) => any;
+
+export type HttpBody =
+  | Buffer
+  | URLSearchParams
+  | NodeJS.ReadableStream
+  | string
+  | null;
+//| Blob -- from fetch-blob - can add later if needed
 
 export type HttpMethods =
   | 'GET'
@@ -21,7 +30,7 @@ export type HttpRequest = {
   url: string;
   method: HttpMethods;
   headers?: { [name: string]: string };
-  body?: string | null;
+  body?: HttpBody;
 };
 
 export type HttpRequestOptions = {
@@ -39,7 +48,7 @@ export type HttpResponse = {
 export type Record = {
   [field: string]: any;
   Id?: string;
-  attributes?: { type: string; [prop: string]: any };
+  attributes?: { type: string; url: string; [prop: string]: any };
 };
 
 export type SavedRecord = Record & { Id: string };
@@ -561,6 +570,33 @@ export type OrganizationLimitsInfo = {
   };
 };
 
+// https://help.salesforce.com/articleView?id=sf.remoteaccess_using_openid.htm&type=5
+export type IdentityInfo = {
+  user_id: string;
+  organization_id: string;
+  id: string;
+  username: string;
+  display_name: string;
+  nick_name: string;
+  email: string;
+  photos: {
+    picture: string;
+    thumbnail: string;
+  };
+  urls: {
+    enterprise: string;
+    metadata: string;
+    partner: string;
+    rest: string;
+    sobjects: string;
+    search: string;
+    query: string;
+    profile: string;
+  };
+  user_type: string;
+  language: string;
+};
+
 export type UserInfo = {
   id: string;
   organizationId: string;
@@ -572,4 +608,23 @@ export type LimitInfo = {
     used: number;
     limit: number;
   };
+};
+
+// https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_process_rules.htm
+export type ProcessRule = {
+  actions: {
+    id: string;
+    name: string;
+    type: string;
+  };
+  description: string | null;
+  id: string;
+  name: string;
+  namespacePrefix: string | null;
+  object: string;
+};
+
+// https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_process_rules.htm
+export type ProcessRules = {
+  [index: string]: ProcessRule;
 };

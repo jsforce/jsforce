@@ -3,7 +3,7 @@
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
 import Connection from './connection';
-import { Schema } from './types';
+import { ProcessRules, Schema } from './types';
 
 /**
  *
@@ -43,7 +43,9 @@ export class ProcessRule<S extends Schema> {
    * Get all process rule definitions registered to sobjects
    */
   async list() {
-    const res = await this._conn.request('/process/rules');
+    const res = await this._conn.request<{ rules: ProcessRules }>(
+      '/process/rules',
+    );
     return res.rules;
   }
 
@@ -52,7 +54,18 @@ export class ProcessRule<S extends Schema> {
    */
   trigger(contextIds: string | string[]) {
     const contextIds_ = Array.isArray(contextIds) ? contextIds : [contextIds];
-    return this._conn.request({
+    // https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_process_rules_trigger.htm
+    return this._conn.request<
+      | {
+          errors: null;
+          success: true;
+        }
+      | {
+          // Docs don't say what the trigger errors are
+          errors: any[];
+          success: false;
+        }
+    >({
       method: 'POST',
       url: '/process/rules/',
       body: JSON.stringify({
@@ -73,6 +86,7 @@ export type ApprovalProcessDefinition = {
   name: string;
   object: string;
   sortOrder: number;
+  description: string | null;
 };
 
 /**
@@ -117,7 +131,9 @@ export class ApprovalProcess<S extends Schema> {
    * Get all approval process definitions registered to sobjects
    */
   async list() {
-    const res = await this._conn.request('/process/approvals');
+    const res = await this._conn.request<{
+      approvals: { [index: string]: ApprovalProcessDefinition };
+    }>('/process/approvals');
     return res.approvals;
   }
 
@@ -130,7 +146,7 @@ export class ApprovalProcess<S extends Schema> {
     const requests_ = requests.map((req) =>
       '_request' in req ? req._request : req,
     );
-    return this._conn.request({
+    return this._conn.request<ApprovalProcessRequestResult[]>({
       method: 'POST',
       url: '/process/approvals',
       headers: { 'content-type': 'application/json' },
@@ -230,7 +246,9 @@ class ApprovalProcessRequest<S extends Schema> {
     onReject?: (err: any) => U | PromiseLike<U> | null,
   ) {
     if (!this._promise) {
-      this._promise = this._process.request([this]).then((rets) => rets[0]);
+      this._promise = this._process
+        .request([this])
+        .then((rets: any) => rets[0]);
     }
     this._promise.then(onResolve, onReject);
   }
@@ -239,7 +257,7 @@ class ApprovalProcessRequest<S extends Schema> {
 /**
  * A class which manages process rules and approval processes
  */
-export default class Process<S extends Schema> {
+export class Process<S extends Schema> {
   rule: ProcessRule<S>;
   approval: ApprovalProcess<S>;
 
@@ -251,3 +269,5 @@ export default class Process<S extends Schema> {
     this.approval = new ApprovalProcess(conn);
   }
 }
+
+export default Process;

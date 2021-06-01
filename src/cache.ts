@@ -94,7 +94,7 @@ function generateKeyString(
  * @class
  * @constructor
  */
-export default class Cache {
+export class Cache {
   private _entries: { [key: string]: CacheEntry<any> } = {};
 
   /**
@@ -183,3 +183,5 @@ export default class Cache {
     return $fn as CachedFunction<Fn>;
   }
 }
+
+export default Cache;

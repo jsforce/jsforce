@@ -47,7 +47,7 @@ function toSoapRecord(records: Record | Record[]): Record | Record[] {
 /**
  * API class for Partner SOAP call
  */
-export default class SoapApi<S extends Schema> {
+export class SoapApi<S extends Schema> {
   _conn: Connection<S>;
 
   constructor(conn: Connection<S>) {
@@ -247,3 +247,5 @@ export default class SoapApi<S extends Schema> {
  * Register hook in connection instantiation for dynamically adding this API module features
  */
 registerModule('soap', (conn) => new SoapApi(conn));
+
+export default SoapApi;

@@ -1,6 +1,7 @@
 /**
  *
  */
+import { createHash, randomBytes } from 'crypto';
 import querystring from 'querystring';
 import Transport, { XdProxyTransport, HttpProxyTransport } from './transport';
 import { Optional } from './types';
@@ -8,6 +9,17 @@ import { Optional } from './types';
 const defaultOAuth2Config = {
   loginUrl: 'https://login.salesforce.com',
 };
+
+// Makes a nodejs base64 encoded string compatible with rfc4648 alternative encoding for urls.
+// @param base64Encoded a nodejs base64 encoded string
+function base64UrlEscape(base64Encoded: string): string {
+  // builtin node js base 64 encoding is not 64 url compatible.
+  // See https://toolsn.ietf.org/html/rfc4648#section-5
+  return base64Encoded
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=/g, '');
+}
 
 /**
  * type defs
@@ -22,11 +34,13 @@ export type OAuth2Config = {
   revokeServiceUrl?: string;
   proxyUrl?: string;
   httpProxy?: string;
+  useVerifier?: boolean;
 };
 
 export type AuthzRequestParams = {
   scope?: string;
   state?: string;
+  code_challenge?: string;
 } & {
   [attr: string]: string;
 };
@@ -46,7 +60,7 @@ export type TokenResponse = {
 /**
  * OAuth2 class
  */
-export default class OAuth2 {
+export class OAuth2 {
   loginUrl: string;
   authzServiceUrl: string;
   tokenServiceUrl: string;
@@ -54,6 +68,7 @@ export default class OAuth2 {
   clientId: Optional<string>;
   clientSecret: Optional<string>;
   redirectUri: Optional<string>;
+  codeVerifier: Optional<string>;
 
   _transport: Transport;
 
@@ -71,6 +86,7 @@ export default class OAuth2 {
       redirectUri,
       proxyUrl,
       httpProxy,
+      useVerifier,
     } = config;
     if (authzServiceUrl && tokenServiceUrl) {
       this.loginUrl = authzServiceUrl.split('/').slice(0, 3).join('/');
@@ -94,12 +110,27 @@ export default class OAuth2 {
     } else {
       this._transport = new Transport();
     }
+    if (useVerifier) {
+      // Set a code verifier string for OAuth authorization
+      this.codeVerifier = base64UrlEscape(
+        randomBytes(Math.ceil(128)).toString('base64'),
+      );
+    }
   }
 
   /**
    * Get Salesforce OAuth2 authorization page URL to redirect user agent.
    */
   getAuthorizationUrl(params: AuthzRequestParams = {}) {
+    if (this.codeVerifier) {
+      // code verifier must be a base 64 url encoded hash of 128 bytes of random data. Our random data is also
+      // base 64 url encoded. See Connection.create();
+      const codeChallenge = base64UrlEscape(
+        createHash('sha256').update(this.codeVerifier).digest('base64'),
+      );
+      params.code_challenge = codeChallenge;
+    }
+
     const _params = {
       ...params,
       response_type: 'code',
@@ -219,6 +250,8 @@ export default class OAuth2 {
    * @private
    */
   async _postParams(params: { [name: string]: string }): Promise<any> {
+    if (this.codeVerifier) params.code_verifier = this.codeVerifier;
+
     const response = await this._transport.httpRequest({
       method: 'POST',
       url: this.tokenServiceUrl,
@@ -254,3 +287,5 @@ export default class OAuth2 {
     return res;
   }
 }
+
+export default OAuth2;

@@ -33,9 +33,14 @@ export default class ConnectionManager {
     const userPool = this._userPool;
     const config = this._config;
     const username = await (userPool ? userPool.checkout() : config.username);
+
     // eslint-disable-next-line no-param-reassign
     (conn as any).__username = username; // for later checkin
-    await conn.login(username, config.password);
+    if (username && config.password) {
+      await conn.login(username, config.password);
+    } else {
+      throw new Error('Set SF_USERNAME and SF_PASSWORD.');
+    }
   }
 
   async closeConnection<S extends Schema>(conn: Connection<S>) {
