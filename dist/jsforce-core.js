@@ -23117,7 +23117,7 @@ exports.callbackify = callbackify;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony default export */ __webpack_exports__["a"] = ('2.0.0-beta.3');
+/* harmony default export */ __webpack_exports__["a"] = ('2.0.0-beta.4');
 
 
 /***/ }),
