@@ -1,5 +1,6 @@
 {
   "main": "../lib/core",
   "module": "../module/core",
+  "browser": "../browser/core",
   "types": "../lib/core"
 }
