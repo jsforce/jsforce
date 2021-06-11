@@ -3,10 +3,10 @@ const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
   entry: {
-    jsforce: './index.js',
-    'jsforce.min': './index.js',
-    'jsforce-core': './core.js',
-    'jsforce-core.min': './core.js',
+    jsforce: '.',
+    'jsforce.min': '.',
+    'jsforce-core': './core',
+    'jsforce-core.min': './core',
   },
   output: {
     path: path.join(__dirname, 'dist'),
