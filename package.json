@@ -32,7 +32,7 @@
     "./browser/request": "./browser/browser/request.js",
     "./browser/request.js": "./browser/browser/request.js"
   },
-  "types": "./lib/index",
+  "types": "./index",
   "scripts": {
     "clean": "rimraf lib/* module/* browser/*",
     "build": "run-s build:transpile build:bundle",
@@ -67,7 +67,8 @@
     "module",
     "src",
     "typings",
-    "index.js"
+    "index.js",
+    "index.d.ts"
   ],
   "engines": {
     "node": ">=8.0"
