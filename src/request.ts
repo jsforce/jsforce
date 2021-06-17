@@ -38,20 +38,26 @@ async function startFetchRequest(
   const agent = httpProxy ? createHttpsProxyAgent(httpProxy) : undefined;
   const { url, body, ...rrequest } = request;
   const controller = new AbortController();
-  const res = await executeWithTimeout(
-    () =>
-      fetch(url, {
-        ...rrequest,
-        ...(input && /^(post|put|patch)$/i.test(request.method)
-          ? { body: input }
-          : {}),
-        redirect: 'manual',
-        signal: controller.signal,
-        agent,
-      }),
-    options.timeout,
-    () => controller.abort(),
-  );
+  let res
+  try {
+    res = await executeWithTimeout(
+      () =>
+        fetch(url, {
+          ...rrequest,
+          ...(input && /^(post|put|patch)$/i.test(request.method)
+            ? { body: input }
+            : {}),
+          redirect: 'manual',
+          signal: controller.signal,
+          agent,
+        }),
+      options.timeout,
+      () => controller.abort(),
+    );
+  } catch(err) {
+    emitter.emit('error', err);
+    return;
+  }
   const headers: { [key: string]: any } = {};
   for (const headerName of res.headers.keys()) {
     headers[headerName.toLowerCase()] = res.headers.get(headerName);
