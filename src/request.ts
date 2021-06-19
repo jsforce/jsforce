@@ -38,7 +38,7 @@ async function startFetchRequest(
   const agent = httpProxy ? createHttpsProxyAgent(httpProxy) : undefined;
   const { url, body, ...rrequest } = request;
   const controller = new AbortController();
-  let res
+  let res;
   try {
     res = await executeWithTimeout(
       () =>
@@ -54,7 +54,7 @@ async function startFetchRequest(
       options.timeout,
       () => controller.abort(),
     );
-  } catch(err) {
+  } catch (err) {
     emitter.emit('error', err);
     return;
   }
