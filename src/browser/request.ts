@@ -24,6 +24,10 @@ const supportsReadableStream = (async () => {
         method: 'POST',
         body: new ReadableStream(),
       });
+      // if it has content-type header it doesn't regard body as stream
+      if (req.headers.has('Content-Type')) {
+        return false;
+      }
       await (await fetch(req)).text();
       return true;
     }
