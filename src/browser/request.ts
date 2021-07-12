@@ -87,7 +87,7 @@ async function startFetchRequest(
   const { url, body: reqBody, ...rreq } = request;
   const body =
     input && /^(post|put|patch)$/i.test(request.method)
-      ? (await supportsReadableStream)
+      ? supportsReadableStream
         ? toWhatwgReadableStream(input)
         : await readAll(input)
       : undefined;
