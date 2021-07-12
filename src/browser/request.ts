@@ -12,18 +12,23 @@ import { HttpRequest, HttpRequestOptions } from '../types';
 /**
  *
  */
-const supportsReadableStream = (() => {
+const supportsReadableStream = (async () => {
   try {
     if (
-      typeof Request !== 'undefined' &&
-      typeof ReadableStream !== 'undefined'
+      typeof fetch === 'function' &&
+      typeof Request === 'function' &&
+      typeof ReadableStream === 'function'
     ) {
-      return !new Request('', {
-        body: new ReadableStream(),
+      // this feature detection requires dummy POST request
+      const req = new Request('data:text/plain,', {
         method: 'POST',
-      }).headers.has('Content-Type');
+        body: new ReadableStream(),
+      });
+      await (await fetch(req)).text();
+      return true;
     }
   } catch (e) {
+    // error might occur in env with CSP without connect-src data:
     return false;
   }
   return false;
@@ -73,7 +78,7 @@ async function startFetchRequest(
   const { url, body: reqBody, ...rreq } = request;
   const body =
     input && /^(post|put|patch)$/i.test(request.method)
-      ? supportsReadableStream
+      ? (await supportsReadableStream)
         ? toWhatwgReadableStream(input)
         : await readAll(input)
       : undefined;
