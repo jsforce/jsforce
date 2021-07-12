@@ -10,24 +10,38 @@ import { readAll } from '../util/stream';
 import { HttpRequest, HttpRequestOptions } from '../types';
 
 /**
- *
+ * As the request streming is not yet supported on major browsers,
+ * it is set to false for now.
  */
-const supportsReadableStream = (() => {
+const supportsReadableStream = false;
+
+/*
+(async () => {
   try {
     if (
-      typeof Request !== 'undefined' &&
-      typeof ReadableStream !== 'undefined'
+      typeof fetch === 'function' &&
+      typeof Request === 'function' &&
+      typeof ReadableStream === 'function'
     ) {
-      return !new Request('', {
-        body: new ReadableStream(),
+      // this feature detection requires dummy POST request
+      const req = new Request('data:text/plain,', {
         method: 'POST',
-      }).headers.has('Content-Type');
+        body: new ReadableStream(),
+      });
+      // if it has content-type header it doesn't regard body as stream
+      if (req.headers.has('Content-Type')) {
+        return false;
+      }
+      await (await fetch(req)).text();
+      return true;
     }
   } catch (e) {
+    // error might occur in env with CSP without connect-src data:
     return false;
   }
   return false;
 })();
+*/
 
 /**
  *
@@ -73,7 +87,7 @@ async function startFetchRequest(
   const { url, body: reqBody, ...rreq } = request;
   const body =
     input && /^(post|put|patch)$/i.test(request.method)
-      ? supportsReadableStream
+      ? (await supportsReadableStream)
         ? toWhatwgReadableStream(input)
         : await readAll(input)
       : undefined;
