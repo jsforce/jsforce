@@ -10,9 +10,13 @@ import { readAll } from '../util/stream';
 import { HttpRequest, HttpRequestOptions } from '../types';
 
 /**
- *
+ * As the request streming is not yet supported on major browsers,
+ * it is set to false for now.
  */
-const supportsReadableStream = (async () => {
+const supportsReadableStream = false;
+
+/*
+(async () => {
   try {
     if (
       typeof fetch === 'function' &&
@@ -37,6 +41,7 @@ const supportsReadableStream = (async () => {
   }
   return false;
 })();
+*/
 
 /**
  *
