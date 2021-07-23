@@ -760,6 +760,9 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
    */
   _normalizeUrl(url: string) {
     if (url[0] === '/') {
+      if (url.indexOf(this.instanceUrl + '/services/') === 0) {
+        return url;
+      }
       if (url.indexOf('/services/') === 0) {
         return this.instanceUrl + url;
       }
