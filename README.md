@@ -24,6 +24,8 @@ Supported Salesforce APIs are the following:
 - Streaming API
 - Tooling API
 
+Can also refer this link for API https://trailhead.salesforce.com/content/learn/modules/api_basics/api_basics_overview
+
 ## Documentation
 
 See documentation in http://jsforce.github.io/ .
