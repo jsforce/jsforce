@@ -1734,8 +1734,7 @@ Connection.prototype._updateMany = function(type, records, options) {
  * @param {Callback.<RecordResult|Array.<RecordResult>>} [callback] - Callback
  * @returns {Promise.<RecordResult|Array.<RecordResult>>}
  */
-Connection.prototype.upsert = function(type, records, extIdField, options, callback) {
-  // You can omit "type" argument, when the record includes type information.
+ Connection.prototype.upsert = function(type, records, extIdField, options, callback) {
   if (!_.isString(type)) {
     // reverse order
     callback = options;
@@ -1749,42 +1748,92 @@ Connection.prototype.upsert = function(type, records, extIdField, options, callb
     options = {};
   }
   options = options || {};
-  var self = this;
-  var isArray = _.isArray(records);
-  records = isArray ? records : [ records ];
-  if (records.length > this.maxRequest) {
-    return Promise.reject(new Error("Exceeded max limit of concurrent call")).thenCall(callback);
-  }
-  return Promise.all(
-    _.map(records, function(record) {
-      var sobjectType = type || (record.attributes && record.attributes.type) || record.type;
-      var extId = record[extIdField];
-      record = _.clone(record);
-      delete record[extIdField];
-      delete record.type;
-      delete record.attributes;
+  return (
+    _.isArray(records) ?
+      (this._supports('sobject-collection') ? // check whether SObject collection API is supported
+        this._upsertMany(type, records, extIdField, options) :
+        this._upsertParallel(type, records, extIdField, options)) :
+      this._upsertSingle(type, records, extIdField, options)
+  ).thenCall(callback);
+};
 
-      var url = [ self._baseUrl(), "sobjects", sobjectType, extIdField, extId ].join('/');
-      return self.request({
-        method : 'PATCH',
-        url : url,
-        body : JSON.stringify(record),
-        headers : _.defaults(options.headers || {}, {
-          "Content-Type" : "application/json"
-        })
-      }, {
-        noContentResponse: { success : true, errors : [] }
-      })
-      .catch(function(err) {
-        // be aware that `allOrNone` option in upsert method will not revert the other successful requests
+/** @private */
+Connection.prototype._upsertParallel = function(type, records, extIdField, options) {
+  if (records.length > this.maxRequest) {
+    return Promise.reject(new Error("Exceeded max limit of concurrent call"));
+  }
+  var self = this;
+  return Promise.all(
+    records.map(function(record) {
+      return self._upsertSingle(type, record, extIdField, options).catch(function(err) {
+        // be aware that allOrNone in parallel mode will not revert the other successful requests
         // it only raises error when met at least one failed request.
-        if (!isArray || options.allOrNone || !err.errorCode) { throw err; }
-        return self._toRecordResult(null, err);
-      })
+        if (options.allOrNone || !err.errorCode) {
+          throw err;
+        }
+        return this._toRecordResult(record.Id, err);
+      });
     })
-  ).then(function(results) {
-    return !isArray && _.isArray(results) ? results[0] : results;
-  }).thenCall(callback);
+  );
+};
+
+/** @private */
+Connection.prototype._upsertSingle = function(type, record, extIdField, options) {
+  var self = this;
+  var sobjectType = type || (record.attributes && record.attributes.type) || record.type;
+  var extId = record[extIdField];
+  record = _.clone(record);
+  delete record[extIdField];
+  delete record.type;
+  delete record.attributes;
+
+  var url = [ self._baseUrl(), "sobjects", sobjectType, extIdField, extId ].join('/');
+  return self.request({
+    method : 'PATCH',
+    url : url,
+    body : JSON.stringify(record),
+    headers : _.defaults(options.headers || {}, {
+      "Content-Type" : "application/json"
+    })
+  }, {
+    noContentResponse: { success : true, errors : [] }
+  });
+};
+
+
+/** @private */
+Connection.prototype._upsertMany = function(type, records, extIdField, options) {
+  if (records.length === 0) {
+    return Promise.resolve([]);
+  }
+  if (records.length > MAX_DML_COUNT && options.allowRecursive) {
+    var self = this;
+    return self._upsertMany(type, records.slice(0, MAX_DML_COUNT), extIdField, options).then(function(rets1) {
+      return self._upsertMany(type, records.slice(MAX_DML_COUNT), extIdField, options).then(function(rets2) {
+        return rets1.concat(rets2);
+      });
+    });
+  }
+  var sobjectType = type || (records[0].attributes && records[0].attributes.type) || records[0].type;
+  records = _.map(records, function(record) {
+    var sobjectType = type || (record.attributes && record.attributes.type) || record.type;
+    record = _.clone(record);
+    delete record.type;
+    record.attributes = { type : sobjectType };
+    return record;
+  });
+  var url = [ this._baseUrl(), "composite", "sobjects", sobjectType, extIdField ].join('/');
+  return this.request({
+    method : 'PATCH',
+    url : url,
+    body : JSON.stringify({
+      allOrNone : options.allOrNone || false,
+      records : records
+    }),
+    headers : _.defaults(options.headers || {}, {
+      "Content-Type" : "application/json"
+    })
+  });
 };
 
 /**
