@@ -165,7 +165,9 @@ export class Cli {
           const identity = await this._conn.identity();
           this.print(`Logged in as : ${identity.username}`);
         } catch (err) {
-          this.print(err.message);
+          if (err instanceof Error) {
+            this.print(err.message);
+          }
           if (this._conn.oauth2) {
             throw new Error('Please re-authorize connection.');
           } else {
@@ -183,7 +185,7 @@ export class Cli {
     try {
       await this.loginByPassword(username, password, 2);
     } catch (err) {
-      if (err.message === 'canceled') {
+      if (err instanceof Error && err.message === 'canceled') {
         console.error('Password authentication canceled: Not logged in');
       } else {
         throw err;
@@ -211,7 +213,9 @@ export class Cli {
       this.print(`Logged in as : ${username}`);
       return result;
     } catch (err) {
-      console.error(err.message);
+      if (err instanceof Error) {
+        console.error(err.message);
+      }
       if (retryCount > 0) {
         return this.loginByPassword(username, undefined, retryCount - 1);
       } else {

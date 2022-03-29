@@ -247,7 +247,9 @@ export class Repl {
         try {
           await cli.connect(params);
         } catch (err) {
-          console.error(err.message);
+          if (err instanceof Error) {
+            console.error(err.message);
+          }
         }
         replServer.displayPrompt();
       },
@@ -272,7 +274,9 @@ export class Repl {
         try {
           await cli.authorize(clientName);
         } catch (err) {
-          console.error(err.message);
+          if (err instanceof Error) {
+            console.error(err.message);
+          }
         }
         replServer.displayPrompt();
       },
@@ -280,18 +284,15 @@ export class Repl {
     replServer.defineCommand('register', {
       help: 'Register OAuth2 client information',
       action: async (...args: string[]) => {
-        const [
-          clientName,
-          clientId,
-          clientSecret,
-          redirectUri,
-          loginUrl,
-        ] = args;
+        const [clientName, clientId, clientSecret, redirectUri, loginUrl] =
+          args;
         const config = { clientId, clientSecret, redirectUri, loginUrl };
         try {
           await cli.register(clientName, config);
         } catch (err) {
-          console.error(err.message);
+          if (err instanceof Error) {
+            console.error(err.message);
+          }
         }
         replServer.displayPrompt();
       },

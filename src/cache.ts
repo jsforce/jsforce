@@ -143,7 +143,7 @@ export class Cache {
           entry.set({ error: undefined, result });
           return result;
         } catch (error) {
-          entry.set({ error, result: undefined });
+          entry.set({ error: error as Error, result: undefined });
           throw error;
         }
       };
