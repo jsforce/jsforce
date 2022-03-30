@@ -10,7 +10,10 @@ async function main() {
   });
   archive.finalize();
   const loginUrl = process.env.SF_LOGIN_URL || 'https://login.salesforce.com';
-  const conn = new jsforce.Connection({ loginUrl, logLevel: process.env.DEBUG });
+  const conn = new jsforce.Connection({
+    loginUrl,
+    logLevel: process.env.DEBUG,
+  });
   if (process.env.SF_USERNAME && process.env.SF_PASSWORD) {
     await conn.login(process.env.SF_USERNAME, process.env.SF_PASSWORD);
   } else {

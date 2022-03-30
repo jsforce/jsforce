@@ -4,11 +4,12 @@
  */
 import { EventEmitter } from 'events';
 import { Readable } from 'stream';
+import FormData from 'form-data';
 import { registerModule } from '../jsforce';
 import Connection from '../connection';
 import SOAP from '../soap';
 import { isObject } from '../util/function';
-import { Schema, SoapSchemaDef, SoapSchema } from '../types';
+import { Schema, SoapSchemaDef, SoapSchema, HttpRequest } from '../types';
 import {
   ApiSchemas,
   Metadata,
@@ -337,11 +338,41 @@ export class MetadataApi<S extends Schema> {
 
   /**
    * Deploy components into an organization using zipped file representations
+   * using the REST Metadata API instead of SOAP
+   */
+  deployRest(
+    zipInput: Buffer,
+    options: Partial<DeployOptions> = {},
+  ): DeployResultLocator<S> {
+    const form = new FormData();
+    form.append('file', zipInput, {
+      contentType: 'application/zip',
+      filename: 'package.xml',
+    });
+
+    // Add the deploy options
+    form.append('entity_content', JSON.stringify({ deployOptions: options }), {
+      contentType: 'application/json',
+    });
+
+    const request: HttpRequest = {
+      url: '/metadata/deployRequest',
+      method: 'POST',
+      headers: { ...form.getHeaders() },
+      body: form.getBuffer(),
+    };
+    const res = this._conn.request<AsyncResult>(request);
+
+    return new DeployResultLocator(this, res);
+  }
+
+  /**
+   * Deploy components into an organization using zipped file representations
    */
   deploy(
     zipInput: Readable | Buffer | string,
     options: Partial<DeployOptions> = {},
-  ) {
+  ): DeployResultLocator<S> {
     const res = (async () => {
       const zipContentB64 = await new Promise((resolve, reject) => {
         if (

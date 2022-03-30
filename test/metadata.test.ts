@@ -196,6 +196,32 @@ describe('CRUD based call', () => {
 /*------------------------------------------------------------------------*/
 
 /**
+ * Test metadata rest api with form data from zip file
+ */
+describe('REST API deploy', () => {
+  if (isNodeJS()) {
+    it('should deploy metadata in packaged file and deploy package', async () => {
+      const zipBuffer = await fs.promises.readFile(
+        path.join(__dirname, '/data/MyPackage.zip'),
+      );
+      const result = await conn.metadata
+        .deployRest(zipBuffer, {
+          testLevel: 'RunSpecifiedTests',
+          runTests: ['MyApexTriggerTest'],
+        })
+        .complete();
+      assert.ok(result.done === true);
+      assert.ok(result.success === true);
+      assert.ok(result.status === 'Succeeded');
+      assert.ok(result.numberComponentErrors === 0);
+      assert.ok(
+        result.numberComponentsDeployed === result.numberComponentsTotal,
+      );
+      assert.ok(result.numberTestsCompleted === 1);
+    });
+  }
+});
+/**
  *
  */
 describe('file based call', () => {

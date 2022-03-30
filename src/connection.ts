@@ -265,7 +265,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   describeGlobal$$: CachedFunction<() => DescribeGlobalResult>;
 
   // API libs are not instantiated here so that core module to remain without dependencies to them
-  // It is responsible for develpers to import api libs explicitly if they are using 'jsforce/core' instead of 'jsforce'.
+  // It is responsible for developers to import api libs explicitly if they are using 'jsforce/core' instead of 'jsforce'.
   get analytics(): Analytics<S> {
     return raiseNoModuleError('analytics');
   }
@@ -1519,7 +1519,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   }
 
   /**
-   * Returns curren system limit in the organization
+   * Returns current system limit in the organization
    */
   async limits(): Promise<OrganizationLimitsInfo> {
     const url = [this._baseUrl(), 'limits'].join('/');
@@ -1545,7 +1545,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   }
 
   /**
-   * Get reference for specified global quick aciton
+   * Get reference for specified global quick action
    */
   quickAction(actionName: string): QuickAction<S> {
     return new QuickAction(this, `/quickActions/${actionName}`);

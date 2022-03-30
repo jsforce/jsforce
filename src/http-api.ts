@@ -99,7 +99,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
         } finally {
           const responseTime = Date.now();
           this._logger.debug(
-            `elappsed time: ${responseTime - requestTime} msec`,
+            `elapsed time: ${responseTime - requestTime} msec`,
           );
         }
         if (!response) {
