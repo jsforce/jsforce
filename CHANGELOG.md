@@ -1,3 +1,22 @@
+# Changelog
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## 2.0.0-beta.9 (2022-04-12)
+
+
+### Features
+
+* metadata rest deploy ([1ab2f62](https://github.com/jsforce/jsforce/commit/1ab2f62eaacc73e6e6102398271e71202ab4a829))
+
+
+### Bug Fixes
+
+* combine all batches from bulk api into single stream ([4523b71](https://github.com/jsforce/jsforce/commit/4523b716b2727d590a34a33a451b4c478f2cfa7b))
+* import namespace eventemitter instead of the default module ([08ed1ce](https://github.com/jsforce/jsforce/commit/08ed1ceb973cb5058204b79d4d6108fb8c0f5230))
+* issue where process.env.HTTP_TIMEOUT caused exception in timers.js ([8bf2d84](https://github.com/jsforce/jsforce/commit/8bf2d84c6c3a5660d7350a1db20d9945edd32775))
+* missing types ([6fdb6e6](https://github.com/jsforce/jsforce/commit/6fdb6e67f7ba116a0d5f3b46387c9a6a1fa8f834))
+
 ## 1.9.0 (Jul 25, 2018)
 * Change API ver to 42.0
 * Catch csv parsing errors and emit (#775)
@@ -305,4 +324,3 @@
 ## v0.3.0 (May 10, 2012):
 
 * Support Salesforce Streaming API.
-
