@@ -36,6 +36,9 @@ async function loginAndApprove(
   } else if (url.indexOf('/setup/secur/RemoteAccessErrorPage.apexp') > 0) {
     // authorization error
     throw new Error('invalid authorization error');
+  } else if (url.endsWith('salesforce.com/')) {
+    // authorization error
+    throw new Error('invalid authorization error');
   } else {
     await page.waitForTimeout(1000);
     return loginAndApprove(page, username, password);
