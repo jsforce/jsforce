@@ -284,8 +284,13 @@ export class Repl {
     replServer.defineCommand('register', {
       help: 'Register OAuth2 client information',
       action: async (...args: string[]) => {
-        const [clientName, clientId, clientSecret, redirectUri, loginUrl] =
-          args;
+        const [
+          clientName,
+          clientId,
+          clientSecret,
+          redirectUri,
+          loginUrl,
+        ] = args;
         const config = { clientId, clientSecret, redirectUri, loginUrl };
         try {
           await cli.register(clientName, config);

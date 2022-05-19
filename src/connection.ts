@@ -378,8 +378,13 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
       this,
       { key: 'describeGlobal', strategy: 'IMMEDIATE' },
     ) as any;
-    const { accessToken, refreshToken, sessionId, serverUrl, signedRequest } =
-      config;
+    const {
+      accessToken,
+      refreshToken,
+      sessionId,
+      serverUrl,
+      signedRequest,
+    } = config;
     this._establish({
       accessToken,
       refreshToken,
@@ -913,7 +918,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
    */
   create<
     N extends SObjectNames<S>,
-    InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>,
+    InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>
   >(
     type: N,
     records: InputRecord[],
@@ -921,11 +926,11 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   ): Promise<SaveResult[]>;
   create<
     N extends SObjectNames<S>,
-    InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>,
+    InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>
   >(type: N, record: InputRecord, options?: DmlOptions): Promise<SaveResult>;
   create<
     N extends SObjectNames<S>,
-    InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>,
+    InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>
   >(
     type: N,
     records: InputRecord | InputRecord[],
@@ -1044,7 +1049,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
    */
   update<
     N extends SObjectNames<S>,
-    UpdateRecord extends SObjectUpdateRecord<S, N> = SObjectUpdateRecord<S, N>,
+    UpdateRecord extends SObjectUpdateRecord<S, N> = SObjectUpdateRecord<S, N>
   >(
     type: N,
     records: UpdateRecord[],
@@ -1052,11 +1057,11 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   ): Promise<SaveResult[]>;
   update<
     N extends SObjectNames<S>,
-    UpdateRecord extends SObjectUpdateRecord<S, N> = SObjectUpdateRecord<S, N>,
+    UpdateRecord extends SObjectUpdateRecord<S, N> = SObjectUpdateRecord<S, N>
   >(type: N, record: UpdateRecord, options?: DmlOptions): Promise<SaveResult>;
   update<
     N extends SObjectNames<S>,
-    UpdateRecord extends SObjectUpdateRecord<S, N> = SObjectUpdateRecord<S, N>,
+    UpdateRecord extends SObjectUpdateRecord<S, N> = SObjectUpdateRecord<S, N>
   >(
     type: N,
     records: UpdateRecord | UpdateRecord[],
@@ -1185,7 +1190,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   upsert<
     N extends SObjectNames<S>,
     InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>,
-    FieldNames extends SObjectFieldNames<S, N> = SObjectFieldNames<S, N>,
+    FieldNames extends SObjectFieldNames<S, N> = SObjectFieldNames<S, N>
   >(
     type: N,
     records: InputRecord[],
@@ -1195,7 +1200,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   upsert<
     N extends SObjectNames<S>,
     InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>,
-    FieldNames extends SObjectFieldNames<S, N> = SObjectFieldNames<S, N>,
+    FieldNames extends SObjectFieldNames<S, N> = SObjectFieldNames<S, N>
   >(
     type: N,
     record: InputRecord,
@@ -1205,7 +1210,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   upsert<
     N extends SObjectNames<S>,
     InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>,
-    FieldNames extends SObjectFieldNames<S, N> = SObjectFieldNames<S, N>,
+    FieldNames extends SObjectFieldNames<S, N> = SObjectFieldNames<S, N>
   >(
     type: N,
     records: InputRecord | InputRecord[],

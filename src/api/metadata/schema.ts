@@ -5583,6 +5583,13 @@ export const ApiSchemas = {
     },
     extends: 'Metadata',
   },
+  SourceTrackingSettings: {
+    type: 'SourceTrackingSettings',
+    props: {
+      enableSourceTrackingSandboxes: '?boolean',
+    },
+    extends: 'Metadata',
+  },
   MapsAndLocationSettings: {
     type: 'MapsAndLocationSettings',
     props: {
@@ -13451,11 +13458,14 @@ export type ManagedTopics = Metadata & {
   managedTopic: ManagedTopic[];
 };
 
+export type SourceTrackingSettings = Metadata & {
+  enableSourceTrackingSandboxes?: boolean | null | undefined;
+};
+
 export type MapsAndLocationSettings = Metadata & {
   enableAddressAutoComplete?: boolean | null | undefined;
   enableMapsAndLocation?: boolean | null | undefined;
 };
-
 export type MatchingRule = Metadata & {
   booleanFilter?: string | null | undefined;
   description?: string | null | undefined;
@@ -16647,6 +16657,7 @@ export type ApiSchemaTypes = {
   ManagedTopic: ManagedTopic;
   ManagedTopics: ManagedTopics;
   MapsAndLocationSettings: MapsAndLocationSettings;
+  SourceTrackingSettings: SourceTrackingSettings;
   MatchingRule: MatchingRule;
   MatchingRuleItem: MatchingRuleItem;
   MatchingRules: MatchingRules;
