@@ -37,7 +37,11 @@ export type BulkOptions = {
   assignmentRuleId?: string;
 };
 
+export type BulkV2Options = Omit<BulkOptions, 'concurrencyMode'>;
+
 export type JobState = 'Open' | 'Closed' | 'Aborted' | 'Failed' | 'Unknown';
+
+export type JobStateV2 = 'Open' | 'UploadComplete' | 'Aborted' | 'Failed' | 'JobComplete';
 
 export type JobInfo = {
   id: string;
@@ -45,6 +49,25 @@ export type JobInfo = {
   operation: BulkOperation;
   state: JobState;
 };
+
+export type JobInfoV2 = {
+  apiVersion: string;
+  assignmentRuleId: string;
+  columnDelimiter: 'BACKQUOTE' | 'CARET' | 'COMMA' | 'PIPE' | 'SEMICOLON' | 'TAB';
+  concurrencyMode: string;
+  contentType: 'CSV';
+  contentUrl: string;
+  createdById: string;
+  createdDate: string;
+  externalIdFieldName: string;
+  id: string;
+  jobType: 'BigObjectIngest' | 'Classic' | 'V2Ingest';
+  lineEnding: 'LF' | 'CRLF';
+  object: string;
+  operation: BulkOperation;
+  state: JobStateV2;
+  systemModstamp: string;
+}
 
 type JobInfoResponse = {
   jobInfo: JobInfo;
@@ -751,12 +774,15 @@ export class Bulk<S extends Schema> {
    */
   pollTimeout = 10000;
 
+  readonly v2: BulkV2<S>
+
   /**
    *
    */
   constructor(conn: Connection<S>) {
     this._conn = conn;
     this._logger = conn._logger;
+    this.v2 = new BulkV2<S>(conn)
   }
 
   /**
@@ -873,6 +899,149 @@ export class Bulk<S extends Schema> {
    */
   job<Opr extends BulkOperation>(jobId: string) {
     return new Job<S, Opr>(this, null, null, null, jobId);
+  }
+}
+
+export class BulkV2<S extends Schema> {
+  _conn: Connection<S>;
+  _logger: Logger;
+
+  /**
+   * Polling interval in milliseconds
+   */
+  pollInterval = 1000;
+
+  /**
+   * Polling timeout in milliseconds
+   * @type {Number}
+   */
+  pollTimeout = 10000;
+
+  constructor(conn: Connection<S>) {
+    this._conn = conn
+    this._logger = conn._logger
+  }
+
+  /**
+   *
+   */
+  _request<T>(request_: BulkRequest) {
+    const conn = this._conn;
+    const { path, responseType, ...rreq } = request_;
+    const baseUrl = [conn.instanceUrl, 'services/data', `v${conn.version}`, 'jobs/ingest'].join(
+        '/',
+    );
+    const request = {
+      ...rreq,
+      url: baseUrl + path,
+    };
+
+    // TODO: remove this when implementation is complete
+    this._conn._logLevel = 'DEBUG';
+
+    return new HttpApi(this._conn, { responseType }).request<T>(request);
+  }
+
+  /**
+   * Create a new job instance
+   */
+  job<Opr extends BulkOperation>(
+      type: string,
+      operation: Opr,
+      options: BulkOptions = {},
+  ): JobV2<S, Opr> {
+    return new JobV2(this, type, operation, options);
+  }
+}
+
+/**
+ * Class for Bulk API Job
+ */
+export class JobV2<
+    S extends Schema,
+    Opr extends BulkOperation
+    > extends EventEmitter {
+  type: string | null;
+  operation: Opr | null;
+  options: BulkOptions;
+  id: string | null;
+  state: JobStateV2 | undefined;
+  _bulk: BulkV2<S>;
+  _jobInfo: Promise<JobInfoV2> | undefined;
+  _error: Error | undefined;
+
+  /**
+   *
+   */
+  constructor(
+      bulk: BulkV2<S>,
+      type: string | null,
+      operation: Opr | null,
+      options: BulkOptions | null,
+      jobId?: string,
+  ) {
+    super();
+    this._bulk = bulk;
+    this.type = type;
+    this.operation = operation;
+    this.options = options || {};
+    this.id = jobId ?? null;
+    this.state = this.id ? 'Open' : undefined;
+    // default error handler to keep the latest error
+    this.on('error', (error) => (this._error = error));
+  }
+
+  create() {
+    const bulk = this._bulk;
+    const options = this.options;
+
+    // if sobject type / operation is not provided
+    if (!this.type || !this.operation) {
+      throw new Error('type / operation is required to create a new job');
+    }
+
+    // if not requested opening job
+    if (!this._jobInfo) {
+      this._jobInfo = (async () => {
+        try {
+          const res = await bulk._request<JobInfoV2>({
+            method: 'POST',
+            path: '',
+            body: JSON.stringify({
+              assignmentRuleId: options.assignmentRuleId,
+              externalIdFieldName: options.extIdField,
+              object: this.type,
+              operation: this.operation
+            }),
+            headers: {
+              'Content-Type': 'application/json; charset=utf-8',
+            },
+            responseType: 'application/json'
+          })
+          this.emit('createJob', res);
+          this.id = res.id;
+          this.state = res.state;
+          return res;
+        } catch (err) {
+          this.emit('error', err)
+          throw err
+        }
+      })()
+    }
+
+    return this._jobInfo;
+  }
+
+  uploadData(records: Record[]): Promise<void> {
+    throw new Error('needs to be implemented');
+  }
+
+  close(): Promise<void> {
+    throw new Error('needs to be implemented');
+  }
+
+  getSuccessfulRecordResults(): Promise<Record[]> {
+    throw new Error('needs to be implemented');
   }
 }
 
