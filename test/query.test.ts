@@ -52,12 +52,15 @@ it('should query big table and execute queryMore and fetch all records', async (
   let result = await conn.query(
     `SELECT Id, Name FROM ${config.bigTable || 'Account'}`,
   );
+  expect(result.records.length).toBe(2000);
+  expect(result.nextRecordsUrl).toBeTruthy();
+  expect(result.done).toBe(false);
   let records = result.records;
-  while (!result.done) {
-    result = await conn.queryMore(result.nextRecordsUrl!); // TODO: remove "!" when assrtion functionn is introduced
+  while (!result.done && result.nextRecordsUrl) {
+    result = await conn.queryMore(result.nextRecordsUrl); // TODO: remove "!" when assertion function is introduced
     records = [...records, ...result.records];
   }
-  assert.ok(records.length === result.totalSize);
+  assert.ok(records.length === 25000);
 });
 
 /**
@@ -102,6 +105,42 @@ it('should query big tables with autoFetch and scan records up to maxFetch num',
       ? query.totalFetched === 5000
       : query.totalFetched === query.totalSize,
   );
+});
+
+it('should query big tables with autoFetch using async/await and hit max fetch', async () => {
+  const result = await conn.query(
+    `SELECT Id, Name FROM ${config.bigTable || 'Account'}`,
+    { autoFetch: true, maxFetch: 5999 },
+  );
+  expect(result.totalSize).toBe(25000);
+  expect(result.records.length).toBe(5999);
+});
+
+it('should query big tables with autoFetch using async/await and hit max fetch', async () => {
+  const result = await conn.query(
+    `SELECT Id, Name FROM ${config.bigTable || 'Account'}`,
+    { autoFetch: true, maxFetch: 6000 },
+  );
+  expect(result.totalSize).toBe(25000);
+  expect(result.records.length).toBe(6000);
+});
+
+it('should query big tables with autoFetch using async/await and hit max fetch', async () => {
+  const result = await conn.query(
+    `SELECT Id, Name FROM ${config.bigTable || 'Account'}`,
+    { autoFetch: true, maxFetch: 6001 },
+  );
+  expect(result.totalSize).toBe(25000);
+  expect(result.records.length).toBe(6001);
+});
+
+it('should query big tables with autoFetch using async/await when max fetch is not hit', async () => {
+  const result = await conn.query(
+    `SELECT Id, Name FROM ${config.bigTable || 'Account'}`,
+    { autoFetch: true, maxFetch: 5000000 },
+  );
+  expect(result.totalSize).toBe(25000);
+  expect(result.records.length).toBe(25000);
 });
 
 /**

@@ -197,7 +197,7 @@ export class Query<
   S extends Schema,
   N extends SObjectNames<S>,
   R extends Record = Record,
-  QRT extends QueryResponseTarget = QueryResponseTarget
+  QRT extends QueryResponseTarget = 'QueryResult'
 > extends EventEmitter {
   static _logger = getLogger('query');
 
@@ -214,8 +214,9 @@ export class Query<
   _promise: Promise<QueryResponse<R, QRT>>;
   _stream: Serializable<R>;
 
-  totalSize: Optional<number>;
-  totalFetched: Optional<number>;
+  totalSize = 0;
+  totalFetched = 0;
+  records: R[] = [];
 
   /**
    *
@@ -232,12 +233,15 @@ export class Query<
       : Query._logger;
     if (typeof config === 'string') {
       this._soql = config;
+      this._logger.debug(`config is soql: ${config}`);
     } else if (typeof (config as any).locator === 'string') {
       const locator: string = (config as any).locator;
-      if (locator.indexOf('/') >= 0) {
-        this._locator = locator.split('/').pop();
-      }
+      this._logger.debug(`config is locator: ${locator}`);
+      this._locator = locator.includes('/')
+        ? this.urlToLocator(locator)
+        : locator;
     } else {
+      this._logger.debug(`config is QueryConfig: ${config}`);
       const { fields, includes, sort, ..._config } = config as QueryConfig<
         S,
         N
@@ -450,7 +454,7 @@ export class Query<
   }
 
   /**
-   * Include child relationship queryies, but not moving down to the children context
+   * Include child relationship queries, but not moving down to the children context
    */
   includeChildren(
     includes: {
@@ -582,17 +586,66 @@ export class Query<
    */
   run = this.execute;
 
+  private locatorToUrl() {
+    return this._locator
+      ? [this._conn._baseUrl(), '/query/', this._locator].join('')
+      : '';
+  }
+
+  private urlToLocator(url: string) {
+    return url.split('/').pop();
+  }
+
+  private constructResponse(
+    rawDone: boolean,
+    responseTarget: QueryResponseTarget[3],
+  ): number;
+  private constructResponse(
+    rawDone: boolean,
+    responseTarget: QueryResponseTarget[2],
+  ): R;
+  private constructResponse(
+    rawDone: boolean,
+    responseTarget: QueryResponseTarget[1],
+  ): R[];
+  private constructResponse(
+    rawDone: boolean,
+    responseTarget: QueryResponseTarget[0],
+  ): QueryResult<R>;
+  private constructResponse(
+    rawDone: boolean,
+    responseTarget: QueryResponseTarget,
+  ): QueryResult<R> | R[] | number | R {
+    switch (responseTarget) {
+      case 'Count':
+        return this.totalSize;
+      case 'SingleRecord':
+        return this.records?.[0] ?? null;
+      case 'Records':
+        return this.records;
+      // QueryResult is default response target
+      default:
+        return {
+          ...{
+            records: this.records,
+            totalSize: this.totalSize,
+            done: rawDone,
+          },
+          ...(this._locator ? { nextRecordsUrl: this.locatorToUrl() } : {}),
+        };
+    }
+  }
   /**
    * @private
    */
   async _execute(options: QueryOptions): Promise<QueryResponse<R>> {
     const { headers, responseTarget, autoFetch, maxFetch, scanAll } = options;
-    let url = '';
+    this._logger.debug('execute with options', options);
+    let url;
     if (this._locator) {
-      url = [this._conn._baseUrl(), '/query/', this._locator].join('');
+      url = this.locatorToUrl();
     } else {
       const soql = await this.toSOQL();
-      this.totalFetched = 0;
       this._logger.debug(`SOQL = ${soql}`);
       url = [
         this._conn._baseUrl(),
@@ -605,28 +658,19 @@ export class Query<
     const data = await this._conn.request<R>({ method: 'GET', url, headers });
     this.emit('fetch');
     this.totalSize = data.totalSize;
-    let res;
-    switch (responseTarget) {
-      case ResponseTargets.SingleRecord:
-        res = data.records && data.records.length > 0 ? data.records[0] : null;
-        break;
-      case ResponseTargets.Records:
-        res = data.records;
-        break;
-      case ResponseTargets.Count:
-        res = data.totalSize;
-        break;
-      default:
-        res = data;
-    }
-    // only fire response event when it should be notified per fetch
-    if (responseTarget !== ResponseTargets.Records) {
-      this.emit('response', res, this);
-    }
+    this.records = this.records?.concat(
+      maxFetch - this.records.length > data.records.length
+        ? data.records
+        : data.records.slice(0, maxFetch - this.records.length),
+    );
+    this._locator = data.nextRecordsUrl
+      ? this.urlToLocator(data.nextRecordsUrl)
+      : undefined;
+    this._finished = this._finished || data.done || !autoFetch;
 
     // streaming record instances
-    const numRecords = (data.records && data.records.length) || 0;
-    let totalFetched = this.totalFetched || 0;
+    const numRecords = data.records?.length ?? 0;
+    let totalFetched = this.totalFetched;
     for (let i = 0; i < numRecords; i++) {
       if (totalFetched >= maxFetch) {
         this._finished = true;
@@ -637,16 +681,18 @@ export class Query<
       totalFetched += 1;
     }
     this.totalFetched = totalFetched;
-    if (data.nextRecordsUrl) {
-      this._locator = data.nextRecordsUrl.split('/').pop();
-    }
-    this._finished = this._finished || data.done || !autoFetch;
+
     if (this._finished) {
+      const response = this.constructResponse(data.done, responseTarget);
+      // only fire response event when it should be notified per fetch
+      if (responseTarget !== ResponseTargets.Records) {
+        this.emit('response', response, this);
+      }
       this.emit('end');
+      return response;
     } else {
-      this._execute(options);
+      return this._execute(options);
     }
-    return res;
   }
 
   /**
