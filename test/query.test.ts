@@ -70,7 +70,7 @@ describe('big tables and autoFetch', () => {
       result = await conn.queryMore(result.nextRecordsUrl); // TODO: remove "!" when assertion function is introduced
       records = [...records, ...result.records];
     }
-    assert.ok(records.length === 25000);
+    assert.ok(records.length === totalRecordCount);
   });
 
   /**
