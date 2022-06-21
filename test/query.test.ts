@@ -45,104 +45,113 @@ it('should query accounts with scanAll option and return all records', async () 
   assert.ok(result.totalSize > 0);
 });
 
-/**
- *
- */
-it('should query big table and execute queryMore and fetch all records', async () => {
-  let result = await conn.query(
-    `SELECT Id, Name FROM ${config.bigTable || 'Account'}`,
-  );
-  expect(result.records.length).toBe(2000);
-  expect(result.nextRecordsUrl).toBeTruthy();
-  expect(result.done).toBe(false);
-  let records = result.records;
-  while (!result.done && result.nextRecordsUrl) {
-    result = await conn.queryMore(result.nextRecordsUrl); // TODO: remove "!" when assertion function is introduced
-    records = [...records, ...result.records];
-  }
-  assert.ok(records.length === 25000);
-});
-
-/**
- *
- */
-it('should query big tables without autoFetch and scan records in one query fetch', async () => {
-  const records: any[] = []; // TODO: remove any
-  let query: any; // TODO: remove any
-  await new Promise((resolve, reject) => {
-    query = conn
-      .query(`SELECT Id, Name FROM ${config.bigTable || 'Account'}`)
-      .on('record', (record: any) => records.push(record)) // TODO: remove any
-      .on('end', resolve)
-      .on('error', reject)
-      .run({ autoFetch: false });
+describe('big tables and autoFetch', () => {
+  let totalRecordCount: number;
+  let maxFetchThatWillComplete: number;
+  const bigTableQuery = `SELECT Id, Name FROM ${config.bigTable || 'Account'}`;
+  beforeAll(async () => {
+    totalRecordCount = await conn.query(bigTableQuery, {
+      responseTarget: 'Count',
+    });
+    maxFetchThatWillComplete = 2000 * Math.floor(totalRecordCount / 2000);
   });
-  assert.ok(query.totalFetched === records.length);
-  assert.ok(
-    query.totalSize > 2000
-      ? query.totalFetched === 2000
-      : query.totalFetched === query.totalSize,
-  );
-});
 
-/**
- *
- */
-it('should query big tables with autoFetch and scan records up to maxFetch num', async () => {
-  const records: any[] = []; // TODO: remove any
-  let query: any; // TODO: remove any
-  await new Promise((resolve, reject) => {
-    query = conn
-      .query(`SELECT Id, Name FROM ${config.bigTable || 'Account'}`)
-      .on('record', (record: any) => records.push(record)) // TODO: remove any
-      .on('end', resolve)
-      .on('error', reject)
-      .run({ autoFetch: true, maxFetch: 5000 });
+  /**
+   *
+   */
+  it('should query big table and execute queryMore and fetch all records', async () => {
+    let result = await conn.query(bigTableQuery);
+    expect(result.records.length).toBe(2000);
+    expect(result.nextRecordsUrl).toBeTruthy();
+    expect(result.done).toBe(false);
+    let records = result.records;
+    while (!result.done && result.nextRecordsUrl) {
+      result = await conn.queryMore(result.nextRecordsUrl); // TODO: remove "!" when assertion function is introduced
+      records = [...records, ...result.records];
+    }
+    assert.ok(records.length === 25000);
   });
-  assert.ok(query.totalFetched === records.length);
-  assert.ok(
-    query.totalSize > 5000
-      ? query.totalFetched === 5000
-      : query.totalFetched === query.totalSize,
-  );
-});
 
-it('should query big tables with autoFetch using async/await and hit max fetch', async () => {
-  const result = await conn.query(
-    `SELECT Id, Name FROM ${config.bigTable || 'Account'}`,
-    { autoFetch: true, maxFetch: 5999 },
-  );
-  expect(result.totalSize).toBe(25000);
-  expect(result.records.length).toBe(5999);
-});
+  /**
+   *
+   */
+  it('should query big tables without autoFetch and scan records in one query fetch', async () => {
+    const records: any[] = []; // TODO: remove any
+    let query: any; // TODO: remove any
+    await new Promise((resolve, reject) => {
+      query = conn
+        .query(`SELECT Id, Name FROM ${config.bigTable || 'Account'}`)
+        .on('record', (record: any) => records.push(record)) // TODO: remove any
+        .on('end', resolve)
+        .on('error', reject)
+        .run({ autoFetch: false });
+    });
+    assert.ok(query.totalFetched === records.length);
+    assert.ok(
+      query.totalSize > 2000
+        ? query.totalFetched === 2000
+        : query.totalFetched === query.totalSize,
+    );
+  });
 
-it('should query big tables with autoFetch using async/await and hit max fetch', async () => {
-  const result = await conn.query(
-    `SELECT Id, Name FROM ${config.bigTable || 'Account'}`,
-    { autoFetch: true, maxFetch: 6000 },
-  );
-  expect(result.totalSize).toBe(25000);
-  expect(result.records.length).toBe(6000);
-});
+  /**
+   *
+   */
+  it('should query big tables with autoFetch and scan records up to maxFetch num', async () => {
+    const records: any[] = []; // TODO: remove any
+    let query: any; // TODO: remove any
+    await new Promise((resolve, reject) => {
+      query = conn
+        .query(`SELECT Id, Name FROM ${config.bigTable || 'Account'}`)
+        .on('record', (record: any) => records.push(record)) // TODO: remove any
+        .on('end', resolve)
+        .on('error', reject)
+        .run({ autoFetch: true, maxFetch: 5000 });
+    });
+    assert.ok(query.totalFetched === records.length);
+    assert.ok(
+      query.totalSize > 5000
+        ? query.totalFetched === 5000
+        : query.totalFetched === query.totalSize,
+    );
+  });
 
-it('should query big tables with autoFetch using async/await and hit max fetch', async () => {
-  const result = await conn.query(
-    `SELECT Id, Name FROM ${config.bigTable || 'Account'}`,
-    { autoFetch: true, maxFetch: 6001 },
-  );
-  expect(result.totalSize).toBe(25000);
-  expect(result.records.length).toBe(6001);
-});
+  it('should query big tables with autoFetch using async/await and hit max fetch', async () => {
+    const result = await conn.query(bigTableQuery, {
+      autoFetch: true,
+      maxFetch: maxFetchThatWillComplete - 1,
+    });
+    expect(result.totalSize).toBe(totalRecordCount);
+    expect(result.records.length).toBe(maxFetchThatWillComplete - 1);
+  });
 
-it('should query big tables with autoFetch using async/await when max fetch is not hit', async () => {
-  const result = await conn.query(
-    `SELECT Id, Name FROM ${config.bigTable || 'Account'}`,
-    { autoFetch: true, maxFetch: 5000000 },
-  );
-  expect(result.totalSize).toBe(25000);
-  expect(result.records.length).toBe(25000);
-});
+  it('should query big tables with autoFetch using async/await and hit max fetch', async () => {
+    const result = await conn.query(bigTableQuery, {
+      autoFetch: true,
+      maxFetch: maxFetchThatWillComplete,
+    });
+    expect(result.totalSize).toBe(totalRecordCount);
+    expect(result.records.length).toBe(maxFetchThatWillComplete);
+  });
 
+  it('should query big tables with autoFetch using async/await and hit max fetch', async () => {
+    const result = await conn.query(bigTableQuery, {
+      autoFetch: true,
+      maxFetch: maxFetchThatWillComplete + 1,
+    });
+    expect(result.totalSize).toBe(totalRecordCount);
+    expect(result.records.length).toBe(maxFetchThatWillComplete + 1);
+  });
+
+  it('should query big tables with autoFetch using async/await when max fetch is not hit', async () => {
+    const result = await conn.query(bigTableQuery, {
+      autoFetch: true,
+      maxFetch: 5000000,
+    });
+    expect(result.totalSize).toBe(25000);
+    expect(result.records.length).toBe(totalRecordCount);
+  });
+});
 /**
  *
  */
