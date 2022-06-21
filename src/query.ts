@@ -197,7 +197,7 @@ export class Query<
   S extends Schema,
   N extends SObjectNames<S>,
   R extends Record = Record,
-  QRT extends QueryResponseTarget = 'QueryResult'
+  QRT extends QueryResponseTarget = QueryResponseTarget
 > extends EventEmitter {
   static _logger = getLogger('query');
 

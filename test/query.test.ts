@@ -50,6 +50,7 @@ describe('big tables and autoFetch', () => {
   let maxFetchThatWillComplete: number;
   const bigTableQuery = `SELECT Id, Name FROM ${config.bigTable || 'Account'}`;
   beforeAll(async () => {
+    // @ts-ignore
     totalRecordCount = await conn.query(bigTableQuery, {
       responseTarget: 'Count',
     });
