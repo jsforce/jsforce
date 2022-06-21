@@ -1,4 +1,4 @@
-# jsforce 
+# jsforce
 
 Salesforce API Library for JavaScript applications (both on web browser and Node.js)
 
@@ -26,7 +26,7 @@ Supported Salesforce APIs are the following:
 
 ## Documentation
 
-See documentation in http://jsforce.github.io/ .
+See documentation in <http://jsforce.github.io/> .
 
 ## Releases
 
@@ -39,7 +39,6 @@ See [license](LICENSE) (MIT License).
 ## Authors
 
 - Shinichi Tomita <shinichi.tomita@gmail.com>
-
 
 ## Notes
 
@@ -61,14 +60,12 @@ Finally, to run the tests simply do:
 
     SF_USERNAME=myusername SF_PASSWORD=password+securityToken npm run test:browser
 
+Alternatively, if you are using `sfdx` and have a default DevHub set up, you can create a scratch org with all the test setup ready by running `./test/bin/org-setup-sfdx.sh` (it's a bash script and probably won't help most windows users)
+
 ## Contributions
 
 Your contributions are welcome: both by reporting issues on [GitHub issues](https://github.com/jsforce/jsforce/issues) or pull-requesting patches.
 
 If you want to implement any additional features, to be added to JSforce to our master branch, which may or may not be merged please first check current [opening issues](https://github.com/jsforce/jsforce/issues?q=is%3Aopen) with milestones and confirm whether the feature is on road map or not.
 
-If your feature implementation is brand-new or fixing unsupposed bugs in the library's test cases, please include addtional test codes in the `test/` directory.
-
-
-
-
+If your feature implementation is brand-new or fixing unsupposed bugs in the library's test cases, please include additional test codes in the `test/` directory.

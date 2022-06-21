@@ -112,7 +112,7 @@ describe('recent records', () => {
   //
   it('should get updated accounts and return updated accounts', async () => {
     const end = new Date();
-    const start = new Date(end.getTime() - 1 * 60 * 60 * 1000); // 1 hour before
+    const start = new Date(end.getTime() - 1 * 60 * 1000); // 1 minute before
     const result = await conn.sobject('Account').updated(start, end);
     assert.ok(Array.isArray(result.ids));
   });
@@ -120,7 +120,7 @@ describe('recent records', () => {
   //
   it('should get updated account (with string input) and return updated accounts', async () => {
     const end = new Date();
-    const start = new Date(end.getTime() - 1 * 60 * 60 * 1000); // 1 hour before
+    const start = new Date(end.getTime() - 1 * 60 * 1000); // 1 minute before
     const result = await conn
       .sobject('Account')
       .updated(start.toString(), end.toString());
@@ -130,7 +130,7 @@ describe('recent records', () => {
   //
   it('should get deleted account and return deleted account object', async () => {
     const end = new Date();
-    const start = new Date(end.getTime() - 1 * 60 * 60 * 1000); // 1 hour before
+    const start = new Date(end.getTime() - 1 * 60 * 1000); // 1 minute before
     const result = await conn.sobject('Account').deleted(start, end);
     assert.ok(Array.isArray(result.deletedRecords));
   });
@@ -140,7 +140,7 @@ describe('recent records', () => {
    */
   it('should get deleted account (with string input) and return deleted account object', async () => {
     const end = new Date();
-    const start = new Date(end.getTime() - 1 * 60 * 60 * 1000); // 1 hour before
+    const start = new Date(end.getTime() - 1 * 60 * 1000); // 1 minute before
     const result = await conn
       .sobject('Account')
       .deleted(start.toString(), end.toString());
