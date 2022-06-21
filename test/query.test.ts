@@ -149,7 +149,7 @@ describe('big tables and autoFetch', () => {
       autoFetch: true,
       maxFetch: 5000000,
     });
-    expect(result.totalSize).toBe(25000);
+    expect(result.totalSize).toBe(totalRecordCount);
     expect(result.records.length).toBe(totalRecordCount);
   });
 });
