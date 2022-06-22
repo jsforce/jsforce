@@ -629,7 +629,7 @@ export class Query<
           ...{
             records: this.records,
             totalSize: this.totalSize,
-            done: rawDone,
+            done: rawDone ?? true, // when no records, done is omitted
           },
           ...(this._locator ? { nextRecordsUrl: this.locatorToUrl() } : {}),
         };
@@ -666,7 +666,12 @@ export class Query<
     this._locator = data.nextRecordsUrl
       ? this.urlToLocator(data.nextRecordsUrl)
       : undefined;
-    this._finished = this._finished || data.done || !autoFetch;
+    this._finished =
+      this._finished ||
+      data.done ||
+      !autoFetch ||
+      // this is what the response looks like when there are no results
+      (data.records.legnth === 0 && data.done === undefined);
 
     // streaming record instances
     const numRecords = data.records?.length ?? 0;
