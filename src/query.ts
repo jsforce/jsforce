@@ -671,7 +671,7 @@ export class Query<
       data.done ||
       !autoFetch ||
       // this is what the response looks like when there are no results
-      (data.records.legnth === 0 && data.done === undefined);
+      (data.records.length === 0 && data.done === undefined);
 
     // streaming record instances
     const numRecords = data.records?.length ?? 0;
