@@ -16915,7 +16915,7 @@ var query_Query = /*#__PURE__*/function (_EventEmitter) {
                 this.records = (_this$records2 = this.records) === null || _this$records2 === void 0 ? void 0 : concat_default()(_this$records2).call(_this$records2, maxFetch - this.records.length > data.records.length ? data.records : slice_default()(_context10 = data.records).call(_context10, 0, maxFetch - this.records.length));
                 this._locator = data.nextRecordsUrl ? this.urlToLocator(data.nextRecordsUrl) : undefined;
                 this._finished = this._finished || data.done || !autoFetch || // this is what the response looks like when there are no results
-                data.records.legnth === 0 && data.done === undefined; // streaming record instances
+                data.records.length === 0 && data.done === undefined; // streaming record instances
 
                 numRecords = (_data$records$length = (_data$records = data.records) === null || _data$records === void 0 ? void 0 : _data$records.length) !== null && _data$records$length !== void 0 ? _data$records$length : 0;
                 totalFetched = this.totalFetched;
