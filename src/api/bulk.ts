@@ -41,7 +41,11 @@ export type BulkV2Options = Omit<BulkOptions, 'concurrencyMode'>;
 
 export type JobState = 'Open' | 'Closed' | 'Aborted' | 'Failed' | 'Unknown';
 
-export type JobStateV2 = 'Open' | 'UploadComplete' | 'Aborted' | 'Failed' | 'JobComplete';
+export type JobStateV2 =
+    | Exclude<JobState, 'Closed'>
+    | 'UploadComplete'
+    | 'InProgress'
+    | 'JobComplete'
 
 export type JobInfo = {
   id: string;
@@ -67,6 +71,8 @@ export type JobInfoV2 = {
   operation: BulkOperation;
   state: JobStateV2;
   systemModstamp: string;
+  numberRecordsProcessed?: number;
+  numberRecordsFailed?: number;
 }
 
 type JobInfoResponse = {
@@ -414,6 +420,19 @@ class PollingTimeoutError extends Error {
     this.name = 'PollingTimeout';
     this.jobId = jobId;
     this.batchId = batchId;
+  }
+}
+
+class JobPollingTimeoutError extends Error {
+  jobId: string;
+
+  /**
+   *
+   */
+  constructor(message: string, jobId: string) {
+    super(message);
+    this.name = 'JobPollingTimeout';
+    this.jobId = jobId;
   }
 }
 
@@ -902,6 +921,24 @@ export class Bulk<S extends Schema> {
   }
 }
 
+type BulkJobSuccessfulResultsResponse<S extends Schema>= Array<{
+  sf__Created: "true" | "false";
+  sf__Id: string;
+} & S>
+
+type BulkJobFailedResultsResponse<S extends Schema>= Array<{
+  sf__Error: string;
+  sf__Id: string;
+} & S>
+
+type AllResults<S extends Schema> = {
+  successfulResults: BulkJobSuccessfulResultsResponse<S>;
+  failedResults: BulkJobFailedResultsResponse<S>;
+  unprocessedRecords: BulkJobUnprocessedRecordsResponse<S>;
+}
+
+type BulkJobUnprocessedRecordsResponse<S extends Schema> = Array<S>
+
 export class BulkV2<S extends Schema> {
   _conn: Connection<S>;
   _logger: Logger;
@@ -945,12 +982,65 @@ export class BulkV2<S extends Schema> {
   /**
    * Create a new job instance
    */
-  job<Opr extends BulkOperation>(
+  createJob<Opr extends BulkOperation>(
       type: string,
       operation: Opr,
       options: BulkOptions = {},
   ): JobV2<S, Opr> {
     return new JobV2(this, type, operation, options);
+  }
+
+  /**
+   * Create, upload, and start bulkload job
+   */
+  async load<Opr extends BulkOperation>(
+      type: string,
+      operation: Opr,
+      input?: Record[] | Readable | string,
+  ): Promise<AllResults<S>>;
+  async load<Opr extends BulkOperation>(
+      type: string,
+      operation: Opr,
+      optionsOrInput?: BulkV2Options | Record[] | Readable | string,
+      input?: Record[] | Readable | string,
+  ): Promise<AllResults<S>>;
+  async load<Opr extends BulkOperation>(
+      type: string,
+      operation: Opr,
+      optionsOrInput?: BulkV2Options | Record[] | Readable | string,
+      input?: Record[] | Readable | string,
+  ): Promise<AllResults<S>> {
+    let options: BulkV2Options = {};
+    if (
+        typeof optionsOrInput === 'string' ||
+        Array.isArray(optionsOrInput) ||
+        (isObject(optionsOrInput) &&
+            'pipe' in optionsOrInput &&
+            typeof optionsOrInput.pipe === 'function')
+    ) {
+      // when options is not plain hash object, it is omitted
+      input = optionsOrInput;
+    } else {
+      options = optionsOrInput as BulkOptions;
+    }
+    const job = this.createJob('Account', 'insert', options);
+    await job.open();
+    await job.uploadData(input);
+    await job.close();
+    await job.poll();
+    return job.getAllResults()
+  }
+
+  async getAllJobs<Opr extends BulkOperation>(): Promise<JobV2<S, Opr>[]> {
+    const jobs = await this._request({
+      method: 'GET',
+      path: '',
+      responseType: 'application/json'
+    })
+    // @ts-ignore
+    return jobs.records.map(j => {
+      return new JobV2(this, j.jobType, j.operation, null, j.id)
+    })
   }
 }
 
@@ -966,6 +1056,7 @@ export class JobV2<
   options: BulkOptions;
   id: string | null;
   state: JobStateV2 | undefined;
+  _dataUpload: DataUpload<S, Opr>;
   _bulk: BulkV2<S>;
   _jobInfo: Promise<JobInfoV2> | undefined;
   _error: Error | undefined;
@@ -987,11 +1078,12 @@ export class JobV2<
     this.options = options || {};
     this.id = jobId ?? null;
     this.state = this.id ? 'Open' : undefined;
+    this._dataUpload = new DataUpload<S, Opr>(this);
     // default error handler to keep the latest error
     this.on('error', (error) => (this._error = error));
   }
 
-  create() {
+  open() {
     const bulk = this._bulk;
     const options = this.options;
 
@@ -1018,7 +1110,7 @@ export class JobV2<
             },
             responseType: 'application/json'
           })
-          this.emit('createJob', res);
+          this.emit('open', res);
           this.id = res.id;
           this.state = res.state;
           return res;
@@ -1032,16 +1124,377 @@ export class JobV2<
     return this._jobInfo;
   }
 
-  uploadData(records: Record[]): Promise<void> {
-    throw new Error('needs to be implemented');
+  ready(): Promise<string> {
+    return this.id
+        ? Promise.resolve(this.id)
+        : this.open().then(({ id }) => id);
   }
 
-  close(): Promise<void> {
-    throw new Error('needs to be implemented');
+  uploadData(input?: string | Record[] | Readable): DataUpload<S, Opr> {
+    return this._dataUpload.execute(input);
   }
 
-  getSuccessfulRecordResults(): Promise<Record[]> {
-    throw new Error('needs to be implemented');
+  async getAllResults(): Promise<AllResults<S>> {
+    await this.poll()
+    const [successfulResults, failedResults, unprocessedRecords] = await Promise.all([
+        this.getSuccessfulResults(),
+        this.getFailedResults(),
+        this.getUnprocessedRecords()
+    ])
+    return {successfulResults, failedResults, unprocessedRecords}
+  }
+
+  /**
+   * Close opened job
+   */
+  async close() {
+    if (!this.id) {
+      return;
+    }
+    try {
+      const jobInfo = await this._changeState('UploadComplete');
+      this.emit('close', jobInfo);
+      return jobInfo;
+    } catch (err) {
+      this.emit('error', err);
+      throw err;
+    }
+  }
+
+  /**
+   * Set the status to abort
+   */
+  async abort() {
+    if (!this.id) {
+      return;
+    }
+    try {
+      const jobInfo = await this._changeState('Aborted');
+      this.emit('abort', jobInfo);
+      return jobInfo;
+    } catch (err) {
+      this.emit('error', err);
+      throw err;
+    }
+  }
+
+  async poll(interval: number = this._bulk.pollInterval, timeout: number = this._bulk.pollTimeout): Promise<void> {
+    const jobId = this.id;
+    const startTime = new Date().getTime();
+
+    if (!jobId) {
+      throw new Error('Job not started.');
+    }
+
+    if (this.state !== 'UploadComplete' && this.state !== 'InProgress') {
+      throw new Error('cannot poll against job that is not yet uploaded or in progress');
+    }
+
+    return new Promise<void>((resolve, reject) => {
+      const poll = async () => {
+        const now = new Date().getTime();
+
+        if (startTime + timeout < now) {
+          const timeoutError = new JobPollingTimeoutError(`Polling time out. Job Id = ${jobId}`, jobId)
+          this.emit('error', timeoutError);
+          reject(timeoutError);
+          return
+        }
+
+        try {
+          const res = await this.check();
+          if (res.state === 'InProgress') {
+            this.emit('progress', res);
+            setTimeout(poll, interval);
+          } else {
+            resolve();
+          }
+        } catch (err) {
+          this.emit('error', err);
+          reject(err);
+          return;
+        }
+      };
+
+      setTimeout(poll, interval);
+    })
+  }
+
+  /**
+   * Check the latest batch status in server
+   */
+  async check(): Promise<JobInfoV2> {
+    const bulk = this._bulk;
+    const logger = bulk._logger;
+    const jobId = this.id;
+
+    if (!jobId) {
+      throw new Error('Job not started.');
+    }
+
+    const res = await bulk._request<JobInfoV2>({
+      method: 'GET',
+      path: `/${jobId}`,
+      responseType: 'application/json',
+    });
+    logger.debug(res);
+    return res;
+  }
+
+  async getSuccessfulResults(): Promise<BulkJobSuccessfulResultsResponse<S>> {
+    const bulk = this._bulk;
+    const logger = bulk._logger;
+    const jobId = this.id;
+
+    if (!jobId) {
+      throw new Error('Job not started.');
+    }
+
+    const res = await bulk._request<BulkJobSuccessfulResultsResponse<S>>({
+      method: 'GET',
+      path: `/${jobId}/successfulResults`,
+      responseType: 'text/csv',
+    })
+
+    logger.debug(res)
+    return res
+  }
+
+  async getFailedResults(): Promise<BulkJobFailedResultsResponse<S>> {
+    const bulk = this._bulk;
+    const logger = bulk._logger;
+    const jobId = this.id;
+
+    if (!jobId) {
+      throw new Error('Job not started.');
+    }
+
+    const res = await bulk._request<BulkJobFailedResultsResponse<S>>({
+      method: 'GET',
+      path: `/${jobId}/failedResults`,
+      responseType: 'text/csv',
+    })
+
+    logger.debug(res)
+    return res
+  }
+
+  async getUnprocessedRecords(): Promise<BulkJobUnprocessedRecordsResponse<S>> {
+    const bulk = this._bulk;
+    const logger = bulk._logger;
+    const jobId = this.id;
+
+    if (!jobId) {
+      throw new Error('Job not started.');
+    }
+
+    const res = await bulk._request<BulkJobUnprocessedRecordsResponse<S>>({
+      method: 'GET',
+      path: `/${jobId}/unprocessedrecords`,
+      responseType: 'text/csv',
+    })
+
+    logger.debug(res)
+    return res
+  }
+
+  async delete(): Promise<void> {
+    const bulk = this._bulk;
+    const logger = bulk._logger;
+    const jobId = this.id;
+
+    if (!jobId) {
+      throw new Error('Job not started.');
+    }
+
+    const res = await bulk._request<void>({
+      method: 'DELETE',
+      path: `/${jobId}`,
+    })
+
+    logger.debug(res)
+    return res
+  }
+
+  /**
+   * @private
+   */
+  async _changeState(state: JobStateV2) {
+    const bulk = this._bulk;
+    const logger = bulk._logger;
+
+    this._jobInfo = (async () => {
+      const jobId = await this.ready();
+      const res = await bulk._request<JobInfoV2>({
+        method: 'PATCH',
+        path: `/${jobId}`,
+        body: JSON.stringify({state}),
+        headers: {'Content-Type': 'application/json; charset=utf-8'},
+        responseType: 'application/json',
+      });
+      logger.debug(res);
+      this.state = res.state;
+      return res;
+    })();
+    return this._jobInfo;
+  }
+}
+
+class DataUpload<S extends Schema, Opr extends BulkOperation> extends Writable {
+  job: JobV2<S, Opr>;
+  id: string | undefined;
+  _bulk: BulkV2<S>;
+  _uploadStream: Serializable;
+  _downloadStream: Parsable;
+  _dataStream: Duplex;
+  _result: Promise<void> | undefined;
+  _error: Error | undefined;
+
+  /**
+   *
+   */
+  constructor(job: JobV2<S, Opr>, id?: string) {
+    super({ objectMode: true });
+    this.job = job;
+    this._bulk = job._bulk;
+
+    // default error handler to keep the latest error
+    this.on('error', (error) => (this._error = error));
+
+    //
+    // setup data streams
+    //
+    const converterOptions = { nullValue: '#N/A' };
+    const uploadStream = (this._uploadStream = new Serializable());
+    const uploadDataStream = uploadStream.stream('csv', converterOptions);
+    const downloadStream = (this._downloadStream = new Parsable());
+    const downloadDataStream = downloadStream.stream('csv', converterOptions);
+
+    this.on('finish', () => uploadStream.end());
+    uploadDataStream.once('readable', async () => {
+      try {
+        // ensure the job is opened in server or job id is already assigned
+        await this.job.ready();
+        // pipe upload data to batch API request stream
+        uploadDataStream.pipe(this._createRequestStream());
+      } catch (err) {
+        this.emit('error', err);
+      }
+    });
+
+    // duplex data stream, opened access to API programmers by Batch#stream()
+    this._dataStream = concatStreamsAsDuplex(
+        uploadDataStream,
+        downloadDataStream,
+    );
+  }
+
+  /**
+   * Connect batch API and create stream instance of request/response
+   *
+   * @private
+   */
+  _createRequestStream() {
+    const bulk = this._bulk;
+    const logger = bulk._logger;
+    const req = bulk._request<JobInfoResponse>({
+      method: 'PUT',
+      path: `/${this.job.id}/batches`,
+      headers: {
+        'Content-Type': 'text/csv',
+      },
+      responseType: 'application/json',
+    });
+    (async () => {
+      try {
+        await req;
+        this.emit('upload', this.job.id);
+      } catch (err) {
+        this.emit('error', err);
+      }
+    })();
+    return req.stream();
+  }
+
+  /**
+   * Implementation of Writable
+   */
+  _write(record_: Record, enc: string, cb: () => void) {
+    const { Id, type, attributes, ...rrec } = record_;
+    let record;
+    switch (this.job.operation) {
+      case 'insert':
+        record = rrec;
+        break;
+      case 'delete':
+      case 'hardDelete':
+        record = { Id };
+        break;
+      default:
+        record = { Id, ...rrec };
+    }
+    this._uploadStream.write(record, enc, cb);
+  }
+
+  /**
+   * Returns duplex stream which accepts CSV data input and batch result output
+   */
+  stream() {
+    return this._dataStream;
+  }
+
+  /**
+   * Execute batch operation
+   */
+  execute(input?: string | Record[] | Readable) {
+    if (this._result) {
+      throw new Error('Data can only be uploaded to a job once.')
+    }
+
+    this._result = new Promise((resolve, reject) => {
+      this.once('upload', () => resolve());
+      this.once('error', reject);
+    });
+
+    if (isObject(input) && 'pipe' in input && isFunction(input.pipe)) {
+      // if input has stream.Readable interface
+      input.pipe(this._dataStream);
+    } else {
+      if (Array.isArray(input)) {
+        for (const record of input) {
+          for (const key of Object.keys(record)) {
+            if (typeof record[key] === 'boolean') {
+              record[key] = String(record[key]);
+            }
+          }
+          this.write(record);
+        }
+        this.end();
+      } else if (typeof input === 'string') {
+        this._dataStream.write(input, 'utf8');
+        this._dataStream.end();
+      }
+    }
+
+    return this;
+  }
+
+  run = this.execute;
+
+  exec = this.execute;
+
+  /**
+   * Promise/A+ interface
+   * Delegate to promise, return promise instance for batch result
+   */
+  then(
+      onResolved: () => void,
+      onReject: (err: any) => void,
+  ) {
+    if (!this._result) {
+      this.execute();
+    }
+    return this._result!.then(onResolved, onReject);
   }
 }
 

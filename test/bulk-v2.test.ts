@@ -30,82 +30,115 @@ it('should bulk insert records and return result status', async () => {
     { BillingState: 'CA' }, // should raise error
   ];
 
-  const job = conn.bulk.v2.job('Account', 'insert');
-  await job.create();
-  await job.uploadData(records);
-  await job.close();
-  const rets = await job.getSuccessfulRecordResults();
+  const {
+    successfulResults: rets,
+    failedResults: retf
+  } = await conn.bulk.v2.load('Account', 'insert', records)
 
   assert.ok(Array.isArray(rets));
   let i = 0;
   let ret;
   for (; i < 200; i++) {
     ret = rets[i];
-    assert.ok(isString(ret.id));
-    assert.ok(ret.success === true);
+    assert.ok(isString(ret.sf__Id));
+    assert.ok(ret.sf__Created === "true");
   }
-  ret = rets[200];
-  assert.ok(ret.id === null);
-  assert.ok(ret.success === false);
+  ret = retf[0];
+  assert.ok(ret.sf__Id === "");
+  assert.ok(isString(ret.sf__Error));
 });
-//
-// /**
-//  *
-//  */
-// it('should bulk update and return updated status', async () => {
-//   let records = await conn
-//     .sobject('Account')
-//     .find({ Name: { $like: 'Bulk Account%' } }, ['Id', 'Name'])
-//     .execute();
-//   records = records.map((rec) => ({ ...rec, Name: `${rec.Name} (Updated)` }));
-//   const rets = await conn.bulk.load('Account', 'update', records);
-//   assert.ok(Array.isArray(rets));
-//   for (const ret of rets) {
-//     assert.ok(isString(ret.id));
-//     assert.ok(ret.success === true);
-//   }
-// });
-//
-// /**
-//  *
-//  */
-// it('should bulk update with empty input and raise client input error', async () => {
-//   try {
-//     await conn.bulk.load('Account', 'update', []);
-//     assert.fail();
-//   } catch (err) {
-//     assert.ok(isObject(err));
-//     assert.ok(err.name === 'ClientInputError');
-//   }
-// });
-//
-// /**
-//  *
-//  */
-// it('should bulk delete and return deleted status', async () => {
-//   const records = await conn
-//     .sobject('Account')
-//     .find({ Name: { $like: 'Bulk Account%' } })
-//     .execute();
-//   const rets = await conn.bulk.load('Account', 'delete', records);
-//   assert.ok(Array.isArray(rets));
-//   for (const ret of rets) {
-//     assert.ok(isString(ret.id));
-//     assert.ok(ret.success === true);
-//   }
-// });
-//
-// /**
-//  *
-//  */
-// it('should bulk delete with empty input and raise client input error', async () => {
-//   try {
-//     await conn.bulk.load('Account', 'delete', []);
-//   } catch (err) {
-//     assert.ok(isObject(err));
-//     assert.ok(err.name === 'ClientInputError');
-//   }
-// });
+
+it('should bulk insert records and return result status (long)', async () => {
+  const records = [
+    ...Array.from(Array(200), (a, i) => ({
+      Name: `Bulk Account #${i + 1}`,
+      NumberOfEmployees: 300 * (i + 1),
+    })),
+    { BillingState: 'CA' }, // should raise error
+  ];
+
+  const job = await conn.bulk.v2.createJob('Account', 'insert');
+  await job.uploadData(records);
+  await job.close();
+  await job.poll();
+  const rets = await job.getSuccessfulResults();
+  const retf = await job.getFailedResults();
+  const retu = await job.getUnprocessedRecords();
+
+  assert.ok(Array.isArray(rets));
+  let i = 0;
+  let ret;
+  for (; i < 200; i++) {
+    ret = rets[i];
+    assert.ok(isString(ret.sf__Id));
+    assert.ok(ret.sf__Created === "true");
+  }
+  ret = retf[0];
+  assert.ok(ret.sf__Id === "");
+  assert.ok(isString(ret.sf__Error));
+});
+
+/**
+ *
+ */
+it('should bulk update and return updated status', async () => {
+  let records = await conn
+    .sobject('Account')
+    .find({ Name: { $like: 'Bulk Account%' } }, ['Id', 'Name'])
+    .execute();
+  records = records.map((rec) => ({ ...rec, Name: `${rec.Name} (Updated)` }));
+  const {
+    successfulResults: rets
+  } = await conn.bulk.v2.load('Account', 'update', records);
+  assert.ok(Array.isArray(rets));
+  for (const ret of rets) {
+    assert.ok(isString(ret.sf__Id));
+    assert.ok(ret.sf__Created === "true");
+  }
+});
+
+/**
+ *
+ */
+it('should bulk update with empty input and raise client input error', async () => {
+  try {
+    await conn.bulk.v2.load('Account', 'update', []);
+    assert.fail();
+  } catch (err) {
+    assert.ok(isObject(err));
+    assert.ok(err.name === 'ClientInputError');
+  }
+});
+
+/**
+ *
+ */
+it('should bulk delete and return deleted status', async () => {
+  const records = await conn
+    .sobject('Account')
+    .find({ Name: { $like: 'Bulk Account%' } })
+    .execute();
+  const {
+    successfulResults: rets
+  } = await conn.bulk.v2.load('Account', 'delete', records);
+  assert.ok(Array.isArray(rets));
+  for (const ret of rets) {
+    assert.ok(isString(ret.sf__Id));
+    assert.ok(ret.sf__Created === "true");
+  }
+});
+
+/**
+ *
+ */
+it('should bulk delete with empty input and raise client input error', async () => {
+  try {
+    await conn.bulk.v2.load('Account', 'delete', []);
+  } catch (err) {
+    assert.ok(isObject(err));
+    assert.ok(err.name === 'ClientInputError');
+  }
+});
 //
 // /*------------------------------------------------------------------------*/
 // if (isNodeJS()) {
