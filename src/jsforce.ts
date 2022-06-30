@@ -2,6 +2,7 @@ import { EventEmitter } from 'events';
 import VERSION from './VERSION';
 import Connection from './connection';
 import OAuth2 from './oauth2';
+import JwtOAuth2 from './jwtOAuth2';
 import SfDate from './date';
 import registry, { Registry } from './registry';
 import client, { BrowserClient } from './browser/client';
@@ -13,6 +14,7 @@ class JSforce extends EventEmitter {
   VERSION: typeof VERSION = VERSION;
   Connection: typeof Connection = Connection;
   OAuth2: typeof OAuth2 = OAuth2;
+  JwtOAuth2: typeof JwtOAuth2 = JwtOAuth2;
   SfDate: typeof SfDate = SfDate;
   Date: typeof SfDate = SfDate;
   BrowserClient: typeof BrowserClient = BrowserClient;

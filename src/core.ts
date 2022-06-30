@@ -8,6 +8,7 @@ import RecordReference from './record-reference';
 import RecordStream from './record-stream';
 
 export * from './oauth2';
+export * from './jwtOAuth2';
 export * from './connection';
 export * from './query';
 export * from './quick-action';
