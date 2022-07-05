@@ -7,7 +7,7 @@ export type JwtOAuth2Config = OAuth2Config & {
   refreshToken?: string;
   loginUrl?: string;
   username?: string;
-};//here
+};
 
 export class JwtOAuth2 extends OAuth2 {
   constructor(config: OAuth2Config) {
