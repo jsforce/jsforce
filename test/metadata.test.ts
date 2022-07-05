@@ -221,6 +221,46 @@ describe('REST API deploy', () => {
     });
   }
 });
+
+describe('deployRecentValidation', () => {
+  if (isNodeJS()) {
+    it('deployRecentValidation() should return string, and different id (REST)', async () => {
+      const zipBuffer = await fs.promises.readFile(
+        path.join(__dirname, '/data/MyPackage.zip'),
+      );
+      const deploy = await conn.metadata
+        .deployRest(zipBuffer, {
+          testLevel: 'RunAllTestsInOrg',
+          checkOnly: true,
+        })
+        .complete();
+      const result = await conn.metadata.deployRecentValidation({
+        id: deploy.id,
+        rest: true,
+      });
+      assert.ok(typeof result === 'string');
+      assert.ok(result !== deploy.id);
+    });
+
+    it('deployRecentValidation() should return string, and different id (SOAP)', async () => {
+      const zipBuffer = await fs.promises.readFile(
+        path.join(__dirname, '/data/MyPackage.zip'),
+      );
+      const deploy = await conn.metadata
+        .deploy(zipBuffer, {
+          testLevel: 'RunAllTestsInOrg',
+          checkOnly: true,
+        })
+        .complete();
+      const result = await conn.metadata.deployRecentValidation({
+        id: deploy.id,
+        rest: false,
+      });
+      assert.ok(typeof result === 'string');
+      assert.ok(result !== deploy.id);
+    });
+  }
+});
 /**
  *
  */
