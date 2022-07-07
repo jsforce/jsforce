@@ -8,6 +8,7 @@ import joinStreams from 'multistream';
 import Connection from '../connection';
 import { Serializable, Parsable } from '../record-stream';
 import HttpApi from '../http-api';
+import { StreamPromise } from '../util/promise';
 import { registerModule } from '../jsforce';
 import { Logger } from '../util/logger';
 import { concatStreamsAsDuplex } from '../util/stream';
@@ -31,21 +32,23 @@ export type BulkOperation =
   | 'query'
   | 'queryAll';
 
+export type IngestOperation = Exclude<BulkOperation, 'query' | 'queryAll'>;
+
+export type QueryOperation = Extract<BulkOperation, 'query' | 'queryAll'>;
+
 export type BulkOptions = {
   extIdField?: string;
   concurrencyMode?: 'Serial' | 'Parallel';
   assignmentRuleId?: string;
 };
 
-export type BulkV2Options = Omit<BulkOptions, 'concurrencyMode'>;
-
 export type JobState = 'Open' | 'Closed' | 'Aborted' | 'Failed' | 'Unknown';
 
 export type JobStateV2 =
-    | Exclude<JobState, 'Closed'>
-    | 'UploadComplete'
-    | 'InProgress'
-    | 'JobComplete'
+  | Exclude<JobState, 'Closed' | 'Unknown'>
+  | 'UploadComplete'
+  | 'InProgress'
+  | 'JobComplete';
 
 export type JobInfo = {
   id: string;
@@ -56,14 +59,20 @@ export type JobInfo = {
 
 export type JobInfoV2 = {
   apiVersion: string;
-  assignmentRuleId: string;
-  columnDelimiter: 'BACKQUOTE' | 'CARET' | 'COMMA' | 'PIPE' | 'SEMICOLON' | 'TAB';
+  assignmentRuleId?: string;
+  columnDelimiter:
+    | 'BACKQUOTE'
+    | 'CARET'
+    | 'COMMA'
+    | 'PIPE'
+    | 'SEMICOLON'
+    | 'TAB';
   concurrencyMode: string;
   contentType: 'CSV';
   contentUrl: string;
   createdById: string;
   createdDate: string;
-  externalIdFieldName: string;
+  externalIdFieldName?: string;
   id: string;
   jobType: 'BigObjectIngest' | 'Classic' | 'V2Ingest';
   lineEnding: 'LF' | 'CRLF';
@@ -73,7 +82,7 @@ export type JobInfoV2 = {
   systemModstamp: string;
   numberRecordsProcessed?: number;
   numberRecordsFailed?: number;
-}
+};
 
 type JobInfoResponse = {
   jobInfo: JobInfo;
@@ -142,6 +151,60 @@ type BulkRequest = {
   body?: string;
   headers?: { [name: string]: string };
   responseType?: string;
+};
+
+export type IngestJobV2SuccessfulResults<S extends Schema> = Array<
+  {
+    sf__Created: 'true' | 'false';
+    sf__Id: string;
+  } & S
+>;
+
+export type IngestJobV2FailedResults<S extends Schema> = Array<
+  {
+    sf__Error: string;
+    sf__Id: string;
+  } & S
+>;
+
+export type IngestJobV2UnprocessedRecords<S extends Schema> = Array<S>;
+
+export type IngestJobV2Results<S extends Schema> = {
+  successfulResults: IngestJobV2SuccessfulResults<S>;
+  failedResults: IngestJobV2FailedResults<S>;
+  unprocessedRecords: IngestJobV2UnprocessedRecords<S>;
+};
+
+type NewIngestJobOptions = Pick<
+  JobInfoV2,
+  'object' | 'operation' | 'assignmentRuleId' | 'externalIdFieldName'
+>;
+
+type ExistingIngestJobOptions = Pick<JobInfoV2, 'id'>;
+
+type CreateIngestJobV2Request = <T>(request: BulkRequest) => StreamPromise<T>;
+
+type CreateIngestJobV2Options<S extends Schema> = {
+  connection: Connection<S>;
+  jobInfo: NewIngestJobOptions | ExistingIngestJobOptions;
+  pollingOptions: BulkV2PollingOptions;
+};
+
+type CreateJobDataV2Options<S extends Schema, Opr extends IngestOperation> = {
+  job: IngestJobV2<S, Opr>;
+  createRequest: CreateIngestJobV2Request;
+};
+
+type CreateQueryJobV2Options<S extends Schema> = {
+  connection: Connection<S>;
+  operation: QueryOperation;
+  query: string;
+  pollingOptions: BulkV2PollingOptions;
+};
+
+type BulkV2PollingOptions = {
+  pollInterval: number;
+  pollTimeout: number;
 };
 
 /**
@@ -771,6 +834,29 @@ class BulkApi<S extends Schema> extends HttpApi<S> {
   }
 }
 
+class BulkApiV2<S extends Schema> extends HttpApi<S> {
+  hasErrorInResponseBody(body: any) {
+    return (
+      Array.isArray(body) &&
+      typeof body[0] === 'object' &&
+      'errorCode' in body[0]
+    );
+  }
+
+  isSessionExpired(response: HttpResponse): boolean {
+    return (
+      response.statusCode === 401 && /INVALID_SESSION_ID/.test(response.body)
+    );
+  }
+
+  parseError(body: any) {
+    return {
+      errorCode: body[0].errorCode,
+      message: body[0].message,
+    };
+  }
+}
+
 /*--------------------------------------------*/
 
 /**
@@ -793,7 +879,7 @@ export class Bulk<S extends Schema> {
    */
   pollTimeout = 10000;
 
-  readonly v2: BulkV2<S>
+  readonly v2: BulkV2<S>;
 
   /**
    *
@@ -801,7 +887,7 @@ export class Bulk<S extends Schema> {
   constructor(conn: Connection<S>) {
     this._conn = conn;
     this._logger = conn._logger;
-    this.v2 = new BulkV2<S>(conn)
+    this.v2 = new BulkV2<S>(conn);
   }
 
   /**
@@ -921,27 +1007,8 @@ export class Bulk<S extends Schema> {
   }
 }
 
-type BulkJobSuccessfulResultsResponse<S extends Schema>= Array<{
-  sf__Created: "true" | "false";
-  sf__Id: string;
-} & S>
-
-type BulkJobFailedResultsResponse<S extends Schema>= Array<{
-  sf__Error: string;
-  sf__Id: string;
-} & S>
-
-type AllResults<S extends Schema> = {
-  successfulResults: BulkJobSuccessfulResultsResponse<S>;
-  failedResults: BulkJobFailedResultsResponse<S>;
-  unprocessedRecords: BulkJobUnprocessedRecordsResponse<S>;
-}
-
-type BulkJobUnprocessedRecordsResponse<S extends Schema> = Array<S>
-
 export class BulkV2<S extends Schema> {
-  _conn: Connection<S>;
-  _logger: Logger;
+  #connection: Connection<S>;
 
   /**
    * Polling interval in milliseconds
@@ -954,207 +1021,115 @@ export class BulkV2<S extends Schema> {
    */
   pollTimeout = 10000;
 
-  constructor(conn: Connection<S>) {
-    this._conn = conn
-    this._logger = conn._logger
-  }
-
-  /**
-   *
-   */
-  _request<T>(request_: BulkRequest) {
-    const conn = this._conn;
-    const { path, responseType, ...rreq } = request_;
-    const baseUrl = [conn.instanceUrl, 'services/data', `v${conn.version}`, 'jobs/ingest'].join(
-        '/',
-    );
-    const request = {
-      ...rreq,
-      url: baseUrl + path,
-    };
-
-    // TODO: remove this when implementation is complete
-    this._conn._logLevel = 'DEBUG';
-
-    return new HttpApi(this._conn, { responseType }).request<T>(request);
+  constructor(connection: Connection<S>) {
+    this.#connection = connection;
   }
 
   /**
    * Create a new job instance
    */
-  createJob<Opr extends BulkOperation>(
-      type: string,
-      operation: Opr,
-      options: BulkOptions = {},
-  ): JobV2<S, Opr> {
-    return new JobV2(this, type, operation, options);
+  createJob<Opr extends IngestOperation>(
+    options: NewIngestJobOptions,
+  ): IngestJobV2<S, Opr> {
+    return new IngestJobV2({
+      connection: this.#connection,
+      jobInfo: options,
+      pollingOptions: this,
+    });
+  }
+
+  job<Opr extends IngestOperation>(
+    options: ExistingIngestJobOptions,
+  ): IngestJobV2<S, Opr> {
+    return new IngestJobV2({
+      connection: this.#connection,
+      jobInfo: options,
+      pollingOptions: this,
+    });
   }
 
   /**
    * Create, upload, and start bulkload job
    */
-  async load<Opr extends BulkOperation>(
-      type: string,
-      operation: Opr,
-      input?: Record[] | Readable | string,
-  ): Promise<AllResults<S>>;
-  async load<Opr extends BulkOperation>(
-      type: string,
-      operation: Opr,
-      optionsOrInput?: BulkV2Options | Record[] | Readable | string,
-      input?: Record[] | Readable | string,
-  ): Promise<AllResults<S>>;
-  async load<Opr extends BulkOperation>(
-      type: string,
-      operation: Opr,
-      optionsOrInput?: BulkV2Options | Record[] | Readable | string,
-      input?: Record[] | Readable | string,
-  ): Promise<AllResults<S>> {
-    let options: BulkV2Options = {};
-    if (
-        typeof optionsOrInput === 'string' ||
-        Array.isArray(optionsOrInput) ||
-        (isObject(optionsOrInput) &&
-            'pipe' in optionsOrInput &&
-            typeof optionsOrInput.pipe === 'function')
-    ) {
-      // when options is not plain hash object, it is omitted
-      input = optionsOrInput;
-    } else {
-      options = optionsOrInput as BulkOptions;
+  async load(
+    options: NewIngestJobOptions & {
+      input: Record[] | Readable | string;
+    },
+  ): Promise<IngestJobV2Results<S>> {
+    const job = this.createJob(options);
+    try {
+      await job.open();
+      await job.uploadData(options.input);
+      await job.close();
+      await job.poll();
+      return await job.getAllResults();
+    } catch (err) {
+      if (err.name !== 'JobPollingTimeoutError') {
+        // fires off one last attempt to cleanup and ignores the result | error
+        job.delete().catch((ignored) => ignored);
+      }
+      throw err;
     }
-    const job = this.createJob('Account', 'insert', options);
-    await job.open();
-    await job.uploadData(input);
-    await job.close();
-    await job.poll();
-    return job.getAllResults()
   }
 
-  async getAllJobs<Opr extends BulkOperation>(): Promise<JobV2<S, Opr>[]> {
-    const jobs = await this._request({
-      method: 'GET',
-      path: '',
-      responseType: 'application/json'
-    })
-    // @ts-ignore
-    return jobs.records.map(j => {
-      return new JobV2(this, j.jobType, j.operation, null, j.id)
-    })
+  /**
+   * Execute bulk query and get record stream
+   */
+  async query(soql: string): Promise<Record[]> {
+    const queryJob = new QueryJobV2({
+      connection: this.#connection,
+      operation: 'query',
+      query: soql,
+      pollingOptions: this,
+    });
+    try {
+      await queryJob.open();
+      await queryJob.poll();
+      return await queryJob.getResults();
+    } catch (err) {
+      if (err.name !== 'JobPollingTimeoutError') {
+        // fires off one last attempt to cleanup and ignores the result | error
+        queryJob.delete().catch((ignored) => ignored);
+      }
+      throw err;
+    }
   }
 }
 
-/**
- * Class for Bulk API Job
- */
-export class JobV2<
-    S extends Schema,
-    Opr extends BulkOperation
-    > extends EventEmitter {
-  type: string | null;
-  operation: Opr | null;
-  options: BulkOptions;
-  id: string | null;
-  state: JobStateV2 | undefined;
-  _dataUpload: DataUpload<S, Opr>;
-  _bulk: BulkV2<S>;
-  _jobInfo: Promise<JobInfoV2> | undefined;
-  _error: Error | undefined;
+export class QueryJobV2<S extends Schema> extends EventEmitter {
+  readonly #connection: Connection<S>;
+  readonly #operation: QueryOperation;
+  readonly #query: string;
+  readonly #pollingOptions: BulkV2PollingOptions;
+  #queryResults: Record[] | undefined;
+  #error: Error | undefined;
+  jobInfo: Partial<JobInfoV2> | undefined;
 
-  /**
-   *
-   */
-  constructor(
-      bulk: BulkV2<S>,
-      type: string | null,
-      operation: Opr | null,
-      options: BulkOptions | null,
-      jobId?: string,
-  ) {
+  constructor(options: CreateQueryJobV2Options<S>) {
     super();
-    this._bulk = bulk;
-    this.type = type;
-    this.operation = operation;
-    this.options = options || {};
-    this.id = jobId ?? null;
-    this.state = this.id ? 'Open' : undefined;
-    this._dataUpload = new DataUpload<S, Opr>(this);
+    this.#connection = options.connection;
+    this.#operation = options.operation;
+    this.#query = options.query;
+    this.#pollingOptions = options.pollingOptions;
     // default error handler to keep the latest error
-    this.on('error', (error) => (this._error = error));
+    this.on('error', (error) => (this.#error = error));
   }
 
-  open() {
-    const bulk = this._bulk;
-    const options = this.options;
-
-    // if sobject type / operation is not provided
-    if (!this.type || !this.operation) {
-      throw new Error('type / operation is required to create a new job');
-    }
-
-    // if not requested opening job
-    if (!this._jobInfo) {
-      this._jobInfo = (async () => {
-        try {
-          const res = await bulk._request<JobInfoV2>({
-            method: 'POST',
-            path: '',
-            body: JSON.stringify({
-              assignmentRuleId: options.assignmentRuleId,
-              externalIdFieldName: options.extIdField,
-              object: this.type,
-              operation: this.operation
-            }),
-            headers: {
-              'Content-Type': 'application/json; charset=utf-8',
-            },
-            responseType: 'application/json'
-          })
-          this.emit('open', res);
-          this.id = res.id;
-          this.state = res.state;
-          return res;
-        } catch (err) {
-          this.emit('error', err)
-          throw err
-        }
-      })()
-    }
-
-    return this._jobInfo;
-  }
-
-  ready(): Promise<string> {
-    return this.id
-        ? Promise.resolve(this.id)
-        : this.open().then(({ id }) => id);
-  }
-
-  uploadData(input?: string | Record[] | Readable): DataUpload<S, Opr> {
-    return this._dataUpload.execute(input);
-  }
-
-  async getAllResults(): Promise<AllResults<S>> {
-    await this.poll()
-    const [successfulResults, failedResults, unprocessedRecords] = await Promise.all([
-        this.getSuccessfulResults(),
-        this.getFailedResults(),
-        this.getUnprocessedRecords()
-    ])
-    return {successfulResults, failedResults, unprocessedRecords}
-  }
-
-  /**
-   * Close opened job
-   */
-  async close() {
-    if (!this.id) {
-      return;
-    }
+  async open(): Promise<void> {
     try {
-      const jobInfo = await this._changeState('UploadComplete');
-      this.emit('close', jobInfo);
-      return jobInfo;
+      this.jobInfo = await this.createQueryRequest<JobInfoV2>({
+        method: 'POST',
+        path: '',
+        body: JSON.stringify({
+          operation: this.#operation,
+          query: this.#query,
+        }),
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+        },
+        responseType: 'application/json',
+      });
+      this.emit('open');
     } catch (err) {
       this.emit('error', err);
       throw err;
@@ -1164,13 +1139,74 @@ export class JobV2<
   /**
    * Set the status to abort
    */
-  async abort() {
-    if (!this.id) {
-      return;
-    }
+  async abort(): Promise<void> {
     try {
-      const jobInfo = await this._changeState('Aborted');
-      this.emit('abort', jobInfo);
+      const state: JobStateV2 = 'Aborted';
+      this.jobInfo = await this.createQueryRequest<JobInfoV2>({
+        method: 'PATCH',
+        path: `/${this.jobInfo?.id}`,
+        body: JSON.stringify({ state }),
+        headers: { 'Content-Type': 'application/json; charset=utf-8' },
+        responseType: 'application/json',
+      });
+      this.emit('aborted');
+    } catch (err) {
+      this.emit('error', err);
+      throw err;
+    }
+  }
+
+  async poll(
+    interval: number = this.#pollingOptions.pollInterval,
+    timeout: number = this.#pollingOptions.pollTimeout,
+  ): Promise<void> {
+    const jobId = getJobIdOrError(this.jobInfo);
+    const startTime = Date.now();
+
+    while (startTime + timeout > Date.now()) {
+      try {
+        const res = await this.check();
+        switch (res.state) {
+          case 'Open':
+            throw new Error('Job has not been started');
+          case 'Aborted':
+            throw new Error('Job has been aborted');
+          case 'UploadComplete':
+          case 'InProgress':
+            await delay(interval);
+            break;
+          case 'Failed':
+            this.emit('failed');
+            return;
+          case 'JobComplete':
+            this.emit('jobcomplete');
+            return;
+        }
+      } catch (err) {
+        this.emit('error', err);
+        throw err;
+      }
+    }
+
+    const timeoutError = new JobPollingTimeoutError(
+      `Polling time out. Job Id = ${jobId}`,
+      jobId,
+    );
+    this.emit('error', timeoutError);
+    throw timeoutError;
+  }
+
+  /**
+   * Check the latest batch status in server
+   */
+  async check(): Promise<JobInfoV2> {
+    try {
+      const jobInfo = await this.createQueryRequest<JobInfoV2>({
+        method: 'GET',
+        path: `/${getJobIdOrError(this.jobInfo)}`,
+        responseType: 'application/json',
+      });
+      this.jobInfo = jobInfo;
       return jobInfo;
     } catch (err) {
       this.emit('error', err);
@@ -1178,251 +1214,370 @@ export class JobV2<
     }
   }
 
-  async poll(interval: number = this._bulk.pollInterval, timeout: number = this._bulk.pollTimeout): Promise<void> {
-    const jobId = this.id;
-    const startTime = new Date().getTime();
+  async getResults(): Promise<Record[]> {
+    try {
+      if (this.#queryResults) {
+        return this.#queryResults;
+      }
 
-    if (!jobId) {
-      throw new Error('Job not started.');
+      const results = await this.createQueryRequest<Record[] | undefined>({
+        method: 'GET',
+        path: `/${getJobIdOrError(this.jobInfo)}/results`,
+        responseType: 'text/csv',
+      });
+
+      this.#queryResults = results ?? [];
+
+      return this.#queryResults;
+    } catch (err) {
+      this.emit('error', err);
+      throw err;
+    }
+  }
+
+  async delete(): Promise<void> {
+    return this.createQueryRequest<void>({
+      method: 'DELETE',
+      path: `/${getJobIdOrError(this.jobInfo)}`,
+    });
+  }
+
+  private createQueryRequest<T>(request: BulkRequest) {
+    const { path, responseType } = request;
+    const baseUrl = [
+      this.#connection.instanceUrl,
+      'services/data',
+      `v${this.#connection.version}`,
+      'jobs/query',
+    ].join('/');
+
+    return new BulkApiV2(this.#connection, { responseType }).request<T>({
+      ...request,
+      url: baseUrl + path,
+    });
+  }
+}
+
+/**
+ * Class for Bulk API V2 Ingest Job
+ */
+export class IngestJobV2<
+  S extends Schema,
+  Opr extends IngestOperation
+> extends EventEmitter {
+  readonly #connection: Connection<S>;
+  readonly #pollingOptions: BulkV2PollingOptions;
+  readonly #jobData: JobDataV2<S, Opr>;
+  #bulkJobSuccessfulResults: IngestJobV2SuccessfulResults<S> | undefined;
+  #bulkJobFailedResults: IngestJobV2FailedResults<S> | undefined;
+  #bulkJobUnprocessedRecords: IngestJobV2UnprocessedRecords<S> | undefined;
+  #error: Error | undefined;
+  jobInfo: Partial<JobInfoV2>;
+
+  /**
+   *
+   */
+  constructor(options: CreateIngestJobV2Options<S>) {
+    super();
+
+    this.#connection = options.connection;
+    this.#pollingOptions = options.pollingOptions;
+    this.jobInfo = options.jobInfo;
+    this.#jobData = new JobDataV2<S, Opr>({
+      createRequest: (request) => this.createIngestRequest(request),
+      job: this,
+    });
+    // default error handler to keep the latest error
+    this.on('error', (error) => (this.#error = error));
+  }
+
+  get id() {
+    return this.jobInfo.id;
+  }
+
+  async open(): Promise<void> {
+    try {
+      this.jobInfo = await this.createIngestRequest<JobInfoV2>({
+        method: 'POST',
+        path: '',
+        body: JSON.stringify({
+          assignmentRuleId: this.jobInfo?.assignmentRuleId,
+          externalIdFieldName: this.jobInfo?.externalIdFieldName,
+          object: this.jobInfo?.object,
+          operation: this.jobInfo?.operation,
+        }),
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+        },
+        responseType: 'application/json',
+      });
+      this.emit('open');
+    } catch (err) {
+      this.emit('error', err);
+      throw err;
+    }
+  }
+
+  async uploadData(input: string | Record[] | Readable): Promise<void> {
+    await this.#jobData.execute(input);
+  }
+
+  async getAllResults(): Promise<IngestJobV2Results<S>> {
+    const [
+      successfulResults,
+      failedResults,
+      unprocessedRecords,
+    ] = await Promise.all([
+      this.getSuccessfulResults(),
+      this.getFailedResults(),
+      this.getUnprocessedRecords(),
+    ]);
+    return { successfulResults, failedResults, unprocessedRecords };
+  }
+
+  /**
+   * Close opened job
+   */
+  async close(): Promise<void> {
+    try {
+      const state: JobStateV2 = 'UploadComplete';
+      this.jobInfo = await this.createIngestRequest<JobInfoV2>({
+        method: 'PATCH',
+        path: `/${this.jobInfo.id}`,
+        body: JSON.stringify({ state }),
+        headers: { 'Content-Type': 'application/json; charset=utf-8' },
+        responseType: 'application/json',
+      });
+      this.emit('uploadcomplete');
+    } catch (err) {
+      this.emit('error', err);
+      throw err;
+    }
+  }
+
+  /**
+   * Set the status to abort
+   */
+  async abort(): Promise<void> {
+    try {
+      const state: JobStateV2 = 'Aborted';
+      this.jobInfo = await this.createIngestRequest<JobInfoV2>({
+        method: 'PATCH',
+        path: `/${this.jobInfo.id}`,
+        body: JSON.stringify({ state }),
+        headers: { 'Content-Type': 'application/json; charset=utf-8' },
+        responseType: 'application/json',
+      });
+      this.emit('aborted');
+    } catch (err) {
+      this.emit('error', err);
+      throw err;
+    }
+  }
+
+  async poll(
+    interval: number = this.#pollingOptions.pollInterval,
+    timeout: number = this.#pollingOptions.pollTimeout,
+  ): Promise<void> {
+    const jobId = getJobIdOrError(this.jobInfo);
+    const startTime = Date.now();
+
+    while (startTime + timeout > Date.now()) {
+      try {
+        const res = await this.check();
+        switch (res.state) {
+          case 'Open':
+            throw new Error('Job has not been started');
+          case 'Aborted':
+            throw new Error('Job has been aborted');
+          case 'UploadComplete':
+          case 'InProgress':
+            await delay(interval);
+            break;
+          case 'Failed':
+            this.emit('failed');
+            return;
+          case 'JobComplete':
+            this.emit('jobcomplete');
+            return;
+        }
+      } catch (err) {
+        this.emit('error', err);
+        throw err;
+      }
     }
 
-    if (this.state !== 'UploadComplete' && this.state !== 'InProgress') {
-      throw new Error('cannot poll against job that is not yet uploaded or in progress');
-    }
-
-    return new Promise<void>((resolve, reject) => {
-      const poll = async () => {
-        const now = new Date().getTime();
-
-        if (startTime + timeout < now) {
-          const timeoutError = new JobPollingTimeoutError(`Polling time out. Job Id = ${jobId}`, jobId)
-          this.emit('error', timeoutError);
-          reject(timeoutError);
-          return
-        }
-
-        try {
-          const res = await this.check();
-          if (res.state === 'InProgress') {
-            this.emit('progress', res);
-            setTimeout(poll, interval);
-          } else {
-            resolve();
-          }
-        } catch (err) {
-          this.emit('error', err);
-          reject(err);
-          return;
-        }
-      };
-
-      setTimeout(poll, interval);
-    })
+    const timeoutError = new JobPollingTimeoutError(
+      `Polling time out. Job Id = ${jobId}`,
+      jobId,
+    );
+    this.emit('error', timeoutError);
+    throw timeoutError;
   }
 
   /**
    * Check the latest batch status in server
    */
   async check(): Promise<JobInfoV2> {
-    const bulk = this._bulk;
-    const logger = bulk._logger;
-    const jobId = this.id;
+    try {
+      const jobInfo = await this.createIngestRequest<JobInfoV2>({
+        method: 'GET',
+        path: `/${getJobIdOrError(this.jobInfo)}`,
+        responseType: 'application/json',
+      });
+      this.jobInfo = jobInfo;
+      return jobInfo;
+    } catch (err) {
+      this.emit('error', err);
+      throw err;
+    }
+  }
 
-    if (!jobId) {
-      throw new Error('Job not started.');
+  async getSuccessfulResults(): Promise<IngestJobV2SuccessfulResults<S>> {
+    if (this.#bulkJobSuccessfulResults) {
+      return this.#bulkJobSuccessfulResults;
     }
 
-    const res = await bulk._request<JobInfoV2>({
+    const results = await this.createIngestRequest<
+      IngestJobV2SuccessfulResults<S> | undefined
+    >({
       method: 'GET',
-      path: `/${jobId}`,
-      responseType: 'application/json',
+      path: `/${getJobIdOrError(this.jobInfo)}/successfulResults`,
+      responseType: 'text/csv',
     });
-    logger.debug(res);
-    return res;
+
+    this.#bulkJobSuccessfulResults = results ?? [];
+
+    return this.#bulkJobSuccessfulResults;
   }
 
-  async getSuccessfulResults(): Promise<BulkJobSuccessfulResultsResponse<S>> {
-    const bulk = this._bulk;
-    const logger = bulk._logger;
-    const jobId = this.id;
-
-    if (!jobId) {
-      throw new Error('Job not started.');
+  async getFailedResults(): Promise<IngestJobV2FailedResults<S>> {
+    if (this.#bulkJobFailedResults) {
+      return this.#bulkJobFailedResults;
     }
 
-    const res = await bulk._request<BulkJobSuccessfulResultsResponse<S>>({
+    const results = await this.createIngestRequest<
+      IngestJobV2FailedResults<S> | undefined
+    >({
       method: 'GET',
-      path: `/${jobId}/successfulResults`,
+      path: `/${getJobIdOrError(this.jobInfo)}/failedResults`,
       responseType: 'text/csv',
-    })
+    });
 
-    logger.debug(res)
-    return res
+    this.#bulkJobFailedResults = results ?? [];
+
+    return this.#bulkJobFailedResults;
   }
 
-  async getFailedResults(): Promise<BulkJobFailedResultsResponse<S>> {
-    const bulk = this._bulk;
-    const logger = bulk._logger;
-    const jobId = this.id;
-
-    if (!jobId) {
-      throw new Error('Job not started.');
+  async getUnprocessedRecords(): Promise<IngestJobV2UnprocessedRecords<S>> {
+    if (this.#bulkJobUnprocessedRecords) {
+      return this.#bulkJobUnprocessedRecords;
     }
 
-    const res = await bulk._request<BulkJobFailedResultsResponse<S>>({
+    const results = await this.createIngestRequest<
+      IngestJobV2UnprocessedRecords<S> | undefined
+    >({
       method: 'GET',
-      path: `/${jobId}/failedResults`,
+      path: `/${getJobIdOrError(this.jobInfo)}/unprocessedrecords`,
       responseType: 'text/csv',
-    })
+    });
 
-    logger.debug(res)
-    return res
-  }
+    this.#bulkJobUnprocessedRecords = results ?? [];
 
-  async getUnprocessedRecords(): Promise<BulkJobUnprocessedRecordsResponse<S>> {
-    const bulk = this._bulk;
-    const logger = bulk._logger;
-    const jobId = this.id;
-
-    if (!jobId) {
-      throw new Error('Job not started.');
-    }
-
-    const res = await bulk._request<BulkJobUnprocessedRecordsResponse<S>>({
-      method: 'GET',
-      path: `/${jobId}/unprocessedrecords`,
-      responseType: 'text/csv',
-    })
-
-    logger.debug(res)
-    return res
+    return this.#bulkJobUnprocessedRecords;
   }
 
   async delete(): Promise<void> {
-    const bulk = this._bulk;
-    const logger = bulk._logger;
-    const jobId = this.id;
-
-    if (!jobId) {
-      throw new Error('Job not started.');
-    }
-
-    const res = await bulk._request<void>({
+    return this.createIngestRequest<void>({
       method: 'DELETE',
-      path: `/${jobId}`,
-    })
-
-    logger.debug(res)
-    return res
+      path: `/${getJobIdOrError(this.jobInfo)}`,
+    });
   }
 
-  /**
-   * @private
-   */
-  async _changeState(state: JobStateV2) {
-    const bulk = this._bulk;
-    const logger = bulk._logger;
+  private createIngestRequest<T>(request: BulkRequest) {
+    const { path, responseType } = request;
+    const baseUrl = [
+      this.#connection.instanceUrl,
+      'services/data',
+      `v${this.#connection.version}`,
+      'jobs/ingest',
+    ].join('/');
 
-    this._jobInfo = (async () => {
-      const jobId = await this.ready();
-      const res = await bulk._request<JobInfoV2>({
-        method: 'PATCH',
-        path: `/${jobId}`,
-        body: JSON.stringify({state}),
-        headers: {'Content-Type': 'application/json; charset=utf-8'},
-        responseType: 'application/json',
-      });
-      logger.debug(res);
-      this.state = res.state;
-      return res;
-    })();
-    return this._jobInfo;
+    return new BulkApiV2(this.#connection, { responseType }).request<T>({
+      ...request,
+      url: baseUrl + path,
+    });
   }
 }
 
-class DataUpload<S extends Schema, Opr extends BulkOperation> extends Writable {
-  job: JobV2<S, Opr>;
-  id: string | undefined;
-  _bulk: BulkV2<S>;
-  _uploadStream: Serializable;
-  _downloadStream: Parsable;
-  _dataStream: Duplex;
-  _result: Promise<void> | undefined;
-  _error: Error | undefined;
+class JobDataV2<
+  S extends Schema,
+  Opr extends IngestOperation
+> extends Writable {
+  readonly #job: IngestJobV2<S, Opr>;
+  readonly #uploadStream: Serializable;
+  readonly #downloadStream: Parsable;
+  readonly #dataStream: Duplex;
+  #result: any;
 
   /**
    *
    */
-  constructor(job: JobV2<S, Opr>, id?: string) {
+  constructor(options: CreateJobDataV2Options<S, Opr>) {
     super({ objectMode: true });
-    this.job = job;
-    this._bulk = job._bulk;
 
-    // default error handler to keep the latest error
-    this.on('error', (error) => (this._error = error));
+    const createRequest = options.createRequest;
 
-    //
-    // setup data streams
-    //
+    this.#job = options.job;
+    this.#uploadStream = new Serializable();
+    this.#downloadStream = new Parsable();
+
     const converterOptions = { nullValue: '#N/A' };
-    const uploadStream = (this._uploadStream = new Serializable());
-    const uploadDataStream = uploadStream.stream('csv', converterOptions);
-    const downloadStream = (this._downloadStream = new Parsable());
-    const downloadDataStream = downloadStream.stream('csv', converterOptions);
-
-    this.on('finish', () => uploadStream.end());
-    uploadDataStream.once('readable', async () => {
-      try {
-        // ensure the job is opened in server or job id is already assigned
-        await this.job.ready();
-        // pipe upload data to batch API request stream
-        uploadDataStream.pipe(this._createRequestStream());
-      } catch (err) {
-        this.emit('error', err);
-      }
-    });
-
-    // duplex data stream, opened access to API programmers by Batch#stream()
-    this._dataStream = concatStreamsAsDuplex(
-        uploadDataStream,
-        downloadDataStream,
+    const uploadDataStream = this.#uploadStream.stream('csv', converterOptions);
+    const downloadDataStream = this.#downloadStream.stream(
+      'csv',
+      converterOptions,
     );
-  }
 
-  /**
-   * Connect batch API and create stream instance of request/response
-   *
-   * @private
-   */
-  _createRequestStream() {
-    const bulk = this._bulk;
-    const logger = bulk._logger;
-    const req = bulk._request<JobInfoResponse>({
-      method: 'PUT',
-      path: `/${this.job.id}/batches`,
-      headers: {
-        'Content-Type': 'text/csv',
-      },
-      responseType: 'application/json',
-    });
-    (async () => {
+    this.#dataStream = concatStreamsAsDuplex(
+      uploadDataStream,
+      downloadDataStream,
+    );
+
+    this.on('finish', () => this.#uploadStream.end());
+
+    uploadDataStream.once('readable', () => {
       try {
-        await req;
-        this.emit('upload', this.job.id);
+        // pipe upload data to batch API request stream
+        const req = createRequest({
+          method: 'PUT',
+          path: `/${this.#job.jobInfo?.id}/batches`,
+          headers: {
+            'Content-Type': 'text/csv',
+          },
+          responseType: 'application/json',
+        });
+
+        (async () => {
+          try {
+            const res = await req;
+            this.emit('response', res);
+          } catch (err) {
+            this.emit('error', err);
+          }
+        })();
+
+        uploadDataStream.pipe(req.stream());
       } catch (err) {
         this.emit('error', err);
       }
-    })();
-    return req.stream();
+    });
   }
 
-  /**
-   * Implementation of Writable
-   */
   _write(record_: Record, enc: string, cb: () => void) {
     const { Id, type, attributes, ...rrec } = record_;
     let record;
-    switch (this.job.operation) {
+    switch (this.#job.jobInfo.operation) {
       case 'insert':
         record = rrec;
         break;
@@ -1433,32 +1588,32 @@ class DataUpload<S extends Schema, Opr extends BulkOperation> extends Writable {
       default:
         record = { Id, ...rrec };
     }
-    this._uploadStream.write(record, enc, cb);
+    this.#uploadStream.write(record, enc, cb);
   }
 
   /**
    * Returns duplex stream which accepts CSV data input and batch result output
    */
   stream() {
-    return this._dataStream;
+    return this.#dataStream;
   }
 
   /**
    * Execute batch operation
    */
   execute(input?: string | Record[] | Readable) {
-    if (this._result) {
-      throw new Error('Data can only be uploaded to a job once.')
+    if (this.#result) {
+      throw new Error('Data can only be uploaded to a job once.');
     }
 
-    this._result = new Promise((resolve, reject) => {
-      this.once('upload', () => resolve());
+    this.#result = new Promise<void>((resolve, reject) => {
+      this.once('response', () => resolve());
       this.once('error', reject);
     });
 
     if (isObject(input) && 'pipe' in input && isFunction(input.pipe)) {
       // if input has stream.Readable interface
-      input.pipe(this._dataStream);
+      input.pipe(this.#dataStream);
     } else {
       if (Array.isArray(input)) {
         for (const record of input) {
@@ -1471,31 +1626,36 @@ class DataUpload<S extends Schema, Opr extends BulkOperation> extends Writable {
         }
         this.end();
       } else if (typeof input === 'string') {
-        this._dataStream.write(input, 'utf8');
-        this._dataStream.end();
+        this.#dataStream.write(input, 'utf8');
+        this.#dataStream.end();
       }
     }
 
     return this;
   }
 
-  run = this.execute;
-
-  exec = this.execute;
-
   /**
    * Promise/A+ interface
    * Delegate to promise, return promise instance for batch result
    */
-  then(
-      onResolved: () => void,
-      onReject: (err: any) => void,
-  ) {
-    if (!this._result) {
+  then(onResolved: () => void, onReject: (err: any) => void) {
+    if (this.#result === undefined) {
       this.execute();
     }
-    return this._result!.then(onResolved, onReject);
+    return this.#result!.then(onResolved, onReject);
   }
+}
+
+function getJobIdOrError(jobInfo: Partial<JobInfoV2> | undefined): string {
+  const jobId = jobInfo?.id;
+  if (jobId === undefined) {
+    throw new Error('No job id, maybe you need to call `job.open()` first.');
+  }
+  return jobId;
+}
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /*--------------------------------------------*/

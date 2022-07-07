@@ -28,6 +28,7 @@ import {
 } from './types';
 import { Readable } from 'stream';
 import SfDate from './date';
+import { IngestJobV2Results } from './api/bulk';
 
 /**
  *
@@ -175,20 +176,25 @@ export type QueryResponse<
   ? R | null
   : number; // QRT extends 'Count'
 
+export type BulkApiVersion = 1 | 2;
+
 export type QueryDestroyOptions = {
   allowBulk?: boolean;
   bulkThreshold?: number;
+  bulkApiVersion?: BulkApiVersion;
 };
 
 export type QueryUpdateOptions = {
   allowBulk?: boolean;
   bulkThreshold?: number;
+  bulkApiVersion?: BulkApiVersion;
 };
 
 /**
  *
  */
 const DEFAULT_BULK_THRESHOLD = 200;
+const DEFAULT_BULK_API_VERSION = 1;
 
 /**
  * Query
@@ -868,6 +874,9 @@ export class Query<
         this._conn._ensureVersion(42)
         ? DEFAULT_BULK_THRESHOLD
         : this._conn._maxRequest / 2;
+
+    const bulkApiVersion = options.bulkApiVersion ?? DEFAULT_BULK_API_VERSION;
+
     return new Promise((resolve, reject) => {
       const createBatch = () =>
         this._conn
@@ -890,7 +899,11 @@ export class Query<
           batch.write(record);
         } else {
           records.push(record);
-          if (thresholdNum >= 0 && records.length > thresholdNum) {
+          if (
+            thresholdNum >= 0 &&
+            records.length > thresholdNum &&
+            bulkApiVersion === 1
+          ) {
             // Use bulk delete instead of SObject REST API
             batch = createBatch();
             for (const record of records) {
@@ -905,10 +918,24 @@ export class Query<
           batch.end();
         } else {
           const ids = records.map((record) => record.Id as string);
-          this._conn
-            .sobject(type_)
-            .destroy(ids, { allowRecursive: true })
-            .then(resolve, reject);
+          if (records.length > thresholdNum && bulkApiVersion === 2) {
+            this._conn.bulk.v2
+              .load({
+                object: type_,
+                operation: 'delete',
+                input: records,
+              })
+              .then(
+                (allResults) =>
+                  resolve(this.mapBulkV2ResultsToSaveResults(allResults)),
+                reject,
+              );
+          } else {
+            this._conn
+              .sobject(type_)
+              .destroy(ids, { allowRecursive: true })
+              .then(resolve, reject);
+          }
         }
       };
       this.stream('record')
@@ -971,6 +998,7 @@ export class Query<
         this._conn._ensureVersion(42)
         ? DEFAULT_BULK_THRESHOLD
         : this._conn._maxRequest / 2;
+    const bulkApiVersion = options.bulkApiVersion ?? DEFAULT_BULK_API_VERSION;
     return new Promise((resolve, reject) => {
       const createBatch = () =>
         this._conn
@@ -986,7 +1014,11 @@ export class Query<
         } else {
           records.push(record as SObjectUpdateRecord<S, N>);
         }
-        if (thresholdNum >= 0 && records.length > thresholdNum) {
+        if (
+          thresholdNum >= 0 &&
+          records.length > thresholdNum &&
+          bulkApiVersion === 1
+        ) {
           // Use bulk update instead of SObject REST API
           batch = createBatch();
           for (const record of records) {
@@ -999,10 +1031,24 @@ export class Query<
         if (batch) {
           batch.end();
         } else {
-          this._conn
-            .sobject(type_)
-            .update(records, { allowRecursive: true })
-            .then(resolve, reject);
+          if (records.length > thresholdNum && bulkApiVersion === 2) {
+            this._conn.bulk.v2
+              .load({
+                object: type_,
+                operation: 'update',
+                input: records,
+              })
+              .then(
+                (allResults) =>
+                  resolve(this.mapBulkV2ResultsToSaveResults(allResults)),
+                reject,
+              );
+          } else {
+            this._conn
+              .sobject(type_)
+              .update(records, { allowRecursive: true })
+              .then(resolve, reject);
+          }
         }
       };
       this.stream('record')
@@ -1012,6 +1058,36 @@ export class Query<
         .on('end', handleEnd)
         .on('error', reject);
     });
+  }
+
+  private mapBulkV2ResultsToSaveResults(
+    bulkJobAllResults: IngestJobV2Results<S>,
+  ): SaveResult[] {
+    const successSaveResults: SaveResult[] = bulkJobAllResults.successfulResults.map(
+      (r) => {
+        const saveResult: SaveResult = {
+          id: r.sf__Id,
+          success: true,
+          errors: [],
+        };
+        return saveResult;
+      },
+    );
+
+    const failedSaveResults = bulkJobAllResults.failedResults.map((r) => {
+      const saveResult: SaveResult = {
+        success: false,
+        errors: [
+          {
+            errorCode: r.sf__Error,
+            message: r.sf__Error,
+          },
+        ],
+      };
+      return saveResult;
+    });
+
+    return [...successSaveResults, ...failedSaveResults];
   }
 }
 
