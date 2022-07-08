@@ -360,18 +360,19 @@ export class MetadataApi<S extends Schema> {
         body: messageBody,
       };
       const requestOptions = { headers: 'json' };
-      response = await this._conn.request(requestInfo, requestOptions);
+      // This is the deploy ID of the deployRecentValidation response, not
+      // the already validated deploy ID (i.e., validateddeployrequestid).
+      // REST returns an object with an id property, SOAP returns the id as a string directly.
+      response = (
+        await this._conn.request<{ id: string }>(requestInfo, requestOptions)
+      ).id;
     } else {
       response = await this._invoke('deployRecentValidation', {
         validationId: id,
       });
     }
-    // This is the deploy ID of the deployRecentValidation response, not
-    // the already validated deploy ID (i.e., validateddeployrequestid).
-    // REST returns an object with an id property, SOAP returns the id as a string directly.
-    return typeof response === 'string'
-      ? response
-      : (response as { id: string }).id;
+
+    return response;
   }
 
   /**
