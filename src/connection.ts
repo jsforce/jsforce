@@ -62,7 +62,7 @@ import Metadata from './api/metadata';
 import SoapApi from './api/soap';
 import Streaming from './api/streaming';
 import Tooling from './api/tooling';
-import JwtOAuth2, { JwtOAuth2Config } from './jwtOAuth2';
+import { JwtOAuth2Config, JwtOAuth2 } from './jwtOAuth2';
 
 /**
  * type definitions

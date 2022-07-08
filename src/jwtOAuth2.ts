@@ -9,7 +9,7 @@ export type JwtOAuth2Config = OAuth2Config & {
   username?: string;
 };
 
-export default class JwtOAuth2 extends OAuth2 {
+export class JwtOAuth2 extends OAuth2 {
   constructor(config: OAuth2Config) {
     super(config);
   }
