@@ -342,17 +342,17 @@ export class MetadataApi<S extends Schema> {
    *
    * @param options.id = the deploy ID that's been validated already from a previous checkOnly deploy request
    * @param options.rest = a boolean whether or not to use the REST API
+   * @returns the deploy ID of the recent validation request
    */
   public async deployRecentValidation(options: {
     id: string;
     rest?: boolean;
   }): Promise<string> {
-    const rest = options.rest;
-    delete options.rest;
+    const { id, rest } = options;
     let response: string;
     if (rest) {
       const messageBody = JSON.stringify({
-        validatedDeployRequestId: options.id,
+        validatedDeployRequestId: id,
       });
       const requestInfo: HttpRequest = {
         method: 'POST',
@@ -363,7 +363,7 @@ export class MetadataApi<S extends Schema> {
       response = await this._conn.request(requestInfo, requestOptions);
     } else {
       response = await this._invoke('deployRecentValidation', {
-        validationId: options.id,
+        validationId: id,
       });
     }
     // This is the deploy ID of the deployRecentValidation response, not
