@@ -338,6 +338,44 @@ export class MetadataApi<S extends Schema> {
   }
 
   /**
+   * Will deploy a recently validated deploy request
+   *
+   * @param options.id = the deploy ID that's been validated already from a previous checkOnly deploy request
+   * @param options.rest = a boolean whether or not to use the REST API
+   * @returns the deploy ID of the recent validation request
+   */
+  public async deployRecentValidation(options: {
+    id: string;
+    rest?: boolean;
+  }): Promise<string> {
+    const { id, rest } = options;
+    let response: string;
+    if (rest) {
+      const messageBody = JSON.stringify({
+        validatedDeployRequestId: id,
+      });
+      const requestInfo: HttpRequest = {
+        method: 'POST',
+        url: '/metadata/deployRequest',
+        body: messageBody,
+      };
+      const requestOptions = { headers: 'json' };
+      // This is the deploy ID of the deployRecentValidation response, not
+      // the already validated deploy ID (i.e., validateddeployrequestid).
+      // REST returns an object with an id property, SOAP returns the id as a string directly.
+      response = (
+        await this._conn.request<{ id: string }>(requestInfo, requestOptions)
+      ).id;
+    } else {
+      response = await this._invoke('deployRecentValidation', {
+        validationId: id,
+      });
+    }
+
+    return response;
+  }
+
+  /**
    * Deploy components into an organization using zipped file representations
    * using the REST Metadata API instead of SOAP
    */
