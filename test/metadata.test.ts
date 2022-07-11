@@ -229,7 +229,7 @@ describe('deployRecentValidation', () => {
         path.join(__dirname, '/data/MyPackage.zip'),
       );
       const deploy = await conn.metadata
-        .deployRest(zipBuffer, {
+        .deploy(zipBuffer, {
           testLevel: 'RunAllTestsInOrg',
           checkOnly: true,
         })
