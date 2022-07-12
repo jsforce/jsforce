@@ -1,5 +1,9 @@
 # Mixmax changelog (since forking)
 
+## 1.8.5
+
+* bump csv-parse to 4.16.3
+
 ## 1.8.4
 
 * Bugfix required for Salesforce modules `queryBetweenDateRange` function: https://github.com/mixmaxhq/jsforce/pull/82
