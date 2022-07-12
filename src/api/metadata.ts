@@ -354,10 +354,14 @@ export class MetadataApi<S extends Schema> {
       const messageBody = JSON.stringify({
         validatedDeployRequestId: id,
       });
+
       const requestInfo: HttpRequest = {
         method: 'POST',
-        url: '/metadata/deployRequest',
+        url: `${this._conn._baseUrl()}/metadata/deployRequest`,
         body: messageBody,
+        headers: {
+          'content-type': 'application/json',
+        },
       };
       const requestOptions = { headers: 'json' };
       // This is the deploy ID of the deployRecentValidation response, not
