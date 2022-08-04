@@ -919,8 +919,8 @@ export class Query<
         } else {
           const ids = records.map((record) => record.Id as string);
           if (records.length > thresholdNum && bulkApiVersion === 2) {
-            this._conn.bulk.v2
-              .load({
+            this._conn.bulk2
+              .loadAndWaitForResults({
                 object: type_,
                 operation: 'delete',
                 input: records,
@@ -1032,8 +1032,8 @@ export class Query<
           batch.end();
         } else {
           if (records.length > thresholdNum && bulkApiVersion === 2) {
-            this._conn.bulk.v2
-              .load({
+            this._conn.bulk2
+              .loadAndWaitForResults({
                 object: type_,
                 operation: 'update',
                 input: records,

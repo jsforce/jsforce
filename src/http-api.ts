@@ -189,7 +189,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
    * @protected
    */
   async getResponseBody(response: HttpResponse) {
-    if (response.statusCode === 204 || response.statusCode === 201) {
+    if (response.statusCode === 204) {
       // No Content
       return this._noContentResponse;
     }

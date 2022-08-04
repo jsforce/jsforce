@@ -9,7 +9,7 @@ import { isNodeJS } from './helper/env';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();
-conn.bulk.v2.pollTimeout = 40 * 1000; // adjust poll timeout to test timeout.
+conn.bulk2.pollTimeout = 40 * 1000; // adjust poll timeout to test timeout.
 
 /**
  *
@@ -31,7 +31,7 @@ it('should bulk insert records and return result status', async () => {
     successfulResults,
     failedResults,
     unprocessedRecords,
-  } = await conn.bulk.v2.load({
+  } = await conn.bulk2.loadAndWaitForResults({
     object: 'Account',
     operation: 'insert',
     input: records,
@@ -66,7 +66,7 @@ it('should bulk update and return updated status', async () => {
     Name: `${rec.Name} (Updated)`,
   }));
 
-  const { successfulResults } = await conn.bulk.v2.load({
+  const { successfulResults } = await conn.bulk2.loadAndWaitForResults({
     object: 'Account',
     operation: 'update',
     input: updatedRecords,
@@ -84,7 +84,7 @@ it('should bulk update with empty input and not raise client input error', async
     successfulResults,
     failedResults,
     unprocessedRecords,
-  } = await conn.bulk.v2.load({
+  } = await conn.bulk2.loadAndWaitForResults({
     operation: 'insert',
     object: 'Account',
     input: [],
@@ -102,7 +102,7 @@ it('should bulk delete and return deleted status', async () => {
     .find({ Name: { $like: 'Bulk Account%' } })
     .execute();
 
-  const { successfulResults } = await conn.bulk.v2.load({
+  const { successfulResults } = await conn.bulk2.loadAndWaitForResults({
     object: 'Account',
     operation: 'delete',
     input: records,
@@ -120,7 +120,7 @@ it('should bulk delete with empty input and not raise client input error', async
     successfulResults,
     failedResults,
     unprocessedRecords,
-  } = await conn.bulk.v2.load({
+  } = await conn.bulk2.loadAndWaitForResults({
     operation: 'delete',
     object: 'Account',
     input: [],
@@ -139,7 +139,7 @@ if (isNodeJS()) {
       path.join(__dirname, 'data/Account.csv'),
     );
 
-    const { successfulResults } = await conn.bulk.v2.load({
+    const { successfulResults } = await conn.bulk2.loadAndWaitForResults({
       object: 'Account',
       operation: 'insert',
       input: csvStream,
@@ -164,7 +164,7 @@ if (isNodeJS()) {
       );
     });
     const fstream = fs.createReadStream(deleteFileName);
-    const { successfulResults } = await conn.bulk.v2.load({
+    const { successfulResults } = await conn.bulk2.loadAndWaitForResults({
       object: 'Account',
       operation: 'delete',
       input: fstream,
@@ -178,7 +178,7 @@ if (isNodeJS()) {
 
   it('should bulk query and get records', async () => {
     const count = await conn.sobject(config.bigTable).count({});
-    const records = await conn.bulk.v2.query(
+    const records = await conn.bulk2.query(
       `SELECT Id, Name FROM ${config.bigTable}`,
     );
     assert.ok(Array.isArray(records) && records.length === count);
@@ -194,7 +194,7 @@ it('should call bulk api from invalid session conn with refresh fn, and return r
   const accounts = Array.from(Array(100), (a, i) => ({
     Name: `Session Expiry Test #${i}`,
   }));
-  const bulkInsert = await conn.bulk.v2.load({
+  const bulkInsert = await conn.bulk2.loadAndWaitForResults({
     operation: 'insert',
     object: 'Account',
     input: accounts,
@@ -213,7 +213,7 @@ it('should call bulk api from invalid session conn with refresh fn, and return r
       setTimeout(() => callback(null, conn.accessToken ?? undefined), 500);
     },
   });
-  const bulkDelete = await conn2.bulk.v2.load({
+  const bulkDelete = await conn2.bulk2.loadAndWaitForResults({
     operation: 'delete',
     object: 'Account',
     input: deleteRecords,
@@ -236,7 +236,7 @@ it('should call bulk api from invalid session conn without refresh fn, and raise
   });
   const records = [{ Name: 'Impossible Bulk Account #1' }];
   try {
-    await conn3.bulk.v2.load({
+    await conn3.bulk2.loadAndWaitForResults({
       object: 'Account',
       operation: 'insert',
       input: records,
@@ -258,7 +258,7 @@ it('should bulk update using Query#update and return updated status', async () =
     BillingState: 'CA',
     NumberOfEmployees: 300 * (i + 1),
   }));
-  await conn.bulk.v2.load({
+  await conn.bulk2.loadAndWaitForResults({
     object: 'Account',
     operation: 'insert',
     input: accounts,
@@ -347,7 +347,7 @@ it('should bulk update using Query#update with bulkThreshold modified and return
     BillingState: 'CA',
     NumberOfEmployees: 300 * (i + 1),
   }));
-  await conn.bulk.v2.load({
+  await conn.bulk2.loadAndWaitForResults({
     object: 'Account',
     operation: 'insert',
     input: records,

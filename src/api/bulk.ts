@@ -67,7 +67,7 @@ export type JobInfoV2 = {
     | 'PIPE'
     | 'SEMICOLON'
     | 'TAB';
-  concurrencyMode: string;
+  concurrencyMode: 'Parallel';
   contentType: 'CSV';
   contentUrl: string;
   createdById: string;
@@ -175,10 +175,8 @@ export type IngestJobV2Results<S extends Schema> = {
   unprocessedRecords: IngestJobV2UnprocessedRecords<S>;
 };
 
-type NewIngestJobOptions = Pick<
-  JobInfoV2,
-  'object' | 'operation' | 'assignmentRuleId' | 'externalIdFieldName'
->;
+type NewIngestJobOptions = Required<Pick<JobInfoV2, 'object' | 'operation'>> &
+  Partial<Pick<JobInfoV2, 'assignmentRuleId' | 'externalIdFieldName'>>;
 
 type ExistingIngestJobOptions = Pick<JobInfoV2, 'id'>;
 
@@ -879,15 +877,12 @@ export class Bulk<S extends Schema> {
    */
   pollTimeout = 10000;
 
-  readonly v2: BulkV2<S>;
-
   /**
    *
    */
   constructor(conn: Connection<S>) {
     this._conn = conn;
     this._logger = conn._logger;
-    this.v2 = new BulkV2<S>(conn);
   }
 
   /**
@@ -1051,21 +1046,22 @@ export class BulkV2<S extends Schema> {
   /**
    * Create, upload, and start bulkload job
    */
-  async load(
-    options: NewIngestJobOptions & {
-      input: Record[] | Readable | string;
-    },
+  async loadAndWaitForResults(
+    options: NewIngestJobOptions &
+      Partial<BulkV2PollingOptions> & {
+        input: Record[] | Readable | string;
+      },
   ): Promise<IngestJobV2Results<S>> {
     const job = this.createJob(options);
     try {
       await job.open();
       await job.uploadData(options.input);
       await job.close();
-      await job.poll();
+      await job.poll(options.pollInterval, options.pollTimeout);
       return await job.getAllResults();
     } catch (err) {
       if (err.name !== 'JobPollingTimeoutError') {
-        // fires off one last attempt to cleanup and ignores the result | error
+        // fires off one last attempt to clean up and ignores the result | error
         job.delete().catch((ignored) => ignored);
       }
       throw err;
@@ -1075,7 +1071,10 @@ export class BulkV2<S extends Schema> {
   /**
    * Execute bulk query and get record stream
    */
-  async query(soql: string): Promise<Record[]> {
+  async query(
+    soql: string,
+    options?: Partial<BulkV2PollingOptions>,
+  ): Promise<Record[]> {
     const queryJob = new QueryJobV2({
       connection: this.#connection,
       operation: 'query',
@@ -1084,11 +1083,11 @@ export class BulkV2<S extends Schema> {
     });
     try {
       await queryJob.open();
-      await queryJob.poll();
+      await queryJob.poll(options?.pollInterval, options?.pollTimeout);
       return await queryJob.getResults();
     } catch (err) {
       if (err.name !== 'JobPollingTimeoutError') {
-        // fires off one last attempt to cleanup and ignores the result | error
+        // fires off one last attempt to clean up and ignores the result | error
         queryJob.delete().catch((ignored) => ignored);
       }
       throw err;
@@ -1663,5 +1662,6 @@ function delay(ms: number): Promise<void> {
  * Register hook in connection instantiation for dynamically adding this API module features
  */
 registerModule('bulk', (conn) => new Bulk(conn));
+registerModule('bulk2', (conn) => new BulkV2(conn));
 
 export default Bulk;
