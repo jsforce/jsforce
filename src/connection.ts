@@ -56,7 +56,7 @@ import Process from './process';
 import { formatDate } from './util/formatter';
 import Analytics from './api/analytics';
 import Apex from './api/apex';
-import Bulk from './api/bulk';
+import { Bulk, BulkV2 } from './api/bulk';
 import Chatter from './api/chatter';
 import Metadata from './api/metadata';
 import SoapApi from './api/soap';
@@ -278,6 +278,10 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
 
   get bulk(): Bulk<S> {
     return raiseNoModuleError('bulk');
+  }
+
+  get bulk2(): BulkV2<S> {
+    return raiseNoModuleError('bulk2');
   }
 
   get chatter(): Chatter<S> {
