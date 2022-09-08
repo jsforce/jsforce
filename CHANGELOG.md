@@ -1,5 +1,9 @@
 # Mixmax changelog (since forking)
 
+## 1.8.6
+
+* bump csv-parse to 4.16.3
+
 ## 1.8.5
 
 * bump csv-parse to 4.16.3
