@@ -10003,7 +10003,8 @@ function normalizeApiHost(apiHost) {
 
 Object(_request__WEBPACK_IMPORTED_MODULE_24__[/* setDefaults */ "b"])({
   httpProxy: (_ref = (_process$env$HTTPS_PR = process.env.HTTPS_PROXY) !== null && _process$env$HTTPS_PR !== void 0 ? _process$env$HTTPS_PR : process.env.HTTP_PROXY) !== null && _ref !== void 0 ? _ref : undefined,
-  timeout: process.env.HTTP_TIMEOUT ? _babel_runtime_corejs3_core_js_stable_parse_int__WEBPACK_IMPORTED_MODULE_23___default()(process.env.HTTP_TIMEOUT, 10) : undefined
+  timeout: process.env.HTTP_TIMEOUT ? _babel_runtime_corejs3_core_js_stable_parse_int__WEBPACK_IMPORTED_MODULE_23___default()(process.env.HTTP_TIMEOUT, 10) : undefined,
+  followRedirect: true
 });
 var baseUrl = typeof window !== 'undefined' && window.location && window.location.host ? "https://".concat(normalizeApiHost(window.location.host)) : process.env.LOCATION_BASE_URL || '';
 /**
