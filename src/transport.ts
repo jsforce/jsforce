@@ -25,6 +25,7 @@ setDefaults({
   timeout: process.env.HTTP_TIMEOUT
     ? parseInt(process.env.HTTP_TIMEOUT, 10)
     : undefined,
+  followRedirect: true,
 });
 
 const baseUrl =
