@@ -93,7 +93,7 @@
     "power-assert": "^1.6.0",
     "puppeteer": "^1.18.1",
     "require-swapper": "^0.1.7",
-    "testem": "^2.8.2",
+    "testem": "^3.9.0",
     "through2": "^2.0.3",
     "utf-8-validate": "^5.0.1",
     "vinyl-buffer": "^1.0.1",
