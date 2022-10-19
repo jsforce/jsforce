@@ -18,6 +18,7 @@ import {
   HttpResponse,
   Record,
   Schema,
+  Optional,
 } from '../types';
 import { isFunction, isObject } from '../util/function';
 
@@ -1100,9 +1101,11 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
   readonly #operation: QueryOperation;
   readonly #query: string;
   readonly #pollingOptions: BulkV2PollingOptions;
-  #queryResults: Record[] | undefined;
+  #queryResults: Record[][] | undefined;
   #error: Error | undefined;
   jobInfo: Partial<JobInfoV2> | undefined;
+  locator: Optional<string>;
+  finished: boolean = false;
 
   constructor(options: CreateQueryJobV2Options<S>) {
     super();
@@ -1213,25 +1216,46 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     }
   }
 
-  async getResults(): Promise<Record[]> {
-    try {
-      if (this.#queryResults) {
-        return this.#queryResults;
-      }
+  request<R = unknown>(
+    request: string | HttpRequest,
+    options: Object = {},
+  ): StreamPromise<R> {
+    // if request is simple string, regard it as url in GET method
+    let request_: HttpRequest =
+      typeof request === 'string' ? { method: 'GET', url: request } : request;
 
-      const results = await this.createQueryRequest<Record[] | undefined>({
-        method: 'GET',
-        path: `/${getJobIdOrError(this.jobInfo)}/results`,
-        responseType: 'text/csv',
-      });
+    const httpApi = new HttpApi(this.#connection, options);
+    httpApi.on('response', (response: HttpResponse) => {
+      this.locator = response.headers['sforce-locator']
+    })
+    return httpApi.request<R>(request_);
+  }
 
-      this.#queryResults = results ?? [];
+  private getResultsUrl() {
+    const url = `${this.#connection.instanceUrl}/services/data/v${this.#connection.version}/jobs/query/${getJobIdOrError(this.jobInfo)}/results`
 
-      return this.#queryResults;
-    } catch (err) {
-      this.emit('error', err);
-      throw err;
+    return this.locator ? `${url}?locator=${this.locator}` : url
+  }
+
+  async getResults(): Promise<Record[][]> {
+    if (this.finished && this.#queryResults) {
+      return this.#queryResults
     }
+
+    this.#queryResults = []
+
+    while (this.locator !== 'null') {
+      this.#queryResults.concat(await this.request<Record[][]>({
+        method: 'GET',
+        url: this.getResultsUrl(),
+        headers: {
+          'Accept': 'text/csv',
+        }
+      }))
+    }
+    this.finished = true
+
+    return this.#queryResults
   }
 
   async delete(): Promise<void> {
