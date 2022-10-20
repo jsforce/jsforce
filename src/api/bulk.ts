@@ -1101,7 +1101,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
   readonly #operation: QueryOperation;
   readonly #query: string;
   readonly #pollingOptions: BulkV2PollingOptions;
-  #queryResults: Record[][] | undefined;
+  #queryResults: Record[] | undefined;
   #error: Error | undefined;
   jobInfo: Partial<JobInfoV2> | undefined;
   locator: Optional<string>;
@@ -1216,7 +1216,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     }
   }
 
-  request<R = unknown>(
+  private request<R = unknown>(
     request: string | HttpRequest,
     options: Object = {},
   ): StreamPromise<R> {
@@ -1237,7 +1237,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     return this.locator ? `${url}?locator=${this.locator}` : url
   }
 
-  async getResults(): Promise<Record[][]> {
+  async getResults(): Promise<Record[]> {
     if (this.finished && this.#queryResults) {
       return this.#queryResults
     }
@@ -1245,13 +1245,15 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     this.#queryResults = []
 
     while (this.locator !== 'null') {
-      this.#queryResults.concat(await this.request<Record[][]>({
+      const nextResults = await this.request<Record[]>({
         method: 'GET',
         url: this.getResultsUrl(),
         headers: {
           'Accept': 'text/csv',
         }
-      }))
+      })
+
+      this.#queryResults = this.#queryResults.concat(nextResults)
     }
     this.finished = true
 
