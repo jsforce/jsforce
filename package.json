@@ -93,7 +93,7 @@
     "https-proxy-agent": "^5.0.0",
     "inquirer": "^7.0.0",
     "multistream": "^3.1.0",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^3.2.10",
     "open": "^7.0.0",
     "regenerator-runtime": "^0.13.3",
     "strip-ansi": "^6.0.0",
