@@ -2,7 +2,7 @@ version: 2.1
 executors:
   node10:
     docker:
-      - image: circleci/node:14.20.0-browsers
+      - image: circleci/node:14.21.0-browsers
 jobs:
   test_node:
     executor: node10
