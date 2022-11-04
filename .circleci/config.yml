@@ -5,7 +5,7 @@ executors:
       - image: cimg/node:14.21.0-browsers
 jobs:
   test_node:
-    executor: node10
+    executor: node14
     steps:
       - checkout
       - restore_cache:
@@ -28,7 +28,7 @@ jobs:
           command: |
             npm run test:node
   test_browser:
-    executor: node10
+    executor: node14
     steps:
       - checkout
       - restore_cache:
