@@ -1,6 +1,6 @@
 version: 2.1
 executors:
-  node10:
+  node14:
     docker:
       - image: cimg/node:14.21.0-browsers
 jobs:
