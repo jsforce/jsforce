@@ -89,7 +89,7 @@ async function startFetchRequest(
     return;
   }
   emitter.emit('response', response);
-  res.body.pipe(output);
+  res.body?.pipe(output);
 }
 
 /**

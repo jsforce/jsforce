@@ -1,11 +1,15 @@
 version: 2.1
+
+orbs:
+  browser-tools: circleci/browser-tools@1.4.0
+
 executors:
-  node10:
+  node14:
     docker:
-      - image: circleci/node:10.16.0-browsers
+      - image: cimg/node:14.21.0-browsers
 jobs:
   test_node:
-    executor: node10
+    executor: node14
     steps:
       - checkout
       - restore_cache:
@@ -28,9 +32,10 @@ jobs:
           command: |
             npm run test:node
   test_browser:
-    executor: node10
+    executor: node14
     steps:
       - checkout
+      - browser-tools/install-browser-tools
       - restore_cache:
           key: jsforce-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
       - run:

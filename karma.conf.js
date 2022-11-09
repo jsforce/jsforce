@@ -5,6 +5,7 @@ const webpackConfig = require('./webpack.config.test');
 // Set BABEL_ENV to use proper preset config
 process.env.NODE_ENV = 'test';
 process.env.BABEL_ENV = 'test';
+process.env.CHROME_BIN = '/usr/bin/google-chrome';
 
 module.exports = function (config) {
   config.set({
