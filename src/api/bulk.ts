@@ -446,7 +446,7 @@ export class Job<
 
     this._jobInfo = (async () => {
       const jobId = await this.ready();
-      const body = ` 
+      const body = `
 <?xml version="1.0" encoding="UTF-8"?>
   <jobInfo xmlns="http://www.force.com/2009/06/asyncapi/dataload">
   <state>${state}</state>
@@ -1226,38 +1226,40 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
 
     const httpApi = new HttpApi(this.#connection, options);
     httpApi.on('response', (response: HttpResponse) => {
-      this.locator = response.headers['sforce-locator']
-    })
+      this.locator = response.headers['sforce-locator'];
+    });
     return httpApi.request<R>(request_);
   }
 
   private getResultsUrl() {
-    const url = `${this.#connection.instanceUrl}/services/data/v${this.#connection.version}/jobs/query/${getJobIdOrError(this.jobInfo)}/results`
+    const url = `${this.#connection.instanceUrl}/services/data/v${
+      this.#connection.version
+    }/jobs/query/${getJobIdOrError(this.jobInfo)}/results`;
 
-    return this.locator ? `${url}?locator=${this.locator}` : url
+    return this.locator ? `${url}?locator=${this.locator}` : url;
   }
 
   async getResults(): Promise<Record[]> {
     if (this.finished && this.#queryResults) {
-      return this.#queryResults
+      return this.#queryResults;
     }
 
-    this.#queryResults = []
+    this.#queryResults = [];
 
     while (this.locator !== 'null') {
       const nextResults = await this.request<Record[]>({
         method: 'GET',
         url: this.getResultsUrl(),
         headers: {
-          'Accept': 'text/csv',
-        }
-      })
+          Accept: 'text/csv',
+        },
+      });
 
-      this.#queryResults = this.#queryResults.concat(nextResults)
+      this.#queryResults = this.#queryResults.concat(nextResults);
     }
-    this.finished = true
+    this.finished = true;
 
-    return this.#queryResults
+    return this.#queryResults;
   }
 
   async delete(): Promise<void> {
