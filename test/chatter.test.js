@@ -208,6 +208,19 @@ describe("chatter", function() {
       }.check(done));
     });
 
+    it("should update a comment post", function(done) {
+      conn.chatter.resource(feedElementUrl).update({
+        body: {
+          messageSegments: [{
+            type: 'Text',
+            text: 'This is an updated comment #1'
+          }]
+        }
+      }, function(err, result) {
+        if (err) { throw err; }
+      }.check(done));
+    });
+
     after(function(done) {
       conn.chatter.resource(feedElementUrl).delete(function(err, result) {
         if (err) { throw err; }

@@ -30,6 +30,23 @@ describe("soql-builder", function() {
     });
   });
 
+  describe("Query with multiple conditions on a single field", function() {
+    var soql = SOQLBuilder.createSOQL({
+      fields: [ "Id" ],
+      table: "Opportunity",
+      conditions: { CloseDate: { $gte: '2020-02-25', $lt: '2020-02-26' } },
+      limit : 10,
+      offset : 20
+    });
+
+    it("should include all conditions", function() {
+      assert.ok(soql ===
+        "SELECT Id FROM Opportunity " +
+        "WHERE CloseDate >= '2020-02-25' AND CloseDate < '2020-02-26' "+
+        "LIMIT 10 OFFSET 20"
+      );
+    })
+  });
   /**
    *
    */

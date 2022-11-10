@@ -30,6 +30,17 @@ describe("connection-meta", function() {
    *
    */
   describe("describe Account", function() {
+    it("should return undefined when not modified recently enough", function(done) {
+      var options = {
+        type: 'Account',
+        ifModifiedSince: new Date().toUTCString()
+      };
+      conn.describe(options, function(err, meta) {
+        if (err) { throw err; }
+        assert.ok(meta === undefined);
+      }.check(done));
+    });
+
     it("should return metadata information", function(done) {
       conn.sobject('Account').describe(function(err, meta) {
         if (err) { throw err; }
@@ -45,6 +56,110 @@ describe("connection-meta", function() {
           assert.ok(meta.name === "Account");
           assert.ok(_.isArray(meta.fields));
         }.check(done));
+      });
+    });
+  });
+
+  /**
+   *
+   */
+  describe("connection-batch-meta", function () {
+    this.timeout(40000); // set timeout to 40 sec.
+
+    var conn = testEnv.createConnection();
+
+    /**
+     *
+     */
+    before(function (done) {
+      this.timeout(600000); // set timeout to 10 min.
+      testEnv.establishConnection(conn, done);
+    });
+
+    /**
+     *
+     */
+    describe("batch describe", function () {
+      it("should return metadata information", function (done) {
+        conn.batchDescribe(
+          { types: ['Account', 'Contact'] },
+          function (err, meta) {
+            if (err) {
+              throw err;
+            }
+            assert.ok(_.isArray(meta));
+            assert.ok(meta[0].name === "Account");
+            assert.ok(meta[1].name === "Contact");
+          }.check(done)
+        );
+      });
+
+      it("should return first 25 results from large array of types when not autofetch", function (done) {
+        conn.describeGlobal(function(err, res) {
+          var types = res.sobjects.map(function (sobject) { return sobject.name; });
+          assert.ok(types.length > 30);
+          var typesToFetch = types.slice(0, 30);
+          conn.batchDescribe({types: typesToFetch, autofetch: false}, function(err, meta) {
+            if (err) {
+               throw err;
+            }
+            assert.ok(_.isArray(meta));
+            assert.ok(meta.length === 25);
+            meta.forEach(function (sobject, index) {
+              assert(sobject.name === typesToFetch[index]);
+            });
+          }.check(done));
+        });
+      });
+  
+      it("should return all results from large array of types when autofetch", function (done) {
+        conn.describeGlobal(function(err, res) {
+          var types = res.sobjects.map(function (sobject) { return sobject.name; });
+          assert.ok(types.length > 30);
+          var typesToFetch = types.slice(0, 30);
+          conn.batchDescribe({types: typesToFetch, autofetch: true}, function(err, meta) {
+            if (err) {
+               throw err;
+            }
+            assert.ok(_.isArray(meta));
+            assert.ok(meta.length === 30);
+            meta.forEach(function (sobject, index) {
+              assert(sobject.name === typesToFetch[index]);
+            });
+          }.check(done));
+        });
+      });
+  
+      it("should return all results from large array of types when multiple batches of requests are made", function (done) {
+        conn.describeGlobal(function(err, res) {
+          var types = res.sobjects.map(function (sobject) { return sobject.name; });
+          assert.ok(types.length > 60);
+          var typesToFetch = types.slice(0, 60);
+          conn.batchDescribe({types: typesToFetch, autofetch: true, maxConcurrentRequests: 2}, function(err, meta) {
+            if (err) {
+               throw err;
+            }
+            assert.ok(_.isArray(meta));
+            assert.ok(meta.length === 60);
+            meta.forEach(function (sobject, index) {
+              assert(sobject.name === typesToFetch[index]);
+            });
+          }.check(done));
+        });
+      });
+  
+      describe("then describe cached Contact", function () {
+        it("should return metadata information", function (done) {
+          conn.sobject("Contact").describe$(
+            function (err, meta) {
+              if (err) {
+                throw err;
+              }
+              assert.ok(meta.name === "Contact");
+              assert.ok(_.isArray(meta.fields));
+            }.check(done)
+          );
+        });
       });
     });
   });
