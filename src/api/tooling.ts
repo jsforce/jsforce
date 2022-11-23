@@ -181,6 +181,7 @@ export type CompletionsResult = {
 const {
   query,
   queryMore,
+    _ensureVersion,
   create,
   _createSingle,
   _createMany,
@@ -212,6 +213,10 @@ const describeCacheKey = (type?: string) =>
 export class Tooling<S extends Schema> {
   _conn: Connection<S>;
 
+    get version(): string {
+        return this._conn.version;
+    }
+
   /**
    * Execute query by using SOQL
    */
@@ -221,6 +226,8 @@ export class Tooling<S extends Schema> {
    * Query next record set by using query locator
    */
   queryMore: Connection<S>['queryMore'] = queryMore;
+
+    _ensureVersion: Connection<S>['_ensureVersion'] = _ensureVersion;
 
   /**
    * Create records
