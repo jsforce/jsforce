@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="686f2631-f3cf-4faf-a5d3-d52e75817ced" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/lib/api/metadata.js" beforeDir="false" afterPath="$PROJECT_DIR$/lib/api/metadata.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,7 +48,7 @@
       <updated>1670834321564</updated>
       <workItem from="1670834322806" duration="8812000" />
       <workItem from="1671351779744" duration="22173000" />
-      <workItem from="1672142122663" duration="7554000" />
+      <workItem from="1672142122663" duration="8347000" />
     </task>
     <servers />
   </component>
