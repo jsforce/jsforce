@@ -219,6 +219,14 @@ export class HttpApi<S extends Schema> extends EventEmitter {
   }
 
   /**
+   * Detect if error is recoverable
+   * @protected
+   */
+  isRecoverable(response) {
+    return !(response.body.includes("INVALID_SESSION_ID") && response.body.includes("This session is not valid for use with the REST API"));
+  }
+  
+  /**
    * Detect error response
    * @protected
    */
