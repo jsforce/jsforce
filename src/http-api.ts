@@ -113,7 +113,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
         this.emit('response', response);
         // Refresh token if session has been expired and requires authentication
         // when session refresh delegate is available
-        if (this.isSessionExpired(response) && refreshDelegate) {
+        if (this.isSessionExpired(response) && refreshDelegate && this.isRecoverable(response)) {
           await refreshDelegate.refresh(requestTime);
           return this.request(request);
         }
@@ -222,7 +222,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
    * Detect if error is recoverable
    * @protected
    */
-  isRecoverable(response) {
+  isRecoverable(response: HttpResponse) {
     return !(response.body.includes("INVALID_SESSION_ID") && response.body.includes("This session is not valid for use with the REST API"));
   }
   

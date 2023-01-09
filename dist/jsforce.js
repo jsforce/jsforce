@@ -228,7 +228,7 @@ module.exports = _createClass;
 
 "use strict";
 
-var global = __webpack_require__(39);
+var global = __webpack_require__(40);
 var getOwnPropertyDescriptor = __webpack_require__(125).f;
 var isForced = __webpack_require__(299);
 var path = __webpack_require__(28);
@@ -540,7 +540,7 @@ module.exports = __webpack_require__(536);
 /* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var _typeof = __webpack_require__(42);
+var _typeof = __webpack_require__(43);
 
 var assertThisInitialized = __webpack_require__(2);
 
@@ -3281,6 +3281,26 @@ module.exports = true;
 /* 38 */
 /***/ (function(module, exports) {
 
+function _classPrivateFieldGet(receiver, privateMap) {
+  var descriptor = privateMap.get(receiver);
+
+  if (!descriptor) {
+    throw new TypeError("attempted to get private field on non-instance");
+  }
+
+  if (descriptor.get) {
+    return descriptor.get.call(receiver);
+  }
+
+  return descriptor.value;
+}
+
+module.exports = _classPrivateFieldGet;
+
+/***/ }),
+/* 39 */
+/***/ (function(module, exports) {
+
 module.exports = function (exec) {
   try {
     return !!exec();
@@ -3291,7 +3311,7 @@ module.exports = function (exec) {
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {var check = function (it) {
@@ -3311,10 +3331,10 @@ module.exports =
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(35)))
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global = __webpack_require__(39);
+var global = __webpack_require__(40);
 var shared = __webpack_require__(210);
 var has = __webpack_require__(63);
 var uid = __webpack_require__(166);
@@ -3334,12 +3354,12 @@ module.exports = function (name) {
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var anObject = __webpack_require__(27);
 var isArrayIteratorMethod = __webpack_require__(325);
-var toLength = __webpack_require__(114);
+var toLength = __webpack_require__(115);
 var bind = __webpack_require__(59);
 var getIteratorMethod = __webpack_require__(171);
 var iteratorClose = __webpack_require__(324);
@@ -3398,7 +3418,7 @@ module.exports = function (iterable, unboundFunction, options) {
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _Symbol$iterator = __webpack_require__(491);
@@ -3422,26 +3442,6 @@ function _typeof(obj) {
 }
 
 module.exports = _typeof;
-
-/***/ }),
-/* 43 */
-/***/ (function(module, exports) {
-
-function _classPrivateFieldGet(receiver, privateMap) {
-  var descriptor = privateMap.get(receiver);
-
-  if (!descriptor) {
-    throw new TypeError("attempted to get private field on non-instance");
-  }
-
-  if (descriptor.get) {
-    return descriptor.get.call(receiver);
-  }
-
-  return descriptor.value;
-}
-
-module.exports = _classPrivateFieldGet;
 
 /***/ }),
 /* 44 */
@@ -4351,7 +4351,7 @@ module.exports = __webpack_require__(611);
 /* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var fails = __webpack_require__(38);
+var fails = __webpack_require__(39);
 
 // Thank's IE8 for his funny defineProperty
 module.exports = !fails(function () {
@@ -4387,7 +4387,7 @@ module.exports = function (exec) {
 /* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isObject = __webpack_require__(98);
+var isObject = __webpack_require__(99);
 
 module.exports = function (it) {
   if (!isObject(it)) {
@@ -4488,9 +4488,9 @@ module.exports = function (it, key) {
 /* harmony import */ var events__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(33);
 /* harmony import */ var events__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(events__WEBPACK_IMPORTED_MODULE_9__);
 /* harmony import */ var _VERSION__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(191);
-/* harmony import */ var _connection__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(103);
+/* harmony import */ var _connection__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(104);
 /* harmony import */ var _oauth2__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(77);
-/* harmony import */ var _date__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(110);
+/* harmony import */ var _date__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(112);
 /* harmony import */ var _registry__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(159);
 /* harmony import */ var _browser_client__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(139);
 /* harmony import */ var _jwtOAuth2__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(194);
@@ -4587,7 +4587,7 @@ var jsforce = new JSforce();
 /***/ (function(module, exports, __webpack_require__) {
 
 var path = __webpack_require__(28);
-var global = __webpack_require__(39);
+var global = __webpack_require__(40);
 
 var aFunction = function (variable) {
   return typeof variable == 'function' ? variable : undefined;
@@ -4605,7 +4605,7 @@ module.exports = function (namespace, method) {
 
 "use strict";
 
-var $ = __webpack_require__(117);
+var $ = __webpack_require__(118);
 var IndexedObject = __webpack_require__(330);
 var toIndexedObject = __webpack_require__(146);
 var arrayMethodIsStrict = __webpack_require__(570);
@@ -4630,7 +4630,7 @@ $({ target: 'Array', proto: true, forced: ES3_STRINGS || !STRICT_METHOD }, {
 
 "use strict";
 
-var $ = __webpack_require__(117);
+var $ = __webpack_require__(118);
 var exec = __webpack_require__(178);
 
 $({ target: 'RegExp', proto: true, forced: /./.exec !== exec }, {
@@ -4663,7 +4663,7 @@ assert.equal = function assertEqual(l, r, msg) {
 
 
 var utils = exports;
-var BN = __webpack_require__(101);
+var BN = __webpack_require__(102);
 var minAssert = __webpack_require__(68);
 var minUtils = __webpack_require__(415);
 
@@ -4790,7 +4790,7 @@ utils.intFromLE = intFromLE;
   var DocumentPosition, NodeType, XMLCData, XMLComment, XMLDeclaration, XMLDocType, XMLDummy, XMLElement, XMLNamedNodeMap, XMLNode, XMLNodeList, XMLProcessingInstruction, XMLRaw, XMLText, getValue, isEmpty, isFunction, isObject, ref1,
     hasProp = {}.hasOwnProperty;
 
-  ref1 = __webpack_require__(102), isObject = ref1.isObject, isFunction = ref1.isFunction, isEmpty = ref1.isEmpty, getValue = ref1.getValue;
+  ref1 = __webpack_require__(103), isObject = ref1.isObject, isFunction = ref1.isFunction, isEmpty = ref1.isEmpty, getValue = ref1.getValue;
 
   XMLElement = null;
 
@@ -4839,9 +4839,9 @@ utils.intFromLE = intFromLE;
         XMLProcessingInstruction = __webpack_require__(275);
         XMLDummy = __webpack_require__(433);
         NodeType = __webpack_require__(45);
-        XMLNodeList = __webpack_require__(805);
+        XMLNodeList = __webpack_require__(814);
         XMLNamedNodeMap = __webpack_require__(264);
-        DocumentPosition = __webpack_require__(806);
+        DocumentPosition = __webpack_require__(815);
       }
     }
 
@@ -5594,9 +5594,9 @@ module.exports = __webpack_require__(642);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return concatStreamsAsDuplex; });
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(100);
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(101);
 /* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(113);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(110);
 /* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1);
 /* harmony import */ var _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_3__);
@@ -5903,15 +5903,15 @@ module.exports = function (it, key) {
 /* harmony import */ var core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_9__);
 /* harmony import */ var core_js_modules_es_function_name__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(123);
 /* harmony import */ var core_js_modules_es_function_name__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_function_name__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(100);
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(101);
 /* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_11__);
 /* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(67);
 /* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_12__);
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(113);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(110);
 /* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_13__);
 /* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(151);
 /* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_14__);
-/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(118);
+/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(119);
 /* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_15__);
 /* harmony import */ var _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(18);
 /* harmony import */ var _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_16__);
@@ -5919,7 +5919,7 @@ module.exports = function (it, key) {
 /* harmony import */ var _babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_17__);
 /* harmony import */ var _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(9);
 /* harmony import */ var _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_18___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_18__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(104);
+/* harmony import */ var _babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(105);
 /* harmony import */ var _babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_19___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_19__);
 /* harmony import */ var _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(1);
 /* harmony import */ var _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_20___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_20__);
@@ -5939,9 +5939,9 @@ module.exports = function (it, key) {
 /* harmony import */ var _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_27___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_27__);
 /* harmony import */ var crypto__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(288);
 /* harmony import */ var crypto__WEBPACK_IMPORTED_MODULE_28___default = /*#__PURE__*/__webpack_require__.n(crypto__WEBPACK_IMPORTED_MODULE_28__);
-/* harmony import */ var querystring__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(111);
+/* harmony import */ var querystring__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(113);
 /* harmony import */ var querystring__WEBPACK_IMPORTED_MODULE_29___default = /*#__PURE__*/__webpack_require__.n(querystring__WEBPACK_IMPORTED_MODULE_29__);
-/* harmony import */ var _transport__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(90);
+/* harmony import */ var _transport__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(91);
 
 
 
@@ -6438,9091 +6438,7 @@ module.exports = __webpack_require__(852);
  * This file is generated from WSDL file by wsdl2schema.ts.
  * Do not modify directly.
  * To generate the file, run "ts-node path/to/wsdl2schema.ts path/to/wsdl.xml path/to/schema.ts"
- */
-var ApiSchemas = {
-  CancelDeployResult: {
-    type: 'CancelDeployResult',
-    props: {
-      done: 'boolean',
-      id: 'string'
-    }
-  },
-  DeployResult: {
-    type: 'DeployResult',
-    props: {
-      canceledBy: '?string',
-      canceledByName: '?string',
-      checkOnly: 'boolean',
-      completedDate: '?string',
-      createdBy: 'string',
-      createdByName: 'string',
-      createdDate: 'string',
-      details: 'DeployDetails',
-      done: 'boolean',
-      errorMessage: '?string',
-      errorStatusCode: '?string',
-      id: 'string',
-      ignoreWarnings: 'boolean',
-      lastModifiedDate: '?string',
-      numberComponentErrors: 'number',
-      numberComponentsDeployed: 'number',
-      numberComponentsTotal: 'number',
-      numberTestErrors: 'number',
-      numberTestsCompleted: 'number',
-      numberTestsTotal: 'number',
-      rollbackOnError: 'boolean',
-      runTestsEnabled: 'boolean',
-      startDate: '?string',
-      stateDetail: '?string',
-      status: 'string',
-      success: 'boolean'
-    }
-  },
-  DeployDetails: {
-    type: 'DeployDetails',
-    props: {
-      componentFailures: ['DeployMessage'],
-      componentSuccesses: ['DeployMessage'],
-      retrieveResult: '?RetrieveResult',
-      runTestResult: '?RunTestsResult'
-    }
-  },
-  DeployMessage: {
-    type: 'DeployMessage',
-    props: {
-      changed: 'boolean',
-      columnNumber: '?number',
-      componentType: '?string',
-      created: 'boolean',
-      createdDate: 'string',
-      deleted: 'boolean',
-      fileName: 'string',
-      fullName: 'string',
-      id: '?string',
-      lineNumber: '?number',
-      problem: '?string',
-      problemType: '?string',
-      success: 'boolean'
-    }
-  },
-  RetrieveResult: {
-    type: 'RetrieveResult',
-    props: {
-      done: 'boolean',
-      errorMessage: '?string',
-      errorStatusCode: '?string',
-      fileProperties: ['FileProperties'],
-      id: 'string',
-      messages: ['RetrieveMessage'],
-      status: 'string',
-      success: 'boolean',
-      zipFile: 'string'
-    }
-  },
-  FileProperties: {
-    type: 'FileProperties',
-    props: {
-      createdById: 'string',
-      createdByName: 'string',
-      createdDate: 'string',
-      fileName: 'string',
-      fullName: 'string',
-      id: 'string',
-      lastModifiedById: 'string',
-      lastModifiedByName: 'string',
-      lastModifiedDate: 'string',
-      manageableState: '?string',
-      namespacePrefix: '?string',
-      type: 'string'
-    }
-  },
-  RetrieveMessage: {
-    type: 'RetrieveMessage',
-    props: {
-      fileName: 'string',
-      problem: 'string'
-    }
-  },
-  RunTestsResult: {
-    type: 'RunTestsResult',
-    props: {
-      apexLogId: '?string',
-      codeCoverage: ['CodeCoverageResult'],
-      codeCoverageWarnings: ['CodeCoverageWarning'],
-      failures: ['RunTestFailure'],
-      flowCoverage: ['FlowCoverageResult'],
-      flowCoverageWarnings: ['FlowCoverageWarning'],
-      numFailures: 'number',
-      numTestsRun: 'number',
-      successes: ['RunTestSuccess'],
-      totalTime: 'number'
-    }
-  },
-  CodeCoverageResult: {
-    type: 'CodeCoverageResult',
-    props: {
-      dmlInfo: ['CodeLocation'],
-      id: 'string',
-      locationsNotCovered: ['CodeLocation'],
-      methodInfo: ['CodeLocation'],
-      name: 'string',
-      namespace: '?string',
-      numLocations: 'number',
-      numLocationsNotCovered: 'number',
-      soqlInfo: ['CodeLocation'],
-      soslInfo: ['CodeLocation'],
-      type: 'string'
-    }
-  },
-  CodeLocation: {
-    type: 'CodeLocation',
-    props: {
-      column: 'number',
-      line: 'number',
-      numExecutions: 'number',
-      time: 'number'
-    }
-  },
-  CodeCoverageWarning: {
-    type: 'CodeCoverageWarning',
-    props: {
-      id: 'string',
-      message: 'string',
-      name: '?string',
-      namespace: '?string'
-    }
-  },
-  RunTestFailure: {
-    type: 'RunTestFailure',
-    props: {
-      id: 'string',
-      message: 'string',
-      methodName: '?string',
-      name: 'string',
-      namespace: '?string',
-      packageName: 'string',
-      seeAllData: '?boolean',
-      stackTrace: '?string',
-      time: 'number',
-      type: 'string'
-    }
-  },
-  FlowCoverageResult: {
-    type: 'FlowCoverageResult',
-    props: {
-      elementsNotCovered: ['string'],
-      flowId: 'string',
-      flowName: 'string',
-      flowNamespace: '?string',
-      numElements: 'number',
-      numElementsNotCovered: 'number',
-      processType: 'string'
-    }
-  },
-  FlowCoverageWarning: {
-    type: 'FlowCoverageWarning',
-    props: {
-      flowId: '?string',
-      flowName: '?string',
-      flowNamespace: '?string',
-      message: 'string'
-    }
-  },
-  RunTestSuccess: {
-    type: 'RunTestSuccess',
-    props: {
-      id: 'string',
-      methodName: 'string',
-      name: 'string',
-      namespace: '?string',
-      seeAllData: '?boolean',
-      time: 'number'
-    }
-  },
-  Metadata: {
-    type: 'Metadata',
-    props: {
-      fullName: '?string'
-    }
-  },
-  AccountRelationshipShareRule: {
-    type: 'AccountRelationshipShareRule',
-    props: {
-      accessLevel: 'string',
-      accountToCriteriaField: 'string',
-      description: '?string',
-      entityType: 'string',
-      masterLabel: 'string',
-      staticFormulaCriteria: '?string',
-      type: 'string'
-    },
-    extends: 'Metadata'
-  },
-  AccountSettings: {
-    type: 'AccountSettings',
-    props: {
-      enableAccountHistoryTracking: '?boolean',
-      enableAccountInsightsInMobile: '?boolean',
-      enableAccountOwnerReport: '?boolean',
-      enableAccountTeams: '?boolean',
-      enableContactHistoryTracking: '?boolean',
-      enableRelateContactToMultipleAccounts: '?boolean',
-      showViewHierarchyLink: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  ActionLinkGroupTemplate: {
-    type: 'ActionLinkGroupTemplate',
-    props: {
-      actionLinkTemplates: ['ActionLinkTemplate'],
-      category: 'string',
-      executionsAllowed: 'string',
-      hoursUntilExpiration: '?number',
-      isPublished: 'boolean',
-      name: 'string'
-    },
-    extends: 'Metadata'
-  },
-  ActionLinkTemplate: {
-    type: 'ActionLinkTemplate',
-    props: {
-      actionUrl: 'string',
-      headers: '?string',
-      isConfirmationRequired: 'boolean',
-      isGroupDefault: 'boolean',
-      label: '?string',
-      labelKey: 'string',
-      linkType: 'string',
-      method: 'string',
-      position: 'number',
-      requestBody: '?string',
-      userAlias: '?string',
-      userVisibility: 'string'
-    }
-  },
-  ActionPlanTemplate: {
-    type: 'ActionPlanTemplate',
-    props: {
-      actionPlanTemplateItem: ['ActionPlanTemplateItem'],
-      description: '?string',
-      name: 'string',
-      targetEntityType: 'string',
-      uniqueName: 'string'
-    },
-    extends: 'Metadata'
-  },
-  ActionPlanTemplateItem: {
-    type: 'ActionPlanTemplateItem',
-    props: {
-      actionPlanTemplateItemValue: ['ActionPlanTemplateItemValue'],
-      displayOrder: '?number',
-      isRequired: '?boolean',
-      name: 'string',
-      uniqueName: 'string'
-    }
-  },
-  ActionPlanTemplateItemValue: {
-    type: 'ActionPlanTemplateItemValue',
-    props: {
-      name: 'string',
-      valueFormula: '?string',
-      valueLiteral: '?string'
-    }
-  },
-  ActionsSettings: {
-    type: 'ActionsSettings',
-    props: {
-      enableDefaultQuickActionsOn: '?boolean',
-      enableMdpEnabled: '?boolean',
-      enableThirdPartyActions: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  ActivitiesSettings: {
-    type: 'ActivitiesSettings',
-    props: {
-      allowUsersToRelateMultipleContactsToTasksAndEvents: '?boolean',
-      autoRelateEventAttendees: '?boolean',
-      enableActivityReminders: '?boolean',
-      enableClickCreateEvents: '?boolean',
-      enableDragAndDropScheduling: '?boolean',
-      enableEmailTracking: '?boolean',
-      enableGroupTasks: '?boolean',
-      enableListViewScheduling: '?boolean',
-      enableLogNote: '?boolean',
-      enableMultidayEvents: '?boolean',
-      enableRecurringEvents: '?boolean',
-      enableRecurringTasks: '?boolean',
-      enableRollUpActivToContactsAcct: '?boolean',
-      enableSidebarCalendarShortcut: '?boolean',
-      enableSimpleTaskCreateUI: '?boolean',
-      enableUNSTaskDelegatedToNotifications: '?boolean',
-      enableUserListViewCalendars: '?boolean',
-      meetingRequestsLogo: '?string',
-      showCustomLogoMeetingRequests: '?boolean',
-      showEventDetailsMultiUserCalendar: '?boolean',
-      showHomePageHoverLinksForEvents: '?boolean',
-      showMyTasksHoverLinks: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  AddressSettings: {
-    type: 'AddressSettings',
-    props: {
-      countriesAndStates: 'CountriesAndStates'
-    },
-    extends: 'Metadata'
-  },
-  CountriesAndStates: {
-    type: 'CountriesAndStates',
-    props: {
-      countries: ['Country']
-    }
-  },
-  Country: {
-    type: 'Country',
-    props: {
-      active: 'boolean',
-      integrationValue: 'string',
-      isoCode: 'string',
-      label: 'string',
-      orgDefault: 'boolean',
-      standard: 'boolean',
-      states: ['State'],
-      visible: 'boolean'
-    }
-  },
-  State: {
-    type: 'State',
-    props: {
-      active: 'boolean',
-      integrationValue: 'string',
-      isoCode: 'string',
-      label: 'string',
-      standard: 'boolean',
-      visible: 'boolean'
-    }
-  },
-  AnalyticSnapshot: {
-    type: 'AnalyticSnapshot',
-    props: {
-      description: '?string',
-      groupColumn: '?string',
-      mappings: ['AnalyticSnapshotMapping'],
-      name: 'string',
-      runningUser: '?string',
-      sourceReport: 'string',
-      targetObject: 'string'
-    },
-    extends: 'Metadata'
-  },
-  AnalyticSnapshotMapping: {
-    type: 'AnalyticSnapshotMapping',
-    props: {
-      aggregateType: '?string',
-      sourceField: 'string',
-      sourceType: 'string',
-      targetField: 'string'
-    }
-  },
-  AnalyticsSettings: {
-    type: 'AnalyticsSettings',
-    props: {
-      alwaysGenPreviews: '?boolean',
-      analyticsAdoptionMetadata: '?boolean',
-      canAccessAnalyticsViaAPI: '?boolean',
-      canAnnotateDashboards: '?boolean',
-      canEnableSavedView: '?boolean',
-      canExploreDataConversationally: '?boolean',
-      canShareAppsWithCommunities: '?boolean',
-      canSubscribeDashboardWidgets: '?boolean',
-      canViewThumbnailAssets: '?boolean',
-      enableAnalyticsSubtotals: '?boolean',
-      enableAutoCompleteCombo: '?boolean',
-      enableDashboardComponentSnapshot: '?boolean',
-      enableDashboardFlexiTable: '?boolean',
-      enableEmailReportsToPortalUsers: '?boolean',
-      enableFloatingReportHeaders: '?boolean',
-      enableInsights: '?boolean',
-      enableLightningReportBuilder: '?boolean',
-      enableLotusNotesImages: '?boolean',
-      enableMassEnableReportBuilder: '?boolean',
-      enableNewChartsEngine: '?boolean',
-      enablePowerInsights: '?boolean',
-      enableRemoveFooterForRepDisplay: '?boolean',
-      enableRemoveFooterFromRepExp: '?boolean',
-      enableReportFieldToFieldPref: '?boolean',
-      enableReportUniqueRowCountPref: '?boolean',
-      enableSFXJoinedReportsEnable: '?boolean',
-      enableSmartDataDiscovery: '?boolean',
-      enableUseOldChartsLookAndFeel: '?boolean',
-      enableWaveReplication: '?boolean',
-      enableWaveSharingInheritance: '?boolean',
-      enableWaveTemplate: '?boolean',
-      enableWaveTrendedDatasetCleanup: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  AnimationRule: {
-    type: 'AnimationRule',
-    props: {
-      animationFrequency: 'string',
-      developerName: 'string',
-      isActive: 'boolean',
-      masterLabel: 'string',
-      recordTypeContext: 'string',
-      recordTypeName: '?string',
-      sobjectType: 'string',
-      targetField: 'string',
-      targetFieldChangeToValues: 'string'
-    },
-    extends: 'Metadata'
-  },
-  ApexSettings: {
-    type: 'ApexSettings',
-    props: {
-      enableAggregateCodeCoverageOnly: '?boolean',
-      enableApexAccessRightsPref: '?boolean',
-      enableApexApprovalLockUnlock: '?boolean',
-      enableApexCtrlImplicitWithSharingPref: '?boolean',
-      enableApexPropertyGetterPref: '?boolean',
-      enableAuraApexCtrlAuthUserAccessCheckPref: '?boolean',
-      enableAuraApexCtrlGuestUserAccessCheckPref: '?boolean',
-      enableCompileOnDeploy: '?boolean',
-      enableDisableParallelApexTesting: '?boolean',
-      enableDoNotEmailDebugLog: '?boolean',
-      enableGaplessTestAutoNum: '?boolean',
-      enableMngdCtrlActionAccessPref: '?boolean',
-      enableNonCertifiedApexMdCrud: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  ApexTestSuite: {
-    type: 'ApexTestSuite',
-    props: {
-      testClassName: ['string']
-    },
-    extends: 'Metadata'
-  },
-  AppExperienceSettings: {
-    type: 'AppExperienceSettings',
-    props: {
-      doesHideAllAppsInAppLauncher: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  AppMenu: {
-    type: 'AppMenu',
-    props: {
-      appMenuItems: ['AppMenuItem']
-    },
-    extends: 'Metadata'
-  },
-  AppMenuItem: {
-    type: 'AppMenuItem',
-    props: {
-      name: 'string',
-      type: 'string'
-    }
-  },
-  AppointmentSchedulingPolicy: {
-    type: 'AppointmentSchedulingPolicy',
-    props: {
-      appointmentStartTimeInterval: 'string',
-      masterLabel: 'string',
-      shouldConsiderCalendarEvents: 'boolean',
-      shouldEnforceExcludedResource: 'boolean',
-      shouldEnforceRequiredResource: 'boolean',
-      shouldMatchSkill: 'boolean',
-      shouldMatchSkillLevel: 'boolean',
-      shouldRespectVisitingHours: 'boolean',
-      shouldUsePrimaryMembers: 'boolean',
-      shouldUseSecondaryMembers: 'boolean'
-    },
-    extends: 'Metadata'
-  },
-  ApprovalProcess: {
-    type: 'ApprovalProcess',
-    props: {
-      active: 'boolean',
-      allowRecall: '?boolean',
-      allowedSubmitters: ['ApprovalSubmitter'],
-      approvalPageFields: '?ApprovalPageField',
-      approvalStep: ['ApprovalStep'],
-      description: '?string',
-      emailTemplate: '?string',
-      enableMobileDeviceAccess: '?boolean',
-      entryCriteria: '?ApprovalEntryCriteria',
-      finalApprovalActions: '?ApprovalAction',
-      finalApprovalRecordLock: '?boolean',
-      finalRejectionActions: '?ApprovalAction',
-      finalRejectionRecordLock: '?boolean',
-      initialSubmissionActions: '?ApprovalAction',
-      label: 'string',
-      nextAutomatedApprover: '?NextAutomatedApprover',
-      postTemplate: '?string',
-      recallActions: '?ApprovalAction',
-      recordEditability: 'string',
-      showApprovalHistory: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  ApprovalSubmitter: {
-    type: 'ApprovalSubmitter',
-    props: {
-      submitter: '?string',
-      type: 'string'
-    }
-  },
-  ApprovalPageField: {
-    type: 'ApprovalPageField',
-    props: {
-      field: ['string']
-    }
-  },
-  ApprovalStep: {
-    type: 'ApprovalStep',
-    props: {
-      allowDelegate: '?boolean',
-      approvalActions: '?ApprovalAction',
-      assignedApprover: 'ApprovalStepApprover',
-      description: '?string',
-      entryCriteria: '?ApprovalEntryCriteria',
-      ifCriteriaNotMet: '?string',
-      label: 'string',
-      name: 'string',
-      rejectBehavior: '?ApprovalStepRejectBehavior',
-      rejectionActions: '?ApprovalAction'
-    }
-  },
-  ApprovalAction: {
-    type: 'ApprovalAction',
-    props: {
-      action: ['WorkflowActionReference']
-    }
-  },
-  WorkflowActionReference: {
-    type: 'WorkflowActionReference',
-    props: {
-      name: 'string',
-      type: 'string'
-    }
-  },
-  ApprovalStepApprover: {
-    type: 'ApprovalStepApprover',
-    props: {
-      approver: ['Approver'],
-      whenMultipleApprovers: '?string'
-    }
-  },
-  Approver: {
-    type: 'Approver',
-    props: {
-      name: '?string',
-      type: 'string'
-    }
-  },
-  ApprovalEntryCriteria: {
-    type: 'ApprovalEntryCriteria',
-    props: {
-      booleanFilter: '?string',
-      criteriaItems: ['FilterItem'],
-      formula: '?string'
-    }
-  },
-  FilterItem: {
-    type: 'FilterItem',
-    props: {
-      field: 'string',
-      operation: 'string',
-      value: '?string',
-      valueField: '?string'
-    }
-  },
-  DuplicateRuleFilterItem: {
-    type: 'DuplicateRuleFilterItem',
-    props: {
-      sortOrder: 'number',
-      table: 'string'
-    },
-    extends: 'FilterItem'
-  },
-  ApprovalStepRejectBehavior: {
-    type: 'ApprovalStepRejectBehavior',
-    props: {
-      type: 'string'
-    }
-  },
-  NextAutomatedApprover: {
-    type: 'NextAutomatedApprover',
-    props: {
-      useApproverFieldOfRecordOwner: '?boolean',
-      userHierarchyField: 'string'
-    }
-  },
-  ArchiveSettings: {
-    type: 'ArchiveSettings',
-    props: {
-      enableEntityArchivingEnabled: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  AssignmentRule: {
-    type: 'AssignmentRule',
-    props: {
-      active: '?boolean',
-      ruleEntry: ['RuleEntry']
-    },
-    extends: 'Metadata'
-  },
-  RuleEntry: {
-    type: 'RuleEntry',
-    props: {
-      assignedTo: '?string',
-      assignedToType: '?string',
-      booleanFilter: '?string',
-      businessHours: '?string',
-      businessHoursSource: '?string',
-      criteriaItems: ['FilterItem'],
-      disableEscalationWhenModified: '?boolean',
-      escalationAction: ['EscalationAction'],
-      escalationStartTime: '?string',
-      formula: '?string',
-      notifyCcRecipients: '?boolean',
-      overrideExistingTeams: '?boolean',
-      replyToEmail: '?string',
-      senderEmail: '?string',
-      senderName: '?string',
-      team: ['string'],
-      template: '?string'
-    }
-  },
-  EscalationAction: {
-    type: 'EscalationAction',
-    props: {
-      assignedTo: '?string',
-      assignedToTemplate: '?string',
-      assignedToType: '?string',
-      minutesToEscalation: '?number',
-      notifyCaseOwner: '?boolean',
-      notifyEmail: ['string'],
-      notifyTo: '?string',
-      notifyToTemplate: '?string'
-    }
-  },
-  AssignmentRules: {
-    type: 'AssignmentRules',
-    props: {
-      assignmentRule: ['AssignmentRule']
-    },
-    extends: 'Metadata'
-  },
-  Audience: {
-    type: 'Audience',
-    props: {
-      audienceName: 'string',
-      container: 'string',
-      criteria: 'AudienceCriteria',
-      description: '?string',
-      formula: '?string',
-      formulaFilterType: '?string',
-      targets: '?PersonalizationTargetInfos'
-    },
-    extends: 'Metadata'
-  },
-  AudienceCriteria: {
-    type: 'AudienceCriteria',
-    props: {
-      criterion: ['AudienceCriterion']
-    }
-  },
-  AudienceCriterion: {
-    type: 'AudienceCriterion',
-    props: {
-      criteriaNumber: '?number',
-      criterionValue: '?AudienceCriteriaValue',
-      operator: '?string',
-      type: 'string'
-    }
-  },
-  AudienceCriteriaValue: {
-    type: 'AudienceCriteriaValue',
-    props: {
-      city: '?string',
-      country: '?string',
-      domain: '?string',
-      entityField: '?string',
-      entityType: '?string',
-      fieldValue: '?string',
-      isEnabled: '?string',
-      permissionName: '?string',
-      permissionType: '?string',
-      profile: '?string',
-      subdivision: '?string'
-    }
-  },
-  PersonalizationTargetInfos: {
-    type: 'PersonalizationTargetInfos',
-    props: {
-      target: ['PersonalizationTargetInfo']
-    }
-  },
-  PersonalizationTargetInfo: {
-    type: 'PersonalizationTargetInfo',
-    props: {
-      groupName: 'string',
-      priority: '?number',
-      targetType: 'string',
-      targetValue: 'string'
-    }
-  },
-  AuraDefinitionBundle: {
-    type: 'AuraDefinitionBundle',
-    props: {
-      SVGContent: '?string',
-      apiVersion: '?number',
-      controllerContent: '?string',
-      description: '?string',
-      designContent: '?string',
-      documentationContent: '?string',
-      helperContent: '?string',
-      markup: '?string',
-      modelContent: '?string',
-      packageVersions: ['PackageVersion'],
-      rendererContent: '?string',
-      styleContent: '?string',
-      testsuiteContent: '?string',
-      type: '?string'
-    },
-    extends: 'Metadata'
-  },
-  PackageVersion: {
-    type: 'PackageVersion',
-    props: {
-      majorNumber: 'number',
-      minorNumber: 'number',
-      namespace: 'string'
-    }
-  },
-  AuthProvider: {
-    type: 'AuthProvider',
-    props: {
-      appleTeam: '?string',
-      authorizeUrl: '?string',
-      consumerKey: '?string',
-      consumerSecret: '?string',
-      customMetadataTypeRecord: '?string',
-      defaultScopes: '?string',
-      ecKey: '?string',
-      errorUrl: '?string',
-      executionUser: '?string',
-      friendlyName: 'string',
-      iconUrl: '?string',
-      idTokenIssuer: '?string',
-      includeOrgIdInIdentifier: '?boolean',
-      linkKickoffUrl: '?string',
-      logoutUrl: '?string',
-      oauthKickoffUrl: '?string',
-      plugin: '?string',
-      portal: '?string',
-      providerType: 'string',
-      registrationHandler: '?string',
-      sendAccessTokenInHeader: '?boolean',
-      sendClientCredentialsInHeader: '?boolean',
-      sendSecretInApis: '?boolean',
-      ssoKickoffUrl: '?string',
-      tokenUrl: '?string',
-      userInfoUrl: '?string'
-    },
-    extends: 'Metadata'
-  },
-  AutoResponseRule: {
-    type: 'AutoResponseRule',
-    props: {
-      active: '?boolean',
-      ruleEntry: ['RuleEntry']
-    },
-    extends: 'Metadata'
-  },
-  AutoResponseRules: {
-    type: 'AutoResponseRules',
-    props: {
-      autoResponseRule: ['AutoResponseRule']
-    },
-    extends: 'Metadata'
-  },
-  BlockchainSettings: {
-    type: 'BlockchainSettings',
-    props: {
-      enableBcp: '?boolean',
-      enableBcpCoin: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  Bot: {
-    type: 'Bot',
-    props: {
-      botMlDomain: '?LocalMlDomain',
-      botUser: '?string',
-      botVersions: ['BotVersion'],
-      contextVariables: ['ConversationContextVariable'],
-      description: '?string',
-      label: '?string'
-    },
-    extends: 'Metadata'
-  },
-  LocalMlDomain: {
-    type: 'LocalMlDomain',
-    props: {
-      label: 'string',
-      mlIntents: ['MlIntent'],
-      mlSlotClasses: ['MlSlotClass'],
-      name: 'string'
-    }
-  },
-  MlIntent: {
-    type: 'MlIntent',
-    props: {
-      description: '?string',
-      developerName: 'string',
-      label: 'string',
-      mlIntentUtterances: ['MlIntentUtterance'],
-      relatedMlIntents: ['MlRelatedIntent']
-    }
-  },
-  MlIntentUtterance: {
-    type: 'MlIntentUtterance',
-    props: {
-      utterance: 'string'
-    }
-  },
-  MlRelatedIntent: {
-    type: 'MlRelatedIntent',
-    props: {
-      relatedMlIntent: 'string'
-    }
-  },
-  MlSlotClass: {
-    type: 'MlSlotClass',
-    props: {
-      dataType: 'string',
-      description: '?string',
-      developerName: 'string',
-      extractionRegex: '?string',
-      extractionType: '?string',
-      label: 'string',
-      mlSlotClassValues: ['MlSlotClassValue']
-    }
-  },
-  MlSlotClassValue: {
-    type: 'MlSlotClassValue',
-    props: {
-      synonymGroup: '?SynonymGroup',
-      value: 'string'
-    }
-  },
-  SynonymGroup: {
-    type: 'SynonymGroup',
-    props: {
-      languages: ['string'],
-      terms: ['string']
-    }
-  },
-  BotVersion: {
-    type: 'BotVersion',
-    props: {
-      botDialogGroups: ['BotDialogGroup'],
-      botDialogs: ['BotDialog'],
-      conversationVariables: ['ConversationVariable'],
-      entryDialog: 'string',
-      mainMenuDialog: 'string',
-      responseDelayMilliseconds: '?number'
-    },
-    extends: 'Metadata'
-  },
-  BotDialogGroup: {
-    type: 'BotDialogGroup',
-    props: {
-      description: '?string',
-      developerName: 'string',
-      label: 'string'
-    }
-  },
-  BotDialog: {
-    type: 'BotDialog',
-    props: {
-      botDialogGroup: '?string',
-      botSteps: ['BotStep'],
-      description: '?string',
-      developerName: 'string',
-      label: 'string',
-      mlIntent: '?string',
-      mlIntentTrainingEnabled: '?boolean',
-      showInFooterMenu: '?boolean'
-    }
-  },
-  BotStep: {
-    type: 'BotStep',
-    props: {
-      booleanFilter: '?string',
-      botInvocation: '?BotInvocation',
-      botMessages: ['BotMessage'],
-      botNavigation: '?BotNavigation',
-      botStepConditions: ['BotStepCondition'],
-      botSteps: ['BotStep'],
-      botVariableOperation: '?BotVariableOperation',
-      conversationRecordLookup: '?ConversationRecordLookup',
-      conversationSystemMessage: '?ConversationSystemMessage',
-      type: 'string'
-    }
-  },
-  BotInvocation: {
-    type: 'BotInvocation',
-    props: {
-      invocationActionName: '?string',
-      invocationActionType: '?string',
-      invocationMappings: ['BotInvocationMapping']
-    }
-  },
-  BotInvocationMapping: {
-    type: 'BotInvocationMapping',
-    props: {
-      parameterName: 'string',
-      type: 'string',
-      value: '?string',
-      variableName: '?string',
-      variableType: '?string'
-    }
-  },
-  BotMessage: {
-    type: 'BotMessage',
-    props: {
-      message: 'string'
-    }
-  },
-  BotNavigation: {
-    type: 'BotNavigation',
-    props: {
-      botNavigationLinks: ['BotNavigationLink'],
-      type: 'string'
-    }
-  },
-  BotNavigationLink: {
-    type: 'BotNavigationLink',
-    props: {
-      label: '?string',
-      targetBotDialog: 'string'
-    }
-  },
-  BotStepCondition: {
-    type: 'BotStepCondition',
-    props: {
-      leftOperandName: 'string',
-      leftOperandType: 'string',
-      operatorType: 'string',
-      rightOperandValue: '?string'
-    }
-  },
-  BotVariableOperation: {
-    type: 'BotVariableOperation',
-    props: {
-      botInvocation: '?BotInvocation',
-      botMessages: ['BotMessage'],
-      botQuickReplyOptions: ['BotQuickReplyOption'],
-      botVariableOperands: ['BotVariableOperand'],
-      invalidInputBotNavigation: '?BotNavigation',
-      quickReplyOptionTemplate: '?string',
-      quickReplyType: '?string',
-      quickReplyWidgetType: '?string',
-      sourceVariableName: '?string',
-      sourceVariableType: '?string',
-      type: 'string'
-    }
-  },
-  BotQuickReplyOption: {
-    type: 'BotQuickReplyOption',
-    props: {
-      literalValue: 'string'
-    }
-  },
-  BotVariableOperand: {
-    type: 'BotVariableOperand',
-    props: {
-      disableAutoFill: '?boolean',
-      sourceName: '?string',
-      sourceType: '?string',
-      sourceValue: '?string',
-      targetName: 'string',
-      targetType: 'string'
-    }
-  },
-  ConversationRecordLookup: {
-    type: 'ConversationRecordLookup',
-    props: {
-      SObjectType: 'string',
-      lookupFields: ['ConversationRecordLookupField'],
-      maxLookupResults: 'number',
-      sourceVariableName: 'string',
-      sourceVariableType: 'string',
-      targetVariableName: 'string'
-    }
-  },
-  ConversationRecordLookupField: {
-    type: 'ConversationRecordLookupField',
-    props: {
-      fieldName: 'string'
-    }
-  },
-  ConversationSystemMessage: {
-    type: 'ConversationSystemMessage',
-    props: {
-      systemMessageMappings: ['ConversationSystemMessageMapping'],
-      type: 'string'
-    }
-  },
-  ConversationSystemMessageMapping: {
-    type: 'ConversationSystemMessageMapping',
-    props: {
-      mappingType: 'string',
-      parameterType: 'string',
-      variableName: 'string'
-    }
-  },
-  ConversationVariable: {
-    type: 'ConversationVariable',
-    props: {
-      SObjectType: '?string',
-      collectionType: '?string',
-      dataType: 'string',
-      developerName: 'string',
-      label: 'string'
-    }
-  },
-  ConversationContextVariable: {
-    type: 'ConversationContextVariable',
-    props: {
-      SObjectType: '?string',
-      contextVariableMappings: ['ConversationContextVariableMapping'],
-      dataType: 'string',
-      developerName: 'string',
-      label: 'string'
-    }
-  },
-  ConversationContextVariableMapping: {
-    type: 'ConversationContextVariableMapping',
-    props: {
-      SObjectType: 'string',
-      fieldName: 'string',
-      messageType: 'string'
-    }
-  },
-  BotSettings: {
-    type: 'BotSettings',
-    props: {
-      enableBots: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  BrandingSet: {
-    type: 'BrandingSet',
-    props: {
-      brandingSetProperty: ['BrandingSetProperty'],
-      description: '?string',
-      masterLabel: 'string',
-      type: '?string'
-    },
-    extends: 'Metadata'
-  },
-  BrandingSetProperty: {
-    type: 'BrandingSetProperty',
-    props: {
-      propertyName: 'string',
-      propertyValue: '?string'
-    }
-  },
-  BusinessHoursEntry: {
-    type: 'BusinessHoursEntry',
-    props: {
-      active: '?boolean',
-      default: 'boolean',
-      fridayEndTime: '?string',
-      fridayStartTime: '?string',
-      mondayEndTime: '?string',
-      mondayStartTime: '?string',
-      name: '?string',
-      saturdayEndTime: '?string',
-      saturdayStartTime: '?string',
-      sundayEndTime: '?string',
-      sundayStartTime: '?string',
-      thursdayEndTime: '?string',
-      thursdayStartTime: '?string',
-      timeZoneId: '?string',
-      tuesdayEndTime: '?string',
-      tuesdayStartTime: '?string',
-      wednesdayEndTime: '?string',
-      wednesdayStartTime: '?string'
-    },
-    extends: 'Metadata'
-  },
-  BusinessHoursSettings: {
-    type: 'BusinessHoursSettings',
-    props: {
-      businessHours: ['BusinessHoursEntry'],
-      holidays: ['Holiday']
-    },
-    extends: 'Metadata'
-  },
-  Holiday: {
-    type: 'Holiday',
-    props: {
-      activityDate: '?string',
-      businessHours: ['string'],
-      description: '?string',
-      endTime: '?string',
-      isRecurring: '?boolean',
-      name: '?string',
-      recurrenceDayOfMonth: '?number',
-      recurrenceDayOfWeek: ['string'],
-      recurrenceDayOfWeekMask: '?number',
-      recurrenceEndDate: '?string',
-      recurrenceInstance: '?string',
-      recurrenceInterval: '?number',
-      recurrenceMonthOfYear: '?string',
-      recurrenceStartDate: '?string',
-      recurrenceType: '?string',
-      startTime: '?string'
-    }
-  },
-  BusinessProcess: {
-    type: 'BusinessProcess',
-    props: {
-      description: '?string',
-      isActive: '?boolean',
-      values: ['PicklistValue']
-    },
-    extends: 'Metadata'
-  },
-  PicklistValue: {
-    type: 'PicklistValue',
-    props: {
-      color: '?string',
-      default: 'boolean',
-      description: '?string',
-      isActive: '?boolean',
-      allowEmail: '?boolean',
-      closed: '?boolean',
-      controllingFieldValues: ['string'],
-      converted: '?boolean',
-      cssExposed: '?boolean',
-      forecastCategory: '?string',
-      highPriority: '?boolean',
-      probability: '?number',
-      reverseRole: '?string',
-      reviewed: '?boolean',
-      won: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  CMSConnectSource: {
-    type: 'CMSConnectSource',
-    props: {
-      cmsConnectAsset: ['CMSConnectAsset'],
-      cmsConnectLanguage: ['CMSConnectLanguage'],
-      cmsConnectPersonalization: '?CMSConnectPersonalization',
-      cmsConnectResourceType: ['CMSConnectResourceType'],
-      connectionType: 'string',
-      cssScope: '?string',
-      developerName: 'string',
-      languageEnabled: '?string',
-      masterLabel: 'string',
-      namedCredential: '?string',
-      personalizationEnabled: '?string',
-      rootPath: '?string',
-      sortOrder: 'number',
-      status: 'string',
-      type: 'string',
-      websiteUrl: '?string'
-    },
-    extends: 'Metadata'
-  },
-  CMSConnectAsset: {
-    type: 'CMSConnectAsset',
-    props: {
-      assetPath: 'string',
-      assetType: 'string',
-      sortOrder: 'number'
-    }
-  },
-  CMSConnectLanguage: {
-    type: 'CMSConnectLanguage',
-    props: {
-      cmsLanguage: 'string',
-      language: 'string'
-    }
-  },
-  CMSConnectPersonalization: {
-    type: 'CMSConnectPersonalization',
-    props: {
-      connectorPage: 'string',
-      connectorPageAsset: 'string'
-    }
-  },
-  CMSConnectResourceType: {
-    type: 'CMSConnectResourceType',
-    props: {
-      cmsConnectResourceDefinition: ['CMSConnectResourceDefinition'],
-      developerName: 'string',
-      masterLabel: 'string',
-      resourceType: 'string'
-    }
-  },
-  CMSConnectResourceDefinition: {
-    type: 'CMSConnectResourceDefinition',
-    props: {
-      developerName: 'string',
-      masterLabel: 'string',
-      options: 'number',
-      payloadType: 'string',
-      resourceIdPath: '?string',
-      resourceNamePath: '?string',
-      resourcePath: 'string',
-      rootNodePath: '?string'
-    }
-  },
-  CallCenter: {
-    type: 'CallCenter',
-    props: {
-      adapterUrl: '?string',
-      customSettings: '?string',
-      displayName: 'string',
-      displayNameLabel: 'string',
-      internalNameLabel: 'string',
-      sections: ['CallCenterSection'],
-      version: '?string'
-    },
-    extends: 'Metadata'
-  },
-  CallCenterSection: {
-    type: 'CallCenterSection',
-    props: {
-      items: ['CallCenterItem'],
-      label: 'string',
-      name: 'string'
-    }
-  },
-  CallCenterItem: {
-    type: 'CallCenterItem',
-    props: {
-      label: 'string',
-      name: 'string',
-      value: 'string'
-    }
-  },
-  CampaignInfluenceModel: {
-    type: 'CampaignInfluenceModel',
-    props: {
-      isActive: '?boolean',
-      isDefaultModel: 'boolean',
-      isModelLocked: 'boolean',
-      modelDescription: '?string',
-      name: 'string',
-      recordPreference: '?string'
-    },
-    extends: 'Metadata'
-  },
-  CampaignSettings: {
-    type: 'CampaignSettings',
-    props: {
-      enableAutoCampInfluenceDisabled: '?boolean',
-      enableB2bmaCampaignInfluence2: '?boolean',
-      enableCampaignHistoryTrackEnabled: '?boolean',
-      enableCampaignInfluence2: '?boolean',
-      enableCampaignMemberTWCF: '?boolean',
-      enableSuppressNoValueCI2: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  CanvasMetadata: {
-    type: 'CanvasMetadata',
-    props: {
-      accessMethod: 'string',
-      canvasOptions: '?string',
-      canvasUrl: 'string',
-      lifecycleClass: '?string',
-      locationOptions: '?string',
-      samlInitiationMethod: '?string'
-    },
-    extends: 'Metadata'
-  },
-  CaseClassificationSettings: {
-    type: 'CaseClassificationSettings',
-    props: {
-      caseClassificationRecommendations: '?boolean',
-      reRunAttributeBasedRules: '?boolean',
-      runAssignmentRules: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  CaseSettings: {
-    type: 'CaseSettings',
-    props: {
-      caseAssignNotificationTemplate: '?string',
-      caseAutoProcUser: '?boolean',
-      caseCloseNotificationTemplate: '?string',
-      caseCommentNotificationTemplate: '?string',
-      caseCreateNotificationTemplate: '?string',
-      caseFeedItemSettings: ['FeedItemSettings'],
-      caseFeedReadUnreadLtng: '?boolean',
-      caseMergeInLightning: '?boolean',
-      closeCaseThroughStatusChange: '?boolean',
-      defaultCaseFeedLayoutOn: '?boolean',
-      defaultCaseOwner: '?string',
-      defaultCaseOwnerType: '?string',
-      defaultCaseUser: '?string',
-      emailActionDefaultsHandlerClass: '?string',
-      emailToCase: '?EmailToCaseSettings',
-      enableCaseFeed: '?boolean',
-      enableCollapseEmailThread: '?boolean',
-      enableDraftEmails: '?boolean',
-      enableEarlyEscalationRuleTriggers: '?boolean',
-      enableEmailActionDefaultsHandler: '?boolean',
-      enableSuggestedArticlesApplication: '?boolean',
-      enableSuggestedArticlesCustomerPortal: '?boolean',
-      enableSuggestedArticlesPartnerPortal: '?boolean',
-      enableSuggestedSolutions: '?boolean',
-      escalateCaseBefore: '?boolean',
-      genericMessageEnabled: '?boolean',
-      keepRecordTypeOnAssignmentRule: '?boolean',
-      notifyContactOnCaseComment: '?boolean',
-      notifyDefaultCaseOwner: '?boolean',
-      notifyOwnerOnCaseComment: '?boolean',
-      notifyOwnerOnCaseOwnerChange: '?boolean',
-      predictiveSupportEnabled: '?boolean',
-      showEmailAttachmentsInCaseAttachmentsRL: '?boolean',
-      showFewerCloseActions: '?boolean',
-      systemUserEmail: '?string',
-      useSystemEmailAddress: '?boolean',
-      useSystemUserAsDefaultCaseUser: '?boolean',
-      webToCase: '?WebToCaseSettings'
-    },
-    extends: 'Metadata'
-  },
-  FeedItemSettings: {
-    type: 'FeedItemSettings',
-    props: {
-      characterLimit: '?number',
-      displayFormat: '?string',
-      feedItemType: 'string'
-    }
-  },
-  EmailToCaseSettings: {
-    type: 'EmailToCaseSettings',
-    props: {
-      enableE2CAttachmentAsFile: '?boolean',
-      enableE2CSourceTracking: '?boolean',
-      enableEmailToCase: '?boolean',
-      enableHtmlEmail: '?boolean',
-      enableOnDemandEmailToCase: '?boolean',
-      enableThreadIDInBody: '?boolean',
-      enableThreadIDInSubject: '?boolean',
-      notifyOwnerOnNewCaseEmail: '?boolean',
-      overEmailLimitAction: '?string',
-      preQuoteSignature: '?boolean',
-      routingAddresses: ['EmailToCaseRoutingAddress'],
-      unauthorizedSenderAction: '?string'
-    }
-  },
-  EmailToCaseRoutingAddress: {
-    type: 'EmailToCaseRoutingAddress',
-    props: {
-      addressType: '?string',
-      authorizedSenders: '?string',
-      caseOrigin: '?string',
-      caseOwner: '?string',
-      caseOwnerType: '?string',
-      casePriority: '?string',
-      createTask: '?boolean',
-      emailAddress: '?string',
-      emailServicesAddress: '?string',
-      isVerified: '?boolean',
-      routingName: '?string',
-      saveEmailHeaders: '?boolean',
-      taskStatus: '?string'
-    }
-  },
-  WebToCaseSettings: {
-    type: 'WebToCaseSettings',
-    props: {
-      caseOrigin: '?string',
-      defaultResponseTemplate: '?string',
-      enableWebToCase: '?boolean'
-    }
-  },
-  CaseSubjectParticle: {
-    type: 'CaseSubjectParticle',
-    props: {
-      index: 'number',
-      textField: '?string',
-      type: 'string'
-    },
-    extends: 'Metadata'
-  },
-  ChannelLayout: {
-    type: 'ChannelLayout',
-    props: {
-      enabledChannels: ['string'],
-      label: 'string',
-      layoutItems: ['ChannelLayoutItem'],
-      recordType: '?string'
-    },
-    extends: 'Metadata'
-  },
-  ChannelLayoutItem: {
-    type: 'ChannelLayoutItem',
-    props: {
-      field: 'string'
-    }
-  },
-  ChatterAnswersSettings: {
-    type: 'ChatterAnswersSettings',
-    props: {
-      emailFollowersOnBestAnswer: '?boolean',
-      emailFollowersOnReply: '?boolean',
-      emailOwnerOnPrivateReply: '?boolean',
-      emailOwnerOnReply: '?boolean',
-      enableAnswerViaEmail: '?boolean',
-      enableChatterAnswers: 'boolean',
-      enableFacebookSSO: '?boolean',
-      enableInlinePublisher: '?boolean',
-      enableReputation: '?boolean',
-      enableRichTextEditor: '?boolean',
-      facebookAuthProvider: '?string',
-      showInPortals: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  ChatterEmailsMDSettings: {
-    type: 'ChatterEmailsMDSettings',
-    props: {
-      enableChatterDigestEmailsApiOnly: '?boolean',
-      enableChatterEmailAttachment: '?boolean',
-      enableCollaborationEmail: '?boolean',
-      enableDisplayAppDownloadBadges: '?boolean',
-      enableEmailReplyToChatter: '?boolean',
-      enableEmailToChatter: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  ChatterExtension: {
-    type: 'ChatterExtension',
-    props: {
-      compositionComponent: 'string',
-      description: 'string',
-      extensionName: 'string',
-      headerText: '?string',
-      hoverText: '?string',
-      icon: 'string',
-      isProtected: '?boolean',
-      masterLabel: 'string',
-      renderComponent: 'string',
-      type: 'string'
-    },
-    extends: 'Metadata'
-  },
-  ChatterSettings: {
-    type: 'ChatterSettings',
-    props: {
-      allowChatterGroupArchiving: '?boolean',
-      allowRecordsInChatterGroup: '?boolean',
-      allowSharingInChatterGroup: '?boolean',
-      enableApprovalRequest: '?boolean',
-      enableChatter: '?boolean',
-      enableChatterEmoticons: '?boolean',
-      enableFeedEdit: '?boolean',
-      enableFeedPinning: '?boolean',
-      enableFeedsDraftPosts: '?boolean',
-      enableFeedsRichText: '?boolean',
-      enableInviteCsnUsers: '?boolean',
-      enableOutOfOfficeEnabledPref: '?boolean',
-      enableRichLinkPreviewsInFeed: '?boolean',
-      enableTodayRecsInFeed: '?boolean',
-      unlistedGroupsEnabled: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  CleanDataService: {
-    type: 'CleanDataService',
-    props: {
-      cleanRules: ['CleanRule'],
-      description: 'string',
-      masterLabel: 'string',
-      matchEngine: 'string'
-    },
-    extends: 'Metadata'
-  },
-  CleanRule: {
-    type: 'CleanRule',
-    props: {
-      bulkEnabled: 'boolean',
-      bypassTriggers: 'boolean',
-      bypassWorkflow: 'boolean',
-      description: 'string',
-      developerName: 'string',
-      fieldMappings: ['FieldMapping'],
-      masterLabel: 'string',
-      matchRule: 'string',
-      sourceSobjectType: 'string',
-      status: 'string',
-      targetSobjectType: 'string'
-    }
-  },
-  FieldMapping: {
-    type: 'FieldMapping',
-    props: {
-      SObjectType: 'string',
-      developerName: 'string',
-      fieldMappingRows: ['FieldMappingRow'],
-      masterLabel: 'string'
-    }
-  },
-  FieldMappingRow: {
-    type: 'FieldMappingRow',
-    props: {
-      SObjectType: 'string',
-      fieldMappingFields: ['FieldMappingField'],
-      fieldName: 'string',
-      mappingOperation: 'string'
-    }
-  },
-  FieldMappingField: {
-    type: 'FieldMappingField',
-    props: {
-      dataServiceField: 'string',
-      dataServiceObjectName: 'string',
-      priority: 'number'
-    }
-  },
-  CommandAction: {
-    type: 'CommandAction',
-    props: {
-      actionType: 'string',
-      description: '?string',
-      intents: ['CommandActionIntent'],
-      label: 'string',
-      parameters: ['CommandActionParam'],
-      responseTemplates: ['CommandActionResponse'],
-      target: '?string'
-    },
-    extends: 'Metadata'
-  },
-  CommandActionIntent: {
-    type: 'CommandActionIntent',
-    props: {
-      phrase: 'string',
-      responseTemplates: ['CommandActionResponse']
-    }
-  },
-  CommandActionResponse: {
-    type: 'CommandActionResponse',
-    props: {
-      template: 'string'
-    }
-  },
-  CommandActionParam: {
-    type: 'CommandActionParam',
-    props: {
-      defaultValue: '?string',
-      description: '?string',
-      name: 'string',
-      required: '?boolean',
-      type: 'string'
-    }
-  },
-  CommunitiesSettings: {
-    type: 'CommunitiesSettings',
-    props: {
-      canModerateAllFeedPosts: '?boolean',
-      canModerateInternalFeedPosts: '?boolean',
-      embeddedVisualforcePages: '?boolean',
-      enableCommunityWorkspaces: '?boolean',
-      enableCspContactVisibilityPref: '?boolean',
-      enableCspNotesOnAccConPref: '?boolean',
-      enableEnablePRM: '?boolean',
-      enableExternalAccHierPref: '?boolean',
-      enableGuestRecordReassignOrgPref: '?boolean',
-      enableInviteChatterGuestEnabled: '?boolean',
-      enableNetPortalUserReportOpts: '?boolean',
-      enableNetworksEnabled: '?boolean',
-      enableOotbProfExtUserOpsEnable: '?boolean',
-      enablePRMAccRelPref: '?boolean',
-      enablePowerCustomerCaseStatus: '?boolean',
-      enableRelaxPartnerAccountFieldPref: '?boolean',
-      enableUsernameUniqForOrgPref: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  Community: {
-    type: 'Community',
-    props: {
-      active: '?boolean',
-      chatterAnswersFacebookSsoUrl: '?string',
-      communityFeedPage: '?string',
-      dataCategoryName: '?string',
-      description: '?string',
-      emailFooterDocument: '?string',
-      emailHeaderDocument: '?string',
-      emailNotificationUrl: '?string',
-      enableChatterAnswers: '?boolean',
-      enablePrivateQuestions: '?boolean',
-      expertsGroup: '?string',
-      portal: '?string',
-      reputationLevels: '?ReputationLevels',
-      showInPortal: '?boolean',
-      site: '?string'
-    },
-    extends: 'Metadata'
-  },
-  ReputationLevels: {
-    type: 'ReputationLevels',
-    props: {
-      chatterAnswersReputationLevels: ['ChatterAnswersReputationLevel'],
-      ideaReputationLevels: ['IdeaReputationLevel']
-    }
-  },
-  ChatterAnswersReputationLevel: {
-    type: 'ChatterAnswersReputationLevel',
-    props: {
-      name: 'string',
-      value: 'number'
-    }
-  },
-  IdeaReputationLevel: {
-    type: 'IdeaReputationLevel',
-    props: {
-      name: 'string',
-      value: 'number'
-    }
-  },
-  CommunityTemplateDefinition: {
-    type: 'CommunityTemplateDefinition',
-    props: {
-      baseTemplate: '?string',
-      bundlesInfo: ['CommunityTemplateBundleInfo'],
-      category: 'string',
-      defaultBrandingSet: '?string',
-      defaultThemeDefinition: 'string',
-      description: '?string',
-      enableExtendedCleanUpOnDelete: '?boolean',
-      masterLabel: 'string',
-      navigationLinkSet: ['NavigationLinkSet'],
-      pageSetting: ['CommunityTemplatePageSetting'],
-      publisher: '?string'
-    },
-    extends: 'Metadata'
-  },
-  CommunityTemplateBundleInfo: {
-    type: 'CommunityTemplateBundleInfo',
-    props: {
-      description: '?string',
-      image: '?string',
-      order: 'number',
-      title: 'string',
-      type: 'string'
-    }
-  },
-  CommunityThemeBundleInfo: {
-    type: 'CommunityThemeBundleInfo',
-    props: {},
-    extends: 'CommunityTemplateBundleInfo'
-  },
-  NavigationLinkSet: {
-    type: 'NavigationLinkSet',
-    props: {
-      navigationMenuItem: ['NavigationMenuItem']
-    }
-  },
-  NavigationMenuItem: {
-    type: 'NavigationMenuItem',
-    props: {
-      defaultListViewId: '?string',
-      label: 'string',
-      menuItemBranding: '?NavigationMenuItemBranding',
-      position: 'number',
-      publiclyAvailable: '?boolean',
-      subMenu: '?NavigationSubMenu',
-      target: '?string',
-      targetPreference: '?string',
-      type: 'string'
-    }
-  },
-  NavigationMenuItemBranding: {
-    type: 'NavigationMenuItemBranding',
-    props: {
-      tileImage: '?string'
-    }
-  },
-  NavigationSubMenu: {
-    type: 'NavigationSubMenu',
-    props: {
-      navigationMenuItem: ['NavigationMenuItem']
-    }
-  },
-  CommunityTemplatePageSetting: {
-    type: 'CommunityTemplatePageSetting',
-    props: {
-      page: 'string',
-      themeLayout: 'string'
-    }
-  },
-  CommunityThemeDefinition: {
-    type: 'CommunityThemeDefinition',
-    props: {
-      bundlesInfo: ['CommunityThemeBundleInfo'],
-      customThemeLayoutType: ['CommunityCustomThemeLayoutType'],
-      defaultBrandingSet: '?string',
-      description: '?string',
-      enableExtendedCleanUpOnDelete: '?boolean',
-      masterLabel: 'string',
-      publisher: '?string',
-      themeRouteOverride: ['CommunityThemeRouteOverride'],
-      themeSetting: ['CommunityThemeSetting']
-    },
-    extends: 'Metadata'
-  },
-  CommunityCustomThemeLayoutType: {
-    type: 'CommunityCustomThemeLayoutType',
-    props: {
-      description: '?string',
-      label: 'string'
-    }
-  },
-  CommunityThemeRouteOverride: {
-    type: 'CommunityThemeRouteOverride',
-    props: {
-      customThemeLayoutType: '?string',
-      pageAttributes: 'string',
-      pageType: 'string',
-      themeLayoutType: '?string'
-    }
-  },
-  CommunityThemeSetting: {
-    type: 'CommunityThemeSetting',
-    props: {
-      customThemeLayoutType: '?string',
-      themeLayout: 'string',
-      themeLayoutType: '?string'
-    }
-  },
-  CompactLayout: {
-    type: 'CompactLayout',
-    props: {
-      fields: ['string'],
-      label: 'string'
-    },
-    extends: 'Metadata'
-  },
-  CompanySettings: {
-    type: 'CompanySettings',
-    props: {
-      enableCustomFiscalYear: 'boolean',
-      fiscalYear: '?FiscalYearSettings'
-    },
-    extends: 'Metadata'
-  },
-  FiscalYearSettings: {
-    type: 'FiscalYearSettings',
-    props: {
-      fiscalYearNameBasedOn: '?string',
-      startMonth: '?string'
-    }
-  },
-  ConnectedApp: {
-    type: 'ConnectedApp',
-    props: {
-      attributes: ['ConnectedAppAttribute'],
-      canvas: '?CanvasMetadata',
-      canvasConfig: '?ConnectedAppCanvasConfig',
-      contactEmail: 'string',
-      contactPhone: '?string',
-      description: '?string',
-      iconUrl: '?string',
-      infoUrl: '?string',
-      ipRanges: ['ConnectedAppIpRange'],
-      label: 'string',
-      logoUrl: '?string',
-      mobileAppConfig: '?ConnectedAppMobileDetailConfig',
-      mobileStartUrl: '?string',
-      oauthConfig: '?ConnectedAppOauthConfig',
-      permissionSetName: ['string'],
-      plugin: '?string',
-      pluginExecutionUser: '?string',
-      profileName: ['string'],
-      samlConfig: '?ConnectedAppSamlConfig',
-      startUrl: '?string'
-    },
-    extends: 'Metadata'
-  },
-  ConnectedAppAttribute: {
-    type: 'ConnectedAppAttribute',
-    props: {
-      formula: 'string',
-      key: 'string'
-    }
-  },
-  ConnectedAppCanvasConfig: {
-    type: 'ConnectedAppCanvasConfig',
-    props: {
-      accessMethod: 'string',
-      canvasUrl: 'string',
-      lifecycleClass: '?string',
-      locations: ['string'],
-      options: ['string'],
-      samlInitiationMethod: '?string'
-    }
-  },
-  ConnectedAppIpRange: {
-    type: 'ConnectedAppIpRange',
-    props: {
-      description: '?string',
-      end: 'string',
-      start: 'string'
-    }
-  },
-  ConnectedAppMobileDetailConfig: {
-    type: 'ConnectedAppMobileDetailConfig',
-    props: {
-      applicationBinaryFile: '?string',
-      applicationBinaryFileName: '?string',
-      applicationBundleIdentifier: '?string',
-      applicationFileLength: '?number',
-      applicationIconFile: '?string',
-      applicationIconFileName: '?string',
-      applicationInstallUrl: '?string',
-      devicePlatform: 'string',
-      deviceType: '?string',
-      minimumOsVersion: '?string',
-      privateApp: '?boolean',
-      version: 'string'
-    }
-  },
-  ConnectedAppOauthConfig: {
-    type: 'ConnectedAppOauthConfig',
-    props: {
-      callbackUrl: 'string',
-      certificate: '?string',
-      consumerKey: '?string',
-      consumerSecret: '?string',
-      idTokenConfig: '?ConnectedAppOauthIdToken',
-      isAdminApproved: '?boolean',
-      scopes: ['string'],
-      singleLogoutUrl: '?string'
-    }
-  },
-  ConnectedAppOauthIdToken: {
-    type: 'ConnectedAppOauthIdToken',
-    props: {
-      idTokenAudience: '?string',
-      idTokenIncludeAttributes: '?boolean',
-      idTokenIncludeCustomPerms: '?boolean',
-      idTokenIncludeStandardClaims: '?boolean',
-      idTokenValidity: '?number'
-    }
-  },
-  ConnectedAppSamlConfig: {
-    type: 'ConnectedAppSamlConfig',
-    props: {
-      acsUrl: 'string',
-      certificate: '?string',
-      encryptionCertificate: '?string',
-      encryptionType: '?string',
-      entityUrl: 'string',
-      issuer: '?string',
-      samlIdpSLOBindingEnum: '?string',
-      samlNameIdFormat: '?string',
-      samlSloUrl: '?string',
-      samlSubjectCustomAttr: '?string',
-      samlSubjectType: 'string'
-    }
-  },
-  ConnectedAppSettings: {
-    type: 'ConnectedAppSettings',
-    props: {
-      enableAdminApprovedAppsOnly: '?boolean',
-      enableSkipUserProvisioningWizardWelcomePage: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  ContentSettings: {
-    type: 'ContentSettings',
-    props: {
-      enableChatterFileLink: '?boolean',
-      enableContent: '?boolean',
-      enableContentAutoAssign: '?boolean',
-      enableContentDistForPortalUsers: '?boolean',
-      enableContentDistPwOptionsBit1: '?boolean',
-      enableContentDistPwOptionsBit2: '?boolean',
-      enableContentDistribution: '?boolean',
-      enableContentSupportMultiLanguage: '?boolean',
-      enableContentWorkspaceAccess: '?boolean',
-      enableFileShareSetByRecord: '?boolean',
-      enableFilesUsrShareNetRestricted: '?boolean',
-      enableJPGPreviews: '?boolean',
-      enableLibraryManagedFiles: '?boolean',
-      enableSiteGuestUserToUploadFiles: '?boolean',
-      enableUploadFilesOnAttachments: '?boolean',
-      skipContentAssetTriggers: '?boolean',
-      skipContentAssetTriggersOnDeploy: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  ContractSettings: {
-    type: 'ContractSettings',
-    props: {
-      autoCalculateEndDate: '?boolean',
-      autoExpirationDelay: '?string',
-      autoExpirationRecipient: '?string',
-      autoExpireContracts: '?boolean',
-      enableContractHistoryTracking: '?boolean',
-      notifyOwnersOnContractExpiration: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  CorsWhitelistOrigin: {
-    type: 'CorsWhitelistOrigin',
-    props: {
-      urlPattern: 'string'
-    },
-    extends: 'Metadata'
-  },
-  CspTrustedSite: {
-    type: 'CspTrustedSite',
-    props: {
-      context: '?string',
-      description: '?string',
-      endpointUrl: 'string',
-      isActive: 'boolean'
-    },
-    extends: 'Metadata'
-  },
-  CurrencySettings: {
-    type: 'CurrencySettings',
-    props: {
-      enableCurrencyEffectiveDates: '?boolean',
-      enableCurrencySymbolWithMultiCurrency: '?boolean',
-      enableMultiCurrency: '?boolean',
-      isMultiCurrencyActivationAllowed: '?boolean',
-      isParenCurrencyConvDisabled: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  CustomApplication: {
-    type: 'CustomApplication',
-    props: {
-      actionOverrides: ['AppActionOverride'],
-      brand: '?AppBrand',
-      consoleConfig: '?ServiceCloudConsoleConfig',
-      defaultLandingTab: '?string',
-      description: '?string',
-      formFactors: ['string'],
-      isNavAutoTempTabsDisabled: '?boolean',
-      isNavPersonalizationDisabled: '?boolean',
-      isServiceCloudConsole: '?boolean',
-      label: '?string',
-      logo: '?string',
-      navType: '?string',
-      preferences: '?AppPreferences',
-      profileActionOverrides: ['AppProfileActionOverride'],
-      setupExperience: '?string',
-      subscriberTabs: ['string'],
-      tabs: ['string'],
-      uiType: '?string',
-      utilityBar: '?string',
-      workspaceConfig: '?AppWorkspaceConfig'
-    },
-    extends: 'Metadata'
-  },
-  AppActionOverride: {
-    type: 'AppActionOverride',
-    props: {
-      pageOrSobjectType: 'string'
-    },
-    extends: 'ActionOverride'
-  },
-  ActionOverride: {
-    type: 'ActionOverride',
-    props: {
-      actionName: '?string',
-      comment: '?string',
-      content: '?string',
-      formFactor: '?string',
-      skipRecordTypeSelect: '?boolean',
-      type: '?string'
-    }
-  },
-  AppBrand: {
-    type: 'AppBrand',
-    props: {
-      footerColor: '?string',
-      headerColor: '?string',
-      logo: '?string',
-      logoVersion: '?number',
-      shouldOverrideOrgTheme: '?boolean'
-    }
-  },
-  ServiceCloudConsoleConfig: {
-    type: 'ServiceCloudConsoleConfig',
-    props: {
-      componentList: '?AppComponentList',
-      detailPageRefreshMethod: 'string',
-      footerColor: '?string',
-      headerColor: '?string',
-      keyboardShortcuts: 'KeyboardShortcuts',
-      listPlacement: 'ListPlacement',
-      listRefreshMethod: 'string',
-      liveAgentConfig: '?LiveAgentConfig',
-      primaryTabColor: '?string',
-      pushNotifications: ['PushNotification'],
-      tabLimitConfig: '?TabLimitConfig',
-      whitelistedDomains: ['string']
-    }
-  },
-  AppComponentList: {
-    type: 'AppComponentList',
-    props: {
-      alignment: 'string',
-      components: ['string']
-    }
-  },
-  KeyboardShortcuts: {
-    type: 'KeyboardShortcuts',
-    props: {
-      customShortcuts: ['CustomShortcut'],
-      defaultShortcuts: ['DefaultShortcut']
-    }
-  },
-  CustomShortcut: {
-    type: 'CustomShortcut',
-    props: {
-      description: '?string',
-      eventName: 'string'
-    },
-    extends: 'DefaultShortcut'
-  },
-  DefaultShortcut: {
-    type: 'DefaultShortcut',
-    props: {
-      action: 'string',
-      active: 'boolean',
-      keyCommand: 'string'
-    }
-  },
-  ListPlacement: {
-    type: 'ListPlacement',
-    props: {
-      height: '?number',
-      location: 'string',
-      units: '?string',
-      width: '?number'
-    }
-  },
-  LiveAgentConfig: {
-    type: 'LiveAgentConfig',
-    props: {
-      enableLiveChat: '?boolean',
-      openNewAccountSubtab: '?boolean',
-      openNewCaseSubtab: '?boolean',
-      openNewContactSubtab: '?boolean',
-      openNewLeadSubtab: '?boolean',
-      openNewVFPageSubtab: '?boolean',
-      pageNamesToOpen: ['string'],
-      showKnowledgeArticles: '?boolean'
-    }
-  },
-  PushNotification: {
-    type: 'PushNotification',
-    props: {
-      fieldNames: ['string'],
-      objectName: 'string'
-    }
-  },
-  TabLimitConfig: {
-    type: 'TabLimitConfig',
-    props: {
-      maxNumberOfPrimaryTabs: '?string',
-      maxNumberOfSubTabs: '?string'
-    }
-  },
-  AppPreferences: {
-    type: 'AppPreferences',
-    props: {
-      enableCustomizeMyTabs: 'boolean',
-      enableKeyboardShortcuts: 'boolean',
-      enableListViewHover: 'boolean',
-      enableListViewReskin: 'boolean',
-      enableMultiMonitorComponents: 'boolean',
-      enablePinTabs: 'boolean',
-      enableTabHover: 'boolean',
-      enableTabLimits: 'boolean',
-      saveUserSessions: 'boolean'
-    }
-  },
-  AppProfileActionOverride: {
-    type: 'AppProfileActionOverride',
-    props: {
-      profile: 'string'
-    },
-    extends: 'ProfileActionOverride'
-  },
-  ProfileActionOverride: {
-    type: 'ProfileActionOverride',
-    props: {
-      actionName: 'string',
-      content: '?string',
-      formFactor: 'string',
-      pageOrSobjectType: 'string',
-      recordType: '?string',
-      type: 'string'
-    }
-  },
-  AppWorkspaceConfig: {
-    type: 'AppWorkspaceConfig',
-    props: {
-      mappings: ['WorkspaceMapping']
-    }
-  },
-  WorkspaceMapping: {
-    type: 'WorkspaceMapping',
-    props: {
-      fieldName: '?string',
-      tab: 'string'
-    }
-  },
-  CustomApplicationComponent: {
-    type: 'CustomApplicationComponent',
-    props: {
-      buttonIconUrl: '?string',
-      buttonStyle: '?string',
-      buttonText: '?string',
-      buttonWidth: '?number',
-      height: '?number',
-      isHeightFixed: 'boolean',
-      isHidden: 'boolean',
-      isWidthFixed: 'boolean',
-      visualforcePage: 'string',
-      width: '?number'
-    },
-    extends: 'Metadata'
-  },
-  CustomFeedFilter: {
-    type: 'CustomFeedFilter',
-    props: {
-      criteria: ['FeedFilterCriterion'],
-      description: '?string',
-      isProtected: '?boolean',
-      label: 'string'
-    },
-    extends: 'Metadata'
-  },
-  FeedFilterCriterion: {
-    type: 'FeedFilterCriterion',
-    props: {
-      feedItemType: 'string',
-      feedItemVisibility: '?string',
-      relatedSObjectType: '?string'
-    }
-  },
-  CustomField: {
-    type: 'CustomField',
-    props: {
-      businessOwnerGroup: '?string',
-      businessOwnerUser: '?string',
-      businessStatus: '?string',
-      caseSensitive: '?boolean',
-      complianceGroup: '?string',
-      customDataType: '?string',
-      defaultValue: '?string',
-      deleteConstraint: '?string',
-      deprecated: '?boolean',
-      description: '?string',
-      displayFormat: '?string',
-      encryptionScheme: '?string',
-      escapeMarkup: '?boolean',
-      externalDeveloperName: '?string',
-      externalId: '?boolean',
-      fieldManageability: '?string',
-      formula: '?string',
-      formulaTreatBlanksAs: '?string',
-      inlineHelpText: '?string',
-      isAIPredictionField: '?boolean',
-      isConvertLeadDisabled: '?boolean',
-      isFilteringDisabled: '?boolean',
-      isNameField: '?boolean',
-      isSortingDisabled: '?boolean',
-      label: '?string',
-      length: '?number',
-      lookupFilter: '?LookupFilter',
-      maskChar: '?string',
-      maskType: '?string',
-      metadataRelationshipControllingField: '?string',
-      populateExistingRows: '?boolean',
-      precision: '?number',
-      referenceTargetField: '?string',
-      referenceTo: '?string',
-      relationshipLabel: '?string',
-      relationshipName: '?string',
-      relationshipOrder: '?number',
-      reparentableMasterDetail: '?boolean',
-      required: '?boolean',
-      restrictedAdminField: '?boolean',
-      scale: '?number',
-      securityClassification: '?string',
-      startingNumber: '?number',
-      stripMarkup: '?boolean',
-      summarizedField: '?string',
-      summaryFilterItems: ['FilterItem'],
-      summaryForeignKey: '?string',
-      summaryOperation: '?string',
-      trackFeedHistory: '?boolean',
-      trackHistory: '?boolean',
-      trackTrending: '?boolean',
-      translateData: '?boolean',
-      type: '?string',
-      unique: '?boolean',
-      valueSet: '?ValueSet',
-      visibleLines: '?number',
-      writeRequiresMasterRead: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  LookupFilter: {
-    type: 'LookupFilter',
-    props: {
-      active: 'boolean',
-      booleanFilter: '?string',
-      description: '?string',
-      errorMessage: '?string',
-      filterItems: ['FilterItem'],
-      infoMessage: '?string',
-      isOptional: 'boolean'
-    }
-  },
-  ValueSet: {
-    type: 'ValueSet',
-    props: {
-      controllingField: '?string',
-      restricted: '?boolean',
-      valueSetDefinition: '?ValueSetValuesDefinition',
-      valueSetName: '?string',
-      valueSettings: ['ValueSettings']
-    }
-  },
-  ValueSetValuesDefinition: {
-    type: 'ValueSetValuesDefinition',
-    props: {
-      sorted: 'boolean',
-      value: ['CustomValue']
-    }
-  },
-  CustomValue: {
-    type: 'CustomValue',
-    props: {
-      color: '?string',
-      default: 'boolean',
-      description: '?string',
-      isActive: '?boolean',
-      label: '?string'
-    },
-    extends: 'Metadata'
-  },
-  StandardValue: {
-    type: 'StandardValue',
-    props: {
-      allowEmail: '?boolean',
-      closed: '?boolean',
-      converted: '?boolean',
-      cssExposed: '?boolean',
-      forecastCategory: '?string',
-      groupingString: '?string',
-      highPriority: '?boolean',
-      probability: '?number',
-      reverseRole: '?string',
-      reviewed: '?boolean',
-      won: '?boolean'
-    },
-    extends: 'CustomValue'
-  },
-  ValueSettings: {
-    type: 'ValueSettings',
-    props: {
-      controllingFieldValue: ['string'],
-      valueName: 'string'
-    }
-  },
-  CustomHelpMenuSection: {
-    type: 'CustomHelpMenuSection',
-    props: {
-      customHelpMenuItems: ['CustomHelpMenuItem'],
-      masterLabel: 'string'
-    },
-    extends: 'Metadata'
-  },
-  CustomHelpMenuItem: {
-    type: 'CustomHelpMenuItem',
-    props: {
-      linkUrl: 'string',
-      masterLabel: 'string',
-      sortOrder: 'number'
-    }
-  },
-  CustomLabel: {
-    type: 'CustomLabel',
-    props: {
-      categories: '?string',
-      language: 'string',
-      protected: 'boolean',
-      shortDescription: 'string',
-      value: 'string'
-    },
-    extends: 'Metadata'
-  },
-  CustomLabels: {
-    type: 'CustomLabels',
-    props: {
-      labels: ['CustomLabel']
-    },
-    extends: 'Metadata'
-  },
-  CustomMetadata: {
-    type: 'CustomMetadata',
-    props: {
-      description: '?string',
-      label: '?string',
-      protected: '?boolean',
-      values: ['CustomMetadataValue']
-    },
-    extends: 'Metadata'
-  },
-  CustomMetadataValue: {
-    type: 'CustomMetadataValue',
-    props: {
-      field: 'string',
-      value: '?any'
-    }
-  },
-  CustomNotificationType: {
-    type: 'CustomNotificationType',
-    props: {
-      customNotifTypeName: 'string',
-      description: '?string',
-      desktop: 'boolean',
-      masterLabel: 'string',
-      mobile: 'boolean'
-    },
-    extends: 'Metadata'
-  },
-  CustomObject: {
-    type: 'CustomObject',
-    props: {
-      actionOverrides: ['ActionOverride'],
-      allowInChatterGroups: '?boolean',
-      articleTypeChannelDisplay: '?ArticleTypeChannelDisplay',
-      businessProcesses: ['BusinessProcess'],
-      compactLayoutAssignment: '?string',
-      compactLayouts: ['CompactLayout'],
-      customHelp: '?string',
-      customHelpPage: '?string',
-      customSettingsType: '?string',
-      deploymentStatus: '?string',
-      deprecated: '?boolean',
-      description: '?string',
-      enableActivities: '?boolean',
-      enableBulkApi: '?boolean',
-      enableDataTranslation: '?boolean',
-      enableDivisions: '?boolean',
-      enableEnhancedLookup: '?boolean',
-      enableFeeds: '?boolean',
-      enableHistory: '?boolean',
-      enableLicensing: '?boolean',
-      enableReports: '?boolean',
-      enableSearch: '?boolean',
-      enableSharing: '?boolean',
-      enableStreamingApi: '?boolean',
-      eventType: '?string',
-      externalDataSource: '?string',
-      externalName: '?string',
-      externalRepository: '?string',
-      externalSharingModel: '?string',
-      fieldSets: ['FieldSet'],
-      fields: ['CustomField'],
-      gender: '?string',
-      historyRetentionPolicy: '?HistoryRetentionPolicy',
-      household: '?boolean',
-      indexes: ['Index'],
-      label: '?string',
-      listViews: ['ListView'],
-      nameField: '?CustomField',
-      pluralLabel: '?string',
-      profileSearchLayouts: ['ProfileSearchLayouts'],
-      publishBehavior: '?string',
-      recordTypeTrackFeedHistory: '?boolean',
-      recordTypeTrackHistory: '?boolean',
-      recordTypes: ['RecordType'],
-      searchLayouts: '?SearchLayouts',
-      sharingModel: '?string',
-      sharingReasons: ['SharingReason'],
-      sharingRecalculations: ['SharingRecalculation'],
-      startsWith: '?string',
-      validationRules: ['ValidationRule'],
-      visibility: '?string',
-      webLinks: ['WebLink']
-    },
-    extends: 'Metadata'
-  },
-  ArticleTypeChannelDisplay: {
-    type: 'ArticleTypeChannelDisplay',
-    props: {
-      articleTypeTemplates: ['ArticleTypeTemplate']
-    }
-  },
-  ArticleTypeTemplate: {
-    type: 'ArticleTypeTemplate',
-    props: {
-      channel: 'string',
-      page: '?string',
-      template: 'string'
-    }
-  },
-  FieldSet: {
-    type: 'FieldSet',
-    props: {
-      availableFields: ['FieldSetItem'],
-      description: 'string',
-      displayedFields: ['FieldSetItem'],
-      label: 'string'
-    },
-    extends: 'Metadata'
-  },
-  FieldSetItem: {
-    type: 'FieldSetItem',
-    props: {
-      field: '?string',
-      isFieldManaged: '?boolean',
-      isRequired: '?boolean'
-    }
-  },
-  HistoryRetentionPolicy: {
-    type: 'HistoryRetentionPolicy',
-    props: {
-      archiveAfterMonths: 'number',
-      archiveRetentionYears: 'number',
-      description: '?string'
-    }
-  },
-  Index: {
-    type: 'Index',
-    props: {
-      fields: ['IndexField'],
-      label: 'string'
-    },
-    extends: 'Metadata'
-  },
-  IndexField: {
-    type: 'IndexField',
-    props: {
-      name: 'string',
-      sortDirection: 'string'
-    }
-  },
-  ListView: {
-    type: 'ListView',
-    props: {
-      booleanFilter: '?string',
-      columns: ['string'],
-      division: '?string',
-      filterScope: 'string',
-      filters: ['ListViewFilter'],
-      label: 'string',
-      language: '?string',
-      queue: '?string',
-      sharedTo: '?SharedTo'
-    },
-    extends: 'Metadata'
-  },
-  ListViewFilter: {
-    type: 'ListViewFilter',
-    props: {
-      field: 'string',
-      operation: 'string',
-      value: '?string'
-    }
-  },
-  SharedTo: {
-    type: 'SharedTo',
-    props: {
-      allCustomerPortalUsers: '?string',
-      allInternalUsers: '?string',
-      allPartnerUsers: '?string',
-      channelProgramGroup: ['string'],
-      channelProgramGroups: ['string'],
-      group: ['string'],
-      groups: ['string'],
-      guestUser: ['string'],
-      managerSubordinates: ['string'],
-      managers: ['string'],
-      portalRole: ['string'],
-      portalRoleAndSubordinates: ['string'],
-      queue: ['string'],
-      role: ['string'],
-      roleAndSubordinates: ['string'],
-      roleAndSubordinatesInternal: ['string'],
-      roles: ['string'],
-      rolesAndSubordinates: ['string'],
-      territories: ['string'],
-      territoriesAndSubordinates: ['string'],
-      territory: ['string'],
-      territoryAndSubordinates: ['string']
-    }
-  },
-  ProfileSearchLayouts: {
-    type: 'ProfileSearchLayouts',
-    props: {
-      fields: ['string'],
-      profileName: '?string'
-    }
-  },
-  RecordType: {
-    type: 'RecordType',
-    props: {
-      active: 'boolean',
-      businessProcess: '?string',
-      compactLayoutAssignment: '?string',
-      description: '?string',
-      label: 'string',
-      picklistValues: ['RecordTypePicklistValue']
-    },
-    extends: 'Metadata'
-  },
-  RecordTypePicklistValue: {
-    type: 'RecordTypePicklistValue',
-    props: {
-      picklist: 'string',
-      values: ['PicklistValue']
-    }
-  },
-  SearchLayouts: {
-    type: 'SearchLayouts',
-    props: {
-      customTabListAdditionalFields: ['string'],
-      excludedStandardButtons: ['string'],
-      listViewButtons: ['string'],
-      lookupDialogsAdditionalFields: ['string'],
-      lookupFilterFields: ['string'],
-      lookupPhoneDialogsAdditionalFields: ['string'],
-      massQuickActions: ['string'],
-      searchFilterFields: ['string'],
-      searchResultsAdditionalFields: ['string'],
-      searchResultsCustomButtons: ['string']
-    }
-  },
-  SharingReason: {
-    type: 'SharingReason',
-    props: {
-      label: 'string'
-    },
-    extends: 'Metadata'
-  },
-  SharingRecalculation: {
-    type: 'SharingRecalculation',
-    props: {
-      className: 'string'
-    }
-  },
-  ValidationRule: {
-    type: 'ValidationRule',
-    props: {
-      active: 'boolean',
-      description: '?string',
-      errorConditionFormula: 'string',
-      errorDisplayField: '?string',
-      errorMessage: 'string'
-    },
-    extends: 'Metadata'
-  },
-  WebLink: {
-    type: 'WebLink',
-    props: {
-      availability: 'string',
-      description: '?string',
-      displayType: 'string',
-      encodingKey: '?string',
-      hasMenubar: '?boolean',
-      hasScrollbars: '?boolean',
-      hasToolbar: '?boolean',
-      height: '?number',
-      isResizable: '?boolean',
-      linkType: 'string',
-      masterLabel: '?string',
-      openType: 'string',
-      page: '?string',
-      position: '?string',
-      protected: 'boolean',
-      requireRowSelection: '?boolean',
-      scontrol: '?string',
-      showsLocation: '?boolean',
-      showsStatus: '?boolean',
-      url: '?string',
-      width: '?number'
-    },
-    extends: 'Metadata'
-  },
-  CustomObjectTranslation: {
-    type: 'CustomObjectTranslation',
-    props: {
-      caseValues: ['ObjectNameCaseValue'],
-      fieldSets: ['FieldSetTranslation'],
-      fields: ['CustomFieldTranslation'],
-      gender: '?string',
-      layouts: ['LayoutTranslation'],
-      nameFieldLabel: '?string',
-      quickActions: ['QuickActionTranslation'],
-      recordTypes: ['RecordTypeTranslation'],
-      sharingReasons: ['SharingReasonTranslation'],
-      standardFields: ['StandardFieldTranslation'],
-      startsWith: '?string',
-      validationRules: ['ValidationRuleTranslation'],
-      webLinks: ['WebLinkTranslation'],
-      workflowTasks: ['WorkflowTaskTranslation']
-    },
-    extends: 'Metadata'
-  },
-  ObjectNameCaseValue: {
-    type: 'ObjectNameCaseValue',
-    props: {
-      article: '?string',
-      caseType: '?string',
-      plural: '?boolean',
-      possessive: '?string',
-      value: 'string'
-    }
-  },
-  FieldSetTranslation: {
-    type: 'FieldSetTranslation',
-    props: {
-      label: 'string',
-      name: 'string'
-    }
-  },
-  CustomFieldTranslation: {
-    type: 'CustomFieldTranslation',
-    props: {
-      caseValues: ['ObjectNameCaseValue'],
-      gender: '?string',
-      help: '?string',
-      label: '?string',
-      lookupFilter: '?LookupFilterTranslation',
-      name: 'string',
-      picklistValues: ['PicklistValueTranslation'],
-      relationshipLabel: '?string',
-      startsWith: '?string'
-    }
-  },
-  LookupFilterTranslation: {
-    type: 'LookupFilterTranslation',
-    props: {
-      errorMessage: 'string',
-      informationalMessage: 'string'
-    }
-  },
-  PicklistValueTranslation: {
-    type: 'PicklistValueTranslation',
-    props: {
-      masterLabel: 'string',
-      translation: '?string'
-    }
-  },
-  LayoutTranslation: {
-    type: 'LayoutTranslation',
-    props: {
-      layout: 'string',
-      layoutType: '?string',
-      sections: ['LayoutSectionTranslation']
-    }
-  },
-  LayoutSectionTranslation: {
-    type: 'LayoutSectionTranslation',
-    props: {
-      label: 'string',
-      section: 'string'
-    }
-  },
-  QuickActionTranslation: {
-    type: 'QuickActionTranslation',
-    props: {
-      label: 'string',
-      name: 'string'
-    }
-  },
-  RecordTypeTranslation: {
-    type: 'RecordTypeTranslation',
-    props: {
-      description: '?string',
-      label: 'string',
-      name: 'string'
-    }
-  },
-  SharingReasonTranslation: {
-    type: 'SharingReasonTranslation',
-    props: {
-      label: 'string',
-      name: 'string'
-    }
-  },
-  StandardFieldTranslation: {
-    type: 'StandardFieldTranslation',
-    props: {
-      label: '?string',
-      name: 'string'
-    }
-  },
-  ValidationRuleTranslation: {
-    type: 'ValidationRuleTranslation',
-    props: {
-      errorMessage: 'string',
-      name: 'string'
-    }
-  },
-  WebLinkTranslation: {
-    type: 'WebLinkTranslation',
-    props: {
-      label: 'string',
-      name: 'string'
-    }
-  },
-  WorkflowTaskTranslation: {
-    type: 'WorkflowTaskTranslation',
-    props: {
-      description: '?string',
-      name: 'string',
-      subject: '?string'
-    }
-  },
-  CustomPageWebLink: {
-    type: 'CustomPageWebLink',
-    props: {
-      availability: 'string',
-      description: '?string',
-      displayType: 'string',
-      encodingKey: '?string',
-      hasMenubar: '?boolean',
-      hasScrollbars: '?boolean',
-      hasToolbar: '?boolean',
-      height: '?number',
-      isResizable: '?boolean',
-      linkType: 'string',
-      masterLabel: '?string',
-      openType: 'string',
-      page: '?string',
-      position: '?string',
-      protected: 'boolean',
-      requireRowSelection: '?boolean',
-      scontrol: '?string',
-      showsLocation: '?boolean',
-      showsStatus: '?boolean',
-      url: '?string',
-      width: '?number'
-    },
-    extends: 'Metadata'
-  },
-  CustomPermission: {
-    type: 'CustomPermission',
-    props: {
-      connectedApp: '?string',
-      description: '?string',
-      label: 'string',
-      requiredPermission: ['CustomPermissionDependencyRequired']
-    },
-    extends: 'Metadata'
-  },
-  CustomPermissionDependencyRequired: {
-    type: 'CustomPermissionDependencyRequired',
-    props: {
-      customPermission: 'string',
-      dependency: 'boolean'
-    }
-  },
-  CustomSite: {
-    type: 'CustomSite',
-    props: {
-      active: 'boolean',
-      allowHomePage: 'boolean',
-      allowStandardAnswersPages: '?boolean',
-      allowStandardIdeasPages: 'boolean',
-      allowStandardLookups: 'boolean',
-      allowStandardPortalPages: 'boolean',
-      allowStandardSearch: 'boolean',
-      analyticsTrackingCode: '?string',
-      authorizationRequiredPage: '?string',
-      bandwidthExceededPage: '?string',
-      browserXssProtection: 'boolean',
-      changePasswordPage: '?string',
-      chatterAnswersForgotPasswordConfirmPage: '?string',
-      chatterAnswersForgotPasswordPage: '?string',
-      chatterAnswersHelpPage: '?string',
-      chatterAnswersLoginPage: '?string',
-      chatterAnswersRegistrationPage: '?string',
-      clickjackProtectionLevel: 'string',
-      contentSniffingProtection: 'boolean',
-      cspUpgradeInsecureRequests: 'boolean',
-      customWebAddresses: ['SiteWebAddress'],
-      description: '?string',
-      enableAuraRequests: '?boolean',
-      favoriteIcon: '?string',
-      fileNotFoundPage: '?string',
-      forgotPasswordPage: '?string',
-      genericErrorPage: '?string',
-      guestProfile: '?string',
-      inMaintenancePage: '?string',
-      inactiveIndexPage: '?string',
-      indexPage: 'string',
-      masterLabel: 'string',
-      myProfilePage: '?string',
-      portal: '?string',
-      referrerPolicyOriginWhenCrossOrigin: 'boolean',
-      requireHttps: 'boolean',
-      requireInsecurePortalAccess: 'boolean',
-      robotsTxtPage: '?string',
-      rootComponent: '?string',
-      selfRegPage: '?string',
-      serverIsDown: '?string',
-      siteAdmin: '?string',
-      siteRedirectMappings: ['SiteRedirectMapping'],
-      siteTemplate: '?string',
-      siteType: 'string',
-      subdomain: '?string',
-      urlPathPrefix: '?string'
-    },
-    extends: 'Metadata'
-  },
-  SiteWebAddress: {
-    type: 'SiteWebAddress',
-    props: {
-      certificate: '?string',
-      domainName: 'string',
-      primary: 'boolean'
-    }
-  },
-  SiteRedirectMapping: {
-    type: 'SiteRedirectMapping',
-    props: {
-      action: 'string',
-      isActive: '?boolean',
-      source: 'string',
-      target: 'string'
-    }
-  },
-  CustomTab: {
-    type: 'CustomTab',
-    props: {
-      actionOverrides: ['ActionOverride'],
-      auraComponent: '?string',
-      customObject: '?boolean',
-      description: '?string',
-      flexiPage: '?string',
-      frameHeight: '?number',
-      hasSidebar: '?boolean',
-      icon: '?string',
-      label: '?string',
-      lwcComponent: '?string',
-      motif: '?string',
-      page: '?string',
-      scontrol: '?string',
-      splashPageLink: '?string',
-      url: '?string',
-      urlEncodingKey: '?string'
-    },
-    extends: 'Metadata'
-  },
-  Dashboard: {
-    type: 'Dashboard',
-    props: {
-      backgroundEndColor: 'string',
-      backgroundFadeDirection: 'string',
-      backgroundStartColor: 'string',
-      chartTheme: '?string',
-      colorPalette: '?string',
-      dashboardChartTheme: '?string',
-      dashboardColorPalette: '?string',
-      dashboardFilters: ['DashboardFilter'],
-      dashboardGridLayout: '?DashboardGridLayout',
-      dashboardResultRefreshedDate: '?string',
-      dashboardResultRunningUser: '?string',
-      dashboardType: '?string',
-      description: '?string',
-      folderName: '?string',
-      isGridLayout: '?boolean',
-      leftSection: '?DashboardComponentSection',
-      middleSection: '?DashboardComponentSection',
-      numSubscriptions: '?number',
-      rightSection: '?DashboardComponentSection',
-      runningUser: '?string',
-      textColor: 'string',
-      title: 'string',
-      titleColor: 'string',
-      titleSize: 'number'
-    },
-    extends: 'Metadata'
-  },
-  DashboardFilter: {
-    type: 'DashboardFilter',
-    props: {
-      dashboardFilterOptions: ['DashboardFilterOption'],
-      name: 'string'
-    }
-  },
-  DashboardFilterOption: {
-    type: 'DashboardFilterOption',
-    props: {
-      operator: 'string',
-      values: ['string']
-    }
-  },
-  DashboardGridLayout: {
-    type: 'DashboardGridLayout',
-    props: {
-      dashboardGridComponents: ['DashboardGridComponent'],
-      numberOfColumns: 'number',
-      rowHeight: 'number'
-    }
-  },
-  DashboardGridComponent: {
-    type: 'DashboardGridComponent',
-    props: {
-      colSpan: 'number',
-      columnIndex: 'number',
-      dashboardComponent: 'DashboardComponent',
-      rowIndex: 'number',
-      rowSpan: 'number'
-    }
-  },
-  DashboardComponent: {
-    type: 'DashboardComponent',
-    props: {
-      autoselectColumnsFromReport: '?boolean',
-      chartAxisRange: '?string',
-      chartAxisRangeMax: '?number',
-      chartAxisRangeMin: '?number',
-      chartSummary: ['ChartSummary'],
-      componentChartTheme: '?string',
-      componentType: 'string',
-      dashboardFilterColumns: ['DashboardFilterColumn'],
-      dashboardTableColumn: ['DashboardTableColumn'],
-      decimalPrecision: '?number',
-      displayUnits: '?string',
-      drillDownUrl: '?string',
-      drillEnabled: '?boolean',
-      drillToDetailEnabled: '?boolean',
-      enableHover: '?boolean',
-      expandOthers: '?boolean',
-      flexComponentProperties: '?DashboardFlexTableComponentProperties',
-      footer: '?string',
-      gaugeMax: '?number',
-      gaugeMin: '?number',
-      groupingColumn: ['string'],
-      groupingSortProperties: '?DashboardComponentGroupingSortProperties',
-      header: '?string',
-      indicatorBreakpoint1: '?number',
-      indicatorBreakpoint2: '?number',
-      indicatorHighColor: '?string',
-      indicatorLowColor: '?string',
-      indicatorMiddleColor: '?string',
-      legendPosition: '?string',
-      maxValuesDisplayed: '?number',
-      metricLabel: '?string',
-      page: '?string',
-      pageHeightInPixels: '?number',
-      report: '?string',
-      scontrol: '?string',
-      scontrolHeightInPixels: '?number',
-      showPercentage: '?boolean',
-      showPicturesOnCharts: '?boolean',
-      showPicturesOnTables: '?boolean',
-      showRange: '?boolean',
-      showTotal: '?boolean',
-      showValues: '?boolean',
-      sortBy: '?string',
-      title: '?string',
-      useReportChart: '?boolean'
-    }
-  },
-  ChartSummary: {
-    type: 'ChartSummary',
-    props: {
-      aggregate: '?string',
-      axisBinding: '?string',
-      column: 'string'
-    }
-  },
-  DashboardFilterColumn: {
-    type: 'DashboardFilterColumn',
-    props: {
-      column: 'string'
-    }
-  },
-  DashboardTableColumn: {
-    type: 'DashboardTableColumn',
-    props: {
-      aggregateType: '?string',
-      calculatePercent: '?boolean',
-      column: 'string',
-      decimalPlaces: '?number',
-      showSubTotal: '?boolean',
-      showTotal: '?boolean',
-      sortBy: '?string'
-    }
-  },
-  DashboardFlexTableComponentProperties: {
-    type: 'DashboardFlexTableComponentProperties',
-    props: {
-      decimalPrecision: '?number',
-      flexTableColumn: ['DashboardComponentColumn'],
-      flexTableSortInfo: '?DashboardComponentSortInfo',
-      hideChatterPhotos: '?boolean'
-    }
-  },
-  DashboardComponentColumn: {
-    type: 'DashboardComponentColumn',
-    props: {
-      breakPoint1: '?number',
-      breakPoint2: '?number',
-      breakPointOrder: '?number',
-      highRangeColor: '?number',
-      lowRangeColor: '?number',
-      midRangeColor: '?number',
-      reportColumn: 'string',
-      showSubTotal: '?boolean',
-      showTotal: '?boolean',
-      type: 'string'
-    }
-  },
-  DashboardComponentSortInfo: {
-    type: 'DashboardComponentSortInfo',
-    props: {
-      sortColumn: '?string',
-      sortOrder: '?string'
-    }
-  },
-  DashboardComponentGroupingSortProperties: {
-    type: 'DashboardComponentGroupingSortProperties',
-    props: {
-      groupingSorts: ['DashboardComponentGroupingSort']
-    }
-  },
-  DashboardComponentGroupingSort: {
-    type: 'DashboardComponentGroupingSort',
-    props: {
-      groupingLevel: 'string',
-      inheritedReportGroupingSort: '?string',
-      sortColumn: '?string',
-      sortOrder: '?string'
-    }
-  },
-  DashboardComponentSection: {
-    type: 'DashboardComponentSection',
-    props: {
-      columnSize: 'string',
-      components: ['DashboardComponent']
-    }
-  },
-  DataCategoryGroup: {
-    type: 'DataCategoryGroup',
-    props: {
-      active: 'boolean',
-      dataCategory: 'DataCategory',
-      description: '?string',
-      label: 'string',
-      objectUsage: '?ObjectUsage'
-    },
-    extends: 'Metadata'
-  },
-  DataCategory: {
-    type: 'DataCategory',
-    props: {
-      dataCategory: ['DataCategory'],
-      label: 'string',
-      name: 'string'
-    }
-  },
-  ObjectUsage: {
-    type: 'ObjectUsage',
-    props: {
-      object: ['string']
-    }
-  },
-  DataDotComSettings: {
-    type: 'DataDotComSettings',
-    props: {
-      enableAccountExportButtonOff: '?boolean',
-      enableAccountImportButtonOff: '?boolean',
-      enableAllowDupeContactFromLead: '?boolean',
-      enableAllowDupeLeadFromContact: '?boolean',
-      enableCleanUpgradeRequested: '?boolean',
-      enableContactExportButtonOff: '?boolean',
-      enableContactImportButtonOff: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  DelegateGroup: {
-    type: 'DelegateGroup',
-    props: {
-      customObjects: ['string'],
-      groups: ['string'],
-      label: 'string',
-      loginAccess: 'boolean',
-      permissionSets: ['string'],
-      profiles: ['string'],
-      roles: ['string']
-    },
-    extends: 'Metadata'
-  },
-  DeploymentSettings: {
-    type: 'DeploymentSettings',
-    props: {
-      doesSkipAsyncApexValidation: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  DevHubSettings: {
-    type: 'DevHubSettings',
-    props: {
-      enableShapeExportPref: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  DiscoverySettings: {
-    type: 'DiscoverySettings',
-    props: {
-      enableEinsteinAnswersPref: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  DocumentType: {
-    type: 'DocumentType',
-    props: {
-      description: 'string',
-      isActive: 'boolean',
-      masterLabel: 'string'
-    },
-    extends: 'Metadata'
-  },
-  DuplicateRule: {
-    type: 'DuplicateRule',
-    props: {
-      actionOnInsert: 'string',
-      actionOnUpdate: 'string',
-      alertText: '?string',
-      description: '?string',
-      duplicateRuleFilter: '?DuplicateRuleFilter',
-      duplicateRuleMatchRules: ['?', 'DuplicateRuleMatchRule'],
-      isActive: 'boolean',
-      masterLabel: 'string',
-      operationsOnInsert: ['string'],
-      operationsOnUpdate: ['string'],
-      securityOption: 'string',
-      sortOrder: 'number'
-    },
-    extends: 'Metadata'
-  },
-  DuplicateRuleFilter: {
-    type: 'DuplicateRuleFilter',
-    props: {
-      booleanFilter: '?string',
-      duplicateRuleFilterItems: ['DuplicateRuleFilterItem']
-    }
-  },
-  DuplicateRuleMatchRule: {
-    type: 'DuplicateRuleMatchRule',
-    props: {
-      matchRuleSObjectType: 'string',
-      matchingRule: 'string',
-      objectMapping: '?ObjectMapping'
-    }
-  },
-  ObjectMapping: {
-    type: 'ObjectMapping',
-    props: {
-      inputObject: 'string',
-      mappingFields: ['ObjectMappingField'],
-      outputObject: 'string'
-    }
-  },
-  ObjectMappingField: {
-    type: 'ObjectMappingField',
-    props: {
-      inputField: 'string',
-      outputField: 'string'
-    }
-  },
-  EACSettings: {
-    type: 'EACSettings',
-    props: {
-      enableEACForEveryonePref: '?boolean',
-      enableInboxActivitySharing: '?boolean',
-      enableInsightsInTimeline: '?boolean',
-      enableInsightsInTimelineEacStd: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  EmailAdministrationSettings: {
-    type: 'EmailAdministrationSettings',
-    props: {
-      enableComplianceBcc: '?boolean',
-      enableEmailConsentManagement: '?boolean',
-      enableEmailSenderIdCompliance: '?boolean',
-      enableEmailSpfCompliance: '?boolean',
-      enableEmailToSalesforce: '?boolean',
-      enableEmailWorkflowApproval: '?boolean',
-      enableEnhancedEmailEnabled: '?boolean',
-      enableHandleBouncedEmails: '?boolean',
-      enableHtmlEmail: '?boolean',
-      enableListEmailLogActivities: '?boolean',
-      enableResendBouncedEmails: '?boolean',
-      enableRestrictTlsToDomains: '?boolean',
-      enableSendThroughGmailPref: '?boolean',
-      enableSendViaExchangePref: '?boolean',
-      enableSendViaGmailPref: '?boolean',
-      enableSetMatchingEmailsOnBounce: '?boolean',
-      enableUseOrgFootersForExtTrans: '?boolean',
-      sendEmailsEvenWhenAutomationUpdatesSameRecord: '?boolean',
-      sendMassEmailNotification: '?boolean',
-      sendTextOnlySystemEmails: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  EmailIntegrationSettings: {
-    type: 'EmailIntegrationSettings',
-    props: {
-      doesEmailLogAsEmailMessageInOutlook: '?boolean',
-      doesGmailStayConnectedToSalesforce: '?boolean',
-      enableContactAndEventSync: '?boolean',
-      enableEmailTrackingInMobile: '?boolean',
-      enableEngageForOutlook: '?boolean',
-      enableGmailIntegration: '?boolean',
-      enableOutlookIntegration: '?boolean',
-      enableProductivityFeatures: '?boolean',
-      enableSupplementalContactInfoInMobile: '?boolean',
-      isLayoutCustomizationAllowed: '?boolean',
-      shouldUseTrustedDomainsList: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  EmailServicesFunction: {
-    type: 'EmailServicesFunction',
-    props: {
-      apexClass: 'string',
-      attachmentOption: 'string',
-      authenticationFailureAction: 'string',
-      authorizationFailureAction: 'string',
-      authorizedSenders: '?string',
-      emailServicesAddresses: ['EmailServicesAddress'],
-      errorRoutingAddress: '?string',
-      functionInactiveAction: 'string',
-      functionName: 'string',
-      isActive: '?boolean',
-      isAuthenticationRequired: '?boolean',
-      isErrorRoutingEnabled: '?boolean',
-      isTextAttachmentsAsBinary: '?boolean',
-      isTlsRequired: '?boolean',
-      overLimitAction: 'string'
-    },
-    extends: 'Metadata'
-  },
-  EmailServicesAddress: {
-    type: 'EmailServicesAddress',
-    props: {
-      authorizedSenders: '?string',
-      developerName: 'string',
-      isActive: '?boolean',
-      localPart: 'string',
-      runAsUser: 'string'
-    }
-  },
-  EmailTemplateSettings: {
-    type: 'EmailTemplateSettings',
-    props: {
-      enableLwcEmailTemplateBuilder: '?boolean',
-      enableTemplateEnhancedFolderPref: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  EmbeddedServiceBranding: {
-    type: 'EmbeddedServiceBranding',
-    props: {
-      contrastInvertedColor: '?string',
-      contrastPrimaryColor: '?string',
-      embeddedServiceConfig: 'string',
-      font: '?string',
-      height: '?number',
-      masterLabel: 'string',
-      navBarColor: '?string',
-      primaryColor: '?string',
-      secondaryColor: '?string',
-      width: '?number'
-    },
-    extends: 'Metadata'
-  },
-  EmbeddedServiceConfig: {
-    type: 'EmbeddedServiceConfig',
-    props: {
-      areGuestUsersAllowed: '?boolean',
-      authMethod: '?string',
-      embeddedServiceAppointmentSettings: '?EmbeddedServiceAppointmentSettings',
-      embeddedServiceCustomComponents: ['EmbeddedServiceCustomComponent'],
-      embeddedServiceCustomLabels: ['EmbeddedServiceCustomLabel'],
-      embeddedServiceFlowConfig: '?EmbeddedServiceFlowConfig',
-      embeddedServiceFlows: ['EmbeddedServiceFlow'],
-      embeddedServiceLayouts: ['EmbeddedServiceLayout'],
-      masterLabel: 'string',
-      shouldHideAuthDialog: '?boolean',
-      site: 'string'
-    },
-    extends: 'Metadata'
-  },
-  EmbeddedServiceAppointmentSettings: {
-    type: 'EmbeddedServiceAppointmentSettings',
-    props: {
-      appointmentConfirmImg: '?string',
-      enabled: 'boolean',
-      homeImg: '?string',
-      logoImg: '?string',
-      shouldShowExistingAppointment: '?boolean',
-      shouldShowNewAppointment: '?boolean'
-    }
-  },
-  EmbeddedServiceCustomComponent: {
-    type: 'EmbeddedServiceCustomComponent',
-    props: {
-      componentBundleType: '?string',
-      customComponent: '?string',
-      customComponentType: '?string'
-    }
-  },
-  EmbeddedServiceCustomLabel: {
-    type: 'EmbeddedServiceCustomLabel',
-    props: {
-      customLabel: '?string',
-      feature: '?string',
-      labelKey: '?string'
-    }
-  },
-  EmbeddedServiceFlowConfig: {
-    type: 'EmbeddedServiceFlowConfig',
-    props: {
-      enabled: 'boolean'
-    },
-    extends: 'Metadata'
-  },
-  EmbeddedServiceFlow: {
-    type: 'EmbeddedServiceFlow',
-    props: {
-      flow: 'string',
-      flowType: 'string',
-      isAuthenticationRequired: 'boolean'
-    }
-  },
-  EmbeddedServiceLayout: {
-    type: 'EmbeddedServiceLayout',
-    props: {
-      embeddedServiceLayoutRules: ['EmbeddedServiceLayoutRule'],
-      layout: 'string',
-      layoutType: '?string'
-    }
-  },
-  EmbeddedServiceLayoutRule: {
-    type: 'EmbeddedServiceLayoutRule',
-    props: {
-      appointmentStatus: 'string'
-    }
-  },
-  EmbeddedServiceLiveAgent: {
-    type: 'EmbeddedServiceLiveAgent',
-    props: {
-      avatarImg: '?string',
-      embeddedServiceConfig: 'string',
-      embeddedServiceQuickActions: ['EmbeddedServiceQuickAction'],
-      enabled: 'boolean',
-      fontSize: 'string',
-      headerBackgroundImg: '?string',
-      isOfflineCaseEnabled: '?boolean',
-      isQueuePositionEnabled: '?boolean',
-      liveAgentChatUrl: '?string',
-      liveAgentContentUrl: '?string',
-      liveChatButton: 'string',
-      liveChatDeployment: 'string',
-      masterLabel: 'string',
-      offlineCaseBackgroundImg: '?string',
-      prechatBackgroundImg: '?string',
-      prechatEnabled: 'boolean',
-      prechatJson: '?string',
-      scenario: 'string',
-      smallCompanyLogoImg: '?string',
-      waitingStateBackgroundImg: '?string'
-    },
-    extends: 'Metadata'
-  },
-  EmbeddedServiceQuickAction: {
-    type: 'EmbeddedServiceQuickAction',
-    props: {
-      embeddedServiceLiveAgent: 'string',
-      order: 'number',
-      quickActionDefinition: 'string',
-      quickActionType: '?string'
-    }
-  },
-  EmbeddedServiceMenuSettings: {
-    type: 'EmbeddedServiceMenuSettings',
-    props: {
-      branding: '?string',
-      embeddedServiceMenuItems: ['EmbeddedServiceMenuItem'],
-      isEnabled: '?boolean',
-      masterLabel: '?string',
-      site: '?string'
-    },
-    extends: 'Metadata'
-  },
-  EmbeddedServiceMenuItem: {
-    type: 'EmbeddedServiceMenuItem',
-    props: {
-      channel: '?string',
-      channelType: '?string',
-      displayOrder: '?number',
-      phoneNumber: '?string'
-    }
-  },
-  EncryptionKeySettings: {
-    type: 'EncryptionKeySettings',
-    props: {
-      canOptOutOfDerivationWithBYOK: '?boolean',
-      enableCacheOnlyKeys: '?boolean',
-      enableReplayDetection: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  EnhancedNotesSettings: {
-    type: 'EnhancedNotesSettings',
-    props: {
-      enableEnhancedNotes: '?boolean',
-      enableTasksOnEnhancedNotes: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  EntitlementProcess: {
-    type: 'EntitlementProcess',
-    props: {
-      SObjectType: '?string',
-      active: '?boolean',
-      businessHours: '?string',
-      description: '?string',
-      entryStartDateField: '?string',
-      exitCriteriaBooleanFilter: '?string',
-      exitCriteriaFilterItems: ['FilterItem'],
-      exitCriteriaFormula: '?string',
-      isRecordTypeApplied: '?boolean',
-      isVersionDefault: '?boolean',
-      milestones: ['EntitlementProcessMilestoneItem'],
-      name: '?string',
-      recordType: '?string',
-      versionMaster: '?string',
-      versionNotes: '?string',
-      versionNumber: '?number'
-    },
-    extends: 'Metadata'
-  },
-  EntitlementProcessMilestoneItem: {
-    type: 'EntitlementProcessMilestoneItem',
-    props: {
-      businessHours: '?string',
-      criteriaBooleanFilter: '?string',
-      milestoneCriteriaFilterItems: ['FilterItem'],
-      milestoneCriteriaFormula: '?string',
-      milestoneName: '?string',
-      minutesCustomClass: '?string',
-      minutesToComplete: '?number',
-      successActions: ['WorkflowActionReference'],
-      timeTriggers: ['EntitlementProcessMilestoneTimeTrigger'],
-      useCriteriaStartTime: '?boolean'
-    }
-  },
-  EntitlementProcessMilestoneTimeTrigger: {
-    type: 'EntitlementProcessMilestoneTimeTrigger',
-    props: {
-      actions: ['WorkflowActionReference'],
-      timeLength: '?number',
-      workflowTimeTriggerUnit: 'string'
-    }
-  },
-  EntitlementSettings: {
-    type: 'EntitlementSettings',
-    props: {
-      assetLookupLimitedToActiveEntitlementsOnAccount: '?boolean',
-      assetLookupLimitedToActiveEntitlementsOnContact: '?boolean',
-      assetLookupLimitedToSameAccount: '?boolean',
-      assetLookupLimitedToSameContact: '?boolean',
-      enableEntitlementVersioning: 'boolean',
-      enableEntitlements: 'boolean',
-      enableMilestoneFeedItem: '?boolean',
-      enableMilestoneStoppedTime: '?boolean',
-      entitlementLookupLimitedToActiveStatus: '?boolean',
-      entitlementLookupLimitedToSameAccount: '?boolean',
-      entitlementLookupLimitedToSameAsset: '?boolean',
-      entitlementLookupLimitedToSameContact: '?boolean',
-      ignoreMilestoneBusinessHours: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  EntitlementTemplate: {
-    type: 'EntitlementTemplate',
-    props: {
-      businessHours: '?string',
-      casesPerEntitlement: '?number',
-      entitlementProcess: '?string',
-      isPerIncident: '?boolean',
-      term: '?number',
-      type: '?string'
-    },
-    extends: 'Metadata'
-  },
-  EntityImplements: {
-    type: 'EntityImplements',
-    props: {
-      fieldMap: ['FieldImplements'],
-      interface: '?string',
-      isDefault: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  FieldImplements: {
-    type: 'FieldImplements',
-    props: {
-      field: '?string',
-      interfaceField: '?string'
-    }
-  },
-  EscalationRule: {
-    type: 'EscalationRule',
-    props: {
-      active: '?boolean',
-      ruleEntry: ['RuleEntry']
-    },
-    extends: 'Metadata'
-  },
-  EscalationRules: {
-    type: 'EscalationRules',
-    props: {
-      escalationRule: ['EscalationRule']
-    },
-    extends: 'Metadata'
-  },
-  EssentialsSettings: {
-    type: 'EssentialsSettings',
-    props: {
-      emailConnectorEnabled: '?boolean',
-      essentialsAppEnabled: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  EssentialsTrialOrgSettings: {
-    type: 'EssentialsTrialOrgSettings',
-    props: {
-      enableSampleDataDeleted: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  EventSettings: {
-    type: 'EventSettings',
-    props: {
-      enableApexLimitEvents: '?boolean',
-      enableDeleteMonitoringData: '?boolean',
-      enableDynamicStreamingChannel: '?boolean',
-      enableEventLogWaveIntegration: '?boolean',
-      enableLoginForensics: '?boolean',
-      enableStreamingApi: '?boolean',
-      enableTerminateOldestSession: '?boolean',
-      enableTransactionSecurityPolicies: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  ExperienceBundleSettings: {
-    type: 'ExperienceBundleSettings',
-    props: {
-      enableExperienceBundleMetadata: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  ExternalDataSource: {
-    type: 'ExternalDataSource',
-    props: {
-      authProvider: '?string',
-      certificate: '?string',
-      customConfiguration: '?string',
-      customHttpHeaders: ['CustomHttpHeader'],
-      endpoint: '?string',
-      isWritable: '?boolean',
-      label: 'string',
-      oauthRefreshToken: '?string',
-      oauthScope: '?string',
-      oauthToken: '?string',
-      password: '?string',
-      principalType: 'string',
-      protocol: 'string',
-      repository: '?string',
-      type: 'string',
-      username: '?string',
-      version: '?string'
-    },
-    extends: 'Metadata'
-  },
-  CustomHttpHeader: {
-    type: 'CustomHttpHeader',
-    props: {
-      description: '?string',
-      headerFieldName: 'string',
-      headerFieldValue: 'string',
-      isActive: '?boolean'
-    }
-  },
-  ExternalServiceRegistration: {
-    type: 'ExternalServiceRegistration',
-    props: {
-      description: '?string',
-      label: 'string',
-      namedCredential: '?string',
-      schema: '?string',
-      schemaType: '?string',
-      schemaUrl: '?string',
-      status: 'string'
-    },
-    extends: 'Metadata'
-  },
-  ExternalServicesSettings: {
-    type: 'ExternalServicesSettings',
-    props: {
-      enableEnhancedExternalServices: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  FieldServiceSettings: {
-    type: 'FieldServiceSettings',
-    props: {
-      capacityUsageCalcClassId: '?string',
-      doesAllowEditSaForCrew: '?boolean',
-      doesShareSaParentWoWithAr: '?boolean',
-      doesShareSaWithAr: '?boolean',
-      enableWorkOrders: '?boolean',
-      fieldServiceNotificationsOrgPref: '?boolean',
-      fieldServiceOrgPref: '?boolean',
-      isGeoCodeSyncEnabled: '?boolean',
-      isLocationHistoryEnabled: '?boolean',
-      serviceAppointmentsDueDateOffsetOrgValue: '?number',
-      workOrderLineItemSearchFields: ['string'],
-      workOrderSearchFields: ['string']
-    },
-    extends: 'Metadata'
-  },
-  FileUploadAndDownloadSecuritySettings: {
-    type: 'FileUploadAndDownloadSecuritySettings',
-    props: {
-      dispositions: ['FileTypeDispositionAssignmentBean'],
-      noHtmlUploadAsAttachment: 'boolean'
-    },
-    extends: 'Metadata'
-  },
-  FileTypeDispositionAssignmentBean: {
-    type: 'FileTypeDispositionAssignmentBean',
-    props: {
-      behavior: 'string',
-      fileType: 'string',
-      securityRiskFileType: 'boolean'
-    }
-  },
-  FilesConnectSettings: {
-    type: 'FilesConnectSettings',
-    props: {
-      enableContentHubAllowed: '?boolean',
-      enableContentHubCvtLinksAllowed: '?boolean',
-      enableContentHubEOSearchLayout: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  FlexiPage: {
-    type: 'FlexiPage',
-    props: {
-      description: '?string',
-      flexiPageRegions: ['FlexiPageRegion'],
-      masterLabel: 'string',
-      parentFlexiPage: '?string',
-      platformActionlist: '?PlatformActionList',
-      quickActionList: '?QuickActionList',
-      sobjectType: '?string',
-      template: 'FlexiPageTemplateInstance',
-      type: 'string'
-    },
-    extends: 'Metadata'
-  },
-  FlexiPageRegion: {
-    type: 'FlexiPageRegion',
-    props: {
-      appendable: '?string',
-      componentInstances: ['ComponentInstance'],
-      mode: '?string',
-      name: 'string',
-      prependable: '?string',
-      replaceable: '?string',
-      type: 'string'
-    }
-  },
-  ComponentInstance: {
-    type: 'ComponentInstance',
-    props: {
-      componentInstanceProperties: ['ComponentInstanceProperty'],
-      componentName: 'string',
-      visibilityRule: '?UiFormulaRule'
-    }
-  },
-  ComponentInstanceProperty: {
-    type: 'ComponentInstanceProperty',
-    props: {
-      name: '?string',
-      type: '?string',
-      value: '?string'
-    }
-  },
-  UiFormulaRule: {
-    type: 'UiFormulaRule',
-    props: {
-      booleanFilter: '?string',
-      criteria: ['UiFormulaCriterion']
-    }
-  },
-  UiFormulaCriterion: {
-    type: 'UiFormulaCriterion',
-    props: {
-      leftValue: 'string',
-      operator: 'string',
-      rightValue: '?string'
-    }
-  },
-  PlatformActionList: {
-    type: 'PlatformActionList',
-    props: {
-      actionListContext: 'string',
-      platformActionListItems: ['PlatformActionListItem'],
-      relatedSourceEntity: '?string'
-    },
-    extends: 'Metadata'
-  },
-  PlatformActionListItem: {
-    type: 'PlatformActionListItem',
-    props: {
-      actionName: 'string',
-      actionType: 'string',
-      sortOrder: 'number',
-      subtype: '?string'
-    }
-  },
-  QuickActionList: {
-    type: 'QuickActionList',
-    props: {
-      quickActionListItems: ['QuickActionListItem']
-    }
-  },
-  QuickActionListItem: {
-    type: 'QuickActionListItem',
-    props: {
-      quickActionName: 'string'
-    }
-  },
-  FlexiPageTemplateInstance: {
-    type: 'FlexiPageTemplateInstance',
-    props: {
-      name: 'string',
-      properties: ['ComponentInstanceProperty']
-    }
-  },
-  Flow: {
-    type: 'Flow',
-    props: {
-      actionCalls: ['FlowActionCall'],
-      apexPluginCalls: ['FlowApexPluginCall'],
-      assignments: ['FlowAssignment'],
-      choices: ['FlowChoice'],
-      constants: ['FlowConstant'],
-      decisions: ['FlowDecision'],
-      description: '?string',
-      dynamicChoiceSets: ['FlowDynamicChoiceSet'],
-      formulas: ['FlowFormula'],
-      interviewLabel: '?string',
-      isAdditionalPermissionRequiredToRun: '?boolean',
-      isTemplate: '?boolean',
-      label: 'string',
-      loops: ['FlowLoop'],
-      processMetadataValues: ['FlowMetadataValue'],
-      processType: '?string',
-      recordCreates: ['FlowRecordCreate'],
-      recordDeletes: ['FlowRecordDelete'],
-      recordLookups: ['FlowRecordLookup'],
-      recordUpdates: ['FlowRecordUpdate'],
-      screens: ['FlowScreen'],
-      stages: ['FlowStage'],
-      start: '?FlowStart',
-      startElementReference: '?string',
-      status: '?string',
-      steps: ['FlowStep'],
-      subflows: ['FlowSubflow'],
-      textTemplates: ['FlowTextTemplate'],
-      variables: ['FlowVariable'],
-      waits: ['FlowWait']
-    },
-    extends: 'Metadata'
-  },
-  FlowActionCall: {
-    type: 'FlowActionCall',
-    props: {
-      actionName: 'string',
-      actionType: 'string',
-      connector: '?FlowConnector',
-      faultConnector: '?FlowConnector',
-      inputParameters: ['FlowActionCallInputParameter'],
-      outputParameters: ['FlowActionCallOutputParameter']
-    },
-    extends: 'FlowNode'
-  },
-  FlowNode: {
-    type: 'FlowNode',
-    props: {
-      label: '?string',
-      locationX: 'number',
-      locationY: 'number'
-    },
-    extends: 'FlowElement'
-  },
-  FlowElement: {
-    type: 'FlowElement',
-    props: {
-      description: '?string',
-      name: '?string'
-    },
-    extends: 'FlowBaseElement'
-  },
-  FlowBaseElement: {
-    type: 'FlowBaseElement',
-    props: {
-      processMetadataValues: ['FlowMetadataValue']
-    }
-  },
-  FlowMetadataValue: {
-    type: 'FlowMetadataValue',
-    props: {
-      name: 'string',
-      value: '?FlowElementReferenceOrValue'
-    }
-  },
-  FlowElementReferenceOrValue: {
-    type: 'FlowElementReferenceOrValue',
-    props: {
-      booleanValue: '?boolean',
-      dateTimeValue: '?string',
-      dateValue: '?string',
-      elementReference: '?string',
-      numberValue: '?number',
-      stringValue: '?string'
-    }
-  },
-  FlowActionCallInputParameter: {
-    type: 'FlowActionCallInputParameter',
-    props: {
-      name: 'string',
-      value: '?FlowElementReferenceOrValue'
-    },
-    extends: 'FlowBaseElement'
-  },
-  FlowActionCallOutputParameter: {
-    type: 'FlowActionCallOutputParameter',
-    props: {
-      assignToReference: 'string',
-      name: 'string'
-    },
-    extends: 'FlowBaseElement'
-  },
-  FlowApexPluginCallInputParameter: {
-    type: 'FlowApexPluginCallInputParameter',
-    props: {
-      name: 'string',
-      value: '?FlowElementReferenceOrValue'
-    },
-    extends: 'FlowBaseElement'
-  },
-  FlowApexPluginCallOutputParameter: {
-    type: 'FlowApexPluginCallOutputParameter',
-    props: {
-      assignToReference: 'string',
-      name: 'string'
-    },
-    extends: 'FlowBaseElement'
-  },
-  FlowAssignmentItem: {
-    type: 'FlowAssignmentItem',
-    props: {
-      assignToReference: 'string',
-      operator: 'string',
-      value: '?FlowElementReferenceOrValue'
-    },
-    extends: 'FlowBaseElement'
-  },
-  FlowChoiceUserInput: {
-    type: 'FlowChoiceUserInput',
-    props: {
-      isRequired: '?boolean',
-      promptText: '?string',
-      validationRule: '?FlowInputValidationRule'
-    },
-    extends: 'FlowBaseElement'
-  },
-  FlowInputValidationRule: {
-    type: 'FlowInputValidationRule',
-    props: {
-      errorMessage: 'string',
-      formulaExpression: 'string'
-    }
-  },
-  FlowCondition: {
-    type: 'FlowCondition',
-    props: {
-      leftValueReference: 'string',
-      operator: 'string',
-      rightValue: '?FlowElementReferenceOrValue'
-    },
-    extends: 'FlowBaseElement'
-  },
-  FlowConnector: {
-    type: 'FlowConnector',
-    props: {
-      targetReference: 'string'
-    },
-    extends: 'FlowBaseElement'
-  },
-  FlowInputFieldAssignment: {
-    type: 'FlowInputFieldAssignment',
-    props: {
-      field: 'string',
-      value: '?FlowElementReferenceOrValue'
-    },
-    extends: 'FlowBaseElement'
-  },
-  FlowOutputFieldAssignment: {
-    type: 'FlowOutputFieldAssignment',
-    props: {
-      assignToReference: 'string',
-      field: 'string'
-    },
-    extends: 'FlowBaseElement'
-  },
-  FlowRecordFilter: {
-    type: 'FlowRecordFilter',
-    props: {
-      field: 'string',
-      operator: 'string',
-      value: '?FlowElementReferenceOrValue'
-    },
-    extends: 'FlowBaseElement'
-  },
-  FlowScreenFieldInputParameter: {
-    type: 'FlowScreenFieldInputParameter',
-    props: {
-      name: 'string',
-      value: '?FlowElementReferenceOrValue'
-    },
-    extends: 'FlowBaseElement'
-  },
-  FlowScreenFieldOutputParameter: {
-    type: 'FlowScreenFieldOutputParameter',
-    props: {
-      assignToReference: 'string',
-      name: 'string'
-    },
-    extends: 'FlowBaseElement'
-  },
-  FlowScreenRule: {
-    type: 'FlowScreenRule',
-    props: {
-      conditionLogic: '?string',
-      conditions: ['FlowCondition'],
-      label: 'string',
-      ruleActions: ['FlowScreenRuleAction']
-    },
-    extends: 'FlowBaseElement'
-  },
-  FlowScreenRuleAction: {
-    type: 'FlowScreenRuleAction',
-    props: {
-      attribute: 'string',
-      fieldReference: 'string',
-      value: '?FlowElementReferenceOrValue'
-    },
-    extends: 'FlowBaseElement'
-  },
-  FlowSubflowInputAssignment: {
-    type: 'FlowSubflowInputAssignment',
-    props: {
-      name: 'string',
-      value: '?FlowElementReferenceOrValue'
-    },
-    extends: 'FlowBaseElement'
-  },
-  FlowSubflowOutputAssignment: {
-    type: 'FlowSubflowOutputAssignment',
-    props: {
-      assignToReference: 'string',
-      name: 'string'
-    },
-    extends: 'FlowBaseElement'
-  },
-  FlowVisibilityRule: {
-    type: 'FlowVisibilityRule',
-    props: {
-      conditionLogic: '?string',
-      conditions: ['FlowCondition']
-    },
-    extends: 'FlowBaseElement'
-  },
-  FlowWaitEventInputParameter: {
-    type: 'FlowWaitEventInputParameter',
-    props: {
-      name: 'string',
-      value: '?FlowElementReferenceOrValue'
-    },
-    extends: 'FlowBaseElement'
-  },
-  FlowWaitEventOutputParameter: {
-    type: 'FlowWaitEventOutputParameter',
-    props: {
-      assignToReference: 'string',
-      name: 'string'
-    },
-    extends: 'FlowBaseElement'
-  },
-  FlowChoice: {
-    type: 'FlowChoice',
-    props: {
-      choiceText: 'string',
-      dataType: 'string',
-      userInput: '?FlowChoiceUserInput',
-      value: '?FlowElementReferenceOrValue'
-    },
-    extends: 'FlowElement'
-  },
-  FlowConstant: {
-    type: 'FlowConstant',
-    props: {
-      dataType: 'string',
-      value: '?FlowElementReferenceOrValue'
-    },
-    extends: 'FlowElement'
-  },
-  FlowDynamicChoiceSet: {
-    type: 'FlowDynamicChoiceSet',
-    props: {
-      dataType: 'string',
-      displayField: 'string',
-      filters: ['FlowRecordFilter'],
-      limit: '?number',
-      object: 'string',
-      outputAssignments: ['FlowOutputFieldAssignment'],
-      picklistField: '?string',
-      picklistObject: '?string',
-      sortField: '?string',
-      sortOrder: '?string',
-      valueField: '?string'
-    },
-    extends: 'FlowElement'
-  },
-  FlowFormula: {
-    type: 'FlowFormula',
-    props: {
-      dataType: '?string',
-      expression: 'string',
-      scale: '?number'
-    },
-    extends: 'FlowElement'
-  },
-  FlowRule: {
-    type: 'FlowRule',
-    props: {
-      conditionLogic: 'string',
-      conditions: ['FlowCondition'],
-      connector: '?FlowConnector',
-      label: 'string'
-    },
-    extends: 'FlowElement'
-  },
-  FlowScreenField: {
-    type: 'FlowScreenField',
-    props: {
-      choiceReferences: ['string'],
-      dataType: '?string',
-      defaultSelectedChoiceReference: '?string',
-      defaultValue: '?FlowElementReferenceOrValue',
-      extensionName: '?string',
-      fieldText: '?string',
-      fieldType: 'string',
-      helpText: '?string',
-      inputParameters: ['FlowScreenFieldInputParameter'],
-      isRequired: '?boolean',
-      isVisible: '?boolean',
-      outputParameters: ['FlowScreenFieldOutputParameter'],
-      scale: '?number',
-      storeOutputAutomatically: '?boolean',
-      validationRule: '?FlowInputValidationRule',
-      visibilityRule: '?FlowVisibilityRule'
-    },
-    extends: 'FlowElement'
-  },
-  FlowStage: {
-    type: 'FlowStage',
-    props: {
-      isActive: 'boolean',
-      label: 'string',
-      stageOrder: 'number'
-    },
-    extends: 'FlowElement'
-  },
-  FlowTextTemplate: {
-    type: 'FlowTextTemplate',
-    props: {
-      text: 'string'
-    },
-    extends: 'FlowElement'
-  },
-  FlowVariable: {
-    type: 'FlowVariable',
-    props: {
-      apexClass: '?string',
-      dataType: 'string',
-      isCollection: '?boolean',
-      isInput: '?boolean',
-      isOutput: '?boolean',
-      objectType: '?string',
-      scale: '?number',
-      value: '?FlowElementReferenceOrValue'
-    },
-    extends: 'FlowElement'
-  },
-  FlowWaitEvent: {
-    type: 'FlowWaitEvent',
-    props: {
-      conditionLogic: '?string',
-      conditions: ['FlowCondition'],
-      connector: 'FlowConnector',
-      eventType: 'string',
-      inputParameters: ['FlowWaitEventInputParameter'],
-      label: 'string',
-      outputParameters: ['FlowWaitEventOutputParameter']
-    },
-    extends: 'FlowElement'
-  },
-  FlowApexPluginCall: {
-    type: 'FlowApexPluginCall',
-    props: {
-      apexClass: 'string',
-      connector: '?FlowConnector',
-      faultConnector: '?FlowConnector',
-      inputParameters: ['FlowApexPluginCallInputParameter'],
-      outputParameters: ['FlowApexPluginCallOutputParameter']
-    },
-    extends: 'FlowNode'
-  },
-  FlowAssignment: {
-    type: 'FlowAssignment',
-    props: {
-      assignmentItems: ['FlowAssignmentItem'],
-      connector: '?FlowConnector'
-    },
-    extends: 'FlowNode'
-  },
-  FlowDecision: {
-    type: 'FlowDecision',
-    props: {
-      defaultConnector: '?FlowConnector',
-      defaultConnectorLabel: '?string',
-      rules: ['FlowRule']
-    },
-    extends: 'FlowNode'
-  },
-  FlowLoop: {
-    type: 'FlowLoop',
-    props: {
-      assignNextValueToReference: 'string',
-      collectionReference: 'string',
-      iterationOrder: '?string',
-      nextValueConnector: '?FlowConnector',
-      noMoreValuesConnector: '?FlowConnector'
-    },
-    extends: 'FlowNode'
-  },
-  FlowRecordCreate: {
-    type: 'FlowRecordCreate',
-    props: {
-      assignRecordIdToReference: '?string',
-      connector: '?FlowConnector',
-      faultConnector: '?FlowConnector',
-      inputAssignments: ['FlowInputFieldAssignment'],
-      inputReference: '?string',
-      object: '?string'
-    },
-    extends: 'FlowNode'
-  },
-  FlowRecordDelete: {
-    type: 'FlowRecordDelete',
-    props: {
-      connector: '?FlowConnector',
-      faultConnector: '?FlowConnector',
-      filters: ['FlowRecordFilter'],
-      inputReference: '?string',
-      object: '?string'
-    },
-    extends: 'FlowNode'
-  },
-  FlowRecordLookup: {
-    type: 'FlowRecordLookup',
-    props: {
-      assignNullValuesIfNoRecordsFound: '?boolean',
-      connector: '?FlowConnector',
-      faultConnector: '?FlowConnector',
-      filters: ['FlowRecordFilter'],
-      getFirstRecordOnly: '?boolean',
-      object: 'string',
-      outputAssignments: ['FlowOutputFieldAssignment'],
-      outputReference: '?string',
-      queriedFields: ['string'],
-      sortField: '?string',
-      sortOrder: '?string',
-      storeOutputAutomatically: '?boolean'
-    },
-    extends: 'FlowNode'
-  },
-  FlowRecordUpdate: {
-    type: 'FlowRecordUpdate',
-    props: {
-      connector: '?FlowConnector',
-      faultConnector: '?FlowConnector',
-      filters: ['FlowRecordFilter'],
-      inputAssignments: ['FlowInputFieldAssignment'],
-      inputReference: '?string',
-      object: '?string'
-    },
-    extends: 'FlowNode'
-  },
-  FlowScreen: {
-    type: 'FlowScreen',
-    props: {
-      allowBack: '?boolean',
-      allowFinish: '?boolean',
-      allowPause: '?boolean',
-      connector: '?FlowConnector',
-      fields: ['FlowScreenField'],
-      helpText: '?string',
-      pausedText: '?string',
-      rules: ['FlowScreenRule'],
-      showFooter: '?boolean',
-      showHeader: '?boolean'
-    },
-    extends: 'FlowNode'
-  },
-  FlowStart: {
-    type: 'FlowStart',
-    props: {
-      connector: '?FlowConnector',
-      filters: ['FlowRecordFilter'],
-      object: '?string',
-      schedule: '?FlowSchedule',
-      triggerType: '?string'
-    },
-    extends: 'FlowNode'
-  },
-  FlowSchedule: {
-    type: 'FlowSchedule',
-    props: {
-      frequency: '?string',
-      startDate: '?string',
-      startTime: '?string'
-    }
-  },
-  FlowStep: {
-    type: 'FlowStep',
-    props: {
-      connectors: ['FlowConnector']
-    },
-    extends: 'FlowNode'
-  },
-  FlowSubflow: {
-    type: 'FlowSubflow',
-    props: {
-      connector: '?FlowConnector',
-      flowName: 'string',
-      inputAssignments: ['FlowSubflowInputAssignment'],
-      outputAssignments: ['FlowSubflowOutputAssignment']
-    },
-    extends: 'FlowNode'
-  },
-  FlowWait: {
-    type: 'FlowWait',
-    props: {
-      defaultConnector: '?FlowConnector',
-      defaultConnectorLabel: 'string',
-      faultConnector: '?FlowConnector',
-      waitEvents: ['FlowWaitEvent']
-    },
-    extends: 'FlowNode'
-  },
-  FlowCategory: {
-    type: 'FlowCategory',
-    props: {
-      description: '?string',
-      flowCategoryItems: ['FlowCategoryItems'],
-      masterLabel: 'string'
-    },
-    extends: 'Metadata'
-  },
-  FlowCategoryItems: {
-    type: 'FlowCategoryItems',
-    props: {
-      flow: 'string'
-    }
-  },
-  FlowDefinition: {
-    type: 'FlowDefinition',
-    props: {
-      activeVersionNumber: '?number',
-      description: '?string',
-      masterLabel: '?string'
-    },
-    extends: 'Metadata'
-  },
-  FlowSettings: {
-    type: 'FlowSettings',
-    props: {
-      enableFlowBREncodedFixEnabled: '?boolean',
-      enableFlowDeployAsActiveEnabled: '?boolean',
-      enableFlowFieldFilterEnabled: '?boolean',
-      enableFlowFormulasFixEnabled: '?boolean',
-      enableFlowInterviewSharingEnabled: '?boolean',
-      enableFlowNullPreviousValueFix: '?boolean',
-      enableFlowPauseEnabled: '?boolean',
-      enableFlowUseApexExceptionEmail: '?boolean',
-      enableInvocableFlowFixEnabled: '?boolean',
-      enableLightningRuntimeEnabled: '?boolean',
-      enableUseFlowBuilder: '?boolean',
-      isAccessToInvokedApexRequired: '?boolean',
-      isEnhancedFlowListViewVisible: '?boolean',
-      isManageFlowRequiredForAutomationCharts: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  Folder: {
-    type: 'Folder',
-    props: {
-      accessType: '?string',
-      folderShares: ['FolderShare'],
-      name: 'string',
-      publicFolderAccess: '?string',
-      sharedTo: '?SharedTo'
-    },
-    extends: 'Metadata'
-  },
-  FolderShare: {
-    type: 'FolderShare',
-    props: {
-      accessLevel: 'string',
-      sharedTo: 'string',
-      sharedToType: 'string'
-    }
-  },
-  DashboardFolder: {
-    type: 'DashboardFolder',
-    props: {},
-    extends: 'Folder'
-  },
-  DocumentFolder: {
-    type: 'DocumentFolder',
-    props: {},
-    extends: 'Folder'
-  },
-  EmailFolder: {
-    type: 'EmailFolder',
-    props: {},
-    extends: 'Folder'
-  },
-  ReportFolder: {
-    type: 'ReportFolder',
-    props: {},
-    extends: 'Folder'
-  },
-  ForecastingSettings: {
-    type: 'ForecastingSettings',
-    props: {
-      defaultToPersonalCurrency: '?boolean',
-      enableForecasts: '?boolean',
-      forecastingCategoryMappings: ['ForecastingCategoryMapping'],
-      forecastingDisplayedFamilySettings: ['ForecastingDisplayedFamilySettings'],
-      forecastingTypeSettings: ['ForecastingTypeSettings']
-    },
-    extends: 'Metadata'
-  },
-  ForecastingCategoryMapping: {
-    type: 'ForecastingCategoryMapping',
-    props: {
-      forecastingItemCategoryApiName: 'string',
-      weightedSourceCategories: ['WeightedSourceCategory']
-    }
-  },
-  WeightedSourceCategory: {
-    type: 'WeightedSourceCategory',
-    props: {
-      sourceCategoryApiName: 'string',
-      weight: 'number'
-    }
-  },
-  ForecastingDisplayedFamilySettings: {
-    type: 'ForecastingDisplayedFamilySettings',
-    props: {
-      productFamily: '?string'
-    }
-  },
-  ForecastingTypeSettings: {
-    type: 'ForecastingTypeSettings',
-    props: {
-      active: 'boolean',
-      adjustmentsSettings: 'AdjustmentsSettings',
-      displayedCategoryApiNames: ['string'],
-      forecastRangeSettings: 'ForecastRangeSettings',
-      forecastedCategoryApiNames: ['string'],
-      forecastingDateType: 'string',
-      hasProductFamily: 'boolean',
-      isAmount: 'boolean',
-      isAvailable: 'boolean',
-      isQuantity: 'boolean',
-      managerAdjustableCategoryApiNames: ['string'],
-      masterLabel: 'string',
-      name: 'string',
-      opportunityListFieldsLabelMappings: ['OpportunityListFieldsLabelMapping'],
-      opportunityListFieldsSelectedSettings: 'OpportunityListFieldsSelectedSettings',
-      opportunityListFieldsUnselectedSettings: 'OpportunityListFieldsUnselectedSettings',
-      opportunitySplitName: '?string',
-      ownerAdjustableCategoryApiNames: ['string'],
-      quotasSettings: 'QuotasSettings',
-      territory2ModelName: '?string'
-    }
-  },
-  AdjustmentsSettings: {
-    type: 'AdjustmentsSettings',
-    props: {
-      enableAdjustments: 'boolean',
-      enableOwnerAdjustments: 'boolean'
-    }
-  },
-  ForecastRangeSettings: {
-    type: 'ForecastRangeSettings',
-    props: {
-      beginning: 'number',
-      displaying: 'number',
-      periodType: 'string'
-    }
-  },
-  OpportunityListFieldsLabelMapping: {
-    type: 'OpportunityListFieldsLabelMapping',
-    props: {
-      field: 'string',
-      label: 'string'
-    }
-  },
-  OpportunityListFieldsSelectedSettings: {
-    type: 'OpportunityListFieldsSelectedSettings',
-    props: {
-      field: ['string']
-    }
-  },
-  OpportunityListFieldsUnselectedSettings: {
-    type: 'OpportunityListFieldsUnselectedSettings',
-    props: {
-      field: ['string']
-    }
-  },
-  QuotasSettings: {
-    type: 'QuotasSettings',
-    props: {
-      showQuotas: 'boolean'
-    }
-  },
-  Form: {
-    type: 'Form',
-    props: {
-      description: '?string',
-      formSections: ['FormSection'],
-      masterLabel: 'string'
-    },
-    extends: 'Metadata'
-  },
-  FormSection: {
-    type: 'FormSection',
-    props: {
-      formColumns: ['FormColumn'],
-      masterLabel: 'string',
-      tabOrderType: 'string'
-    },
-    extends: 'Metadata'
-  },
-  FormColumn: {
-    type: 'FormColumn',
-    props: {
-      formItems: ['FormItem']
-    }
-  },
-  FormItem: {
-    type: 'FormItem',
-    props: {
-      emptySpace: '?boolean',
-      expression: '?string',
-      formLayoutableItem: '?string',
-      helpText: '?string'
-    }
-  },
-  FormulaSettings: {
-    type: 'FormulaSettings',
-    props: {
-      enableDSTAwareDatevalue: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  GlobalValueSet: {
-    type: 'GlobalValueSet',
-    props: {
-      customValue: ['CustomValue'],
-      description: '?string',
-      masterLabel: 'string',
-      sorted: 'boolean'
-    },
-    extends: 'Metadata'
-  },
-  GlobalValueSetTranslation: {
-    type: 'GlobalValueSetTranslation',
-    props: {
-      valueTranslation: ['ValueTranslation']
-    },
-    extends: 'Metadata'
-  },
-  ValueTranslation: {
-    type: 'ValueTranslation',
-    props: {
-      masterLabel: 'string',
-      translation: '?string'
-    }
-  },
-  GoogleAppsSettings: {
-    type: 'GoogleAppsSettings',
-    props: {
-      enableGmailButtons: '?boolean',
-      enableGmailButtonsAndLinks: '?boolean',
-      enableGmailLinks: '?boolean',
-      enableGoogleDocs: '?boolean',
-      enableGoogleDocsTab: '?boolean',
-      enableGoogleTalk: '?boolean',
-      googleAppsDomain: '?string',
-      googleAppsDomainLinked: '?boolean',
-      googleAppsDomainValidated: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  Group: {
-    type: 'Group',
-    props: {
-      doesIncludeBosses: '?boolean',
-      name: 'string'
-    },
-    extends: 'Metadata'
-  },
-  HighVelocitySalesSettings: {
-    type: 'HighVelocitySalesSettings',
-    props: {
-      enableDispositionCategory: '?boolean',
-      enableEngagementWaveAnalyticsPref: '?boolean',
-      enableHighVelocitySales: '?boolean',
-      enableHighVelocitySalesSetup: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  HomePageComponent: {
-    type: 'HomePageComponent',
-    props: {
-      body: '?string',
-      height: '?number',
-      links: ['string'],
-      page: '?string',
-      pageComponentType: 'string',
-      showLabel: '?boolean',
-      showScrollbars: '?boolean',
-      width: '?string'
-    },
-    extends: 'Metadata'
-  },
-  HomePageLayout: {
-    type: 'HomePageLayout',
-    props: {
-      narrowComponents: ['string'],
-      wideComponents: ['string']
-    },
-    extends: 'Metadata'
-  },
-  IdeasSettings: {
-    type: 'IdeasSettings',
-    props: {
-      enableChatterProfile: '?boolean',
-      enableHtmlIdea: '?boolean',
-      enableIdeaMultipleCategory: '?boolean',
-      enableIdeaThemes: '?boolean',
-      enableIdeas: '?boolean',
-      enableIdeasControllerExtensions: '?boolean',
-      enableIdeasReputation: '?boolean',
-      halfLife: '?number',
-      ideasProfilePage: '?string'
-    },
-    extends: 'Metadata'
-  },
-  IndustriesManufacturingSettings: {
-    type: 'IndustriesManufacturingSettings',
-    props: {
-      enableIndManufacturing: '?boolean',
-      enableIndustriesMfgAccountForecast: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  IndustriesSettings: {
-    type: 'IndustriesSettings',
-    props: {
-      allowMultipleProducersToWorkOnSamePolicy: '?boolean',
-      enableAccessToMasterListOfCoverageTypes: '?boolean',
-      enableBlockResourceAvailabilityOrgPref: '?boolean',
-      enableEventManagementOrgPref: '?boolean',
-      enableHCReferralScoring: '?boolean',
-      enableManyToManyRelationships: '?boolean',
-      enableMortgageRlaTotalsOrgPref: '?boolean',
-      enableMultiResourceOrgPref: '?boolean',
-      enableObjectDetection: '?boolean',
-      enableOverbookingOrgPref: '?boolean',
-      enableProviderSearchSyncOrgPref: '?boolean',
-      enableReferralScoring: '?boolean',
-      enableSentimentAnalysis: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  InstalledPackage: {
-    type: 'InstalledPackage',
-    props: {
-      activateRSS: 'boolean',
-      password: '?string',
-      versionNumber: 'string'
-    },
-    extends: 'Metadata'
-  },
-  IntegrationHubSettings: {
-    type: 'IntegrationHubSettings',
-    props: {
-      canonicalName: '?string',
-      canonicalNameBindingChar: '?string',
-      description: '?string',
-      isEnabled: '?boolean',
-      isProtected: '?boolean',
-      masterLabel: 'string',
-      setupData: '?string',
-      setupDefinition: '?string',
-      setupNamespace: '?string',
-      setupSimpleName: 'string',
-      uUID: '?string',
-      version: '?string',
-      versionBuild: '?number',
-      versionMajor: '?number',
-      versionMinor: '?number',
-      versionSetUuid: '?string'
-    },
-    extends: 'Metadata'
-  },
-  IntegrationHubSettingsType: {
-    type: 'IntegrationHubSettingsType',
-    props: {
-      canonicalName: '?string',
-      canonicalNameBindingChar: '?string',
-      description: '?string',
-      isEnabled: '?boolean',
-      isProtected: '?boolean',
-      masterLabel: 'string',
-      setupNamespace: '?string',
-      setupSimpleName: 'string',
-      uUID: '?string',
-      version: '?string',
-      versionBuild: '?number',
-      versionMajor: '?number',
-      versionMinor: '?number',
-      versionSetUuid: '?string'
-    },
-    extends: 'Metadata'
-  },
-  InvocableActionSettings: {
-    type: 'InvocableActionSettings',
-    props: {
-      isPartialSaveAllowed: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  IoTSettings: {
-    type: 'IoTSettings',
-    props: {
-      enableIoT: '?boolean',
-      enableIoTInsightsPilot: '?boolean',
-      enableIoTUsageEmail: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  IsvHammerSettings: {
-    type: 'IsvHammerSettings',
-    props: {
-      enableIsvHammerSubIsOptedOut: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  KeywordList: {
-    type: 'KeywordList',
-    props: {
-      description: '?string',
-      keywords: ['Keyword'],
-      masterLabel: 'string'
-    },
-    extends: 'Metadata'
-  },
-  Keyword: {
-    type: 'Keyword',
-    props: {
-      keyword: 'string'
-    }
-  },
-  KnowledgeSettings: {
-    type: 'KnowledgeSettings',
-    props: {
-      answers: '?KnowledgeAnswerSettings',
-      cases: '?KnowledgeCaseSettings',
-      defaultLanguage: '?string',
-      enableChatterQuestionKBDeflection: '?boolean',
-      enableCreateEditOnArticlesTab: '?boolean',
-      enableExternalMediaContent: '?boolean',
-      enableKnowledge: '?boolean',
-      enableKnowledgeArticleTextHighlights: '?boolean',
-      enableKnowledgeKeywordAutoComplete: '?boolean',
-      enableKnowledgeTitleAutoComplete: '?boolean',
-      enableLightningKbAutoLoadRichTextField: '?boolean',
-      enableLightningKnowledge: '?boolean',
-      languages: '?KnowledgeLanguageSettings',
-      showArticleSummariesCustomerPortal: '?boolean',
-      showArticleSummariesInternalApp: '?boolean',
-      showArticleSummariesPartnerPortal: '?boolean',
-      showValidationStatusField: '?boolean',
-      suggestedArticles: '?KnowledgeSuggestedArticlesSettings'
-    },
-    extends: 'Metadata'
-  },
-  KnowledgeAnswerSettings: {
-    type: 'KnowledgeAnswerSettings',
-    props: {
-      assignTo: '?string',
-      defaultArticleType: '?string',
-      enableArticleCreation: '?boolean'
-    }
-  },
-  KnowledgeCaseSettings: {
-    type: 'KnowledgeCaseSettings',
-    props: {
-      articlePDFCreationProfile: '?string',
-      articlePublicSharingCommunities: '?KnowledgeCommunitiesSettings',
-      articlePublicSharingSites: '?KnowledgeSitesSettings',
-      articlePublicSharingSitesChatterAnswers: '?KnowledgeSitesSettings',
-      assignTo: '?string',
-      customizationClass: '?string',
-      defaultContributionArticleType: '?string',
-      editor: '?string',
-      enableArticleCreation: '?boolean',
-      enableArticlePublicSharingSites: '?boolean',
-      enableCaseDataCategoryMapping: '?boolean',
-      useProfileForPDFCreation: '?boolean'
-    }
-  },
-  KnowledgeCommunitiesSettings: {
-    type: 'KnowledgeCommunitiesSettings',
-    props: {
-      community: ['string']
-    }
-  },
-  KnowledgeSitesSettings: {
-    type: 'KnowledgeSitesSettings',
-    props: {
-      site: ['string']
-    }
-  },
-  KnowledgeLanguageSettings: {
-    type: 'KnowledgeLanguageSettings',
-    props: {
-      language: ['KnowledgeLanguage']
-    }
-  },
-  KnowledgeLanguage: {
-    type: 'KnowledgeLanguage',
-    props: {
-      active: '?boolean',
-      defaultAssignee: '?string',
-      defaultAssigneeType: '?string',
-      defaultReviewer: '?string',
-      defaultReviewerType: '?string',
-      name: 'string'
-    }
-  },
-  KnowledgeSuggestedArticlesSettings: {
-    type: 'KnowledgeSuggestedArticlesSettings',
-    props: {
-      caseFields: '?KnowledgeCaseFieldsSettings',
-      useSuggestedArticlesForCase: '?boolean',
-      workOrderFields: '?KnowledgeWorkOrderFieldsSettings',
-      workOrderLineItemFields: '?KnowledgeWorkOrderLineItemFieldsSettings'
-    }
-  },
-  KnowledgeCaseFieldsSettings: {
-    type: 'KnowledgeCaseFieldsSettings',
-    props: {
-      field: ['KnowledgeCaseField']
-    }
-  },
-  KnowledgeCaseField: {
-    type: 'KnowledgeCaseField',
-    props: {
-      name: '?string'
-    }
-  },
-  KnowledgeWorkOrderFieldsSettings: {
-    type: 'KnowledgeWorkOrderFieldsSettings',
-    props: {
-      field: ['KnowledgeWorkOrderField']
-    }
-  },
-  KnowledgeWorkOrderField: {
-    type: 'KnowledgeWorkOrderField',
-    props: {
-      name: '?string'
-    }
-  },
-  KnowledgeWorkOrderLineItemFieldsSettings: {
-    type: 'KnowledgeWorkOrderLineItemFieldsSettings',
-    props: {
-      field: ['KnowledgeWorkOrderLineItemField']
-    }
-  },
-  KnowledgeWorkOrderLineItemField: {
-    type: 'KnowledgeWorkOrderLineItemField',
-    props: {
-      name: '?string'
-    }
-  },
-  LanguageSettings: {
-    type: 'LanguageSettings',
-    props: {
-      enableCanadaIcuFormat: '?boolean',
-      enableEndUserLanguages: '?boolean',
-      enableICULocaleDateFormat: '?boolean',
-      enablePlatformLanguages: '?boolean',
-      enableTranslationWorkbench: '?boolean',
-      useLanguageFallback: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  Layout: {
-    type: 'Layout',
-    props: {
-      customButtons: ['string'],
-      customConsoleComponents: '?CustomConsoleComponents',
-      emailDefault: '?boolean',
-      excludeButtons: ['string'],
-      feedLayout: '?FeedLayout',
-      headers: ['string'],
-      layoutSections: ['LayoutSection'],
-      miniLayout: '?MiniLayout',
-      multilineLayoutFields: ['string'],
-      platformActionList: '?PlatformActionList',
-      quickActionList: '?QuickActionList',
-      relatedContent: '?RelatedContent',
-      relatedLists: ['RelatedListItem'],
-      relatedObjects: ['string'],
-      runAssignmentRulesDefault: '?boolean',
-      showEmailCheckbox: '?boolean',
-      showHighlightsPanel: '?boolean',
-      showInteractionLogPanel: '?boolean',
-      showKnowledgeComponent: '?boolean',
-      showRunAssignmentRulesCheckbox: '?boolean',
-      showSolutionSection: '?boolean',
-      showSubmitAndAttachButton: '?boolean',
-      summaryLayout: '?SummaryLayout'
-    },
-    extends: 'Metadata'
-  },
-  CustomConsoleComponents: {
-    type: 'CustomConsoleComponents',
-    props: {
-      primaryTabComponents: '?PrimaryTabComponents',
-      subtabComponents: '?SubtabComponents'
-    }
-  },
-  PrimaryTabComponents: {
-    type: 'PrimaryTabComponents',
-    props: {
-      containers: ['Container']
-    }
-  },
-  Container: {
-    type: 'Container',
-    props: {
-      height: '?number',
-      isContainerAutoSizeEnabled: 'boolean',
-      region: 'string',
-      sidebarComponents: ['SidebarComponent'],
-      style: 'string',
-      unit: 'string',
-      width: '?number'
-    }
-  },
-  SidebarComponent: {
-    type: 'SidebarComponent',
-    props: {
-      componentType: 'string',
-      createAction: '?string',
-      enableLinking: '?boolean',
-      height: '?number',
-      label: '?string',
-      lookup: '?string',
-      page: '?string',
-      relatedLists: ['RelatedList'],
-      unit: '?string',
-      updateAction: '?string',
-      width: '?number'
-    }
-  },
-  RelatedList: {
-    type: 'RelatedList',
-    props: {
-      hideOnDetail: 'boolean',
-      name: 'string'
-    }
-  },
-  SubtabComponents: {
-    type: 'SubtabComponents',
-    props: {
-      containers: ['Container']
-    }
-  },
-  FeedLayout: {
-    type: 'FeedLayout',
-    props: {
-      autocollapsePublisher: '?boolean',
-      compactFeed: '?boolean',
-      feedFilterPosition: '?string',
-      feedFilters: ['FeedLayoutFilter'],
-      fullWidthFeed: '?boolean',
-      hideSidebar: '?boolean',
-      highlightExternalFeedItems: '?boolean',
-      leftComponents: ['FeedLayoutComponent'],
-      rightComponents: ['FeedLayoutComponent'],
-      useInlineFiltersInConsole: '?boolean'
-    }
-  },
-  FeedLayoutFilter: {
-    type: 'FeedLayoutFilter',
-    props: {
-      feedFilterName: '?string',
-      feedFilterType: 'string',
-      feedItemType: '?string'
-    }
-  },
-  FeedLayoutComponent: {
-    type: 'FeedLayoutComponent',
-    props: {
-      componentType: 'string',
-      height: '?number',
-      page: '?string'
-    }
-  },
-  LayoutSection: {
-    type: 'LayoutSection',
-    props: {
-      customLabel: '?boolean',
-      detailHeading: '?boolean',
-      editHeading: '?boolean',
-      label: '?string',
-      layoutColumns: ['LayoutColumn'],
-      style: 'string'
-    }
-  },
-  LayoutColumn: {
-    type: 'LayoutColumn',
-    props: {
-      layoutItems: ['LayoutItem'],
-      reserved: '?string'
-    }
-  },
-  LayoutItem: {
-    type: 'LayoutItem',
-    props: {
-      analyticsCloudComponent: '?AnalyticsCloudComponentLayoutItem',
-      behavior: '?string',
-      canvas: '?string',
-      component: '?string',
-      customLink: '?string',
-      emptySpace: '?boolean',
-      field: '?string',
-      height: '?number',
-      page: '?string',
-      reportChartComponent: '?ReportChartComponentLayoutItem',
-      scontrol: '?string',
-      showLabel: '?boolean',
-      showScrollbars: '?boolean',
-      width: '?string'
-    }
-  },
-  AnalyticsCloudComponentLayoutItem: {
-    type: 'AnalyticsCloudComponentLayoutItem',
-    props: {
-      assetType: 'string',
-      devName: 'string',
-      error: '?string',
-      filter: '?string',
-      height: '?number',
-      hideOnError: '?boolean',
-      showHeader: '?boolean',
-      showSharing: '?boolean',
-      showTitle: '?boolean',
-      width: '?string'
-    }
-  },
-  ReportChartComponentLayoutItem: {
-    type: 'ReportChartComponentLayoutItem',
-    props: {
-      cacheData: '?boolean',
-      contextFilterableField: '?string',
-      error: '?string',
-      hideOnError: '?boolean',
-      includeContext: '?boolean',
-      reportName: 'string',
-      showTitle: '?boolean',
-      size: '?string'
-    }
-  },
-  MiniLayout: {
-    type: 'MiniLayout',
-    props: {
-      fields: ['string'],
-      relatedLists: ['RelatedListItem']
-    }
-  },
-  RelatedListItem: {
-    type: 'RelatedListItem',
-    props: {
-      customButtons: ['string'],
-      excludeButtons: ['string'],
-      fields: ['string'],
-      relatedList: 'string',
-      sortField: '?string',
-      sortOrder: '?string'
-    }
-  },
-  RelatedContent: {
-    type: 'RelatedContent',
-    props: {
-      relatedContentItems: ['RelatedContentItem']
-    }
-  },
-  RelatedContentItem: {
-    type: 'RelatedContentItem',
-    props: {
-      layoutItem: 'LayoutItem'
-    }
-  },
-  SummaryLayout: {
-    type: 'SummaryLayout',
-    props: {
-      masterLabel: 'string',
-      sizeX: 'number',
-      sizeY: '?number',
-      sizeZ: '?number',
-      summaryLayoutItems: ['SummaryLayoutItem'],
-      summaryLayoutStyle: 'string'
-    }
-  },
-  SummaryLayoutItem: {
-    type: 'SummaryLayoutItem',
-    props: {
-      customLink: '?string',
-      field: '?string',
-      posX: 'number',
-      posY: '?number',
-      posZ: '?number'
-    }
-  },
-  LeadConfigSettings: {
-    type: 'LeadConfigSettings',
-    props: {
-      doesEnableLeadConvertDefaultSubjectBlankTaskCreation: '?boolean',
-      doesHideOpportunityInConvertLeadWindow: '?boolean',
-      doesPreserveLeadStatus: '?boolean',
-      doesSelectNoOpportunityOnConvertLead: '?boolean',
-      doesTrackHistory: '?boolean',
-      enableConversionsOnMobile: '?boolean',
-      enableOrgWideMergeAndDelete: '?boolean',
-      shouldLeadConvertRequireValidation: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  LeadConvertSettings: {
-    type: 'LeadConvertSettings',
-    props: {
-      allowOwnerChange: '?boolean',
-      objectMapping: ['ObjectMapping'],
-      opportunityCreationOptions: '?string'
-    },
-    extends: 'Metadata'
-  },
-  Letterhead: {
-    type: 'Letterhead',
-    props: {
-      available: 'boolean',
-      backgroundColor: 'string',
-      bodyColor: 'string',
-      bottomLine: 'LetterheadLine',
-      description: '?string',
-      footer: 'LetterheadHeaderFooter',
-      header: 'LetterheadHeaderFooter',
-      middleLine: 'LetterheadLine',
-      name: 'string',
-      topLine: 'LetterheadLine'
-    },
-    extends: 'Metadata'
-  },
-  LetterheadLine: {
-    type: 'LetterheadLine',
-    props: {
-      color: 'string',
-      height: 'number'
-    }
-  },
-  LetterheadHeaderFooter: {
-    type: 'LetterheadHeaderFooter',
-    props: {
-      backgroundColor: 'string',
-      height: 'number',
-      horizontalAlignment: '?string',
-      logo: '?string',
-      verticalAlignment: '?string'
-    }
-  },
-  LicenseDefinition: {
-    type: 'LicenseDefinition',
-    props: {
-      aggregationGroup: 'string',
-      description: '?string',
-      isPublished: 'boolean',
-      label: 'string',
-      licensedCustomPermissions: ['LicensedCustomPermissions'],
-      licensingAuthority: 'string',
-      licensingAuthorityProvider: 'string',
-      minPlatformVersion: 'number',
-      origin: 'string',
-      revision: 'number',
-      trialLicenseDuration: 'number',
-      trialLicenseQuantity: 'number'
-    },
-    extends: 'Metadata'
-  },
-  LicensedCustomPermissions: {
-    type: 'LicensedCustomPermissions',
-    props: {
-      customPermission: 'string',
-      licenseDefinition: 'string'
-    }
-  },
-  LightningBolt: {
-    type: 'LightningBolt',
-    props: {
-      category: 'string',
-      lightningBoltFeatures: ['LightningBoltFeatures'],
-      lightningBoltImages: ['LightningBoltImages'],
-      lightningBoltItems: ['LightningBoltItems'],
-      masterLabel: 'string',
-      publisher: 'string',
-      summary: 'string'
-    },
-    extends: 'Metadata'
-  },
-  LightningBoltFeatures: {
-    type: 'LightningBoltFeatures',
-    props: {
-      description: '?string',
-      order: 'number',
-      title: 'string'
-    }
-  },
-  LightningBoltImages: {
-    type: 'LightningBoltImages',
-    props: {
-      image: 'string',
-      order: 'number'
-    }
-  },
-  LightningBoltItems: {
-    type: 'LightningBoltItems',
-    props: {
-      name: 'string',
-      type: 'string'
-    }
-  },
-  LightningComponentBundle: {
-    type: 'LightningComponentBundle',
-    props: {
-      apiVersion: '?number',
-      description: '?string',
-      isExplicitImport: '?boolean',
-      isExposed: '?boolean',
-      lwcResources: '?LwcResources',
-      masterLabel: '?string',
-      runtimeNamespace: '?string',
-      targetConfigs: '?string',
-      targets: '?Targets'
-    },
-    extends: 'Metadata'
-  },
-  LwcResources: {
-    type: 'LwcResources',
-    props: {
-      lwcResource: ['LwcResource']
-    }
-  },
-  LwcResource: {
-    type: 'LwcResource',
-    props: {
-      filePath: 'string',
-      source: 'string'
-    }
-  },
-  Targets: {
-    type: 'Targets',
-    props: {
-      target: ['string']
-    }
-  },
-  LightningExperienceSettings: {
-    type: 'LightningExperienceSettings',
-    props: {
-      enableAccessCheckCrucPref: '?boolean',
-      enableApiUserLtngOutAccessPref: '?boolean',
-      enableAuraCDNPref: '?boolean',
-      enableFeedbackInMobile: '?boolean',
-      enableIE11DeprecationMsgHidden: '?boolean',
-      enableIE11LEXCrucPref: '?boolean',
-      enableInAppTooltips: '?boolean',
-      enableLEXOnIpadEnabled: '?boolean',
-      enableLexEndUsersNoSwitching: '?boolean',
-      enableNavPersonalizationOptOut: '?boolean',
-      enableRemoveThemeBrandBanner: '?boolean',
-      enableS1BannerPref: '?boolean',
-      enableS1BrowserEnabled: '?boolean',
-      enableS1DesktopEnabled: '?boolean',
-      enableS1UiLoggingEnabled: '?boolean',
-      enableTryLightningOptOut: '?boolean',
-      enableUseS1AlohaDesktop: '?boolean',
-      enableUsersAreLightningOnly: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  LightningExperienceTheme: {
-    type: 'LightningExperienceTheme',
-    props: {
-      defaultBrandingSet: 'string',
-      description: '?string',
-      masterLabel: 'string',
-      shouldOverrideLoadingImage: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  LightningMessageChannel: {
-    type: 'LightningMessageChannel',
-    props: {
-      description: '?string',
-      isExposed: '?boolean',
-      lightningMessageFields: ['LightningMessageField'],
-      masterLabel: 'string'
-    },
-    extends: 'Metadata'
-  },
-  LightningMessageField: {
-    type: 'LightningMessageField',
-    props: {
-      description: '?string',
-      fieldName: 'string'
-    }
-  },
-  LightningOnboardingConfig: {
-    type: 'LightningOnboardingConfig',
-    props: {
-      collaborationGroup: '?string',
-      customQuestion: 'string',
-      feedbackFormDaysFrequency: 'number',
-      isCustom: 'boolean',
-      masterLabel: 'string',
-      sendFeedbackToSalesforce: 'boolean'
-    },
-    extends: 'Metadata'
-  },
-  LiveAgentSettings: {
-    type: 'LiveAgentSettings',
-    props: {
-      enableLiveAgent: '?boolean',
-      enableQuickTextEnabled: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  LiveChatAgentConfig: {
-    type: 'LiveChatAgentConfig',
-    props: {
-      assignments: '?AgentConfigAssignments',
-      autoGreeting: '?string',
-      capacity: '?number',
-      criticalWaitTime: '?number',
-      customAgentName: '?string',
-      enableAgentFileTransfer: '?boolean',
-      enableAgentSneakPeek: '?boolean',
-      enableAssistanceFlag: '?boolean',
-      enableAutoAwayOnDecline: '?boolean',
-      enableAutoAwayOnPushTimeout: '?boolean',
-      enableChatConferencing: '?boolean',
-      enableChatMonitoring: '?boolean',
-      enableChatTransferToAgent: '?boolean',
-      enableChatTransferToButton: '?boolean',
-      enableChatTransferToSkill: '?boolean',
-      enableLogoutSound: '?boolean',
-      enableNotifications: '?boolean',
-      enableRequestSound: '?boolean',
-      enableSneakPeek: '?boolean',
-      enableVisitorBlocking: '?boolean',
-      enableWhisperMessage: '?boolean',
-      label: 'string',
-      supervisorDefaultAgentStatusFilter: '?string',
-      supervisorDefaultButtonFilter: '?string',
-      supervisorDefaultSkillFilter: '?string',
-      supervisorSkills: '?SupervisorAgentConfigSkills',
-      transferableButtons: '?AgentConfigButtons',
-      transferableSkills: '?AgentConfigSkills'
-    },
-    extends: 'Metadata'
-  },
-  AgentConfigAssignments: {
-    type: 'AgentConfigAssignments',
-    props: {
-      profiles: '?AgentConfigProfileAssignments',
-      users: '?AgentConfigUserAssignments'
-    }
-  },
-  AgentConfigProfileAssignments: {
-    type: 'AgentConfigProfileAssignments',
-    props: {
-      profile: ['string']
-    }
-  },
-  AgentConfigUserAssignments: {
-    type: 'AgentConfigUserAssignments',
-    props: {
-      user: ['string']
-    }
-  },
-  SupervisorAgentConfigSkills: {
-    type: 'SupervisorAgentConfigSkills',
-    props: {
-      skill: ['string']
-    }
-  },
-  AgentConfigButtons: {
-    type: 'AgentConfigButtons',
-    props: {
-      button: ['string']
-    }
-  },
-  AgentConfigSkills: {
-    type: 'AgentConfigSkills',
-    props: {
-      skill: ['string']
-    }
-  },
-  LiveChatButton: {
-    type: 'LiveChatButton',
-    props: {
-      animation: '?string',
-      autoGreeting: '?string',
-      chasitorIdleTimeout: '?number',
-      chasitorIdleTimeoutWarning: '?number',
-      chatPage: '?string',
-      customAgentName: '?string',
-      deployments: '?LiveChatButtonDeployments',
-      enableQueue: '?boolean',
-      inviteEndPosition: '?string',
-      inviteImage: '?string',
-      inviteStartPosition: '?string',
-      isActive: '?boolean',
-      label: 'string',
-      numberOfReroutingAttempts: '?number',
-      offlineImage: '?string',
-      onlineImage: '?string',
-      optionsCustomRoutingIsEnabled: '?boolean',
-      optionsHasChasitorIdleTimeout: 'boolean',
-      optionsHasInviteAfterAccept: '?boolean',
-      optionsHasInviteAfterReject: '?boolean',
-      optionsHasRerouteDeclinedRequest: '?boolean',
-      optionsIsAutoAccept: '?boolean',
-      optionsIsInviteAutoRemove: '?boolean',
-      overallQueueLength: '?number',
-      perAgentQueueLength: '?number',
-      postChatPage: '?string',
-      postChatUrl: '?string',
-      preChatFormPage: '?string',
-      preChatFormUrl: '?string',
-      pushTimeOut: '?number',
-      routingType: 'string',
-      site: '?string',
-      skills: '?LiveChatButtonSkills',
-      timeToRemoveInvite: '?number',
-      type: 'string',
-      windowLanguage: '?string'
-    },
-    extends: 'Metadata'
-  },
-  LiveChatButtonDeployments: {
-    type: 'LiveChatButtonDeployments',
-    props: {
-      deployment: ['string']
-    }
-  },
-  LiveChatButtonSkills: {
-    type: 'LiveChatButtonSkills',
-    props: {
-      skill: ['string']
-    }
-  },
-  LiveChatDeployment: {
-    type: 'LiveChatDeployment',
-    props: {
-      brandingImage: '?string',
-      connectionTimeoutDuration: '?number',
-      connectionWarningDuration: '?number',
-      displayQueuePosition: '?boolean',
-      domainWhiteList: '?LiveChatDeploymentDomainWhitelist',
-      enablePrechatApi: '?boolean',
-      enableTranscriptSave: '?boolean',
-      label: 'string',
-      mobileBrandingImage: '?string',
-      site: '?string',
-      windowTitle: 'string'
-    },
-    extends: 'Metadata'
-  },
-  LiveChatDeploymentDomainWhitelist: {
-    type: 'LiveChatDeploymentDomainWhitelist',
-    props: {
-      domain: ['string']
-    }
-  },
-  LiveChatSensitiveDataRule: {
-    type: 'LiveChatSensitiveDataRule',
-    props: {
-      actionType: 'string',
-      description: '?string',
-      enforceOn: 'number',
-      isEnabled: 'boolean',
-      pattern: 'string',
-      priority: 'number',
-      replacement: '?string'
-    },
-    extends: 'Metadata'
-  },
-  LiveMessageSettings: {
-    type: 'LiveMessageSettings',
-    props: {
-      enableLiveMessage: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  MacroSettings: {
-    type: 'MacroSettings',
-    props: {
-      enableAdvancedSearch: '?boolean',
-      macrosInFolders: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  ManagedContentType: {
-    type: 'ManagedContentType',
-    props: {
-      description: '?string',
-      developerName: 'string',
-      managedContentNodeTypes: ['ManagedContentNodeType'],
-      masterLabel: 'string'
-    },
-    extends: 'Metadata'
-  },
-  ManagedContentNodeType: {
-    type: 'ManagedContentNodeType',
-    props: {
-      helpText: '?string',
-      isLocalizable: '?boolean',
-      isRequired: '?boolean',
-      nodeLabel: 'string',
-      nodeName: 'string',
-      nodeType: 'string',
-      placeholderText: '?string'
-    }
-  },
-  ManagedTopic: {
-    type: 'ManagedTopic',
-    props: {
-      managedTopicType: 'string',
-      name: 'string',
-      parentName: 'string',
-      position: 'number',
-      topicDescription: 'string'
-    },
-    extends: 'Metadata'
-  },
-  ManagedTopics: {
-    type: 'ManagedTopics',
-    props: {
-      managedTopic: ['ManagedTopic']
-    },
-    extends: 'Metadata'
-  },
-  SourceTrackingSettings: {
-    type: 'SourceTrackingSettings',
-    props: {
-      enableSourceTrackingSandboxes: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  MapsAndLocationSettings: {
-    type: 'MapsAndLocationSettings',
-    props: {
-      enableAddressAutoComplete: '?boolean',
-      enableMapsAndLocation: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  MatchingRule: {
-    type: 'MatchingRule',
-    props: {
-      booleanFilter: '?string',
-      description: '?string',
-      label: 'string',
-      matchingRuleItems: ['MatchingRuleItem'],
-      ruleStatus: 'string'
-    },
-    extends: 'Metadata'
-  },
-  MatchingRuleItem: {
-    type: 'MatchingRuleItem',
-    props: {
-      blankValueBehavior: '?string',
-      fieldName: 'string',
-      matchingMethod: 'string'
-    }
-  },
-  MatchingRules: {
-    type: 'MatchingRules',
-    props: {
-      matchingRules: ['MatchingRule']
-    },
-    extends: 'Metadata'
-  },
-  MetadataWithContent: {
-    type: 'MetadataWithContent',
-    props: {
-      content: '?string'
-    },
-    extends: 'Metadata'
-  },
-  AccessControlPolicy: {
-    type: 'AccessControlPolicy',
-    props: {
-      active: 'boolean',
-      deploymentStatus: 'string',
-      description: '?string',
-      masterLabel: 'string',
-      targetEntity: 'string',
-      version: 'number'
-    },
-    extends: 'MetadataWithContent'
-  },
-  ApexClass: {
-    type: 'ApexClass',
-    props: {
-      apiVersion: 'number',
-      packageVersions: ['PackageVersion'],
-      status: 'string'
-    },
-    extends: 'MetadataWithContent'
-  },
-  ApexComponent: {
-    type: 'ApexComponent',
-    props: {
-      apiVersion: '?number',
-      description: '?string',
-      label: 'string',
-      packageVersions: ['PackageVersion']
-    },
-    extends: 'MetadataWithContent'
-  },
-  ApexPage: {
-    type: 'ApexPage',
-    props: {
-      apiVersion: 'number',
-      availableInTouch: '?boolean',
-      confirmationTokenRequired: '?boolean',
-      description: '?string',
-      label: 'string',
-      packageVersions: ['PackageVersion']
-    },
-    extends: 'MetadataWithContent'
-  },
-  ApexTrigger: {
-    type: 'ApexTrigger',
-    props: {
-      apiVersion: 'number',
-      packageVersions: ['PackageVersion'],
-      status: 'string'
-    },
-    extends: 'MetadataWithContent'
-  },
-  Certificate: {
-    type: 'Certificate',
-    props: {
-      caSigned: 'boolean',
-      encryptedWithPlatformEncryption: '?boolean',
-      expirationDate: '?string',
-      keySize: '?number',
-      masterLabel: 'string',
-      privateKeyExportable: '?boolean'
-    },
-    extends: 'MetadataWithContent'
-  },
-  ContentAsset: {
-    type: 'ContentAsset',
-    props: {
-      format: '?string',
-      isVisibleByExternalUsers: '?boolean',
-      language: 'string',
-      masterLabel: 'string',
-      originNetwork: '?string',
-      relationships: '?ContentAssetRelationships',
-      versions: 'ContentAssetVersions'
-    },
-    extends: 'MetadataWithContent'
-  },
-  ContentAssetRelationships: {
-    type: 'ContentAssetRelationships',
-    props: {
-      insightsApplication: ['ContentAssetLink'],
-      network: ['ContentAssetLink'],
-      organization: '?ContentAssetLink',
-      workspace: ['ContentAssetLink']
-    }
-  },
-  ContentAssetLink: {
-    type: 'ContentAssetLink',
-    props: {
-      access: 'string',
-      isManagingWorkspace: '?boolean',
-      name: '?string'
-    }
-  },
-  ContentAssetVersions: {
-    type: 'ContentAssetVersions',
-    props: {
-      version: ['ContentAssetVersion']
-    }
-  },
-  ContentAssetVersion: {
-    type: 'ContentAssetVersion',
-    props: {
-      number: 'string',
-      pathOnClient: 'string',
-      zipEntry: '?string'
-    }
-  },
-  Document: {
-    type: 'Document',
-    props: {
-      description: '?string',
-      internalUseOnly: 'boolean',
-      keywords: '?string',
-      name: '?string',
-      public: 'boolean'
-    },
-    extends: 'MetadataWithContent'
-  },
-  EclairGeoData: {
-    type: 'EclairGeoData',
-    props: {
-      maps: ['EclairMap'],
-      masterLabel: 'string'
-    },
-    extends: 'MetadataWithContent'
-  },
-  EclairMap: {
-    type: 'EclairMap',
-    props: {
-      boundingBoxBottom: '?number',
-      boundingBoxLeft: '?number',
-      boundingBoxRight: '?number',
-      boundingBoxTop: '?number',
-      mapLabel: '?string',
-      mapName: 'string',
-      projection: 'string'
-    }
-  },
-  EmailTemplate: {
-    type: 'EmailTemplate',
-    props: {
-      apiVersion: '?number',
-      attachedDocuments: ['string'],
-      attachments: ['Attachment'],
-      available: 'boolean',
-      description: '?string',
-      encodingKey: 'string',
-      letterhead: '?string',
-      name: 'string',
-      packageVersions: ['PackageVersion'],
-      relatedEntityType: '?string',
-      style: 'string',
-      subject: '?string',
-      textOnly: '?string',
-      type: 'string',
-      uiType: '?string'
-    },
-    extends: 'MetadataWithContent'
-  },
-  Attachment: {
-    type: 'Attachment',
-    props: {
-      content: 'string',
-      name: 'string'
-    }
-  },
-  NetworkBranding: {
-    type: 'NetworkBranding',
-    props: {
-      loginBackgroundImageUrl: '?string',
-      loginFooterText: '?string',
-      loginLogo: '?string',
-      loginLogoName: '?string',
-      loginPrimaryColor: '?string',
-      loginQuaternaryColor: '?string',
-      loginRightFrameUrl: '?string',
-      network: '?string',
-      pageFooter: '?string',
-      pageHeader: '?string',
-      primaryColor: 'string',
-      primaryComplementColor: 'string',
-      quaternaryColor: 'string',
-      quaternaryComplementColor: 'string',
-      secondaryColor: 'string',
-      staticLogoImageUrl: '?string',
-      tertiaryColor: 'string',
-      tertiaryComplementColor: 'string',
-      zeronaryColor: 'string',
-      zeronaryComplementColor: 'string'
-    },
-    extends: 'MetadataWithContent'
-  },
-  Orchestration: {
-    type: 'Orchestration',
-    props: {
-      context: 'string',
-      masterLabel: 'string'
-    },
-    extends: 'MetadataWithContent'
-  },
-  Scontrol: {
-    type: 'Scontrol',
-    props: {
-      contentSource: 'string',
-      description: '?string',
-      encodingKey: 'string',
-      fileContent: '?string',
-      fileName: '?string',
-      name: 'string',
-      supportsCaching: 'boolean'
-    },
-    extends: 'MetadataWithContent'
-  },
-  SiteDotCom: {
-    type: 'SiteDotCom',
-    props: {
-      label: 'string',
-      siteType: 'string'
-    },
-    extends: 'MetadataWithContent'
-  },
-  StaticResource: {
-    type: 'StaticResource',
-    props: {
-      cacheControl: 'string',
-      contentType: 'string',
-      description: '?string'
-    },
-    extends: 'MetadataWithContent'
-  },
-  UiPlugin: {
-    type: 'UiPlugin',
-    props: {
-      description: '?string',
-      extensionPointIdentifier: 'string',
-      isEnabled: 'boolean',
-      language: 'string',
-      masterLabel: 'string'
-    },
-    extends: 'MetadataWithContent'
-  },
-  WaveDashboard: {
-    type: 'WaveDashboard',
-    props: {
-      application: 'string',
-      description: '?string',
-      masterLabel: 'string',
-      templateAssetSourceName: '?string'
-    },
-    extends: 'MetadataWithContent'
-  },
-  WaveDataflow: {
-    type: 'WaveDataflow',
-    props: {
-      dataflowType: '?string',
-      description: '?string',
-      masterLabel: 'string'
-    },
-    extends: 'MetadataWithContent'
-  },
-  WaveLens: {
-    type: 'WaveLens',
-    props: {
-      application: 'string',
-      datasets: ['string'],
-      description: '?string',
-      masterLabel: 'string',
-      templateAssetSourceName: '?string',
-      visualizationType: 'string'
-    },
-    extends: 'MetadataWithContent'
-  },
-  WaveRecipe: {
-    type: 'WaveRecipe',
-    props: {
-      dataflow: 'string',
-      masterLabel: 'string',
-      securityPredicate: '?string',
-      targetDatasetAlias: 'string'
-    },
-    extends: 'MetadataWithContent'
-  },
-  MilestoneType: {
-    type: 'MilestoneType',
-    props: {
-      description: '?string',
-      recurrenceType: '?string'
-    },
-    extends: 'Metadata'
-  },
-  MlDomain: {
-    type: 'MlDomain',
-    props: {
-      description: '?string',
-      label: 'string',
-      mlIntents: ['MlIntent'],
-      mlSlotClasses: ['MlSlotClass']
-    },
-    extends: 'Metadata'
-  },
-  MobileApplicationDetail: {
-    type: 'MobileApplicationDetail',
-    props: {
-      applicationBinaryFile: '?string',
-      applicationBinaryFileName: '?string',
-      applicationBundleIdentifier: '?string',
-      applicationFileLength: '?number',
-      applicationIconFile: '?string',
-      applicationIconFileName: '?string',
-      applicationInstallUrl: '?string',
-      devicePlatform: 'string',
-      deviceType: '?string',
-      minimumOsVersion: '?string',
-      privateApp: '?boolean',
-      version: 'string'
-    },
-    extends: 'Metadata'
-  },
-  MobileSettings: {
-    type: 'MobileSettings',
-    props: {
-      dashboardMobile: '?DashboardMobileSettings',
-      enableImportContactFromDevice: '?boolean',
-      enableLightningOnMobile: '?boolean',
-      enableOfflineDraftsEnabled: '?boolean',
-      enablePopulateNameManuallyInToday: '?boolean',
-      enableS1EncryptedStoragePref2: '?boolean',
-      enableS1OfflinePref: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  DashboardMobileSettings: {
-    type: 'DashboardMobileSettings',
-    props: {
-      enableDashboardIPadApp: '?boolean'
-    }
-  },
-  ModerationRule: {
-    type: 'ModerationRule',
-    props: {
-      action: 'string',
-      actionLimit: '?number',
-      active: 'boolean',
-      description: '?string',
-      entitiesAndFields: ['ModeratedEntityField'],
-      masterLabel: 'string',
-      notifyLimit: '?number',
-      timePeriod: '?string',
-      type: '?string',
-      userCriteria: ['string'],
-      userMessage: '?string'
-    },
-    extends: 'Metadata'
-  },
-  ModeratedEntityField: {
-    type: 'ModeratedEntityField',
-    props: {
-      entityName: 'string',
-      fieldName: '?string',
-      keywordList: '?string'
-    }
-  },
-  MyDomainSettings: {
-    type: 'MyDomainSettings',
-    props: {
-      canOnlyLoginWithMyDomainUrl: '?boolean',
-      doesApiLoginRequireOrgDomain: '?boolean',
-      enableNativeBrowserForAuthOnAndroid: '?boolean',
-      enableNativeBrowserForAuthOnIos: '?boolean',
-      useStabilizedMyDomainHostnames: '?boolean',
-      useStabilizedSandboxMyDomainHostnames: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  NameSettings: {
-    type: 'NameSettings',
-    props: {
-      enableMiddleName: '?boolean',
-      enableNameSuffix: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  NamedCredential: {
-    type: 'NamedCredential',
-    props: {
-      allowMergeFieldsInBody: '?boolean',
-      allowMergeFieldsInHeader: '?boolean',
-      authProvider: '?string',
-      authTokenEndpointUrl: '?string',
-      awsAccessKey: '?string',
-      awsAccessSecret: '?string',
-      awsRegion: '?string',
-      awsService: '?string',
-      certificate: '?string',
-      endpoint: '?string',
-      generateAuthorizationHeader: '?boolean',
-      jwtAudience: '?string',
-      jwtFormulaSubject: '?string',
-      jwtIssuer: '?string',
-      jwtSigningCertificate: '?string',
-      jwtTextSubject: '?string',
-      jwtValidityPeriodSeconds: '?number',
-      label: 'string',
-      oauthRefreshToken: '?string',
-      oauthScope: '?string',
-      oauthToken: '?string',
-      password: '?string',
-      principalType: 'string',
-      privateConnection: '?string',
-      protocol: 'string',
-      username: '?string'
-    },
-    extends: 'Metadata'
-  },
-  NavigationMenu: {
-    type: 'NavigationMenu',
-    props: {
-      container: 'string',
-      containerType: 'string',
-      label: 'string',
-      navigationMenuItem: ['NavigationMenuItem']
-    },
-    extends: 'Metadata'
-  },
-  Network: {
-    type: 'Network',
-    props: {
-      allowInternalUserLogin: '?boolean',
-      allowMembersToFlag: '?boolean',
-      allowedExtensions: '?string',
-      caseCommentEmailTemplate: '?string',
-      changePasswordTemplate: 'string',
-      communityRoles: '?CommunityRoles',
-      description: '?string',
-      disableReputationRecordConversations: '?boolean',
-      emailFooterLogo: '?string',
-      emailFooterText: '?string',
-      emailSenderAddress: 'string',
-      emailSenderName: 'string',
-      enableCustomVFErrorPageOverrides: '?boolean',
-      enableDirectMessages: '?boolean',
-      enableGuestChatter: '?boolean',
-      enableGuestFileAccess: '?boolean',
-      enableGuestMemberVisibility: '?boolean',
-      enableInvitation: '?boolean',
-      enableKnowledgeable: '?boolean',
-      enableMemberVisibility: '?boolean',
-      enableNicknameDisplay: '?boolean',
-      enablePrivateMessages: '?boolean',
-      enableReputation: '?boolean',
-      enableShowAllNetworkSettings: '?boolean',
-      enableSiteAsContainer: '?boolean',
-      enableTalkingAboutStats: '?boolean',
-      enableTopicAssignmentRules: '?boolean',
-      enableTopicSuggestions: '?boolean',
-      enableUpDownVote: '?boolean',
-      feedChannel: '?string',
-      forgotPasswordTemplate: 'string',
-      gatherCustomerSentimentData: '?boolean',
-      lockoutTemplate: '?string',
-      logoutUrl: '?string',
-      maxFileSizeKb: '?number',
-      navigationLinkSet: '?NavigationLinkSet',
-      networkMemberGroups: '?NetworkMemberGroup',
-      networkPageOverrides: '?NetworkPageOverride',
-      newSenderAddress: '?string',
-      picassoSite: '?string',
-      recommendationAudience: '?RecommendationAudience',
-      recommendationDefinition: '?RecommendationDefinition',
-      reputationLevels: '?ReputationLevelDefinitions',
-      reputationPointsRules: '?ReputationPointsRules',
-      selfRegProfile: '?string',
-      selfRegistration: '?boolean',
-      sendWelcomeEmail: '?boolean',
-      site: 'string',
-      status: 'string',
-      tabs: 'NetworkTabSet',
-      urlPathPrefix: '?string',
-      verificationTemplate: '?string',
-      welcomeTemplate: 'string'
-    },
-    extends: 'Metadata'
-  },
-  CommunityRoles: {
-    type: 'CommunityRoles',
-    props: {
-      customerUserRole: '?string',
-      employeeUserRole: '?string',
-      partnerUserRole: '?string'
-    }
-  },
-  NetworkMemberGroup: {
-    type: 'NetworkMemberGroup',
-    props: {
-      permissionSet: ['string'],
-      profile: ['string']
-    }
-  },
-  NetworkPageOverride: {
-    type: 'NetworkPageOverride',
-    props: {
-      changePasswordPageOverrideSetting: '?string',
-      forgotPasswordPageOverrideSetting: '?string',
-      homePageOverrideSetting: '?string',
-      loginPageOverrideSetting: '?string',
-      selfRegProfilePageOverrideSetting: '?string'
-    }
-  },
-  RecommendationAudience: {
-    type: 'RecommendationAudience',
-    props: {
-      recommendationAudienceDetails: ['RecommendationAudienceDetail']
-    }
-  },
-  RecommendationAudienceDetail: {
-    type: 'RecommendationAudienceDetail',
-    props: {
-      audienceCriteriaType: '?string',
-      audienceCriteriaValue: '?string',
-      setupName: '?string'
-    }
-  },
-  RecommendationDefinition: {
-    type: 'RecommendationDefinition',
-    props: {
-      recommendationDefinitionDetails: ['RecommendationDefinitionDetail']
-    }
-  },
-  RecommendationDefinitionDetail: {
-    type: 'RecommendationDefinitionDetail',
-    props: {
-      actionUrl: '?string',
-      description: '?string',
-      linkText: '?string',
-      scheduledRecommendations: '?ScheduledRecommendation',
-      setupName: '?string',
-      title: '?string'
-    }
-  },
-  ScheduledRecommendation: {
-    type: 'ScheduledRecommendation',
-    props: {
-      scheduledRecommendationDetails: ['ScheduledRecommendationDetail']
-    }
-  },
-  ScheduledRecommendationDetail: {
-    type: 'ScheduledRecommendationDetail',
-    props: {
-      channel: '?string',
-      enabled: '?boolean',
-      rank: '?number',
-      recommendationAudience: '?string'
-    }
-  },
-  ReputationLevelDefinitions: {
-    type: 'ReputationLevelDefinitions',
-    props: {
-      level: ['ReputationLevel']
-    }
-  },
-  ReputationLevel: {
-    type: 'ReputationLevel',
-    props: {
-      branding: '?ReputationBranding',
-      label: '?string',
-      lowerThreshold: 'number'
-    }
-  },
-  ReputationBranding: {
-    type: 'ReputationBranding',
-    props: {
-      smallImage: '?string'
-    }
-  },
-  ReputationPointsRules: {
-    type: 'ReputationPointsRules',
-    props: {
-      pointsRule: ['ReputationPointsRule']
-    }
-  },
-  ReputationPointsRule: {
-    type: 'ReputationPointsRule',
-    props: {
-      eventType: 'string',
-      points: 'number'
-    }
-  },
-  NetworkTabSet: {
-    type: 'NetworkTabSet',
-    props: {
-      customTab: ['string'],
-      defaultTab: 'string',
-      standardTab: ['string']
-    }
-  },
-  NotificationsSettings: {
-    type: 'NotificationsSettings',
-    props: {
-      enableMobileAppPushNotifications: '?boolean',
-      enableNotifications: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  OauthCustomScope: {
-    type: 'OauthCustomScope',
-    props: {
-      description: 'string',
-      developerName: 'string',
-      isProtected: '?boolean',
-      isPublic: '?boolean',
-      masterLabel: 'string'
-    },
-    extends: 'Metadata'
-  },
-  ObjectLinkingSettings: {
-    type: 'ObjectLinkingSettings',
-    props: {
-      enableObjectLinking: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  OmniChannelSettings: {
-    type: 'OmniChannelSettings',
-    props: {
-      enableOmniAutoLoginPrompt: '?boolean',
-      enableOmniChannel: '?boolean',
-      enableOmniSecondaryRoutingPriority: '?boolean',
-      enableOmniSkillsRouting: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  OpportunitySettings: {
-    type: 'OpportunitySettings',
-    props: {
-      autoActivateNewReminders: '?boolean',
-      customizableProductSchedulesEnabled: '?boolean',
-      doesAutoAddSplitOwnerAsOpportunityTeamMember: '?boolean',
-      doesEnforceStandardOpportunitySaveLogic: '?boolean',
-      enableFindSimilarOpportunities: '?boolean',
-      enableOpportunityFieldHistoryTracking: '?boolean',
-      enableOpportunityInsightsInMobile: '?boolean',
-      enableOpportunityTeam: '?boolean',
-      enableUpdateReminders: '?boolean',
-      findSimilarOppFilter: '?FindSimilarOppFilter',
-      promptToAddProducts: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  FindSimilarOppFilter: {
-    type: 'FindSimilarOppFilter',
-    props: {
-      similarOpportunitiesDisplayColumns: ['string'],
-      similarOpportunitiesMatchFields: ['string']
-    }
-  },
-  OrchestrationContext: {
-    type: 'OrchestrationContext',
-    props: {
-      datasets: ['OrchestrationContextDataset'],
-      description: '?string',
-      events: ['OrchestrationContextEvent'],
-      imageFile: 'string',
-      imageScale: 'number',
-      masterLabel: 'string',
-      runtimeType: 'string',
-      salesforceObject: '?string',
-      salesforceObjectPrimaryKey: '?string'
-    },
-    extends: 'Metadata'
-  },
-  OrchestrationContextDataset: {
-    type: 'OrchestrationContextDataset',
-    props: {
-      datasetType: 'string',
-      orchestrationDataset: 'string'
-    }
-  },
-  OrchestrationContextEvent: {
-    type: 'OrchestrationContextEvent',
-    props: {
-      eventType: 'string',
-      orchestrationEvent: 'string',
-      platformEvent: 'string',
-      platformEventPrimaryKey: 'string'
-    }
-  },
-  OrderManagementSettings: {
-    type: 'OrderManagementSettings',
-    props: {
-      enableOrderManagement: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  OrderSettings: {
-    type: 'OrderSettings',
-    props: {
-      enableNegativeQuantity: '?boolean',
-      enableOrders: '?boolean',
-      enableReductionOrders: '?boolean',
-      enableZeroQuantity: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  OrgPreferenceSettings: {
-    type: 'OrgPreferenceSettings',
-    props: {
-      preferences: ['OrganizationSettingsDetail']
-    },
-    extends: 'Metadata'
-  },
-  OrganizationSettingsDetail: {
-    type: 'OrganizationSettingsDetail',
-    props: {
-      settingName: 'string',
-      settingValue: 'boolean'
-    }
-  },
-  OrgSettings: {
-    type: 'OrgSettings',
-    props: {
-      enableCustomerSuccessPortal: '?boolean',
-      enableExtendedMailMerge: '?boolean',
-      enableIncludeContractStatus: '?boolean',
-      enableMakeDeploymentsMandatory: '?boolean',
-      enableManageSelfServiceUsers: '?boolean',
-      enableOrgFeedSentimentAnalysis: '?boolean',
-      enableRADeploymentAttributeOnly: '?boolean',
-      enableResetDivisionOnLogin: '?boolean',
-      saveMailMergeDocsAsSalesforceDocs: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  Package: {
-    type: 'Package',
-    props: {
-      apiAccessLevel: '?string',
-      description: '?string',
-      namespacePrefix: '?string',
-      objectPermissions: ['ProfileObjectPermissions'],
-      packageType: '?string',
-      postInstallClass: '?string',
-      setupWeblink: '?string',
-      types: ['PackageTypeMembers'],
-      uninstallClass: '?string',
-      version: 'string'
-    },
-    extends: 'Metadata'
-  },
-  ProfileObjectPermissions: {
-    type: 'ProfileObjectPermissions',
-    props: {
-      allowCreate: '?boolean',
-      allowDelete: '?boolean',
-      allowEdit: '?boolean',
-      allowRead: '?boolean',
-      modifyAllRecords: '?boolean',
-      object: 'string',
-      viewAllRecords: '?boolean'
-    }
-  },
-  PackageTypeMembers: {
-    type: 'PackageTypeMembers',
-    props: {
-      members: ['string'],
-      name: 'string'
-    }
-  },
-  PardotEinsteinSettings: {
-    type: 'PardotEinsteinSettings',
-    props: {
-      enableCampaignInsight: '?boolean',
-      enableEngagementScore: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  PardotSettings: {
-    type: 'PardotSettings',
-    props: {
-      enableB2bmaAppEnabled: '?boolean',
-      enableEngagementHistoryDashboards: '?boolean',
-      enablePardotAppV1Enabled: '?boolean',
-      enablePardotEnabled: '?boolean',
-      enableProspectActivityDataset: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  PartyDataModelSettings: {
-    type: 'PartyDataModelSettings',
-    props: {
-      enableAutoSelectIndividualOnMerge: '?boolean',
-      enableConsentManagement: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  PathAssistant: {
-    type: 'PathAssistant',
-    props: {
-      active: 'boolean',
-      entityName: 'string',
-      fieldName: 'string',
-      masterLabel: 'string',
-      pathAssistantSteps: ['PathAssistantStep'],
-      recordTypeName: 'string'
-    },
-    extends: 'Metadata'
-  },
-  PathAssistantStep: {
-    type: 'PathAssistantStep',
-    props: {
-      fieldNames: ['string'],
-      info: '?string',
-      picklistValueName: 'string'
-    }
-  },
-  PathAssistantSettings: {
-    type: 'PathAssistantSettings',
-    props: {
-      canOverrideAutoPathCollapseWithUserPref: '?boolean',
-      pathAssistantEnabled: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  PermissionSet: {
-    type: 'PermissionSet',
-    props: {
-      applicationVisibilities: ['PermissionSetApplicationVisibility'],
-      classAccesses: ['PermissionSetApexClassAccess'],
-      customMetadataTypeAccesses: ['PermissionSetCustomMetadataTypeAccess'],
-      customPermissions: ['PermissionSetCustomPermissions'],
-      description: '?string',
-      externalDataSourceAccesses: ['PermissionSetExternalDataSourceAccess'],
-      fieldPermissions: ['PermissionSetFieldPermissions'],
-      flowAccesses: ['PermissionSetFlowAccess'],
-      hasActivationRequired: '?boolean',
-      label: 'string',
-      license: '?string',
-      objectPermissions: ['PermissionSetObjectPermissions'],
-      pageAccesses: ['PermissionSetApexPageAccess'],
-      recordTypeVisibilities: ['PermissionSetRecordTypeVisibility'],
-      tabSettings: ['PermissionSetTabSetting'],
-      userPermissions: ['PermissionSetUserPermission']
-    },
-    extends: 'Metadata'
-  },
-  PermissionSetApplicationVisibility: {
-    type: 'PermissionSetApplicationVisibility',
-    props: {
-      application: 'string',
-      visible: 'boolean'
-    }
-  },
-  PermissionSetApexClassAccess: {
-    type: 'PermissionSetApexClassAccess',
-    props: {
-      apexClass: 'string',
-      enabled: 'boolean'
-    }
-  },
-  PermissionSetCustomMetadataTypeAccess: {
-    type: 'PermissionSetCustomMetadataTypeAccess',
-    props: {
-      enabled: 'boolean',
-      name: 'string'
-    }
-  },
-  PermissionSetCustomPermissions: {
-    type: 'PermissionSetCustomPermissions',
-    props: {
-      enabled: 'boolean',
-      name: 'string'
-    }
-  },
-  PermissionSetExternalDataSourceAccess: {
-    type: 'PermissionSetExternalDataSourceAccess',
-    props: {
-      enabled: 'boolean',
-      externalDataSource: 'string'
-    }
-  },
-  PermissionSetFieldPermissions: {
-    type: 'PermissionSetFieldPermissions',
-    props: {
-      editable: 'boolean',
-      field: 'string',
-      readable: '?boolean'
-    }
-  },
-  PermissionSetFlowAccess: {
-    type: 'PermissionSetFlowAccess',
-    props: {
-      enabled: 'boolean',
-      flow: 'string'
-    }
-  },
-  PermissionSetObjectPermissions: {
-    type: 'PermissionSetObjectPermissions',
-    props: {
-      allowCreate: 'boolean',
-      allowDelete: 'boolean',
-      allowEdit: 'boolean',
-      allowRead: 'boolean',
-      modifyAllRecords: 'boolean',
-      object: 'string',
-      viewAllRecords: 'boolean'
-    }
-  },
-  PermissionSetApexPageAccess: {
-    type: 'PermissionSetApexPageAccess',
-    props: {
-      apexPage: 'string',
-      enabled: 'boolean'
-    }
-  },
-  PermissionSetRecordTypeVisibility: {
-    type: 'PermissionSetRecordTypeVisibility',
-    props: {
-      recordType: 'string',
-      visible: 'boolean'
-    }
-  },
-  PermissionSetTabSetting: {
-    type: 'PermissionSetTabSetting',
-    props: {
-      tab: 'string',
-      visibility: 'string'
-    }
-  },
-  PermissionSetUserPermission: {
-    type: 'PermissionSetUserPermission',
-    props: {
-      enabled: 'boolean',
-      name: 'string'
-    }
-  },
-  MutingPermissionSet: {
-    type: 'MutingPermissionSet',
-    props: {
-      label: 'string'
-    },
-    extends: 'PermissionSet'
-  },
-  PermissionSetGroup: {
-    type: 'PermissionSetGroup',
-    props: {
-      description: '?string',
-      label: 'string',
-      mutingPermissionSets: ['string'],
-      permissionSets: ['string'],
-      status: '?string'
-    },
-    extends: 'Metadata'
-  },
-  PersonListSettings: {
-    type: 'PersonListSettings',
-    props: {
-      enablePersonList: 'boolean'
-    },
-    extends: 'Metadata'
-  },
-  PicklistSettings: {
-    type: 'PicklistSettings',
-    props: {
-      isPicklistApiNameEditDisabled: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  PlatformCachePartition: {
-    type: 'PlatformCachePartition',
-    props: {
-      description: '?string',
-      isDefaultPartition: 'boolean',
-      masterLabel: 'string',
-      platformCachePartitionTypes: ['PlatformCachePartitionType']
-    },
-    extends: 'Metadata'
-  },
-  PlatformCachePartitionType: {
-    type: 'PlatformCachePartitionType',
-    props: {
-      allocatedCapacity: 'number',
-      allocatedPurchasedCapacity: 'number',
-      allocatedTrialCapacity: 'number',
-      cacheType: 'string'
-    }
-  },
-  PlatformEncryptionSettings: {
-    type: 'PlatformEncryptionSettings',
-    props: {
-      canEncryptManagedPackageFields: '?boolean',
-      enableDeterministicEncryption: '?boolean',
-      enableEncryptFieldHistory: '?boolean',
-      enableEventBusEncryption: '?boolean',
-      isMEKForEncryptionRequired: '?boolean',
-      isUseHighAssuranceKeysRequired: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  PlatformEventChannel: {
-    type: 'PlatformEventChannel',
-    props: {
-      channelType: 'string',
-      label: 'string'
-    },
-    extends: 'Metadata'
-  },
-  PlatformEventChannelMember: {
-    type: 'PlatformEventChannelMember',
-    props: {
-      eventChannel: 'string',
-      selectedEntity: 'string'
-    },
-    extends: 'Metadata'
-  },
-  Portal: {
-    type: 'Portal',
-    props: {
-      active: 'boolean',
-      admin: '?string',
-      defaultLanguage: '?string',
-      description: '?string',
-      emailSenderAddress: 'string',
-      emailSenderName: 'string',
-      enableSelfCloseCase: '?boolean',
-      footerDocument: '?string',
-      forgotPassTemplate: '?string',
-      headerDocument: '?string',
-      isSelfRegistrationActivated: '?boolean',
-      loginHeaderDocument: '?string',
-      logoDocument: '?string',
-      logoutUrl: '?string',
-      newCommentTemplate: '?string',
-      newPassTemplate: '?string',
-      newUserTemplate: '?string',
-      ownerNotifyTemplate: '?string',
-      selfRegNewUserUrl: '?string',
-      selfRegUserDefaultProfile: '?string',
-      selfRegUserDefaultRole: '?string',
-      selfRegUserTemplate: '?string',
-      showActionConfirmation: '?boolean',
-      stylesheetDocument: '?string',
-      type: 'string'
-    },
-    extends: 'Metadata'
-  },
-  PostTemplate: {
-    type: 'PostTemplate',
-    props: {
-      default: '?boolean',
-      description: '?string',
-      fields: ['string'],
-      label: 'string'
-    },
-    extends: 'Metadata'
-  },
-  PresenceDeclineReason: {
-    type: 'PresenceDeclineReason',
-    props: {
-      label: 'string'
-    },
-    extends: 'Metadata'
-  },
-  PresenceUserConfig: {
-    type: 'PresenceUserConfig',
-    props: {
-      assignments: '?PresenceConfigAssignments',
-      capacity: 'number',
-      declineReasons: ['string'],
-      enableAutoAccept: '?boolean',
-      enableDecline: '?boolean',
-      enableDeclineReason: '?boolean',
-      enableDisconnectSound: '?boolean',
-      enableRequestSound: '?boolean',
-      label: 'string',
-      presenceStatusOnDecline: '?string',
-      presenceStatusOnPushTimeout: '?string'
-    },
-    extends: 'Metadata'
-  },
-  PresenceConfigAssignments: {
-    type: 'PresenceConfigAssignments',
-    props: {
-      profiles: '?PresenceConfigProfileAssignments',
-      users: '?PresenceConfigUserAssignments'
-    }
-  },
-  PresenceConfigProfileAssignments: {
-    type: 'PresenceConfigProfileAssignments',
-    props: {
-      profile: ['string']
-    }
-  },
-  PresenceConfigUserAssignments: {
-    type: 'PresenceConfigUserAssignments',
-    props: {
-      user: ['string']
-    }
-  },
-  PrivacySettings: {
-    type: 'PrivacySettings',
-    props: {
-      enableConsentAuditTrail: '?boolean',
-      enableConsentEventStream: '?boolean',
-      enableDefaultMetadataValues: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  PrivateConnection: {
-    type: 'PrivateConnection',
-    props: {
-      description: '?string',
-      direction: 'string',
-      externalConnectionProperties: ['ExternalConnectionProperty'],
-      label: 'string',
-      status: 'string',
-      type: 'string'
-    },
-    extends: 'Metadata'
-  },
-  ExternalConnectionProperty: {
-    type: 'ExternalConnectionProperty',
-    props: {
-      propertyName: 'string',
-      propertyValue: 'string'
-    }
-  },
-  ProductSettings: {
-    type: 'ProductSettings',
-    props: {
-      enableCascadeActivateToRelatedPrices: '?boolean',
-      enableMySettings: '?boolean',
-      enableQuantitySchedule: '?boolean',
-      enableRevenueSchedule: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  Profile: {
-    type: 'Profile',
-    props: {
-      applicationVisibilities: ['ProfileApplicationVisibility'],
-      categoryGroupVisibilities: ['ProfileCategoryGroupVisibility'],
-      classAccesses: ['ProfileApexClassAccess'],
-      custom: '?boolean',
-      customMetadataTypeAccesses: ['ProfileCustomMetadataTypeAccess'],
-      customPermissions: ['ProfileCustomPermissions'],
-      description: '?string',
-      externalDataSourceAccesses: ['ProfileExternalDataSourceAccess'],
-      fieldPermissions: ['ProfileFieldLevelSecurity'],
-      flowAccesses: ['ProfileFlowAccess'],
-      layoutAssignments: ['ProfileLayoutAssignment'],
-      loginHours: '?ProfileLoginHours',
-      loginIpRanges: ['ProfileLoginIpRange'],
-      objectPermissions: ['ProfileObjectPermissions'],
-      pageAccesses: ['ProfileApexPageAccess'],
-      profileActionOverrides: ['ProfileActionOverride'],
-      recordTypeVisibilities: ['ProfileRecordTypeVisibility'],
-      tabVisibilities: ['ProfileTabVisibility'],
-      userLicense: '?string',
-      userPermissions: ['ProfileUserPermission']
-    },
-    extends: 'Metadata'
-  },
-  ProfileApplicationVisibility: {
-    type: 'ProfileApplicationVisibility',
-    props: {
-      application: 'string',
-      default: 'boolean',
-      visible: 'boolean'
-    }
-  },
-  ProfileCategoryGroupVisibility: {
-    type: 'ProfileCategoryGroupVisibility',
-    props: {
-      dataCategories: ['string'],
-      dataCategoryGroup: 'string',
-      visibility: 'string'
-    }
-  },
-  ProfileApexClassAccess: {
-    type: 'ProfileApexClassAccess',
-    props: {
-      apexClass: 'string',
-      enabled: 'boolean'
-    }
-  },
-  ProfileCustomMetadataTypeAccess: {
-    type: 'ProfileCustomMetadataTypeAccess',
-    props: {
-      enabled: 'boolean',
-      name: 'string'
-    }
-  },
-  ProfileCustomPermissions: {
-    type: 'ProfileCustomPermissions',
-    props: {
-      enabled: 'boolean',
-      name: 'string'
-    }
-  },
-  ProfileExternalDataSourceAccess: {
-    type: 'ProfileExternalDataSourceAccess',
-    props: {
-      enabled: 'boolean',
-      externalDataSource: 'string'
-    }
-  },
-  ProfileFieldLevelSecurity: {
-    type: 'ProfileFieldLevelSecurity',
-    props: {
-      editable: 'boolean',
-      field: 'string',
-      readable: '?boolean'
-    }
-  },
-  ProfileFlowAccess: {
-    type: 'ProfileFlowAccess',
-    props: {
-      enabled: 'boolean',
-      flow: 'string'
-    }
-  },
-  ProfileLayoutAssignment: {
-    type: 'ProfileLayoutAssignment',
-    props: {
-      layout: 'string',
-      recordType: '?string'
-    }
-  },
-  ProfileLoginHours: {
-    type: 'ProfileLoginHours',
-    props: {
-      fridayEnd: '?string',
-      fridayStart: '?string',
-      mondayEnd: '?string',
-      mondayStart: '?string',
-      saturdayEnd: '?string',
-      saturdayStart: '?string',
-      sundayEnd: '?string',
-      sundayStart: '?string',
-      thursdayEnd: '?string',
-      thursdayStart: '?string',
-      tuesdayEnd: '?string',
-      tuesdayStart: '?string',
-      wednesdayEnd: '?string',
-      wednesdayStart: '?string'
-    }
-  },
-  ProfileLoginIpRange: {
-    type: 'ProfileLoginIpRange',
-    props: {
-      description: '?string',
-      endAddress: 'string',
-      startAddress: 'string'
-    }
-  },
-  ProfileApexPageAccess: {
-    type: 'ProfileApexPageAccess',
-    props: {
-      apexPage: 'string',
-      enabled: 'boolean'
-    }
-  },
-  ProfileRecordTypeVisibility: {
-    type: 'ProfileRecordTypeVisibility',
-    props: {
-      default: 'boolean',
-      personAccountDefault: '?boolean',
-      recordType: 'string',
-      visible: 'boolean'
-    }
-  },
-  ProfileTabVisibility: {
-    type: 'ProfileTabVisibility',
-    props: {
-      tab: 'string',
-      visibility: 'string'
-    }
-  },
-  ProfileUserPermission: {
-    type: 'ProfileUserPermission',
-    props: {
-      enabled: 'boolean',
-      name: 'string'
-    }
-  },
-  ProfilePasswordPolicy: {
-    type: 'ProfilePasswordPolicy',
-    props: {
-      forgotPasswordRedirect: '?boolean',
-      lockoutInterval: 'number',
-      maxLoginAttempts: 'number',
-      minimumPasswordLength: 'number',
-      minimumPasswordLifetime: '?boolean',
-      obscure: '?boolean',
-      passwordComplexity: 'number',
-      passwordExpiration: 'number',
-      passwordHistory: 'number',
-      passwordQuestion: 'number',
-      profile: 'string'
-    },
-    extends: 'Metadata'
-  },
-  ProfileSessionSetting: {
-    type: 'ProfileSessionSetting',
-    props: {
-      externalCommunityUserIdentityVerif: 'boolean',
-      forceLogout: 'boolean',
-      profile: 'string',
-      requiredSessionLevel: '?string',
-      sessionPersistence: 'boolean',
-      sessionTimeout: 'number',
-      sessionTimeoutWarning: 'boolean'
-    },
-    extends: 'Metadata'
-  },
-  Prompt: {
-    type: 'Prompt',
-    props: {
-      masterLabel: 'string',
-      promptVersions: ['PromptVersion']
-    },
-    extends: 'Metadata'
-  },
-  PromptVersion: {
-    type: 'PromptVersion',
-    props: {
-      actionButtonLabel: '?string',
-      actionButtonLink: '?string',
-      body: 'string',
-      customApplication: '?string',
-      delayDays: 'number',
-      description: '?string',
-      dismissButtonLabel: '?string',
-      displayPosition: '?string',
-      displayType: 'string',
-      endDate: '?string',
-      header: '?string',
-      indexWithIsPublished: '?string',
-      indexWithoutIsPublished: '?string',
-      isPublished: '?boolean',
-      masterLabel: 'string',
-      publishedByUser: '?string',
-      publishedDate: '?string',
-      shouldDisplayActionButton: 'boolean',
-      startDate: 'string',
-      targetAppDeveloperName: 'string',
-      targetAppNamespacePrefix: '?string',
-      targetPageKey1: 'string',
-      targetPageKey2: '?string',
-      targetPageType: 'string',
-      timesToDisplay: 'number',
-      title: 'string',
-      uiFormulaRule: '?UiFormulaRule',
-      userAccess: 'string',
-      versionNumber: 'number'
-    }
-  },
-  Queue: {
-    type: 'Queue',
-    props: {
-      doesSendEmailToMembers: '?boolean',
-      email: '?string',
-      name: 'string',
-      queueMembers: '?QueueMembers',
-      queueRoutingConfig: '?string',
-      queueSobject: ['QueueSobject']
-    },
-    extends: 'Metadata'
-  },
-  QueueMembers: {
-    type: 'QueueMembers',
-    props: {
-      publicGroups: '?PublicGroups',
-      roleAndSubordinates: '?RoleAndSubordinates',
-      roleAndSubordinatesInternal: '?RoleAndSubordinatesInternal',
-      roles: '?Roles',
-      users: '?Users'
-    }
-  },
-  PublicGroups: {
-    type: 'PublicGroups',
-    props: {
-      publicGroup: ['string']
-    }
-  },
-  RoleAndSubordinates: {
-    type: 'RoleAndSubordinates',
-    props: {
-      roleAndSubordinate: ['string']
-    }
-  },
-  RoleAndSubordinatesInternal: {
-    type: 'RoleAndSubordinatesInternal',
-    props: {
-      roleAndSubordinateInternal: ['string']
-    }
-  },
-  Roles: {
-    type: 'Roles',
-    props: {
-      role: ['string']
-    }
-  },
-  Users: {
-    type: 'Users',
-    props: {
-      user: ['string']
-    }
-  },
-  QueueSobject: {
-    type: 'QueueSobject',
-    props: {
-      sobjectType: 'string'
-    }
-  },
-  QueueRoutingConfig: {
-    type: 'QueueRoutingConfig',
-    props: {
-      capacityPercentage: '?number',
-      capacityWeight: '?number',
-      dropAdditionalSkillsTimeout: '?number',
-      isAttributeBased: '?boolean',
-      label: 'string',
-      pushTimeout: '?number',
-      queueOverflowAssignee: '?string',
-      routingModel: 'string',
-      routingPriority: 'number',
-      userOverflowAssignee: '?string'
-    },
-    extends: 'Metadata'
-  },
-  QuickAction: {
-    type: 'QuickAction',
-    props: {
-      canvas: '?string',
-      description: '?string',
-      fieldOverrides: ['FieldOverride'],
-      flowDefinition: '?string',
-      height: '?number',
-      icon: '?string',
-      isProtected: '?boolean',
-      label: '?string',
-      lightningComponent: '?string',
-      mobExtDisplayMode: '?string',
-      optionsCreateFeedItem: 'boolean',
-      page: '?string',
-      quickActionLayout: '?QuickActionLayout',
-      quickActionSendEmailOptions: '?QuickActionSendEmailOptions',
-      standardLabel: '?string',
-      successMessage: '?string',
-      targetObject: '?string',
-      targetParentField: '?string',
-      targetRecordType: '?string',
-      type: 'string',
-      width: '?number'
-    },
-    extends: 'Metadata'
-  },
-  FieldOverride: {
-    type: 'FieldOverride',
-    props: {
-      field: 'string',
-      formula: '?string',
-      literalValue: '?string'
-    }
-  },
-  QuickActionLayout: {
-    type: 'QuickActionLayout',
-    props: {
-      layoutSectionStyle: 'string',
-      quickActionLayoutColumns: ['QuickActionLayoutColumn']
-    }
-  },
-  QuickActionLayoutColumn: {
-    type: 'QuickActionLayoutColumn',
-    props: {
-      quickActionLayoutItems: ['QuickActionLayoutItem']
-    }
-  },
-  QuickActionLayoutItem: {
-    type: 'QuickActionLayoutItem',
-    props: {
-      emptySpace: '?boolean',
-      field: '?string',
-      uiBehavior: '?string'
-    }
-  },
-  QuickActionSendEmailOptions: {
-    type: 'QuickActionSendEmailOptions',
-    props: {
-      defaultEmailTemplateName: '?string',
-      ignoreDefaultEmailTemplateSubject: 'boolean'
-    }
-  },
-  QuoteSettings: {
-    type: 'QuoteSettings',
-    props: {
-      enableQuote: 'boolean',
-      enableQuotesWithoutOppEnabled: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  RecommendationStrategy: {
-    type: 'RecommendationStrategy',
-    props: {
-      actionContext: ['StrategyAction'],
-      contextRecordType: '?string',
-      description: '?string',
-      filter: ['StrategyNodeFilter'],
-      if: ['StrategyNodeIf'],
-      invocableAction: ['StrategyNodeInvocableAction'],
-      isTemplate: '?boolean',
-      label: 'string',
-      map: ['StrategyNodeMap'],
-      mutuallyExclusive: ['StrategyNodeExclusive'],
-      onBehalfOfExpression: '?string',
-      recommendationLimit: ['StrategyNodeRecommendationLimit'],
-      recommendationLoad: ['StrategyNodeRecommendationLoad'],
-      sort: ['StrategyNodeSort'],
-      union: ['StrategyNodeUnion']
-    },
-    extends: 'Metadata'
-  },
-  StrategyAction: {
-    type: 'StrategyAction',
-    props: {
-      action: 'string',
-      argument: ['StrategyActionArg'],
-      description: '?string',
-      label: '?string',
-      name: 'string',
-      type: 'string'
-    }
-  },
-  StrategyActionArg: {
-    type: 'StrategyActionArg',
-    props: {
-      name: 'string',
-      value: 'string'
-    }
-  },
-  StrategyNodeFilter: {
-    type: 'StrategyNodeFilter',
-    props: {
-      expression: 'string'
-    },
-    extends: 'StrategyNodeUnionBase'
-  },
-  StrategyNodeUnionBase: {
-    type: 'StrategyNodeUnionBase',
-    props: {
-      limit: '?number'
-    },
-    extends: 'StrategyNodeBase'
-  },
-  StrategyNodeBase: {
-    type: 'StrategyNodeBase',
-    props: {
-      childNode: ['string'],
-      description: '?string',
-      label: '?string',
-      name: 'string'
-    }
-  },
-  StrategyNodeExclusive: {
-    type: 'StrategyNodeExclusive',
-    props: {},
-    extends: 'StrategyNodeUnionBase'
-  },
-  StrategyNodeIf: {
-    type: 'StrategyNodeIf',
-    props: {
-      childNodeExpression: ['IfExpression'],
-      onlyFirstMatch: '?boolean'
-    },
-    extends: 'StrategyNodeUnionBase'
-  },
-  IfExpression: {
-    type: 'IfExpression',
-    props: {
-      childName: 'string',
-      expression: 'string'
-    }
-  },
-  StrategyNodeInvocableAction: {
-    type: 'StrategyNodeInvocableAction',
-    props: {
-      action: 'string',
-      argument: ['StrategyNodeInvocableActionArg'],
-      isGenerator: 'boolean',
-      type: 'string'
-    },
-    extends: 'StrategyNodeUnionBase'
-  },
-  StrategyNodeInvocableActionArg: {
-    type: 'StrategyNodeInvocableActionArg',
-    props: {
-      name: 'string',
-      value: 'string'
-    }
-  },
-  StrategyNodeMap: {
-    type: 'StrategyNodeMap',
-    props: {
-      mapExpression: ['MapExpression']
-    },
-    extends: 'StrategyNodeUnionBase'
-  },
-  MapExpression: {
-    type: 'MapExpression',
-    props: {
-      expression: 'string',
-      name: 'string',
-      type: 'string'
-    }
-  },
-  StrategyNodeRecommendationLimit: {
-    type: 'StrategyNodeRecommendationLimit',
-    props: {
-      filterMode: ['string'],
-      lookbackDuration: '?number',
-      maxRecommendationCount: '?number'
-    },
-    extends: 'StrategyNodeUnionBase'
-  },
-  StrategyNodeRecommendationLoad: {
-    type: 'StrategyNodeRecommendationLoad',
-    props: {
-      condition: ['RecommendationLoadCondition'],
-      conditionLogic: '?string'
-    },
-    extends: 'StrategyNodeUnionBase'
-  },
-  RecommendationLoadCondition: {
-    type: 'RecommendationLoadCondition',
-    props: {
-      field: 'string',
-      operator: 'string',
-      value: 'RecommendationConditionValue'
-    }
-  },
-  RecommendationConditionValue: {
-    type: 'RecommendationConditionValue',
-    props: {
-      type: 'string',
-      value: '?string'
-    }
-  },
-  StrategyNodeSort: {
-    type: 'StrategyNodeSort',
-    props: {
-      field: ['StrategyNodeSortField']
-    },
-    extends: 'StrategyNodeUnionBase'
-  },
-  StrategyNodeSortField: {
-    type: 'StrategyNodeSortField',
-    props: {
-      name: 'string',
-      nullsFirst: '?boolean',
-      order: '?string'
-    }
-  },
-  StrategyNodeUnion: {
-    type: 'StrategyNodeUnion',
-    props: {},
-    extends: 'StrategyNodeUnionBase'
-  },
-  RecordActionDeployment: {
-    type: 'RecordActionDeployment',
-    props: {
-      channelConfigurations: ['RecordActionDeploymentChannel'],
-      deploymentContexts: ['RecordActionDeploymentContext'],
-      hasGuidedActions: '?boolean',
-      hasRecommendations: '?boolean',
-      masterLabel: 'string',
-      recommendation: '?RecordActionRecommendation',
-      selectableItems: ['RecordActionSelectableItem']
-    },
-    extends: 'Metadata'
-  },
-  RecordActionDeploymentChannel: {
-    type: 'RecordActionDeploymentChannel',
-    props: {
-      channel: 'string',
-      channelItems: ['RecordActionDefaultItem'],
-      isAutopopEnabled: '?boolean'
-    }
-  },
-  RecordActionDefaultItem: {
-    type: 'RecordActionDefaultItem',
-    props: {
-      action: 'string',
-      isMandatory: '?boolean',
-      isUiRemoveHidden: '?boolean',
-      pinned: 'string',
-      position: 'number',
-      type: 'string'
-    }
-  },
-  RecordActionDeploymentContext: {
-    type: 'RecordActionDeploymentContext',
-    props: {
-      entityName: 'string',
-      recommendationStrategy: '?string'
-    }
-  },
-  RecordActionRecommendation: {
-    type: 'RecordActionRecommendation',
-    props: {
-      defaultStrategy: '?string',
-      hasDescription: 'boolean',
-      hasImage: 'boolean',
-      hasRejectAction: 'boolean',
-      hasTitle: 'boolean',
-      maxDisplayRecommendations: 'number'
-    }
-  },
-  RecordActionSelectableItem: {
-    type: 'RecordActionSelectableItem',
-    props: {
-      action: 'string',
-      type: 'string'
-    }
-  },
-  RecordPageSettings: {
-    type: 'RecordPageSettings',
-    props: {
-      enableActivityRelatedList: '?boolean',
-      enableFullRecordView: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  RemoteSiteSetting: {
-    type: 'RemoteSiteSetting',
-    props: {
-      description: '?string',
-      disableProtocolSecurity: 'boolean',
-      isActive: 'boolean',
-      url: 'string'
-    },
-    extends: 'Metadata'
-  },
-  Report: {
-    type: 'Report',
-    props: {
-      aggregates: ['ReportAggregate'],
-      block: ['Report'],
-      blockInfo: '?ReportBlockInfo',
-      buckets: ['ReportBucketField'],
-      chart: '?ReportChart',
-      colorRanges: ['ReportColorRange'],
-      columns: ['ReportColumn'],
-      crossFilters: ['ReportCrossFilter'],
-      currency: '?string',
-      customDetailFormulas: ['ReportCustomDetailFormula'],
-      dataCategoryFilters: ['ReportDataCategoryFilter'],
-      description: '?string',
-      division: '?string',
-      filter: '?ReportFilter',
-      folderName: '?string',
-      format: 'string',
-      formattingRules: ['ReportFormattingRule'],
-      groupingsAcross: ['ReportGrouping'],
-      groupingsDown: ['ReportGrouping'],
-      historicalSelector: '?ReportHistoricalSelector',
-      name: 'string',
-      numSubscriptions: '?number',
-      params: ['ReportParam'],
-      reportType: 'string',
-      roleHierarchyFilter: '?string',
-      rowLimit: '?number',
-      scope: '?string',
-      showCurrentDate: '?boolean',
-      showDetails: '?boolean',
-      showGrandTotal: '?boolean',
-      showSubTotals: '?boolean',
-      sortColumn: '?string',
-      sortOrder: '?string',
-      territoryHierarchyFilter: '?string',
-      timeFrameFilter: '?ReportTimeFrameFilter',
-      userFilter: '?string'
-    },
-    extends: 'Metadata'
-  },
-  ReportAggregate: {
-    type: 'ReportAggregate',
-    props: {
-      acrossGroupingContext: '?string',
-      calculatedFormula: 'string',
-      datatype: 'string',
-      description: '?string',
-      developerName: 'string',
-      downGroupingContext: '?string',
-      isActive: 'boolean',
-      isCrossBlock: '?boolean',
-      masterLabel: 'string',
-      reportType: '?string',
-      scale: '?number'
-    }
-  },
-  ReportBlockInfo: {
-    type: 'ReportBlockInfo',
-    props: {
-      aggregateReferences: ['ReportAggregateReference'],
-      blockId: 'string',
-      joinTable: 'string'
-    }
-  },
-  ReportAggregateReference: {
-    type: 'ReportAggregateReference',
-    props: {
-      aggregate: 'string'
-    }
-  },
-  ReportBucketField: {
-    type: 'ReportBucketField',
-    props: {
-      bucketType: 'string',
-      developerName: 'string',
-      masterLabel: 'string',
-      nullTreatment: '?string',
-      otherBucketLabel: '?string',
-      sourceColumnName: 'string',
-      useOther: '?boolean',
-      values: ['ReportBucketFieldValue']
-    }
-  },
-  ReportBucketFieldValue: {
-    type: 'ReportBucketFieldValue',
-    props: {
-      sourceValues: ['ReportBucketFieldSourceValue'],
-      value: 'string'
-    }
-  },
-  ReportBucketFieldSourceValue: {
-    type: 'ReportBucketFieldSourceValue',
-    props: {
-      from: '?string',
-      sourceValue: '?string',
-      to: '?string'
-    }
-  },
-  ReportChart: {
-    type: 'ReportChart',
-    props: {
-      backgroundColor1: '?string',
-      backgroundColor2: '?string',
-      backgroundFadeDir: '?string',
-      chartSummaries: ['ChartSummary'],
-      chartType: 'string',
-      enableHoverLabels: '?boolean',
-      expandOthers: '?boolean',
-      groupingColumn: '?string',
-      legendPosition: '?string',
-      location: '?string',
-      secondaryGroupingColumn: '?string',
-      showAxisLabels: '?boolean',
-      showPercentage: '?boolean',
-      showTotal: '?boolean',
-      showValues: '?boolean',
-      size: '?string',
-      summaryAxisManualRangeEnd: '?number',
-      summaryAxisManualRangeStart: '?number',
-      summaryAxisRange: '?string',
-      textColor: '?string',
-      textSize: '?number',
-      title: '?string',
-      titleColor: '?string',
-      titleSize: '?number'
-    }
-  },
-  ReportColorRange: {
-    type: 'ReportColorRange',
-    props: {
-      aggregate: '?string',
-      columnName: 'string',
-      highBreakpoint: '?number',
-      highColor: 'string',
-      lowBreakpoint: '?number',
-      lowColor: 'string',
-      midColor: 'string'
-    }
-  },
-  ReportColumn: {
-    type: 'ReportColumn',
-    props: {
-      aggregateTypes: ['string'],
-      field: 'string',
-      reverseColors: '?boolean',
-      showChanges: '?boolean'
-    }
-  },
-  ReportCrossFilter: {
-    type: 'ReportCrossFilter',
-    props: {
-      criteriaItems: ['ReportFilterItem'],
-      operation: 'string',
-      primaryTableColumn: 'string',
-      relatedTable: 'string',
-      relatedTableJoinColumn: 'string'
-    }
-  },
-  ReportFilterItem: {
-    type: 'ReportFilterItem',
-    props: {
-      column: 'string',
-      columnToColumn: '?boolean',
-      isUnlocked: '?boolean',
-      operator: 'string',
-      snapshot: '?string',
-      value: '?string'
-    }
-  },
-  ReportCustomDetailFormula: {
-    type: 'ReportCustomDetailFormula',
-    props: {
-      calculatedFormula: 'string',
-      dataType: 'string',
-      description: '?string',
-      developerName: 'string',
-      label: 'string',
-      scale: 'number'
-    }
-  },
-  ReportDataCategoryFilter: {
-    type: 'ReportDataCategoryFilter',
-    props: {
-      dataCategory: 'string',
-      dataCategoryGroup: 'string',
-      operator: 'string'
-    }
-  },
-  ReportFilter: {
-    type: 'ReportFilter',
-    props: {
-      booleanFilter: '?string',
-      criteriaItems: ['ReportFilterItem'],
-      language: '?string'
-    }
-  },
-  ReportFormattingRule: {
-    type: 'ReportFormattingRule',
-    props: {
-      aggregate: '?string',
-      columnName: 'string',
-      values: ['ReportFormattingRuleValue']
-    }
-  },
-  ReportFormattingRuleValue: {
-    type: 'ReportFormattingRuleValue',
-    props: {
-      backgroundColor: '?string',
-      rangeUpperBound: '?number'
-    }
-  },
-  ReportGrouping: {
-    type: 'ReportGrouping',
-    props: {
-      aggregateType: '?string',
-      dateGranularity: '?string',
-      field: 'string',
-      sortByName: '?string',
-      sortOrder: 'string',
-      sortType: '?string'
-    }
-  },
-  ReportHistoricalSelector: {
-    type: 'ReportHistoricalSelector',
-    props: {
-      snapshot: ['string']
-    }
-  },
-  ReportParam: {
-    type: 'ReportParam',
-    props: {
-      name: 'string',
-      value: 'string'
-    }
-  },
-  ReportTimeFrameFilter: {
-    type: 'ReportTimeFrameFilter',
-    props: {
-      dateColumn: 'string',
-      endDate: '?string',
-      interval: 'string',
-      startDate: '?string'
-    }
-  },
-  ReportType: {
-    type: 'ReportType',
-    props: {
-      autogenerated: '?boolean',
-      baseObject: 'string',
-      category: 'string',
-      deployed: 'boolean',
-      description: '?string',
-      join: '?ObjectRelationship',
-      label: 'string',
-      sections: ['ReportLayoutSection']
-    },
-    extends: 'Metadata'
-  },
-  ObjectRelationship: {
-    type: 'ObjectRelationship',
-    props: {
-      join: '?ObjectRelationship',
-      outerJoin: 'boolean',
-      relationship: 'string'
-    }
-  },
-  ReportLayoutSection: {
-    type: 'ReportLayoutSection',
-    props: {
-      columns: ['ReportTypeColumn'],
-      masterLabel: 'string'
-    }
-  },
-  ReportTypeColumn: {
-    type: 'ReportTypeColumn',
-    props: {
-      checkedByDefault: 'boolean',
-      displayNameOverride: '?string',
-      field: 'string',
-      table: 'string'
-    }
-  },
-  RestrictionRule: {
-    type: 'RestrictionRule',
-    props: {
-      active: 'boolean',
-      description: 'string',
-      enforcementType: 'string',
-      masterLabel: 'string',
-      recordFilter: 'string',
-      targetEntity: 'string',
-      userCriteria: 'string',
-      version: 'number'
-    },
-    extends: 'Metadata'
-  },
-  RetailExecutionSettings: {
-    type: 'RetailExecutionSettings',
-    props: {
-      enableRetailExecution: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  RoleOrTerritory: {
-    type: 'RoleOrTerritory',
-    props: {
-      caseAccessLevel: '?string',
-      contactAccessLevel: '?string',
-      description: '?string',
-      mayForecastManagerShare: '?boolean',
-      name: 'string',
-      opportunityAccessLevel: '?string'
-    },
-    extends: 'Metadata'
-  },
-  Role: {
-    type: 'Role',
-    props: {
-      parentRole: '?string'
-    },
-    extends: 'RoleOrTerritory'
-  },
-  Territory: {
-    type: 'Territory',
-    props: {
-      accountAccessLevel: '?string',
-      parentTerritory: '?string'
-    },
-    extends: 'RoleOrTerritory'
-  },
-  SamlSsoConfig: {
-    type: 'SamlSsoConfig',
-    props: {
-      attributeName: '?string',
-      attributeNameIdFormat: '?string',
-      decryptionCertificate: '?string',
-      errorUrl: '?string',
-      executionUserId: '?string',
-      identityLocation: 'string',
-      identityMapping: 'string',
-      issuer: 'string',
-      loginUrl: '?string',
-      logoutUrl: '?string',
-      name: 'string',
-      oauthTokenEndpoint: '?string',
-      redirectBinding: '?boolean',
-      requestSignatureMethod: '?string',
-      requestSigningCertId: '?string',
-      salesforceLoginUrl: '?string',
-      samlEntityId: 'string',
-      samlJitHandlerId: '?string',
-      samlVersion: 'string',
-      singleLogoutBinding: '?string',
-      singleLogoutUrl: '?string',
-      userProvisioning: '?boolean',
-      validationCert: 'string'
-    },
-    extends: 'Metadata'
-  },
-  SchemaSettings: {
-    type: 'SchemaSettings',
-    props: {
-      enableAdvancedCMTSecurity: '?boolean',
-      enableAdvancedCSSecurity: '?boolean',
-      enableListCustomSettingCreation: '?boolean',
-      enableSOSLOnCustomSettings: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  SearchSettings: {
-    type: 'SearchSettings',
-    props: {
-      documentContentSearchEnabled: 'boolean',
-      enableAdvancedSearchInAlohaSidebar: '?boolean',
-      enableEinsteinSearchPersonalization: '?boolean',
-      enableQuerySuggestionPigOn: '?boolean',
-      enableSalesforceGeneratedSynonyms: '?boolean',
-      enableSetupSearch: '?boolean',
-      optimizeSearchForCJKEnabled: 'boolean',
-      recentlyViewedUsersForBlankLookupEnabled: 'boolean',
-      searchSettingsByObject: 'SearchSettingsByObject',
-      sidebarAutoCompleteEnabled: 'boolean',
-      sidebarDropDownListEnabled: 'boolean',
-      sidebarLimitToItemsIOwnCheckboxEnabled: 'boolean',
-      singleSearchResultShortcutEnabled: 'boolean',
-      spellCorrectKnowledgeSearchEnabled: 'boolean'
-    },
-    extends: 'Metadata'
-  },
-  SearchSettingsByObject: {
-    type: 'SearchSettingsByObject',
-    props: {
-      searchSettingsByObject: ['ObjectSearchSetting']
-    }
-  },
-  ObjectSearchSetting: {
-    type: 'ObjectSearchSetting',
-    props: {
-      enhancedLookupEnabled: 'boolean',
-      lookupAutoCompleteEnabled: 'boolean',
-      name: 'string',
-      resultsPerPageCount: 'number'
-    }
-  },
-  SecuritySettings: {
-    type: 'SecuritySettings',
-    props: {
-      canUsersGrantLoginAccess: '?boolean',
-      enableAdminLoginAsAnyUser: '?boolean',
-      enableAuditFieldsInactiveOwner: '?boolean',
-      enableAuraSecureEvalPref: '?boolean',
-      enableRequireHttpsConnection: '?boolean',
-      isTLSv12Required: '?boolean',
-      isTLSv12RequiredCommunities: '?boolean',
-      networkAccess: '?NetworkAccess',
-      passwordPolicies: '?PasswordPolicies',
-      sessionSettings: '?SessionSettings',
-      singleSignOnSettings: '?SingleSignOnSettings'
-    },
-    extends: 'Metadata'
-  },
-  NetworkAccess: {
-    type: 'NetworkAccess',
-    props: {
-      ipRanges: ['IpRange']
-    }
-  },
-  IpRange: {
-    type: 'IpRange',
-    props: {
-      description: '?string',
-      end: '?string',
-      start: '?string'
-    }
-  },
-  PasswordPolicies: {
-    type: 'PasswordPolicies',
-    props: {
-      apiOnlyUserHomePageURL: '?string',
-      complexity: '?string',
-      enableSetPasswordInApi: '?boolean',
-      expiration: '?string',
-      historyRestriction: '?string',
-      lockoutInterval: '?string',
-      maxLoginAttempts: '?string',
-      minimumPasswordLength: '?string',
-      minimumPasswordLifetime: '?boolean',
-      obscureSecretAnswer: '?boolean',
-      passwordAssistanceMessage: '?string',
-      passwordAssistanceURL: '?string',
-      questionRestriction: '?string'
-    }
-  },
-  SessionSettings: {
-    type: 'SessionSettings',
-    props: {
-      allowUserAuthenticationByCertificate: '?boolean',
-      canConfirmEmailChangeInLightningCommunities: '?boolean',
-      disableTimeoutWarning: '?boolean',
-      enableCSPOnEmail: '?boolean',
-      enableCSRFOnGet: '?boolean',
-      enableCSRFOnPost: '?boolean',
-      enableCacheAndAutocomplete: '?boolean',
-      enableClickjackNonsetupSFDC: '?boolean',
-      enableClickjackNonsetupUser: '?boolean',
-      enableClickjackNonsetupUserHeaderless: '?boolean',
-      enableClickjackSetup: '?boolean',
-      enableContentSniffingProtection: '?boolean',
-      enableLightningLogin: '?boolean',
-      enableLightningLoginOnlyWithUserPerm: '?boolean',
-      enablePostForSessions: '?boolean',
-      enableSMSIdentity: '?boolean',
-      enableU2F: '?boolean',
-      enableUpgradeInsecureRequests: '?boolean',
-      enableXssProtection: '?boolean',
-      enforceIpRangesEveryRequest: '?boolean',
-      forceLogoutOnSessionTimeout: '?boolean',
-      forceRelogin: '?boolean',
-      hasRetainedLoginHints: '?boolean',
-      hasUserSwitching: '?boolean',
-      hstsOnForcecomSites: '?boolean',
-      identityConfirmationOnEmailChange: '?boolean',
-      identityConfirmationOnTwoFactorRegistrationEnabled: '?boolean',
-      lockSessionsToDomain: '?boolean',
-      lockSessionsToIp: '?boolean',
-      lockerServiceAPIVersion: '?string',
-      lockerServiceCSP: '?boolean',
-      lockerServiceFrozenRealm: '?boolean',
-      logoutURL: '?string',
-      redirectionWarning: '?boolean',
-      referrerPolicy: '?boolean',
-      requireHttpOnly: '?boolean',
-      requireHttps: '?boolean',
-      securityCentralKillSession: '?boolean',
-      sessionTimeout: '?string'
-    }
-  },
-  SingleSignOnSettings: {
-    type: 'SingleSignOnSettings',
-    props: {
-      enableForceDelegatedCallout: '?boolean',
-      enableMultipleSamlConfigs: '?boolean',
-      enableSamlJitProvisioning: '?boolean',
-      enableSamlLogin: '?boolean'
-    }
-  },
-  ServiceChannel: {
-    type: 'ServiceChannel',
-    props: {
-      interactionComponent: '?string',
-      label: 'string',
-      relatedEntityType: 'string',
-      secondaryRoutingPriorityField: '?string',
-      serviceChannelFieldPriorities: ['ServiceChannelFieldPriority']
-    },
-    extends: 'Metadata'
-  },
-  ServiceChannelFieldPriority: {
-    type: 'ServiceChannelFieldPriority',
-    props: {
-      priority: 'number',
-      value: 'string'
-    }
-  },
-  ServicePresenceStatus: {
-    type: 'ServicePresenceStatus',
-    props: {
-      channels: '?ServiceChannelStatus',
-      label: 'string'
-    },
-    extends: 'Metadata'
-  },
-  ServiceChannelStatus: {
-    type: 'ServiceChannelStatus',
-    props: {
-      channel: ['string']
-    }
-  },
-  SharingBaseRule: {
-    type: 'SharingBaseRule',
-    props: {
-      accessLevel: 'string',
-      accountSettings: '?AccountSharingRuleSettings',
-      description: '?string',
-      label: 'string',
-      sharedTo: 'SharedTo'
-    },
-    extends: 'Metadata'
-  },
-  AccountSharingRuleSettings: {
-    type: 'AccountSharingRuleSettings',
-    props: {
-      caseAccessLevel: 'string',
-      contactAccessLevel: 'string',
-      opportunityAccessLevel: 'string'
-    }
-  },
-  SharingCriteriaRule: {
-    type: 'SharingCriteriaRule',
-    props: {
-      booleanFilter: '?string',
-      criteriaItems: ['FilterItem']
-    },
-    extends: 'SharingBaseRule'
-  },
-  SharingGuestRule: {
-    type: 'SharingGuestRule',
-    props: {
-      booleanFilter: '?string',
-      criteriaItems: ['FilterItem']
-    },
-    extends: 'SharingBaseRule'
-  },
-  SharingOwnerRule: {
-    type: 'SharingOwnerRule',
-    props: {
-      sharedFrom: 'SharedTo'
-    },
-    extends: 'SharingBaseRule'
-  },
-  SharingTerritoryRule: {
-    type: 'SharingTerritoryRule',
-    props: {},
-    extends: 'SharingOwnerRule'
-  },
-  SharingRules: {
-    type: 'SharingRules',
-    props: {
-      sharingCriteriaRules: ['SharingCriteriaRule'],
-      sharingGuestRules: ['SharingGuestRule'],
-      sharingOwnerRules: ['SharingOwnerRule'],
-      sharingTerritoryRules: ['SharingTerritoryRule']
-    },
-    extends: 'Metadata'
-  },
-  SharingSet: {
-    type: 'SharingSet',
-    props: {
-      accessMappings: ['AccessMapping'],
-      description: '?string',
-      name: 'string',
-      profiles: ['string']
-    },
-    extends: 'Metadata'
-  },
-  AccessMapping: {
-    type: 'AccessMapping',
-    props: {
-      accessLevel: 'string',
-      object: 'string',
-      objectField: 'string',
-      userField: 'string'
-    }
-  },
-  SharingSettings: {
-    type: 'SharingSettings',
-    props: {
-      enableAccountRoleOptimization: '?boolean',
-      enableAssetSharing: '?boolean',
-      enableCommunityUserVisibility: '?boolean',
-      enableExternalSharingModel: '?boolean',
-      enableManagerGroups: '?boolean',
-      enableManualUserRecordSharing: '?boolean',
-      enablePartnerSuperUserAccess: '?boolean',
-      enablePortalUserCaseSharing: '?boolean',
-      enablePortalUserVisibility: '?boolean',
-      enableRemoveTMGroupMembership: '?boolean',
-      enableSecureGuestAccess: '?boolean',
-      enableStandardReportVisibility: '?boolean',
-      enableTerritoryForecastManager: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  SiteSettings: {
-    type: 'SiteSettings',
-    props: {
-      enableProxyLoginICHeader: '?boolean',
-      enableTopicsInSites: '?boolean',
-      enableVisualforceApiAccessAllowed: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  Skill: {
-    type: 'Skill',
-    props: {
-      assignments: '?SkillAssignments',
-      description: '?string',
-      label: 'string'
-    },
-    extends: 'Metadata'
-  },
-  SkillAssignments: {
-    type: 'SkillAssignments',
-    props: {
-      profiles: '?SkillProfileAssignments',
-      users: '?SkillUserAssignments'
-    }
-  },
-  SkillProfileAssignments: {
-    type: 'SkillProfileAssignments',
-    props: {
-      profile: ['string']
-    }
-  },
-  SkillUserAssignments: {
-    type: 'SkillUserAssignments',
-    props: {
-      user: ['string']
-    }
-  },
-  SocialCustomerServiceSettings: {
-    type: 'SocialCustomerServiceSettings',
-    props: {
-      caseSubjectOption: 'string',
-      enableSocialApprovals: '?boolean',
-      enableSocialCaseAssignmentRules: '?boolean',
-      enableSocialCustomerService: '?boolean',
-      enableSocialPersonaHistoryTracking: '?boolean',
-      enableSocialPostHistoryTracking: '?boolean',
-      enableSocialReceiveParentPost: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  SocialProfileSettings: {
-    type: 'SocialProfileSettings',
-    props: {
-      enableSocialProfiles: '?boolean',
-      isFacebookSocialProfilesDisabled: '?boolean',
-      isLinkedInSocialProfilesDisabled: '?boolean',
-      isTwitterSocialProfilesDisabled: '?boolean',
-      isYouTubeSocialProfilesDisabled: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  StandardValueSet: {
-    type: 'StandardValueSet',
-    props: {
-      groupingStringEnum: '?string',
-      sorted: 'boolean',
-      standardValue: ['StandardValue']
-    },
-    extends: 'Metadata'
-  },
-  StandardValueSetTranslation: {
-    type: 'StandardValueSetTranslation',
-    props: {
-      valueTranslation: ['ValueTranslation']
-    },
-    extends: 'Metadata'
-  },
-  SurveySettings: {
-    type: 'SurveySettings',
-    props: {
-      enableSurvey: '?boolean',
-      enableSurveyOwnerCanManageResponse: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  SynonymDictionary: {
-    type: 'SynonymDictionary',
-    props: {
-      groups: ['SynonymGroup'],
-      isProtected: '?boolean',
-      label: 'string'
-    },
-    extends: 'Metadata'
-  },
-  SystemNotificationSettings: {
-    type: 'SystemNotificationSettings',
-    props: {
-      disableDowntimeNotifications: '?boolean',
-      disableMaintenanceNotifications: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  Territory2: {
-    type: 'Territory2',
-    props: {
-      accountAccessLevel: '?string',
-      caseAccessLevel: '?string',
-      contactAccessLevel: '?string',
-      customFields: ['FieldValue'],
-      description: '?string',
-      name: 'string',
-      opportunityAccessLevel: '?string',
-      parentTerritory: '?string',
-      ruleAssociations: ['Territory2RuleAssociation'],
-      territory2Type: 'string'
-    },
-    extends: 'Metadata'
-  },
-  FieldValue: {
-    type: 'FieldValue',
-    props: {
-      name: 'string',
-      value: '?any'
-    }
-  },
-  Territory2RuleAssociation: {
-    type: 'Territory2RuleAssociation',
-    props: {
-      inherited: 'boolean',
-      ruleName: 'string'
-    }
-  },
-  Territory2Model: {
-    type: 'Territory2Model',
-    props: {
-      customFields: ['FieldValue'],
-      description: '?string',
-      name: 'string'
-    },
-    extends: 'Metadata'
-  },
-  Territory2Rule: {
-    type: 'Territory2Rule',
-    props: {
-      active: 'boolean',
-      booleanFilter: '?string',
-      name: 'string',
-      objectType: 'string',
-      ruleItems: ['Territory2RuleItem']
-    },
-    extends: 'Metadata'
-  },
-  Territory2RuleItem: {
-    type: 'Territory2RuleItem',
-    props: {
-      field: 'string',
-      operation: 'string',
-      value: '?string'
-    }
-  },
-  Territory2Settings: {
-    type: 'Territory2Settings',
-    props: {
-      defaultAccountAccessLevel: '?string',
-      defaultCaseAccessLevel: '?string',
-      defaultContactAccessLevel: '?string',
-      defaultOpportunityAccessLevel: '?string',
-      enableTerritoryManagement2: '?boolean',
-      opportunityFilterSettings: '?Territory2SettingsOpportunityFilter'
-    },
-    extends: 'Metadata'
-  },
-  Territory2SettingsOpportunityFilter: {
-    type: 'Territory2SettingsOpportunityFilter',
-    props: {
-      apexClassName: '?string',
-      enableFilter: 'boolean',
-      runOnCreate: 'boolean'
-    }
-  },
-  Territory2Type: {
-    type: 'Territory2Type',
-    props: {
-      description: '?string',
-      name: 'string',
-      priority: 'number'
-    },
-    extends: 'Metadata'
-  },
-  TimeSheetTemplate: {
-    type: 'TimeSheetTemplate',
-    props: {
-      active: 'boolean',
-      description: '?string',
-      frequency: 'string',
-      masterLabel: 'string',
-      startDate: 'string',
-      timeSheetTemplateAssignments: ['TimeSheetTemplateAssignment'],
-      workWeekEndDay: 'string',
-      workWeekStartDay: 'string'
-    },
-    extends: 'Metadata'
-  },
-  TimeSheetTemplateAssignment: {
-    type: 'TimeSheetTemplateAssignment',
-    props: {
-      assignedTo: '?string'
-    }
-  },
-  TopicsForObjects: {
-    type: 'TopicsForObjects',
-    props: {
-      enableTopics: 'boolean',
-      entityApiName: 'string'
-    },
-    extends: 'Metadata'
-  },
-  TrailheadSettings: {
-    type: 'TrailheadSettings',
-    props: {
-      enableMyTrailheadPref: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  TransactionSecurityPolicy: {
-    type: 'TransactionSecurityPolicy',
-    props: {
-      action: 'TransactionSecurityAction',
-      active: 'boolean',
-      apexClass: '?string',
-      description: '?string',
-      developerName: '?string',
-      eventName: '?string',
-      eventType: '?string',
-      executionUser: '?string',
-      flow: '?string',
-      masterLabel: '?string',
-      resourceName: '?string',
-      type: '?string'
-    },
-    extends: 'Metadata'
-  },
-  TransactionSecurityAction: {
-    type: 'TransactionSecurityAction',
-    props: {
-      block: 'boolean',
-      endSession: 'boolean',
-      freezeUser: 'boolean',
-      notifications: ['TransactionSecurityNotification'],
-      twoFactorAuthentication: 'boolean'
-    }
-  },
-  TransactionSecurityNotification: {
-    type: 'TransactionSecurityNotification',
-    props: {
-      inApp: 'boolean',
-      sendEmail: 'boolean',
-      user: 'string'
-    }
-  },
-  Translations: {
-    type: 'Translations',
-    props: {
-      customApplications: ['CustomApplicationTranslation'],
-      customDataTypeTranslations: ['CustomDataTypeTranslation'],
-      customLabels: ['CustomLabelTranslation'],
-      customPageWebLinks: ['CustomPageWebLinkTranslation'],
-      customTabs: ['CustomTabTranslation'],
-      flowDefinitions: ['FlowDefinitionTranslation'],
-      quickActions: ['GlobalQuickActionTranslation'],
-      reportTypes: ['ReportTypeTranslation'],
-      scontrols: ['ScontrolTranslation']
-    },
-    extends: 'Metadata'
-  },
-  CustomApplicationTranslation: {
-    type: 'CustomApplicationTranslation',
-    props: {
-      label: 'string',
-      name: 'string'
-    }
-  },
-  CustomDataTypeTranslation: {
-    type: 'CustomDataTypeTranslation',
-    props: {
-      components: ['CustomDataTypeComponentTranslation'],
-      customDataTypeName: 'string',
-      description: '?string',
-      label: '?string'
-    }
-  },
-  CustomDataTypeComponentTranslation: {
-    type: 'CustomDataTypeComponentTranslation',
-    props: {
-      developerSuffix: 'string',
-      label: '?string'
-    }
-  },
-  CustomLabelTranslation: {
-    type: 'CustomLabelTranslation',
-    props: {
-      label: 'string',
-      name: 'string'
-    }
-  },
-  CustomPageWebLinkTranslation: {
-    type: 'CustomPageWebLinkTranslation',
-    props: {
-      label: 'string',
-      name: 'string'
-    }
-  },
-  CustomTabTranslation: {
-    type: 'CustomTabTranslation',
-    props: {
-      label: 'string',
-      name: 'string'
-    }
-  },
-  FlowDefinitionTranslation: {
-    type: 'FlowDefinitionTranslation',
-    props: {
-      flows: ['FlowTranslation'],
-      fullName: 'string',
-      label: '?string'
-    }
-  },
-  FlowTranslation: {
-    type: 'FlowTranslation',
-    props: {
-      choices: ['FlowChoiceTranslation'],
-      fullName: 'string',
-      label: '?string',
-      screens: ['FlowScreenTranslation'],
-      stages: ['FlowStageTranslation'],
-      textTemplates: ['FlowTextTemplateTranslation']
-    }
-  },
-  FlowChoiceTranslation: {
-    type: 'FlowChoiceTranslation',
-    props: {
-      choiceText: '?string',
-      name: 'string',
-      userInput: '?FlowChoiceUserInputTranslation'
-    }
-  },
-  FlowChoiceUserInputTranslation: {
-    type: 'FlowChoiceUserInputTranslation',
-    props: {
-      promptText: '?string',
-      validationRule: '?FlowInputValidationRuleTranslation'
-    }
-  },
-  FlowInputValidationRuleTranslation: {
-    type: 'FlowInputValidationRuleTranslation',
-    props: {
-      errorMessage: '?string'
-    }
-  },
-  FlowScreenTranslation: {
-    type: 'FlowScreenTranslation',
-    props: {
-      fields: ['FlowScreenFieldTranslation'],
-      helpText: '?string',
-      name: 'string',
-      pausedText: '?string'
-    }
-  },
-  FlowScreenFieldTranslation: {
-    type: 'FlowScreenFieldTranslation',
-    props: {
-      fieldText: '?string',
-      helpText: '?string',
-      name: 'string',
-      validationRule: '?FlowInputValidationRuleTranslation'
-    }
-  },
-  FlowStageTranslation: {
-    type: 'FlowStageTranslation',
-    props: {
-      label: '?string',
-      name: 'string'
-    }
-  },
-  FlowTextTemplateTranslation: {
-    type: 'FlowTextTemplateTranslation',
-    props: {
-      name: 'string',
-      text: '?string'
-    }
-  },
-  GlobalQuickActionTranslation: {
-    type: 'GlobalQuickActionTranslation',
-    props: {
-      label: 'string',
-      name: 'string'
-    }
-  },
-  ReportTypeTranslation: {
-    type: 'ReportTypeTranslation',
-    props: {
-      description: '?string',
-      label: '?string',
-      name: 'string',
-      sections: ['ReportTypeSectionTranslation']
-    }
-  },
-  ReportTypeSectionTranslation: {
-    type: 'ReportTypeSectionTranslation',
-    props: {
-      columns: ['ReportTypeColumnTranslation'],
-      label: '?string',
-      name: 'string'
-    }
-  },
-  ReportTypeColumnTranslation: {
-    type: 'ReportTypeColumnTranslation',
-    props: {
-      label: 'string',
-      name: 'string'
-    }
-  },
-  ScontrolTranslation: {
-    type: 'ScontrolTranslation',
-    props: {
-      label: 'string',
-      name: 'string'
-    }
-  },
-  UIObjectRelationConfig: {
-    type: 'UIObjectRelationConfig',
-    props: {
-      UIObjectRelationFieldConfigs: ['UIObjectRelationFieldConfig'],
-      contextObject: 'string',
-      contextObjectRecordType: '?string',
-      directRelationshipField: '?string',
-      indirectObjectContextField: '?string',
-      indirectObjectRelatedField: '?string',
-      indirectRelationshipObject: '?string',
-      isActive: 'boolean',
-      masterLabel: 'string',
-      relatedObject: 'string',
-      relatedObjectRecordType: '?string',
-      relationshipType: 'string'
-    },
-    extends: 'Metadata'
-  },
-  UIObjectRelationFieldConfig: {
-    type: 'UIObjectRelationFieldConfig',
-    props: {
-      displayLabel: 'string',
-      queryText: 'string',
-      rowOrder: 'number'
-    }
-  },
-  UserCriteria: {
-    type: 'UserCriteria',
-    props: {
-      creationAgeInSeconds: '?number',
-      description: '?string',
-      lastChatterActivityAgeInSeconds: '?number',
-      masterLabel: 'string',
-      profiles: ['string'],
-      userTypes: ['string']
-    },
-    extends: 'Metadata'
-  },
-  UserEngagementSettings: {
-    type: 'UserEngagementSettings',
-    props: {
-      canGovCloudUseAdoptionApps: '?boolean',
-      doesScheduledSwitcherRunDaily: '?boolean',
-      enableCustomHelpGlobalSection: '?boolean',
-      enableHelpMenuShowFeedback: '?boolean',
-      enableHelpMenuShowHelp: '?boolean',
-      enableHelpMenuShowNewUser: '?boolean',
-      enableHelpMenuShowSearch: '?boolean',
-      enableHelpMenuShowSfdcContent: '?boolean',
-      enableHelpMenuShowShortcut: '?boolean',
-      enableHelpMenuShowSupport: '?boolean',
-      enableHelpMenuShowTrailhead: '?boolean',
-      enableIBILOptOutDashboards: '?boolean',
-      enableIBILOptOutEvents: '?boolean',
-      enableIBILOptOutReports: '?boolean',
-      enableIBILOptOutTasks: '?boolean',
-      enableLexToClassicFeedbackEnable: '?boolean',
-      enableOrchestrationInSandbox: '?boolean',
-      enableOrgUserAssistEnabled: '?boolean',
-      enableScheduledSwitcher: '?boolean',
-      enableSfdcProductFeedbackSurvey: '?boolean',
-      enableShowSalesforceUserAssist: '?boolean',
-      isAutoTransitionDelayed: '?boolean',
-      isCrucNotificationDisabled: '?boolean',
-      isCustomProfileAutoTransitionDelayed: '?boolean',
-      isLEXWelcomeMatDisabled: '?boolean',
-      isMeetTheAssistantDisabledInClassic: '?boolean',
-      isMeetTheAssistantDisabledInLightning: '?boolean',
-      optimizerAppEnabled: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  UserInterfaceSettings: {
-    type: 'UserInterfaceSettings',
-    props: {
-      alternateAlohaListView: '?boolean',
-      enableAsyncRelatedLists: '?boolean',
-      enableClickjackUserPageHeaderless: '?boolean',
-      enableCollapsibleSections: '?boolean',
-      enableCollapsibleSideBar: '?boolean',
-      enableCustomObjectTruncate: '?boolean',
-      enableCustomeSideBarOnAllPages: '?boolean',
-      enableDeleteFieldHistory: '?boolean',
-      enableHoverDetails: '?boolean',
-      enableInlineEdit: '?boolean',
-      enableNewPageLayoutEditor: '?boolean',
-      enablePersonalCanvas: '?boolean',
-      enablePrintableListViews: '?boolean',
-      enableProfileCustomTabsets: '?boolean',
-      enableQuickCreate: '?boolean',
-      enableTabOrganizer: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  UserManagementSettings: {
-    type: 'UserManagementSettings',
-    props: {
-      enableCanAnswerContainUsername: '?boolean',
-      enableCanSaveUserPerm: '?boolean',
-      enableConcealPersonalInfo: '?boolean',
-      enableContactlessExternalIdentityUsers: '?boolean',
-      enableEnhancedPermsetMgmt: '?boolean',
-      enableEnhancedProfileMgmt: '?boolean',
-      enableNewProfileUI: '?boolean',
-      enableScrambleUserData: '?boolean',
-      enableUserSelfDeactivate: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  VoiceSettings: {
-    type: 'VoiceSettings',
-    props: {
-      enableCallDisposition: '?boolean',
-      enableVoiceCallList: '?boolean',
-      enableVoiceCallRecording: '?boolean',
-      enableVoiceCoaching: '?boolean',
-      enableVoiceConferencing: '?boolean',
-      enableVoiceLocalPresence: '?boolean',
-      enableVoiceMail: '?boolean',
-      enableVoiceMailDrop: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  WaveApplication: {
-    type: 'WaveApplication',
-    props: {
-      assetIcon: '?string',
-      description: '?string',
-      folder: 'string',
-      masterLabel: 'string',
-      shares: ['FolderShare'],
-      templateOrigin: '?string',
-      templateVersion: '?string'
-    },
-    extends: 'Metadata'
-  },
-  WaveDataset: {
-    type: 'WaveDataset',
-    props: {
-      application: 'string',
-      description: '?string',
-      masterLabel: 'string',
-      templateAssetSourceName: '?string'
-    },
-    extends: 'Metadata'
-  },
-  WaveTemplateBundle: {
-    type: 'WaveTemplateBundle',
-    props: {
-      assetIcon: '?string',
-      assetVersion: '?number',
-      description: '?string',
-      label: 'string',
-      templateType: 'string'
-    },
-    extends: 'Metadata'
-  },
-  WaveXmd: {
-    type: 'WaveXmd',
-    props: {
-      application: '?string',
-      dataset: 'string',
-      datasetConnector: '?string',
-      datasetFullyQualifiedName: '?string',
-      dates: ['WaveXmdDate'],
-      dimensions: ['WaveXmdDimension'],
-      measures: ['WaveXmdMeasure'],
-      organizations: ['WaveXmdOrganization'],
-      origin: '?string',
-      type: '?string',
-      waveVisualization: '?string'
-    },
-    extends: 'Metadata'
-  },
-  WaveXmdDate: {
-    type: 'WaveXmdDate',
-    props: {
-      alias: 'string',
-      compact: '?boolean',
-      dateFieldDay: '?string',
-      dateFieldEpochDay: '?string',
-      dateFieldEpochSecond: '?string',
-      dateFieldFiscalMonth: '?string',
-      dateFieldFiscalQuarter: '?string',
-      dateFieldFiscalWeek: '?string',
-      dateFieldFiscalYear: '?string',
-      dateFieldFullYear: '?string',
-      dateFieldHour: '?string',
-      dateFieldMinute: '?string',
-      dateFieldMonth: '?string',
-      dateFieldQuarter: '?string',
-      dateFieldSecond: '?string',
-      dateFieldWeek: '?string',
-      dateFieldYear: '?string',
-      description: '?string',
-      firstDayOfWeek: 'number',
-      fiscalMonthOffset: 'number',
-      isYearEndFiscalYear: '?boolean',
-      label: '?string',
-      showInExplorer: '?boolean',
-      sortIndex: 'number',
-      type: 'string'
-    }
-  },
-  WaveXmdDimension: {
-    type: 'WaveXmdDimension',
-    props: {
-      conditionalFormatting: ['WaveXmdFormattingProperty'],
-      customActions: ['WaveXmdDimensionCustomAction'],
-      customActionsEnabled: '?boolean',
-      dateFormat: '?string',
-      description: '?string',
-      field: 'string',
-      fullyQualifiedName: '?string',
-      imageTemplate: '?string',
-      isDerived: 'boolean',
-      isMultiValue: '?boolean',
-      label: '?string',
-      linkTemplate: '?string',
-      linkTemplateEnabled: '?boolean',
-      linkTooltip: '?string',
-      members: ['WaveXmdDimensionMember'],
-      origin: '?string',
-      recordDisplayFields: ['WaveXmdRecordDisplayLookup'],
-      recordIdField: '?string',
-      recordOrganizationIdField: '?string',
-      salesforceActions: ['WaveXmdDimensionSalesforceAction'],
-      salesforceActionsEnabled: '?boolean',
-      showDetailsDefaultFieldIndex: '?number',
-      showInExplorer: '?boolean',
-      sortIndex: 'number'
-    }
-  },
-  WaveXmdFormattingProperty: {
-    type: 'WaveXmdFormattingProperty',
-    props: {
-      formattingBins: ['WaveXmdFormattingBin'],
-      formattingPredicates: ['WaveXmdFormattingPredicate'],
-      property: 'string',
-      referenceField: 'string',
-      sortIndex: 'number',
-      type: 'string'
-    }
-  },
-  WaveXmdFormattingBin: {
-    type: 'WaveXmdFormattingBin',
-    props: {
-      bin: 'string',
-      formatValue: 'string',
-      label: 'string',
-      sortIndex: 'number'
-    }
-  },
-  WaveXmdFormattingPredicate: {
-    type: 'WaveXmdFormattingPredicate',
-    props: {
-      formatValue: 'string',
-      operator: 'string',
-      sortIndex: 'number',
-      value: 'string'
-    }
-  },
-  WaveXmdDimensionCustomAction: {
-    type: 'WaveXmdDimensionCustomAction',
-    props: {
-      customActionName: 'string',
-      enabled: 'boolean',
-      icon: '?string',
-      method: '?string',
-      sortIndex: 'number',
-      target: '?string',
-      tooltip: '?string',
-      url: '?string'
-    }
-  },
-  WaveXmdDimensionMember: {
-    type: 'WaveXmdDimensionMember',
-    props: {
-      color: '?string',
-      label: '?string',
-      member: 'string',
-      sortIndex: 'number'
-    }
-  },
-  WaveXmdRecordDisplayLookup: {
-    type: 'WaveXmdRecordDisplayLookup',
-    props: {
-      recordDisplayField: 'string'
-    }
-  },
-  WaveXmdDimensionSalesforceAction: {
-    type: 'WaveXmdDimensionSalesforceAction',
-    props: {
-      enabled: 'boolean',
-      salesforceActionName: 'string',
-      sortIndex: 'number'
-    }
-  },
-  WaveXmdMeasure: {
-    type: 'WaveXmdMeasure',
-    props: {
-      conditionalFormatting: ['WaveXmdFormattingProperty'],
-      dateFormat: '?string',
-      description: '?string',
-      field: 'string',
-      formatCustomFormat: '?string',
-      formatDecimalDigits: '?number',
-      formatIsNegativeParens: '?boolean',
-      formatPrefix: '?string',
-      formatSuffix: '?string',
-      formatUnit: '?string',
-      formatUnitMultiplier: '?number',
-      fullyQualifiedName: '?string',
-      isDerived: 'boolean',
-      label: '?string',
-      origin: '?string',
-      showDetailsDefaultFieldIndex: '?number',
-      showInExplorer: '?boolean',
-      sortIndex: 'number'
-    }
-  },
-  WaveXmdOrganization: {
-    type: 'WaveXmdOrganization',
-    props: {
-      instanceUrl: 'string',
-      label: 'string',
-      organizationIdentifier: 'string',
-      sortIndex: 'number'
-    }
-  },
-  WorkDotComSettings: {
-    type: 'WorkDotComSettings',
-    props: {
-      enableCoachingManagerGroupAccess: '?boolean',
-      enableGoalManagerGroupAccess: '?boolean',
-      enableProfileSkills: '?boolean',
-      enableProfileSkillsAddFeedPost: '?boolean',
-      enableProfileSkillsAutoSuggest: '?boolean',
-      enableProfileSkillsUsePlatform: '?boolean',
-      enableWorkBadgeDefRestrictPref: '?boolean',
-      enableWorkCalibration: '?boolean',
-      enableWorkCanvasPref: '?boolean',
-      enableWorkCertification: '?boolean',
-      enableWorkCertificationNotification: '?boolean',
-      enableWorkRewardsPref: '?boolean',
-      enableWorkThanksPref: '?boolean',
-      enableWorkUseObjectivesForGoals: '?boolean'
-    },
-    extends: 'Metadata'
-  },
-  Workflow: {
-    type: 'Workflow',
-    props: {
-      alerts: ['WorkflowAlert'],
-      fieldUpdates: ['WorkflowFieldUpdate'],
-      flowActions: ['WorkflowFlowAction'],
-      knowledgePublishes: ['WorkflowKnowledgePublish'],
-      outboundMessages: ['WorkflowOutboundMessage'],
-      rules: ['WorkflowRule'],
-      send: ['WorkflowSend'],
-      tasks: ['WorkflowTask']
-    },
-    extends: 'Metadata'
-  },
-  WorkflowAlert: {
-    type: 'WorkflowAlert',
-    props: {
-      ccEmails: ['string'],
-      description: 'string',
-      protected: 'boolean',
-      recipients: ['WorkflowEmailRecipient'],
-      senderAddress: '?string',
-      senderType: '?string',
-      template: 'string'
-    },
-    extends: 'WorkflowAction'
-  },
-  WorkflowAction: {
-    type: 'WorkflowAction',
-    props: {},
-    extends: 'Metadata'
-  },
-  WorkflowFieldUpdate: {
-    type: 'WorkflowFieldUpdate',
-    props: {
-      description: '?string',
-      field: 'string',
-      formula: '?string',
-      literalValue: '?string',
-      lookupValue: '?string',
-      lookupValueType: '?string',
-      name: 'string',
-      notifyAssignee: 'boolean',
-      operation: 'string',
-      protected: 'boolean',
-      reevaluateOnChange: '?boolean',
-      targetObject: '?string'
-    },
-    extends: 'WorkflowAction'
-  },
-  WorkflowFlowAction: {
-    type: 'WorkflowFlowAction',
-    props: {
-      description: '?string',
-      flow: 'string',
-      flowInputs: ['WorkflowFlowActionParameter'],
-      label: 'string',
-      language: '?string',
-      protected: 'boolean'
-    },
-    extends: 'WorkflowAction'
-  },
-  WorkflowFlowActionParameter: {
-    type: 'WorkflowFlowActionParameter',
-    props: {
-      name: 'string',
-      value: '?string'
-    }
-  },
-  WorkflowKnowledgePublish: {
-    type: 'WorkflowKnowledgePublish',
-    props: {
-      action: 'string',
-      description: '?string',
-      label: 'string',
-      language: '?string',
-      protected: 'boolean'
-    },
-    extends: 'WorkflowAction'
-  },
-  WorkflowOutboundMessage: {
-    type: 'WorkflowOutboundMessage',
-    props: {
-      apiVersion: 'number',
-      description: '?string',
-      endpointUrl: 'string',
-      fields: ['string'],
-      includeSessionId: 'boolean',
-      integrationUser: 'string',
-      name: 'string',
-      protected: 'boolean',
-      useDeadLetterQueue: '?boolean'
-    },
-    extends: 'WorkflowAction'
-  },
-  WorkflowSend: {
-    type: 'WorkflowSend',
-    props: {
-      action: 'string',
-      description: '?string',
-      label: 'string',
-      language: '?string',
-      protected: 'boolean'
-    },
-    extends: 'WorkflowAction'
-  },
-  WorkflowTask: {
-    type: 'WorkflowTask',
-    props: {
-      assignedTo: '?string',
-      assignedToType: 'string',
-      description: '?string',
-      dueDateOffset: 'number',
-      notifyAssignee: 'boolean',
-      offsetFromField: '?string',
-      priority: 'string',
-      protected: 'boolean',
-      status: 'string',
-      subject: 'string'
-    },
-    extends: 'WorkflowAction'
-  },
-  WorkflowEmailRecipient: {
-    type: 'WorkflowEmailRecipient',
-    props: {
-      field: '?string',
-      recipient: '?string',
-      type: 'string'
-    }
-  },
-  WorkflowRule: {
-    type: 'WorkflowRule',
-    props: {
-      actions: ['WorkflowActionReference'],
-      active: 'boolean',
-      booleanFilter: '?string',
-      criteriaItems: ['FilterItem'],
-      description: '?string',
-      formula: '?string',
-      triggerType: 'string',
-      workflowTimeTriggers: ['WorkflowTimeTrigger']
-    },
-    extends: 'Metadata'
-  },
-  WorkflowTimeTrigger: {
-    type: 'WorkflowTimeTrigger',
-    props: {
-      actions: ['WorkflowActionReference'],
-      offsetFromField: '?string',
-      timeLength: '?string',
-      workflowTimeTriggerUnit: 'string'
-    }
-  },
-  SaveResult: {
-    type: 'SaveResult',
-    props: {
-      errors: ['Error'],
-      fullName: 'string',
-      success: 'boolean'
-    }
-  },
-  Error: {
-    type: 'Error',
-    props: {
-      extendedErrorDetails: ['ExtendedErrorDetails'],
-      fields: ['string'],
-      message: 'string',
-      statusCode: 'string'
-    }
-  },
-  ExtendedErrorDetails: {
-    type: 'ExtendedErrorDetails',
-    props: {
-      extendedErrorCode: 'string'
-    }
-  },
-  DeleteResult: {
-    type: 'DeleteResult',
-    props: {
-      errors: ['Error'],
-      fullName: 'string',
-      success: 'boolean'
-    }
-  },
-  DeployOptions: {
-    type: 'DeployOptions',
-    props: {
-      allowMissingFiles: 'boolean',
-      autoUpdatePackage: 'boolean',
-      checkOnly: 'boolean',
-      ignoreWarnings: 'boolean',
-      performRetrieve: 'boolean',
-      purgeOnDelete: 'boolean',
-      rollbackOnError: 'boolean',
-      runTests: ['string'],
-      singlePackage: 'boolean',
-      testLevel: 'string'
-    }
-  },
-  AsyncResult: {
-    type: 'AsyncResult',
-    props: {
-      done: 'boolean',
-      id: 'string',
-      message: '?string',
-      state: 'string',
-      statusCode: '?string'
-    }
-  },
-  DescribeMetadataResult: {
-    type: 'DescribeMetadataResult',
-    props: {
-      metadataObjects: ['DescribeMetadataObject'],
-      organizationNamespace: 'string',
-      partialSaveAllowed: 'boolean',
-      testRequired: 'boolean'
-    }
-  },
-  DescribeMetadataObject: {
-    type: 'DescribeMetadataObject',
-    props: {
-      childXmlNames: ['string'],
-      directoryName: 'string',
-      inFolder: 'boolean',
-      metaFile: 'boolean',
-      suffix: '?string',
-      xmlName: 'string'
-    }
-  },
-  DescribeValueTypeResult: {
-    type: 'DescribeValueTypeResult',
-    props: {
-      apiCreatable: 'boolean',
-      apiDeletable: 'boolean',
-      apiReadable: 'boolean',
-      apiUpdatable: 'boolean',
-      parentField: '?ValueTypeField',
-      valueTypeFields: ['ValueTypeField']
-    }
-  },
-  ValueTypeField: {
-    type: 'ValueTypeField',
-    props: {
-      fields: ['ValueTypeField'],
-      foreignKeyDomain: ['string'],
-      isForeignKey: 'boolean',
-      isNameField: 'boolean',
-      minOccurs: 'number',
-      name: 'string',
-      picklistValues: ['PicklistEntry'],
-      soapType: 'string',
-      valueRequired: 'boolean'
-    }
-  },
-  PicklistEntry: {
-    type: 'PicklistEntry',
-    props: {
-      active: 'boolean',
-      defaultValue: 'boolean',
-      label: 'string',
-      validFor: '?string',
-      value: 'string'
-    }
-  },
-  ListMetadataQuery: {
-    type: 'ListMetadataQuery',
-    props: {
-      folder: '?string',
-      type: 'string'
-    }
-  },
-  ReadResult: {
-    type: 'ReadResult',
-    props: {
-      records: ['Metadata']
-    }
-  },
-  RetrieveRequest: {
-    type: 'RetrieveRequest',
-    props: {
-      apiVersion: 'number',
-      packageNames: ['string'],
-      singlePackage: 'boolean',
-      specificFiles: ['string'],
-      unpackaged: '?Package'
-    }
-  },
-  UpsertResult: {
-    type: 'UpsertResult',
-    props: {
-      created: 'boolean',
-      errors: ['Error'],
-      fullName: 'string',
-      success: 'boolean'
-    }
-  },
-  LogInfo: {
-    type: 'LogInfo',
-    props: {
-      category: 'string',
-      level: 'string'
-    }
-  }
-};
+ */var ApiSchemas={CancelDeployResult:{type:'CancelDeployResult',props:{done:'boolean',id:'string'}},DeployResult:{type:'DeployResult',props:{canceledBy:'?string',canceledByName:'?string',checkOnly:'boolean',completedDate:'?string',createdBy:'string',createdByName:'string',createdDate:'string',details:'DeployDetails',done:'boolean',errorMessage:'?string',errorStatusCode:'?string',id:'string',ignoreWarnings:'boolean',lastModifiedDate:'?string',numberComponentErrors:'number',numberComponentsDeployed:'number',numberComponentsTotal:'number',numberTestErrors:'number',numberTestsCompleted:'number',numberTestsTotal:'number',rollbackOnError:'boolean',runTestsEnabled:'boolean',startDate:'?string',stateDetail:'?string',status:'string',success:'boolean'}},DeployDetails:{type:'DeployDetails',props:{componentFailures:['DeployMessage'],componentSuccesses:['DeployMessage'],retrieveResult:'?RetrieveResult',runTestResult:'?RunTestsResult'}},DeployMessage:{type:'DeployMessage',props:{changed:'boolean',columnNumber:'?number',componentType:'?string',created:'boolean',createdDate:'string',deleted:'boolean',fileName:'string',fullName:'string',id:'?string',lineNumber:'?number',problem:'?string',problemType:'?string',success:'boolean'}},RetrieveResult:{type:'RetrieveResult',props:{done:'boolean',errorMessage:'?string',errorStatusCode:'?string',fileProperties:['FileProperties'],id:'string',messages:['RetrieveMessage'],status:'string',success:'boolean',zipFile:'string'}},FileProperties:{type:'FileProperties',props:{createdById:'string',createdByName:'string',createdDate:'string',fileName:'string',fullName:'string',id:'string',lastModifiedById:'string',lastModifiedByName:'string',lastModifiedDate:'string',manageableState:'?string',namespacePrefix:'?string',type:'string'}},RetrieveMessage:{type:'RetrieveMessage',props:{fileName:'string',problem:'string'}},RunTestsResult:{type:'RunTestsResult',props:{apexLogId:'?string',codeCoverage:['CodeCoverageResult'],codeCoverageWarnings:['CodeCoverageWarning'],failures:['RunTestFailure'],flowCoverage:['FlowCoverageResult'],flowCoverageWarnings:['FlowCoverageWarning'],numFailures:'number',numTestsRun:'number',successes:['RunTestSuccess'],totalTime:'number'}},CodeCoverageResult:{type:'CodeCoverageResult',props:{dmlInfo:['CodeLocation'],id:'string',locationsNotCovered:['CodeLocation'],methodInfo:['CodeLocation'],name:'string',namespace:'?string',numLocations:'number',numLocationsNotCovered:'number',soqlInfo:['CodeLocation'],soslInfo:['CodeLocation'],type:'string'}},CodeLocation:{type:'CodeLocation',props:{column:'number',line:'number',numExecutions:'number',time:'number'}},CodeCoverageWarning:{type:'CodeCoverageWarning',props:{id:'string',message:'string',name:'?string',namespace:'?string'}},RunTestFailure:{type:'RunTestFailure',props:{id:'string',message:'string',methodName:'?string',name:'string',namespace:'?string',packageName:'string',seeAllData:'?boolean',stackTrace:'?string',time:'number',type:'string'}},FlowCoverageResult:{type:'FlowCoverageResult',props:{elementsNotCovered:['string'],flowId:'string',flowName:'string',flowNamespace:'?string',numElements:'number',numElementsNotCovered:'number',processType:'string'}},FlowCoverageWarning:{type:'FlowCoverageWarning',props:{flowId:'?string',flowName:'?string',flowNamespace:'?string',message:'string'}},RunTestSuccess:{type:'RunTestSuccess',props:{id:'string',methodName:'string',name:'string',namespace:'?string',seeAllData:'?boolean',time:'number'}},Metadata:{type:'Metadata',props:{fullName:'?string'}},AccountRelationshipShareRule:{type:'AccountRelationshipShareRule',props:{accessLevel:'string',accountToCriteriaField:'string',description:'?string',entityType:'string',masterLabel:'string',staticFormulaCriteria:'?string',type:'string'},extends:'Metadata'},AccountSettings:{type:'AccountSettings',props:{enableAccountHistoryTracking:'?boolean',enableAccountInsightsInMobile:'?boolean',enableAccountOwnerReport:'?boolean',enableAccountTeams:'?boolean',enableContactHistoryTracking:'?boolean',enableRelateContactToMultipleAccounts:'?boolean',showViewHierarchyLink:'?boolean'},extends:'Metadata'},ActionLinkGroupTemplate:{type:'ActionLinkGroupTemplate',props:{actionLinkTemplates:['ActionLinkTemplate'],category:'string',executionsAllowed:'string',hoursUntilExpiration:'?number',isPublished:'boolean',name:'string'},extends:'Metadata'},ActionLinkTemplate:{type:'ActionLinkTemplate',props:{actionUrl:'string',headers:'?string',isConfirmationRequired:'boolean',isGroupDefault:'boolean',label:'?string',labelKey:'string',linkType:'string',method:'string',position:'number',requestBody:'?string',userAlias:'?string',userVisibility:'string'}},ActionPlanTemplate:{type:'ActionPlanTemplate',props:{actionPlanTemplateItem:['ActionPlanTemplateItem'],description:'?string',name:'string',targetEntityType:'string',uniqueName:'string'},extends:'Metadata'},ActionPlanTemplateItem:{type:'ActionPlanTemplateItem',props:{actionPlanTemplateItemValue:['ActionPlanTemplateItemValue'],displayOrder:'?number',isRequired:'?boolean',name:'string',uniqueName:'string'}},ActionPlanTemplateItemValue:{type:'ActionPlanTemplateItemValue',props:{name:'string',valueFormula:'?string',valueLiteral:'?string'}},ActionsSettings:{type:'ActionsSettings',props:{enableDefaultQuickActionsOn:'?boolean',enableMdpEnabled:'?boolean',enableThirdPartyActions:'?boolean'},extends:'Metadata'},ActivitiesSettings:{type:'ActivitiesSettings',props:{allowUsersToRelateMultipleContactsToTasksAndEvents:'?boolean',autoRelateEventAttendees:'?boolean',enableActivityReminders:'?boolean',enableClickCreateEvents:'?boolean',enableDragAndDropScheduling:'?boolean',enableEmailTracking:'?boolean',enableGroupTasks:'?boolean',enableListViewScheduling:'?boolean',enableLogNote:'?boolean',enableMultidayEvents:'?boolean',enableRecurringEvents:'?boolean',enableRecurringTasks:'?boolean',enableRollUpActivToContactsAcct:'?boolean',enableSidebarCalendarShortcut:'?boolean',enableSimpleTaskCreateUI:'?boolean',enableUNSTaskDelegatedToNotifications:'?boolean',enableUserListViewCalendars:'?boolean',meetingRequestsLogo:'?string',showCustomLogoMeetingRequests:'?boolean',showEventDetailsMultiUserCalendar:'?boolean',showHomePageHoverLinksForEvents:'?boolean',showMyTasksHoverLinks:'?boolean'},extends:'Metadata'},AddressSettings:{type:'AddressSettings',props:{countriesAndStates:'CountriesAndStates'},extends:'Metadata'},CountriesAndStates:{type:'CountriesAndStates',props:{countries:['Country']}},Country:{type:'Country',props:{active:'boolean',integrationValue:'string',isoCode:'string',label:'string',orgDefault:'boolean',standard:'boolean',states:['State'],visible:'boolean'}},State:{type:'State',props:{active:'boolean',integrationValue:'string',isoCode:'string',label:'string',standard:'boolean',visible:'boolean'}},AnalyticSnapshot:{type:'AnalyticSnapshot',props:{description:'?string',groupColumn:'?string',mappings:['AnalyticSnapshotMapping'],name:'string',runningUser:'?string',sourceReport:'string',targetObject:'string'},extends:'Metadata'},AnalyticSnapshotMapping:{type:'AnalyticSnapshotMapping',props:{aggregateType:'?string',sourceField:'string',sourceType:'string',targetField:'string'}},AnalyticsSettings:{type:'AnalyticsSettings',props:{alwaysGenPreviews:'?boolean',analyticsAdoptionMetadata:'?boolean',canAccessAnalyticsViaAPI:'?boolean',canAnnotateDashboards:'?boolean',canEnableSavedView:'?boolean',canExploreDataConversationally:'?boolean',canShareAppsWithCommunities:'?boolean',canSubscribeDashboardWidgets:'?boolean',canViewThumbnailAssets:'?boolean',enableAnalyticsSubtotals:'?boolean',enableAutoCompleteCombo:'?boolean',enableDashboardComponentSnapshot:'?boolean',enableDashboardFlexiTable:'?boolean',enableEmailReportsToPortalUsers:'?boolean',enableFloatingReportHeaders:'?boolean',enableInsights:'?boolean',enableLightningReportBuilder:'?boolean',enableLotusNotesImages:'?boolean',enableMassEnableReportBuilder:'?boolean',enableNewChartsEngine:'?boolean',enablePowerInsights:'?boolean',enableRemoveFooterForRepDisplay:'?boolean',enableRemoveFooterFromRepExp:'?boolean',enableReportFieldToFieldPref:'?boolean',enableReportUniqueRowCountPref:'?boolean',enableSFXJoinedReportsEnable:'?boolean',enableSmartDataDiscovery:'?boolean',enableUseOldChartsLookAndFeel:'?boolean',enableWaveReplication:'?boolean',enableWaveSharingInheritance:'?boolean',enableWaveTemplate:'?boolean',enableWaveTrendedDatasetCleanup:'?boolean'},extends:'Metadata'},AnimationRule:{type:'AnimationRule',props:{animationFrequency:'string',developerName:'string',isActive:'boolean',masterLabel:'string',recordTypeContext:'string',recordTypeName:'?string',sobjectType:'string',targetField:'string',targetFieldChangeToValues:'string'},extends:'Metadata'},ApexSettings:{type:'ApexSettings',props:{enableAggregateCodeCoverageOnly:'?boolean',enableApexAccessRightsPref:'?boolean',enableApexApprovalLockUnlock:'?boolean',enableApexCtrlImplicitWithSharingPref:'?boolean',enableApexPropertyGetterPref:'?boolean',enableAuraApexCtrlAuthUserAccessCheckPref:'?boolean',enableAuraApexCtrlGuestUserAccessCheckPref:'?boolean',enableCompileOnDeploy:'?boolean',enableDisableParallelApexTesting:'?boolean',enableDoNotEmailDebugLog:'?boolean',enableGaplessTestAutoNum:'?boolean',enableMngdCtrlActionAccessPref:'?boolean',enableNonCertifiedApexMdCrud:'?boolean'},extends:'Metadata'},ApexTestSuite:{type:'ApexTestSuite',props:{testClassName:['string']},extends:'Metadata'},AppExperienceSettings:{type:'AppExperienceSettings',props:{doesHideAllAppsInAppLauncher:'?boolean'},extends:'Metadata'},AppMenu:{type:'AppMenu',props:{appMenuItems:['AppMenuItem']},extends:'Metadata'},AppMenuItem:{type:'AppMenuItem',props:{name:'string',type:'string'}},AppointmentSchedulingPolicy:{type:'AppointmentSchedulingPolicy',props:{appointmentStartTimeInterval:'string',masterLabel:'string',shouldConsiderCalendarEvents:'boolean',shouldEnforceExcludedResource:'boolean',shouldEnforceRequiredResource:'boolean',shouldMatchSkill:'boolean',shouldMatchSkillLevel:'boolean',shouldRespectVisitingHours:'boolean',shouldUsePrimaryMembers:'boolean',shouldUseSecondaryMembers:'boolean'},extends:'Metadata'},ApprovalProcess:{type:'ApprovalProcess',props:{active:'boolean',allowRecall:'?boolean',allowedSubmitters:['ApprovalSubmitter'],approvalPageFields:'?ApprovalPageField',approvalStep:['ApprovalStep'],description:'?string',emailTemplate:'?string',enableMobileDeviceAccess:'?boolean',entryCriteria:'?ApprovalEntryCriteria',finalApprovalActions:'?ApprovalAction',finalApprovalRecordLock:'?boolean',finalRejectionActions:'?ApprovalAction',finalRejectionRecordLock:'?boolean',initialSubmissionActions:'?ApprovalAction',label:'string',nextAutomatedApprover:'?NextAutomatedApprover',postTemplate:'?string',recallActions:'?ApprovalAction',recordEditability:'string',showApprovalHistory:'?boolean'},extends:'Metadata'},ApprovalSubmitter:{type:'ApprovalSubmitter',props:{submitter:'?string',type:'string'}},ApprovalPageField:{type:'ApprovalPageField',props:{field:['string']}},ApprovalStep:{type:'ApprovalStep',props:{allowDelegate:'?boolean',approvalActions:'?ApprovalAction',assignedApprover:'ApprovalStepApprover',description:'?string',entryCriteria:'?ApprovalEntryCriteria',ifCriteriaNotMet:'?string',label:'string',name:'string',rejectBehavior:'?ApprovalStepRejectBehavior',rejectionActions:'?ApprovalAction'}},ApprovalAction:{type:'ApprovalAction',props:{action:['WorkflowActionReference']}},WorkflowActionReference:{type:'WorkflowActionReference',props:{name:'string',type:'string'}},ApprovalStepApprover:{type:'ApprovalStepApprover',props:{approver:['Approver'],whenMultipleApprovers:'?string'}},Approver:{type:'Approver',props:{name:'?string',type:'string'}},ApprovalEntryCriteria:{type:'ApprovalEntryCriteria',props:{booleanFilter:'?string',criteriaItems:['FilterItem'],formula:'?string'}},FilterItem:{type:'FilterItem',props:{field:'string',operation:'string',value:'?string',valueField:'?string'}},DuplicateRuleFilterItem:{type:'DuplicateRuleFilterItem',props:{sortOrder:'number',table:'string'},extends:'FilterItem'},ApprovalStepRejectBehavior:{type:'ApprovalStepRejectBehavior',props:{type:'string'}},NextAutomatedApprover:{type:'NextAutomatedApprover',props:{useApproverFieldOfRecordOwner:'?boolean',userHierarchyField:'string'}},ArchiveSettings:{type:'ArchiveSettings',props:{enableEntityArchivingEnabled:'?boolean'},extends:'Metadata'},AssignmentRule:{type:'AssignmentRule',props:{active:'?boolean',ruleEntry:['RuleEntry']},extends:'Metadata'},RuleEntry:{type:'RuleEntry',props:{assignedTo:'?string',assignedToType:'?string',booleanFilter:'?string',businessHours:'?string',businessHoursSource:'?string',criteriaItems:['FilterItem'],disableEscalationWhenModified:'?boolean',escalationAction:['EscalationAction'],escalationStartTime:'?string',formula:'?string',notifyCcRecipients:'?boolean',overrideExistingTeams:'?boolean',replyToEmail:'?string',senderEmail:'?string',senderName:'?string',team:['string'],template:'?string'}},EscalationAction:{type:'EscalationAction',props:{assignedTo:'?string',assignedToTemplate:'?string',assignedToType:'?string',minutesToEscalation:'?number',notifyCaseOwner:'?boolean',notifyEmail:['string'],notifyTo:'?string',notifyToTemplate:'?string'}},AssignmentRules:{type:'AssignmentRules',props:{assignmentRule:['AssignmentRule']},extends:'Metadata'},Audience:{type:'Audience',props:{audienceName:'string',container:'string',criteria:'AudienceCriteria',description:'?string',formula:'?string',formulaFilterType:'?string',targets:'?PersonalizationTargetInfos'},extends:'Metadata'},AudienceCriteria:{type:'AudienceCriteria',props:{criterion:['AudienceCriterion']}},AudienceCriterion:{type:'AudienceCriterion',props:{criteriaNumber:'?number',criterionValue:'?AudienceCriteriaValue',operator:'?string',type:'string'}},AudienceCriteriaValue:{type:'AudienceCriteriaValue',props:{city:'?string',country:'?string',domain:'?string',entityField:'?string',entityType:'?string',fieldValue:'?string',isEnabled:'?string',permissionName:'?string',permissionType:'?string',profile:'?string',subdivision:'?string'}},PersonalizationTargetInfos:{type:'PersonalizationTargetInfos',props:{target:['PersonalizationTargetInfo']}},PersonalizationTargetInfo:{type:'PersonalizationTargetInfo',props:{groupName:'string',priority:'?number',targetType:'string',targetValue:'string'}},AuraDefinitionBundle:{type:'AuraDefinitionBundle',props:{SVGContent:'?string',apiVersion:'?number',controllerContent:'?string',description:'?string',designContent:'?string',documentationContent:'?string',helperContent:'?string',markup:'?string',modelContent:'?string',packageVersions:['PackageVersion'],rendererContent:'?string',styleContent:'?string',testsuiteContent:'?string',type:'?string'},extends:'Metadata'},PackageVersion:{type:'PackageVersion',props:{majorNumber:'number',minorNumber:'number',namespace:'string'}},AuthProvider:{type:'AuthProvider',props:{appleTeam:'?string',authorizeUrl:'?string',consumerKey:'?string',consumerSecret:'?string',customMetadataTypeRecord:'?string',defaultScopes:'?string',ecKey:'?string',errorUrl:'?string',executionUser:'?string',friendlyName:'string',iconUrl:'?string',idTokenIssuer:'?string',includeOrgIdInIdentifier:'?boolean',linkKickoffUrl:'?string',logoutUrl:'?string',oauthKickoffUrl:'?string',plugin:'?string',portal:'?string',providerType:'string',registrationHandler:'?string',sendAccessTokenInHeader:'?boolean',sendClientCredentialsInHeader:'?boolean',sendSecretInApis:'?boolean',ssoKickoffUrl:'?string',tokenUrl:'?string',userInfoUrl:'?string'},extends:'Metadata'},AutoResponseRule:{type:'AutoResponseRule',props:{active:'?boolean',ruleEntry:['RuleEntry']},extends:'Metadata'},AutoResponseRules:{type:'AutoResponseRules',props:{autoResponseRule:['AutoResponseRule']},extends:'Metadata'},BlockchainSettings:{type:'BlockchainSettings',props:{enableBcp:'?boolean',enableBcpCoin:'?boolean'},extends:'Metadata'},Bot:{type:'Bot',props:{botMlDomain:'?LocalMlDomain',botUser:'?string',botVersions:['BotVersion'],contextVariables:['ConversationContextVariable'],description:'?string',label:'?string'},extends:'Metadata'},LocalMlDomain:{type:'LocalMlDomain',props:{label:'string',mlIntents:['MlIntent'],mlSlotClasses:['MlSlotClass'],name:'string'}},MlIntent:{type:'MlIntent',props:{description:'?string',developerName:'string',label:'string',mlIntentUtterances:['MlIntentUtterance'],relatedMlIntents:['MlRelatedIntent']}},MlIntentUtterance:{type:'MlIntentUtterance',props:{utterance:'string'}},MlRelatedIntent:{type:'MlRelatedIntent',props:{relatedMlIntent:'string'}},MlSlotClass:{type:'MlSlotClass',props:{dataType:'string',description:'?string',developerName:'string',extractionRegex:'?string',extractionType:'?string',label:'string',mlSlotClassValues:['MlSlotClassValue']}},MlSlotClassValue:{type:'MlSlotClassValue',props:{synonymGroup:'?SynonymGroup',value:'string'}},SynonymGroup:{type:'SynonymGroup',props:{languages:['string'],terms:['string']}},BotVersion:{type:'BotVersion',props:{botDialogGroups:['BotDialogGroup'],botDialogs:['BotDialog'],conversationVariables:['ConversationVariable'],entryDialog:'string',mainMenuDialog:'string',responseDelayMilliseconds:'?number'},extends:'Metadata'},BotDialogGroup:{type:'BotDialogGroup',props:{description:'?string',developerName:'string',label:'string'}},BotDialog:{type:'BotDialog',props:{botDialogGroup:'?string',botSteps:['BotStep'],description:'?string',developerName:'string',label:'string',mlIntent:'?string',mlIntentTrainingEnabled:'?boolean',showInFooterMenu:'?boolean'}},BotStep:{type:'BotStep',props:{booleanFilter:'?string',botInvocation:'?BotInvocation',botMessages:['BotMessage'],botNavigation:'?BotNavigation',botStepConditions:['BotStepCondition'],botSteps:['BotStep'],botVariableOperation:'?BotVariableOperation',conversationRecordLookup:'?ConversationRecordLookup',conversationSystemMessage:'?ConversationSystemMessage',type:'string'}},BotInvocation:{type:'BotInvocation',props:{invocationActionName:'?string',invocationActionType:'?string',invocationMappings:['BotInvocationMapping']}},BotInvocationMapping:{type:'BotInvocationMapping',props:{parameterName:'string',type:'string',value:'?string',variableName:'?string',variableType:'?string'}},BotMessage:{type:'BotMessage',props:{message:'string'}},BotNavigation:{type:'BotNavigation',props:{botNavigationLinks:['BotNavigationLink'],type:'string'}},BotNavigationLink:{type:'BotNavigationLink',props:{label:'?string',targetBotDialog:'string'}},BotStepCondition:{type:'BotStepCondition',props:{leftOperandName:'string',leftOperandType:'string',operatorType:'string',rightOperandValue:'?string'}},BotVariableOperation:{type:'BotVariableOperation',props:{botInvocation:'?BotInvocation',botMessages:['BotMessage'],botQuickReplyOptions:['BotQuickReplyOption'],botVariableOperands:['BotVariableOperand'],invalidInputBotNavigation:'?BotNavigation',quickReplyOptionTemplate:'?string',quickReplyType:'?string',quickReplyWidgetType:'?string',sourceVariableName:'?string',sourceVariableType:'?string',type:'string'}},BotQuickReplyOption:{type:'BotQuickReplyOption',props:{literalValue:'string'}},BotVariableOperand:{type:'BotVariableOperand',props:{disableAutoFill:'?boolean',sourceName:'?string',sourceType:'?string',sourceValue:'?string',targetName:'string',targetType:'string'}},ConversationRecordLookup:{type:'ConversationRecordLookup',props:{SObjectType:'string',lookupFields:['ConversationRecordLookupField'],maxLookupResults:'number',sourceVariableName:'string',sourceVariableType:'string',targetVariableName:'string'}},ConversationRecordLookupField:{type:'ConversationRecordLookupField',props:{fieldName:'string'}},ConversationSystemMessage:{type:'ConversationSystemMessage',props:{systemMessageMappings:['ConversationSystemMessageMapping'],type:'string'}},ConversationSystemMessageMapping:{type:'ConversationSystemMessageMapping',props:{mappingType:'string',parameterType:'string',variableName:'string'}},ConversationVariable:{type:'ConversationVariable',props:{SObjectType:'?string',collectionType:'?string',dataType:'string',developerName:'string',label:'string'}},ConversationContextVariable:{type:'ConversationContextVariable',props:{SObjectType:'?string',contextVariableMappings:['ConversationContextVariableMapping'],dataType:'string',developerName:'string',label:'string'}},ConversationContextVariableMapping:{type:'ConversationContextVariableMapping',props:{SObjectType:'string',fieldName:'string',messageType:'string'}},BotSettings:{type:'BotSettings',props:{enableBots:'?boolean'},extends:'Metadata'},BrandingSet:{type:'BrandingSet',props:{brandingSetProperty:['BrandingSetProperty'],description:'?string',masterLabel:'string',type:'?string'},extends:'Metadata'},BrandingSetProperty:{type:'BrandingSetProperty',props:{propertyName:'string',propertyValue:'?string'}},BusinessHoursEntry:{type:'BusinessHoursEntry',props:{active:'?boolean',default:'boolean',fridayEndTime:'?string',fridayStartTime:'?string',mondayEndTime:'?string',mondayStartTime:'?string',name:'?string',saturdayEndTime:'?string',saturdayStartTime:'?string',sundayEndTime:'?string',sundayStartTime:'?string',thursdayEndTime:'?string',thursdayStartTime:'?string',timeZoneId:'?string',tuesdayEndTime:'?string',tuesdayStartTime:'?string',wednesdayEndTime:'?string',wednesdayStartTime:'?string'},extends:'Metadata'},BusinessHoursSettings:{type:'BusinessHoursSettings',props:{businessHours:['BusinessHoursEntry'],holidays:['Holiday']},extends:'Metadata'},Holiday:{type:'Holiday',props:{activityDate:'?string',businessHours:['string'],description:'?string',endTime:'?string',isRecurring:'?boolean',name:'?string',recurrenceDayOfMonth:'?number',recurrenceDayOfWeek:['string'],recurrenceDayOfWeekMask:'?number',recurrenceEndDate:'?string',recurrenceInstance:'?string',recurrenceInterval:'?number',recurrenceMonthOfYear:'?string',recurrenceStartDate:'?string',recurrenceType:'?string',startTime:'?string'}},BusinessProcess:{type:'BusinessProcess',props:{description:'?string',isActive:'?boolean',values:['PicklistValue']},extends:'Metadata'},PicklistValue:{type:'PicklistValue',props:{color:'?string',default:'boolean',description:'?string',isActive:'?boolean',allowEmail:'?boolean',closed:'?boolean',controllingFieldValues:['string'],converted:'?boolean',cssExposed:'?boolean',forecastCategory:'?string',highPriority:'?boolean',probability:'?number',reverseRole:'?string',reviewed:'?boolean',won:'?boolean'},extends:'Metadata'},CMSConnectSource:{type:'CMSConnectSource',props:{cmsConnectAsset:['CMSConnectAsset'],cmsConnectLanguage:['CMSConnectLanguage'],cmsConnectPersonalization:'?CMSConnectPersonalization',cmsConnectResourceType:['CMSConnectResourceType'],connectionType:'string',cssScope:'?string',developerName:'string',languageEnabled:'?string',masterLabel:'string',namedCredential:'?string',personalizationEnabled:'?string',rootPath:'?string',sortOrder:'number',status:'string',type:'string',websiteUrl:'?string'},extends:'Metadata'},CMSConnectAsset:{type:'CMSConnectAsset',props:{assetPath:'string',assetType:'string',sortOrder:'number'}},CMSConnectLanguage:{type:'CMSConnectLanguage',props:{cmsLanguage:'string',language:'string'}},CMSConnectPersonalization:{type:'CMSConnectPersonalization',props:{connectorPage:'string',connectorPageAsset:'string'}},CMSConnectResourceType:{type:'CMSConnectResourceType',props:{cmsConnectResourceDefinition:['CMSConnectResourceDefinition'],developerName:'string',masterLabel:'string',resourceType:'string'}},CMSConnectResourceDefinition:{type:'CMSConnectResourceDefinition',props:{developerName:'string',masterLabel:'string',options:'number',payloadType:'string',resourceIdPath:'?string',resourceNamePath:'?string',resourcePath:'string',rootNodePath:'?string'}},CallCenter:{type:'CallCenter',props:{adapterUrl:'?string',customSettings:'?string',displayName:'string',displayNameLabel:'string',internalNameLabel:'string',sections:['CallCenterSection'],version:'?string'},extends:'Metadata'},CallCenterSection:{type:'CallCenterSection',props:{items:['CallCenterItem'],label:'string',name:'string'}},CallCenterItem:{type:'CallCenterItem',props:{label:'string',name:'string',value:'string'}},CampaignInfluenceModel:{type:'CampaignInfluenceModel',props:{isActive:'?boolean',isDefaultModel:'boolean',isModelLocked:'boolean',modelDescription:'?string',name:'string',recordPreference:'?string'},extends:'Metadata'},CampaignSettings:{type:'CampaignSettings',props:{enableAutoCampInfluenceDisabled:'?boolean',enableB2bmaCampaignInfluence2:'?boolean',enableCampaignHistoryTrackEnabled:'?boolean',enableCampaignInfluence2:'?boolean',enableCampaignMemberTWCF:'?boolean',enableSuppressNoValueCI2:'?boolean'},extends:'Metadata'},CanvasMetadata:{type:'CanvasMetadata',props:{accessMethod:'string',canvasOptions:'?string',canvasUrl:'string',lifecycleClass:'?string',locationOptions:'?string',samlInitiationMethod:'?string'},extends:'Metadata'},CaseClassificationSettings:{type:'CaseClassificationSettings',props:{caseClassificationRecommendations:'?boolean',reRunAttributeBasedRules:'?boolean',runAssignmentRules:'?boolean'},extends:'Metadata'},CaseSettings:{type:'CaseSettings',props:{caseAssignNotificationTemplate:'?string',caseAutoProcUser:'?boolean',caseCloseNotificationTemplate:'?string',caseCommentNotificationTemplate:'?string',caseCreateNotificationTemplate:'?string',caseFeedItemSettings:['FeedItemSettings'],caseFeedReadUnreadLtng:'?boolean',caseMergeInLightning:'?boolean',closeCaseThroughStatusChange:'?boolean',defaultCaseFeedLayoutOn:'?boolean',defaultCaseOwner:'?string',defaultCaseOwnerType:'?string',defaultCaseUser:'?string',emailActionDefaultsHandlerClass:'?string',emailToCase:'?EmailToCaseSettings',enableCaseFeed:'?boolean',enableCollapseEmailThread:'?boolean',enableDraftEmails:'?boolean',enableEarlyEscalationRuleTriggers:'?boolean',enableEmailActionDefaultsHandler:'?boolean',enableSuggestedArticlesApplication:'?boolean',enableSuggestedArticlesCustomerPortal:'?boolean',enableSuggestedArticlesPartnerPortal:'?boolean',enableSuggestedSolutions:'?boolean',escalateCaseBefore:'?boolean',genericMessageEnabled:'?boolean',keepRecordTypeOnAssignmentRule:'?boolean',notifyContactOnCaseComment:'?boolean',notifyDefaultCaseOwner:'?boolean',notifyOwnerOnCaseComment:'?boolean',notifyOwnerOnCaseOwnerChange:'?boolean',predictiveSupportEnabled:'?boolean',showEmailAttachmentsInCaseAttachmentsRL:'?boolean',showFewerCloseActions:'?boolean',systemUserEmail:'?string',useSystemEmailAddress:'?boolean',useSystemUserAsDefaultCaseUser:'?boolean',webToCase:'?WebToCaseSettings'},extends:'Metadata'},FeedItemSettings:{type:'FeedItemSettings',props:{characterLimit:'?number',displayFormat:'?string',feedItemType:'string'}},EmailToCaseSettings:{type:'EmailToCaseSettings',props:{enableE2CAttachmentAsFile:'?boolean',enableE2CSourceTracking:'?boolean',enableEmailToCase:'?boolean',enableHtmlEmail:'?boolean',enableOnDemandEmailToCase:'?boolean',enableThreadIDInBody:'?boolean',enableThreadIDInSubject:'?boolean',notifyOwnerOnNewCaseEmail:'?boolean',overEmailLimitAction:'?string',preQuoteSignature:'?boolean',routingAddresses:['EmailToCaseRoutingAddress'],unauthorizedSenderAction:'?string'}},EmailToCaseRoutingAddress:{type:'EmailToCaseRoutingAddress',props:{addressType:'?string',authorizedSenders:'?string',caseOrigin:'?string',caseOwner:'?string',caseOwnerType:'?string',casePriority:'?string',createTask:'?boolean',emailAddress:'?string',emailServicesAddress:'?string',isVerified:'?boolean',routingName:'?string',saveEmailHeaders:'?boolean',taskStatus:'?string'}},WebToCaseSettings:{type:'WebToCaseSettings',props:{caseOrigin:'?string',defaultResponseTemplate:'?string',enableWebToCase:'?boolean'}},CaseSubjectParticle:{type:'CaseSubjectParticle',props:{index:'number',textField:'?string',type:'string'},extends:'Metadata'},ChannelLayout:{type:'ChannelLayout',props:{enabledChannels:['string'],label:'string',layoutItems:['ChannelLayoutItem'],recordType:'?string'},extends:'Metadata'},ChannelLayoutItem:{type:'ChannelLayoutItem',props:{field:'string'}},ChatterAnswersSettings:{type:'ChatterAnswersSettings',props:{emailFollowersOnBestAnswer:'?boolean',emailFollowersOnReply:'?boolean',emailOwnerOnPrivateReply:'?boolean',emailOwnerOnReply:'?boolean',enableAnswerViaEmail:'?boolean',enableChatterAnswers:'boolean',enableFacebookSSO:'?boolean',enableInlinePublisher:'?boolean',enableReputation:'?boolean',enableRichTextEditor:'?boolean',facebookAuthProvider:'?string',showInPortals:'?boolean'},extends:'Metadata'},ChatterEmailsMDSettings:{type:'ChatterEmailsMDSettings',props:{enableChatterDigestEmailsApiOnly:'?boolean',enableChatterEmailAttachment:'?boolean',enableCollaborationEmail:'?boolean',enableDisplayAppDownloadBadges:'?boolean',enableEmailReplyToChatter:'?boolean',enableEmailToChatter:'?boolean'},extends:'Metadata'},ChatterExtension:{type:'ChatterExtension',props:{compositionComponent:'string',description:'string',extensionName:'string',headerText:'?string',hoverText:'?string',icon:'string',isProtected:'?boolean',masterLabel:'string',renderComponent:'string',type:'string'},extends:'Metadata'},ChatterSettings:{type:'ChatterSettings',props:{allowChatterGroupArchiving:'?boolean',allowRecordsInChatterGroup:'?boolean',allowSharingInChatterGroup:'?boolean',enableApprovalRequest:'?boolean',enableChatter:'?boolean',enableChatterEmoticons:'?boolean',enableFeedEdit:'?boolean',enableFeedPinning:'?boolean',enableFeedsDraftPosts:'?boolean',enableFeedsRichText:'?boolean',enableInviteCsnUsers:'?boolean',enableOutOfOfficeEnabledPref:'?boolean',enableRichLinkPreviewsInFeed:'?boolean',enableTodayRecsInFeed:'?boolean',unlistedGroupsEnabled:'?boolean'},extends:'Metadata'},CleanDataService:{type:'CleanDataService',props:{cleanRules:['CleanRule'],description:'string',masterLabel:'string',matchEngine:'string'},extends:'Metadata'},CleanRule:{type:'CleanRule',props:{bulkEnabled:'boolean',bypassTriggers:'boolean',bypassWorkflow:'boolean',description:'string',developerName:'string',fieldMappings:['FieldMapping'],masterLabel:'string',matchRule:'string',sourceSobjectType:'string',status:'string',targetSobjectType:'string'}},FieldMapping:{type:'FieldMapping',props:{SObjectType:'string',developerName:'string',fieldMappingRows:['FieldMappingRow'],masterLabel:'string'}},FieldMappingRow:{type:'FieldMappingRow',props:{SObjectType:'string',fieldMappingFields:['FieldMappingField'],fieldName:'string',mappingOperation:'string'}},FieldMappingField:{type:'FieldMappingField',props:{dataServiceField:'string',dataServiceObjectName:'string',priority:'number'}},CommandAction:{type:'CommandAction',props:{actionType:'string',description:'?string',intents:['CommandActionIntent'],label:'string',parameters:['CommandActionParam'],responseTemplates:['CommandActionResponse'],target:'?string'},extends:'Metadata'},CommandActionIntent:{type:'CommandActionIntent',props:{phrase:'string',responseTemplates:['CommandActionResponse']}},CommandActionResponse:{type:'CommandActionResponse',props:{template:'string'}},CommandActionParam:{type:'CommandActionParam',props:{defaultValue:'?string',description:'?string',name:'string',required:'?boolean',type:'string'}},CommunitiesSettings:{type:'CommunitiesSettings',props:{canModerateAllFeedPosts:'?boolean',canModerateInternalFeedPosts:'?boolean',embeddedVisualforcePages:'?boolean',enableCommunityWorkspaces:'?boolean',enableCspContactVisibilityPref:'?boolean',enableCspNotesOnAccConPref:'?boolean',enableEnablePRM:'?boolean',enableExternalAccHierPref:'?boolean',enableGuestRecordReassignOrgPref:'?boolean',enableInviteChatterGuestEnabled:'?boolean',enableNetPortalUserReportOpts:'?boolean',enableNetworksEnabled:'?boolean',enableOotbProfExtUserOpsEnable:'?boolean',enablePRMAccRelPref:'?boolean',enablePowerCustomerCaseStatus:'?boolean',enableRelaxPartnerAccountFieldPref:'?boolean',enableUsernameUniqForOrgPref:'?boolean'},extends:'Metadata'},Community:{type:'Community',props:{active:'?boolean',chatterAnswersFacebookSsoUrl:'?string',communityFeedPage:'?string',dataCategoryName:'?string',description:'?string',emailFooterDocument:'?string',emailHeaderDocument:'?string',emailNotificationUrl:'?string',enableChatterAnswers:'?boolean',enablePrivateQuestions:'?boolean',expertsGroup:'?string',portal:'?string',reputationLevels:'?ReputationLevels',showInPortal:'?boolean',site:'?string'},extends:'Metadata'},ReputationLevels:{type:'ReputationLevels',props:{chatterAnswersReputationLevels:['ChatterAnswersReputationLevel'],ideaReputationLevels:['IdeaReputationLevel']}},ChatterAnswersReputationLevel:{type:'ChatterAnswersReputationLevel',props:{name:'string',value:'number'}},IdeaReputationLevel:{type:'IdeaReputationLevel',props:{name:'string',value:'number'}},CommunityTemplateDefinition:{type:'CommunityTemplateDefinition',props:{baseTemplate:'?string',bundlesInfo:['CommunityTemplateBundleInfo'],category:'string',defaultBrandingSet:'?string',defaultThemeDefinition:'string',description:'?string',enableExtendedCleanUpOnDelete:'?boolean',masterLabel:'string',navigationLinkSet:['NavigationLinkSet'],pageSetting:['CommunityTemplatePageSetting'],publisher:'?string'},extends:'Metadata'},CommunityTemplateBundleInfo:{type:'CommunityTemplateBundleInfo',props:{description:'?string',image:'?string',order:'number',title:'string',type:'string'}},CommunityThemeBundleInfo:{type:'CommunityThemeBundleInfo',props:{},extends:'CommunityTemplateBundleInfo'},NavigationLinkSet:{type:'NavigationLinkSet',props:{navigationMenuItem:['NavigationMenuItem']}},NavigationMenuItem:{type:'NavigationMenuItem',props:{defaultListViewId:'?string',label:'string',menuItemBranding:'?NavigationMenuItemBranding',position:'number',publiclyAvailable:'?boolean',subMenu:'?NavigationSubMenu',target:'?string',targetPreference:'?string',type:'string'}},NavigationMenuItemBranding:{type:'NavigationMenuItemBranding',props:{tileImage:'?string'}},NavigationSubMenu:{type:'NavigationSubMenu',props:{navigationMenuItem:['NavigationMenuItem']}},CommunityTemplatePageSetting:{type:'CommunityTemplatePageSetting',props:{page:'string',themeLayout:'string'}},CommunityThemeDefinition:{type:'CommunityThemeDefinition',props:{bundlesInfo:['CommunityThemeBundleInfo'],customThemeLayoutType:['CommunityCustomThemeLayoutType'],defaultBrandingSet:'?string',description:'?string',enableExtendedCleanUpOnDelete:'?boolean',masterLabel:'string',publisher:'?string',themeRouteOverride:['CommunityThemeRouteOverride'],themeSetting:['CommunityThemeSetting']},extends:'Metadata'},CommunityCustomThemeLayoutType:{type:'CommunityCustomThemeLayoutType',props:{description:'?string',label:'string'}},CommunityThemeRouteOverride:{type:'CommunityThemeRouteOverride',props:{customThemeLayoutType:'?string',pageAttributes:'string',pageType:'string',themeLayoutType:'?string'}},CommunityThemeSetting:{type:'CommunityThemeSetting',props:{customThemeLayoutType:'?string',themeLayout:'string',themeLayoutType:'?string'}},CompactLayout:{type:'CompactLayout',props:{fields:['string'],label:'string'},extends:'Metadata'},CompanySettings:{type:'CompanySettings',props:{enableCustomFiscalYear:'boolean',fiscalYear:'?FiscalYearSettings'},extends:'Metadata'},FiscalYearSettings:{type:'FiscalYearSettings',props:{fiscalYearNameBasedOn:'?string',startMonth:'?string'}},ConnectedApp:{type:'ConnectedApp',props:{attributes:['ConnectedAppAttribute'],canvas:'?CanvasMetadata',canvasConfig:'?ConnectedAppCanvasConfig',contactEmail:'string',contactPhone:'?string',description:'?string',iconUrl:'?string',infoUrl:'?string',ipRanges:['ConnectedAppIpRange'],label:'string',logoUrl:'?string',mobileAppConfig:'?ConnectedAppMobileDetailConfig',mobileStartUrl:'?string',oauthConfig:'?ConnectedAppOauthConfig',permissionSetName:['string'],plugin:'?string',pluginExecutionUser:'?string',profileName:['string'],samlConfig:'?ConnectedAppSamlConfig',startUrl:'?string'},extends:'Metadata'},ConnectedAppAttribute:{type:'ConnectedAppAttribute',props:{formula:'string',key:'string'}},ConnectedAppCanvasConfig:{type:'ConnectedAppCanvasConfig',props:{accessMethod:'string',canvasUrl:'string',lifecycleClass:'?string',locations:['string'],options:['string'],samlInitiationMethod:'?string'}},ConnectedAppIpRange:{type:'ConnectedAppIpRange',props:{description:'?string',end:'string',start:'string'}},ConnectedAppMobileDetailConfig:{type:'ConnectedAppMobileDetailConfig',props:{applicationBinaryFile:'?string',applicationBinaryFileName:'?string',applicationBundleIdentifier:'?string',applicationFileLength:'?number',applicationIconFile:'?string',applicationIconFileName:'?string',applicationInstallUrl:'?string',devicePlatform:'string',deviceType:'?string',minimumOsVersion:'?string',privateApp:'?boolean',version:'string'}},ConnectedAppOauthConfig:{type:'ConnectedAppOauthConfig',props:{callbackUrl:'string',certificate:'?string',consumerKey:'?string',consumerSecret:'?string',idTokenConfig:'?ConnectedAppOauthIdToken',isAdminApproved:'?boolean',scopes:['string'],singleLogoutUrl:'?string'}},ConnectedAppOauthIdToken:{type:'ConnectedAppOauthIdToken',props:{idTokenAudience:'?string',idTokenIncludeAttributes:'?boolean',idTokenIncludeCustomPerms:'?boolean',idTokenIncludeStandardClaims:'?boolean',idTokenValidity:'?number'}},ConnectedAppSamlConfig:{type:'ConnectedAppSamlConfig',props:{acsUrl:'string',certificate:'?string',encryptionCertificate:'?string',encryptionType:'?string',entityUrl:'string',issuer:'?string',samlIdpSLOBindingEnum:'?string',samlNameIdFormat:'?string',samlSloUrl:'?string',samlSubjectCustomAttr:'?string',samlSubjectType:'string'}},ConnectedAppSettings:{type:'ConnectedAppSettings',props:{enableAdminApprovedAppsOnly:'?boolean',enableSkipUserProvisioningWizardWelcomePage:'?boolean'},extends:'Metadata'},ContentSettings:{type:'ContentSettings',props:{enableChatterFileLink:'?boolean',enableContent:'?boolean',enableContentAutoAssign:'?boolean',enableContentDistForPortalUsers:'?boolean',enableContentDistPwOptionsBit1:'?boolean',enableContentDistPwOptionsBit2:'?boolean',enableContentDistribution:'?boolean',enableContentSupportMultiLanguage:'?boolean',enableContentWorkspaceAccess:'?boolean',enableFileShareSetByRecord:'?boolean',enableFilesUsrShareNetRestricted:'?boolean',enableJPGPreviews:'?boolean',enableLibraryManagedFiles:'?boolean',enableSiteGuestUserToUploadFiles:'?boolean',enableUploadFilesOnAttachments:'?boolean',skipContentAssetTriggers:'?boolean',skipContentAssetTriggersOnDeploy:'?boolean'},extends:'Metadata'},ContractSettings:{type:'ContractSettings',props:{autoCalculateEndDate:'?boolean',autoExpirationDelay:'?string',autoExpirationRecipient:'?string',autoExpireContracts:'?boolean',enableContractHistoryTracking:'?boolean',notifyOwnersOnContractExpiration:'?boolean'},extends:'Metadata'},CorsWhitelistOrigin:{type:'CorsWhitelistOrigin',props:{urlPattern:'string'},extends:'Metadata'},CspTrustedSite:{type:'CspTrustedSite',props:{context:'?string',description:'?string',endpointUrl:'string',isActive:'boolean'},extends:'Metadata'},CurrencySettings:{type:'CurrencySettings',props:{enableCurrencyEffectiveDates:'?boolean',enableCurrencySymbolWithMultiCurrency:'?boolean',enableMultiCurrency:'?boolean',isMultiCurrencyActivationAllowed:'?boolean',isParenCurrencyConvDisabled:'?boolean'},extends:'Metadata'},CustomApplication:{type:'CustomApplication',props:{actionOverrides:['AppActionOverride'],brand:'?AppBrand',consoleConfig:'?ServiceCloudConsoleConfig',defaultLandingTab:'?string',description:'?string',formFactors:['string'],isNavAutoTempTabsDisabled:'?boolean',isNavPersonalizationDisabled:'?boolean',isServiceCloudConsole:'?boolean',label:'?string',logo:'?string',navType:'?string',preferences:'?AppPreferences',profileActionOverrides:['AppProfileActionOverride'],setupExperience:'?string',subscriberTabs:['string'],tabs:['string'],uiType:'?string',utilityBar:'?string',workspaceConfig:'?AppWorkspaceConfig'},extends:'Metadata'},AppActionOverride:{type:'AppActionOverride',props:{pageOrSobjectType:'string'},extends:'ActionOverride'},ActionOverride:{type:'ActionOverride',props:{actionName:'?string',comment:'?string',content:'?string',formFactor:'?string',skipRecordTypeSelect:'?boolean',type:'?string'}},AppBrand:{type:'AppBrand',props:{footerColor:'?string',headerColor:'?string',logo:'?string',logoVersion:'?number',shouldOverrideOrgTheme:'?boolean'}},ServiceCloudConsoleConfig:{type:'ServiceCloudConsoleConfig',props:{componentList:'?AppComponentList',detailPageRefreshMethod:'string',footerColor:'?string',headerColor:'?string',keyboardShortcuts:'KeyboardShortcuts',listPlacement:'ListPlacement',listRefreshMethod:'string',liveAgentConfig:'?LiveAgentConfig',primaryTabColor:'?string',pushNotifications:['PushNotification'],tabLimitConfig:'?TabLimitConfig',whitelistedDomains:['string']}},AppComponentList:{type:'AppComponentList',props:{alignment:'string',components:['string']}},KeyboardShortcuts:{type:'KeyboardShortcuts',props:{customShortcuts:['CustomShortcut'],defaultShortcuts:['DefaultShortcut']}},CustomShortcut:{type:'CustomShortcut',props:{description:'?string',eventName:'string'},extends:'DefaultShortcut'},DefaultShortcut:{type:'DefaultShortcut',props:{action:'string',active:'boolean',keyCommand:'string'}},ListPlacement:{type:'ListPlacement',props:{height:'?number',location:'string',units:'?string',width:'?number'}},LiveAgentConfig:{type:'LiveAgentConfig',props:{enableLiveChat:'?boolean',openNewAccountSubtab:'?boolean',openNewCaseSubtab:'?boolean',openNewContactSubtab:'?boolean',openNewLeadSubtab:'?boolean',openNewVFPageSubtab:'?boolean',pageNamesToOpen:['string'],showKnowledgeArticles:'?boolean'}},PushNotification:{type:'PushNotification',props:{fieldNames:['string'],objectName:'string'}},TabLimitConfig:{type:'TabLimitConfig',props:{maxNumberOfPrimaryTabs:'?string',maxNumberOfSubTabs:'?string'}},AppPreferences:{type:'AppPreferences',props:{enableCustomizeMyTabs:'boolean',enableKeyboardShortcuts:'boolean',enableListViewHover:'boolean',enableListViewReskin:'boolean',enableMultiMonitorComponents:'boolean',enablePinTabs:'boolean',enableTabHover:'boolean',enableTabLimits:'boolean',saveUserSessions:'boolean'}},AppProfileActionOverride:{type:'AppProfileActionOverride',props:{profile:'string'},extends:'ProfileActionOverride'},ProfileActionOverride:{type:'ProfileActionOverride',props:{actionName:'string',content:'?string',formFactor:'string',pageOrSobjectType:'string',recordType:'?string',type:'string'}},AppWorkspaceConfig:{type:'AppWorkspaceConfig',props:{mappings:['WorkspaceMapping']}},WorkspaceMapping:{type:'WorkspaceMapping',props:{fieldName:'?string',tab:'string'}},CustomApplicationComponent:{type:'CustomApplicationComponent',props:{buttonIconUrl:'?string',buttonStyle:'?string',buttonText:'?string',buttonWidth:'?number',height:'?number',isHeightFixed:'boolean',isHidden:'boolean',isWidthFixed:'boolean',visualforcePage:'string',width:'?number'},extends:'Metadata'},CustomFeedFilter:{type:'CustomFeedFilter',props:{criteria:['FeedFilterCriterion'],description:'?string',isProtected:'?boolean',label:'string'},extends:'Metadata'},FeedFilterCriterion:{type:'FeedFilterCriterion',props:{feedItemType:'string',feedItemVisibility:'?string',relatedSObjectType:'?string'}},CustomField:{type:'CustomField',props:{businessOwnerGroup:'?string',businessOwnerUser:'?string',businessStatus:'?string',caseSensitive:'?boolean',complianceGroup:'?string',customDataType:'?string',defaultValue:'?string',deleteConstraint:'?string',deprecated:'?boolean',description:'?string',displayFormat:'?string',encryptionScheme:'?string',escapeMarkup:'?boolean',externalDeveloperName:'?string',externalId:'?boolean',fieldManageability:'?string',formula:'?string',formulaTreatBlanksAs:'?string',inlineHelpText:'?string',isAIPredictionField:'?boolean',isConvertLeadDisabled:'?boolean',isFilteringDisabled:'?boolean',isNameField:'?boolean',isSortingDisabled:'?boolean',label:'?string',length:'?number',lookupFilter:'?LookupFilter',maskChar:'?string',maskType:'?string',metadataRelationshipControllingField:'?string',populateExistingRows:'?boolean',precision:'?number',referenceTargetField:'?string',referenceTo:'?string',relationshipLabel:'?string',relationshipName:'?string',relationshipOrder:'?number',reparentableMasterDetail:'?boolean',required:'?boolean',restrictedAdminField:'?boolean',scale:'?number',securityClassification:'?string',startingNumber:'?number',stripMarkup:'?boolean',summarizedField:'?string',summaryFilterItems:['FilterItem'],summaryForeignKey:'?string',summaryOperation:'?string',trackFeedHistory:'?boolean',trackHistory:'?boolean',trackTrending:'?boolean',translateData:'?boolean',type:'?string',unique:'?boolean',valueSet:'?ValueSet',visibleLines:'?number',writeRequiresMasterRead:'?boolean'},extends:'Metadata'},LookupFilter:{type:'LookupFilter',props:{active:'boolean',booleanFilter:'?string',description:'?string',errorMessage:'?string',filterItems:['FilterItem'],infoMessage:'?string',isOptional:'boolean'}},ValueSet:{type:'ValueSet',props:{controllingField:'?string',restricted:'?boolean',valueSetDefinition:'?ValueSetValuesDefinition',valueSetName:'?string',valueSettings:['ValueSettings']}},ValueSetValuesDefinition:{type:'ValueSetValuesDefinition',props:{sorted:'boolean',value:['CustomValue']}},CustomValue:{type:'CustomValue',props:{color:'?string',default:'boolean',description:'?string',isActive:'?boolean',label:'?string'},extends:'Metadata'},StandardValue:{type:'StandardValue',props:{allowEmail:'?boolean',closed:'?boolean',converted:'?boolean',cssExposed:'?boolean',forecastCategory:'?string',groupingString:'?string',highPriority:'?boolean',probability:'?number',reverseRole:'?string',reviewed:'?boolean',won:'?boolean'},extends:'CustomValue'},ValueSettings:{type:'ValueSettings',props:{controllingFieldValue:['string'],valueName:'string'}},CustomHelpMenuSection:{type:'CustomHelpMenuSection',props:{customHelpMenuItems:['CustomHelpMenuItem'],masterLabel:'string'},extends:'Metadata'},CustomHelpMenuItem:{type:'CustomHelpMenuItem',props:{linkUrl:'string',masterLabel:'string',sortOrder:'number'}},CustomLabel:{type:'CustomLabel',props:{categories:'?string',language:'string',protected:'boolean',shortDescription:'string',value:'string'},extends:'Metadata'},CustomLabels:{type:'CustomLabels',props:{labels:['CustomLabel']},extends:'Metadata'},CustomMetadata:{type:'CustomMetadata',props:{description:'?string',label:'?string',protected:'?boolean',values:['CustomMetadataValue']},extends:'Metadata'},CustomMetadataValue:{type:'CustomMetadataValue',props:{field:'string',value:'?any'}},CustomNotificationType:{type:'CustomNotificationType',props:{customNotifTypeName:'string',description:'?string',desktop:'boolean',masterLabel:'string',mobile:'boolean'},extends:'Metadata'},CustomObject:{type:'CustomObject',props:{actionOverrides:['ActionOverride'],allowInChatterGroups:'?boolean',articleTypeChannelDisplay:'?ArticleTypeChannelDisplay',businessProcesses:['BusinessProcess'],compactLayoutAssignment:'?string',compactLayouts:['CompactLayout'],customHelp:'?string',customHelpPage:'?string',customSettingsType:'?string',deploymentStatus:'?string',deprecated:'?boolean',description:'?string',enableActivities:'?boolean',enableBulkApi:'?boolean',enableDataTranslation:'?boolean',enableDivisions:'?boolean',enableEnhancedLookup:'?boolean',enableFeeds:'?boolean',enableHistory:'?boolean',enableLicensing:'?boolean',enableReports:'?boolean',enableSearch:'?boolean',enableSharing:'?boolean',enableStreamingApi:'?boolean',eventType:'?string',externalDataSource:'?string',externalName:'?string',externalRepository:'?string',externalSharingModel:'?string',fieldSets:['FieldSet'],fields:['CustomField'],gender:'?string',historyRetentionPolicy:'?HistoryRetentionPolicy',household:'?boolean',indexes:['Index'],label:'?string',listViews:['ListView'],nameField:'?CustomField',pluralLabel:'?string',profileSearchLayouts:['ProfileSearchLayouts'],publishBehavior:'?string',recordTypeTrackFeedHistory:'?boolean',recordTypeTrackHistory:'?boolean',recordTypes:['RecordType'],searchLayouts:'?SearchLayouts',sharingModel:'?string',sharingReasons:['SharingReason'],sharingRecalculations:['SharingRecalculation'],startsWith:'?string',validationRules:['ValidationRule'],visibility:'?string',webLinks:['WebLink']},extends:'Metadata'},ArticleTypeChannelDisplay:{type:'ArticleTypeChannelDisplay',props:{articleTypeTemplates:['ArticleTypeTemplate']}},ArticleTypeTemplate:{type:'ArticleTypeTemplate',props:{channel:'string',page:'?string',template:'string'}},FieldSet:{type:'FieldSet',props:{availableFields:['FieldSetItem'],description:'string',displayedFields:['FieldSetItem'],label:'string'},extends:'Metadata'},FieldSetItem:{type:'FieldSetItem',props:{field:'?string',isFieldManaged:'?boolean',isRequired:'?boolean'}},HistoryRetentionPolicy:{type:'HistoryRetentionPolicy',props:{archiveAfterMonths:'number',archiveRetentionYears:'number',description:'?string'}},Index:{type:'Index',props:{fields:['IndexField'],label:'string'},extends:'Metadata'},IndexField:{type:'IndexField',props:{name:'string',sortDirection:'string'}},ListView:{type:'ListView',props:{booleanFilter:'?string',columns:['string'],division:'?string',filterScope:'string',filters:['ListViewFilter'],label:'string',language:'?string',queue:'?string',sharedTo:'?SharedTo'},extends:'Metadata'},ListViewFilter:{type:'ListViewFilter',props:{field:'string',operation:'string',value:'?string'}},SharedTo:{type:'SharedTo',props:{allCustomerPortalUsers:'?string',allInternalUsers:'?string',allPartnerUsers:'?string',channelProgramGroup:['string'],channelProgramGroups:['string'],group:['string'],groups:['string'],guestUser:['string'],managerSubordinates:['string'],managers:['string'],portalRole:['string'],portalRoleAndSubordinates:['string'],queue:['string'],role:['string'],roleAndSubordinates:['string'],roleAndSubordinatesInternal:['string'],roles:['string'],rolesAndSubordinates:['string'],territories:['string'],territoriesAndSubordinates:['string'],territory:['string'],territoryAndSubordinates:['string']}},ProfileSearchLayouts:{type:'ProfileSearchLayouts',props:{fields:['string'],profileName:'?string'}},RecordType:{type:'RecordType',props:{active:'boolean',businessProcess:'?string',compactLayoutAssignment:'?string',description:'?string',label:'string',picklistValues:['RecordTypePicklistValue']},extends:'Metadata'},RecordTypePicklistValue:{type:'RecordTypePicklistValue',props:{picklist:'string',values:['PicklistValue']}},SearchLayouts:{type:'SearchLayouts',props:{customTabListAdditionalFields:['string'],excludedStandardButtons:['string'],listViewButtons:['string'],lookupDialogsAdditionalFields:['string'],lookupFilterFields:['string'],lookupPhoneDialogsAdditionalFields:['string'],massQuickActions:['string'],searchFilterFields:['string'],searchResultsAdditionalFields:['string'],searchResultsCustomButtons:['string']}},SharingReason:{type:'SharingReason',props:{label:'string'},extends:'Metadata'},SharingRecalculation:{type:'SharingRecalculation',props:{className:'string'}},ValidationRule:{type:'ValidationRule',props:{active:'boolean',description:'?string',errorConditionFormula:'string',errorDisplayField:'?string',errorMessage:'string'},extends:'Metadata'},WebLink:{type:'WebLink',props:{availability:'string',description:'?string',displayType:'string',encodingKey:'?string',hasMenubar:'?boolean',hasScrollbars:'?boolean',hasToolbar:'?boolean',height:'?number',isResizable:'?boolean',linkType:'string',masterLabel:'?string',openType:'string',page:'?string',position:'?string',protected:'boolean',requireRowSelection:'?boolean',scontrol:'?string',showsLocation:'?boolean',showsStatus:'?boolean',url:'?string',width:'?number'},extends:'Metadata'},CustomObjectTranslation:{type:'CustomObjectTranslation',props:{caseValues:['ObjectNameCaseValue'],fieldSets:['FieldSetTranslation'],fields:['CustomFieldTranslation'],gender:'?string',layouts:['LayoutTranslation'],nameFieldLabel:'?string',quickActions:['QuickActionTranslation'],recordTypes:['RecordTypeTranslation'],sharingReasons:['SharingReasonTranslation'],standardFields:['StandardFieldTranslation'],startsWith:'?string',validationRules:['ValidationRuleTranslation'],webLinks:['WebLinkTranslation'],workflowTasks:['WorkflowTaskTranslation']},extends:'Metadata'},ObjectNameCaseValue:{type:'ObjectNameCaseValue',props:{article:'?string',caseType:'?string',plural:'?boolean',possessive:'?string',value:'string'}},FieldSetTranslation:{type:'FieldSetTranslation',props:{label:'string',name:'string'}},CustomFieldTranslation:{type:'CustomFieldTranslation',props:{caseValues:['ObjectNameCaseValue'],gender:'?string',help:'?string',label:'?string',lookupFilter:'?LookupFilterTranslation',name:'string',picklistValues:['PicklistValueTranslation'],relationshipLabel:'?string',startsWith:'?string'}},LookupFilterTranslation:{type:'LookupFilterTranslation',props:{errorMessage:'string',informationalMessage:'string'}},PicklistValueTranslation:{type:'PicklistValueTranslation',props:{masterLabel:'string',translation:'?string'}},LayoutTranslation:{type:'LayoutTranslation',props:{layout:'string',layoutType:'?string',sections:['LayoutSectionTranslation']}},LayoutSectionTranslation:{type:'LayoutSectionTranslation',props:{label:'string',section:'string'}},QuickActionTranslation:{type:'QuickActionTranslation',props:{label:'string',name:'string'}},RecordTypeTranslation:{type:'RecordTypeTranslation',props:{description:'?string',label:'string',name:'string'}},SharingReasonTranslation:{type:'SharingReasonTranslation',props:{label:'string',name:'string'}},StandardFieldTranslation:{type:'StandardFieldTranslation',props:{label:'?string',name:'string'}},ValidationRuleTranslation:{type:'ValidationRuleTranslation',props:{errorMessage:'string',name:'string'}},WebLinkTranslation:{type:'WebLinkTranslation',props:{label:'string',name:'string'}},WorkflowTaskTranslation:{type:'WorkflowTaskTranslation',props:{description:'?string',name:'string',subject:'?string'}},CustomPageWebLink:{type:'CustomPageWebLink',props:{availability:'string',description:'?string',displayType:'string',encodingKey:'?string',hasMenubar:'?boolean',hasScrollbars:'?boolean',hasToolbar:'?boolean',height:'?number',isResizable:'?boolean',linkType:'string',masterLabel:'?string',openType:'string',page:'?string',position:'?string',protected:'boolean',requireRowSelection:'?boolean',scontrol:'?string',showsLocation:'?boolean',showsStatus:'?boolean',url:'?string',width:'?number'},extends:'Metadata'},CustomPermission:{type:'CustomPermission',props:{connectedApp:'?string',description:'?string',label:'string',requiredPermission:['CustomPermissionDependencyRequired']},extends:'Metadata'},CustomPermissionDependencyRequired:{type:'CustomPermissionDependencyRequired',props:{customPermission:'string',dependency:'boolean'}},CustomSite:{type:'CustomSite',props:{active:'boolean',allowHomePage:'boolean',allowStandardAnswersPages:'?boolean',allowStandardIdeasPages:'boolean',allowStandardLookups:'boolean',allowStandardPortalPages:'boolean',allowStandardSearch:'boolean',analyticsTrackingCode:'?string',authorizationRequiredPage:'?string',bandwidthExceededPage:'?string',browserXssProtection:'boolean',changePasswordPage:'?string',chatterAnswersForgotPasswordConfirmPage:'?string',chatterAnswersForgotPasswordPage:'?string',chatterAnswersHelpPage:'?string',chatterAnswersLoginPage:'?string',chatterAnswersRegistrationPage:'?string',clickjackProtectionLevel:'string',contentSniffingProtection:'boolean',cspUpgradeInsecureRequests:'boolean',customWebAddresses:['SiteWebAddress'],description:'?string',enableAuraRequests:'?boolean',favoriteIcon:'?string',fileNotFoundPage:'?string',forgotPasswordPage:'?string',genericErrorPage:'?string',guestProfile:'?string',inMaintenancePage:'?string',inactiveIndexPage:'?string',indexPage:'string',masterLabel:'string',myProfilePage:'?string',portal:'?string',referrerPolicyOriginWhenCrossOrigin:'boolean',requireHttps:'boolean',requireInsecurePortalAccess:'boolean',robotsTxtPage:'?string',rootComponent:'?string',selfRegPage:'?string',serverIsDown:'?string',siteAdmin:'?string',siteRedirectMappings:['SiteRedirectMapping'],siteTemplate:'?string',siteType:'string',subdomain:'?string',urlPathPrefix:'?string'},extends:'Metadata'},SiteWebAddress:{type:'SiteWebAddress',props:{certificate:'?string',domainName:'string',primary:'boolean'}},SiteRedirectMapping:{type:'SiteRedirectMapping',props:{action:'string',isActive:'?boolean',source:'string',target:'string'}},CustomTab:{type:'CustomTab',props:{actionOverrides:['ActionOverride'],auraComponent:'?string',customObject:'?boolean',description:'?string',flexiPage:'?string',frameHeight:'?number',hasSidebar:'?boolean',icon:'?string',label:'?string',lwcComponent:'?string',motif:'?string',page:'?string',scontrol:'?string',splashPageLink:'?string',url:'?string',urlEncodingKey:'?string'},extends:'Metadata'},Dashboard:{type:'Dashboard',props:{backgroundEndColor:'string',backgroundFadeDirection:'string',backgroundStartColor:'string',chartTheme:'?string',colorPalette:'?string',dashboardChartTheme:'?string',dashboardColorPalette:'?string',dashboardFilters:['DashboardFilter'],dashboardGridLayout:'?DashboardGridLayout',dashboardResultRefreshedDate:'?string',dashboardResultRunningUser:'?string',dashboardType:'?string',description:'?string',folderName:'?string',isGridLayout:'?boolean',leftSection:'?DashboardComponentSection',middleSection:'?DashboardComponentSection',numSubscriptions:'?number',rightSection:'?DashboardComponentSection',runningUser:'?string',textColor:'string',title:'string',titleColor:'string',titleSize:'number'},extends:'Metadata'},DashboardFilter:{type:'DashboardFilter',props:{dashboardFilterOptions:['DashboardFilterOption'],name:'string'}},DashboardFilterOption:{type:'DashboardFilterOption',props:{operator:'string',values:['string']}},DashboardGridLayout:{type:'DashboardGridLayout',props:{dashboardGridComponents:['DashboardGridComponent'],numberOfColumns:'number',rowHeight:'number'}},DashboardGridComponent:{type:'DashboardGridComponent',props:{colSpan:'number',columnIndex:'number',dashboardComponent:'DashboardComponent',rowIndex:'number',rowSpan:'number'}},DashboardComponent:{type:'DashboardComponent',props:{autoselectColumnsFromReport:'?boolean',chartAxisRange:'?string',chartAxisRangeMax:'?number',chartAxisRangeMin:'?number',chartSummary:['ChartSummary'],componentChartTheme:'?string',componentType:'string',dashboardFilterColumns:['DashboardFilterColumn'],dashboardTableColumn:['DashboardTableColumn'],decimalPrecision:'?number',displayUnits:'?string',drillDownUrl:'?string',drillEnabled:'?boolean',drillToDetailEnabled:'?boolean',enableHover:'?boolean',expandOthers:'?boolean',flexComponentProperties:'?DashboardFlexTableComponentProperties',footer:'?string',gaugeMax:'?number',gaugeMin:'?number',groupingColumn:['string'],groupingSortProperties:'?DashboardComponentGroupingSortProperties',header:'?string',indicatorBreakpoint1:'?number',indicatorBreakpoint2:'?number',indicatorHighColor:'?string',indicatorLowColor:'?string',indicatorMiddleColor:'?string',legendPosition:'?string',maxValuesDisplayed:'?number',metricLabel:'?string',page:'?string',pageHeightInPixels:'?number',report:'?string',scontrol:'?string',scontrolHeightInPixels:'?number',showPercentage:'?boolean',showPicturesOnCharts:'?boolean',showPicturesOnTables:'?boolean',showRange:'?boolean',showTotal:'?boolean',showValues:'?boolean',sortBy:'?string',title:'?string',useReportChart:'?boolean'}},ChartSummary:{type:'ChartSummary',props:{aggregate:'?string',axisBinding:'?string',column:'string'}},DashboardFilterColumn:{type:'DashboardFilterColumn',props:{column:'string'}},DashboardTableColumn:{type:'DashboardTableColumn',props:{aggregateType:'?string',calculatePercent:'?boolean',column:'string',decimalPlaces:'?number',showSubTotal:'?boolean',showTotal:'?boolean',sortBy:'?string'}},DashboardFlexTableComponentProperties:{type:'DashboardFlexTableComponentProperties',props:{decimalPrecision:'?number',flexTableColumn:['DashboardComponentColumn'],flexTableSortInfo:'?DashboardComponentSortInfo',hideChatterPhotos:'?boolean'}},DashboardComponentColumn:{type:'DashboardComponentColumn',props:{breakPoint1:'?number',breakPoint2:'?number',breakPointOrder:'?number',highRangeColor:'?number',lowRangeColor:'?number',midRangeColor:'?number',reportColumn:'string',showSubTotal:'?boolean',showTotal:'?boolean',type:'string'}},DashboardComponentSortInfo:{type:'DashboardComponentSortInfo',props:{sortColumn:'?string',sortOrder:'?string'}},DashboardComponentGroupingSortProperties:{type:'DashboardComponentGroupingSortProperties',props:{groupingSorts:['DashboardComponentGroupingSort']}},DashboardComponentGroupingSort:{type:'DashboardComponentGroupingSort',props:{groupingLevel:'string',inheritedReportGroupingSort:'?string',sortColumn:'?string',sortOrder:'?string'}},DashboardComponentSection:{type:'DashboardComponentSection',props:{columnSize:'string',components:['DashboardComponent']}},DataCategoryGroup:{type:'DataCategoryGroup',props:{active:'boolean',dataCategory:'DataCategory',description:'?string',label:'string',objectUsage:'?ObjectUsage'},extends:'Metadata'},DataCategory:{type:'DataCategory',props:{dataCategory:['DataCategory'],label:'string',name:'string'}},ObjectUsage:{type:'ObjectUsage',props:{object:['string']}},DataDotComSettings:{type:'DataDotComSettings',props:{enableAccountExportButtonOff:'?boolean',enableAccountImportButtonOff:'?boolean',enableAllowDupeContactFromLead:'?boolean',enableAllowDupeLeadFromContact:'?boolean',enableCleanUpgradeRequested:'?boolean',enableContactExportButtonOff:'?boolean',enableContactImportButtonOff:'?boolean'},extends:'Metadata'},DelegateGroup:{type:'DelegateGroup',props:{customObjects:['string'],groups:['string'],label:'string',loginAccess:'boolean',permissionSets:['string'],profiles:['string'],roles:['string']},extends:'Metadata'},DeploymentSettings:{type:'DeploymentSettings',props:{doesSkipAsyncApexValidation:'?boolean'},extends:'Metadata'},DevHubSettings:{type:'DevHubSettings',props:{enableShapeExportPref:'?boolean'},extends:'Metadata'},DiscoverySettings:{type:'DiscoverySettings',props:{enableEinsteinAnswersPref:'?boolean'},extends:'Metadata'},DocumentType:{type:'DocumentType',props:{description:'string',isActive:'boolean',masterLabel:'string'},extends:'Metadata'},DuplicateRule:{type:'DuplicateRule',props:{actionOnInsert:'string',actionOnUpdate:'string',alertText:'?string',description:'?string',duplicateRuleFilter:'?DuplicateRuleFilter',duplicateRuleMatchRules:['?','DuplicateRuleMatchRule'],isActive:'boolean',masterLabel:'string',operationsOnInsert:['string'],operationsOnUpdate:['string'],securityOption:'string',sortOrder:'number'},extends:'Metadata'},DuplicateRuleFilter:{type:'DuplicateRuleFilter',props:{booleanFilter:'?string',duplicateRuleFilterItems:['DuplicateRuleFilterItem']}},DuplicateRuleMatchRule:{type:'DuplicateRuleMatchRule',props:{matchRuleSObjectType:'string',matchingRule:'string',objectMapping:'?ObjectMapping'}},ObjectMapping:{type:'ObjectMapping',props:{inputObject:'string',mappingFields:['ObjectMappingField'],outputObject:'string'}},ObjectMappingField:{type:'ObjectMappingField',props:{inputField:'string',outputField:'string'}},EACSettings:{type:'EACSettings',props:{enableEACForEveryonePref:'?boolean',enableInboxActivitySharing:'?boolean',enableInsightsInTimeline:'?boolean',enableInsightsInTimelineEacStd:'?boolean'},extends:'Metadata'},EmailAdministrationSettings:{type:'EmailAdministrationSettings',props:{enableComplianceBcc:'?boolean',enableEmailConsentManagement:'?boolean',enableEmailSenderIdCompliance:'?boolean',enableEmailSpfCompliance:'?boolean',enableEmailToSalesforce:'?boolean',enableEmailWorkflowApproval:'?boolean',enableEnhancedEmailEnabled:'?boolean',enableHandleBouncedEmails:'?boolean',enableHtmlEmail:'?boolean',enableListEmailLogActivities:'?boolean',enableResendBouncedEmails:'?boolean',enableRestrictTlsToDomains:'?boolean',enableSendThroughGmailPref:'?boolean',enableSendViaExchangePref:'?boolean',enableSendViaGmailPref:'?boolean',enableSetMatchingEmailsOnBounce:'?boolean',enableUseOrgFootersForExtTrans:'?boolean',sendEmailsEvenWhenAutomationUpdatesSameRecord:'?boolean',sendMassEmailNotification:'?boolean',sendTextOnlySystemEmails:'?boolean'},extends:'Metadata'},EmailIntegrationSettings:{type:'EmailIntegrationSettings',props:{doesEmailLogAsEmailMessageInOutlook:'?boolean',doesGmailStayConnectedToSalesforce:'?boolean',enableContactAndEventSync:'?boolean',enableEmailTrackingInMobile:'?boolean',enableEngageForOutlook:'?boolean',enableGmailIntegration:'?boolean',enableOutlookIntegration:'?boolean',enableProductivityFeatures:'?boolean',enableSupplementalContactInfoInMobile:'?boolean',isLayoutCustomizationAllowed:'?boolean',shouldUseTrustedDomainsList:'?boolean'},extends:'Metadata'},EmailServicesFunction:{type:'EmailServicesFunction',props:{apexClass:'string',attachmentOption:'string',authenticationFailureAction:'string',authorizationFailureAction:'string',authorizedSenders:'?string',emailServicesAddresses:['EmailServicesAddress'],errorRoutingAddress:'?string',functionInactiveAction:'string',functionName:'string',isActive:'?boolean',isAuthenticationRequired:'?boolean',isErrorRoutingEnabled:'?boolean',isTextAttachmentsAsBinary:'?boolean',isTlsRequired:'?boolean',overLimitAction:'string'},extends:'Metadata'},EmailServicesAddress:{type:'EmailServicesAddress',props:{authorizedSenders:'?string',developerName:'string',isActive:'?boolean',localPart:'string',runAsUser:'string'}},EmailTemplateSettings:{type:'EmailTemplateSettings',props:{enableLwcEmailTemplateBuilder:'?boolean',enableTemplateEnhancedFolderPref:'?boolean'},extends:'Metadata'},EmbeddedServiceBranding:{type:'EmbeddedServiceBranding',props:{contrastInvertedColor:'?string',contrastPrimaryColor:'?string',embeddedServiceConfig:'string',font:'?string',height:'?number',masterLabel:'string',navBarColor:'?string',primaryColor:'?string',secondaryColor:'?string',width:'?number'},extends:'Metadata'},EmbeddedServiceConfig:{type:'EmbeddedServiceConfig',props:{areGuestUsersAllowed:'?boolean',authMethod:'?string',embeddedServiceAppointmentSettings:'?EmbeddedServiceAppointmentSettings',embeddedServiceCustomComponents:['EmbeddedServiceCustomComponent'],embeddedServiceCustomLabels:['EmbeddedServiceCustomLabel'],embeddedServiceFlowConfig:'?EmbeddedServiceFlowConfig',embeddedServiceFlows:['EmbeddedServiceFlow'],embeddedServiceLayouts:['EmbeddedServiceLayout'],masterLabel:'string',shouldHideAuthDialog:'?boolean',site:'string'},extends:'Metadata'},EmbeddedServiceAppointmentSettings:{type:'EmbeddedServiceAppointmentSettings',props:{appointmentConfirmImg:'?string',enabled:'boolean',homeImg:'?string',logoImg:'?string',shouldShowExistingAppointment:'?boolean',shouldShowNewAppointment:'?boolean'}},EmbeddedServiceCustomComponent:{type:'EmbeddedServiceCustomComponent',props:{componentBundleType:'?string',customComponent:'?string',customComponentType:'?string'}},EmbeddedServiceCustomLabel:{type:'EmbeddedServiceCustomLabel',props:{customLabel:'?string',feature:'?string',labelKey:'?string'}},EmbeddedServiceFlowConfig:{type:'EmbeddedServiceFlowConfig',props:{enabled:'boolean'},extends:'Metadata'},EmbeddedServiceFlow:{type:'EmbeddedServiceFlow',props:{flow:'string',flowType:'string',isAuthenticationRequired:'boolean'}},EmbeddedServiceLayout:{type:'EmbeddedServiceLayout',props:{embeddedServiceLayoutRules:['EmbeddedServiceLayoutRule'],layout:'string',layoutType:'?string'}},EmbeddedServiceLayoutRule:{type:'EmbeddedServiceLayoutRule',props:{appointmentStatus:'string'}},EmbeddedServiceLiveAgent:{type:'EmbeddedServiceLiveAgent',props:{avatarImg:'?string',embeddedServiceConfig:'string',embeddedServiceQuickActions:['EmbeddedServiceQuickAction'],enabled:'boolean',fontSize:'string',headerBackgroundImg:'?string',isOfflineCaseEnabled:'?boolean',isQueuePositionEnabled:'?boolean',liveAgentChatUrl:'?string',liveAgentContentUrl:'?string',liveChatButton:'string',liveChatDeployment:'string',masterLabel:'string',offlineCaseBackgroundImg:'?string',prechatBackgroundImg:'?string',prechatEnabled:'boolean',prechatJson:'?string',scenario:'string',smallCompanyLogoImg:'?string',waitingStateBackgroundImg:'?string'},extends:'Metadata'},EmbeddedServiceQuickAction:{type:'EmbeddedServiceQuickAction',props:{embeddedServiceLiveAgent:'string',order:'number',quickActionDefinition:'string',quickActionType:'?string'}},EmbeddedServiceMenuSettings:{type:'EmbeddedServiceMenuSettings',props:{branding:'?string',embeddedServiceMenuItems:['EmbeddedServiceMenuItem'],isEnabled:'?boolean',masterLabel:'?string',site:'?string'},extends:'Metadata'},EmbeddedServiceMenuItem:{type:'EmbeddedServiceMenuItem',props:{channel:'?string',channelType:'?string',displayOrder:'?number',phoneNumber:'?string'}},EncryptionKeySettings:{type:'EncryptionKeySettings',props:{canOptOutOfDerivationWithBYOK:'?boolean',enableCacheOnlyKeys:'?boolean',enableReplayDetection:'?boolean'},extends:'Metadata'},EnhancedNotesSettings:{type:'EnhancedNotesSettings',props:{enableEnhancedNotes:'?boolean',enableTasksOnEnhancedNotes:'?boolean'},extends:'Metadata'},EntitlementProcess:{type:'EntitlementProcess',props:{SObjectType:'?string',active:'?boolean',businessHours:'?string',description:'?string',entryStartDateField:'?string',exitCriteriaBooleanFilter:'?string',exitCriteriaFilterItems:['FilterItem'],exitCriteriaFormula:'?string',isRecordTypeApplied:'?boolean',isVersionDefault:'?boolean',milestones:['EntitlementProcessMilestoneItem'],name:'?string',recordType:'?string',versionMaster:'?string',versionNotes:'?string',versionNumber:'?number'},extends:'Metadata'},EntitlementProcessMilestoneItem:{type:'EntitlementProcessMilestoneItem',props:{businessHours:'?string',criteriaBooleanFilter:'?string',milestoneCriteriaFilterItems:['FilterItem'],milestoneCriteriaFormula:'?string',milestoneName:'?string',minutesCustomClass:'?string',minutesToComplete:'?number',successActions:['WorkflowActionReference'],timeTriggers:['EntitlementProcessMilestoneTimeTrigger'],useCriteriaStartTime:'?boolean'}},EntitlementProcessMilestoneTimeTrigger:{type:'EntitlementProcessMilestoneTimeTrigger',props:{actions:['WorkflowActionReference'],timeLength:'?number',workflowTimeTriggerUnit:'string'}},EntitlementSettings:{type:'EntitlementSettings',props:{assetLookupLimitedToActiveEntitlementsOnAccount:'?boolean',assetLookupLimitedToActiveEntitlementsOnContact:'?boolean',assetLookupLimitedToSameAccount:'?boolean',assetLookupLimitedToSameContact:'?boolean',enableEntitlementVersioning:'boolean',enableEntitlements:'boolean',enableMilestoneFeedItem:'?boolean',enableMilestoneStoppedTime:'?boolean',entitlementLookupLimitedToActiveStatus:'?boolean',entitlementLookupLimitedToSameAccount:'?boolean',entitlementLookupLimitedToSameAsset:'?boolean',entitlementLookupLimitedToSameContact:'?boolean',ignoreMilestoneBusinessHours:'?boolean'},extends:'Metadata'},EntitlementTemplate:{type:'EntitlementTemplate',props:{businessHours:'?string',casesPerEntitlement:'?number',entitlementProcess:'?string',isPerIncident:'?boolean',term:'?number',type:'?string'},extends:'Metadata'},EntityImplements:{type:'EntityImplements',props:{fieldMap:['FieldImplements'],interface:'?string',isDefault:'?boolean'},extends:'Metadata'},FieldImplements:{type:'FieldImplements',props:{field:'?string',interfaceField:'?string'}},EscalationRule:{type:'EscalationRule',props:{active:'?boolean',ruleEntry:['RuleEntry']},extends:'Metadata'},EscalationRules:{type:'EscalationRules',props:{escalationRule:['EscalationRule']},extends:'Metadata'},EssentialsSettings:{type:'EssentialsSettings',props:{emailConnectorEnabled:'?boolean',essentialsAppEnabled:'?boolean'},extends:'Metadata'},EssentialsTrialOrgSettings:{type:'EssentialsTrialOrgSettings',props:{enableSampleDataDeleted:'?boolean'},extends:'Metadata'},EventSettings:{type:'EventSettings',props:{enableApexLimitEvents:'?boolean',enableDeleteMonitoringData:'?boolean',enableDynamicStreamingChannel:'?boolean',enableEventLogWaveIntegration:'?boolean',enableLoginForensics:'?boolean',enableStreamingApi:'?boolean',enableTerminateOldestSession:'?boolean',enableTransactionSecurityPolicies:'?boolean'},extends:'Metadata'},ExperienceBundleSettings:{type:'ExperienceBundleSettings',props:{enableExperienceBundleMetadata:'?boolean'},extends:'Metadata'},ExternalDataSource:{type:'ExternalDataSource',props:{authProvider:'?string',certificate:'?string',customConfiguration:'?string',customHttpHeaders:['CustomHttpHeader'],endpoint:'?string',isWritable:'?boolean',label:'string',oauthRefreshToken:'?string',oauthScope:'?string',oauthToken:'?string',password:'?string',principalType:'string',protocol:'string',repository:'?string',type:'string',username:'?string',version:'?string'},extends:'Metadata'},CustomHttpHeader:{type:'CustomHttpHeader',props:{description:'?string',headerFieldName:'string',headerFieldValue:'string',isActive:'?boolean'}},ExternalServiceRegistration:{type:'ExternalServiceRegistration',props:{description:'?string',label:'string',namedCredential:'?string',schema:'?string',schemaType:'?string',schemaUrl:'?string',status:'string'},extends:'Metadata'},ExternalServicesSettings:{type:'ExternalServicesSettings',props:{enableEnhancedExternalServices:'?boolean'},extends:'Metadata'},FieldServiceSettings:{type:'FieldServiceSettings',props:{capacityUsageCalcClassId:'?string',doesAllowEditSaForCrew:'?boolean',doesShareSaParentWoWithAr:'?boolean',doesShareSaWithAr:'?boolean',enableWorkOrders:'?boolean',fieldServiceNotificationsOrgPref:'?boolean',fieldServiceOrgPref:'?boolean',isGeoCodeSyncEnabled:'?boolean',isLocationHistoryEnabled:'?boolean',serviceAppointmentsDueDateOffsetOrgValue:'?number',workOrderLineItemSearchFields:['string'],workOrderSearchFields:['string']},extends:'Metadata'},FileUploadAndDownloadSecuritySettings:{type:'FileUploadAndDownloadSecuritySettings',props:{dispositions:['FileTypeDispositionAssignmentBean'],noHtmlUploadAsAttachment:'boolean'},extends:'Metadata'},FileTypeDispositionAssignmentBean:{type:'FileTypeDispositionAssignmentBean',props:{behavior:'string',fileType:'string',securityRiskFileType:'boolean'}},FilesConnectSettings:{type:'FilesConnectSettings',props:{enableContentHubAllowed:'?boolean',enableContentHubCvtLinksAllowed:'?boolean',enableContentHubEOSearchLayout:'?boolean'},extends:'Metadata'},FlexiPage:{type:'FlexiPage',props:{description:'?string',flexiPageRegions:['FlexiPageRegion'],masterLabel:'string',parentFlexiPage:'?string',platformActionlist:'?PlatformActionList',quickActionList:'?QuickActionList',sobjectType:'?string',template:'FlexiPageTemplateInstance',type:'string'},extends:'Metadata'},FlexiPageRegion:{type:'FlexiPageRegion',props:{appendable:'?string',componentInstances:['ComponentInstance'],mode:'?string',name:'string',prependable:'?string',replaceable:'?string',type:'string'}},ComponentInstance:{type:'ComponentInstance',props:{componentInstanceProperties:['ComponentInstanceProperty'],componentName:'string',visibilityRule:'?UiFormulaRule'}},ComponentInstanceProperty:{type:'ComponentInstanceProperty',props:{name:'?string',type:'?string',value:'?string'}},UiFormulaRule:{type:'UiFormulaRule',props:{booleanFilter:'?string',criteria:['UiFormulaCriterion']}},UiFormulaCriterion:{type:'UiFormulaCriterion',props:{leftValue:'string',operator:'string',rightValue:'?string'}},PlatformActionList:{type:'PlatformActionList',props:{actionListContext:'string',platformActionListItems:['PlatformActionListItem'],relatedSourceEntity:'?string'},extends:'Metadata'},PlatformActionListItem:{type:'PlatformActionListItem',props:{actionName:'string',actionType:'string',sortOrder:'number',subtype:'?string'}},QuickActionList:{type:'QuickActionList',props:{quickActionListItems:['QuickActionListItem']}},QuickActionListItem:{type:'QuickActionListItem',props:{quickActionName:'string'}},FlexiPageTemplateInstance:{type:'FlexiPageTemplateInstance',props:{name:'string',properties:['ComponentInstanceProperty']}},Flow:{type:'Flow',props:{actionCalls:['FlowActionCall'],apexPluginCalls:['FlowApexPluginCall'],assignments:['FlowAssignment'],choices:['FlowChoice'],constants:['FlowConstant'],decisions:['FlowDecision'],description:'?string',dynamicChoiceSets:['FlowDynamicChoiceSet'],formulas:['FlowFormula'],interviewLabel:'?string',isAdditionalPermissionRequiredToRun:'?boolean',isTemplate:'?boolean',label:'string',loops:['FlowLoop'],processMetadataValues:['FlowMetadataValue'],processType:'?string',recordCreates:['FlowRecordCreate'],recordDeletes:['FlowRecordDelete'],recordLookups:['FlowRecordLookup'],recordUpdates:['FlowRecordUpdate'],screens:['FlowScreen'],stages:['FlowStage'],start:'?FlowStart',startElementReference:'?string',status:'?string',steps:['FlowStep'],subflows:['FlowSubflow'],textTemplates:['FlowTextTemplate'],variables:['FlowVariable'],waits:['FlowWait']},extends:'Metadata'},FlowActionCall:{type:'FlowActionCall',props:{actionName:'string',actionType:'string',connector:'?FlowConnector',faultConnector:'?FlowConnector',inputParameters:['FlowActionCallInputParameter'],outputParameters:['FlowActionCallOutputParameter']},extends:'FlowNode'},FlowNode:{type:'FlowNode',props:{label:'?string',locationX:'number',locationY:'number'},extends:'FlowElement'},FlowElement:{type:'FlowElement',props:{description:'?string',name:'?string'},extends:'FlowBaseElement'},FlowBaseElement:{type:'FlowBaseElement',props:{processMetadataValues:['FlowMetadataValue']}},FlowMetadataValue:{type:'FlowMetadataValue',props:{name:'string',value:'?FlowElementReferenceOrValue'}},FlowElementReferenceOrValue:{type:'FlowElementReferenceOrValue',props:{booleanValue:'?boolean',dateTimeValue:'?string',dateValue:'?string',elementReference:'?string',numberValue:'?number',stringValue:'?string'}},FlowActionCallInputParameter:{type:'FlowActionCallInputParameter',props:{name:'string',value:'?FlowElementReferenceOrValue'},extends:'FlowBaseElement'},FlowActionCallOutputParameter:{type:'FlowActionCallOutputParameter',props:{assignToReference:'string',name:'string'},extends:'FlowBaseElement'},FlowApexPluginCallInputParameter:{type:'FlowApexPluginCallInputParameter',props:{name:'string',value:'?FlowElementReferenceOrValue'},extends:'FlowBaseElement'},FlowApexPluginCallOutputParameter:{type:'FlowApexPluginCallOutputParameter',props:{assignToReference:'string',name:'string'},extends:'FlowBaseElement'},FlowAssignmentItem:{type:'FlowAssignmentItem',props:{assignToReference:'string',operator:'string',value:'?FlowElementReferenceOrValue'},extends:'FlowBaseElement'},FlowChoiceUserInput:{type:'FlowChoiceUserInput',props:{isRequired:'?boolean',promptText:'?string',validationRule:'?FlowInputValidationRule'},extends:'FlowBaseElement'},FlowInputValidationRule:{type:'FlowInputValidationRule',props:{errorMessage:'string',formulaExpression:'string'}},FlowCondition:{type:'FlowCondition',props:{leftValueReference:'string',operator:'string',rightValue:'?FlowElementReferenceOrValue'},extends:'FlowBaseElement'},FlowConnector:{type:'FlowConnector',props:{targetReference:'string'},extends:'FlowBaseElement'},FlowInputFieldAssignment:{type:'FlowInputFieldAssignment',props:{field:'string',value:'?FlowElementReferenceOrValue'},extends:'FlowBaseElement'},FlowOutputFieldAssignment:{type:'FlowOutputFieldAssignment',props:{assignToReference:'string',field:'string'},extends:'FlowBaseElement'},FlowRecordFilter:{type:'FlowRecordFilter',props:{field:'string',operator:'string',value:'?FlowElementReferenceOrValue'},extends:'FlowBaseElement'},FlowScreenFieldInputParameter:{type:'FlowScreenFieldInputParameter',props:{name:'string',value:'?FlowElementReferenceOrValue'},extends:'FlowBaseElement'},FlowScreenFieldOutputParameter:{type:'FlowScreenFieldOutputParameter',props:{assignToReference:'string',name:'string'},extends:'FlowBaseElement'},FlowScreenRule:{type:'FlowScreenRule',props:{conditionLogic:'?string',conditions:['FlowCondition'],label:'string',ruleActions:['FlowScreenRuleAction']},extends:'FlowBaseElement'},FlowScreenRuleAction:{type:'FlowScreenRuleAction',props:{attribute:'string',fieldReference:'string',value:'?FlowElementReferenceOrValue'},extends:'FlowBaseElement'},FlowSubflowInputAssignment:{type:'FlowSubflowInputAssignment',props:{name:'string',value:'?FlowElementReferenceOrValue'},extends:'FlowBaseElement'},FlowSubflowOutputAssignment:{type:'FlowSubflowOutputAssignment',props:{assignToReference:'string',name:'string'},extends:'FlowBaseElement'},FlowVisibilityRule:{type:'FlowVisibilityRule',props:{conditionLogic:'?string',conditions:['FlowCondition']},extends:'FlowBaseElement'},FlowWaitEventInputParameter:{type:'FlowWaitEventInputParameter',props:{name:'string',value:'?FlowElementReferenceOrValue'},extends:'FlowBaseElement'},FlowWaitEventOutputParameter:{type:'FlowWaitEventOutputParameter',props:{assignToReference:'string',name:'string'},extends:'FlowBaseElement'},FlowChoice:{type:'FlowChoice',props:{choiceText:'string',dataType:'string',userInput:'?FlowChoiceUserInput',value:'?FlowElementReferenceOrValue'},extends:'FlowElement'},FlowConstant:{type:'FlowConstant',props:{dataType:'string',value:'?FlowElementReferenceOrValue'},extends:'FlowElement'},FlowDynamicChoiceSet:{type:'FlowDynamicChoiceSet',props:{dataType:'string',displayField:'string',filters:['FlowRecordFilter'],limit:'?number',object:'string',outputAssignments:['FlowOutputFieldAssignment'],picklistField:'?string',picklistObject:'?string',sortField:'?string',sortOrder:'?string',valueField:'?string'},extends:'FlowElement'},FlowFormula:{type:'FlowFormula',props:{dataType:'?string',expression:'string',scale:'?number'},extends:'FlowElement'},FlowRule:{type:'FlowRule',props:{conditionLogic:'string',conditions:['FlowCondition'],connector:'?FlowConnector',label:'string'},extends:'FlowElement'},FlowScreenField:{type:'FlowScreenField',props:{choiceReferences:['string'],dataType:'?string',defaultSelectedChoiceReference:'?string',defaultValue:'?FlowElementReferenceOrValue',extensionName:'?string',fieldText:'?string',fieldType:'string',helpText:'?string',inputParameters:['FlowScreenFieldInputParameter'],isRequired:'?boolean',isVisible:'?boolean',outputParameters:['FlowScreenFieldOutputParameter'],scale:'?number',storeOutputAutomatically:'?boolean',validationRule:'?FlowInputValidationRule',visibilityRule:'?FlowVisibilityRule'},extends:'FlowElement'},FlowStage:{type:'FlowStage',props:{isActive:'boolean',label:'string',stageOrder:'number'},extends:'FlowElement'},FlowTextTemplate:{type:'FlowTextTemplate',props:{text:'string'},extends:'FlowElement'},FlowVariable:{type:'FlowVariable',props:{apexClass:'?string',dataType:'string',isCollection:'?boolean',isInput:'?boolean',isOutput:'?boolean',objectType:'?string',scale:'?number',value:'?FlowElementReferenceOrValue'},extends:'FlowElement'},FlowWaitEvent:{type:'FlowWaitEvent',props:{conditionLogic:'?string',conditions:['FlowCondition'],connector:'FlowConnector',eventType:'string',inputParameters:['FlowWaitEventInputParameter'],label:'string',outputParameters:['FlowWaitEventOutputParameter']},extends:'FlowElement'},FlowApexPluginCall:{type:'FlowApexPluginCall',props:{apexClass:'string',connector:'?FlowConnector',faultConnector:'?FlowConnector',inputParameters:['FlowApexPluginCallInputParameter'],outputParameters:['FlowApexPluginCallOutputParameter']},extends:'FlowNode'},FlowAssignment:{type:'FlowAssignment',props:{assignmentItems:['FlowAssignmentItem'],connector:'?FlowConnector'},extends:'FlowNode'},FlowDecision:{type:'FlowDecision',props:{defaultConnector:'?FlowConnector',defaultConnectorLabel:'?string',rules:['FlowRule']},extends:'FlowNode'},FlowLoop:{type:'FlowLoop',props:{assignNextValueToReference:'string',collectionReference:'string',iterationOrder:'?string',nextValueConnector:'?FlowConnector',noMoreValuesConnector:'?FlowConnector'},extends:'FlowNode'},FlowRecordCreate:{type:'FlowRecordCreate',props:{assignRecordIdToReference:'?string',connector:'?FlowConnector',faultConnector:'?FlowConnector',inputAssignments:['FlowInputFieldAssignment'],inputReference:'?string',object:'?string'},extends:'FlowNode'},FlowRecordDelete:{type:'FlowRecordDelete',props:{connector:'?FlowConnector',faultConnector:'?FlowConnector',filters:['FlowRecordFilter'],inputReference:'?string',object:'?string'},extends:'FlowNode'},FlowRecordLookup:{type:'FlowRecordLookup',props:{assignNullValuesIfNoRecordsFound:'?boolean',connector:'?FlowConnector',faultConnector:'?FlowConnector',filters:['FlowRecordFilter'],getFirstRecordOnly:'?boolean',object:'string',outputAssignments:['FlowOutputFieldAssignment'],outputReference:'?string',queriedFields:['string'],sortField:'?string',sortOrder:'?string',storeOutputAutomatically:'?boolean'},extends:'FlowNode'},FlowRecordUpdate:{type:'FlowRecordUpdate',props:{connector:'?FlowConnector',faultConnector:'?FlowConnector',filters:['FlowRecordFilter'],inputAssignments:['FlowInputFieldAssignment'],inputReference:'?string',object:'?string'},extends:'FlowNode'},FlowScreen:{type:'FlowScreen',props:{allowBack:'?boolean',allowFinish:'?boolean',allowPause:'?boolean',connector:'?FlowConnector',fields:['FlowScreenField'],helpText:'?string',pausedText:'?string',rules:['FlowScreenRule'],showFooter:'?boolean',showHeader:'?boolean'},extends:'FlowNode'},FlowStart:{type:'FlowStart',props:{connector:'?FlowConnector',filters:['FlowRecordFilter'],object:'?string',schedule:'?FlowSchedule',triggerType:'?string'},extends:'FlowNode'},FlowSchedule:{type:'FlowSchedule',props:{frequency:'?string',startDate:'?string',startTime:'?string'}},FlowStep:{type:'FlowStep',props:{connectors:['FlowConnector']},extends:'FlowNode'},FlowSubflow:{type:'FlowSubflow',props:{connector:'?FlowConnector',flowName:'string',inputAssignments:['FlowSubflowInputAssignment'],outputAssignments:['FlowSubflowOutputAssignment']},extends:'FlowNode'},FlowWait:{type:'FlowWait',props:{defaultConnector:'?FlowConnector',defaultConnectorLabel:'string',faultConnector:'?FlowConnector',waitEvents:['FlowWaitEvent']},extends:'FlowNode'},FlowCategory:{type:'FlowCategory',props:{description:'?string',flowCategoryItems:['FlowCategoryItems'],masterLabel:'string'},extends:'Metadata'},FlowCategoryItems:{type:'FlowCategoryItems',props:{flow:'string'}},FlowDefinition:{type:'FlowDefinition',props:{activeVersionNumber:'?number',description:'?string',masterLabel:'?string'},extends:'Metadata'},FlowSettings:{type:'FlowSettings',props:{enableFlowBREncodedFixEnabled:'?boolean',enableFlowDeployAsActiveEnabled:'?boolean',enableFlowFieldFilterEnabled:'?boolean',enableFlowFormulasFixEnabled:'?boolean',enableFlowInterviewSharingEnabled:'?boolean',enableFlowNullPreviousValueFix:'?boolean',enableFlowPauseEnabled:'?boolean',enableFlowUseApexExceptionEmail:'?boolean',enableInvocableFlowFixEnabled:'?boolean',enableLightningRuntimeEnabled:'?boolean',enableUseFlowBuilder:'?boolean',isAccessToInvokedApexRequired:'?boolean',isEnhancedFlowListViewVisible:'?boolean',isManageFlowRequiredForAutomationCharts:'?boolean'},extends:'Metadata'},Folder:{type:'Folder',props:{accessType:'?string',folderShares:['FolderShare'],name:'string',publicFolderAccess:'?string',sharedTo:'?SharedTo'},extends:'Metadata'},FolderShare:{type:'FolderShare',props:{accessLevel:'string',sharedTo:'string',sharedToType:'string'}},DashboardFolder:{type:'DashboardFolder',props:{},extends:'Folder'},DocumentFolder:{type:'DocumentFolder',props:{},extends:'Folder'},EmailFolder:{type:'EmailFolder',props:{},extends:'Folder'},ReportFolder:{type:'ReportFolder',props:{},extends:'Folder'},ForecastingSettings:{type:'ForecastingSettings',props:{defaultToPersonalCurrency:'?boolean',enableForecasts:'?boolean',forecastingCategoryMappings:['ForecastingCategoryMapping'],forecastingDisplayedFamilySettings:['ForecastingDisplayedFamilySettings'],forecastingTypeSettings:['ForecastingTypeSettings']},extends:'Metadata'},ForecastingCategoryMapping:{type:'ForecastingCategoryMapping',props:{forecastingItemCategoryApiName:'string',weightedSourceCategories:['WeightedSourceCategory']}},WeightedSourceCategory:{type:'WeightedSourceCategory',props:{sourceCategoryApiName:'string',weight:'number'}},ForecastingDisplayedFamilySettings:{type:'ForecastingDisplayedFamilySettings',props:{productFamily:'?string'}},ForecastingTypeSettings:{type:'ForecastingTypeSettings',props:{active:'boolean',adjustmentsSettings:'AdjustmentsSettings',displayedCategoryApiNames:['string'],forecastRangeSettings:'ForecastRangeSettings',forecastedCategoryApiNames:['string'],forecastingDateType:'string',hasProductFamily:'boolean',isAmount:'boolean',isAvailable:'boolean',isQuantity:'boolean',managerAdjustableCategoryApiNames:['string'],masterLabel:'string',name:'string',opportunityListFieldsLabelMappings:['OpportunityListFieldsLabelMapping'],opportunityListFieldsSelectedSettings:'OpportunityListFieldsSelectedSettings',opportunityListFieldsUnselectedSettings:'OpportunityListFieldsUnselectedSettings',opportunitySplitName:'?string',ownerAdjustableCategoryApiNames:['string'],quotasSettings:'QuotasSettings',territory2ModelName:'?string'}},AdjustmentsSettings:{type:'AdjustmentsSettings',props:{enableAdjustments:'boolean',enableOwnerAdjustments:'boolean'}},ForecastRangeSettings:{type:'ForecastRangeSettings',props:{beginning:'number',displaying:'number',periodType:'string'}},OpportunityListFieldsLabelMapping:{type:'OpportunityListFieldsLabelMapping',props:{field:'string',label:'string'}},OpportunityListFieldsSelectedSettings:{type:'OpportunityListFieldsSelectedSettings',props:{field:['string']}},OpportunityListFieldsUnselectedSettings:{type:'OpportunityListFieldsUnselectedSettings',props:{field:['string']}},QuotasSettings:{type:'QuotasSettings',props:{showQuotas:'boolean'}},Form:{type:'Form',props:{description:'?string',formSections:['FormSection'],masterLabel:'string'},extends:'Metadata'},FormSection:{type:'FormSection',props:{formColumns:['FormColumn'],masterLabel:'string',tabOrderType:'string'},extends:'Metadata'},FormColumn:{type:'FormColumn',props:{formItems:['FormItem']}},FormItem:{type:'FormItem',props:{emptySpace:'?boolean',expression:'?string',formLayoutableItem:'?string',helpText:'?string'}},FormulaSettings:{type:'FormulaSettings',props:{enableDSTAwareDatevalue:'?boolean'},extends:'Metadata'},GlobalValueSet:{type:'GlobalValueSet',props:{customValue:['CustomValue'],description:'?string',masterLabel:'string',sorted:'boolean'},extends:'Metadata'},GlobalValueSetTranslation:{type:'GlobalValueSetTranslation',props:{valueTranslation:['ValueTranslation']},extends:'Metadata'},ValueTranslation:{type:'ValueTranslation',props:{masterLabel:'string',translation:'?string'}},GoogleAppsSettings:{type:'GoogleAppsSettings',props:{enableGmailButtons:'?boolean',enableGmailButtonsAndLinks:'?boolean',enableGmailLinks:'?boolean',enableGoogleDocs:'?boolean',enableGoogleDocsTab:'?boolean',enableGoogleTalk:'?boolean',googleAppsDomain:'?string',googleAppsDomainLinked:'?boolean',googleAppsDomainValidated:'?boolean'},extends:'Metadata'},Group:{type:'Group',props:{doesIncludeBosses:'?boolean',name:'string'},extends:'Metadata'},HighVelocitySalesSettings:{type:'HighVelocitySalesSettings',props:{enableDispositionCategory:'?boolean',enableEngagementWaveAnalyticsPref:'?boolean',enableHighVelocitySales:'?boolean',enableHighVelocitySalesSetup:'?boolean'},extends:'Metadata'},HomePageComponent:{type:'HomePageComponent',props:{body:'?string',height:'?number',links:['string'],page:'?string',pageComponentType:'string',showLabel:'?boolean',showScrollbars:'?boolean',width:'?string'},extends:'Metadata'},HomePageLayout:{type:'HomePageLayout',props:{narrowComponents:['string'],wideComponents:['string']},extends:'Metadata'},IdeasSettings:{type:'IdeasSettings',props:{enableChatterProfile:'?boolean',enableHtmlIdea:'?boolean',enableIdeaMultipleCategory:'?boolean',enableIdeaThemes:'?boolean',enableIdeas:'?boolean',enableIdeasControllerExtensions:'?boolean',enableIdeasReputation:'?boolean',halfLife:'?number',ideasProfilePage:'?string'},extends:'Metadata'},IndustriesManufacturingSettings:{type:'IndustriesManufacturingSettings',props:{enableIndManufacturing:'?boolean',enableIndustriesMfgAccountForecast:'?boolean'},extends:'Metadata'},IndustriesSettings:{type:'IndustriesSettings',props:{allowMultipleProducersToWorkOnSamePolicy:'?boolean',enableAccessToMasterListOfCoverageTypes:'?boolean',enableBlockResourceAvailabilityOrgPref:'?boolean',enableEventManagementOrgPref:'?boolean',enableHCReferralScoring:'?boolean',enableManyToManyRelationships:'?boolean',enableMortgageRlaTotalsOrgPref:'?boolean',enableMultiResourceOrgPref:'?boolean',enableObjectDetection:'?boolean',enableOverbookingOrgPref:'?boolean',enableProviderSearchSyncOrgPref:'?boolean',enableReferralScoring:'?boolean',enableSentimentAnalysis:'?boolean'},extends:'Metadata'},InstalledPackage:{type:'InstalledPackage',props:{activateRSS:'boolean',password:'?string',versionNumber:'string'},extends:'Metadata'},IntegrationHubSettings:{type:'IntegrationHubSettings',props:{canonicalName:'?string',canonicalNameBindingChar:'?string',description:'?string',isEnabled:'?boolean',isProtected:'?boolean',masterLabel:'string',setupData:'?string',setupDefinition:'?string',setupNamespace:'?string',setupSimpleName:'string',uUID:'?string',version:'?string',versionBuild:'?number',versionMajor:'?number',versionMinor:'?number',versionSetUuid:'?string'},extends:'Metadata'},IntegrationHubSettingsType:{type:'IntegrationHubSettingsType',props:{canonicalName:'?string',canonicalNameBindingChar:'?string',description:'?string',isEnabled:'?boolean',isProtected:'?boolean',masterLabel:'string',setupNamespace:'?string',setupSimpleName:'string',uUID:'?string',version:'?string',versionBuild:'?number',versionMajor:'?number',versionMinor:'?number',versionSetUuid:'?string'},extends:'Metadata'},InvocableActionSettings:{type:'InvocableActionSettings',props:{isPartialSaveAllowed:'?boolean'},extends:'Metadata'},IoTSettings:{type:'IoTSettings',props:{enableIoT:'?boolean',enableIoTInsightsPilot:'?boolean',enableIoTUsageEmail:'?boolean'},extends:'Metadata'},IsvHammerSettings:{type:'IsvHammerSettings',props:{enableIsvHammerSubIsOptedOut:'?boolean'},extends:'Metadata'},KeywordList:{type:'KeywordList',props:{description:'?string',keywords:['Keyword'],masterLabel:'string'},extends:'Metadata'},Keyword:{type:'Keyword',props:{keyword:'string'}},KnowledgeSettings:{type:'KnowledgeSettings',props:{answers:'?KnowledgeAnswerSettings',cases:'?KnowledgeCaseSettings',defaultLanguage:'?string',enableChatterQuestionKBDeflection:'?boolean',enableCreateEditOnArticlesTab:'?boolean',enableExternalMediaContent:'?boolean',enableKnowledge:'?boolean',enableKnowledgeArticleTextHighlights:'?boolean',enableKnowledgeKeywordAutoComplete:'?boolean',enableKnowledgeTitleAutoComplete:'?boolean',enableLightningKbAutoLoadRichTextField:'?boolean',enableLightningKnowledge:'?boolean',languages:'?KnowledgeLanguageSettings',showArticleSummariesCustomerPortal:'?boolean',showArticleSummariesInternalApp:'?boolean',showArticleSummariesPartnerPortal:'?boolean',showValidationStatusField:'?boolean',suggestedArticles:'?KnowledgeSuggestedArticlesSettings'},extends:'Metadata'},KnowledgeAnswerSettings:{type:'KnowledgeAnswerSettings',props:{assignTo:'?string',defaultArticleType:'?string',enableArticleCreation:'?boolean'}},KnowledgeCaseSettings:{type:'KnowledgeCaseSettings',props:{articlePDFCreationProfile:'?string',articlePublicSharingCommunities:'?KnowledgeCommunitiesSettings',articlePublicSharingSites:'?KnowledgeSitesSettings',articlePublicSharingSitesChatterAnswers:'?KnowledgeSitesSettings',assignTo:'?string',customizationClass:'?string',defaultContributionArticleType:'?string',editor:'?string',enableArticleCreation:'?boolean',enableArticlePublicSharingSites:'?boolean',enableCaseDataCategoryMapping:'?boolean',useProfileForPDFCreation:'?boolean'}},KnowledgeCommunitiesSettings:{type:'KnowledgeCommunitiesSettings',props:{community:['string']}},KnowledgeSitesSettings:{type:'KnowledgeSitesSettings',props:{site:['string']}},KnowledgeLanguageSettings:{type:'KnowledgeLanguageSettings',props:{language:['KnowledgeLanguage']}},KnowledgeLanguage:{type:'KnowledgeLanguage',props:{active:'?boolean',defaultAssignee:'?string',defaultAssigneeType:'?string',defaultReviewer:'?string',defaultReviewerType:'?string',name:'string'}},KnowledgeSuggestedArticlesSettings:{type:'KnowledgeSuggestedArticlesSettings',props:{caseFields:'?KnowledgeCaseFieldsSettings',useSuggestedArticlesForCase:'?boolean',workOrderFields:'?KnowledgeWorkOrderFieldsSettings',workOrderLineItemFields:'?KnowledgeWorkOrderLineItemFieldsSettings'}},KnowledgeCaseFieldsSettings:{type:'KnowledgeCaseFieldsSettings',props:{field:['KnowledgeCaseField']}},KnowledgeCaseField:{type:'KnowledgeCaseField',props:{name:'?string'}},KnowledgeWorkOrderFieldsSettings:{type:'KnowledgeWorkOrderFieldsSettings',props:{field:['KnowledgeWorkOrderField']}},KnowledgeWorkOrderField:{type:'KnowledgeWorkOrderField',props:{name:'?string'}},KnowledgeWorkOrderLineItemFieldsSettings:{type:'KnowledgeWorkOrderLineItemFieldsSettings',props:{field:['KnowledgeWorkOrderLineItemField']}},KnowledgeWorkOrderLineItemField:{type:'KnowledgeWorkOrderLineItemField',props:{name:'?string'}},LanguageSettings:{type:'LanguageSettings',props:{enableCanadaIcuFormat:'?boolean',enableEndUserLanguages:'?boolean',enableICULocaleDateFormat:'?boolean',enablePlatformLanguages:'?boolean',enableTranslationWorkbench:'?boolean',useLanguageFallback:'?boolean'},extends:'Metadata'},Layout:{type:'Layout',props:{customButtons:['string'],customConsoleComponents:'?CustomConsoleComponents',emailDefault:'?boolean',excludeButtons:['string'],feedLayout:'?FeedLayout',headers:['string'],layoutSections:['LayoutSection'],miniLayout:'?MiniLayout',multilineLayoutFields:['string'],platformActionList:'?PlatformActionList',quickActionList:'?QuickActionList',relatedContent:'?RelatedContent',relatedLists:['RelatedListItem'],relatedObjects:['string'],runAssignmentRulesDefault:'?boolean',showEmailCheckbox:'?boolean',showHighlightsPanel:'?boolean',showInteractionLogPanel:'?boolean',showKnowledgeComponent:'?boolean',showRunAssignmentRulesCheckbox:'?boolean',showSolutionSection:'?boolean',showSubmitAndAttachButton:'?boolean',summaryLayout:'?SummaryLayout'},extends:'Metadata'},CustomConsoleComponents:{type:'CustomConsoleComponents',props:{primaryTabComponents:'?PrimaryTabComponents',subtabComponents:'?SubtabComponents'}},PrimaryTabComponents:{type:'PrimaryTabComponents',props:{containers:['Container']}},Container:{type:'Container',props:{height:'?number',isContainerAutoSizeEnabled:'boolean',region:'string',sidebarComponents:['SidebarComponent'],style:'string',unit:'string',width:'?number'}},SidebarComponent:{type:'SidebarComponent',props:{componentType:'string',createAction:'?string',enableLinking:'?boolean',height:'?number',label:'?string',lookup:'?string',page:'?string',relatedLists:['RelatedList'],unit:'?string',updateAction:'?string',width:'?number'}},RelatedList:{type:'RelatedList',props:{hideOnDetail:'boolean',name:'string'}},SubtabComponents:{type:'SubtabComponents',props:{containers:['Container']}},FeedLayout:{type:'FeedLayout',props:{autocollapsePublisher:'?boolean',compactFeed:'?boolean',feedFilterPosition:'?string',feedFilters:['FeedLayoutFilter'],fullWidthFeed:'?boolean',hideSidebar:'?boolean',highlightExternalFeedItems:'?boolean',leftComponents:['FeedLayoutComponent'],rightComponents:['FeedLayoutComponent'],useInlineFiltersInConsole:'?boolean'}},FeedLayoutFilter:{type:'FeedLayoutFilter',props:{feedFilterName:'?string',feedFilterType:'string',feedItemType:'?string'}},FeedLayoutComponent:{type:'FeedLayoutComponent',props:{componentType:'string',height:'?number',page:'?string'}},LayoutSection:{type:'LayoutSection',props:{customLabel:'?boolean',detailHeading:'?boolean',editHeading:'?boolean',label:'?string',layoutColumns:['LayoutColumn'],style:'string'}},LayoutColumn:{type:'LayoutColumn',props:{layoutItems:['LayoutItem'],reserved:'?string'}},LayoutItem:{type:'LayoutItem',props:{analyticsCloudComponent:'?AnalyticsCloudComponentLayoutItem',behavior:'?string',canvas:'?string',component:'?string',customLink:'?string',emptySpace:'?boolean',field:'?string',height:'?number',page:'?string',reportChartComponent:'?ReportChartComponentLayoutItem',scontrol:'?string',showLabel:'?boolean',showScrollbars:'?boolean',width:'?string'}},AnalyticsCloudComponentLayoutItem:{type:'AnalyticsCloudComponentLayoutItem',props:{assetType:'string',devName:'string',error:'?string',filter:'?string',height:'?number',hideOnError:'?boolean',showHeader:'?boolean',showSharing:'?boolean',showTitle:'?boolean',width:'?string'}},ReportChartComponentLayoutItem:{type:'ReportChartComponentLayoutItem',props:{cacheData:'?boolean',contextFilterableField:'?string',error:'?string',hideOnError:'?boolean',includeContext:'?boolean',reportName:'string',showTitle:'?boolean',size:'?string'}},MiniLayout:{type:'MiniLayout',props:{fields:['string'],relatedLists:['RelatedListItem']}},RelatedListItem:{type:'RelatedListItem',props:{customButtons:['string'],excludeButtons:['string'],fields:['string'],relatedList:'string',sortField:'?string',sortOrder:'?string'}},RelatedContent:{type:'RelatedContent',props:{relatedContentItems:['RelatedContentItem']}},RelatedContentItem:{type:'RelatedContentItem',props:{layoutItem:'LayoutItem'}},SummaryLayout:{type:'SummaryLayout',props:{masterLabel:'string',sizeX:'number',sizeY:'?number',sizeZ:'?number',summaryLayoutItems:['SummaryLayoutItem'],summaryLayoutStyle:'string'}},SummaryLayoutItem:{type:'SummaryLayoutItem',props:{customLink:'?string',field:'?string',posX:'number',posY:'?number',posZ:'?number'}},LeadConfigSettings:{type:'LeadConfigSettings',props:{doesEnableLeadConvertDefaultSubjectBlankTaskCreation:'?boolean',doesHideOpportunityInConvertLeadWindow:'?boolean',doesPreserveLeadStatus:'?boolean',doesSelectNoOpportunityOnConvertLead:'?boolean',doesTrackHistory:'?boolean',enableConversionsOnMobile:'?boolean',enableOrgWideMergeAndDelete:'?boolean',shouldLeadConvertRequireValidation:'?boolean'},extends:'Metadata'},LeadConvertSettings:{type:'LeadConvertSettings',props:{allowOwnerChange:'?boolean',objectMapping:['ObjectMapping'],opportunityCreationOptions:'?string'},extends:'Metadata'},Letterhead:{type:'Letterhead',props:{available:'boolean',backgroundColor:'string',bodyColor:'string',bottomLine:'LetterheadLine',description:'?string',footer:'LetterheadHeaderFooter',header:'LetterheadHeaderFooter',middleLine:'LetterheadLine',name:'string',topLine:'LetterheadLine'},extends:'Metadata'},LetterheadLine:{type:'LetterheadLine',props:{color:'string',height:'number'}},LetterheadHeaderFooter:{type:'LetterheadHeaderFooter',props:{backgroundColor:'string',height:'number',horizontalAlignment:'?string',logo:'?string',verticalAlignment:'?string'}},LicenseDefinition:{type:'LicenseDefinition',props:{aggregationGroup:'string',description:'?string',isPublished:'boolean',label:'string',licensedCustomPermissions:['LicensedCustomPermissions'],licensingAuthority:'string',licensingAuthorityProvider:'string',minPlatformVersion:'number',origin:'string',revision:'number',trialLicenseDuration:'number',trialLicenseQuantity:'number'},extends:'Metadata'},LicensedCustomPermissions:{type:'LicensedCustomPermissions',props:{customPermission:'string',licenseDefinition:'string'}},LightningBolt:{type:'LightningBolt',props:{category:'string',lightningBoltFeatures:['LightningBoltFeatures'],lightningBoltImages:['LightningBoltImages'],lightningBoltItems:['LightningBoltItems'],masterLabel:'string',publisher:'string',summary:'string'},extends:'Metadata'},LightningBoltFeatures:{type:'LightningBoltFeatures',props:{description:'?string',order:'number',title:'string'}},LightningBoltImages:{type:'LightningBoltImages',props:{image:'string',order:'number'}},LightningBoltItems:{type:'LightningBoltItems',props:{name:'string',type:'string'}},LightningComponentBundle:{type:'LightningComponentBundle',props:{apiVersion:'?number',description:'?string',isExplicitImport:'?boolean',isExposed:'?boolean',lwcResources:'?LwcResources',masterLabel:'?string',runtimeNamespace:'?string',targetConfigs:'?string',targets:'?Targets'},extends:'Metadata'},LwcResources:{type:'LwcResources',props:{lwcResource:['LwcResource']}},LwcResource:{type:'LwcResource',props:{filePath:'string',source:'string'}},Targets:{type:'Targets',props:{target:['string']}},LightningExperienceSettings:{type:'LightningExperienceSettings',props:{enableAccessCheckCrucPref:'?boolean',enableApiUserLtngOutAccessPref:'?boolean',enableAuraCDNPref:'?boolean',enableFeedbackInMobile:'?boolean',enableIE11DeprecationMsgHidden:'?boolean',enableIE11LEXCrucPref:'?boolean',enableInAppTooltips:'?boolean',enableLEXOnIpadEnabled:'?boolean',enableLexEndUsersNoSwitching:'?boolean',enableNavPersonalizationOptOut:'?boolean',enableRemoveThemeBrandBanner:'?boolean',enableS1BannerPref:'?boolean',enableS1BrowserEnabled:'?boolean',enableS1DesktopEnabled:'?boolean',enableS1UiLoggingEnabled:'?boolean',enableTryLightningOptOut:'?boolean',enableUseS1AlohaDesktop:'?boolean',enableUsersAreLightningOnly:'?boolean'},extends:'Metadata'},LightningExperienceTheme:{type:'LightningExperienceTheme',props:{defaultBrandingSet:'string',description:'?string',masterLabel:'string',shouldOverrideLoadingImage:'?boolean'},extends:'Metadata'},LightningMessageChannel:{type:'LightningMessageChannel',props:{description:'?string',isExposed:'?boolean',lightningMessageFields:['LightningMessageField'],masterLabel:'string'},extends:'Metadata'},LightningMessageField:{type:'LightningMessageField',props:{description:'?string',fieldName:'string'}},LightningOnboardingConfig:{type:'LightningOnboardingConfig',props:{collaborationGroup:'?string',customQuestion:'string',feedbackFormDaysFrequency:'number',isCustom:'boolean',masterLabel:'string',sendFeedbackToSalesforce:'boolean'},extends:'Metadata'},LiveAgentSettings:{type:'LiveAgentSettings',props:{enableLiveAgent:'?boolean',enableQuickTextEnabled:'?boolean'},extends:'Metadata'},LiveChatAgentConfig:{type:'LiveChatAgentConfig',props:{assignments:'?AgentConfigAssignments',autoGreeting:'?string',capacity:'?number',criticalWaitTime:'?number',customAgentName:'?string',enableAgentFileTransfer:'?boolean',enableAgentSneakPeek:'?boolean',enableAssistanceFlag:'?boolean',enableAutoAwayOnDecline:'?boolean',enableAutoAwayOnPushTimeout:'?boolean',enableChatConferencing:'?boolean',enableChatMonitoring:'?boolean',enableChatTransferToAgent:'?boolean',enableChatTransferToButton:'?boolean',enableChatTransferToSkill:'?boolean',enableLogoutSound:'?boolean',enableNotifications:'?boolean',enableRequestSound:'?boolean',enableSneakPeek:'?boolean',enableVisitorBlocking:'?boolean',enableWhisperMessage:'?boolean',label:'string',supervisorDefaultAgentStatusFilter:'?string',supervisorDefaultButtonFilter:'?string',supervisorDefaultSkillFilter:'?string',supervisorSkills:'?SupervisorAgentConfigSkills',transferableButtons:'?AgentConfigButtons',transferableSkills:'?AgentConfigSkills'},extends:'Metadata'},AgentConfigAssignments:{type:'AgentConfigAssignments',props:{profiles:'?AgentConfigProfileAssignments',users:'?AgentConfigUserAssignments'}},AgentConfigProfileAssignments:{type:'AgentConfigProfileAssignments',props:{profile:['string']}},AgentConfigUserAssignments:{type:'AgentConfigUserAssignments',props:{user:['string']}},SupervisorAgentConfigSkills:{type:'SupervisorAgentConfigSkills',props:{skill:['string']}},AgentConfigButtons:{type:'AgentConfigButtons',props:{button:['string']}},AgentConfigSkills:{type:'AgentConfigSkills',props:{skill:['string']}},LiveChatButton:{type:'LiveChatButton',props:{animation:'?string',autoGreeting:'?string',chasitorIdleTimeout:'?number',chasitorIdleTimeoutWarning:'?number',chatPage:'?string',customAgentName:'?string',deployments:'?LiveChatButtonDeployments',enableQueue:'?boolean',inviteEndPosition:'?string',inviteImage:'?string',inviteStartPosition:'?string',isActive:'?boolean',label:'string',numberOfReroutingAttempts:'?number',offlineImage:'?string',onlineImage:'?string',optionsCustomRoutingIsEnabled:'?boolean',optionsHasChasitorIdleTimeout:'boolean',optionsHasInviteAfterAccept:'?boolean',optionsHasInviteAfterReject:'?boolean',optionsHasRerouteDeclinedRequest:'?boolean',optionsIsAutoAccept:'?boolean',optionsIsInviteAutoRemove:'?boolean',overallQueueLength:'?number',perAgentQueueLength:'?number',postChatPage:'?string',postChatUrl:'?string',preChatFormPage:'?string',preChatFormUrl:'?string',pushTimeOut:'?number',routingType:'string',site:'?string',skills:'?LiveChatButtonSkills',timeToRemoveInvite:'?number',type:'string',windowLanguage:'?string'},extends:'Metadata'},LiveChatButtonDeployments:{type:'LiveChatButtonDeployments',props:{deployment:['string']}},LiveChatButtonSkills:{type:'LiveChatButtonSkills',props:{skill:['string']}},LiveChatDeployment:{type:'LiveChatDeployment',props:{brandingImage:'?string',connectionTimeoutDuration:'?number',connectionWarningDuration:'?number',displayQueuePosition:'?boolean',domainWhiteList:'?LiveChatDeploymentDomainWhitelist',enablePrechatApi:'?boolean',enableTranscriptSave:'?boolean',label:'string',mobileBrandingImage:'?string',site:'?string',windowTitle:'string'},extends:'Metadata'},LiveChatDeploymentDomainWhitelist:{type:'LiveChatDeploymentDomainWhitelist',props:{domain:['string']}},LiveChatSensitiveDataRule:{type:'LiveChatSensitiveDataRule',props:{actionType:'string',description:'?string',enforceOn:'number',isEnabled:'boolean',pattern:'string',priority:'number',replacement:'?string'},extends:'Metadata'},LiveMessageSettings:{type:'LiveMessageSettings',props:{enableLiveMessage:'?boolean'},extends:'Metadata'},MacroSettings:{type:'MacroSettings',props:{enableAdvancedSearch:'?boolean',macrosInFolders:'?boolean'},extends:'Metadata'},ManagedContentType:{type:'ManagedContentType',props:{description:'?string',developerName:'string',managedContentNodeTypes:['ManagedContentNodeType'],masterLabel:'string'},extends:'Metadata'},ManagedContentNodeType:{type:'ManagedContentNodeType',props:{helpText:'?string',isLocalizable:'?boolean',isRequired:'?boolean',nodeLabel:'string',nodeName:'string',nodeType:'string',placeholderText:'?string'}},ManagedTopic:{type:'ManagedTopic',props:{managedTopicType:'string',name:'string',parentName:'string',position:'number',topicDescription:'string'},extends:'Metadata'},ManagedTopics:{type:'ManagedTopics',props:{managedTopic:['ManagedTopic']},extends:'Metadata'},SourceTrackingSettings:{type:'SourceTrackingSettings',props:{enableSourceTrackingSandboxes:'?boolean'},extends:'Metadata'},MapsAndLocationSettings:{type:'MapsAndLocationSettings',props:{enableAddressAutoComplete:'?boolean',enableMapsAndLocation:'?boolean'},extends:'Metadata'},MatchingRule:{type:'MatchingRule',props:{booleanFilter:'?string',description:'?string',label:'string',matchingRuleItems:['MatchingRuleItem'],ruleStatus:'string'},extends:'Metadata'},MatchingRuleItem:{type:'MatchingRuleItem',props:{blankValueBehavior:'?string',fieldName:'string',matchingMethod:'string'}},MatchingRules:{type:'MatchingRules',props:{matchingRules:['MatchingRule']},extends:'Metadata'},MetadataWithContent:{type:'MetadataWithContent',props:{content:'?string'},extends:'Metadata'},AccessControlPolicy:{type:'AccessControlPolicy',props:{active:'boolean',deploymentStatus:'string',description:'?string',masterLabel:'string',targetEntity:'string',version:'number'},extends:'MetadataWithContent'},ApexClass:{type:'ApexClass',props:{apiVersion:'number',packageVersions:['PackageVersion'],status:'string'},extends:'MetadataWithContent'},ApexComponent:{type:'ApexComponent',props:{apiVersion:'?number',description:'?string',label:'string',packageVersions:['PackageVersion']},extends:'MetadataWithContent'},ApexPage:{type:'ApexPage',props:{apiVersion:'number',availableInTouch:'?boolean',confirmationTokenRequired:'?boolean',description:'?string',label:'string',packageVersions:['PackageVersion']},extends:'MetadataWithContent'},ApexTrigger:{type:'ApexTrigger',props:{apiVersion:'number',packageVersions:['PackageVersion'],status:'string'},extends:'MetadataWithContent'},Certificate:{type:'Certificate',props:{caSigned:'boolean',encryptedWithPlatformEncryption:'?boolean',expirationDate:'?string',keySize:'?number',masterLabel:'string',privateKeyExportable:'?boolean'},extends:'MetadataWithContent'},ContentAsset:{type:'ContentAsset',props:{format:'?string',isVisibleByExternalUsers:'?boolean',language:'string',masterLabel:'string',originNetwork:'?string',relationships:'?ContentAssetRelationships',versions:'ContentAssetVersions'},extends:'MetadataWithContent'},ContentAssetRelationships:{type:'ContentAssetRelationships',props:{insightsApplication:['ContentAssetLink'],network:['ContentAssetLink'],organization:'?ContentAssetLink',workspace:['ContentAssetLink']}},ContentAssetLink:{type:'ContentAssetLink',props:{access:'string',isManagingWorkspace:'?boolean',name:'?string'}},ContentAssetVersions:{type:'ContentAssetVersions',props:{version:['ContentAssetVersion']}},ContentAssetVersion:{type:'ContentAssetVersion',props:{number:'string',pathOnClient:'string',zipEntry:'?string'}},Document:{type:'Document',props:{description:'?string',internalUseOnly:'boolean',keywords:'?string',name:'?string',public:'boolean'},extends:'MetadataWithContent'},EclairGeoData:{type:'EclairGeoData',props:{maps:['EclairMap'],masterLabel:'string'},extends:'MetadataWithContent'},EclairMap:{type:'EclairMap',props:{boundingBoxBottom:'?number',boundingBoxLeft:'?number',boundingBoxRight:'?number',boundingBoxTop:'?number',mapLabel:'?string',mapName:'string',projection:'string'}},EmailTemplate:{type:'EmailTemplate',props:{apiVersion:'?number',attachedDocuments:['string'],attachments:['Attachment'],available:'boolean',description:'?string',encodingKey:'string',letterhead:'?string',name:'string',packageVersions:['PackageVersion'],relatedEntityType:'?string',style:'string',subject:'?string',textOnly:'?string',type:'string',uiType:'?string'},extends:'MetadataWithContent'},Attachment:{type:'Attachment',props:{content:'string',name:'string'}},NetworkBranding:{type:'NetworkBranding',props:{loginBackgroundImageUrl:'?string',loginFooterText:'?string',loginLogo:'?string',loginLogoName:'?string',loginPrimaryColor:'?string',loginQuaternaryColor:'?string',loginRightFrameUrl:'?string',network:'?string',pageFooter:'?string',pageHeader:'?string',primaryColor:'string',primaryComplementColor:'string',quaternaryColor:'string',quaternaryComplementColor:'string',secondaryColor:'string',staticLogoImageUrl:'?string',tertiaryColor:'string',tertiaryComplementColor:'string',zeronaryColor:'string',zeronaryComplementColor:'string'},extends:'MetadataWithContent'},Orchestration:{type:'Orchestration',props:{context:'string',masterLabel:'string'},extends:'MetadataWithContent'},Scontrol:{type:'Scontrol',props:{contentSource:'string',description:'?string',encodingKey:'string',fileContent:'?string',fileName:'?string',name:'string',supportsCaching:'boolean'},extends:'MetadataWithContent'},SiteDotCom:{type:'SiteDotCom',props:{label:'string',siteType:'string'},extends:'MetadataWithContent'},StaticResource:{type:'StaticResource',props:{cacheControl:'string',contentType:'string',description:'?string'},extends:'MetadataWithContent'},UiPlugin:{type:'UiPlugin',props:{description:'?string',extensionPointIdentifier:'string',isEnabled:'boolean',language:'string',masterLabel:'string'},extends:'MetadataWithContent'},WaveDashboard:{type:'WaveDashboard',props:{application:'string',description:'?string',masterLabel:'string',templateAssetSourceName:'?string'},extends:'MetadataWithContent'},WaveDataflow:{type:'WaveDataflow',props:{dataflowType:'?string',description:'?string',masterLabel:'string'},extends:'MetadataWithContent'},WaveLens:{type:'WaveLens',props:{application:'string',datasets:['string'],description:'?string',masterLabel:'string',templateAssetSourceName:'?string',visualizationType:'string'},extends:'MetadataWithContent'},WaveRecipe:{type:'WaveRecipe',props:{dataflow:'string',masterLabel:'string',securityPredicate:'?string',targetDatasetAlias:'string'},extends:'MetadataWithContent'},MilestoneType:{type:'MilestoneType',props:{description:'?string',recurrenceType:'?string'},extends:'Metadata'},MlDomain:{type:'MlDomain',props:{description:'?string',label:'string',mlIntents:['MlIntent'],mlSlotClasses:['MlSlotClass']},extends:'Metadata'},MobileApplicationDetail:{type:'MobileApplicationDetail',props:{applicationBinaryFile:'?string',applicationBinaryFileName:'?string',applicationBundleIdentifier:'?string',applicationFileLength:'?number',applicationIconFile:'?string',applicationIconFileName:'?string',applicationInstallUrl:'?string',devicePlatform:'string',deviceType:'?string',minimumOsVersion:'?string',privateApp:'?boolean',version:'string'},extends:'Metadata'},MobileSettings:{type:'MobileSettings',props:{dashboardMobile:'?DashboardMobileSettings',enableImportContactFromDevice:'?boolean',enableLightningOnMobile:'?boolean',enableOfflineDraftsEnabled:'?boolean',enablePopulateNameManuallyInToday:'?boolean',enableS1EncryptedStoragePref2:'?boolean',enableS1OfflinePref:'?boolean'},extends:'Metadata'},DashboardMobileSettings:{type:'DashboardMobileSettings',props:{enableDashboardIPadApp:'?boolean'}},ModerationRule:{type:'ModerationRule',props:{action:'string',actionLimit:'?number',active:'boolean',description:'?string',entitiesAndFields:['ModeratedEntityField'],masterLabel:'string',notifyLimit:'?number',timePeriod:'?string',type:'?string',userCriteria:['string'],userMessage:'?string'},extends:'Metadata'},ModeratedEntityField:{type:'ModeratedEntityField',props:{entityName:'string',fieldName:'?string',keywordList:'?string'}},MyDomainSettings:{type:'MyDomainSettings',props:{canOnlyLoginWithMyDomainUrl:'?boolean',doesApiLoginRequireOrgDomain:'?boolean',enableNativeBrowserForAuthOnAndroid:'?boolean',enableNativeBrowserForAuthOnIos:'?boolean',useStabilizedMyDomainHostnames:'?boolean',useStabilizedSandboxMyDomainHostnames:'?boolean'},extends:'Metadata'},NameSettings:{type:'NameSettings',props:{enableMiddleName:'?boolean',enableNameSuffix:'?boolean'},extends:'Metadata'},NamedCredential:{type:'NamedCredential',props:{allowMergeFieldsInBody:'?boolean',allowMergeFieldsInHeader:'?boolean',authProvider:'?string',authTokenEndpointUrl:'?string',awsAccessKey:'?string',awsAccessSecret:'?string',awsRegion:'?string',awsService:'?string',certificate:'?string',endpoint:'?string',generateAuthorizationHeader:'?boolean',jwtAudience:'?string',jwtFormulaSubject:'?string',jwtIssuer:'?string',jwtSigningCertificate:'?string',jwtTextSubject:'?string',jwtValidityPeriodSeconds:'?number',label:'string',oauthRefreshToken:'?string',oauthScope:'?string',oauthToken:'?string',password:'?string',principalType:'string',privateConnection:'?string',protocol:'string',username:'?string'},extends:'Metadata'},NavigationMenu:{type:'NavigationMenu',props:{container:'string',containerType:'string',label:'string',navigationMenuItem:['NavigationMenuItem']},extends:'Metadata'},Network:{type:'Network',props:{allowInternalUserLogin:'?boolean',allowMembersToFlag:'?boolean',allowedExtensions:'?string',caseCommentEmailTemplate:'?string',changePasswordTemplate:'string',communityRoles:'?CommunityRoles',description:'?string',disableReputationRecordConversations:'?boolean',emailFooterLogo:'?string',emailFooterText:'?string',emailSenderAddress:'string',emailSenderName:'string',enableCustomVFErrorPageOverrides:'?boolean',enableDirectMessages:'?boolean',enableGuestChatter:'?boolean',enableGuestFileAccess:'?boolean',enableGuestMemberVisibility:'?boolean',enableInvitation:'?boolean',enableKnowledgeable:'?boolean',enableMemberVisibility:'?boolean',enableNicknameDisplay:'?boolean',enablePrivateMessages:'?boolean',enableReputation:'?boolean',enableShowAllNetworkSettings:'?boolean',enableSiteAsContainer:'?boolean',enableTalkingAboutStats:'?boolean',enableTopicAssignmentRules:'?boolean',enableTopicSuggestions:'?boolean',enableUpDownVote:'?boolean',feedChannel:'?string',forgotPasswordTemplate:'string',gatherCustomerSentimentData:'?boolean',lockoutTemplate:'?string',logoutUrl:'?string',maxFileSizeKb:'?number',navigationLinkSet:'?NavigationLinkSet',networkMemberGroups:'?NetworkMemberGroup',networkPageOverrides:'?NetworkPageOverride',newSenderAddress:'?string',picassoSite:'?string',recommendationAudience:'?RecommendationAudience',recommendationDefinition:'?RecommendationDefinition',reputationLevels:'?ReputationLevelDefinitions',reputationPointsRules:'?ReputationPointsRules',selfRegProfile:'?string',selfRegistration:'?boolean',sendWelcomeEmail:'?boolean',site:'string',status:'string',tabs:'NetworkTabSet',urlPathPrefix:'?string',verificationTemplate:'?string',welcomeTemplate:'string'},extends:'Metadata'},CommunityRoles:{type:'CommunityRoles',props:{customerUserRole:'?string',employeeUserRole:'?string',partnerUserRole:'?string'}},NetworkMemberGroup:{type:'NetworkMemberGroup',props:{permissionSet:['string'],profile:['string']}},NetworkPageOverride:{type:'NetworkPageOverride',props:{changePasswordPageOverrideSetting:'?string',forgotPasswordPageOverrideSetting:'?string',homePageOverrideSetting:'?string',loginPageOverrideSetting:'?string',selfRegProfilePageOverrideSetting:'?string'}},RecommendationAudience:{type:'RecommendationAudience',props:{recommendationAudienceDetails:['RecommendationAudienceDetail']}},RecommendationAudienceDetail:{type:'RecommendationAudienceDetail',props:{audienceCriteriaType:'?string',audienceCriteriaValue:'?string',setupName:'?string'}},RecommendationDefinition:{type:'RecommendationDefinition',props:{recommendationDefinitionDetails:['RecommendationDefinitionDetail']}},RecommendationDefinitionDetail:{type:'RecommendationDefinitionDetail',props:{actionUrl:'?string',description:'?string',linkText:'?string',scheduledRecommendations:'?ScheduledRecommendation',setupName:'?string',title:'?string'}},ScheduledRecommendation:{type:'ScheduledRecommendation',props:{scheduledRecommendationDetails:['ScheduledRecommendationDetail']}},ScheduledRecommendationDetail:{type:'ScheduledRecommendationDetail',props:{channel:'?string',enabled:'?boolean',rank:'?number',recommendationAudience:'?string'}},ReputationLevelDefinitions:{type:'ReputationLevelDefinitions',props:{level:['ReputationLevel']}},ReputationLevel:{type:'ReputationLevel',props:{branding:'?ReputationBranding',label:'?string',lowerThreshold:'number'}},ReputationBranding:{type:'ReputationBranding',props:{smallImage:'?string'}},ReputationPointsRules:{type:'ReputationPointsRules',props:{pointsRule:['ReputationPointsRule']}},ReputationPointsRule:{type:'ReputationPointsRule',props:{eventType:'string',points:'number'}},NetworkTabSet:{type:'NetworkTabSet',props:{customTab:['string'],defaultTab:'string',standardTab:['string']}},NotificationsSettings:{type:'NotificationsSettings',props:{enableMobileAppPushNotifications:'?boolean',enableNotifications:'?boolean'},extends:'Metadata'},OauthCustomScope:{type:'OauthCustomScope',props:{description:'string',developerName:'string',isProtected:'?boolean',isPublic:'?boolean',masterLabel:'string'},extends:'Metadata'},ObjectLinkingSettings:{type:'ObjectLinkingSettings',props:{enableObjectLinking:'?boolean'},extends:'Metadata'},OmniChannelSettings:{type:'OmniChannelSettings',props:{enableOmniAutoLoginPrompt:'?boolean',enableOmniChannel:'?boolean',enableOmniSecondaryRoutingPriority:'?boolean',enableOmniSkillsRouting:'?boolean'},extends:'Metadata'},OpportunitySettings:{type:'OpportunitySettings',props:{autoActivateNewReminders:'?boolean',customizableProductSchedulesEnabled:'?boolean',doesAutoAddSplitOwnerAsOpportunityTeamMember:'?boolean',doesEnforceStandardOpportunitySaveLogic:'?boolean',enableFindSimilarOpportunities:'?boolean',enableOpportunityFieldHistoryTracking:'?boolean',enableOpportunityInsightsInMobile:'?boolean',enableOpportunityTeam:'?boolean',enableUpdateReminders:'?boolean',findSimilarOppFilter:'?FindSimilarOppFilter',promptToAddProducts:'?boolean'},extends:'Metadata'},FindSimilarOppFilter:{type:'FindSimilarOppFilter',props:{similarOpportunitiesDisplayColumns:['string'],similarOpportunitiesMatchFields:['string']}},OrchestrationContext:{type:'OrchestrationContext',props:{datasets:['OrchestrationContextDataset'],description:'?string',events:['OrchestrationContextEvent'],imageFile:'string',imageScale:'number',masterLabel:'string',runtimeType:'string',salesforceObject:'?string',salesforceObjectPrimaryKey:'?string'},extends:'Metadata'},OrchestrationContextDataset:{type:'OrchestrationContextDataset',props:{datasetType:'string',orchestrationDataset:'string'}},OrchestrationContextEvent:{type:'OrchestrationContextEvent',props:{eventType:'string',orchestrationEvent:'string',platformEvent:'string',platformEventPrimaryKey:'string'}},OrderManagementSettings:{type:'OrderManagementSettings',props:{enableOrderManagement:'?boolean'},extends:'Metadata'},OrderSettings:{type:'OrderSettings',props:{enableNegativeQuantity:'?boolean',enableOrders:'?boolean',enableReductionOrders:'?boolean',enableZeroQuantity:'?boolean'},extends:'Metadata'},OrgPreferenceSettings:{type:'OrgPreferenceSettings',props:{preferences:['OrganizationSettingsDetail']},extends:'Metadata'},OrganizationSettingsDetail:{type:'OrganizationSettingsDetail',props:{settingName:'string',settingValue:'boolean'}},OrgSettings:{type:'OrgSettings',props:{enableCustomerSuccessPortal:'?boolean',enableExtendedMailMerge:'?boolean',enableIncludeContractStatus:'?boolean',enableMakeDeploymentsMandatory:'?boolean',enableManageSelfServiceUsers:'?boolean',enableOrgFeedSentimentAnalysis:'?boolean',enableRADeploymentAttributeOnly:'?boolean',enableResetDivisionOnLogin:'?boolean',saveMailMergeDocsAsSalesforceDocs:'?boolean'},extends:'Metadata'},Package:{type:'Package',props:{apiAccessLevel:'?string',description:'?string',namespacePrefix:'?string',objectPermissions:['ProfileObjectPermissions'],packageType:'?string',postInstallClass:'?string',setupWeblink:'?string',types:['PackageTypeMembers'],uninstallClass:'?string',version:'string'},extends:'Metadata'},ProfileObjectPermissions:{type:'ProfileObjectPermissions',props:{allowCreate:'?boolean',allowDelete:'?boolean',allowEdit:'?boolean',allowRead:'?boolean',modifyAllRecords:'?boolean',object:'string',viewAllRecords:'?boolean'}},PackageTypeMembers:{type:'PackageTypeMembers',props:{members:['string'],name:'string'}},PardotEinsteinSettings:{type:'PardotEinsteinSettings',props:{enableCampaignInsight:'?boolean',enableEngagementScore:'?boolean'},extends:'Metadata'},PardotSettings:{type:'PardotSettings',props:{enableB2bmaAppEnabled:'?boolean',enableEngagementHistoryDashboards:'?boolean',enablePardotAppV1Enabled:'?boolean',enablePardotEnabled:'?boolean',enableProspectActivityDataset:'?boolean'},extends:'Metadata'},PartyDataModelSettings:{type:'PartyDataModelSettings',props:{enableAutoSelectIndividualOnMerge:'?boolean',enableConsentManagement:'?boolean'},extends:'Metadata'},PathAssistant:{type:'PathAssistant',props:{active:'boolean',entityName:'string',fieldName:'string',masterLabel:'string',pathAssistantSteps:['PathAssistantStep'],recordTypeName:'string'},extends:'Metadata'},PathAssistantStep:{type:'PathAssistantStep',props:{fieldNames:['string'],info:'?string',picklistValueName:'string'}},PathAssistantSettings:{type:'PathAssistantSettings',props:{canOverrideAutoPathCollapseWithUserPref:'?boolean',pathAssistantEnabled:'?boolean'},extends:'Metadata'},PermissionSet:{type:'PermissionSet',props:{applicationVisibilities:['PermissionSetApplicationVisibility'],classAccesses:['PermissionSetApexClassAccess'],customMetadataTypeAccesses:['PermissionSetCustomMetadataTypeAccess'],customPermissions:['PermissionSetCustomPermissions'],description:'?string',externalDataSourceAccesses:['PermissionSetExternalDataSourceAccess'],fieldPermissions:['PermissionSetFieldPermissions'],flowAccesses:['PermissionSetFlowAccess'],hasActivationRequired:'?boolean',label:'string',license:'?string',objectPermissions:['PermissionSetObjectPermissions'],pageAccesses:['PermissionSetApexPageAccess'],recordTypeVisibilities:['PermissionSetRecordTypeVisibility'],tabSettings:['PermissionSetTabSetting'],userPermissions:['PermissionSetUserPermission']},extends:'Metadata'},PermissionSetApplicationVisibility:{type:'PermissionSetApplicationVisibility',props:{application:'string',visible:'boolean'}},PermissionSetApexClassAccess:{type:'PermissionSetApexClassAccess',props:{apexClass:'string',enabled:'boolean'}},PermissionSetCustomMetadataTypeAccess:{type:'PermissionSetCustomMetadataTypeAccess',props:{enabled:'boolean',name:'string'}},PermissionSetCustomPermissions:{type:'PermissionSetCustomPermissions',props:{enabled:'boolean',name:'string'}},PermissionSetExternalDataSourceAccess:{type:'PermissionSetExternalDataSourceAccess',props:{enabled:'boolean',externalDataSource:'string'}},PermissionSetFieldPermissions:{type:'PermissionSetFieldPermissions',props:{editable:'boolean',field:'string',readable:'?boolean'}},PermissionSetFlowAccess:{type:'PermissionSetFlowAccess',props:{enabled:'boolean',flow:'string'}},PermissionSetObjectPermissions:{type:'PermissionSetObjectPermissions',props:{allowCreate:'boolean',allowDelete:'boolean',allowEdit:'boolean',allowRead:'boolean',modifyAllRecords:'boolean',object:'string',viewAllRecords:'boolean'}},PermissionSetApexPageAccess:{type:'PermissionSetApexPageAccess',props:{apexPage:'string',enabled:'boolean'}},PermissionSetRecordTypeVisibility:{type:'PermissionSetRecordTypeVisibility',props:{recordType:'string',visible:'boolean'}},PermissionSetTabSetting:{type:'PermissionSetTabSetting',props:{tab:'string',visibility:'string'}},PermissionSetUserPermission:{type:'PermissionSetUserPermission',props:{enabled:'boolean',name:'string'}},MutingPermissionSet:{type:'MutingPermissionSet',props:{label:'string'},extends:'PermissionSet'},PermissionSetGroup:{type:'PermissionSetGroup',props:{description:'?string',label:'string',mutingPermissionSets:['string'],permissionSets:['string'],status:'?string'},extends:'Metadata'},PersonListSettings:{type:'PersonListSettings',props:{enablePersonList:'boolean'},extends:'Metadata'},PicklistSettings:{type:'PicklistSettings',props:{isPicklistApiNameEditDisabled:'?boolean'},extends:'Metadata'},PlatformCachePartition:{type:'PlatformCachePartition',props:{description:'?string',isDefaultPartition:'boolean',masterLabel:'string',platformCachePartitionTypes:['PlatformCachePartitionType']},extends:'Metadata'},PlatformCachePartitionType:{type:'PlatformCachePartitionType',props:{allocatedCapacity:'number',allocatedPurchasedCapacity:'number',allocatedTrialCapacity:'number',cacheType:'string'}},PlatformEncryptionSettings:{type:'PlatformEncryptionSettings',props:{canEncryptManagedPackageFields:'?boolean',enableDeterministicEncryption:'?boolean',enableEncryptFieldHistory:'?boolean',enableEventBusEncryption:'?boolean',isMEKForEncryptionRequired:'?boolean',isUseHighAssuranceKeysRequired:'?boolean'},extends:'Metadata'},PlatformEventChannel:{type:'PlatformEventChannel',props:{channelType:'string',label:'string'},extends:'Metadata'},PlatformEventChannelMember:{type:'PlatformEventChannelMember',props:{eventChannel:'string',selectedEntity:'string'},extends:'Metadata'},Portal:{type:'Portal',props:{active:'boolean',admin:'?string',defaultLanguage:'?string',description:'?string',emailSenderAddress:'string',emailSenderName:'string',enableSelfCloseCase:'?boolean',footerDocument:'?string',forgotPassTemplate:'?string',headerDocument:'?string',isSelfRegistrationActivated:'?boolean',loginHeaderDocument:'?string',logoDocument:'?string',logoutUrl:'?string',newCommentTemplate:'?string',newPassTemplate:'?string',newUserTemplate:'?string',ownerNotifyTemplate:'?string',selfRegNewUserUrl:'?string',selfRegUserDefaultProfile:'?string',selfRegUserDefaultRole:'?string',selfRegUserTemplate:'?string',showActionConfirmation:'?boolean',stylesheetDocument:'?string',type:'string'},extends:'Metadata'},PostTemplate:{type:'PostTemplate',props:{default:'?boolean',description:'?string',fields:['string'],label:'string'},extends:'Metadata'},PresenceDeclineReason:{type:'PresenceDeclineReason',props:{label:'string'},extends:'Metadata'},PresenceUserConfig:{type:'PresenceUserConfig',props:{assignments:'?PresenceConfigAssignments',capacity:'number',declineReasons:['string'],enableAutoAccept:'?boolean',enableDecline:'?boolean',enableDeclineReason:'?boolean',enableDisconnectSound:'?boolean',enableRequestSound:'?boolean',label:'string',presenceStatusOnDecline:'?string',presenceStatusOnPushTimeout:'?string'},extends:'Metadata'},PresenceConfigAssignments:{type:'PresenceConfigAssignments',props:{profiles:'?PresenceConfigProfileAssignments',users:'?PresenceConfigUserAssignments'}},PresenceConfigProfileAssignments:{type:'PresenceConfigProfileAssignments',props:{profile:['string']}},PresenceConfigUserAssignments:{type:'PresenceConfigUserAssignments',props:{user:['string']}},PrivacySettings:{type:'PrivacySettings',props:{enableConsentAuditTrail:'?boolean',enableConsentEventStream:'?boolean',enableDefaultMetadataValues:'?boolean'},extends:'Metadata'},PrivateConnection:{type:'PrivateConnection',props:{description:'?string',direction:'string',externalConnectionProperties:['ExternalConnectionProperty'],label:'string',status:'string',type:'string'},extends:'Metadata'},ExternalConnectionProperty:{type:'ExternalConnectionProperty',props:{propertyName:'string',propertyValue:'string'}},ProductSettings:{type:'ProductSettings',props:{enableCascadeActivateToRelatedPrices:'?boolean',enableMySettings:'?boolean',enableQuantitySchedule:'?boolean',enableRevenueSchedule:'?boolean'},extends:'Metadata'},Profile:{type:'Profile',props:{applicationVisibilities:['ProfileApplicationVisibility'],categoryGroupVisibilities:['ProfileCategoryGroupVisibility'],classAccesses:['ProfileApexClassAccess'],custom:'?boolean',customMetadataTypeAccesses:['ProfileCustomMetadataTypeAccess'],customPermissions:['ProfileCustomPermissions'],description:'?string',externalDataSourceAccesses:['ProfileExternalDataSourceAccess'],fieldPermissions:['ProfileFieldLevelSecurity'],flowAccesses:['ProfileFlowAccess'],layoutAssignments:['ProfileLayoutAssignment'],loginHours:'?ProfileLoginHours',loginIpRanges:['ProfileLoginIpRange'],objectPermissions:['ProfileObjectPermissions'],pageAccesses:['ProfileApexPageAccess'],profileActionOverrides:['ProfileActionOverride'],recordTypeVisibilities:['ProfileRecordTypeVisibility'],tabVisibilities:['ProfileTabVisibility'],userLicense:'?string',userPermissions:['ProfileUserPermission']},extends:'Metadata'},ProfileApplicationVisibility:{type:'ProfileApplicationVisibility',props:{application:'string',default:'boolean',visible:'boolean'}},ProfileCategoryGroupVisibility:{type:'ProfileCategoryGroupVisibility',props:{dataCategories:['string'],dataCategoryGroup:'string',visibility:'string'}},ProfileApexClassAccess:{type:'ProfileApexClassAccess',props:{apexClass:'string',enabled:'boolean'}},ProfileCustomMetadataTypeAccess:{type:'ProfileCustomMetadataTypeAccess',props:{enabled:'boolean',name:'string'}},ProfileCustomPermissions:{type:'ProfileCustomPermissions',props:{enabled:'boolean',name:'string'}},ProfileExternalDataSourceAccess:{type:'ProfileExternalDataSourceAccess',props:{enabled:'boolean',externalDataSource:'string'}},ProfileFieldLevelSecurity:{type:'ProfileFieldLevelSecurity',props:{editable:'boolean',field:'string',readable:'?boolean'}},ProfileFlowAccess:{type:'ProfileFlowAccess',props:{enabled:'boolean',flow:'string'}},ProfileLayoutAssignment:{type:'ProfileLayoutAssignment',props:{layout:'string',recordType:'?string'}},ProfileLoginHours:{type:'ProfileLoginHours',props:{fridayEnd:'?string',fridayStart:'?string',mondayEnd:'?string',mondayStart:'?string',saturdayEnd:'?string',saturdayStart:'?string',sundayEnd:'?string',sundayStart:'?string',thursdayEnd:'?string',thursdayStart:'?string',tuesdayEnd:'?string',tuesdayStart:'?string',wednesdayEnd:'?string',wednesdayStart:'?string'}},ProfileLoginIpRange:{type:'ProfileLoginIpRange',props:{description:'?string',endAddress:'string',startAddress:'string'}},ProfileApexPageAccess:{type:'ProfileApexPageAccess',props:{apexPage:'string',enabled:'boolean'}},ProfileRecordTypeVisibility:{type:'ProfileRecordTypeVisibility',props:{default:'boolean',personAccountDefault:'?boolean',recordType:'string',visible:'boolean'}},ProfileTabVisibility:{type:'ProfileTabVisibility',props:{tab:'string',visibility:'string'}},ProfileUserPermission:{type:'ProfileUserPermission',props:{enabled:'boolean',name:'string'}},ProfilePasswordPolicy:{type:'ProfilePasswordPolicy',props:{forgotPasswordRedirect:'?boolean',lockoutInterval:'number',maxLoginAttempts:'number',minimumPasswordLength:'number',minimumPasswordLifetime:'?boolean',obscure:'?boolean',passwordComplexity:'number',passwordExpiration:'number',passwordHistory:'number',passwordQuestion:'number',profile:'string'},extends:'Metadata'},ProfileSessionSetting:{type:'ProfileSessionSetting',props:{externalCommunityUserIdentityVerif:'boolean',forceLogout:'boolean',profile:'string',requiredSessionLevel:'?string',sessionPersistence:'boolean',sessionTimeout:'number',sessionTimeoutWarning:'boolean'},extends:'Metadata'},Prompt:{type:'Prompt',props:{masterLabel:'string',promptVersions:['PromptVersion']},extends:'Metadata'},PromptVersion:{type:'PromptVersion',props:{actionButtonLabel:'?string',actionButtonLink:'?string',body:'string',customApplication:'?string',delayDays:'number',description:'?string',dismissButtonLabel:'?string',displayPosition:'?string',displayType:'string',endDate:'?string',header:'?string',indexWithIsPublished:'?string',indexWithoutIsPublished:'?string',isPublished:'?boolean',masterLabel:'string',publishedByUser:'?string',publishedDate:'?string',shouldDisplayActionButton:'boolean',startDate:'string',targetAppDeveloperName:'string',targetAppNamespacePrefix:'?string',targetPageKey1:'string',targetPageKey2:'?string',targetPageType:'string',timesToDisplay:'number',title:'string',uiFormulaRule:'?UiFormulaRule',userAccess:'string',versionNumber:'number'}},Queue:{type:'Queue',props:{doesSendEmailToMembers:'?boolean',email:'?string',name:'string',queueMembers:'?QueueMembers',queueRoutingConfig:'?string',queueSobject:['QueueSobject']},extends:'Metadata'},QueueMembers:{type:'QueueMembers',props:{publicGroups:'?PublicGroups',roleAndSubordinates:'?RoleAndSubordinates',roleAndSubordinatesInternal:'?RoleAndSubordinatesInternal',roles:'?Roles',users:'?Users'}},PublicGroups:{type:'PublicGroups',props:{publicGroup:['string']}},RoleAndSubordinates:{type:'RoleAndSubordinates',props:{roleAndSubordinate:['string']}},RoleAndSubordinatesInternal:{type:'RoleAndSubordinatesInternal',props:{roleAndSubordinateInternal:['string']}},Roles:{type:'Roles',props:{role:['string']}},Users:{type:'Users',props:{user:['string']}},QueueSobject:{type:'QueueSobject',props:{sobjectType:'string'}},QueueRoutingConfig:{type:'QueueRoutingConfig',props:{capacityPercentage:'?number',capacityWeight:'?number',dropAdditionalSkillsTimeout:'?number',isAttributeBased:'?boolean',label:'string',pushTimeout:'?number',queueOverflowAssignee:'?string',routingModel:'string',routingPriority:'number',userOverflowAssignee:'?string'},extends:'Metadata'},QuickAction:{type:'QuickAction',props:{canvas:'?string',description:'?string',fieldOverrides:['FieldOverride'],flowDefinition:'?string',height:'?number',icon:'?string',isProtected:'?boolean',label:'?string',lightningComponent:'?string',mobExtDisplayMode:'?string',optionsCreateFeedItem:'boolean',page:'?string',quickActionLayout:'?QuickActionLayout',quickActionSendEmailOptions:'?QuickActionSendEmailOptions',standardLabel:'?string',successMessage:'?string',targetObject:'?string',targetParentField:'?string',targetRecordType:'?string',type:'string',width:'?number'},extends:'Metadata'},FieldOverride:{type:'FieldOverride',props:{field:'string',formula:'?string',literalValue:'?string'}},QuickActionLayout:{type:'QuickActionLayout',props:{layoutSectionStyle:'string',quickActionLayoutColumns:['QuickActionLayoutColumn']}},QuickActionLayoutColumn:{type:'QuickActionLayoutColumn',props:{quickActionLayoutItems:['QuickActionLayoutItem']}},QuickActionLayoutItem:{type:'QuickActionLayoutItem',props:{emptySpace:'?boolean',field:'?string',uiBehavior:'?string'}},QuickActionSendEmailOptions:{type:'QuickActionSendEmailOptions',props:{defaultEmailTemplateName:'?string',ignoreDefaultEmailTemplateSubject:'boolean'}},QuoteSettings:{type:'QuoteSettings',props:{enableQuote:'boolean',enableQuotesWithoutOppEnabled:'?boolean'},extends:'Metadata'},RecommendationStrategy:{type:'RecommendationStrategy',props:{actionContext:['StrategyAction'],contextRecordType:'?string',description:'?string',filter:['StrategyNodeFilter'],if:['StrategyNodeIf'],invocableAction:['StrategyNodeInvocableAction'],isTemplate:'?boolean',label:'string',map:['StrategyNodeMap'],mutuallyExclusive:['StrategyNodeExclusive'],onBehalfOfExpression:'?string',recommendationLimit:['StrategyNodeRecommendationLimit'],recommendationLoad:['StrategyNodeRecommendationLoad'],sort:['StrategyNodeSort'],union:['StrategyNodeUnion']},extends:'Metadata'},StrategyAction:{type:'StrategyAction',props:{action:'string',argument:['StrategyActionArg'],description:'?string',label:'?string',name:'string',type:'string'}},StrategyActionArg:{type:'StrategyActionArg',props:{name:'string',value:'string'}},StrategyNodeFilter:{type:'StrategyNodeFilter',props:{expression:'string'},extends:'StrategyNodeUnionBase'},StrategyNodeUnionBase:{type:'StrategyNodeUnionBase',props:{limit:'?number'},extends:'StrategyNodeBase'},StrategyNodeBase:{type:'StrategyNodeBase',props:{childNode:['string'],description:'?string',label:'?string',name:'string'}},StrategyNodeExclusive:{type:'StrategyNodeExclusive',props:{},extends:'StrategyNodeUnionBase'},StrategyNodeIf:{type:'StrategyNodeIf',props:{childNodeExpression:['IfExpression'],onlyFirstMatch:'?boolean'},extends:'StrategyNodeUnionBase'},IfExpression:{type:'IfExpression',props:{childName:'string',expression:'string'}},StrategyNodeInvocableAction:{type:'StrategyNodeInvocableAction',props:{action:'string',argument:['StrategyNodeInvocableActionArg'],isGenerator:'boolean',type:'string'},extends:'StrategyNodeUnionBase'},StrategyNodeInvocableActionArg:{type:'StrategyNodeInvocableActionArg',props:{name:'string',value:'string'}},StrategyNodeMap:{type:'StrategyNodeMap',props:{mapExpression:['MapExpression']},extends:'StrategyNodeUnionBase'},MapExpression:{type:'MapExpression',props:{expression:'string',name:'string',type:'string'}},StrategyNodeRecommendationLimit:{type:'StrategyNodeRecommendationLimit',props:{filterMode:['string'],lookbackDuration:'?number',maxRecommendationCount:'?number'},extends:'StrategyNodeUnionBase'},StrategyNodeRecommendationLoad:{type:'StrategyNodeRecommendationLoad',props:{condition:['RecommendationLoadCondition'],conditionLogic:'?string'},extends:'StrategyNodeUnionBase'},RecommendationLoadCondition:{type:'RecommendationLoadCondition',props:{field:'string',operator:'string',value:'RecommendationConditionValue'}},RecommendationConditionValue:{type:'RecommendationConditionValue',props:{type:'string',value:'?string'}},StrategyNodeSort:{type:'StrategyNodeSort',props:{field:['StrategyNodeSortField']},extends:'StrategyNodeUnionBase'},StrategyNodeSortField:{type:'StrategyNodeSortField',props:{name:'string',nullsFirst:'?boolean',order:'?string'}},StrategyNodeUnion:{type:'StrategyNodeUnion',props:{},extends:'StrategyNodeUnionBase'},RecordActionDeployment:{type:'RecordActionDeployment',props:{channelConfigurations:['RecordActionDeploymentChannel'],deploymentContexts:['RecordActionDeploymentContext'],hasGuidedActions:'?boolean',hasRecommendations:'?boolean',masterLabel:'string',recommendation:'?RecordActionRecommendation',selectableItems:['RecordActionSelectableItem']},extends:'Metadata'},RecordActionDeploymentChannel:{type:'RecordActionDeploymentChannel',props:{channel:'string',channelItems:['RecordActionDefaultItem'],isAutopopEnabled:'?boolean'}},RecordActionDefaultItem:{type:'RecordActionDefaultItem',props:{action:'string',isMandatory:'?boolean',isUiRemoveHidden:'?boolean',pinned:'string',position:'number',type:'string'}},RecordActionDeploymentContext:{type:'RecordActionDeploymentContext',props:{entityName:'string',recommendationStrategy:'?string'}},RecordActionRecommendation:{type:'RecordActionRecommendation',props:{defaultStrategy:'?string',hasDescription:'boolean',hasImage:'boolean',hasRejectAction:'boolean',hasTitle:'boolean',maxDisplayRecommendations:'number'}},RecordActionSelectableItem:{type:'RecordActionSelectableItem',props:{action:'string',type:'string'}},RecordPageSettings:{type:'RecordPageSettings',props:{enableActivityRelatedList:'?boolean',enableFullRecordView:'?boolean'},extends:'Metadata'},RemoteSiteSetting:{type:'RemoteSiteSetting',props:{description:'?string',disableProtocolSecurity:'boolean',isActive:'boolean',url:'string'},extends:'Metadata'},Report:{type:'Report',props:{aggregates:['ReportAggregate'],block:['Report'],blockInfo:'?ReportBlockInfo',buckets:['ReportBucketField'],chart:'?ReportChart',colorRanges:['ReportColorRange'],columns:['ReportColumn'],crossFilters:['ReportCrossFilter'],currency:'?string',customDetailFormulas:['ReportCustomDetailFormula'],dataCategoryFilters:['ReportDataCategoryFilter'],description:'?string',division:'?string',filter:'?ReportFilter',folderName:'?string',format:'string',formattingRules:['ReportFormattingRule'],groupingsAcross:['ReportGrouping'],groupingsDown:['ReportGrouping'],historicalSelector:'?ReportHistoricalSelector',name:'string',numSubscriptions:'?number',params:['ReportParam'],reportType:'string',roleHierarchyFilter:'?string',rowLimit:'?number',scope:'?string',showCurrentDate:'?boolean',showDetails:'?boolean',showGrandTotal:'?boolean',showSubTotals:'?boolean',sortColumn:'?string',sortOrder:'?string',territoryHierarchyFilter:'?string',timeFrameFilter:'?ReportTimeFrameFilter',userFilter:'?string'},extends:'Metadata'},ReportAggregate:{type:'ReportAggregate',props:{acrossGroupingContext:'?string',calculatedFormula:'string',datatype:'string',description:'?string',developerName:'string',downGroupingContext:'?string',isActive:'boolean',isCrossBlock:'?boolean',masterLabel:'string',reportType:'?string',scale:'?number'}},ReportBlockInfo:{type:'ReportBlockInfo',props:{aggregateReferences:['ReportAggregateReference'],blockId:'string',joinTable:'string'}},ReportAggregateReference:{type:'ReportAggregateReference',props:{aggregate:'string'}},ReportBucketField:{type:'ReportBucketField',props:{bucketType:'string',developerName:'string',masterLabel:'string',nullTreatment:'?string',otherBucketLabel:'?string',sourceColumnName:'string',useOther:'?boolean',values:['ReportBucketFieldValue']}},ReportBucketFieldValue:{type:'ReportBucketFieldValue',props:{sourceValues:['ReportBucketFieldSourceValue'],value:'string'}},ReportBucketFieldSourceValue:{type:'ReportBucketFieldSourceValue',props:{from:'?string',sourceValue:'?string',to:'?string'}},ReportChart:{type:'ReportChart',props:{backgroundColor1:'?string',backgroundColor2:'?string',backgroundFadeDir:'?string',chartSummaries:['ChartSummary'],chartType:'string',enableHoverLabels:'?boolean',expandOthers:'?boolean',groupingColumn:'?string',legendPosition:'?string',location:'?string',secondaryGroupingColumn:'?string',showAxisLabels:'?boolean',showPercentage:'?boolean',showTotal:'?boolean',showValues:'?boolean',size:'?string',summaryAxisManualRangeEnd:'?number',summaryAxisManualRangeStart:'?number',summaryAxisRange:'?string',textColor:'?string',textSize:'?number',title:'?string',titleColor:'?string',titleSize:'?number'}},ReportColorRange:{type:'ReportColorRange',props:{aggregate:'?string',columnName:'string',highBreakpoint:'?number',highColor:'string',lowBreakpoint:'?number',lowColor:'string',midColor:'string'}},ReportColumn:{type:'ReportColumn',props:{aggregateTypes:['string'],field:'string',reverseColors:'?boolean',showChanges:'?boolean'}},ReportCrossFilter:{type:'ReportCrossFilter',props:{criteriaItems:['ReportFilterItem'],operation:'string',primaryTableColumn:'string',relatedTable:'string',relatedTableJoinColumn:'string'}},ReportFilterItem:{type:'ReportFilterItem',props:{column:'string',columnToColumn:'?boolean',isUnlocked:'?boolean',operator:'string',snapshot:'?string',value:'?string'}},ReportCustomDetailFormula:{type:'ReportCustomDetailFormula',props:{calculatedFormula:'string',dataType:'string',description:'?string',developerName:'string',label:'string',scale:'number'}},ReportDataCategoryFilter:{type:'ReportDataCategoryFilter',props:{dataCategory:'string',dataCategoryGroup:'string',operator:'string'}},ReportFilter:{type:'ReportFilter',props:{booleanFilter:'?string',criteriaItems:['ReportFilterItem'],language:'?string'}},ReportFormattingRule:{type:'ReportFormattingRule',props:{aggregate:'?string',columnName:'string',values:['ReportFormattingRuleValue']}},ReportFormattingRuleValue:{type:'ReportFormattingRuleValue',props:{backgroundColor:'?string',rangeUpperBound:'?number'}},ReportGrouping:{type:'ReportGrouping',props:{aggregateType:'?string',dateGranularity:'?string',field:'string',sortByName:'?string',sortOrder:'string',sortType:'?string'}},ReportHistoricalSelector:{type:'ReportHistoricalSelector',props:{snapshot:['string']}},ReportParam:{type:'ReportParam',props:{name:'string',value:'string'}},ReportTimeFrameFilter:{type:'ReportTimeFrameFilter',props:{dateColumn:'string',endDate:'?string',interval:'string',startDate:'?string'}},ReportType:{type:'ReportType',props:{autogenerated:'?boolean',baseObject:'string',category:'string',deployed:'boolean',description:'?string',join:'?ObjectRelationship',label:'string',sections:['ReportLayoutSection']},extends:'Metadata'},ObjectRelationship:{type:'ObjectRelationship',props:{join:'?ObjectRelationship',outerJoin:'boolean',relationship:'string'}},ReportLayoutSection:{type:'ReportLayoutSection',props:{columns:['ReportTypeColumn'],masterLabel:'string'}},ReportTypeColumn:{type:'ReportTypeColumn',props:{checkedByDefault:'boolean',displayNameOverride:'?string',field:'string',table:'string'}},RestrictionRule:{type:'RestrictionRule',props:{active:'boolean',description:'string',enforcementType:'string',masterLabel:'string',recordFilter:'string',targetEntity:'string',userCriteria:'string',version:'number'},extends:'Metadata'},RetailExecutionSettings:{type:'RetailExecutionSettings',props:{enableRetailExecution:'?boolean'},extends:'Metadata'},RoleOrTerritory:{type:'RoleOrTerritory',props:{caseAccessLevel:'?string',contactAccessLevel:'?string',description:'?string',mayForecastManagerShare:'?boolean',name:'string',opportunityAccessLevel:'?string'},extends:'Metadata'},Role:{type:'Role',props:{parentRole:'?string'},extends:'RoleOrTerritory'},Territory:{type:'Territory',props:{accountAccessLevel:'?string',parentTerritory:'?string'},extends:'RoleOrTerritory'},SamlSsoConfig:{type:'SamlSsoConfig',props:{attributeName:'?string',attributeNameIdFormat:'?string',decryptionCertificate:'?string',errorUrl:'?string',executionUserId:'?string',identityLocation:'string',identityMapping:'string',issuer:'string',loginUrl:'?string',logoutUrl:'?string',name:'string',oauthTokenEndpoint:'?string',redirectBinding:'?boolean',requestSignatureMethod:'?string',requestSigningCertId:'?string',salesforceLoginUrl:'?string',samlEntityId:'string',samlJitHandlerId:'?string',samlVersion:'string',singleLogoutBinding:'?string',singleLogoutUrl:'?string',userProvisioning:'?boolean',validationCert:'string'},extends:'Metadata'},SchemaSettings:{type:'SchemaSettings',props:{enableAdvancedCMTSecurity:'?boolean',enableAdvancedCSSecurity:'?boolean',enableListCustomSettingCreation:'?boolean',enableSOSLOnCustomSettings:'?boolean'},extends:'Metadata'},SearchSettings:{type:'SearchSettings',props:{documentContentSearchEnabled:'boolean',enableAdvancedSearchInAlohaSidebar:'?boolean',enableEinsteinSearchPersonalization:'?boolean',enableQuerySuggestionPigOn:'?boolean',enableSalesforceGeneratedSynonyms:'?boolean',enableSetupSearch:'?boolean',optimizeSearchForCJKEnabled:'boolean',recentlyViewedUsersForBlankLookupEnabled:'boolean',searchSettingsByObject:'SearchSettingsByObject',sidebarAutoCompleteEnabled:'boolean',sidebarDropDownListEnabled:'boolean',sidebarLimitToItemsIOwnCheckboxEnabled:'boolean',singleSearchResultShortcutEnabled:'boolean',spellCorrectKnowledgeSearchEnabled:'boolean'},extends:'Metadata'},SearchSettingsByObject:{type:'SearchSettingsByObject',props:{searchSettingsByObject:['ObjectSearchSetting']}},ObjectSearchSetting:{type:'ObjectSearchSetting',props:{enhancedLookupEnabled:'boolean',lookupAutoCompleteEnabled:'boolean',name:'string',resultsPerPageCount:'number'}},SecuritySettings:{type:'SecuritySettings',props:{canUsersGrantLoginAccess:'?boolean',enableAdminLoginAsAnyUser:'?boolean',enableAuditFieldsInactiveOwner:'?boolean',enableAuraSecureEvalPref:'?boolean',enableRequireHttpsConnection:'?boolean',isTLSv12Required:'?boolean',isTLSv12RequiredCommunities:'?boolean',networkAccess:'?NetworkAccess',passwordPolicies:'?PasswordPolicies',sessionSettings:'?SessionSettings',singleSignOnSettings:'?SingleSignOnSettings'},extends:'Metadata'},NetworkAccess:{type:'NetworkAccess',props:{ipRanges:['IpRange']}},IpRange:{type:'IpRange',props:{description:'?string',end:'?string',start:'?string'}},PasswordPolicies:{type:'PasswordPolicies',props:{apiOnlyUserHomePageURL:'?string',complexity:'?string',enableSetPasswordInApi:'?boolean',expiration:'?string',historyRestriction:'?string',lockoutInterval:'?string',maxLoginAttempts:'?string',minimumPasswordLength:'?string',minimumPasswordLifetime:'?boolean',obscureSecretAnswer:'?boolean',passwordAssistanceMessage:'?string',passwordAssistanceURL:'?string',questionRestriction:'?string'}},SessionSettings:{type:'SessionSettings',props:{allowUserAuthenticationByCertificate:'?boolean',canConfirmEmailChangeInLightningCommunities:'?boolean',disableTimeoutWarning:'?boolean',enableCSPOnEmail:'?boolean',enableCSRFOnGet:'?boolean',enableCSRFOnPost:'?boolean',enableCacheAndAutocomplete:'?boolean',enableClickjackNonsetupSFDC:'?boolean',enableClickjackNonsetupUser:'?boolean',enableClickjackNonsetupUserHeaderless:'?boolean',enableClickjackSetup:'?boolean',enableContentSniffingProtection:'?boolean',enableLightningLogin:'?boolean',enableLightningLoginOnlyWithUserPerm:'?boolean',enablePostForSessions:'?boolean',enableSMSIdentity:'?boolean',enableU2F:'?boolean',enableUpgradeInsecureRequests:'?boolean',enableXssProtection:'?boolean',enforceIpRangesEveryRequest:'?boolean',forceLogoutOnSessionTimeout:'?boolean',forceRelogin:'?boolean',hasRetainedLoginHints:'?boolean',hasUserSwitching:'?boolean',hstsOnForcecomSites:'?boolean',identityConfirmationOnEmailChange:'?boolean',identityConfirmationOnTwoFactorRegistrationEnabled:'?boolean',lockSessionsToDomain:'?boolean',lockSessionsToIp:'?boolean',lockerServiceAPIVersion:'?string',lockerServiceCSP:'?boolean',lockerServiceFrozenRealm:'?boolean',logoutURL:'?string',redirectionWarning:'?boolean',referrerPolicy:'?boolean',requireHttpOnly:'?boolean',requireHttps:'?boolean',securityCentralKillSession:'?boolean',sessionTimeout:'?string'}},SingleSignOnSettings:{type:'SingleSignOnSettings',props:{enableForceDelegatedCallout:'?boolean',enableMultipleSamlConfigs:'?boolean',enableSamlJitProvisioning:'?boolean',enableSamlLogin:'?boolean'}},ServiceChannel:{type:'ServiceChannel',props:{interactionComponent:'?string',label:'string',relatedEntityType:'string',secondaryRoutingPriorityField:'?string',serviceChannelFieldPriorities:['ServiceChannelFieldPriority']},extends:'Metadata'},ServiceChannelFieldPriority:{type:'ServiceChannelFieldPriority',props:{priority:'number',value:'string'}},ServicePresenceStatus:{type:'ServicePresenceStatus',props:{channels:'?ServiceChannelStatus',label:'string'},extends:'Metadata'},ServiceChannelStatus:{type:'ServiceChannelStatus',props:{channel:['string']}},SharingBaseRule:{type:'SharingBaseRule',props:{accessLevel:'string',accountSettings:'?AccountSharingRuleSettings',description:'?string',label:'string',sharedTo:'SharedTo'},extends:'Metadata'},AccountSharingRuleSettings:{type:'AccountSharingRuleSettings',props:{caseAccessLevel:'string',contactAccessLevel:'string',opportunityAccessLevel:'string'}},SharingCriteriaRule:{type:'SharingCriteriaRule',props:{booleanFilter:'?string',criteriaItems:['FilterItem']},extends:'SharingBaseRule'},SharingGuestRule:{type:'SharingGuestRule',props:{booleanFilter:'?string',criteriaItems:['FilterItem']},extends:'SharingBaseRule'},SharingOwnerRule:{type:'SharingOwnerRule',props:{sharedFrom:'SharedTo'},extends:'SharingBaseRule'},SharingTerritoryRule:{type:'SharingTerritoryRule',props:{},extends:'SharingOwnerRule'},SharingRules:{type:'SharingRules',props:{sharingCriteriaRules:['SharingCriteriaRule'],sharingGuestRules:['SharingGuestRule'],sharingOwnerRules:['SharingOwnerRule'],sharingTerritoryRules:['SharingTerritoryRule']},extends:'Metadata'},SharingSet:{type:'SharingSet',props:{accessMappings:['AccessMapping'],description:'?string',name:'string',profiles:['string']},extends:'Metadata'},AccessMapping:{type:'AccessMapping',props:{accessLevel:'string',object:'string',objectField:'string',userField:'string'}},SharingSettings:{type:'SharingSettings',props:{enableAccountRoleOptimization:'?boolean',enableAssetSharing:'?boolean',enableCommunityUserVisibility:'?boolean',enableExternalSharingModel:'?boolean',enableManagerGroups:'?boolean',enableManualUserRecordSharing:'?boolean',enablePartnerSuperUserAccess:'?boolean',enablePortalUserCaseSharing:'?boolean',enablePortalUserVisibility:'?boolean',enableRemoveTMGroupMembership:'?boolean',enableSecureGuestAccess:'?boolean',enableStandardReportVisibility:'?boolean',enableTerritoryForecastManager:'?boolean'},extends:'Metadata'},SiteSettings:{type:'SiteSettings',props:{enableProxyLoginICHeader:'?boolean',enableTopicsInSites:'?boolean',enableVisualforceApiAccessAllowed:'?boolean'},extends:'Metadata'},Skill:{type:'Skill',props:{assignments:'?SkillAssignments',description:'?string',label:'string'},extends:'Metadata'},SkillAssignments:{type:'SkillAssignments',props:{profiles:'?SkillProfileAssignments',users:'?SkillUserAssignments'}},SkillProfileAssignments:{type:'SkillProfileAssignments',props:{profile:['string']}},SkillUserAssignments:{type:'SkillUserAssignments',props:{user:['string']}},SocialCustomerServiceSettings:{type:'SocialCustomerServiceSettings',props:{caseSubjectOption:'string',enableSocialApprovals:'?boolean',enableSocialCaseAssignmentRules:'?boolean',enableSocialCustomerService:'?boolean',enableSocialPersonaHistoryTracking:'?boolean',enableSocialPostHistoryTracking:'?boolean',enableSocialReceiveParentPost:'?boolean'},extends:'Metadata'},SocialProfileSettings:{type:'SocialProfileSettings',props:{enableSocialProfiles:'?boolean',isFacebookSocialProfilesDisabled:'?boolean',isLinkedInSocialProfilesDisabled:'?boolean',isTwitterSocialProfilesDisabled:'?boolean',isYouTubeSocialProfilesDisabled:'?boolean'},extends:'Metadata'},StandardValueSet:{type:'StandardValueSet',props:{groupingStringEnum:'?string',sorted:'boolean',standardValue:['StandardValue']},extends:'Metadata'},StandardValueSetTranslation:{type:'StandardValueSetTranslation',props:{valueTranslation:['ValueTranslation']},extends:'Metadata'},SurveySettings:{type:'SurveySettings',props:{enableSurvey:'?boolean',enableSurveyOwnerCanManageResponse:'?boolean'},extends:'Metadata'},SynonymDictionary:{type:'SynonymDictionary',props:{groups:['SynonymGroup'],isProtected:'?boolean',label:'string'},extends:'Metadata'},SystemNotificationSettings:{type:'SystemNotificationSettings',props:{disableDowntimeNotifications:'?boolean',disableMaintenanceNotifications:'?boolean'},extends:'Metadata'},Territory2:{type:'Territory2',props:{accountAccessLevel:'?string',caseAccessLevel:'?string',contactAccessLevel:'?string',customFields:['FieldValue'],description:'?string',name:'string',opportunityAccessLevel:'?string',parentTerritory:'?string',ruleAssociations:['Territory2RuleAssociation'],territory2Type:'string'},extends:'Metadata'},FieldValue:{type:'FieldValue',props:{name:'string',value:'?any'}},Territory2RuleAssociation:{type:'Territory2RuleAssociation',props:{inherited:'boolean',ruleName:'string'}},Territory2Model:{type:'Territory2Model',props:{customFields:['FieldValue'],description:'?string',name:'string'},extends:'Metadata'},Territory2Rule:{type:'Territory2Rule',props:{active:'boolean',booleanFilter:'?string',name:'string',objectType:'string',ruleItems:['Territory2RuleItem']},extends:'Metadata'},Territory2RuleItem:{type:'Territory2RuleItem',props:{field:'string',operation:'string',value:'?string'}},Territory2Settings:{type:'Territory2Settings',props:{defaultAccountAccessLevel:'?string',defaultCaseAccessLevel:'?string',defaultContactAccessLevel:'?string',defaultOpportunityAccessLevel:'?string',enableTerritoryManagement2:'?boolean',opportunityFilterSettings:'?Territory2SettingsOpportunityFilter'},extends:'Metadata'},Territory2SettingsOpportunityFilter:{type:'Territory2SettingsOpportunityFilter',props:{apexClassName:'?string',enableFilter:'boolean',runOnCreate:'boolean'}},Territory2Type:{type:'Territory2Type',props:{description:'?string',name:'string',priority:'number'},extends:'Metadata'},TimeSheetTemplate:{type:'TimeSheetTemplate',props:{active:'boolean',description:'?string',frequency:'string',masterLabel:'string',startDate:'string',timeSheetTemplateAssignments:['TimeSheetTemplateAssignment'],workWeekEndDay:'string',workWeekStartDay:'string'},extends:'Metadata'},TimeSheetTemplateAssignment:{type:'TimeSheetTemplateAssignment',props:{assignedTo:'?string'}},TopicsForObjects:{type:'TopicsForObjects',props:{enableTopics:'boolean',entityApiName:'string'},extends:'Metadata'},TrailheadSettings:{type:'TrailheadSettings',props:{enableMyTrailheadPref:'?boolean'},extends:'Metadata'},TransactionSecurityPolicy:{type:'TransactionSecurityPolicy',props:{action:'TransactionSecurityAction',active:'boolean',apexClass:'?string',description:'?string',developerName:'?string',eventName:'?string',eventType:'?string',executionUser:'?string',flow:'?string',masterLabel:'?string',resourceName:'?string',type:'?string'},extends:'Metadata'},TransactionSecurityAction:{type:'TransactionSecurityAction',props:{block:'boolean',endSession:'boolean',freezeUser:'boolean',notifications:['TransactionSecurityNotification'],twoFactorAuthentication:'boolean'}},TransactionSecurityNotification:{type:'TransactionSecurityNotification',props:{inApp:'boolean',sendEmail:'boolean',user:'string'}},Translations:{type:'Translations',props:{customApplications:['CustomApplicationTranslation'],customDataTypeTranslations:['CustomDataTypeTranslation'],customLabels:['CustomLabelTranslation'],customPageWebLinks:['CustomPageWebLinkTranslation'],customTabs:['CustomTabTranslation'],flowDefinitions:['FlowDefinitionTranslation'],quickActions:['GlobalQuickActionTranslation'],reportTypes:['ReportTypeTranslation'],scontrols:['ScontrolTranslation']},extends:'Metadata'},CustomApplicationTranslation:{type:'CustomApplicationTranslation',props:{label:'string',name:'string'}},CustomDataTypeTranslation:{type:'CustomDataTypeTranslation',props:{components:['CustomDataTypeComponentTranslation'],customDataTypeName:'string',description:'?string',label:'?string'}},CustomDataTypeComponentTranslation:{type:'CustomDataTypeComponentTranslation',props:{developerSuffix:'string',label:'?string'}},CustomLabelTranslation:{type:'CustomLabelTranslation',props:{label:'string',name:'string'}},CustomPageWebLinkTranslation:{type:'CustomPageWebLinkTranslation',props:{label:'string',name:'string'}},CustomTabTranslation:{type:'CustomTabTranslation',props:{label:'string',name:'string'}},FlowDefinitionTranslation:{type:'FlowDefinitionTranslation',props:{flows:['FlowTranslation'],fullName:'string',label:'?string'}},FlowTranslation:{type:'FlowTranslation',props:{choices:['FlowChoiceTranslation'],fullName:'string',label:'?string',screens:['FlowScreenTranslation'],stages:['FlowStageTranslation'],textTemplates:['FlowTextTemplateTranslation']}},FlowChoiceTranslation:{type:'FlowChoiceTranslation',props:{choiceText:'?string',name:'string',userInput:'?FlowChoiceUserInputTranslation'}},FlowChoiceUserInputTranslation:{type:'FlowChoiceUserInputTranslation',props:{promptText:'?string',validationRule:'?FlowInputValidationRuleTranslation'}},FlowInputValidationRuleTranslation:{type:'FlowInputValidationRuleTranslation',props:{errorMessage:'?string'}},FlowScreenTranslation:{type:'FlowScreenTranslation',props:{fields:['FlowScreenFieldTranslation'],helpText:'?string',name:'string',pausedText:'?string'}},FlowScreenFieldTranslation:{type:'FlowScreenFieldTranslation',props:{fieldText:'?string',helpText:'?string',name:'string',validationRule:'?FlowInputValidationRuleTranslation'}},FlowStageTranslation:{type:'FlowStageTranslation',props:{label:'?string',name:'string'}},FlowTextTemplateTranslation:{type:'FlowTextTemplateTranslation',props:{name:'string',text:'?string'}},GlobalQuickActionTranslation:{type:'GlobalQuickActionTranslation',props:{label:'string',name:'string'}},ReportTypeTranslation:{type:'ReportTypeTranslation',props:{description:'?string',label:'?string',name:'string',sections:['ReportTypeSectionTranslation']}},ReportTypeSectionTranslation:{type:'ReportTypeSectionTranslation',props:{columns:['ReportTypeColumnTranslation'],label:'?string',name:'string'}},ReportTypeColumnTranslation:{type:'ReportTypeColumnTranslation',props:{label:'string',name:'string'}},ScontrolTranslation:{type:'ScontrolTranslation',props:{label:'string',name:'string'}},UIObjectRelationConfig:{type:'UIObjectRelationConfig',props:{UIObjectRelationFieldConfigs:['UIObjectRelationFieldConfig'],contextObject:'string',contextObjectRecordType:'?string',directRelationshipField:'?string',indirectObjectContextField:'?string',indirectObjectRelatedField:'?string',indirectRelationshipObject:'?string',isActive:'boolean',masterLabel:'string',relatedObject:'string',relatedObjectRecordType:'?string',relationshipType:'string'},extends:'Metadata'},UIObjectRelationFieldConfig:{type:'UIObjectRelationFieldConfig',props:{displayLabel:'string',queryText:'string',rowOrder:'number'}},UserCriteria:{type:'UserCriteria',props:{creationAgeInSeconds:'?number',description:'?string',lastChatterActivityAgeInSeconds:'?number',masterLabel:'string',profiles:['string'],userTypes:['string']},extends:'Metadata'},UserEngagementSettings:{type:'UserEngagementSettings',props:{canGovCloudUseAdoptionApps:'?boolean',doesScheduledSwitcherRunDaily:'?boolean',enableCustomHelpGlobalSection:'?boolean',enableHelpMenuShowFeedback:'?boolean',enableHelpMenuShowHelp:'?boolean',enableHelpMenuShowNewUser:'?boolean',enableHelpMenuShowSearch:'?boolean',enableHelpMenuShowSfdcContent:'?boolean',enableHelpMenuShowShortcut:'?boolean',enableHelpMenuShowSupport:'?boolean',enableHelpMenuShowTrailhead:'?boolean',enableIBILOptOutDashboards:'?boolean',enableIBILOptOutEvents:'?boolean',enableIBILOptOutReports:'?boolean',enableIBILOptOutTasks:'?boolean',enableLexToClassicFeedbackEnable:'?boolean',enableOrchestrationInSandbox:'?boolean',enableOrgUserAssistEnabled:'?boolean',enableScheduledSwitcher:'?boolean',enableSfdcProductFeedbackSurvey:'?boolean',enableShowSalesforceUserAssist:'?boolean',isAutoTransitionDelayed:'?boolean',isCrucNotificationDisabled:'?boolean',isCustomProfileAutoTransitionDelayed:'?boolean',isLEXWelcomeMatDisabled:'?boolean',isMeetTheAssistantDisabledInClassic:'?boolean',isMeetTheAssistantDisabledInLightning:'?boolean',optimizerAppEnabled:'?boolean'},extends:'Metadata'},UserInterfaceSettings:{type:'UserInterfaceSettings',props:{alternateAlohaListView:'?boolean',enableAsyncRelatedLists:'?boolean',enableClickjackUserPageHeaderless:'?boolean',enableCollapsibleSections:'?boolean',enableCollapsibleSideBar:'?boolean',enableCustomObjectTruncate:'?boolean',enableCustomeSideBarOnAllPages:'?boolean',enableDeleteFieldHistory:'?boolean',enableHoverDetails:'?boolean',enableInlineEdit:'?boolean',enableNewPageLayoutEditor:'?boolean',enablePersonalCanvas:'?boolean',enablePrintableListViews:'?boolean',enableProfileCustomTabsets:'?boolean',enableQuickCreate:'?boolean',enableTabOrganizer:'?boolean'},extends:'Metadata'},UserManagementSettings:{type:'UserManagementSettings',props:{enableCanAnswerContainUsername:'?boolean',enableCanSaveUserPerm:'?boolean',enableConcealPersonalInfo:'?boolean',enableContactlessExternalIdentityUsers:'?boolean',enableEnhancedPermsetMgmt:'?boolean',enableEnhancedProfileMgmt:'?boolean',enableNewProfileUI:'?boolean',enableScrambleUserData:'?boolean',enableUserSelfDeactivate:'?boolean'},extends:'Metadata'},VoiceSettings:{type:'VoiceSettings',props:{enableCallDisposition:'?boolean',enableVoiceCallList:'?boolean',enableVoiceCallRecording:'?boolean',enableVoiceCoaching:'?boolean',enableVoiceConferencing:'?boolean',enableVoiceLocalPresence:'?boolean',enableVoiceMail:'?boolean',enableVoiceMailDrop:'?boolean'},extends:'Metadata'},WaveApplication:{type:'WaveApplication',props:{assetIcon:'?string',description:'?string',folder:'string',masterLabel:'string',shares:['FolderShare'],templateOrigin:'?string',templateVersion:'?string'},extends:'Metadata'},WaveDataset:{type:'WaveDataset',props:{application:'string',description:'?string',masterLabel:'string',templateAssetSourceName:'?string'},extends:'Metadata'},WaveTemplateBundle:{type:'WaveTemplateBundle',props:{assetIcon:'?string',assetVersion:'?number',description:'?string',label:'string',templateType:'string'},extends:'Metadata'},WaveXmd:{type:'WaveXmd',props:{application:'?string',dataset:'string',datasetConnector:'?string',datasetFullyQualifiedName:'?string',dates:['WaveXmdDate'],dimensions:['WaveXmdDimension'],measures:['WaveXmdMeasure'],organizations:['WaveXmdOrganization'],origin:'?string',type:'?string',waveVisualization:'?string'},extends:'Metadata'},WaveXmdDate:{type:'WaveXmdDate',props:{alias:'string',compact:'?boolean',dateFieldDay:'?string',dateFieldEpochDay:'?string',dateFieldEpochSecond:'?string',dateFieldFiscalMonth:'?string',dateFieldFiscalQuarter:'?string',dateFieldFiscalWeek:'?string',dateFieldFiscalYear:'?string',dateFieldFullYear:'?string',dateFieldHour:'?string',dateFieldMinute:'?string',dateFieldMonth:'?string',dateFieldQuarter:'?string',dateFieldSecond:'?string',dateFieldWeek:'?string',dateFieldYear:'?string',description:'?string',firstDayOfWeek:'number',fiscalMonthOffset:'number',isYearEndFiscalYear:'?boolean',label:'?string',showInExplorer:'?boolean',sortIndex:'number',type:'string'}},WaveXmdDimension:{type:'WaveXmdDimension',props:{conditionalFormatting:['WaveXmdFormattingProperty'],customActions:['WaveXmdDimensionCustomAction'],customActionsEnabled:'?boolean',dateFormat:'?string',description:'?string',field:'string',fullyQualifiedName:'?string',imageTemplate:'?string',isDerived:'boolean',isMultiValue:'?boolean',label:'?string',linkTemplate:'?string',linkTemplateEnabled:'?boolean',linkTooltip:'?string',members:['WaveXmdDimensionMember'],origin:'?string',recordDisplayFields:['WaveXmdRecordDisplayLookup'],recordIdField:'?string',recordOrganizationIdField:'?string',salesforceActions:['WaveXmdDimensionSalesforceAction'],salesforceActionsEnabled:'?boolean',showDetailsDefaultFieldIndex:'?number',showInExplorer:'?boolean',sortIndex:'number'}},WaveXmdFormattingProperty:{type:'WaveXmdFormattingProperty',props:{formattingBins:['WaveXmdFormattingBin'],formattingPredicates:['WaveXmdFormattingPredicate'],property:'string',referenceField:'string',sortIndex:'number',type:'string'}},WaveXmdFormattingBin:{type:'WaveXmdFormattingBin',props:{bin:'string',formatValue:'string',label:'string',sortIndex:'number'}},WaveXmdFormattingPredicate:{type:'WaveXmdFormattingPredicate',props:{formatValue:'string',operator:'string',sortIndex:'number',value:'string'}},WaveXmdDimensionCustomAction:{type:'WaveXmdDimensionCustomAction',props:{customActionName:'string',enabled:'boolean',icon:'?string',method:'?string',sortIndex:'number',target:'?string',tooltip:'?string',url:'?string'}},WaveXmdDimensionMember:{type:'WaveXmdDimensionMember',props:{color:'?string',label:'?string',member:'string',sortIndex:'number'}},WaveXmdRecordDisplayLookup:{type:'WaveXmdRecordDisplayLookup',props:{recordDisplayField:'string'}},WaveXmdDimensionSalesforceAction:{type:'WaveXmdDimensionSalesforceAction',props:{enabled:'boolean',salesforceActionName:'string',sortIndex:'number'}},WaveXmdMeasure:{type:'WaveXmdMeasure',props:{conditionalFormatting:['WaveXmdFormattingProperty'],dateFormat:'?string',description:'?string',field:'string',formatCustomFormat:'?string',formatDecimalDigits:'?number',formatIsNegativeParens:'?boolean',formatPrefix:'?string',formatSuffix:'?string',formatUnit:'?string',formatUnitMultiplier:'?number',fullyQualifiedName:'?string',isDerived:'boolean',label:'?string',origin:'?string',showDetailsDefaultFieldIndex:'?number',showInExplorer:'?boolean',sortIndex:'number'}},WaveXmdOrganization:{type:'WaveXmdOrganization',props:{instanceUrl:'string',label:'string',organizationIdentifier:'string',sortIndex:'number'}},WorkDotComSettings:{type:'WorkDotComSettings',props:{enableCoachingManagerGroupAccess:'?boolean',enableGoalManagerGroupAccess:'?boolean',enableProfileSkills:'?boolean',enableProfileSkillsAddFeedPost:'?boolean',enableProfileSkillsAutoSuggest:'?boolean',enableProfileSkillsUsePlatform:'?boolean',enableWorkBadgeDefRestrictPref:'?boolean',enableWorkCalibration:'?boolean',enableWorkCanvasPref:'?boolean',enableWorkCertification:'?boolean',enableWorkCertificationNotification:'?boolean',enableWorkRewardsPref:'?boolean',enableWorkThanksPref:'?boolean',enableWorkUseObjectivesForGoals:'?boolean'},extends:'Metadata'},Workflow:{type:'Workflow',props:{alerts:['WorkflowAlert'],fieldUpdates:['WorkflowFieldUpdate'],flowActions:['WorkflowFlowAction'],knowledgePublishes:['WorkflowKnowledgePublish'],outboundMessages:['WorkflowOutboundMessage'],rules:['WorkflowRule'],send:['WorkflowSend'],tasks:['WorkflowTask']},extends:'Metadata'},WorkflowAlert:{type:'WorkflowAlert',props:{ccEmails:['string'],description:'string',protected:'boolean',recipients:['WorkflowEmailRecipient'],senderAddress:'?string',senderType:'?string',template:'string'},extends:'WorkflowAction'},WorkflowAction:{type:'WorkflowAction',props:{},extends:'Metadata'},WorkflowFieldUpdate:{type:'WorkflowFieldUpdate',props:{description:'?string',field:'string',formula:'?string',literalValue:'?string',lookupValue:'?string',lookupValueType:'?string',name:'string',notifyAssignee:'boolean',operation:'string',protected:'boolean',reevaluateOnChange:'?boolean',targetObject:'?string'},extends:'WorkflowAction'},WorkflowFlowAction:{type:'WorkflowFlowAction',props:{description:'?string',flow:'string',flowInputs:['WorkflowFlowActionParameter'],label:'string',language:'?string',protected:'boolean'},extends:'WorkflowAction'},WorkflowFlowActionParameter:{type:'WorkflowFlowActionParameter',props:{name:'string',value:'?string'}},WorkflowKnowledgePublish:{type:'WorkflowKnowledgePublish',props:{action:'string',description:'?string',label:'string',language:'?string',protected:'boolean'},extends:'WorkflowAction'},WorkflowOutboundMessage:{type:'WorkflowOutboundMessage',props:{apiVersion:'number',description:'?string',endpointUrl:'string',fields:['string'],includeSessionId:'boolean',integrationUser:'string',name:'string',protected:'boolean',useDeadLetterQueue:'?boolean'},extends:'WorkflowAction'},WorkflowSend:{type:'WorkflowSend',props:{action:'string',description:'?string',label:'string',language:'?string',protected:'boolean'},extends:'WorkflowAction'},WorkflowTask:{type:'WorkflowTask',props:{assignedTo:'?string',assignedToType:'string',description:'?string',dueDateOffset:'number',notifyAssignee:'boolean',offsetFromField:'?string',priority:'string',protected:'boolean',status:'string',subject:'string'},extends:'WorkflowAction'},WorkflowEmailRecipient:{type:'WorkflowEmailRecipient',props:{field:'?string',recipient:'?string',type:'string'}},WorkflowRule:{type:'WorkflowRule',props:{actions:['WorkflowActionReference'],active:'boolean',booleanFilter:'?string',criteriaItems:['FilterItem'],description:'?string',formula:'?string',triggerType:'string',workflowTimeTriggers:['WorkflowTimeTrigger']},extends:'Metadata'},WorkflowTimeTrigger:{type:'WorkflowTimeTrigger',props:{actions:['WorkflowActionReference'],offsetFromField:'?string',timeLength:'?string',workflowTimeTriggerUnit:'string'}},SaveResult:{type:'SaveResult',props:{errors:['Error'],fullName:'string',success:'boolean'}},Error:{type:'Error',props:{extendedErrorDetails:['ExtendedErrorDetails'],fields:['string'],message:'string',statusCode:'string'}},ExtendedErrorDetails:{type:'ExtendedErrorDetails',props:{extendedErrorCode:'string'}},DeleteResult:{type:'DeleteResult',props:{errors:['Error'],fullName:'string',success:'boolean'}},DeployOptions:{type:'DeployOptions',props:{allowMissingFiles:'boolean',autoUpdatePackage:'boolean',checkOnly:'boolean',ignoreWarnings:'boolean',performRetrieve:'boolean',purgeOnDelete:'boolean',rollbackOnError:'boolean',runTests:['string'],singlePackage:'boolean',testLevel:'string'}},AsyncResult:{type:'AsyncResult',props:{done:'boolean',id:'string',message:'?string',state:'string',statusCode:'?string'}},DescribeMetadataResult:{type:'DescribeMetadataResult',props:{metadataObjects:['DescribeMetadataObject'],organizationNamespace:'string',partialSaveAllowed:'boolean',testRequired:'boolean'}},DescribeMetadataObject:{type:'DescribeMetadataObject',props:{childXmlNames:['string'],directoryName:'string',inFolder:'boolean',metaFile:'boolean',suffix:'?string',xmlName:'string'}},DescribeValueTypeResult:{type:'DescribeValueTypeResult',props:{apiCreatable:'boolean',apiDeletable:'boolean',apiReadable:'boolean',apiUpdatable:'boolean',parentField:'?ValueTypeField',valueTypeFields:['ValueTypeField']}},ValueTypeField:{type:'ValueTypeField',props:{fields:['ValueTypeField'],foreignKeyDomain:['string'],isForeignKey:'boolean',isNameField:'boolean',minOccurs:'number',name:'string',picklistValues:['PicklistEntry'],soapType:'string',valueRequired:'boolean'}},PicklistEntry:{type:'PicklistEntry',props:{active:'boolean',defaultValue:'boolean',label:'string',validFor:'?string',value:'string'}},ListMetadataQuery:{type:'ListMetadataQuery',props:{folder:'?string',type:'string'}},ReadResult:{type:'ReadResult',props:{records:['Metadata']}},RetrieveRequest:{type:'RetrieveRequest',props:{apiVersion:'number',packageNames:['string'],singlePackage:'boolean',specificFiles:['string'],unpackaged:'?Package'}},UpsertResult:{type:'UpsertResult',props:{created:'boolean',errors:['Error'],fullName:'string',success:'boolean'}},LogInfo:{type:'LogInfo',props:{category:'string',level:'string'}}};
 
 
 /***/ }),
@@ -15626,7 +6542,7 @@ module.exports = __webpack_require__(662);
 /* harmony import */ var _babel_runtime_corejs3_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_25___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_25__);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(4);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_26___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_26__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(42);
+/* harmony import */ var _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(43);
 /* harmony import */ var _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_27___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_27__);
 /* harmony import */ var _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(0);
 /* harmony import */ var _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_28___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_28__);
@@ -15636,7 +6552,7 @@ module.exports = __webpack_require__(662);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_reduce__WEBPACK_IMPORTED_MODULE_30___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_reduce__WEBPACK_IMPORTED_MODULE_30__);
 /* harmony import */ var stream__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(29);
 /* harmony import */ var stream__WEBPACK_IMPORTED_MODULE_31___default = /*#__PURE__*/__webpack_require__.n(stream__WEBPACK_IMPORTED_MODULE_31__);
-/* harmony import */ var _csv__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(160);
+/* harmony import */ var _csv__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(161);
 /* harmony import */ var _util_stream__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(73);
 
 
@@ -16900,6 +7816,12 @@ function getLogger(moduleName) {
 
 /***/ }),
 /* 89 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(800);
+
+/***/ }),
+/* 90 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -16958,7 +7880,7 @@ var get_own_property_symbols = __webpack_require__(16);
 var get_own_property_symbols_default = /*#__PURE__*/__webpack_require__.n(get_own_property_symbols);
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.includes.js
-var es_array_includes = __webpack_require__(835);
+var es_array_includes = __webpack_require__(844);
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.iterator.js
 var es_array_iterator = __webpack_require__(198);
@@ -16970,7 +7892,7 @@ var es_array_join = __webpack_require__(66);
 var es_function_name = __webpack_require__(123);
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.object.to-string.js
-var es_object_to_string = __webpack_require__(100);
+var es_object_to_string = __webpack_require__(101);
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.promise.js
 var es_promise = __webpack_require__(199);
@@ -16979,22 +7901,22 @@ var es_promise = __webpack_require__(199);
 var es_regexp_exec = __webpack_require__(67);
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.regexp.to-string.js
-var es_regexp_to_string = __webpack_require__(113);
+var es_regexp_to_string = __webpack_require__(110);
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.string.includes.js
-var es_string_includes = __webpack_require__(837);
+var es_string_includes = __webpack_require__(846);
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.string.iterator.js
 var es_string_iterator = __webpack_require__(290);
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.string.split.js
-var es_string_split = __webpack_require__(118);
+var es_string_split = __webpack_require__(119);
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/web.dom-collections.iterator.js
 var web_dom_collections_iterator = __webpack_require__(291);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/helpers/typeof.js
-var helpers_typeof = __webpack_require__(42);
+var helpers_typeof = __webpack_require__(43);
 var typeof_default = /*#__PURE__*/__webpack_require__.n(helpers_typeof);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/slice.js
@@ -17049,7 +7971,7 @@ var objectWithoutProperties = __webpack_require__(36);
 var objectWithoutProperties_default = /*#__PURE__*/__webpack_require__.n(objectWithoutProperties);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/includes.js
-var instance_includes = __webpack_require__(121);
+var instance_includes = __webpack_require__(89);
 var includes_default = /*#__PURE__*/__webpack_require__.n(instance_includes);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/sort.js
@@ -17105,7 +8027,7 @@ var object_values = __webpack_require__(466);
 var values_default = /*#__PURE__*/__webpack_require__.n(object_values);
 
 // EXTERNAL MODULE: ./browser/date.js
-var date = __webpack_require__(110);
+var date = __webpack_require__(112);
 
 // CONCATENATED MODULE: ./browser/soql-builder.js
 
@@ -18998,7 +9920,7 @@ var query_SubQuery = /*#__PURE__*/function () {
 
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19371,7 +10293,7 @@ var HttpProxyTransport = /*#__PURE__*/function (_Transport4) {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(32)))
 
 /***/ }),
-/* 91 */
+/* 92 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19382,7 +10304,7 @@ var HttpProxyTransport = /*#__PURE__*/function (_Transport4) {
 /* unused harmony export isPromiseLike */
 /* unused harmony export identityFunc */
 /* unused harmony export emptyFunc */
-/* harmony import */ var _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(42);
+/* harmony import */ var _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(43);
 /* harmony import */ var _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_0__);
 
 
@@ -19439,37 +10361,7 @@ function emptyFunc() {}
 
 
 /***/ }),
-/* 92 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(315);
-var DOMIterables = __webpack_require__(497);
-var global = __webpack_require__(39);
-var classof = __webpack_require__(130);
-var createNonEnumerableProperty = __webpack_require__(74);
-var Iterators = __webpack_require__(116);
-var wellKnownSymbol = __webpack_require__(40);
-
-var TO_STRING_TAG = wellKnownSymbol('toStringTag');
-
-for (var COLLECTION_NAME in DOMIterables) {
-  var Collection = global[COLLECTION_NAME];
-  var CollectionPrototype = Collection && Collection.prototype;
-  if (CollectionPrototype && classof(CollectionPrototype) !== TO_STRING_TAG) {
-    createNonEnumerableProperty(CollectionPrototype, TO_STRING_TAG, COLLECTION_NAME);
-  }
-  Iterators[COLLECTION_NAME] = Iterators.Array;
-}
-
-
-/***/ }),
 /* 93 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(899);
-
-/***/ }),
-/* 94 */
 /***/ (function(module, exports) {
 
 function _classPrivateFieldSet(receiver, privateMap, value) {
@@ -19495,7 +10387,37 @@ function _classPrivateFieldSet(receiver, privateMap, value) {
 module.exports = _classPrivateFieldSet;
 
 /***/ }),
+/* 94 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(315);
+var DOMIterables = __webpack_require__(497);
+var global = __webpack_require__(40);
+var classof = __webpack_require__(130);
+var createNonEnumerableProperty = __webpack_require__(74);
+var Iterators = __webpack_require__(117);
+var wellKnownSymbol = __webpack_require__(41);
+
+var TO_STRING_TAG = wellKnownSymbol('toStringTag');
+
+for (var COLLECTION_NAME in DOMIterables) {
+  var Collection = global[COLLECTION_NAME];
+  var CollectionPrototype = Collection && Collection.prototype;
+  if (CollectionPrototype && classof(CollectionPrototype) !== TO_STRING_TAG) {
+    createNonEnumerableProperty(CollectionPrototype, TO_STRING_TAG, COLLECTION_NAME);
+  }
+  Iterators[COLLECTION_NAME] = Iterators.Array;
+}
+
+
+/***/ }),
 /* 95 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(899);
+
+/***/ }),
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var requireObjectCoercible = __webpack_require__(142);
@@ -19508,7 +10430,7 @@ module.exports = function (argument) {
 
 
 /***/ }),
-/* 96 */
+/* 97 */
 /***/ (function(module, exports) {
 
 // `RequireObjectCoercible` abstract operation
@@ -19520,7 +10442,7 @@ module.exports = function (it) {
 
 
 /***/ }),
-/* 97 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var DESCRIPTORS = __webpack_require__(84);
@@ -19546,7 +10468,7 @@ exports.f = DESCRIPTORS ? nativeDefineProperty : function defineProperty(O, P, A
 
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, exports) {
 
 module.exports = function (it) {
@@ -19555,11 +10477,11 @@ module.exports = function (it) {
 
 
 /***/ }),
-/* 99 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(47);
-var createNonEnumerableProperty = __webpack_require__(108);
+var createNonEnumerableProperty = __webpack_require__(109);
 var has = __webpack_require__(76);
 var setGlobal = __webpack_require__(221);
 var inspectSource = __webpack_require__(229);
@@ -19595,11 +10517,11 @@ var TEMPLATE = String(String).split('String');
 
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var TO_STRING_TAG_SUPPORT = __webpack_require__(232);
-var redefine = __webpack_require__(99);
+var redefine = __webpack_require__(100);
 var toString = __webpack_require__(571);
 
 // `Object.prototype.toString` method
@@ -19610,7 +10532,7 @@ if (!TO_STRING_TAG_SUPPORT) {
 
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(module) {(function (module, exports) {
@@ -23060,10 +13982,10 @@ if (!TO_STRING_TAG_SUPPORT) {
   };
 })( false || module, this);
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(120)(module)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(121)(module)))
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, exports) {
 
 // Generated by CoffeeScript 1.12.7
@@ -23152,14 +14074,14 @@ if (!TO_STRING_TAG_SUPPORT) {
 
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Connection; });
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_symbol_to_primitive__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(460);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_symbol_to_primitive__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_symbol_to_primitive__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(42);
+/* harmony import */ var _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(43);
 /* harmony import */ var _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _babel_runtime_corejs3_core_js_get_iterator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(58);
 /* harmony import */ var _babel_runtime_corejs3_core_js_get_iterator__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_get_iterator__WEBPACK_IMPORTED_MODULE_2__);
@@ -23193,13 +14115,13 @@ if (!TO_STRING_TAG_SUPPORT) {
 /* harmony import */ var core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_16__);
 /* harmony import */ var core_js_modules_es_function_name__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(123);
 /* harmony import */ var core_js_modules_es_function_name__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_function_name__WEBPACK_IMPORTED_MODULE_17__);
-/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(100);
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(101);
 /* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_18___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_18__);
 /* harmony import */ var core_js_modules_es_promise__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(199);
 /* harmony import */ var core_js_modules_es_promise__WEBPACK_IMPORTED_MODULE_19___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_promise__WEBPACK_IMPORTED_MODULE_19__);
 /* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(67);
 /* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_20___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_20__);
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(113);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(110);
 /* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_21___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_21__);
 /* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(290);
 /* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_22___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_22__);
@@ -23207,7 +14129,7 @@ if (!TO_STRING_TAG_SUPPORT) {
 /* harmony import */ var core_js_modules_es_string_match__WEBPACK_IMPORTED_MODULE_23___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_match__WEBPACK_IMPORTED_MODULE_23__);
 /* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(151);
 /* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_24___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_24__);
-/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(118);
+/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(119);
 /* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_25___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_25__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(291);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_26___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_26__);
@@ -23256,13 +14178,13 @@ if (!TO_STRING_TAG_SUPPORT) {
 /* harmony import */ var events__WEBPACK_IMPORTED_MODULE_48__ = __webpack_require__(33);
 /* harmony import */ var events__WEBPACK_IMPORTED_MODULE_48___default = /*#__PURE__*/__webpack_require__.n(events__WEBPACK_IMPORTED_MODULE_48__);
 /* harmony import */ var _jsforce__WEBPACK_IMPORTED_MODULE_49__ = __webpack_require__(64);
-/* harmony import */ var _transport__WEBPACK_IMPORTED_MODULE_50__ = __webpack_require__(90);
+/* harmony import */ var _transport__WEBPACK_IMPORTED_MODULE_50__ = __webpack_require__(91);
 /* harmony import */ var _util_logger__WEBPACK_IMPORTED_MODULE_51__ = __webpack_require__(88);
 /* harmony import */ var _oauth2__WEBPACK_IMPORTED_MODULE_52__ = __webpack_require__(77);
 /* harmony import */ var _cache__WEBPACK_IMPORTED_MODULE_53__ = __webpack_require__(284);
-/* harmony import */ var _http_api__WEBPACK_IMPORTED_MODULE_54__ = __webpack_require__(162);
+/* harmony import */ var _http_api__WEBPACK_IMPORTED_MODULE_54__ = __webpack_require__(160);
 /* harmony import */ var _session_refresh_delegate__WEBPACK_IMPORTED_MODULE_55__ = __webpack_require__(289);
-/* harmony import */ var _query__WEBPACK_IMPORTED_MODULE_56__ = __webpack_require__(89);
+/* harmony import */ var _query__WEBPACK_IMPORTED_MODULE_56__ = __webpack_require__(90);
 /* harmony import */ var _sobject__WEBPACK_IMPORTED_MODULE_57__ = __webpack_require__(192);
 /* harmony import */ var _quick_action__WEBPACK_IMPORTED_MODULE_58__ = __webpack_require__(138);
 /* harmony import */ var _process__WEBPACK_IMPORTED_MODULE_59__ = __webpack_require__(467);
@@ -25894,7 +16816,7 @@ _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_41___defa
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(26).Buffer))
 
 /***/ }),
-/* 104 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _Object$create = __webpack_require__(309);
@@ -25946,13 +16868,13 @@ function _wrapNativeSuper(Class) {
 module.exports = _wrapNativeSuper;
 
 /***/ }),
-/* 105 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 var charAt = __webpack_require__(494).charAt;
-var InternalStateModule = __webpack_require__(115);
+var InternalStateModule = __webpack_require__(116);
 var defineIterator = __webpack_require__(216);
 
 var STRING_ITERATOR = 'String Iterator';
@@ -25982,11 +16904,11 @@ defineIterator(String, 'String', function (iterated) {
 
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var DESCRIPTORS = __webpack_require__(54);
-var fails = __webpack_require__(38);
+var fails = __webpack_require__(39);
 var has = __webpack_require__(63);
 
 var defineProperty = Object.defineProperty;
@@ -26015,7 +16937,7 @@ module.exports = function (METHOD_NAME, options) {
 
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, exports) {
 
 var toString = {}.toString;
@@ -26026,11 +16948,11 @@ module.exports = function (it) {
 
 
 /***/ }),
-/* 108 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var DESCRIPTORS = __webpack_require__(84);
-var definePropertyModule = __webpack_require__(97);
+var definePropertyModule = __webpack_require__(98);
 var createPropertyDescriptor = __webpack_require__(224);
 
 module.exports = DESCRIPTORS ? function (object, key, value) {
@@ -26042,7 +16964,39 @@ module.exports = DESCRIPTORS ? function (object, key, value) {
 
 
 /***/ }),
-/* 109 */
+/* 110 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var redefine = __webpack_require__(100);
+var anObject = __webpack_require__(57);
+var fails = __webpack_require__(56);
+var flags = __webpack_require__(233);
+
+var TO_STRING = 'toString';
+var RegExpPrototype = RegExp.prototype;
+var nativeToString = RegExpPrototype[TO_STRING];
+
+var NOT_GENERIC = fails(function () { return nativeToString.call({ source: 'a', flags: 'b' }) != '/a/b'; });
+// FF44- RegExp#toString has a wrong name
+var INCORRECT_NAME = nativeToString.name != TO_STRING;
+
+// `RegExp.prototype.toString` method
+// https://tc39.github.io/ecma262/#sec-regexp.prototype.tostring
+if (NOT_GENERIC || INCORRECT_NAME) {
+  redefine(RegExp.prototype, TO_STRING, function toString() {
+    var R = anObject(this);
+    var p = String(R.source);
+    var rf = R.flags;
+    var f = String(rf === undefined && R instanceof RegExp && !('flags' in RegExpPrototype) ? flags.call(R) : rf);
+    return '/' + p + '/' + f;
+  }, { unsafe: true });
+}
+
+
+/***/ }),
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var Buffer = __webpack_require__(20).Buffer
@@ -26147,7 +17101,7 @@ module.exports = CipherBase
 
 
 /***/ }),
-/* 110 */
+/* 112 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -26479,7 +17433,7 @@ _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___defau
 
 
 /***/ }),
-/* 111 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26490,7 +17444,7 @@ exports.encode = exports.stringify = __webpack_require__(799);
 
 
 /***/ }),
-/* 112 */
+/* 114 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -26707,39 +17661,7 @@ function _executeWithTimeout() {
 
 
 /***/ }),
-/* 113 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var redefine = __webpack_require__(99);
-var anObject = __webpack_require__(57);
-var fails = __webpack_require__(56);
-var flags = __webpack_require__(233);
-
-var TO_STRING = 'toString';
-var RegExpPrototype = RegExp.prototype;
-var nativeToString = RegExpPrototype[TO_STRING];
-
-var NOT_GENERIC = fails(function () { return nativeToString.call({ source: 'a', flags: 'b' }) != '/a/b'; });
-// FF44- RegExp#toString has a wrong name
-var INCORRECT_NAME = nativeToString.name != TO_STRING;
-
-// `RegExp.prototype.toString` method
-// https://tc39.github.io/ecma262/#sec-regexp.prototype.tostring
-if (NOT_GENERIC || INCORRECT_NAME) {
-  redefine(RegExp.prototype, TO_STRING, function toString() {
-    var R = anObject(this);
-    var p = String(R.source);
-    var rf = R.flags;
-    var f = String(rf === undefined && R instanceof RegExp && !('flags' in RegExpPrototype) ? flags.call(R) : rf);
-    return '/' + p + '/' + f;
-  }, { unsafe: true });
-}
-
-
-/***/ }),
-/* 114 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var toInteger = __webpack_require__(208);
@@ -26754,11 +17676,11 @@ module.exports = function (argument) {
 
 
 /***/ }),
-/* 115 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var NATIVE_WEAK_MAP = __webpack_require__(470);
-var global = __webpack_require__(39);
+var global = __webpack_require__(40);
 var isObject = __webpack_require__(49);
 var createNonEnumerableProperty = __webpack_require__(74);
 var objectHas = __webpack_require__(63);
@@ -26824,20 +17746,20 @@ module.exports = {
 
 
 /***/ }),
-/* 116 */
+/* 117 */
 /***/ (function(module, exports) {
 
 module.exports = {};
 
 
 /***/ }),
-/* 117 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(47);
 var getOwnPropertyDescriptor = __webpack_require__(175).f;
-var createNonEnumerableProperty = __webpack_require__(108);
-var redefine = __webpack_require__(99);
+var createNonEnumerableProperty = __webpack_require__(109);
+var redefine = __webpack_require__(100);
 var setGlobal = __webpack_require__(221);
 var copyConstructorProperties = __webpack_require__(564);
 var isForced = __webpack_require__(176);
@@ -26891,7 +17813,7 @@ module.exports = function (options, source) {
 
 
 /***/ }),
-/* 118 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26899,7 +17821,7 @@ module.exports = function (options, source) {
 var fixRegExpWellKnownSymbolLogic = __webpack_require__(179);
 var isRegExp = __webpack_require__(235);
 var anObject = __webpack_require__(57);
-var requireObjectCoercible = __webpack_require__(96);
+var requireObjectCoercible = __webpack_require__(97);
 var speciesConstructor = __webpack_require__(348);
 var advanceStringIndex = __webpack_require__(234);
 var toLength = __webpack_require__(147);
@@ -27032,7 +17954,7 @@ fixRegExpWellKnownSymbolLogic('split', 2, function (SPLIT, nativeSplit, maybeCal
 
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27169,7 +18091,7 @@ Duplex.prototype._destroy = function (err, cb) {
 };
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -27197,19 +18119,13 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 121 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(843);
-
-/***/ }),
 /* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var bind = __webpack_require__(59);
 var IndexedObject = __webpack_require__(205);
-var toObject = __webpack_require__(95);
-var toLength = __webpack_require__(114);
+var toObject = __webpack_require__(96);
+var toLength = __webpack_require__(115);
 var arraySpeciesCreate = __webpack_require__(307);
 
 var push = [].push;
@@ -27285,7 +18201,7 @@ module.exports = {
 /***/ (function(module, exports, __webpack_require__) {
 
 var DESCRIPTORS = __webpack_require__(84);
-var defineProperty = __webpack_require__(97).f;
+var defineProperty = __webpack_require__(98).f;
 
 var FunctionPrototype = Function.prototype;
 var FunctionPrototypeToString = FunctionPrototype.toString;
@@ -27477,7 +18393,7 @@ var defineProperty = __webpack_require__(75).f;
 var createNonEnumerableProperty = __webpack_require__(74);
 var has = __webpack_require__(63);
 var toString = __webpack_require__(496);
-var wellKnownSymbol = __webpack_require__(40);
+var wellKnownSymbol = __webpack_require__(41);
 
 var TO_STRING_TAG = wellKnownSymbol('toStringTag');
 
@@ -27500,7 +18416,7 @@ module.exports = function (it, TAG, STATIC, SET_METHOD) {
 
 var TO_STRING_TAG_SUPPORT = __webpack_require__(217);
 var classofRaw = __webpack_require__(141);
-var wellKnownSymbol = __webpack_require__(40);
+var wellKnownSymbol = __webpack_require__(41);
 
 var TO_STRING_TAG = wellKnownSymbol('toStringTag');
 // ES3 wrong here
@@ -28461,19 +19377,19 @@ var QuickAction = /*#__PURE__*/function () {
 /* harmony import */ var core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_9__);
 /* harmony import */ var core_js_modules_es_number_constructor__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(471);
 /* harmony import */ var core_js_modules_es_number_constructor__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_number_constructor__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(100);
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(101);
 /* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_11__);
 /* harmony import */ var core_js_modules_es_regexp_constructor__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(866);
 /* harmony import */ var core_js_modules_es_regexp_constructor__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_constructor__WEBPACK_IMPORTED_MODULE_12__);
 /* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(67);
 /* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_13__);
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(113);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(110);
 /* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_14__);
 /* harmony import */ var core_js_modules_es_string_match__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(200);
 /* harmony import */ var core_js_modules_es_string_match__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_match__WEBPACK_IMPORTED_MODULE_15__);
 /* harmony import */ var core_js_modules_es_string_search__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(867);
 /* harmony import */ var core_js_modules_es_string_search__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_search__WEBPACK_IMPORTED_MODULE_16__);
-/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(118);
+/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(119);
 /* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_17__);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(25);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_18___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_18__);
@@ -28507,9 +19423,9 @@ var QuickAction = /*#__PURE__*/function () {
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_32___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_32__);
 /* harmony import */ var events__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(33);
 /* harmony import */ var events__WEBPACK_IMPORTED_MODULE_33___default = /*#__PURE__*/__webpack_require__.n(events__WEBPACK_IMPORTED_MODULE_33__);
-/* harmony import */ var querystring__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(111);
+/* harmony import */ var querystring__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(113);
 /* harmony import */ var querystring__WEBPACK_IMPORTED_MODULE_34___default = /*#__PURE__*/__webpack_require__.n(querystring__WEBPACK_IMPORTED_MODULE_34__);
-/* harmony import */ var _connection__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(103);
+/* harmony import */ var _connection__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(104);
 /* harmony import */ var _oauth2__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(77);
 
 
@@ -28955,7 +19871,7 @@ module.exports = {};
 /***/ (function(module, exports, __webpack_require__) {
 
 var has = __webpack_require__(63);
-var toObject = __webpack_require__(95);
+var toObject = __webpack_require__(96);
 var sharedKey = __webpack_require__(165);
 var CORRECT_PROTOTYPE_GETTER = __webpack_require__(314);
 
@@ -28991,7 +19907,7 @@ module.exports = function (target, key, value, options) {
 
 // toObject with fallback for non-array-like ES3 strings
 var IndexedObject = __webpack_require__(330);
-var requireObjectCoercible = __webpack_require__(96);
+var requireObjectCoercible = __webpack_require__(97);
 
 module.exports = function (it) {
   return IndexedObject(requireObjectCoercible(it));
@@ -29043,8 +19959,8 @@ module.exports = {};
 
 var NATIVE_WEAK_MAP = __webpack_require__(562);
 var global = __webpack_require__(47);
-var isObject = __webpack_require__(98);
-var createNonEnumerableProperty = __webpack_require__(108);
+var isObject = __webpack_require__(99);
+var createNonEnumerableProperty = __webpack_require__(109);
 var objectHas = __webpack_require__(76);
 var sharedKey = __webpack_require__(228);
 var hiddenKeys = __webpack_require__(226);
@@ -29115,7 +20031,7 @@ var anObject = __webpack_require__(57);
 var toObject = __webpack_require__(343);
 var toLength = __webpack_require__(147);
 var toInteger = __webpack_require__(174);
-var requireObjectCoercible = __webpack_require__(96);
+var requireObjectCoercible = __webpack_require__(97);
 var advanceStringIndex = __webpack_require__(234);
 var regExpExec = __webpack_require__(180);
 
@@ -29252,7 +20168,7 @@ fixRegExpWellKnownSymbolLogic('replace', 2, function (REPLACE, nativeReplace, ma
 
 var anObject = __webpack_require__(27);
 var aFunction = __webpack_require__(44);
-var wellKnownSymbol = __webpack_require__(40);
+var wellKnownSymbol = __webpack_require__(41);
 
 var SPECIES = wellKnownSymbol('species');
 
@@ -29414,7 +20330,7 @@ var inherits = __webpack_require__(12)
 var MD5 = __webpack_require__(242)
 var RIPEMD160 = __webpack_require__(244)
 var sha = __webpack_require__(245)
-var Base = __webpack_require__(109)
+var Base = __webpack_require__(111)
 
 function Hash (hash) {
   Base.call(this, 'digest')
@@ -29799,7 +20715,7 @@ var defineProperty = __webpack_require__(0);
 var defineProperty_default = /*#__PURE__*/__webpack_require__.n(defineProperty);
 
 // EXTERNAL MODULE: ./browser/connection.js
-var connection = __webpack_require__(103);
+var connection = __webpack_require__(104);
 
 // CONCATENATED MODULE: ./browser/registry/base.js
 
@@ -30215,6 +21131,620 @@ var registry = new empty_EmptyRegistry();
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* unused harmony export HttpApi */
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(66);
+/* harmony import */ var core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_function_name__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(123);
+/* harmony import */ var core_js_modules_es_function_name__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_function_name__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(105);
+/* harmony import */ var _babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(43);
+/* harmony import */ var _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(17);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_includes__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(89);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_includes__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_includes__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(10);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(1);
+/* harmony import */ var _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_date_now__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(72);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_date_now__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_date_now__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(4);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(48);
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(5);
+/* harmony import */ var _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_12__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(7);
+/* harmony import */ var _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_13__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(2);
+/* harmony import */ var _babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_14__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(18);
+/* harmony import */ var _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_15__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(24);
+/* harmony import */ var _babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_16__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(9);
+/* harmony import */ var _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_17__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(0);
+/* harmony import */ var _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(3);
+/* harmony import */ var _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_19___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_19__);
+/* harmony import */ var events__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(33);
+/* harmony import */ var events__WEBPACK_IMPORTED_MODULE_20___default = /*#__PURE__*/__webpack_require__.n(events__WEBPACK_IMPORTED_MODULE_20__);
+/* harmony import */ var xml2js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(463);
+/* harmony import */ var xml2js__WEBPACK_IMPORTED_MODULE_21___default = /*#__PURE__*/__webpack_require__.n(xml2js__WEBPACK_IMPORTED_MODULE_21__);
+/* harmony import */ var _util_logger__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(88);
+/* harmony import */ var _util_promise__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(195);
+/* harmony import */ var _csv__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(161);
+/* harmony import */ var _util_stream__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(73);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_17___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_17___default()(this).constructor; result = _babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default()(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_16___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default.a) return false; if (_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default.a.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default()(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+/**
+ *
+ */
+
+
+
+
+
+
+/** @private */
+
+function parseJSON(str) {
+  return JSON.parse(str);
+}
+/** @private */
+
+
+function parseXML(_x) {
+  return _parseXML.apply(this, arguments);
+}
+/** @private */
+
+
+function _parseXML() {
+  _parseXML = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_19___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_8___default.a.mark(function _callee5(str) {
+    return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_8___default.a.wrap(function _callee5$(_context10) {
+      while (1) {
+        switch (_context10.prev = _context10.next) {
+          case 0:
+            return _context10.abrupt("return", xml2js__WEBPACK_IMPORTED_MODULE_21___default.a.parseStringPromise(str, {
+              explicitArray: false
+            }));
+
+          case 1:
+          case "end":
+            return _context10.stop();
+        }
+      }
+    }, _callee5);
+  }));
+  return _parseXML.apply(this, arguments);
+}
+
+function parseText(str) {
+  return str;
+}
+/**
+ * HTTP based API class with authorization hook
+ */
+
+
+var HttpApi = /*#__PURE__*/function (_EventEmitter) {
+  _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_15___default()(HttpApi, _EventEmitter);
+
+  var _super = _createSuper(HttpApi);
+
+  function HttpApi(conn, options) {
+    var _this;
+
+    _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_12___default()(this, HttpApi);
+
+    _this = _super.call(this);
+
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_14___default()(_this), "_conn", void 0);
+
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_14___default()(_this), "_logger", void 0);
+
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_14___default()(_this), "_transport", void 0);
+
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_14___default()(_this), "_responseType", void 0);
+
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_14___default()(_this), "_noContentResponse", void 0);
+
+    _this._conn = conn;
+    _this._logger = conn._logLevel ? HttpApi._logger.createInstance(conn._logLevel) : HttpApi._logger;
+    _this._responseType = options.responseType;
+    _this._transport = options.transport || conn._transport;
+    _this._noContentResponse = options.noContentResponse;
+    return _this;
+  }
+  /**
+   * Callout to API endpoint using http
+   */
+
+
+  _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_13___default()(HttpApi, [{
+    key: "request",
+    value: function request(_request) {
+      var _this2 = this;
+
+      return _util_promise__WEBPACK_IMPORTED_MODULE_23__[/* StreamPromise */ "a"].create(function () {
+        var _createLazyStream = Object(_util_stream__WEBPACK_IMPORTED_MODULE_25__[/* createLazyStream */ "b"])(),
+            stream = _createLazyStream.stream,
+            setStream = _createLazyStream.setStream;
+
+        var promise = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_19___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_8___default.a.mark(function _callee() {
+          var _context, _context2;
+
+          var refreshDelegate, bodyPromise, _body2, requestTime, requestPromise, response, responseTime, err, body;
+
+          return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_8___default.a.wrap(function _callee$(_context3) {
+            while (1) {
+              switch (_context3.prev = _context3.next) {
+                case 0:
+                  refreshDelegate = _this2.getRefreshDelegate();
+                  /* TODO decide remove or not this section */
+
+                  /*
+                  // remember previous instance url in case it changes after a refresh
+                  const lastInstanceUrl = conn.instanceUrl;
+                    // check to see if the token refresh has changed the instance url
+                  if(lastInstanceUrl !== conn.instanceUrl){
+                    // if the instance url has changed
+                    // then replace the current request urls instance url fragment
+                    // with the updated instance url
+                    request.url = request.url.replace(lastInstanceUrl,conn.instanceUrl);
+                  }
+                  */
+
+                  if (!(refreshDelegate && refreshDelegate.isRefreshing())) {
+                    _context3.next = 10;
+                    break;
+                  }
+
+                  _context3.next = 4;
+                  return refreshDelegate.waitRefresh();
+
+                case 4:
+                  bodyPromise = _this2.request(_request);
+                  setStream(bodyPromise.stream());
+                  _context3.next = 8;
+                  return bodyPromise;
+
+                case 8:
+                  _body2 = _context3.sent;
+                  return _context3.abrupt("return", _body2);
+
+                case 10:
+                  // hook before sending
+                  _this2.beforeSend(_request);
+
+                  _this2.emit('request', _request);
+
+                  _this2._logger.debug(_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_10___default()(_context = "<request> method=".concat(_request.method, ", url=")).call(_context, _request.url));
+
+                  requestTime = _babel_runtime_corejs3_core_js_stable_date_now__WEBPACK_IMPORTED_MODULE_9___default()();
+                  requestPromise = _this2._transport.httpRequest(_request);
+                  setStream(requestPromise.stream());
+                  _context3.prev = 16;
+                  _context3.next = 19;
+                  return requestPromise;
+
+                case 19:
+                  response = _context3.sent;
+                  _context3.next = 26;
+                  break;
+
+                case 22:
+                  _context3.prev = 22;
+                  _context3.t0 = _context3["catch"](16);
+
+                  _this2._logger.error(_context3.t0);
+
+                  throw _context3.t0;
+
+                case 26:
+                  _context3.prev = 26;
+                  responseTime = _babel_runtime_corejs3_core_js_stable_date_now__WEBPACK_IMPORTED_MODULE_9___default()();
+
+                  _this2._logger.debug("elapsed time: ".concat(responseTime - requestTime, " msec"));
+
+                  return _context3.finish(26);
+
+                case 30:
+                  if (response) {
+                    _context3.next = 32;
+                    break;
+                  }
+
+                  return _context3.abrupt("return");
+
+                case 32:
+                  _this2._logger.debug(_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_10___default()(_context2 = "<response> status=".concat(String(response.statusCode), ", url=")).call(_context2, _request.url));
+
+                  _this2.emit('response', response); // Refresh token if session has been expired and requires authentication
+                  // when session refresh delegate is available
+
+
+                  if (!(_this2.isSessionExpired(response) && refreshDelegate && _this2.isRecoverable(response))) {
+                    _context3.next = 38;
+                    break;
+                  }
+
+                  _context3.next = 37;
+                  return refreshDelegate.refresh(requestTime);
+
+                case 37:
+                  return _context3.abrupt("return", _this2.request(_request));
+
+                case 38:
+                  if (!_this2.isErrorResponse(response)) {
+                    _context3.next = 43;
+                    break;
+                  }
+
+                  _context3.next = 41;
+                  return _this2.getError(response);
+
+                case 41:
+                  err = _context3.sent;
+                  throw err;
+
+                case 43:
+                  _context3.next = 45;
+                  return _this2.getResponseBody(response);
+
+                case 45:
+                  body = _context3.sent;
+                  return _context3.abrupt("return", body);
+
+                case 47:
+                case "end":
+                  return _context3.stop();
+              }
+            }
+          }, _callee, null, [[16, 22, 26, 30]]);
+        }))();
+
+        return {
+          stream: stream,
+          promise: promise
+        };
+      });
+    }
+    /**
+     * @protected
+     */
+
+  }, {
+    key: "getRefreshDelegate",
+    value: function getRefreshDelegate() {
+      return this._conn._refreshDelegate;
+    }
+    /**
+     * @protected
+     */
+
+  }, {
+    key: "beforeSend",
+    value: function beforeSend(request) {
+      /* eslint-disable no-param-reassign */
+      var headers = request.headers || {};
+
+      if (this._conn.accessToken) {
+        headers.Authorization = "Bearer ".concat(this._conn.accessToken);
+      }
+
+      if (this._conn._callOptions) {
+        var callOptions = [];
+
+        for (var _i = 0, _Object$keys = _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_7___default()(this._conn._callOptions); _i < _Object$keys.length; _i++) {
+          var _context4;
+
+          var name = _Object$keys[_i];
+          callOptions.push(_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_10___default()(_context4 = "".concat(name, "=")).call(_context4, this._conn._callOptions[name]));
+        }
+
+        headers['Sforce-Call-Options'] = callOptions.join(', ');
+      }
+
+      request.headers = headers;
+    }
+    /**
+     * Detect response content mime-type
+     * @protected
+     */
+
+  }, {
+    key: "getResponseContentType",
+    value: function getResponseContentType(response) {
+      return this._responseType || response.headers && response.headers['content-type'];
+    }
+    /**
+     * @private
+     */
+
+  }, {
+    key: "parseResponseBody",
+    value: function () {
+      var _parseResponseBody = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_19___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_8___default.a.mark(function _callee2(response) {
+        var contentType, parseBody;
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_8___default.a.wrap(function _callee2$(_context5) {
+          while (1) {
+            switch (_context5.prev = _context5.next) {
+              case 0:
+                contentType = this.getResponseContentType(response) || '';
+                parseBody = /^(text|application)\/xml(;|$)/.test(contentType) ? parseXML : /^application\/json(;|$)/.test(contentType) ? parseJSON : /^text\/csv(;|$)/.test(contentType) ? _csv__WEBPACK_IMPORTED_MODULE_24__[/* parseCSV */ "a"] : parseText;
+                _context5.prev = 2;
+                return _context5.abrupt("return", parseBody(response.body));
+
+              case 6:
+                _context5.prev = 6;
+                _context5.t0 = _context5["catch"](2);
+                return _context5.abrupt("return", response.body);
+
+              case 9:
+              case "end":
+                return _context5.stop();
+            }
+          }
+        }, _callee2, this, [[2, 6]]);
+      }));
+
+      function parseResponseBody(_x2) {
+        return _parseResponseBody.apply(this, arguments);
+      }
+
+      return parseResponseBody;
+    }()
+    /**
+     * Get response body
+     * @protected
+     */
+
+  }, {
+    key: "getResponseBody",
+    value: function () {
+      var _getResponseBody = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_19___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_8___default.a.mark(function _callee3(response) {
+        var body, err;
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_8___default.a.wrap(function _callee3$(_context6) {
+          while (1) {
+            switch (_context6.prev = _context6.next) {
+              case 0:
+                if (!(response.statusCode === 204)) {
+                  _context6.next = 2;
+                  break;
+                }
+
+                return _context6.abrupt("return", this._noContentResponse);
+
+              case 2:
+                _context6.next = 4;
+                return this.parseResponseBody(response);
+
+              case 4:
+                body = _context6.sent;
+
+                if (!this.hasErrorInResponseBody(body)) {
+                  _context6.next = 10;
+                  break;
+                }
+
+                _context6.next = 8;
+                return this.getError(response, body);
+
+              case 8:
+                err = _context6.sent;
+                throw err;
+
+              case 10:
+                if (!(response.statusCode === 300)) {
+                  _context6.next = 12;
+                  break;
+                }
+
+                throw new HttpApiError('Multiple records found', 'MULTIPLE_CHOICES', body);
+
+              case 12:
+                return _context6.abrupt("return", body);
+
+              case 13:
+              case "end":
+                return _context6.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function getResponseBody(_x3) {
+        return _getResponseBody.apply(this, arguments);
+      }
+
+      return getResponseBody;
+    }()
+    /**
+     * Detect session expiry
+     * @protected
+     */
+
+  }, {
+    key: "isSessionExpired",
+    value: function isSessionExpired(response) {
+      return response.statusCode === 401;
+    }
+    /**
+     * Detect if error is recoverable
+     * @protected
+     */
+
+  }, {
+    key: "isRecoverable",
+    value: function isRecoverable(response) {
+      var _context7, _context8;
+
+      return !(_babel_runtime_corejs3_core_js_stable_instance_includes__WEBPACK_IMPORTED_MODULE_6___default()(_context7 = response.body).call(_context7, "INVALID_SESSION_ID") && _babel_runtime_corejs3_core_js_stable_instance_includes__WEBPACK_IMPORTED_MODULE_6___default()(_context8 = response.body).call(_context8, "This session is not valid for use with the REST API"));
+    }
+    /**
+     * Detect error response
+     * @protected
+     */
+
+  }, {
+    key: "isErrorResponse",
+    value: function isErrorResponse(response) {
+      return response.statusCode >= 400;
+    }
+    /**
+     * Detect error in response body
+     * @protected
+     */
+
+  }, {
+    key: "hasErrorInResponseBody",
+    value: function hasErrorInResponseBody(_body) {
+      return false;
+    }
+    /**
+     * Parsing error message in response
+     * @protected
+     */
+
+  }, {
+    key: "parseError",
+    value: function parseError(body) {
+      var errors = body;
+      return _babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_5___default()(errors) ? errors[0] : errors;
+    }
+    /**
+     * Get error message in response
+     * @protected
+     */
+
+  }, {
+    key: "getError",
+    value: function () {
+      var _getError = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_19___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_8___default.a.mark(function _callee4(response, body) {
+        var error;
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_8___default.a.wrap(function _callee4$(_context9) {
+          while (1) {
+            switch (_context9.prev = _context9.next) {
+              case 0:
+                _context9.prev = 0;
+                _context9.t0 = this;
+                _context9.t1 = body;
+
+                if (_context9.t1) {
+                  _context9.next = 7;
+                  break;
+                }
+
+                _context9.next = 6;
+                return this.parseResponseBody(response);
+
+              case 6:
+                _context9.t1 = _context9.sent;
+
+              case 7:
+                _context9.t2 = _context9.t1;
+                error = _context9.t0.parseError.call(_context9.t0, _context9.t2);
+                _context9.next = 13;
+                break;
+
+              case 11:
+                _context9.prev = 11;
+                _context9.t3 = _context9["catch"](0);
+
+              case 13:
+                error = _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_4___default()(error) === 'object' && error !== null && typeof error.message === 'string' ? error : {
+                  errorCode: "ERROR_HTTP_".concat(response.statusCode),
+                  message: response.body
+                };
+                return _context9.abrupt("return", new HttpApiError(error.message, error.errorCode));
+
+              case 15:
+              case "end":
+                return _context9.stop();
+            }
+          }
+        }, _callee4, this, [[0, 11]]);
+      }));
+
+      function getError(_x4, _x5) {
+        return _getError.apply(this, arguments);
+      }
+
+      return getError;
+    }()
+  }]);
+
+  return HttpApi;
+}(events__WEBPACK_IMPORTED_MODULE_20__["EventEmitter"]);
+/**
+ *
+ */
+
+_babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(HttpApi, "_logger", Object(_util_logger__WEBPACK_IMPORTED_MODULE_22__[/* getLogger */ "a"])('http-api'));
+
+var HttpApiError = /*#__PURE__*/function (_Error) {
+  _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_15___default()(HttpApiError, _Error);
+
+  var _super2 = _createSuper(HttpApiError);
+
+  function HttpApiError(message, errorCode, content) {
+    var _this3;
+
+    _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_12___default()(this, HttpApiError);
+
+    _this3 = _super2.call(this, message);
+
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_14___default()(_this3), "errorCode", void 0);
+
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_14___default()(_this3), "content", void 0);
+
+    _this3.name = errorCode || _this3.name;
+    _this3.errorCode = _this3.name;
+    _this3.content = content;
+    return _this3;
+  }
+
+  return HttpApiError;
+}( /*#__PURE__*/_babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_3___default()(Error));
+
+/* harmony default export */ __webpack_exports__["a"] = (HttpApi);
+
+
+/***/ }),
+/* 161 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return parseCSV; });
 /* unused harmony export toCSV */
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return parseCSVStream; });
@@ -30305,609 +21835,10 @@ function serializeCSVStream(options) {
 
 
 /***/ }),
-/* 161 */
+/* 162 */
 /***/ (function(module, exports) {
 
 // empty
-
-
-/***/ }),
-/* 162 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* unused harmony export HttpApi */
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(66);
-/* harmony import */ var core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_function_name__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(123);
-/* harmony import */ var core_js_modules_es_function_name__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_function_name__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(104);
-/* harmony import */ var _babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(42);
-/* harmony import */ var _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(17);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(10);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(1);
-/* harmony import */ var _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_date_now__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(72);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_date_now__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_date_now__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(4);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(48);
-/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(5);
-/* harmony import */ var _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_11__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(7);
-/* harmony import */ var _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_12__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(2);
-/* harmony import */ var _babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_13__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(18);
-/* harmony import */ var _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_14__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(24);
-/* harmony import */ var _babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_15__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(9);
-/* harmony import */ var _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_16__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(0);
-/* harmony import */ var _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_17__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(3);
-/* harmony import */ var _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_18___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_18__);
-/* harmony import */ var events__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(33);
-/* harmony import */ var events__WEBPACK_IMPORTED_MODULE_19___default = /*#__PURE__*/__webpack_require__.n(events__WEBPACK_IMPORTED_MODULE_19__);
-/* harmony import */ var xml2js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(463);
-/* harmony import */ var xml2js__WEBPACK_IMPORTED_MODULE_20___default = /*#__PURE__*/__webpack_require__.n(xml2js__WEBPACK_IMPORTED_MODULE_20__);
-/* harmony import */ var _util_logger__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(88);
-/* harmony import */ var _util_promise__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(195);
-/* harmony import */ var _csv__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(160);
-/* harmony import */ var _util_stream__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(73);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_16___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_16___default()(this).constructor; result = _babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default()(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_15___default()(this, result); }; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default.a) return false; if (_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default.a.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default()(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-/**
- *
- */
-
-
-
-
-
-
-/** @private */
-
-function parseJSON(str) {
-  return JSON.parse(str);
-}
-/** @private */
-
-
-function parseXML(_x) {
-  return _parseXML.apply(this, arguments);
-}
-/** @private */
-
-
-function _parseXML() {
-  _parseXML = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_18___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_7___default.a.mark(function _callee5(str) {
-    return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_7___default.a.wrap(function _callee5$(_context8) {
-      while (1) {
-        switch (_context8.prev = _context8.next) {
-          case 0:
-            return _context8.abrupt("return", xml2js__WEBPACK_IMPORTED_MODULE_20___default.a.parseStringPromise(str, {
-              explicitArray: false
-            }));
-
-          case 1:
-          case "end":
-            return _context8.stop();
-        }
-      }
-    }, _callee5);
-  }));
-  return _parseXML.apply(this, arguments);
-}
-
-function parseText(str) {
-  return str;
-}
-/**
- * HTTP based API class with authorization hook
- */
-
-
-var HttpApi = /*#__PURE__*/function (_EventEmitter) {
-  _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_14___default()(HttpApi, _EventEmitter);
-
-  var _super = _createSuper(HttpApi);
-
-  function HttpApi(conn, options) {
-    var _this;
-
-    _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_11___default()(this, HttpApi);
-
-    _this = _super.call(this);
-
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_17___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_13___default()(_this), "_conn", void 0);
-
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_17___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_13___default()(_this), "_logger", void 0);
-
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_17___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_13___default()(_this), "_transport", void 0);
-
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_17___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_13___default()(_this), "_responseType", void 0);
-
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_17___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_13___default()(_this), "_noContentResponse", void 0);
-
-    _this._conn = conn;
-    _this._logger = conn._logLevel ? HttpApi._logger.createInstance(conn._logLevel) : HttpApi._logger;
-    _this._responseType = options.responseType;
-    _this._transport = options.transport || conn._transport;
-    _this._noContentResponse = options.noContentResponse;
-    return _this;
-  }
-  /**
-   * Callout to API endpoint using http
-   */
-
-
-  _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_12___default()(HttpApi, [{
-    key: "request",
-    value: function request(_request) {
-      var _this2 = this;
-
-      return _util_promise__WEBPACK_IMPORTED_MODULE_22__[/* StreamPromise */ "a"].create(function () {
-        var _createLazyStream = Object(_util_stream__WEBPACK_IMPORTED_MODULE_24__[/* createLazyStream */ "b"])(),
-            stream = _createLazyStream.stream,
-            setStream = _createLazyStream.setStream;
-
-        var promise = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_18___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_7___default.a.mark(function _callee() {
-          var _context, _context2;
-
-          var refreshDelegate, bodyPromise, _body2, requestTime, requestPromise, response, responseTime, err, body;
-
-          return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_7___default.a.wrap(function _callee$(_context3) {
-            while (1) {
-              switch (_context3.prev = _context3.next) {
-                case 0:
-                  refreshDelegate = _this2.getRefreshDelegate();
-                  /* TODO decide remove or not this section */
-
-                  /*
-                  // remember previous instance url in case it changes after a refresh
-                  const lastInstanceUrl = conn.instanceUrl;
-                   // check to see if the token refresh has changed the instance url
-                  if(lastInstanceUrl !== conn.instanceUrl){
-                    // if the instance url has changed
-                    // then replace the current request urls instance url fragment
-                    // with the updated instance url
-                    request.url = request.url.replace(lastInstanceUrl,conn.instanceUrl);
-                  }
-                  */
-
-                  if (!(refreshDelegate && refreshDelegate.isRefreshing())) {
-                    _context3.next = 10;
-                    break;
-                  }
-
-                  _context3.next = 4;
-                  return refreshDelegate.waitRefresh();
-
-                case 4:
-                  bodyPromise = _this2.request(_request);
-                  setStream(bodyPromise.stream());
-                  _context3.next = 8;
-                  return bodyPromise;
-
-                case 8:
-                  _body2 = _context3.sent;
-                  return _context3.abrupt("return", _body2);
-
-                case 10:
-                  // hook before sending
-                  _this2.beforeSend(_request);
-
-                  _this2.emit('request', _request);
-
-                  _this2._logger.debug(_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_9___default()(_context = "<request> method=".concat(_request.method, ", url=")).call(_context, _request.url));
-
-                  requestTime = _babel_runtime_corejs3_core_js_stable_date_now__WEBPACK_IMPORTED_MODULE_8___default()();
-                  requestPromise = _this2._transport.httpRequest(_request);
-                  setStream(requestPromise.stream());
-                  _context3.prev = 16;
-                  _context3.next = 19;
-                  return requestPromise;
-
-                case 19:
-                  response = _context3.sent;
-                  _context3.next = 26;
-                  break;
-
-                case 22:
-                  _context3.prev = 22;
-                  _context3.t0 = _context3["catch"](16);
-
-                  _this2._logger.error(_context3.t0);
-
-                  throw _context3.t0;
-
-                case 26:
-                  _context3.prev = 26;
-                  responseTime = _babel_runtime_corejs3_core_js_stable_date_now__WEBPACK_IMPORTED_MODULE_8___default()();
-
-                  _this2._logger.debug("elapsed time: ".concat(responseTime - requestTime, " msec"));
-
-                  return _context3.finish(26);
-
-                case 30:
-                  if (response) {
-                    _context3.next = 32;
-                    break;
-                  }
-
-                  return _context3.abrupt("return");
-
-                case 32:
-                  _this2._logger.debug(_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_9___default()(_context2 = "<response> status=".concat(String(response.statusCode), ", url=")).call(_context2, _request.url));
-
-                  _this2.emit('response', response); // Refresh token if session has been expired and requires authentication
-                  // when session refresh delegate is available
-
-
-                  if (!(_this2.isSessionExpired(response) && refreshDelegate)) {
-                    _context3.next = 38;
-                    break;
-                  }
-
-                  _context3.next = 37;
-                  return refreshDelegate.refresh(requestTime);
-
-                case 37:
-                  return _context3.abrupt("return", _this2.request(_request));
-
-                case 38:
-                  if (!_this2.isErrorResponse(response)) {
-                    _context3.next = 43;
-                    break;
-                  }
-
-                  _context3.next = 41;
-                  return _this2.getError(response);
-
-                case 41:
-                  err = _context3.sent;
-                  throw err;
-
-                case 43:
-                  _context3.next = 45;
-                  return _this2.getResponseBody(response);
-
-                case 45:
-                  body = _context3.sent;
-                  return _context3.abrupt("return", body);
-
-                case 47:
-                case "end":
-                  return _context3.stop();
-              }
-            }
-          }, _callee, null, [[16, 22, 26, 30]]);
-        }))();
-
-        return {
-          stream: stream,
-          promise: promise
-        };
-      });
-    }
-    /**
-     * @protected
-     */
-
-  }, {
-    key: "getRefreshDelegate",
-    value: function getRefreshDelegate() {
-      return this._conn._refreshDelegate;
-    }
-    /**
-     * @protected
-     */
-
-  }, {
-    key: "beforeSend",
-    value: function beforeSend(request) {
-      /* eslint-disable no-param-reassign */
-      var headers = request.headers || {};
-
-      if (this._conn.accessToken) {
-        headers.Authorization = "Bearer ".concat(this._conn.accessToken);
-      }
-
-      if (this._conn._callOptions) {
-        var callOptions = [];
-
-        for (var _i = 0, _Object$keys = _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_6___default()(this._conn._callOptions); _i < _Object$keys.length; _i++) {
-          var _context4;
-
-          var name = _Object$keys[_i];
-          callOptions.push(_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_9___default()(_context4 = "".concat(name, "=")).call(_context4, this._conn._callOptions[name]));
-        }
-
-        headers['Sforce-Call-Options'] = callOptions.join(', ');
-      }
-
-      request.headers = headers;
-    }
-    /**
-     * Detect response content mime-type
-     * @protected
-     */
-
-  }, {
-    key: "getResponseContentType",
-    value: function getResponseContentType(response) {
-      return this._responseType || response.headers && response.headers['content-type'];
-    }
-    /**
-     * @private
-     */
-
-  }, {
-    key: "parseResponseBody",
-    value: function () {
-      var _parseResponseBody = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_18___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_7___default.a.mark(function _callee2(response) {
-        var contentType, parseBody;
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_7___default.a.wrap(function _callee2$(_context5) {
-          while (1) {
-            switch (_context5.prev = _context5.next) {
-              case 0:
-                contentType = this.getResponseContentType(response) || '';
-                parseBody = /^(text|application)\/xml(;|$)/.test(contentType) ? parseXML : /^application\/json(;|$)/.test(contentType) ? parseJSON : /^text\/csv(;|$)/.test(contentType) ? _csv__WEBPACK_IMPORTED_MODULE_23__[/* parseCSV */ "a"] : parseText;
-                _context5.prev = 2;
-                return _context5.abrupt("return", parseBody(response.body));
-
-              case 6:
-                _context5.prev = 6;
-                _context5.t0 = _context5["catch"](2);
-                return _context5.abrupt("return", response.body);
-
-              case 9:
-              case "end":
-                return _context5.stop();
-            }
-          }
-        }, _callee2, this, [[2, 6]]);
-      }));
-
-      function parseResponseBody(_x2) {
-        return _parseResponseBody.apply(this, arguments);
-      }
-
-      return parseResponseBody;
-    }()
-    /**
-     * Get response body
-     * @protected
-     */
-
-  }, {
-    key: "getResponseBody",
-    value: function () {
-      var _getResponseBody = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_18___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_7___default.a.mark(function _callee3(response) {
-        var body, err;
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_7___default.a.wrap(function _callee3$(_context6) {
-          while (1) {
-            switch (_context6.prev = _context6.next) {
-              case 0:
-                if (!(response.statusCode === 204)) {
-                  _context6.next = 2;
-                  break;
-                }
-
-                return _context6.abrupt("return", this._noContentResponse);
-
-              case 2:
-                _context6.next = 4;
-                return this.parseResponseBody(response);
-
-              case 4:
-                body = _context6.sent;
-
-                if (!this.hasErrorInResponseBody(body)) {
-                  _context6.next = 10;
-                  break;
-                }
-
-                _context6.next = 8;
-                return this.getError(response, body);
-
-              case 8:
-                err = _context6.sent;
-                throw err;
-
-              case 10:
-                if (!(response.statusCode === 300)) {
-                  _context6.next = 12;
-                  break;
-                }
-
-                throw new HttpApiError('Multiple records found', 'MULTIPLE_CHOICES', body);
-
-              case 12:
-                return _context6.abrupt("return", body);
-
-              case 13:
-              case "end":
-                return _context6.stop();
-            }
-          }
-        }, _callee3, this);
-      }));
-
-      function getResponseBody(_x3) {
-        return _getResponseBody.apply(this, arguments);
-      }
-
-      return getResponseBody;
-    }()
-    /**
-     * Detect session expiry
-     * @protected
-     */
-
-  }, {
-    key: "isSessionExpired",
-    value: function isSessionExpired(response) {
-      return response.statusCode === 401;
-    }
-    /**
-     * Detect error response
-     * @protected
-     */
-
-  }, {
-    key: "isErrorResponse",
-    value: function isErrorResponse(response) {
-      return response.statusCode >= 400;
-    }
-    /**
-     * Detect error in response body
-     * @protected
-     */
-
-  }, {
-    key: "hasErrorInResponseBody",
-    value: function hasErrorInResponseBody(_body) {
-      return false;
-    }
-    /**
-     * Parsing error message in response
-     * @protected
-     */
-
-  }, {
-    key: "parseError",
-    value: function parseError(body) {
-      var errors = body;
-      return _babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_5___default()(errors) ? errors[0] : errors;
-    }
-    /**
-     * Get error message in response
-     * @protected
-     */
-
-  }, {
-    key: "getError",
-    value: function () {
-      var _getError = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_18___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_7___default.a.mark(function _callee4(response, body) {
-        var error;
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_7___default.a.wrap(function _callee4$(_context7) {
-          while (1) {
-            switch (_context7.prev = _context7.next) {
-              case 0:
-                _context7.prev = 0;
-                _context7.t0 = this;
-                _context7.t1 = body;
-
-                if (_context7.t1) {
-                  _context7.next = 7;
-                  break;
-                }
-
-                _context7.next = 6;
-                return this.parseResponseBody(response);
-
-              case 6:
-                _context7.t1 = _context7.sent;
-
-              case 7:
-                _context7.t2 = _context7.t1;
-                error = _context7.t0.parseError.call(_context7.t0, _context7.t2);
-                _context7.next = 13;
-                break;
-
-              case 11:
-                _context7.prev = 11;
-                _context7.t3 = _context7["catch"](0);
-
-              case 13:
-                error = _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_4___default()(error) === 'object' && error !== null && typeof error.message === 'string' ? error : {
-                  errorCode: "ERROR_HTTP_".concat(response.statusCode),
-                  message: response.body
-                };
-                return _context7.abrupt("return", new HttpApiError(error.message, error.errorCode));
-
-              case 15:
-              case "end":
-                return _context7.stop();
-            }
-          }
-        }, _callee4, this, [[0, 11]]);
-      }));
-
-      function getError(_x4, _x5) {
-        return _getError.apply(this, arguments);
-      }
-
-      return getError;
-    }()
-  }]);
-
-  return HttpApi;
-}(events__WEBPACK_IMPORTED_MODULE_19__["EventEmitter"]);
-/**
- *
- */
-
-_babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_17___default()(HttpApi, "_logger", Object(_util_logger__WEBPACK_IMPORTED_MODULE_21__[/* getLogger */ "a"])('http-api'));
-
-var HttpApiError = /*#__PURE__*/function (_Error) {
-  _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_14___default()(HttpApiError, _Error);
-
-  var _super2 = _createSuper(HttpApiError);
-
-  function HttpApiError(message, errorCode, content) {
-    var _this3;
-
-    _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_11___default()(this, HttpApiError);
-
-    _this3 = _super2.call(this, message);
-
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_17___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_13___default()(_this3), "errorCode", void 0);
-
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_17___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_13___default()(_this3), "content", void 0);
-
-    _this3.name = errorCode || _this3.name;
-    _this3.errorCode = _this3.name;
-    _this3.content = content;
-    return _this3;
-  }
-
-  return HttpApiError;
-}( /*#__PURE__*/_babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_3___default()(Error));
-
-/* harmony default export */ __webpack_exports__["a"] = (HttpApi);
 
 
 /***/ }),
@@ -30991,8 +21922,8 @@ module.exports = function (object, key, value) {
 /* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var fails = __webpack_require__(38);
-var wellKnownSymbol = __webpack_require__(40);
+var fails = __webpack_require__(39);
+var wellKnownSymbol = __webpack_require__(41);
 var V8_VERSION = __webpack_require__(169);
 
 var SPECIES = wellKnownSymbol('species');
@@ -31016,7 +21947,7 @@ module.exports = function (METHOD_NAME) {
 /* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global = __webpack_require__(39);
+var global = __webpack_require__(40);
 var userAgent = __webpack_require__(213);
 
 var process = global.process;
@@ -31042,7 +21973,7 @@ module.exports = version && +version;
 /* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var wellKnownSymbol = __webpack_require__(40);
+var wellKnownSymbol = __webpack_require__(41);
 
 exports.f = wellKnownSymbol;
 
@@ -31052,8 +21983,8 @@ exports.f = wellKnownSymbol;
 /***/ (function(module, exports, __webpack_require__) {
 
 var classof = __webpack_require__(130);
-var Iterators = __webpack_require__(116);
-var wellKnownSymbol = __webpack_require__(40);
+var Iterators = __webpack_require__(117);
+var wellKnownSymbol = __webpack_require__(41);
 
 var ITERATOR = wellKnownSymbol('iterator');
 
@@ -31070,7 +22001,7 @@ module.exports = function (it) {
 
 "use strict";
 
-var fails = __webpack_require__(38);
+var fails = __webpack_require__(39);
 
 module.exports = function (METHOD_NAME, argument) {
   var method = [][METHOD_NAME];
@@ -31268,11 +22199,11 @@ module.exports = patchedExec;
 
 // TODO: Remove from `core-js@4` since it's moved to entry points
 __webpack_require__(67);
-var redefine = __webpack_require__(99);
+var redefine = __webpack_require__(100);
 var fails = __webpack_require__(56);
 var wellKnownSymbol = __webpack_require__(50);
 var regexpExec = __webpack_require__(178);
-var createNonEnumerableProperty = __webpack_require__(108);
+var createNonEnumerableProperty = __webpack_require__(109);
 
 var SPECIES = wellKnownSymbol('species');
 
@@ -31396,7 +22327,7 @@ module.exports = function (KEY, length, exec, sham) {
 /* 180 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var classof = __webpack_require__(107);
+var classof = __webpack_require__(108);
 var regexpExec = __webpack_require__(178);
 
 // `RegExpExec` abstract operation
@@ -31425,7 +22356,7 @@ module.exports = function (R, S) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var classof = __webpack_require__(141);
-var global = __webpack_require__(39);
+var global = __webpack_require__(40);
 
 module.exports = classof(global.process) == 'process';
 
@@ -31788,7 +22719,7 @@ module.exports = EVP_BytesToKey
 "use strict";
 
 
-var BN = __webpack_require__(101);
+var BN = __webpack_require__(102);
 var utils = __webpack_require__(69);
 var getNAF = utils.getNAF;
 var getJSF = utils.getJSF;
@@ -32922,7 +23853,7 @@ function isPrimitive(arg) {
 }
 exports.isPrimitive = isPrimitive;
 
-exports.isBuffer = __webpack_require__(815);
+exports.isBuffer = __webpack_require__(824);
 
 function objectToString(o) {
   return Object.prototype.toString.call(o);
@@ -32966,7 +23897,7 @@ exports.log = function() {
  *     prototype.
  * @param {function} superCtor Constructor function to inherit prototype from.
  */
-exports.inherits = __webpack_require__(816);
+exports.inherits = __webpack_require__(825);
 
 exports._extend = function(origin, add) {
   // Don't do anything if add isn't an object
@@ -33125,7 +24056,7 @@ exports.callbackify = callbackify;
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_find__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(197);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_find__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_find__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_includes__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(121);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_includes__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(89);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_includes__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_includes__WEBPACK_IMPORTED_MODULE_9__);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_sort__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(78);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_sort__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_sort__WEBPACK_IMPORTED_MODULE_10__);
@@ -33147,7 +24078,7 @@ exports.callbackify = callbackify;
 /* harmony import */ var _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18__);
 /* harmony import */ var _util_logger__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(88);
 /* harmony import */ var _record_reference__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(193);
-/* harmony import */ var _query__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(89);
+/* harmony import */ var _query__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(90);
 /* harmony import */ var _quick_action__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(138);
 
 
@@ -34047,7 +24978,7 @@ var JwtOAuth2 = /*#__PURE__*/function (_OAuth) {
 /* harmony import */ var _babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(9);
 /* harmony import */ var _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(104);
+/* harmony import */ var _babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(105);
 /* harmony import */ var _babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var stream__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(29);
 /* harmony import */ var stream__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(stream__WEBPACK_IMPORTED_MODULE_8__);
@@ -34119,7 +25050,7 @@ var StreamPromise = /*#__PURE__*/function (_Promise) {
 /* 196 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(840);
+module.exports = __webpack_require__(849);
 
 /***/ }),
 /* 197 */
@@ -34193,19 +25124,19 @@ addToUnscopables('entries');
 
 "use strict";
 
-var $ = __webpack_require__(117);
+var $ = __webpack_require__(118);
 var IS_PURE = __webpack_require__(173);
 var global = __webpack_require__(47);
 var getBuiltIn = __webpack_require__(148);
 var NativePromise = __webpack_require__(572);
-var redefine = __webpack_require__(99);
+var redefine = __webpack_require__(100);
 var redefineAll = __webpack_require__(573);
 var setToStringTag = __webpack_require__(231);
 var setSpecies = __webpack_require__(346);
-var isObject = __webpack_require__(98);
+var isObject = __webpack_require__(99);
 var aFunction = __webpack_require__(177);
 var anInstance = __webpack_require__(574);
-var classof = __webpack_require__(107);
+var classof = __webpack_require__(108);
 var inspectSource = __webpack_require__(229);
 var iterate = __webpack_require__(575);
 var checkCorrectnessOfIteration = __webpack_require__(579);
@@ -34582,7 +25513,7 @@ $({ target: PROMISE, stat: true, forced: INCORRECT_ITERATION }, {
 var fixRegExpWellKnownSymbolLogic = __webpack_require__(179);
 var anObject = __webpack_require__(57);
 var toLength = __webpack_require__(147);
-var requireObjectCoercible = __webpack_require__(96);
+var requireObjectCoercible = __webpack_require__(97);
 var advanceStringIndex = __webpack_require__(234);
 var regExpExec = __webpack_require__(180);
 
@@ -34739,7 +25670,7 @@ exports.f = NASHORN_BUG ? function propertyIsEnumerable(V) {
 /* 205 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var fails = __webpack_require__(38);
+var fails = __webpack_require__(39);
 var classof = __webpack_require__(141);
 
 var split = ''.split;
@@ -34758,7 +25689,7 @@ module.exports = fails(function () {
 /* 206 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global = __webpack_require__(39);
+var global = __webpack_require__(40);
 var isObject = __webpack_require__(49);
 
 var document = global.document;
@@ -34775,7 +25706,7 @@ module.exports = function (it) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var toIndexedObject = __webpack_require__(83);
-var toLength = __webpack_require__(114);
+var toLength = __webpack_require__(115);
 var toAbsoluteIndex = __webpack_require__(302);
 
 // `Array.prototype.{ indexOf, includes }` methods implementation
@@ -34858,7 +25789,7 @@ var store = __webpack_require__(211);
 /* 211 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global = __webpack_require__(39);
+var global = __webpack_require__(40);
 var setGlobal = __webpack_require__(478);
 
 var SHARED = '__core-js_shared__';
@@ -34871,7 +25802,7 @@ module.exports = store;
 /* 212 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var fails = __webpack_require__(38);
+var fails = __webpack_require__(39);
 
 module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
   // Chrome 38 Symbol has incorrect toString conversion
@@ -34949,9 +25880,9 @@ var setPrototypeOf = __webpack_require__(215);
 var setToStringTag = __webpack_require__(129);
 var createNonEnumerableProperty = __webpack_require__(74);
 var redefine = __webpack_require__(145);
-var wellKnownSymbol = __webpack_require__(40);
+var wellKnownSymbol = __webpack_require__(41);
 var IS_PURE = __webpack_require__(37);
-var Iterators = __webpack_require__(116);
+var Iterators = __webpack_require__(117);
 var IteratorsCore = __webpack_require__(313);
 
 var IteratorPrototype = IteratorsCore.IteratorPrototype;
@@ -35037,7 +25968,7 @@ module.exports = function (Iterable, NAME, IteratorConstructor, next, DEFAULT, I
 /* 217 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var wellKnownSymbol = __webpack_require__(40);
+var wellKnownSymbol = __webpack_require__(41);
 
 var TO_STRING_TAG = wellKnownSymbol('toStringTag');
 var test = {};
@@ -35081,7 +26012,7 @@ exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(47);
-var createNonEnumerableProperty = __webpack_require__(108);
+var createNonEnumerableProperty = __webpack_require__(109);
 
 module.exports = function (key, value) {
   try {
@@ -35097,7 +26028,7 @@ module.exports = function (key, value) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(47);
-var isObject = __webpack_require__(98);
+var isObject = __webpack_require__(99);
 
 var document = global.document;
 // typeof document.createElement is 'object' in old IE
@@ -35112,7 +26043,7 @@ module.exports = function (it) {
 /* 223 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isObject = __webpack_require__(98);
+var isObject = __webpack_require__(99);
 
 // `ToPrimitive` abstract operation
 // https://tc39.github.io/ecma262/#sec-toprimitive
@@ -35301,7 +26232,7 @@ exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
 /* 231 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var defineProperty = __webpack_require__(97).f;
+var defineProperty = __webpack_require__(98).f;
 var has = __webpack_require__(76);
 var wellKnownSymbol = __webpack_require__(50);
 
@@ -35370,8 +26301,8 @@ module.exports = function (S, index, unicode) {
 /* 235 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isObject = __webpack_require__(98);
-var classof = __webpack_require__(107);
+var isObject = __webpack_require__(99);
+var classof = __webpack_require__(108);
 var wellKnownSymbol = __webpack_require__(50);
 
 var MATCH = wellKnownSymbol('match');
@@ -35488,7 +26419,7 @@ exports = module.exports = __webpack_require__(375);
 exports.Stream = exports;
 exports.Readable = exports;
 exports.Writable = __webpack_require__(241);
-exports.Duplex = __webpack_require__(119);
+exports.Duplex = __webpack_require__(120);
 exports.Transform = __webpack_require__(379);
 exports.PassThrough = __webpack_require__(668);
 
@@ -35598,7 +26529,7 @@ util.inherits(Writable, Stream);
 function nop() {}
 
 function WritableState(options, stream) {
-  Duplex = Duplex || __webpack_require__(119);
+  Duplex = Duplex || __webpack_require__(120);
 
   options = options || {};
 
@@ -35748,7 +26679,7 @@ if (typeof Symbol === 'function' && Symbol.hasInstance && typeof Function.protot
 }
 
 function Writable(options) {
-  Duplex = Duplex || __webpack_require__(119);
+  Duplex = Duplex || __webpack_require__(120);
 
   // Writable ctor is applied to Duplexes, too.
   // `realHasInstance` is necessary because using plain `instanceof`
@@ -40671,7 +31602,7 @@ module.exports = crt
   };
 })( false || module, this);
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(120)(module)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(121)(module)))
 
 /***/ }),
 /* 254 */
@@ -45290,7 +36221,7 @@ exports.tagByName = reverse(exports.tag);
   };
 })( false || module, this);
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(120)(module)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(121)(module)))
 
 /***/ }),
 /* 262 */
@@ -45380,7 +36311,7 @@ exports.tagByName = reverse(exports.tag);
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
-  ref = __webpack_require__(102), isObject = ref.isObject, isFunction = ref.isFunction, getValue = ref.getValue;
+  ref = __webpack_require__(103), isObject = ref.isObject, isFunction = ref.isFunction, getValue = ref.getValue;
 
   XMLNode = __webpack_require__(70);
 
@@ -45832,7 +36763,7 @@ exports.tagByName = reverse(exports.tag);
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
-  isObject = __webpack_require__(102).isObject;
+  isObject = __webpack_require__(103).isObject;
 
   XMLNode = __webpack_require__(70);
 
@@ -45881,7 +36812,7 @@ exports.tagByName = reverse(exports.tag);
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
-  isObject = __webpack_require__(102).isObject;
+  isObject = __webpack_require__(103).isObject;
 
   XMLNode = __webpack_require__(70);
 
@@ -46134,7 +37065,7 @@ exports.tagByName = reverse(exports.tag);
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
-  isObject = __webpack_require__(102).isObject;
+  isObject = __webpack_require__(103).isObject;
 
   XMLNode = __webpack_require__(70);
 
@@ -46548,7 +37479,7 @@ exports.tagByName = reverse(exports.tag);
 "use strict";
 
 
-var keys = __webpack_require__(813);
+var keys = __webpack_require__(822);
 var hasSymbols = typeof Symbol === 'function' && typeof Symbol('foo') === 'symbol';
 
 var toStr = Object.prototype.toString;
@@ -46625,7 +37556,7 @@ module.exports = bind.call(Function.call, Object.prototype.hasOwnProperty);
 "use strict";
 
 
-var implementation = __webpack_require__(821);
+var implementation = __webpack_require__(830);
 
 module.exports = Function.prototype.bind || implementation;
 
@@ -46774,7 +37705,7 @@ information.
 var _require = __webpack_require__(29),
     Transform = _require.Transform;
 
-var ResizeableBuffer = __webpack_require__(834);
+var ResizeableBuffer = __webpack_require__(843);
 
 var cr = 13;
 var nl = 10;
@@ -49289,13 +40220,13 @@ var Cache = /*#__PURE__*/function () {
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_object_get_own_property_symbols__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_object_get_own_property_symbols__WEBPACK_IMPORTED_MODULE_11__);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(10);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_12__);
-/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(100);
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(101);
 /* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_13__);
 /* harmony import */ var core_js_modules_es_promise__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(199);
 /* harmony import */ var core_js_modules_es_promise__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_promise__WEBPACK_IMPORTED_MODULE_14__);
 /* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(67);
 /* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_15__);
-/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(118);
+/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(119);
 /* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_16__);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_reduce__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(71);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_reduce__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_reduce__WEBPACK_IMPORTED_MODULE_17__);
@@ -49319,7 +40250,7 @@ var Cache = /*#__PURE__*/function () {
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_filter__WEBPACK_IMPORTED_MODULE_26___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_filter__WEBPACK_IMPORTED_MODULE_26__);
 /* harmony import */ var _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(3);
 /* harmony import */ var _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_27___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_27__);
-/* harmony import */ var _request_helper__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(112);
+/* harmony import */ var _request_helper__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(114);
 /* harmony import */ var _util_stream__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(73);
 
 
@@ -49987,13 +40918,13 @@ function createRequest() {
 /* harmony import */ var core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var core_js_modules_es_function_name__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(123);
 /* harmony import */ var core_js_modules_es_function_name__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_function_name__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(100);
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(101);
 /* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(67);
 /* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(113);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(110);
 /* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(118);
+/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(119);
 /* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_9__);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(25);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_10__);
@@ -50005,7 +40936,7 @@ function createRequest() {
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_array_from__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_array_from__WEBPACK_IMPORTED_MODULE_13__);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(30);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_14__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(42);
+/* harmony import */ var _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(43);
 /* harmony import */ var _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_15__);
 /* harmony import */ var _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(1);
 /* harmony import */ var _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_16__);
@@ -50515,7 +41446,7 @@ defineIterator(String, 'String', function (iterated) {
 var global = __webpack_require__(47);
 var DOMIterables = __webpack_require__(585);
 var ArrayIteratorMethods = __webpack_require__(198);
-var createNonEnumerableProperty = __webpack_require__(108);
+var createNonEnumerableProperty = __webpack_require__(109);
 var wellKnownSymbol = __webpack_require__(50);
 
 var ITERATOR = wellKnownSymbol('iterator');
@@ -50554,18 +41485,18 @@ for (var COLLECTION_NAME in DOMIterables) {
 "use strict";
 
 var $ = __webpack_require__(8);
-var global = __webpack_require__(39);
+var global = __webpack_require__(40);
 var InternalMetadataModule = __webpack_require__(239);
-var fails = __webpack_require__(38);
+var fails = __webpack_require__(39);
 var createNonEnumerableProperty = __webpack_require__(74);
-var iterate = __webpack_require__(41);
+var iterate = __webpack_require__(42);
 var anInstance = __webpack_require__(201);
 var isObject = __webpack_require__(49);
 var setToStringTag = __webpack_require__(129);
 var defineProperty = __webpack_require__(75).f;
 var forEach = __webpack_require__(122).forEach;
 var DESCRIPTORS = __webpack_require__(54);
-var InternalStateModule = __webpack_require__(115);
+var InternalStateModule = __webpack_require__(116);
 
 var setInternalState = InternalStateModule.set;
 var internalStateGetterFor = InternalStateModule.getterFor;
@@ -51244,7 +42175,7 @@ module.exports = path.Reflect.construct;
 /***/ (function(module, exports, __webpack_require__) {
 
 var DESCRIPTORS = __webpack_require__(54);
-var fails = __webpack_require__(38);
+var fails = __webpack_require__(39);
 var createElement = __webpack_require__(206);
 
 // Thank's IE8 for his funny defineProperty
@@ -51259,7 +42190,7 @@ module.exports = !DESCRIPTORS && !fails(function () {
 /* 299 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var fails = __webpack_require__(38);
+var fails = __webpack_require__(39);
 
 var replacement = /#|\.prototype\./;
 
@@ -51411,15 +42342,15 @@ if (Object.defineProperty.sham) defineProperty.sham = true;
 "use strict";
 
 var $ = __webpack_require__(8);
-var fails = __webpack_require__(38);
+var fails = __webpack_require__(39);
 var isArray = __webpack_require__(128);
 var isObject = __webpack_require__(49);
-var toObject = __webpack_require__(95);
-var toLength = __webpack_require__(114);
+var toObject = __webpack_require__(96);
+var toLength = __webpack_require__(115);
 var createProperty = __webpack_require__(167);
 var arraySpeciesCreate = __webpack_require__(307);
 var arrayMethodHasSpeciesSupport = __webpack_require__(168);
-var wellKnownSymbol = __webpack_require__(40);
+var wellKnownSymbol = __webpack_require__(41);
 var V8_VERSION = __webpack_require__(169);
 
 var IS_CONCAT_SPREADABLE = wellKnownSymbol('isConcatSpreadable');
@@ -51477,7 +42408,7 @@ $({ target: 'Array', proto: true, forced: FORCED }, {
 
 var isObject = __webpack_require__(49);
 var isArray = __webpack_require__(128);
-var wellKnownSymbol = __webpack_require__(40);
+var wellKnownSymbol = __webpack_require__(41);
 
 var SPECIES = wellKnownSymbol('species');
 
@@ -51560,7 +42491,7 @@ module.exports = store.inspectSource;
 var getPrototypeOf = __webpack_require__(144);
 var createNonEnumerableProperty = __webpack_require__(74);
 var has = __webpack_require__(63);
-var wellKnownSymbol = __webpack_require__(40);
+var wellKnownSymbol = __webpack_require__(41);
 var IS_PURE = __webpack_require__(37);
 
 var ITERATOR = wellKnownSymbol('iterator');
@@ -51599,7 +42530,7 @@ module.exports = {
 /* 314 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var fails = __webpack_require__(38);
+var fails = __webpack_require__(39);
 
 module.exports = !fails(function () {
   function F() { /* empty */ }
@@ -51616,8 +42547,8 @@ module.exports = !fails(function () {
 
 var toIndexedObject = __webpack_require__(83);
 var addToUnscopables = __webpack_require__(218);
-var Iterators = __webpack_require__(116);
-var InternalStateModule = __webpack_require__(115);
+var Iterators = __webpack_require__(117);
+var InternalStateModule = __webpack_require__(116);
 var defineIterator = __webpack_require__(216);
 
 var ARRAY_ITERATOR = 'Array Iterator';
@@ -51673,7 +42604,7 @@ addToUnscopables('entries');
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(306);
-__webpack_require__(161);
+__webpack_require__(162);
 __webpack_require__(317);
 __webpack_require__(500);
 __webpack_require__(501);
@@ -51704,18 +42635,18 @@ module.exports = path.Symbol;
 "use strict";
 
 var $ = __webpack_require__(8);
-var global = __webpack_require__(39);
+var global = __webpack_require__(40);
 var getBuiltIn = __webpack_require__(65);
 var IS_PURE = __webpack_require__(37);
 var DESCRIPTORS = __webpack_require__(54);
 var NATIVE_SYMBOL = __webpack_require__(212);
 var USE_SYMBOL_AS_UID = __webpack_require__(308);
-var fails = __webpack_require__(38);
+var fails = __webpack_require__(39);
 var has = __webpack_require__(63);
 var isArray = __webpack_require__(128);
 var isObject = __webpack_require__(49);
 var anObject = __webpack_require__(27);
-var toObject = __webpack_require__(95);
+var toObject = __webpack_require__(96);
 var toIndexedObject = __webpack_require__(83);
 var toPrimitive = __webpack_require__(163);
 var createPropertyDescriptor = __webpack_require__(126);
@@ -51733,11 +42664,11 @@ var shared = __webpack_require__(210);
 var sharedKey = __webpack_require__(165);
 var hiddenKeys = __webpack_require__(143);
 var uid = __webpack_require__(166);
-var wellKnownSymbol = __webpack_require__(40);
+var wellKnownSymbol = __webpack_require__(41);
 var wrappedWellKnownSymbolModule = __webpack_require__(170);
 var defineWellKnownSymbol = __webpack_require__(46);
 var setToStringTag = __webpack_require__(129);
-var InternalStateModule = __webpack_require__(115);
+var InternalStateModule = __webpack_require__(116);
 var $forEach = __webpack_require__(122).forEach;
 
 var HIDDEN = sharedKey('hidden');
@@ -52069,7 +43000,7 @@ module.exports = function (it) {
 /* 323 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(105);
+__webpack_require__(106);
 __webpack_require__(533);
 var path = __webpack_require__(28);
 
@@ -52094,8 +43025,8 @@ module.exports = function (iterator) {
 /* 325 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var wellKnownSymbol = __webpack_require__(40);
-var Iterators = __webpack_require__(116);
+var wellKnownSymbol = __webpack_require__(41);
+var Iterators = __webpack_require__(117);
 
 var ITERATOR = wellKnownSymbol('iterator');
 var ArrayPrototype = Array.prototype;
@@ -52110,7 +43041,7 @@ module.exports = function (it) {
 /* 326 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var wellKnownSymbol = __webpack_require__(40);
+var wellKnownSymbol = __webpack_require__(41);
 
 var ITERATOR = wellKnownSymbol('iterator');
 var SAFE_CLOSING = false;
@@ -52191,7 +43122,7 @@ module.exports = path.Object.keys;
 /***/ (function(module, exports, __webpack_require__) {
 
 var fails = __webpack_require__(56);
-var classof = __webpack_require__(107);
+var classof = __webpack_require__(108);
 
 var split = ''.split;
 
@@ -52211,7 +43142,7 @@ module.exports = fails(function () {
 
 var wellKnownSymbol = __webpack_require__(50);
 var create = __webpack_require__(225);
-var definePropertyModule = __webpack_require__(97);
+var definePropertyModule = __webpack_require__(98);
 
 var UNSCOPABLES = wellKnownSymbol('unscopables');
 var ArrayPrototype = Array.prototype;
@@ -52377,13 +43308,13 @@ module.exports = getBuiltIn('document', 'documentElement');
 
 "use strict";
 
-var $ = __webpack_require__(117);
+var $ = __webpack_require__(118);
 var createIteratorConstructor = __webpack_require__(567);
 var getPrototypeOf = __webpack_require__(342);
 var setPrototypeOf = __webpack_require__(344);
 var setToStringTag = __webpack_require__(231);
-var createNonEnumerableProperty = __webpack_require__(108);
-var redefine = __webpack_require__(99);
+var createNonEnumerableProperty = __webpack_require__(109);
+var redefine = __webpack_require__(100);
 var wellKnownSymbol = __webpack_require__(50);
 var IS_PURE = __webpack_require__(173);
 var Iterators = __webpack_require__(149);
@@ -52475,7 +43406,7 @@ module.exports = function (Iterable, NAME, IteratorConstructor, next, DEFAULT, I
 "use strict";
 
 var getPrototypeOf = __webpack_require__(342);
-var createNonEnumerableProperty = __webpack_require__(108);
+var createNonEnumerableProperty = __webpack_require__(109);
 var has = __webpack_require__(76);
 var wellKnownSymbol = __webpack_require__(50);
 var IS_PURE = __webpack_require__(173);
@@ -52539,7 +43470,7 @@ module.exports = CORRECT_PROTOTYPE_GETTER ? Object.getPrototypeOf : function (O)
 /* 343 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var requireObjectCoercible = __webpack_require__(96);
+var requireObjectCoercible = __webpack_require__(97);
 
 // `ToObject` abstract operation
 // https://tc39.github.io/ecma262/#sec-toobject
@@ -52583,7 +43514,7 @@ module.exports = Object.setPrototypeOf || ('__proto__' in {} ? function () {
 /***/ (function(module, exports, __webpack_require__) {
 
 var TO_STRING_TAG_SUPPORT = __webpack_require__(232);
-var classofRaw = __webpack_require__(107);
+var classofRaw = __webpack_require__(108);
 var wellKnownSymbol = __webpack_require__(50);
 
 var TO_STRING_TAG = wellKnownSymbol('toStringTag');
@@ -52617,7 +43548,7 @@ module.exports = TO_STRING_TAG_SUPPORT ? classofRaw : function (it) {
 "use strict";
 
 var getBuiltIn = __webpack_require__(148);
-var definePropertyModule = __webpack_require__(97);
+var definePropertyModule = __webpack_require__(98);
 var wellKnownSymbol = __webpack_require__(50);
 var DESCRIPTORS = __webpack_require__(84);
 
@@ -52691,7 +43622,7 @@ module.exports = function (O, defaultConstructor) {
 
 var global = __webpack_require__(47);
 var fails = __webpack_require__(56);
-var classof = __webpack_require__(107);
+var classof = __webpack_require__(108);
 var bind = __webpack_require__(347);
 var html = __webpack_require__(339);
 var createElement = __webpack_require__(222);
@@ -52870,7 +43801,7 @@ exports.BROKEN_CARET = fails(function () {
 /***/ (function(module, exports, __webpack_require__) {
 
 var toInteger = __webpack_require__(174);
-var requireObjectCoercible = __webpack_require__(96);
+var requireObjectCoercible = __webpack_require__(97);
 
 // `String.prototype.{ codePointAt, at }` methods implementation
 var createMethod = function (CONVERT_TO_STRING) {
@@ -53034,13 +43965,13 @@ module.exports = {
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(365);
-__webpack_require__(161);
+__webpack_require__(162);
 __webpack_require__(620);
 __webpack_require__(371);
 __webpack_require__(372);
 __webpack_require__(623);
-__webpack_require__(105);
-__webpack_require__(92);
+__webpack_require__(106);
+__webpack_require__(94);
 var path = __webpack_require__(28);
 
 module.exports = path.Promise;
@@ -53058,7 +43989,7 @@ var setPrototypeOf = __webpack_require__(215);
 var create = __webpack_require__(127);
 var createNonEnumerableProperty = __webpack_require__(74);
 var createPropertyDescriptor = __webpack_require__(126);
-var iterate = __webpack_require__(41);
+var iterate = __webpack_require__(42);
 
 var $AggregateError = function AggregateError(errors, message) {
   var that = this;
@@ -53088,7 +44019,7 @@ $({ global: true }, {
 /* 366 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global = __webpack_require__(39);
+var global = __webpack_require__(40);
 
 module.exports = global.Promise;
 
@@ -53101,7 +44032,7 @@ module.exports = global.Promise;
 
 var getBuiltIn = __webpack_require__(65);
 var definePropertyModule = __webpack_require__(75);
-var wellKnownSymbol = __webpack_require__(40);
+var wellKnownSymbol = __webpack_require__(41);
 var DESCRIPTORS = __webpack_require__(54);
 
 var SPECIES = wellKnownSymbol('species');
@@ -53123,8 +44054,8 @@ module.exports = function (CONSTRUCTOR_NAME) {
 /* 368 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global = __webpack_require__(39);
-var fails = __webpack_require__(38);
+var global = __webpack_require__(40);
+var fails = __webpack_require__(39);
 var bind = __webpack_require__(59);
 var html = __webpack_require__(303);
 var createElement = __webpack_require__(206);
@@ -53269,7 +44200,7 @@ var $ = __webpack_require__(8);
 var aFunction = __webpack_require__(44);
 var newPromiseCapabilityModule = __webpack_require__(153);
 var perform = __webpack_require__(182);
-var iterate = __webpack_require__(41);
+var iterate = __webpack_require__(42);
 
 // `Promise.allSettled` method
 // https://github.com/tc39/proposal-promise-allSettled
@@ -53320,7 +44251,7 @@ var aFunction = __webpack_require__(44);
 var getBuiltIn = __webpack_require__(65);
 var newPromiseCapabilityModule = __webpack_require__(153);
 var perform = __webpack_require__(182);
-var iterate = __webpack_require__(41);
+var iterate = __webpack_require__(42);
 
 var PROMISE_ANY_ERROR = 'No one promise resolved';
 
@@ -53373,12 +44304,12 @@ var create = __webpack_require__(127);
 var redefineAll = __webpack_require__(238);
 var bind = __webpack_require__(59);
 var anInstance = __webpack_require__(201);
-var iterate = __webpack_require__(41);
+var iterate = __webpack_require__(42);
 var defineIterator = __webpack_require__(216);
 var setSpecies = __webpack_require__(367);
 var DESCRIPTORS = __webpack_require__(54);
 var fastKey = __webpack_require__(239).fastKey;
-var InternalStateModule = __webpack_require__(115);
+var InternalStateModule = __webpack_require__(116);
 
 var setInternalState = InternalStateModule.set;
 var internalStateGetterFor = InternalStateModule.getterFor;
@@ -53560,7 +44491,7 @@ module.exports = {
 /***/ (function(module, exports, __webpack_require__) {
 
 var $ = __webpack_require__(8);
-var global = __webpack_require__(39);
+var global = __webpack_require__(40);
 var userAgent = __webpack_require__(213);
 
 var slice = [].slice;
@@ -53695,7 +44626,7 @@ function prependListener(emitter, event, fn) {
 }
 
 function ReadableState(options, stream) {
-  Duplex = Duplex || __webpack_require__(119);
+  Duplex = Duplex || __webpack_require__(120);
 
   options = options || {};
 
@@ -53772,7 +44703,7 @@ function ReadableState(options, stream) {
 }
 
 function Readable(options) {
-  Duplex = Duplex || __webpack_require__(119);
+  Duplex = Duplex || __webpack_require__(120);
 
   if (!(this instanceof Readable)) return new Readable(options);
 
@@ -54844,7 +45775,7 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 
 module.exports = Transform;
 
-var Duplex = __webpack_require__(119);
+var Duplex = __webpack_require__(120);
 
 /*<replacement>*/
 var util = Object.create(__webpack_require__(154));
@@ -57739,7 +48670,7 @@ module.exports = Sha512
 
 var inherits = __webpack_require__(12)
 var Legacy = __webpack_require__(724)
-var Base = __webpack_require__(109)
+var Base = __webpack_require__(111)
 var Buffer = __webpack_require__(20).Buffer
 var md5 = __webpack_require__(392)
 var RIPEMD160 = __webpack_require__(244)
@@ -58480,7 +49411,7 @@ module.exports = JSON.parse("{\"aes-128-ecb\":{\"cipher\":\"AES\",\"key\":128,\"
 
 var aes = __webpack_require__(184)
 var Buffer = __webpack_require__(20).Buffer
-var Transform = __webpack_require__(109)
+var Transform = __webpack_require__(111)
 var inherits = __webpack_require__(12)
 var GHASH = __webpack_require__(739)
 var xor = __webpack_require__(156)
@@ -58603,7 +49534,7 @@ module.exports = StreamCipher
 
 var aes = __webpack_require__(184)
 var Buffer = __webpack_require__(20).Buffer
-var Transform = __webpack_require__(109)
+var Transform = __webpack_require__(111)
 var inherits = __webpack_require__(12)
 
 function StreamCipher (mode, key, iv, decrypt) {
@@ -62179,7 +53110,7 @@ function findPrime(bits, gen) {
   };
 })( false || module, this);
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(120)(module)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(121)(module)))
 
 /***/ }),
 /* 408 */
@@ -68537,7 +59468,7 @@ asn1.encoders = __webpack_require__(422);
   };
 })( false || module, this);
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(120)(module)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(121)(module)))
 
 /***/ }),
 /* 422 */
@@ -69320,11 +60251,11 @@ module.exports = withPublic
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
-  isPlainObject = __webpack_require__(102).isPlainObject;
+  isPlainObject = __webpack_require__(103).isPlainObject;
 
   XMLDOMImplementation = __webpack_require__(430);
 
-  XMLDOMConfiguration = __webpack_require__(802);
+  XMLDOMConfiguration = __webpack_require__(811);
 
   XMLNode = __webpack_require__(70);
 
@@ -69964,7 +60895,7 @@ module.exports = withPublic
   var NodeType, WriterState, XMLCData, XMLComment, XMLDTDAttList, XMLDTDElement, XMLDTDEntity, XMLDTDNotation, XMLDeclaration, XMLDocType, XMLDummy, XMLElement, XMLProcessingInstruction, XMLRaw, XMLText, XMLWriterBase, assign,
     hasProp = {}.hasOwnProperty;
 
-  assign = __webpack_require__(102).assign;
+  assign = __webpack_require__(103).assign;
 
   NodeType = __webpack_require__(45);
 
@@ -70445,7 +61376,7 @@ if (!isES5) {
 	throw new TypeError('util.promisify requires a true ES5 environment');
 }
 
-var getOwnPropertyDescriptors = __webpack_require__(817);
+var getOwnPropertyDescriptors = __webpack_require__(826);
 
 if (typeof Promise !== 'function') {
 	throw new TypeError('`Promise` must be globally available for util.promisify to work.');
@@ -70529,7 +61460,7 @@ module.exports.customPromisifyArgs = kCustomPromisifyArgsSymbol;
 "use strict";
 
 
-var ES = __webpack_require__(818);
+var ES = __webpack_require__(827);
 
 var defineProperty = Object.defineProperty;
 var getDescriptor = Object.getOwnPropertyDescriptor;
@@ -70900,7 +61831,7 @@ module.exports = {
 /* 449 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isObject = __webpack_require__(98);
+var isObject = __webpack_require__(99);
 var setPrototypeOf = __webpack_require__(344);
 
 // makes subclassing work correct for wrapped built-ins
@@ -71125,9 +62056,9 @@ module.exports = __webpack_require__(658);
 
   defaults = __webpack_require__(262);
 
-  builder = __webpack_require__(800);
+  builder = __webpack_require__(809);
 
-  parser = __webpack_require__(809);
+  parser = __webpack_require__(818);
 
   processors = __webpack_require__(436);
 
@@ -71599,7 +62530,7 @@ module.exports = __webpack_require__(873);
 /* 470 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global = __webpack_require__(39);
+var global = __webpack_require__(40);
 var inspectSource = __webpack_require__(312);
 
 var WeakMap = global.WeakMap;
@@ -71616,16 +62547,16 @@ module.exports = typeof WeakMap === 'function' && /native code/.test(inspectSour
 var DESCRIPTORS = __webpack_require__(84);
 var global = __webpack_require__(47);
 var isForced = __webpack_require__(176);
-var redefine = __webpack_require__(99);
+var redefine = __webpack_require__(100);
 var has = __webpack_require__(76);
-var classof = __webpack_require__(107);
+var classof = __webpack_require__(108);
 var inheritIfRequired = __webpack_require__(449);
 var toPrimitive = __webpack_require__(223);
 var fails = __webpack_require__(56);
 var create = __webpack_require__(225);
 var getOwnPropertyNames = __webpack_require__(230).f;
 var getOwnPropertyDescriptor = __webpack_require__(175).f;
-var defineProperty = __webpack_require__(97).f;
+var defineProperty = __webpack_require__(98).f;
 var trim = __webpack_require__(864).trim;
 
 var NUMBER = 'Number';
@@ -71878,7 +62809,7 @@ module.exports = Promise;
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _jsforce__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(64);
-/* harmony import */ var _date__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(110);
+/* harmony import */ var _date__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(112);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Date", function() { return _date__WEBPACK_IMPORTED_MODULE_1__["a"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SfDate", function() { return _date__WEBPACK_IMPORTED_MODULE_1__["a"]; });
@@ -71908,10 +62839,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _jwtOAuth2__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(194);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "JwtOAuth2", function() { return _jwtOAuth2__WEBPACK_IMPORTED_MODULE_8__["a"]; });
 
-/* harmony import */ var _connection__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(103);
+/* harmony import */ var _connection__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(104);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Connection", function() { return _connection__WEBPACK_IMPORTED_MODULE_9__["a"]; });
 
-/* harmony import */ var _query__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(89);
+/* harmony import */ var _query__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(90);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ResponseTargets", function() { return _query__WEBPACK_IMPORTED_MODULE_10__["b"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Query", function() { return _query__WEBPACK_IMPORTED_MODULE_10__["a"]; });
@@ -72027,8 +62958,8 @@ module.exports = Faye;
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_25___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_25__);
 /* harmony import */ var _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(0);
 /* harmony import */ var _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_26___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_26__);
-/* harmony import */ var _http_api__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(162);
-/* harmony import */ var _util_function__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(91);
+/* harmony import */ var _http_api__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(160);
+/* harmony import */ var _util_function__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(92);
 
 
 
@@ -72418,7 +63349,7 @@ var anObject = __webpack_require__(27);
 var isObject = __webpack_require__(49);
 var create = __webpack_require__(127);
 var bind = __webpack_require__(304);
-var fails = __webpack_require__(38);
+var fails = __webpack_require__(39);
 
 var nativeConstruct = getBuiltIn('Reflect', 'construct');
 
@@ -72468,7 +63399,7 @@ $({ target: 'Reflect', stat: true, forced: FORCED, sham: FORCED }, {
 /* 478 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global = __webpack_require__(39);
+var global = __webpack_require__(40);
 var createNonEnumerableProperty = __webpack_require__(74);
 
 module.exports = function (key, value) {
@@ -72641,8 +63572,8 @@ module.exports = parent;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(311);
-__webpack_require__(105);
-__webpack_require__(92);
+__webpack_require__(106);
+__webpack_require__(94);
 var WrappedWellKnownSymbolModule = __webpack_require__(170);
 
 module.exports = WrappedWellKnownSymbolModule.f('iterator');
@@ -72691,7 +63622,7 @@ var IteratorPrototype = __webpack_require__(313).IteratorPrototype;
 var create = __webpack_require__(127);
 var createPropertyDescriptor = __webpack_require__(126);
 var setToStringTag = __webpack_require__(129);
-var Iterators = __webpack_require__(116);
+var Iterators = __webpack_require__(117);
 
 var returnThis = function () { return this; };
 
@@ -72935,7 +63866,7 @@ defineWellKnownSymbol('unscopables');
 /* 512 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global = __webpack_require__(39);
+var global = __webpack_require__(40);
 var setToStringTag = __webpack_require__(129);
 
 // JSON[@@toStringTag] property
@@ -73041,8 +63972,8 @@ module.exports = path.Object.getPrototypeOf;
 /***/ (function(module, exports, __webpack_require__) {
 
 var $ = __webpack_require__(8);
-var fails = __webpack_require__(38);
-var toObject = __webpack_require__(95);
+var fails = __webpack_require__(39);
+var toObject = __webpack_require__(96);
 var nativeGetPrototypeOf = __webpack_require__(144);
 var CORRECT_PROTOTYPE_GETTER = __webpack_require__(314);
 
@@ -73338,8 +64269,8 @@ module.exports = WrappedWellKnownSymbolModule.f('toPrimitive');
 /* 529 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(92);
-__webpack_require__(105);
+__webpack_require__(94);
+__webpack_require__(106);
 var getIterator = __webpack_require__(322);
 
 module.exports = getIterator;
@@ -73349,8 +64280,8 @@ module.exports = getIterator;
 /* 530 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(92);
-__webpack_require__(105);
+__webpack_require__(94);
+__webpack_require__(106);
 var getIteratorMethod = __webpack_require__(171);
 
 module.exports = getIteratorMethod;
@@ -73400,10 +64331,10 @@ $({ target: 'Array', stat: true, forced: INCORRECT_ITERATION }, {
 "use strict";
 
 var bind = __webpack_require__(59);
-var toObject = __webpack_require__(95);
+var toObject = __webpack_require__(96);
 var callWithSafeIterationClosing = __webpack_require__(535);
 var isArrayIteratorMethod = __webpack_require__(325);
-var toLength = __webpack_require__(114);
+var toLength = __webpack_require__(115);
 var createProperty = __webpack_require__(167);
 var getIteratorMethod = __webpack_require__(171);
 
@@ -73570,7 +64501,7 @@ module.exports = getBuiltIn('Reflect', 'ownKeys') || function ownKeys(it) {
 /* 543 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(92);
+__webpack_require__(94);
 var forEach = __webpack_require__(544);
 var classof = __webpack_require__(130);
 var ArrayPrototype = Array.prototype;
@@ -73631,7 +64562,7 @@ $({ target: 'Array', proto: true, forced: [].forEach != forEach }, {
 
 var $forEach = __webpack_require__(122).forEach;
 var arrayMethodIsStrict = __webpack_require__(172);
-var arrayMethodUsesToLength = __webpack_require__(106);
+var arrayMethodUsesToLength = __webpack_require__(107);
 
 var STRICT_METHOD = arrayMethodIsStrict('forEach');
 var USES_TO_LENGTH = arrayMethodUsesToLength('forEach');
@@ -73657,7 +64588,7 @@ module.exports = parent;
 /***/ (function(module, exports, __webpack_require__) {
 
 var $ = __webpack_require__(8);
-var fails = __webpack_require__(38);
+var fails = __webpack_require__(39);
 var toIndexedObject = __webpack_require__(83);
 var nativeGetOwnPropertyDescriptor = __webpack_require__(125).f;
 var DESCRIPTORS = __webpack_require__(54);
@@ -73716,7 +64647,7 @@ module.exports = entryVirtual('Array').filter;
 var $ = __webpack_require__(8);
 var $filter = __webpack_require__(122).filter;
 var arrayMethodHasSpeciesSupport = __webpack_require__(168);
-var arrayMethodUsesToLength = __webpack_require__(106);
+var arrayMethodUsesToLength = __webpack_require__(107);
 
 var HAS_SPECIES_SUPPORT = arrayMethodHasSpeciesSupport('filter');
 // Edge 14- issue
@@ -73755,9 +64686,9 @@ module.exports = parent;
 /***/ (function(module, exports, __webpack_require__) {
 
 var $ = __webpack_require__(8);
-var toObject = __webpack_require__(95);
+var toObject = __webpack_require__(96);
 var nativeKeys = __webpack_require__(164);
-var fails = __webpack_require__(38);
+var fails = __webpack_require__(39);
 
 var FAILS_ON_PRIMITIVES = fails(function () { nativeKeys(1); });
 
@@ -73788,7 +64719,7 @@ module.exports = NATIVE_SYMBOL
 /***/ (function(module, exports, __webpack_require__) {
 
 var DESCRIPTORS = __webpack_require__(84);
-var definePropertyModule = __webpack_require__(97);
+var definePropertyModule = __webpack_require__(98);
 var anObject = __webpack_require__(57);
 var objectKeys = __webpack_require__(559);
 
@@ -73885,7 +64816,7 @@ exports.f = NASHORN_BUG ? function propertyIsEnumerable(V) {
 var has = __webpack_require__(76);
 var ownKeys = __webpack_require__(565);
 var getOwnPropertyDescriptorModule = __webpack_require__(175);
-var definePropertyModule = __webpack_require__(97);
+var definePropertyModule = __webpack_require__(98);
 
 module.exports = function (target, source) {
   var keys = ownKeys(source);
@@ -73962,7 +64893,7 @@ module.exports = !fails(function () {
 /* 569 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isObject = __webpack_require__(98);
+var isObject = __webpack_require__(99);
 
 module.exports = function (it) {
   if (!isObject(it) && it !== null) {
@@ -74017,7 +64948,7 @@ module.exports = global.Promise;
 /* 573 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var redefine = __webpack_require__(99);
+var redefine = __webpack_require__(100);
 
 module.exports = function (target, src, options) {
   for (var key in src) redefine(target, key, src[key], options);
@@ -74187,7 +65118,7 @@ module.exports = function (exec, SKIP_CLOSING) {
 
 var global = __webpack_require__(47);
 var getOwnPropertyDescriptor = __webpack_require__(175).f;
-var classof = __webpack_require__(107);
+var classof = __webpack_require__(108);
 var macrotask = __webpack_require__(349).set;
 var IS_IOS = __webpack_require__(350);
 
@@ -74270,7 +65201,7 @@ module.exports = queueMicrotask || function (fn) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var anObject = __webpack_require__(57);
-var isObject = __webpack_require__(98);
+var isObject = __webpack_require__(99);
 var newPromiseCapability = __webpack_require__(352);
 
 module.exports = function (C, x) {
@@ -74443,8 +65374,8 @@ module.exports = parent;
 /* 591 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(92);
-__webpack_require__(105);
+__webpack_require__(94);
+__webpack_require__(106);
 var isIterable = __webpack_require__(592);
 
 module.exports = isIterable;
@@ -74455,8 +65386,8 @@ module.exports = isIterable;
 /***/ (function(module, exports, __webpack_require__) {
 
 var classof = __webpack_require__(130);
-var wellKnownSymbol = __webpack_require__(40);
-var Iterators = __webpack_require__(116);
+var wellKnownSymbol = __webpack_require__(41);
+var Iterators = __webpack_require__(117);
 
 var ITERATOR = wellKnownSymbol('iterator');
 
@@ -74504,12 +65435,12 @@ var $ = __webpack_require__(8);
 var isObject = __webpack_require__(49);
 var isArray = __webpack_require__(128);
 var toAbsoluteIndex = __webpack_require__(302);
-var toLength = __webpack_require__(114);
+var toLength = __webpack_require__(115);
 var toIndexedObject = __webpack_require__(83);
 var createProperty = __webpack_require__(167);
-var wellKnownSymbol = __webpack_require__(40);
+var wellKnownSymbol = __webpack_require__(41);
 var arrayMethodHasSpeciesSupport = __webpack_require__(168);
-var arrayMethodUsesToLength = __webpack_require__(106);
+var arrayMethodUsesToLength = __webpack_require__(107);
 
 var HAS_SPECIES_SUPPORT = arrayMethodHasSpeciesSupport('slice');
 var USES_TO_LENGTH = arrayMethodUsesToLength('slice', { ACCESSORS: true, 0: 0, 1: 2 });
@@ -74588,7 +65519,7 @@ module.exports = entryVirtual('Array').indexOf;
 var $ = __webpack_require__(8);
 var $indexOf = __webpack_require__(207).indexOf;
 var arrayMethodIsStrict = __webpack_require__(172);
-var arrayMethodUsesToLength = __webpack_require__(106);
+var arrayMethodUsesToLength = __webpack_require__(107);
 
 var nativeIndexOf = [].indexOf;
 
@@ -74707,7 +65638,7 @@ module.exports = entryVirtual('Array').map;
 var $ = __webpack_require__(8);
 var $map = __webpack_require__(122).map;
 var arrayMethodHasSpeciesSupport = __webpack_require__(168);
-var arrayMethodUsesToLength = __webpack_require__(106);
+var arrayMethodUsesToLength = __webpack_require__(107);
 
 var HAS_SPECIES_SUPPORT = arrayMethodHasSpeciesSupport('map');
 // FF49- issue
@@ -74771,7 +65702,7 @@ module.exports = function stringify(it, replacer, space) {
 
 var $ = __webpack_require__(8);
 var getBuiltIn = __webpack_require__(65);
-var fails = __webpack_require__(38);
+var fails = __webpack_require__(39);
 
 var $stringify = getBuiltIn('JSON', 'stringify');
 var re = /[\uD800-\uDFFF]/g;
@@ -74840,7 +65771,7 @@ $({ global: true, forced: parseInt != parseIntImplementation }, {
 /* 618 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global = __webpack_require__(39);
+var global = __webpack_require__(40);
 var trim = __webpack_require__(363).trim;
 var whitespaces = __webpack_require__(237);
 
@@ -74873,7 +65804,7 @@ module.exports = parent;
 
 var $ = __webpack_require__(8);
 var IS_PURE = __webpack_require__(37);
-var global = __webpack_require__(39);
+var global = __webpack_require__(40);
 var getBuiltIn = __webpack_require__(65);
 var NativePromise = __webpack_require__(366);
 var redefine = __webpack_require__(145);
@@ -74884,7 +65815,7 @@ var isObject = __webpack_require__(49);
 var aFunction = __webpack_require__(44);
 var anInstance = __webpack_require__(201);
 var inspectSource = __webpack_require__(312);
-var iterate = __webpack_require__(41);
+var iterate = __webpack_require__(42);
 var checkCorrectnessOfIteration = __webpack_require__(326);
 var speciesConstructor = __webpack_require__(152);
 var task = __webpack_require__(368).set;
@@ -74893,9 +65824,9 @@ var promiseResolve = __webpack_require__(370);
 var hostReportErrors = __webpack_require__(622);
 var newPromiseCapabilityModule = __webpack_require__(153);
 var perform = __webpack_require__(182);
-var InternalStateModule = __webpack_require__(115);
+var InternalStateModule = __webpack_require__(116);
 var isForced = __webpack_require__(299);
-var wellKnownSymbol = __webpack_require__(40);
+var wellKnownSymbol = __webpack_require__(41);
 var IS_NODE = __webpack_require__(181);
 var V8_VERSION = __webpack_require__(169);
 
@@ -75257,7 +66188,7 @@ $({ target: PROMISE, stat: true, forced: INCORRECT_ITERATION }, {
 /* 621 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global = __webpack_require__(39);
+var global = __webpack_require__(40);
 var getOwnPropertyDescriptor = __webpack_require__(125).f;
 var macrotask = __webpack_require__(368).set;
 var IS_IOS = __webpack_require__(369);
@@ -75341,7 +66272,7 @@ module.exports = queueMicrotask || function (fn) {
 /* 622 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global = __webpack_require__(39);
+var global = __webpack_require__(40);
 
 module.exports = function (a, b) {
   var console = global.console;
@@ -75360,7 +66291,7 @@ module.exports = function (a, b) {
 var $ = __webpack_require__(8);
 var IS_PURE = __webpack_require__(37);
 var NativePromise = __webpack_require__(366);
-var fails = __webpack_require__(38);
+var fails = __webpack_require__(39);
 var getBuiltIn = __webpack_require__(65);
 var speciesConstructor = __webpack_require__(152);
 var promiseResolve = __webpack_require__(370);
@@ -76447,7 +67378,7 @@ module.exports = entryVirtual('Array').reduce;
 var $ = __webpack_require__(8);
 var $reduce = __webpack_require__(649).left;
 var arrayMethodIsStrict = __webpack_require__(172);
-var arrayMethodUsesToLength = __webpack_require__(106);
+var arrayMethodUsesToLength = __webpack_require__(107);
 var CHROME_VERSION = __webpack_require__(169);
 var IS_NODE = __webpack_require__(181);
 
@@ -76471,9 +67402,9 @@ $({ target: 'Array', proto: true, forced: !STRICT_METHOD || !USES_TO_LENGTH || C
 /***/ (function(module, exports, __webpack_require__) {
 
 var aFunction = __webpack_require__(44);
-var toObject = __webpack_require__(95);
+var toObject = __webpack_require__(96);
 var IndexedObject = __webpack_require__(205);
-var toLength = __webpack_require__(114);
+var toLength = __webpack_require__(115);
 
 // `Array.prototype.{ reduce, reduceRight }` methods implementation
 var createMethod = function (IS_RIGHT) {
@@ -76516,7 +67447,7 @@ module.exports = {
 /* 650 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(92);
+__webpack_require__(94);
 var keys = __webpack_require__(651);
 var classof = __webpack_require__(130);
 var ArrayPrototype = Array.prototype;
@@ -76610,7 +67541,7 @@ $({ target: 'String', proto: true, forced: forcedStringTrimMethod('trim') }, {
 /* 657 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var fails = __webpack_require__(38);
+var fails = __webpack_require__(39);
 var whitespaces = __webpack_require__(237);
 
 var non = '\u200B\u0085\u180E';
@@ -76638,9 +67569,9 @@ module.exports = parent;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(660);
-__webpack_require__(161);
-__webpack_require__(105);
-__webpack_require__(92);
+__webpack_require__(162);
+__webpack_require__(106);
+__webpack_require__(94);
 var path = __webpack_require__(28);
 
 module.exports = path.Set;
@@ -76666,7 +67597,7 @@ module.exports = collection('Set', function (init) {
 /* 661 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var fails = __webpack_require__(38);
+var fails = __webpack_require__(39);
 
 module.exports = !fails(function () {
   return Object.isExtensible(Object.preventExtensions({}));
@@ -77107,7 +68038,7 @@ module.exports = __webpack_require__(241);
 /* 670 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(119);
+module.exports = __webpack_require__(120);
 
 
 /***/ }),
@@ -77166,9 +68097,9 @@ module.exports = parent;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(676);
-__webpack_require__(161);
-__webpack_require__(105);
-__webpack_require__(92);
+__webpack_require__(162);
+__webpack_require__(106);
+__webpack_require__(94);
 var path = __webpack_require__(28);
 
 module.exports = path.Map;
@@ -77213,7 +68144,7 @@ $({ target: 'Map', stat: true }, {
 // https://tc39.github.io/proposal-setmap-offrom/
 var aFunction = __webpack_require__(44);
 var bind = __webpack_require__(59);
-var iterate = __webpack_require__(41);
+var iterate = __webpack_require__(42);
 
 module.exports = function from(source /* , mapFn, thisArg */) {
   var length = arguments.length;
@@ -77356,7 +68287,7 @@ var IS_PURE = __webpack_require__(37);
 var anObject = __webpack_require__(27);
 var bind = __webpack_require__(59);
 var getMapIterator = __webpack_require__(86);
-var iterate = __webpack_require__(41);
+var iterate = __webpack_require__(42);
 
 // `Map.prototype.every` method
 // https://github.com/tc39/proposal-collection-methods
@@ -77386,7 +68317,7 @@ var aFunction = __webpack_require__(44);
 var bind = __webpack_require__(59);
 var speciesConstructor = __webpack_require__(152);
 var getMapIterator = __webpack_require__(86);
-var iterate = __webpack_require__(41);
+var iterate = __webpack_require__(42);
 
 // `Map.prototype.filter` method
 // https://github.com/tc39/proposal-collection-methods
@@ -77416,7 +68347,7 @@ var IS_PURE = __webpack_require__(37);
 var anObject = __webpack_require__(27);
 var bind = __webpack_require__(59);
 var getMapIterator = __webpack_require__(86);
-var iterate = __webpack_require__(41);
+var iterate = __webpack_require__(42);
 
 // `Map.prototype.find` method
 // https://github.com/tc39/proposal-collection-methods
@@ -77443,7 +68374,7 @@ var IS_PURE = __webpack_require__(37);
 var anObject = __webpack_require__(27);
 var bind = __webpack_require__(59);
 var getMapIterator = __webpack_require__(86);
-var iterate = __webpack_require__(41);
+var iterate = __webpack_require__(42);
 
 // `Map.prototype.findKey` method
 // https://github.com/tc39/proposal-collection-methods
@@ -77466,7 +68397,7 @@ $({ target: 'Map', proto: true, real: true, forced: IS_PURE }, {
 "use strict";
 
 var $ = __webpack_require__(8);
-var iterate = __webpack_require__(41);
+var iterate = __webpack_require__(42);
 var aFunction = __webpack_require__(44);
 
 // `Map.groupBy` method
@@ -77499,7 +68430,7 @@ var IS_PURE = __webpack_require__(37);
 var anObject = __webpack_require__(27);
 var getMapIterator = __webpack_require__(86);
 var sameValueZero = __webpack_require__(691);
-var iterate = __webpack_require__(41);
+var iterate = __webpack_require__(42);
 
 // `Map.prototype.includes` method
 // https://github.com/tc39/proposal-collection-methods
@@ -77531,7 +68462,7 @@ module.exports = function (x, y) {
 "use strict";
 
 var $ = __webpack_require__(8);
-var iterate = __webpack_require__(41);
+var iterate = __webpack_require__(42);
 var aFunction = __webpack_require__(44);
 
 // `Map.keyBy` method
@@ -77559,7 +68490,7 @@ var $ = __webpack_require__(8);
 var IS_PURE = __webpack_require__(37);
 var anObject = __webpack_require__(27);
 var getMapIterator = __webpack_require__(86);
-var iterate = __webpack_require__(41);
+var iterate = __webpack_require__(42);
 
 // `Map.prototype.includes` method
 // https://github.com/tc39/proposal-collection-methods
@@ -77586,7 +68517,7 @@ var aFunction = __webpack_require__(44);
 var bind = __webpack_require__(59);
 var speciesConstructor = __webpack_require__(152);
 var getMapIterator = __webpack_require__(86);
-var iterate = __webpack_require__(41);
+var iterate = __webpack_require__(42);
 
 // `Map.prototype.mapKeys` method
 // https://github.com/tc39/proposal-collection-methods
@@ -77619,7 +68550,7 @@ var aFunction = __webpack_require__(44);
 var bind = __webpack_require__(59);
 var speciesConstructor = __webpack_require__(152);
 var getMapIterator = __webpack_require__(86);
-var iterate = __webpack_require__(41);
+var iterate = __webpack_require__(42);
 
 // `Map.prototype.mapValues` method
 // https://github.com/tc39/proposal-collection-methods
@@ -77648,7 +68579,7 @@ var $ = __webpack_require__(8);
 var IS_PURE = __webpack_require__(37);
 var anObject = __webpack_require__(27);
 var aFunction = __webpack_require__(44);
-var iterate = __webpack_require__(41);
+var iterate = __webpack_require__(42);
 
 // `Map.prototype.merge` method
 // https://github.com/tc39/proposal-collection-methods
@@ -77677,7 +68608,7 @@ var IS_PURE = __webpack_require__(37);
 var anObject = __webpack_require__(27);
 var aFunction = __webpack_require__(44);
 var getMapIterator = __webpack_require__(86);
-var iterate = __webpack_require__(41);
+var iterate = __webpack_require__(42);
 
 // `Map.prototype.reduce` method
 // https://github.com/tc39/proposal-collection-methods
@@ -77713,7 +68644,7 @@ var IS_PURE = __webpack_require__(37);
 var anObject = __webpack_require__(27);
 var bind = __webpack_require__(59);
 var getMapIterator = __webpack_require__(86);
-var iterate = __webpack_require__(41);
+var iterate = __webpack_require__(42);
 
 // `Set.prototype.some` method
 // https://github.com/tc39/proposal-collection-methods
@@ -78945,7 +69876,7 @@ module.exports = Sha384
 var inherits = __webpack_require__(12)
 var Buffer = __webpack_require__(20).Buffer
 
-var Base = __webpack_require__(109)
+var Base = __webpack_require__(111)
 
 var ZEROS = Buffer.alloc(128)
 var blocksize = 64
@@ -79182,7 +70113,7 @@ exports.listCiphers = exports.getCiphers = getCiphers
 /* 728 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var CipherBase = __webpack_require__(109)
+var CipherBase = __webpack_require__(111)
 var des = __webpack_require__(729)
 var inherits = __webpack_require__(12)
 var Buffer = __webpack_require__(20).Buffer
@@ -79389,7 +70320,7 @@ var MODES = __webpack_require__(248)
 var AuthCipher = __webpack_require__(404)
 var Buffer = __webpack_require__(20).Buffer
 var StreamCipher = __webpack_require__(405)
-var Transform = __webpack_require__(109)
+var Transform = __webpack_require__(111)
 var aes = __webpack_require__(184)
 var ebtk = __webpack_require__(185)
 var inherits = __webpack_require__(12)
@@ -79781,7 +70712,7 @@ var AuthCipher = __webpack_require__(404)
 var Buffer = __webpack_require__(20).Buffer
 var MODES = __webpack_require__(248)
 var StreamCipher = __webpack_require__(405)
-var Transform = __webpack_require__(109)
+var Transform = __webpack_require__(111)
 var aes = __webpack_require__(184)
 var ebtk = __webpack_require__(185)
 var inherits = __webpack_require__(12)
@@ -83426,7 +74357,7 @@ exports.createDiffieHellman = exports.DiffieHellman = createDiffieHellman
   };
 })( false || module, this);
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(120)(module)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(121)(module)))
 
 /***/ }),
 /* 745 */
@@ -84488,7 +75419,7 @@ module.exports.makeKey = makeKey
 /* 760 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
+module.exports = JSON.parse("{\"_args\":[[\"elliptic@6.5.4\",\"D:\\\\ProxyScripts\\\\jsforce\"]],\"_development\":true,\"_from\":\"elliptic@6.5.4\",\"_id\":\"elliptic@6.5.4\",\"_inBundle\":false,\"_integrity\":\"sha512-iLhC6ULemrljPZb+QutR5TQGB+pdW6KGD5RSegS+8sorOZT+rdQFbsQFJgvN3eRqNALqJer4oQ16YvJHlU8hzQ==\",\"_location\":\"/elliptic\",\"_phantomChildren\":{},\"_requested\":{\"type\":\"version\",\"registry\":true,\"raw\":\"elliptic@6.5.4\",\"name\":\"elliptic\",\"escapedName\":\"elliptic\",\"rawSpec\":\"6.5.4\",\"saveSpec\":null,\"fetchSpec\":\"6.5.4\"},\"_requiredBy\":[\"/browserify-sign\",\"/create-ecdh\"],\"_resolved\":\"https://registry.npmjs.org/elliptic/-/elliptic-6.5.4.tgz\",\"_spec\":\"6.5.4\",\"_where\":\"D:\\\\ProxyScripts\\\\jsforce\",\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
 
 /***/ }),
 /* 761 */
@@ -84504,7 +75435,7 @@ module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"desc
 
 
 var utils = __webpack_require__(69);
-var BN = __webpack_require__(101);
+var BN = __webpack_require__(102);
 var inherits = __webpack_require__(12);
 var Base = __webpack_require__(186);
 
@@ -85448,7 +76379,7 @@ JPoint.prototype.isInfinity = function isInfinity() {
 "use strict";
 
 
-var BN = __webpack_require__(101);
+var BN = __webpack_require__(102);
 var inherits = __webpack_require__(12);
 var Base = __webpack_require__(186);
 
@@ -85634,7 +76565,7 @@ Point.prototype.getX = function getX() {
 
 
 var utils = __webpack_require__(69);
-var BN = __webpack_require__(101);
+var BN = __webpack_require__(102);
 var inherits = __webpack_require__(12);
 var Base = __webpack_require__(186);
 
@@ -87242,7 +78173,7 @@ module.exports = {
 "use strict";
 
 
-var BN = __webpack_require__(101);
+var BN = __webpack_require__(102);
 var HmacDRBG = __webpack_require__(773);
 var utils = __webpack_require__(69);
 var curves = __webpack_require__(255);
@@ -87612,7 +78543,7 @@ HmacDRBG.prototype.generate = function generate(len, enc, add, addEnc) {
 "use strict";
 
 
-var BN = __webpack_require__(101);
+var BN = __webpack_require__(102);
 var utils = __webpack_require__(69);
 var assert = utils.assert;
 
@@ -87740,7 +78671,7 @@ KeyPair.prototype.inspect = function inspect() {
 "use strict";
 
 
-var BN = __webpack_require__(101);
+var BN = __webpack_require__(102);
 
 var utils = __webpack_require__(69);
 var assert = utils.assert;
@@ -88140,7 +79071,7 @@ module.exports = KeyPair;
 "use strict";
 
 
-var BN = __webpack_require__(101);
+var BN = __webpack_require__(102);
 var utils = __webpack_require__(69);
 var assert = utils.assert;
 var cachedProperty = utils.cachedProperty;
@@ -92333,7 +83264,7 @@ function formatReturnValue (bn, enc, len) {
   };
 })( false || module, this);
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(120)(module)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(121)(module)))
 
 /***/ }),
 /* 792 */
@@ -92871,13 +83802,159 @@ var objectKeys = Object.keys || function (obj) {
 /* 800 */
 /***/ (function(module, exports, __webpack_require__) {
 
+var parent = __webpack_require__(801);
+
+module.exports = parent;
+
+
+/***/ }),
+/* 801 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var arrayIncludes = __webpack_require__(802);
+var stringIncludes = __webpack_require__(804);
+
+var ArrayPrototype = Array.prototype;
+var StringPrototype = String.prototype;
+
+module.exports = function (it) {
+  var own = it.includes;
+  if (it === ArrayPrototype || (it instanceof Array && own === ArrayPrototype.includes)) return arrayIncludes;
+  if (typeof it === 'string' || it === StringPrototype || (it instanceof String && own === StringPrototype.includes)) {
+    return stringIncludes;
+  } return own;
+};
+
+
+/***/ }),
+/* 802 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(803);
+var entryVirtual = __webpack_require__(55);
+
+module.exports = entryVirtual('Array').includes;
+
+
+/***/ }),
+/* 803 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(8);
+var $includes = __webpack_require__(207).includes;
+var addToUnscopables = __webpack_require__(218);
+var arrayMethodUsesToLength = __webpack_require__(107);
+
+var USES_TO_LENGTH = arrayMethodUsesToLength('indexOf', { ACCESSORS: true, 1: 0 });
+
+// `Array.prototype.includes` method
+// https://tc39.github.io/ecma262/#sec-array.prototype.includes
+$({ target: 'Array', proto: true, forced: !USES_TO_LENGTH }, {
+  includes: function includes(el /* , fromIndex = 0 */) {
+    return $includes(this, el, arguments.length > 1 ? arguments[1] : undefined);
+  }
+});
+
+// https://tc39.github.io/ecma262/#sec-array.prototype-@@unscopables
+addToUnscopables('includes');
+
+
+/***/ }),
+/* 804 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(805);
+var entryVirtual = __webpack_require__(55);
+
+module.exports = entryVirtual('String').includes;
+
+
+/***/ }),
+/* 805 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(8);
+var notARegExp = __webpack_require__(806);
+var requireObjectCoercible = __webpack_require__(142);
+var correctIsRegExpLogic = __webpack_require__(808);
+
+// `String.prototype.includes` method
+// https://tc39.github.io/ecma262/#sec-string.prototype.includes
+$({ target: 'String', proto: true, forced: !correctIsRegExpLogic('includes') }, {
+  includes: function includes(searchString /* , position = 0 */) {
+    return !!~String(requireObjectCoercible(this))
+      .indexOf(notARegExp(searchString), arguments.length > 1 ? arguments[1] : undefined);
+  }
+});
+
+
+/***/ }),
+/* 806 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var isRegExp = __webpack_require__(807);
+
+module.exports = function (it) {
+  if (isRegExp(it)) {
+    throw TypeError("The method doesn't accept regular expressions");
+  } return it;
+};
+
+
+/***/ }),
+/* 807 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var isObject = __webpack_require__(49);
+var classof = __webpack_require__(141);
+var wellKnownSymbol = __webpack_require__(41);
+
+var MATCH = wellKnownSymbol('match');
+
+// `IsRegExp` abstract operation
+// https://tc39.github.io/ecma262/#sec-isregexp
+module.exports = function (it) {
+  var isRegExp;
+  return isObject(it) && ((isRegExp = it[MATCH]) !== undefined ? !!isRegExp : classof(it) == 'RegExp');
+};
+
+
+/***/ }),
+/* 808 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var wellKnownSymbol = __webpack_require__(41);
+
+var MATCH = wellKnownSymbol('match');
+
+module.exports = function (METHOD_NAME) {
+  var regexp = /./;
+  try {
+    '/./'[METHOD_NAME](regexp);
+  } catch (error1) {
+    try {
+      regexp[MATCH] = false;
+      return '/./'[METHOD_NAME](regexp);
+    } catch (error2) { /* empty */ }
+  } return false;
+};
+
+
+/***/ }),
+/* 809 */
+/***/ (function(module, exports, __webpack_require__) {
+
 // Generated by CoffeeScript 1.12.7
 (function() {
   "use strict";
   var builder, defaults, escapeCDATA, requiresCDATA, wrapCDATA,
     hasProp = {}.hasOwnProperty;
 
-  builder = __webpack_require__(801);
+  builder = __webpack_require__(810);
 
   defaults = __webpack_require__(262).defaults;
 
@@ -93001,24 +84078,24 @@ var objectKeys = Object.keys || function (obj) {
 
 
 /***/ }),
-/* 801 */
+/* 810 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Generated by CoffeeScript 1.12.7
 (function() {
   var NodeType, WriterState, XMLDOMImplementation, XMLDocument, XMLDocumentCB, XMLStreamWriter, XMLStringWriter, assign, isFunction, ref;
 
-  ref = __webpack_require__(102), assign = ref.assign, isFunction = ref.isFunction;
+  ref = __webpack_require__(103), assign = ref.assign, isFunction = ref.isFunction;
 
   XMLDOMImplementation = __webpack_require__(430);
 
   XMLDocument = __webpack_require__(431);
 
-  XMLDocumentCB = __webpack_require__(807);
+  XMLDocumentCB = __webpack_require__(816);
 
   XMLStringWriter = __webpack_require__(276);
 
-  XMLStreamWriter = __webpack_require__(808);
+  XMLStreamWriter = __webpack_require__(817);
 
   NodeType = __webpack_require__(45);
 
@@ -93072,16 +84149,16 @@ var objectKeys = Object.keys || function (obj) {
 
 
 /***/ }),
-/* 802 */
+/* 811 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Generated by CoffeeScript 1.12.7
 (function() {
   var XMLDOMConfiguration, XMLDOMErrorHandler, XMLDOMStringList;
 
-  XMLDOMErrorHandler = __webpack_require__(803);
+  XMLDOMErrorHandler = __webpack_require__(812);
 
-  XMLDOMStringList = __webpack_require__(804);
+  XMLDOMStringList = __webpack_require__(813);
 
   module.exports = XMLDOMConfiguration = (function() {
     function XMLDOMConfiguration() {
@@ -93142,7 +84219,7 @@ var objectKeys = Object.keys || function (obj) {
 
 
 /***/ }),
-/* 803 */
+/* 812 */
 /***/ (function(module, exports) {
 
 // Generated by CoffeeScript 1.12.7
@@ -93164,7 +84241,7 @@ var objectKeys = Object.keys || function (obj) {
 
 
 /***/ }),
-/* 804 */
+/* 813 */
 /***/ (function(module, exports) {
 
 // Generated by CoffeeScript 1.12.7
@@ -93198,7 +84275,7 @@ var objectKeys = Object.keys || function (obj) {
 
 
 /***/ }),
-/* 805 */
+/* 814 */
 /***/ (function(module, exports) {
 
 // Generated by CoffeeScript 1.12.7
@@ -93232,7 +84309,7 @@ var objectKeys = Object.keys || function (obj) {
 
 
 /***/ }),
-/* 806 */
+/* 815 */
 /***/ (function(module, exports) {
 
 // Generated by CoffeeScript 1.12.7
@@ -93250,7 +84327,7 @@ var objectKeys = Object.keys || function (obj) {
 
 
 /***/ }),
-/* 807 */
+/* 816 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Generated by CoffeeScript 1.12.7
@@ -93258,7 +84335,7 @@ var objectKeys = Object.keys || function (obj) {
   var NodeType, WriterState, XMLAttribute, XMLCData, XMLComment, XMLDTDAttList, XMLDTDElement, XMLDTDEntity, XMLDTDNotation, XMLDeclaration, XMLDocType, XMLDocument, XMLDocumentCB, XMLElement, XMLProcessingInstruction, XMLRaw, XMLStringWriter, XMLStringifier, XMLText, getValue, isFunction, isObject, isPlainObject, ref,
     hasProp = {}.hasOwnProperty;
 
-  ref = __webpack_require__(102), isObject = ref.isObject, isFunction = ref.isFunction, isPlainObject = ref.isPlainObject, getValue = ref.getValue;
+  ref = __webpack_require__(103), isObject = ref.isObject, isFunction = ref.isFunction, isPlainObject = ref.isPlainObject, getValue = ref.getValue;
 
   NodeType = __webpack_require__(45);
 
@@ -93784,7 +84861,7 @@ var objectKeys = Object.keys || function (obj) {
 
 
 /***/ }),
-/* 808 */
+/* 817 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Generated by CoffeeScript 1.12.7
@@ -93966,7 +85043,7 @@ var objectKeys = Object.keys || function (obj) {
 
 
 /***/ }),
-/* 809 */
+/* 818 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Generated by CoffeeScript 1.12.7
@@ -93977,11 +85054,11 @@ var objectKeys = Object.keys || function (obj) {
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
-  sax = __webpack_require__(810);
+  sax = __webpack_require__(819);
 
   events = __webpack_require__(33);
 
-  bom = __webpack_require__(811);
+  bom = __webpack_require__(820);
 
   processors = __webpack_require__(436);
 
@@ -93989,7 +85066,7 @@ var objectKeys = Object.keys || function (obj) {
 
   defaults = __webpack_require__(262).defaults;
 
-  promisify = __webpack_require__(812);
+  promisify = __webpack_require__(821);
 
   isEmpty = function(thing) {
     return typeof thing === "object" && (thing != null) && Object.keys(thing).length === 0;
@@ -94345,7 +85422,7 @@ var objectKeys = Object.keys || function (obj) {
 
 
 /***/ }),
-/* 810 */
+/* 819 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(Buffer) {;(function (sax) { // wrapper for non-node envs
@@ -95917,7 +86994,7 @@ var objectKeys = Object.keys || function (obj) {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(26).Buffer))
 
 /***/ }),
-/* 811 */
+/* 820 */
 /***/ (function(module, exports) {
 
 // Generated by CoffeeScript 1.12.7
@@ -95935,7 +87012,7 @@ var objectKeys = Object.keys || function (obj) {
 
 
 /***/ }),
-/* 812 */
+/* 821 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -95947,7 +87024,7 @@ var util = __webpack_require__(190);
 var implementation = __webpack_require__(437);
 var getPolyfill = __webpack_require__(447);
 var polyfill = getPolyfill();
-var shim = __webpack_require__(833);
+var shim = __webpack_require__(842);
 
 /* eslint-disable no-unused-vars */
 var boundPromisify = function promisify(orig) {
@@ -95966,7 +87043,7 @@ module.exports = boundPromisify;
 
 
 /***/ }),
-/* 813 */
+/* 822 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -95976,7 +87053,7 @@ module.exports = boundPromisify;
 var has = Object.prototype.hasOwnProperty;
 var toStr = Object.prototype.toString;
 var slice = Array.prototype.slice;
-var isArgs = __webpack_require__(814);
+var isArgs = __webpack_require__(823);
 var isEnumerable = Object.prototype.propertyIsEnumerable;
 var hasDontEnumBug = !isEnumerable.call({ toString: null }, 'toString');
 var hasProtoEnumBug = isEnumerable.call(function () {}, 'prototype');
@@ -96114,7 +87191,7 @@ module.exports = keysShim;
 
 
 /***/ }),
-/* 814 */
+/* 823 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -96138,7 +87215,7 @@ module.exports = function isArguments(value) {
 
 
 /***/ }),
-/* 815 */
+/* 824 */
 /***/ (function(module, exports) {
 
 module.exports = function isBuffer(arg) {
@@ -96149,7 +87226,7 @@ module.exports = function isBuffer(arg) {
 }
 
 /***/ }),
-/* 816 */
+/* 825 */
 /***/ (function(module, exports) {
 
 if (typeof Object.create === 'function') {
@@ -96178,7 +87255,7 @@ if (typeof Object.create === 'function') {
 
 
 /***/ }),
-/* 817 */
+/* 826 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -96188,7 +87265,7 @@ var define = __webpack_require__(277);
 
 var implementation = __webpack_require__(438);
 var getPolyfill = __webpack_require__(446);
-var shim = __webpack_require__(832);
+var shim = __webpack_require__(841);
 
 define(implementation, {
 	getPolyfill: getPolyfill,
@@ -96200,23 +87277,23 @@ module.exports = implementation;
 
 
 /***/ }),
-/* 818 */
+/* 827 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(819);
+module.exports = __webpack_require__(828);
 
 
 /***/ }),
-/* 819 */
+/* 828 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var ES2015 = __webpack_require__(820);
+var ES2015 = __webpack_require__(829);
 var assign = __webpack_require__(443);
 
 var ES2016 = assign(assign({}, ES2015), {
@@ -96233,14 +87310,14 @@ module.exports = ES2016;
 
 
 /***/ }),
-/* 820 */
+/* 829 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var has = __webpack_require__(278);
-var toPrimitive = __webpack_require__(822);
+var toPrimitive = __webpack_require__(831);
 
 var GetIntrinsic = __webpack_require__(440);
 
@@ -96262,7 +87339,7 @@ var MAX_SAFE_INTEGER = $Number.MAX_SAFE_INTEGER || Math.pow(2, 53) - 1;
 var assign = __webpack_require__(443);
 var sign = __webpack_require__(444);
 var mod = __webpack_require__(445);
-var isPrimitive = __webpack_require__(828);
+var isPrimitive = __webpack_require__(837);
 var parseInteger = parseInt;
 var bind = __webpack_require__(279);
 var arraySlice = bind.call(Function.call, $Array.prototype.slice);
@@ -96300,9 +87377,9 @@ var trim = function (value) {
 	return replace(value, trimRegex, '');
 };
 
-var ES5 = __webpack_require__(829);
+var ES5 = __webpack_require__(838);
 
-var hasRegExpMatcher = __webpack_require__(831);
+var hasRegExpMatcher = __webpack_require__(840);
 
 // https://people.mozilla.org/~jorendorff/es6-draft.html#sec-abstract-operations
 var ES6 = assign(assign({}, ES5), {
@@ -96933,7 +88010,7 @@ module.exports = ES6;
 
 
 /***/ }),
-/* 821 */
+/* 830 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -96992,17 +88069,17 @@ module.exports = function bind(that) {
 
 
 /***/ }),
-/* 822 */
+/* 831 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(823);
+module.exports = __webpack_require__(832);
 
 
 /***/ }),
-/* 823 */
+/* 832 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -97012,8 +88089,8 @@ var hasSymbols = typeof Symbol === 'function' && typeof Symbol.iterator === 'sym
 
 var isPrimitive = __webpack_require__(439);
 var isCallable = __webpack_require__(280);
-var isDate = __webpack_require__(824);
-var isSymbol = __webpack_require__(825);
+var isDate = __webpack_require__(833);
+var isSymbol = __webpack_require__(834);
 
 var ordinaryToPrimitive = function OrdinaryToPrimitive(O, hint) {
 	if (typeof O === 'undefined' || O === null) {
@@ -97084,7 +88161,7 @@ module.exports = function ToPrimitive(input) {
 
 
 /***/ }),
-/* 824 */
+/* 833 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -97111,14 +88188,14 @@ module.exports = function isDateObject(value) {
 
 
 /***/ }),
-/* 825 */
+/* 834 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var toStr = Object.prototype.toString;
-var hasSymbols = __webpack_require__(826)();
+var hasSymbols = __webpack_require__(835)();
 
 if (hasSymbols) {
 	var symToStr = Symbol.prototype.toString;
@@ -97153,14 +88230,14 @@ if (hasSymbols) {
 
 
 /***/ }),
-/* 826 */
+/* 835 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
 var origSymbol = global.Symbol;
-var hasSymbolSham = __webpack_require__(827);
+var hasSymbolSham = __webpack_require__(836);
 
 module.exports = function hasNativeSymbols() {
 	if (typeof origSymbol !== 'function') { return false; }
@@ -97174,7 +88251,7 @@ module.exports = function hasNativeSymbols() {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(35)))
 
 /***/ }),
-/* 827 */
+/* 836 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -97223,7 +88300,7 @@ module.exports = function hasSymbols() {
 
 
 /***/ }),
-/* 828 */
+/* 837 */
 /***/ (function(module, exports) {
 
 module.exports = function isPrimitive(value) {
@@ -97232,7 +88309,7 @@ module.exports = function isPrimitive(value) {
 
 
 /***/ }),
-/* 829 */
+/* 838 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -97251,7 +88328,7 @@ var sign = __webpack_require__(444);
 var mod = __webpack_require__(445);
 
 var IsCallable = __webpack_require__(280);
-var toPrimitive = __webpack_require__(830);
+var toPrimitive = __webpack_require__(839);
 
 var has = __webpack_require__(278);
 
@@ -97481,7 +88558,7 @@ module.exports = ES5;
 
 
 /***/ }),
-/* 830 */
+/* 839 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -97533,7 +88610,7 @@ module.exports = function ToPrimitive(input) {
 
 
 /***/ }),
-/* 831 */
+/* 840 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -97579,7 +88656,7 @@ module.exports = function isRegex(value) {
 
 
 /***/ }),
-/* 832 */
+/* 841 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -97600,7 +88677,7 @@ module.exports = function shimGetOwnPropertyDescriptors() {
 
 
 /***/ }),
-/* 833 */
+/* 842 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -97620,7 +88697,7 @@ module.exports = function shimUtilPromisify() {
 
 
 /***/ }),
-/* 834 */
+/* 843 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -97707,15 +88784,15 @@ module.exports = ResizeableBuffer;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(26).Buffer))
 
 /***/ }),
-/* 835 */
+/* 844 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(117);
+var $ = __webpack_require__(118);
 var $includes = __webpack_require__(338).includes;
 var addToUnscopables = __webpack_require__(331);
-var arrayMethodUsesToLength = __webpack_require__(836);
+var arrayMethodUsesToLength = __webpack_require__(845);
 
 var USES_TO_LENGTH = arrayMethodUsesToLength('indexOf', { ACCESSORS: true, 1: 0 });
 
@@ -97732,7 +88809,7 @@ addToUnscopables('includes');
 
 
 /***/ }),
-/* 836 */
+/* 845 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var DESCRIPTORS = __webpack_require__(84);
@@ -97765,15 +88842,15 @@ module.exports = function (METHOD_NAME, options) {
 
 
 /***/ }),
-/* 837 */
+/* 846 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var $ = __webpack_require__(117);
-var notARegExp = __webpack_require__(838);
-var requireObjectCoercible = __webpack_require__(96);
-var correctIsRegExpLogic = __webpack_require__(839);
+var $ = __webpack_require__(118);
+var notARegExp = __webpack_require__(847);
+var requireObjectCoercible = __webpack_require__(97);
+var correctIsRegExpLogic = __webpack_require__(848);
 
 // `String.prototype.includes` method
 // https://tc39.github.io/ecma262/#sec-string.prototype.includes
@@ -97786,7 +88863,7 @@ $({ target: 'String', proto: true, forced: !correctIsRegExpLogic('includes') }, 
 
 
 /***/ }),
-/* 838 */
+/* 847 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var isRegExp = __webpack_require__(235);
@@ -97799,7 +88876,7 @@ module.exports = function (it) {
 
 
 /***/ }),
-/* 839 */
+/* 848 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var wellKnownSymbol = __webpack_require__(50);
@@ -97820,26 +88897,26 @@ module.exports = function (METHOD_NAME) {
 
 
 /***/ }),
-/* 840 */
+/* 849 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var parent = __webpack_require__(841);
+var parent = __webpack_require__(850);
 
 module.exports = parent;
 
 
 /***/ }),
-/* 841 */
+/* 850 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(842);
+__webpack_require__(851);
 var path = __webpack_require__(28);
 
 module.exports = path.Object.entries;
 
 
 /***/ }),
-/* 842 */
+/* 851 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var $ = __webpack_require__(8);
@@ -97852,152 +88929,6 @@ $({ target: 'Object', stat: true }, {
     return $entries(O);
   }
 });
-
-
-/***/ }),
-/* 843 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var parent = __webpack_require__(844);
-
-module.exports = parent;
-
-
-/***/ }),
-/* 844 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var arrayIncludes = __webpack_require__(845);
-var stringIncludes = __webpack_require__(847);
-
-var ArrayPrototype = Array.prototype;
-var StringPrototype = String.prototype;
-
-module.exports = function (it) {
-  var own = it.includes;
-  if (it === ArrayPrototype || (it instanceof Array && own === ArrayPrototype.includes)) return arrayIncludes;
-  if (typeof it === 'string' || it === StringPrototype || (it instanceof String && own === StringPrototype.includes)) {
-    return stringIncludes;
-  } return own;
-};
-
-
-/***/ }),
-/* 845 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(846);
-var entryVirtual = __webpack_require__(55);
-
-module.exports = entryVirtual('Array').includes;
-
-
-/***/ }),
-/* 846 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var $ = __webpack_require__(8);
-var $includes = __webpack_require__(207).includes;
-var addToUnscopables = __webpack_require__(218);
-var arrayMethodUsesToLength = __webpack_require__(106);
-
-var USES_TO_LENGTH = arrayMethodUsesToLength('indexOf', { ACCESSORS: true, 1: 0 });
-
-// `Array.prototype.includes` method
-// https://tc39.github.io/ecma262/#sec-array.prototype.includes
-$({ target: 'Array', proto: true, forced: !USES_TO_LENGTH }, {
-  includes: function includes(el /* , fromIndex = 0 */) {
-    return $includes(this, el, arguments.length > 1 ? arguments[1] : undefined);
-  }
-});
-
-// https://tc39.github.io/ecma262/#sec-array.prototype-@@unscopables
-addToUnscopables('includes');
-
-
-/***/ }),
-/* 847 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(848);
-var entryVirtual = __webpack_require__(55);
-
-module.exports = entryVirtual('String').includes;
-
-
-/***/ }),
-/* 848 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var $ = __webpack_require__(8);
-var notARegExp = __webpack_require__(849);
-var requireObjectCoercible = __webpack_require__(142);
-var correctIsRegExpLogic = __webpack_require__(851);
-
-// `String.prototype.includes` method
-// https://tc39.github.io/ecma262/#sec-string.prototype.includes
-$({ target: 'String', proto: true, forced: !correctIsRegExpLogic('includes') }, {
-  includes: function includes(searchString /* , position = 0 */) {
-    return !!~String(requireObjectCoercible(this))
-      .indexOf(notARegExp(searchString), arguments.length > 1 ? arguments[1] : undefined);
-  }
-});
-
-
-/***/ }),
-/* 849 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var isRegExp = __webpack_require__(850);
-
-module.exports = function (it) {
-  if (isRegExp(it)) {
-    throw TypeError("The method doesn't accept regular expressions");
-  } return it;
-};
-
-
-/***/ }),
-/* 850 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var isObject = __webpack_require__(49);
-var classof = __webpack_require__(141);
-var wellKnownSymbol = __webpack_require__(40);
-
-var MATCH = wellKnownSymbol('match');
-
-// `IsRegExp` abstract operation
-// https://tc39.github.io/ecma262/#sec-isregexp
-module.exports = function (it) {
-  var isRegExp;
-  return isObject(it) && ((isRegExp = it[MATCH]) !== undefined ? !!isRegExp : classof(it) == 'RegExp');
-};
-
-
-/***/ }),
-/* 851 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var wellKnownSymbol = __webpack_require__(40);
-
-var MATCH = wellKnownSymbol('match');
-
-module.exports = function (METHOD_NAME) {
-  var regexp = /./;
-  try {
-    '/./'[METHOD_NAME](regexp);
-  } catch (error1) {
-    try {
-      regexp[MATCH] = false;
-      return '/./'[METHOD_NAME](regexp);
-    } catch (error2) { /* empty */ }
-  } return false;
-};
 
 
 /***/ }),
@@ -98041,8 +88972,8 @@ module.exports = entryVirtual('Array').sort;
 
 var $ = __webpack_require__(8);
 var aFunction = __webpack_require__(44);
-var toObject = __webpack_require__(95);
-var fails = __webpack_require__(38);
+var toObject = __webpack_require__(96);
+var fails = __webpack_require__(39);
 var arrayMethodIsStrict = __webpack_require__(172);
 
 var test = [];
@@ -98113,7 +89044,7 @@ $({ target: 'Object', stat: true }, {
 
 "use strict";
 
-var $ = __webpack_require__(117);
+var $ = __webpack_require__(118);
 
 // `URL.prototype.toJSON` method
 // https://url.spec.whatwg.org/#dom-url-tojson
@@ -98166,7 +89097,7 @@ module.exports = entryVirtual('Array').find;
 var $ = __webpack_require__(8);
 var $find = __webpack_require__(122).find;
 var addToUnscopables = __webpack_require__(218);
-var arrayMethodUsesToLength = __webpack_require__(106);
+var arrayMethodUsesToLength = __webpack_require__(107);
 
 var FIND = 'find';
 var SKIPS_HOLES = true;
@@ -98192,7 +89123,7 @@ addToUnscopables(FIND);
 /* 864 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var requireObjectCoercible = __webpack_require__(96);
+var requireObjectCoercible = __webpack_require__(97);
 var whitespaces = __webpack_require__(865);
 
 var whitespace = '[' + whitespaces + ']';
@@ -98239,12 +89170,12 @@ var DESCRIPTORS = __webpack_require__(84);
 var global = __webpack_require__(47);
 var isForced = __webpack_require__(176);
 var inheritIfRequired = __webpack_require__(449);
-var defineProperty = __webpack_require__(97).f;
+var defineProperty = __webpack_require__(98).f;
 var getOwnPropertyNames = __webpack_require__(230).f;
 var isRegExp = __webpack_require__(235);
 var getFlags = __webpack_require__(233);
 var stickyHelpers = __webpack_require__(353);
-var redefine = __webpack_require__(99);
+var redefine = __webpack_require__(100);
 var fails = __webpack_require__(56);
 var setInternalState = __webpack_require__(150).set;
 var setSpecies = __webpack_require__(346);
@@ -98329,7 +89260,7 @@ setSpecies('RegExp');
 
 var fixRegExpWellKnownSymbolLogic = __webpack_require__(179);
 var anObject = __webpack_require__(57);
-var requireObjectCoercible = __webpack_require__(96);
+var requireObjectCoercible = __webpack_require__(97);
 var sameValue = __webpack_require__(868);
 var regExpExec = __webpack_require__(180);
 
@@ -102008,7 +92939,7 @@ Object(_jsforce__WEBPACK_IMPORTED_MODULE_14__[/* registerModule */ "b"])('analyt
 /* unused harmony export Apex */
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(25);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(42);
+/* harmony import */ var _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(43);
 /* harmony import */ var _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5);
 /* harmony import */ var _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2__);
@@ -102193,85 +93124,87 @@ Object(_jsforce__WEBPACK_IMPORTED_MODULE_5__[/* registerModule */ "b"])('apex', 
 /* harmony import */ var core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_join__WEBPACK_IMPORTED_MODULE_14__);
 /* harmony import */ var core_js_modules_es_function_name__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(123);
 /* harmony import */ var core_js_modules_es_function_name__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_function_name__WEBPACK_IMPORTED_MODULE_15__);
-/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(100);
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(101);
 /* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_16__);
 /* harmony import */ var core_js_modules_es_promise__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(199);
 /* harmony import */ var core_js_modules_es_promise__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_promise__WEBPACK_IMPORTED_MODULE_17__);
 /* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(67);
 /* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_18___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_18__);
-/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(290);
-/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_19___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_19__);
-/* harmony import */ var core_js_modules_es_string_match__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(200);
-/* harmony import */ var core_js_modules_es_string_match__WEBPACK_IMPORTED_MODULE_20___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_match__WEBPACK_IMPORTED_MODULE_20__);
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(151);
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_21___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_21__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(291);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_22___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_22__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(93);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_23___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_23__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(51);
-/* harmony import */ var _babel_runtime_corejs3_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_24___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_24__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_date_now__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(72);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_date_now__WEBPACK_IMPORTED_MODULE_25___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_date_now__WEBPACK_IMPORTED_MODULE_25__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(25);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_26___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_26__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(43);
-/* harmony import */ var _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(94);
-/* harmony import */ var _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_28___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_28__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(42);
-/* harmony import */ var _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_29___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_29__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_map__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(11);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_map__WEBPACK_IMPORTED_MODULE_30___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_map__WEBPACK_IMPORTED_MODULE_30__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_set_timeout__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(81);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_set_timeout__WEBPACK_IMPORTED_MODULE_31___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_set_timeout__WEBPACK_IMPORTED_MODULE_31__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_parse_int__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(34);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_parse_int__WEBPACK_IMPORTED_MODULE_32___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_parse_int__WEBPACK_IMPORTED_MODULE_32__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(10);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_33___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_33__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(36);
-/* harmony import */ var _babel_runtime_corejs3_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_34___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_34__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(104);
-/* harmony import */ var _babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_35___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_35__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(17);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_36___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_36__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_promise__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(19);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_promise__WEBPACK_IMPORTED_MODULE_37___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_promise__WEBPACK_IMPORTED_MODULE_37__);
-/* harmony import */ var _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(1);
-/* harmony import */ var _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38__);
-/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(48);
-/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_39___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_39__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(3);
-/* harmony import */ var _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(4);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_41___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_41__);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_trim__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(203);
-/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_trim__WEBPACK_IMPORTED_MODULE_42___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_trim__WEBPACK_IMPORTED_MODULE_42__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(5);
-/* harmony import */ var _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_43___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_43__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(7);
-/* harmony import */ var _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_44___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_44__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(2);
-/* harmony import */ var _babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(18);
-/* harmony import */ var _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_46___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_46__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(24);
-/* harmony import */ var _babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_47___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_47__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_48__ = __webpack_require__(9);
-/* harmony import */ var _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_48___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_48__);
-/* harmony import */ var _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49__ = __webpack_require__(0);
-/* harmony import */ var _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49__);
-/* harmony import */ var events__WEBPACK_IMPORTED_MODULE_50__ = __webpack_require__(33);
-/* harmony import */ var events__WEBPACK_IMPORTED_MODULE_50___default = /*#__PURE__*/__webpack_require__.n(events__WEBPACK_IMPORTED_MODULE_50__);
-/* harmony import */ var stream__WEBPACK_IMPORTED_MODULE_51__ = __webpack_require__(29);
-/* harmony import */ var stream__WEBPACK_IMPORTED_MODULE_51___default = /*#__PURE__*/__webpack_require__.n(stream__WEBPACK_IMPORTED_MODULE_51__);
-/* harmony import */ var multistream__WEBPACK_IMPORTED_MODULE_52__ = __webpack_require__(893);
-/* harmony import */ var multistream__WEBPACK_IMPORTED_MODULE_52___default = /*#__PURE__*/__webpack_require__.n(multistream__WEBPACK_IMPORTED_MODULE_52__);
-/* harmony import */ var _record_stream__WEBPACK_IMPORTED_MODULE_53__ = __webpack_require__(82);
-/* harmony import */ var _http_api__WEBPACK_IMPORTED_MODULE_54__ = __webpack_require__(162);
-/* harmony import */ var _jsforce__WEBPACK_IMPORTED_MODULE_55__ = __webpack_require__(64);
-/* harmony import */ var _util_stream__WEBPACK_IMPORTED_MODULE_56__ = __webpack_require__(73);
-/* harmony import */ var _util_function__WEBPACK_IMPORTED_MODULE_57__ = __webpack_require__(91);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(110);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_19___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_19__);
+/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(290);
+/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_20___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_20__);
+/* harmony import */ var core_js_modules_es_string_match__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(200);
+/* harmony import */ var core_js_modules_es_string_match__WEBPACK_IMPORTED_MODULE_21___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_match__WEBPACK_IMPORTED_MODULE_21__);
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(151);
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_22___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_22__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(291);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_23___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_23__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(95);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_24___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_24__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(51);
+/* harmony import */ var _babel_runtime_corejs3_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_25___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_25__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_date_now__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(72);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_date_now__WEBPACK_IMPORTED_MODULE_26___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_date_now__WEBPACK_IMPORTED_MODULE_26__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(25);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_27___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_27__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(38);
+/* harmony import */ var _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(93);
+/* harmony import */ var _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_29___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_29__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(43);
+/* harmony import */ var _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_30___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_30__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_map__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(11);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_map__WEBPACK_IMPORTED_MODULE_31___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_map__WEBPACK_IMPORTED_MODULE_31__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_set_timeout__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(81);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_set_timeout__WEBPACK_IMPORTED_MODULE_32___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_set_timeout__WEBPACK_IMPORTED_MODULE_32__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_parse_int__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(34);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_parse_int__WEBPACK_IMPORTED_MODULE_33___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_parse_int__WEBPACK_IMPORTED_MODULE_33__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(10);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_34___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_34__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(36);
+/* harmony import */ var _babel_runtime_corejs3_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_35___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_35__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(105);
+/* harmony import */ var _babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_36___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_36__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(17);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_37___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_37__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_promise__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(19);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_promise__WEBPACK_IMPORTED_MODULE_38___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_promise__WEBPACK_IMPORTED_MODULE_38__);
+/* harmony import */ var _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(1);
+/* harmony import */ var _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39__);
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(48);
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_40___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_40__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(3);
+/* harmony import */ var _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(4);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_42___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_42__);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_trim__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(203);
+/* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_trim__WEBPACK_IMPORTED_MODULE_43___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_trim__WEBPACK_IMPORTED_MODULE_43__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(5);
+/* harmony import */ var _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_44___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_44__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(7);
+/* harmony import */ var _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_45___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_45__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(2);
+/* harmony import */ var _babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(18);
+/* harmony import */ var _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_47___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_47__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_48__ = __webpack_require__(24);
+/* harmony import */ var _babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_48___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_48__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_49__ = __webpack_require__(9);
+/* harmony import */ var _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_49___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_49__);
+/* harmony import */ var _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50__ = __webpack_require__(0);
+/* harmony import */ var _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50__);
+/* harmony import */ var events__WEBPACK_IMPORTED_MODULE_51__ = __webpack_require__(33);
+/* harmony import */ var events__WEBPACK_IMPORTED_MODULE_51___default = /*#__PURE__*/__webpack_require__.n(events__WEBPACK_IMPORTED_MODULE_51__);
+/* harmony import */ var stream__WEBPACK_IMPORTED_MODULE_52__ = __webpack_require__(29);
+/* harmony import */ var stream__WEBPACK_IMPORTED_MODULE_52___default = /*#__PURE__*/__webpack_require__.n(stream__WEBPACK_IMPORTED_MODULE_52__);
+/* harmony import */ var multistream__WEBPACK_IMPORTED_MODULE_53__ = __webpack_require__(893);
+/* harmony import */ var multistream__WEBPACK_IMPORTED_MODULE_53___default = /*#__PURE__*/__webpack_require__.n(multistream__WEBPACK_IMPORTED_MODULE_53__);
+/* harmony import */ var _record_stream__WEBPACK_IMPORTED_MODULE_54__ = __webpack_require__(82);
+/* harmony import */ var _http_api__WEBPACK_IMPORTED_MODULE_55__ = __webpack_require__(160);
+/* harmony import */ var _jsforce__WEBPACK_IMPORTED_MODULE_56__ = __webpack_require__(64);
+/* harmony import */ var _util_stream__WEBPACK_IMPORTED_MODULE_57__ = __webpack_require__(73);
+/* harmony import */ var _util_function__WEBPACK_IMPORTED_MODULE_58__ = __webpack_require__(92);
 
 
 
@@ -102323,17 +93256,18 @@ Object(_jsforce__WEBPACK_IMPORTED_MODULE_5__[/* registerModule */ "b"])('apex', 
 
 
 
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof _babel_runtime_corejs3_core_js_stable_symbol__WEBPACK_IMPORTED_MODULE_2___default.a === "undefined" || _babel_runtime_corejs3_core_js_get_iterator_method__WEBPACK_IMPORTED_MODULE_1___default()(o) == null) { if (_babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_36___default()(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = _babel_runtime_corejs3_core_js_get_iterator__WEBPACK_IMPORTED_MODULE_0___default()(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
-function _unsupportedIterableToArray(o, minLen) { var _context43; if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = _babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_4___default()(_context43 = Object.prototype.toString.call(o)).call(_context43, 8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return _babel_runtime_corejs3_core_js_stable_array_from__WEBPACK_IMPORTED_MODULE_3___default()(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof _babel_runtime_corejs3_core_js_stable_symbol__WEBPACK_IMPORTED_MODULE_2___default.a === "undefined" || _babel_runtime_corejs3_core_js_get_iterator_method__WEBPACK_IMPORTED_MODULE_1___default()(o) == null) { if (_babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_37___default()(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = _babel_runtime_corejs3_core_js_get_iterator__WEBPACK_IMPORTED_MODULE_0___default()(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { var _context47; if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = _babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_4___default()(_context47 = Object.prototype.toString.call(o)).call(_context47, 8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return _babel_runtime_corejs3_core_js_stable_array_from__WEBPACK_IMPORTED_MODULE_3___default()(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-function ownKeys(object, enumerableOnly) { var keys = _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_33___default()(object); if (_babel_runtime_corejs3_core_js_stable_object_get_own_property_symbols__WEBPACK_IMPORTED_MODULE_11___default.a) { var symbols = _babel_runtime_corejs3_core_js_stable_object_get_own_property_symbols__WEBPACK_IMPORTED_MODULE_11___default()(object); if (enumerableOnly) symbols = _babel_runtime_corejs3_core_js_stable_instance_filter__WEBPACK_IMPORTED_MODULE_10___default()(symbols).call(symbols, function (sym) { return _babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptor__WEBPACK_IMPORTED_MODULE_9___default()(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+function ownKeys(object, enumerableOnly) { var keys = _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_34___default()(object); if (_babel_runtime_corejs3_core_js_stable_object_get_own_property_symbols__WEBPACK_IMPORTED_MODULE_11___default.a) { var symbols = _babel_runtime_corejs3_core_js_stable_object_get_own_property_symbols__WEBPACK_IMPORTED_MODULE_11___default()(object); if (enumerableOnly) symbols = _babel_runtime_corejs3_core_js_stable_instance_filter__WEBPACK_IMPORTED_MODULE_10___default()(symbols).call(symbols, function (sym) { return _babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptor__WEBPACK_IMPORTED_MODULE_9___default()(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { var _context41; _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_8___default()(_context41 = ownKeys(Object(source), true)).call(_context41, function (key) { _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(target, key, source[key]); }); } else if (_babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptors__WEBPACK_IMPORTED_MODULE_7___default.a) { _babel_runtime_corejs3_core_js_stable_object_define_properties__WEBPACK_IMPORTED_MODULE_6___default()(target, _babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptors__WEBPACK_IMPORTED_MODULE_7___default()(source)); } else { var _context42; _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_8___default()(_context42 = ownKeys(Object(source))).call(_context42, function (key) { _babel_runtime_corejs3_core_js_stable_object_define_property__WEBPACK_IMPORTED_MODULE_5___default()(target, key, _babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptor__WEBPACK_IMPORTED_MODULE_9___default()(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { var _context45; _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_8___default()(_context45 = ownKeys(Object(source), true)).call(_context45, function (key) { _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(target, key, source[key]); }); } else if (_babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptors__WEBPACK_IMPORTED_MODULE_7___default.a) { _babel_runtime_corejs3_core_js_stable_object_define_properties__WEBPACK_IMPORTED_MODULE_6___default()(target, _babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptors__WEBPACK_IMPORTED_MODULE_7___default()(source)); } else { var _context46; _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_8___default()(_context46 = ownKeys(Object(source))).call(_context46, function (key) { _babel_runtime_corejs3_core_js_stable_object_define_property__WEBPACK_IMPORTED_MODULE_5___default()(target, key, _babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptor__WEBPACK_IMPORTED_MODULE_9___default()(source, key)); }); } } return target; }
 
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_48___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_48___default()(this).constructor; result = _babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_12___default()(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_47___default()(this, result); }; }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_49___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_49___default()(this).constructor; result = _babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_12___default()(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_48___default()(this, result); }; }
 
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_12___default.a) return false; if (_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_12___default.a.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_12___default()(Date, [], function () {})); return true; } catch (e) { return false; } }
 
@@ -102355,7 +93289,7 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !_b
  * Class for Bulk API Job
  */
 var Job = /*#__PURE__*/function (_EventEmitter) {
-  _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_46___default()(Job, _EventEmitter);
+  _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_47___default()(Job, _EventEmitter);
 
   var _super = _createSuper(Job);
 
@@ -102365,27 +93299,27 @@ var Job = /*#__PURE__*/function (_EventEmitter) {
   function Job(bulk, type, operation, options, jobId) {
     var _this;
 
-    _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_43___default()(this, Job);
+    _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_44___default()(this, Job);
 
     _this = _super.call(this);
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this), "type", void 0);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this), "type", void 0);
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this), "operation", void 0);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this), "operation", void 0);
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this), "options", void 0);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this), "options", void 0);
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this), "id", void 0);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this), "id", void 0);
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this), "state", void 0);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this), "state", void 0);
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this), "_bulk", void 0);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this), "_bulk", void 0);
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this), "_batches", void 0);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this), "_batches", void 0);
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this), "_jobInfo", void 0);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this), "_jobInfo", void 0);
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this), "_error", void 0);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this), "_error", void 0);
 
     _this._bulk = bulk;
     _this.type = type;
@@ -102406,7 +93340,7 @@ var Job = /*#__PURE__*/function (_EventEmitter) {
    */
 
 
-  _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_44___default()(Job, [{
+  _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_45___default()(Job, [{
     key: "info",
     value: function info() {
       // if cache is not available, check the latest
@@ -102446,12 +93380,12 @@ var Job = /*#__PURE__*/function (_EventEmitter) {
           _operation = 'queryAll';
         }
 
-        var body = _babel_runtime_corejs3_core_js_stable_instance_trim__WEBPACK_IMPORTED_MODULE_42___default()(_context = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_41___default()(_context2 = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_41___default()(_context3 = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_41___default()(_context4 = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_41___default()(_context5 = "\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<jobInfo  xmlns=\"http://www.force.com/2009/06/asyncapi/dataload\">\n  <operation>".concat(_operation, "</operation>\n  <object>")).call(_context5, this.type, "</object>\n  ")).call(_context4, options.extIdField ? "<externalIdFieldName>".concat(options.extIdField, "</externalIdFieldName>") : '', "\n  ")).call(_context3, options.concurrencyMode ? "<concurrencyMode>".concat(options.concurrencyMode, "</concurrencyMode>") : '', "\n  ")).call(_context2, options.assignmentRuleId ? "<assignmentRuleId>".concat(options.assignmentRuleId, "</assignmentRuleId>") : '', "\n  <contentType>CSV</contentType>\n</jobInfo>\n      ")).call(_context);
+        var body = _babel_runtime_corejs3_core_js_stable_instance_trim__WEBPACK_IMPORTED_MODULE_43___default()(_context = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_42___default()(_context2 = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_42___default()(_context3 = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_42___default()(_context4 = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_42___default()(_context5 = "\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<jobInfo  xmlns=\"http://www.force.com/2009/06/asyncapi/dataload\">\n  <operation>".concat(_operation, "</operation>\n  <object>")).call(_context5, this.type, "</object>\n  ")).call(_context4, options.extIdField ? "<externalIdFieldName>".concat(options.extIdField, "</externalIdFieldName>") : '', "\n  ")).call(_context3, options.concurrencyMode ? "<concurrencyMode>".concat(options.concurrencyMode, "</concurrencyMode>") : '', "\n  ")).call(_context2, options.assignmentRuleId ? "<assignmentRuleId>".concat(options.assignmentRuleId, "</assignmentRuleId>") : '', "\n  <contentType>CSV</contentType>\n</jobInfo>\n      ")).call(_context);
 
-        this._jobInfo = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee() {
+        this._jobInfo = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee() {
           var _res;
 
-          return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee$(_context6) {
+          return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee$(_context6) {
             while (1) {
               switch (_context6.prev = _context6.next) {
                 case 0:
@@ -102537,9 +93471,9 @@ var Job = /*#__PURE__*/function (_EventEmitter) {
 
       var bulk = this._bulk;
       var logger = bulk._logger;
-      this._jobInfo = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee2() {
+      this._jobInfo = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee2() {
         var jobId, res;
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee2$(_context7) {
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee2$(_context7) {
           while (1) {
             switch (_context7.prev = _context7.next) {
               case 0:
@@ -102580,7 +93514,7 @@ var Job = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "ready",
     value: function ready() {
-      return this.id ? _babel_runtime_corejs3_core_js_stable_promise__WEBPACK_IMPORTED_MODULE_37___default.a.resolve(this.id) : this.open().then(function (_ref3) {
+      return this.id ? _babel_runtime_corejs3_core_js_stable_promise__WEBPACK_IMPORTED_MODULE_38___default.a.resolve(this.id) : this.open().then(function (_ref3) {
         var id = _ref3.id;
         return id;
       });
@@ -102592,9 +93526,9 @@ var Job = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "list",
     value: function () {
-      var _list = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee3() {
+      var _list = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee3() {
         var bulk, logger, jobId, res, batchInfoList;
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee3$(_context8) {
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee3$(_context8) {
           while (1) {
             switch (_context8.prev = _context8.next) {
               case 0:
@@ -102615,7 +93549,7 @@ var Job = /*#__PURE__*/function (_EventEmitter) {
               case 7:
                 res = _context8.sent;
                 logger.debug(res.batchInfoList.batchInfo);
-                batchInfoList = _babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_36___default()(res.batchInfoList.batchInfo) ? res.batchInfoList.batchInfo : [res.batchInfoList.batchInfo];
+                batchInfoList = _babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_37___default()(res.batchInfoList.batchInfo) ? res.batchInfoList.batchInfo : [res.batchInfoList.batchInfo];
                 return _context8.abrupt("return", batchInfoList);
 
               case 11:
@@ -102639,9 +93573,9 @@ var Job = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "close",
     value: function () {
-      var _close = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee4() {
+      var _close = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee4() {
         var jobInfo;
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee4$(_context9) {
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee4$(_context9) {
           while (1) {
             switch (_context9.prev = _context9.next) {
               case 0:
@@ -102690,9 +93624,9 @@ var Job = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "abort",
     value: function () {
-      var _abort = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee5() {
+      var _abort = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee5() {
         var jobInfo;
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee5$(_context10) {
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee5$(_context10) {
           while (1) {
             switch (_context10.prev = _context10.next) {
               case 0:
@@ -102741,21 +93675,21 @@ var Job = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "_changeState",
     value: function () {
-      var _changeState2 = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee7(state) {
+      var _changeState2 = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee7(state) {
         var _this5 = this;
 
         var bulk, logger;
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee7$(_context13) {
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee7$(_context13) {
           while (1) {
             switch (_context13.prev = _context13.next) {
               case 0:
                 bulk = this._bulk;
                 logger = bulk._logger;
-                this._jobInfo = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee6() {
+                this._jobInfo = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee6() {
                   var _context11;
 
                   var jobId, body, res;
-                  return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee6$(_context12) {
+                  return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee6$(_context12) {
                     while (1) {
                       switch (_context12.prev = _context12.next) {
                         case 0:
@@ -102764,7 +93698,7 @@ var Job = /*#__PURE__*/function (_EventEmitter) {
 
                         case 2:
                           jobId = _context12.sent;
-                          body = _babel_runtime_corejs3_core_js_stable_instance_trim__WEBPACK_IMPORTED_MODULE_42___default()(_context11 = " \n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n  <jobInfo xmlns=\"http://www.force.com/2009/06/asyncapi/dataload\">\n  <state>".concat(state, "</state>\n</jobInfo>\n      ")).call(_context11);
+                          body = _babel_runtime_corejs3_core_js_stable_instance_trim__WEBPACK_IMPORTED_MODULE_43___default()(_context11 = " \n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n  <jobInfo xmlns=\"http://www.force.com/2009/06/asyncapi/dataload\">\n  <state>".concat(state, "</state>\n</jobInfo>\n      ")).call(_context11);
                           _context12.next = 6;
                           return bulk._request({
                             method: 'POST',
@@ -102808,11 +93742,11 @@ var Job = /*#__PURE__*/function (_EventEmitter) {
   }]);
 
   return Job;
-}(events__WEBPACK_IMPORTED_MODULE_50__["EventEmitter"]);
+}(events__WEBPACK_IMPORTED_MODULE_51__["EventEmitter"]);
 /*--------------------------------------------*/
 
 var PollingTimeoutError = /*#__PURE__*/function (_Error) {
-  _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_46___default()(PollingTimeoutError, _Error);
+  _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_47___default()(PollingTimeoutError, _Error);
 
   var _super2 = _createSuper(PollingTimeoutError);
 
@@ -102822,13 +93756,13 @@ var PollingTimeoutError = /*#__PURE__*/function (_Error) {
   function PollingTimeoutError(message, jobId, batchId) {
     var _this6;
 
-    _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_43___default()(this, PollingTimeoutError);
+    _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_44___default()(this, PollingTimeoutError);
 
     _this6 = _super2.call(this, message);
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this6), "jobId", void 0);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this6), "jobId", void 0);
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this6), "batchId", void 0);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this6), "batchId", void 0);
 
     _this6.name = 'PollingTimeout';
     _this6.jobId = jobId;
@@ -102837,10 +93771,10 @@ var PollingTimeoutError = /*#__PURE__*/function (_Error) {
   }
 
   return PollingTimeoutError;
-}( /*#__PURE__*/_babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_35___default()(Error));
+}( /*#__PURE__*/_babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_36___default()(Error));
 
 var JobPollingTimeoutError = /*#__PURE__*/function (_Error2) {
-  _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_46___default()(JobPollingTimeoutError, _Error2);
+  _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_47___default()(JobPollingTimeoutError, _Error2);
 
   var _super3 = _createSuper(JobPollingTimeoutError);
 
@@ -102850,11 +93784,11 @@ var JobPollingTimeoutError = /*#__PURE__*/function (_Error2) {
   function JobPollingTimeoutError(message, jobId) {
     var _this7;
 
-    _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_43___default()(this, JobPollingTimeoutError);
+    _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_44___default()(this, JobPollingTimeoutError);
 
     _this7 = _super3.call(this, message);
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this7), "jobId", void 0);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this7), "jobId", void 0);
 
     _this7.name = 'JobPollingTimeout';
     _this7.jobId = jobId;
@@ -102862,7 +93796,7 @@ var JobPollingTimeoutError = /*#__PURE__*/function (_Error2) {
   }
 
   return JobPollingTimeoutError;
-}( /*#__PURE__*/_babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_35___default()(Error));
+}( /*#__PURE__*/_babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_36___default()(Error));
 /*--------------------------------------------*/
 
 /**
@@ -102871,7 +93805,7 @@ var JobPollingTimeoutError = /*#__PURE__*/function (_Error2) {
 
 
 var Batch = /*#__PURE__*/function (_Writable) {
-  _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_46___default()(Batch, _Writable);
+  _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_47___default()(Batch, _Writable);
 
   var _super4 = _createSuper(Batch);
 
@@ -102881,31 +93815,31 @@ var Batch = /*#__PURE__*/function (_Writable) {
   function Batch(job, id) {
     var _this8;
 
-    _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_43___default()(this, Batch);
+    _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_44___default()(this, Batch);
 
     _this8 = _super4.call(this, {
       objectMode: true
     });
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this8), "job", void 0);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this8), "job", void 0);
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this8), "id", void 0);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this8), "id", void 0);
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this8), "_bulk", void 0);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this8), "_bulk", void 0);
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this8), "_uploadStream", void 0);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this8), "_uploadStream", void 0);
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this8), "_downloadStream", void 0);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this8), "_downloadStream", void 0);
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this8), "_dataStream", void 0);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this8), "_dataStream", void 0);
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this8), "_result", void 0);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this8), "_result", void 0);
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this8), "_error", void 0);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this8), "_error", void 0);
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this8), "run", _this8.execute);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this8), "run", _this8.execute);
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this8), "exec", _this8.execute);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this8), "exec", _this8.execute);
 
     _this8.job = job;
     _this8.id = id;
@@ -102921,17 +93855,17 @@ var Batch = /*#__PURE__*/function (_Writable) {
     var converterOptions = {
       nullValue: '#N/A'
     };
-    var uploadStream = _this8._uploadStream = new _record_stream__WEBPACK_IMPORTED_MODULE_53__[/* Serializable */ "b"]();
+    var uploadStream = _this8._uploadStream = new _record_stream__WEBPACK_IMPORTED_MODULE_54__[/* Serializable */ "b"]();
     var uploadDataStream = uploadStream.stream('csv', converterOptions);
-    var downloadStream = _this8._downloadStream = new _record_stream__WEBPACK_IMPORTED_MODULE_53__[/* Parsable */ "a"]();
+    var downloadStream = _this8._downloadStream = new _record_stream__WEBPACK_IMPORTED_MODULE_54__[/* Parsable */ "a"]();
     var downloadDataStream = downloadStream.stream('csv', converterOptions);
 
     _this8.on('finish', function () {
       return uploadStream.end();
     });
 
-    uploadDataStream.once('readable', /*#__PURE__*/_babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee8() {
-      return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee8$(_context14) {
+    uploadDataStream.once('readable', /*#__PURE__*/_babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee8() {
+      return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee8$(_context14) {
         while (1) {
           switch (_context14.prev = _context14.next) {
             case 0:
@@ -102959,7 +93893,7 @@ var Batch = /*#__PURE__*/function (_Writable) {
       }, _callee8, null, [[0, 6]]);
     }))); // duplex data stream, opened access to API programmers by Batch#stream()
 
-    _this8._dataStream = Object(_util_stream__WEBPACK_IMPORTED_MODULE_56__[/* concatStreamsAsDuplex */ "a"])(uploadDataStream, downloadDataStream);
+    _this8._dataStream = Object(_util_stream__WEBPACK_IMPORTED_MODULE_57__[/* concatStreamsAsDuplex */ "a"])(uploadDataStream, downloadDataStream);
     return _this8;
   }
   /**
@@ -102969,7 +93903,7 @@ var Batch = /*#__PURE__*/function (_Writable) {
    */
 
 
-  _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_44___default()(Batch, [{
+  _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_45___default()(Batch, [{
     key: "_createRequestStream",
     value: function _createRequestStream() {
       var _this9 = this;
@@ -102986,10 +93920,10 @@ var Batch = /*#__PURE__*/function (_Writable) {
         responseType: 'application/xml'
       });
 
-      _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee9() {
+      _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee9() {
         var _res2;
 
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee9$(_context15) {
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee9$(_context15) {
           while (1) {
             switch (_context15.prev = _context15.next) {
               case 0:
@@ -103033,7 +93967,7 @@ var Batch = /*#__PURE__*/function (_Writable) {
       var Id = record_.Id,
           type = record_.type,
           attributes = record_.attributes,
-          rrec = _babel_runtime_corejs3_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_34___default()(record_, ["Id", "type", "attributes"]);
+          rrec = _babel_runtime_corejs3_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_35___default()(record_, ["Id", "type", "attributes"]);
 
       var record;
 
@@ -103080,17 +94014,17 @@ var Batch = /*#__PURE__*/function (_Writable) {
         throw new Error('Batch already executed.');
       }
 
-      this._result = new _babel_runtime_corejs3_core_js_stable_promise__WEBPACK_IMPORTED_MODULE_37___default.a(function (resolve, reject) {
+      this._result = new _babel_runtime_corejs3_core_js_stable_promise__WEBPACK_IMPORTED_MODULE_38___default.a(function (resolve, reject) {
         _this10.once('response', resolve);
 
         _this10.once('error', reject);
       });
 
-      if (Object(_util_function__WEBPACK_IMPORTED_MODULE_57__[/* isObject */ "c"])(input) && 'pipe' in input && Object(_util_function__WEBPACK_IMPORTED_MODULE_57__[/* isFunction */ "a"])(input.pipe)) {
+      if (Object(_util_function__WEBPACK_IMPORTED_MODULE_58__[/* isObject */ "c"])(input) && 'pipe' in input && Object(_util_function__WEBPACK_IMPORTED_MODULE_58__[/* isFunction */ "a"])(input.pipe)) {
         // if input has stream.Readable interface
         input.pipe(this._dataStream);
       } else {
-        if (_babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_36___default()(input)) {
+        if (_babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_37___default()(input)) {
           var _iterator = _createForOfIteratorHelper(input),
               _step;
 
@@ -103098,7 +94032,7 @@ var Batch = /*#__PURE__*/function (_Writable) {
             for (_iterator.s(); !(_step = _iterator.n()).done;) {
               var record = _step.value;
 
-              for (var _i = 0, _Object$keys = _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_33___default()(record); _i < _Object$keys.length; _i++) {
+              for (var _i = 0, _Object$keys = _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_34___default()(record); _i < _Object$keys.length; _i++) {
                 var key = _Object$keys[_i];
 
                 if (typeof record[key] === 'boolean') {
@@ -103146,9 +94080,9 @@ var Batch = /*#__PURE__*/function (_Writable) {
   }, {
     key: "check",
     value: function () {
-      var _check = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee10() {
+      var _check = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee10() {
         var bulk, logger, jobId, batchId, res;
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee10$(_context16) {
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee10$(_context16) {
           while (1) {
             switch (_context16.prev = _context16.next) {
               case 0:
@@ -103210,10 +94144,10 @@ var Batch = /*#__PURE__*/function (_Writable) {
       var startTime = new Date().getTime();
 
       var poll = /*#__PURE__*/function () {
-        var _ref7 = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee11() {
+        var _ref7 = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee11() {
           var now, _err, res;
 
-          return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee11$(_context17) {
+          return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee11$(_context17) {
             while (1) {
               switch (_context17.prev = _context17.next) {
                 case 0:
@@ -103250,7 +94184,7 @@ var Batch = /*#__PURE__*/function (_Writable) {
 
                 case 15:
                   if (res.state === 'Failed') {
-                    if (_babel_runtime_corejs3_core_js_stable_parse_int__WEBPACK_IMPORTED_MODULE_32___default()(res.numberRecordsProcessed, 10) > 0) {
+                    if (_babel_runtime_corejs3_core_js_stable_parse_int__WEBPACK_IMPORTED_MODULE_33___default()(res.numberRecordsProcessed, 10) > 0) {
                       _this11.retrieve();
                     } else {
                       _this11.emit('error', new Error(res.stateMessage));
@@ -103260,7 +94194,7 @@ var Batch = /*#__PURE__*/function (_Writable) {
                   } else {
                     _this11.emit('progress', res);
 
-                    _babel_runtime_corejs3_core_js_stable_set_timeout__WEBPACK_IMPORTED_MODULE_31___default()(poll, interval);
+                    _babel_runtime_corejs3_core_js_stable_set_timeout__WEBPACK_IMPORTED_MODULE_32___default()(poll, interval);
                   }
 
                 case 16:
@@ -103276,7 +94210,7 @@ var Batch = /*#__PURE__*/function (_Writable) {
         };
       }();
 
-      _babel_runtime_corejs3_core_js_stable_set_timeout__WEBPACK_IMPORTED_MODULE_31___default()(poll, interval);
+      _babel_runtime_corejs3_core_js_stable_set_timeout__WEBPACK_IMPORTED_MODULE_32___default()(poll, interval);
     }
     /**
      * Retrieve batch result
@@ -103285,10 +94219,10 @@ var Batch = /*#__PURE__*/function (_Writable) {
   }, {
     key: "retrieve",
     value: function () {
-      var _retrieve = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee12() {
+      var _retrieve = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee12() {
         var bulk, jobId, job, batchId, resp, results, _context18, _res3, resultId, _res4;
 
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee12$(_context19) {
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee12$(_context19) {
           while (1) {
             switch (_context19.prev = _context19.next) {
               case 0:
@@ -103318,7 +94252,7 @@ var Batch = /*#__PURE__*/function (_Writable) {
                 if (job.operation === 'query' || job.operation === 'queryAll') {
                   _res3 = resp;
                   resultId = _res3['result-list'].result;
-                  results = _babel_runtime_corejs3_core_js_stable_instance_map__WEBPACK_IMPORTED_MODULE_30___default()(_context18 = _babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_36___default()(resultId) ? resultId : [resultId]).call(_context18, function (id) {
+                  results = _babel_runtime_corejs3_core_js_stable_instance_map__WEBPACK_IMPORTED_MODULE_31___default()(_context18 = _babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_37___default()(resultId) ? resultId : [resultId]).call(_context18, function (id) {
                     return {
                       id: id,
                       batchId: batchId,
@@ -103327,7 +94261,7 @@ var Batch = /*#__PURE__*/function (_Writable) {
                   });
                 } else {
                   _res4 = resp;
-                  results = _babel_runtime_corejs3_core_js_stable_instance_map__WEBPACK_IMPORTED_MODULE_30___default()(_res4).call(_res4, function (ret) {
+                  results = _babel_runtime_corejs3_core_js_stable_instance_map__WEBPACK_IMPORTED_MODULE_31___default()(_res4).call(_res4, function (ret) {
                     return {
                       id: ret.Id || null,
                       success: ret.Success === 'true',
@@ -103375,7 +94309,7 @@ var Batch = /*#__PURE__*/function (_Writable) {
         throw new Error('Batch not started.');
       }
 
-      var resultStream = new _record_stream__WEBPACK_IMPORTED_MODULE_53__[/* Parsable */ "a"]();
+      var resultStream = new _record_stream__WEBPACK_IMPORTED_MODULE_54__[/* Parsable */ "a"]();
       var resultDataStream = resultStream.stream('csv');
 
       this._bulk._request({
@@ -103389,7 +94323,7 @@ var Batch = /*#__PURE__*/function (_Writable) {
   }]);
 
   return Batch;
-}(stream__WEBPACK_IMPORTED_MODULE_51__["Writable"]);
+}(stream__WEBPACK_IMPORTED_MODULE_52__["Writable"]);
 /*--------------------------------------------*/
 
 /**
@@ -103397,17 +94331,17 @@ var Batch = /*#__PURE__*/function (_Writable) {
  */
 
 var BulkApi = /*#__PURE__*/function (_HttpApi) {
-  _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_46___default()(BulkApi, _HttpApi);
+  _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_47___default()(BulkApi, _HttpApi);
 
   var _super5 = _createSuper(BulkApi);
 
   function BulkApi() {
-    _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_43___default()(this, BulkApi);
+    _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_44___default()(this, BulkApi);
 
     return _super5.apply(this, arguments);
   }
 
-  _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_44___default()(BulkApi, [{
+  _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_45___default()(BulkApi, [{
     key: "beforeSend",
     value: function beforeSend(request) {
       var _this$_conn$accessTok;
@@ -103437,23 +94371,23 @@ var BulkApi = /*#__PURE__*/function (_HttpApi) {
   }]);
 
   return BulkApi;
-}(_http_api__WEBPACK_IMPORTED_MODULE_54__[/* default */ "a"]);
+}(_http_api__WEBPACK_IMPORTED_MODULE_55__[/* default */ "a"]);
 
 var BulkApiV2 = /*#__PURE__*/function (_HttpApi2) {
-  _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_46___default()(BulkApiV2, _HttpApi2);
+  _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_47___default()(BulkApiV2, _HttpApi2);
 
   var _super6 = _createSuper(BulkApiV2);
 
   function BulkApiV2() {
-    _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_43___default()(this, BulkApiV2);
+    _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_44___default()(this, BulkApiV2);
 
     return _super6.apply(this, arguments);
   }
 
-  _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_44___default()(BulkApiV2, [{
+  _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_45___default()(BulkApiV2, [{
     key: "hasErrorInResponseBody",
     value: function hasErrorInResponseBody(body) {
-      return _babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_36___default()(body) && _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_29___default()(body[0]) === 'object' && 'errorCode' in body[0];
+      return _babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_37___default()(body) && _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_30___default()(body[0]) === 'object' && 'errorCode' in body[0];
     }
   }, {
     key: "isSessionExpired",
@@ -103471,7 +94405,7 @@ var BulkApiV2 = /*#__PURE__*/function (_HttpApi2) {
   }]);
 
   return BulkApiV2;
-}(_http_api__WEBPACK_IMPORTED_MODULE_54__[/* default */ "a"]);
+}(_http_api__WEBPACK_IMPORTED_MODULE_55__[/* default */ "a"]);
 /*--------------------------------------------*/
 
 /**
@@ -103495,15 +94429,15 @@ var Bulk = /*#__PURE__*/function () {
    *
    */
   function Bulk(conn) {
-    _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_43___default()(this, Bulk);
+    _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_44___default()(this, Bulk);
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(this, "_conn", void 0);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(this, "_conn", void 0);
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(this, "_logger", void 0);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(this, "_logger", void 0);
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(this, "pollInterval", 1000);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(this, "pollInterval", 1000);
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(this, "pollTimeout", 10000);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(this, "pollTimeout", 10000);
 
     this._conn = conn;
     this._logger = conn._logger;
@@ -103513,14 +94447,14 @@ var Bulk = /*#__PURE__*/function () {
    */
 
 
-  _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_44___default()(Bulk, [{
+  _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_45___default()(Bulk, [{
     key: "_request",
     value: function _request(request_) {
       var conn = this._conn;
 
       var path = request_.path,
           responseType = request_.responseType,
-          rreq = _babel_runtime_corejs3_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_34___default()(request_, ["path", "responseType"]);
+          rreq = _babel_runtime_corejs3_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_35___default()(request_, ["path", "responseType"]);
 
       var baseUrl = [conn.instanceUrl, 'services/async', conn.version].join('/');
 
@@ -103543,7 +94477,7 @@ var Bulk = /*#__PURE__*/function () {
 
       var options = {};
 
-      if (typeof optionsOrInput === 'string' || _babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_36___default()(optionsOrInput) || Object(_util_function__WEBPACK_IMPORTED_MODULE_57__[/* isObject */ "c"])(optionsOrInput) && 'pipe' in optionsOrInput && typeof optionsOrInput.pipe === 'function') {
+      if (typeof optionsOrInput === 'string' || _babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_37___default()(optionsOrInput) || Object(_util_function__WEBPACK_IMPORTED_MODULE_58__[/* isObject */ "c"])(optionsOrInput) && 'pipe' in optionsOrInput && typeof optionsOrInput.pipe === 'function') {
         // when options is not plain hash object, it is omitted
         input = optionsOrInput;
       } else {
@@ -103586,12 +94520,12 @@ var Bulk = /*#__PURE__*/function () {
       }
 
       var type = m[1];
-      var recordStream = new _record_stream__WEBPACK_IMPORTED_MODULE_53__[/* Parsable */ "a"]();
+      var recordStream = new _record_stream__WEBPACK_IMPORTED_MODULE_54__[/* Parsable */ "a"]();
       var dataStream = recordStream.stream('csv');
 
-      _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee13() {
+      _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee13() {
         var results, streams;
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee13$(_context20) {
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee13$(_context20) {
           while (1) {
             switch (_context20.prev = _context20.next) {
               case 0:
@@ -103601,10 +94535,10 @@ var Bulk = /*#__PURE__*/function () {
 
               case 3:
                 results = _context20.sent;
-                streams = _babel_runtime_corejs3_core_js_stable_instance_map__WEBPACK_IMPORTED_MODULE_30___default()(results).call(results, function (result) {
+                streams = _babel_runtime_corejs3_core_js_stable_instance_map__WEBPACK_IMPORTED_MODULE_31___default()(results).call(results, function (result) {
                   return _this13.job(result.jobId).batch(result.batchId).result(result.id).stream();
                 });
-                multistream__WEBPACK_IMPORTED_MODULE_52___default()(streams).pipe(dataStream);
+                multistream__WEBPACK_IMPORTED_MODULE_53___default()(streams).pipe(dataStream);
                 _context20.next = 11;
                 break;
 
@@ -103650,7 +94584,7 @@ var Bulk = /*#__PURE__*/function () {
   return Bulk;
 }();
 
-var _connection = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_23___default.a();
+var _connection = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_24___default.a();
 
 var BulkV2 = /*#__PURE__*/function () {
   /**
@@ -103662,29 +94596,29 @@ var BulkV2 = /*#__PURE__*/function () {
    * @type {Number}
    */
   function BulkV2(connection) {
-    _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_43___default()(this, BulkV2);
+    _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_44___default()(this, BulkV2);
 
     _connection.set(this, {
       writable: true,
       value: void 0
     });
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(this, "pollInterval", 1000);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(this, "pollInterval", 1000);
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(this, "pollTimeout", 10000);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(this, "pollTimeout", 10000);
 
-    _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_28___default()(this, _connection, connection);
+    _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_29___default()(this, _connection, connection);
   }
   /**
    * Create a new job instance
    */
 
 
-  _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_44___default()(BulkV2, [{
+  _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_45___default()(BulkV2, [{
     key: "createJob",
     value: function createJob(options) {
       return new IngestJobV2({
-        connection: _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _connection),
+        connection: _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _connection),
         jobInfo: options,
         pollingOptions: this
       });
@@ -103693,7 +94627,7 @@ var BulkV2 = /*#__PURE__*/function () {
     key: "job",
     value: function job(options) {
       return new IngestJobV2({
-        connection: _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _connection),
+        connection: _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _connection),
         jobInfo: options,
         pollingOptions: this
       });
@@ -103705,9 +94639,9 @@ var BulkV2 = /*#__PURE__*/function () {
   }, {
     key: "loadAndWaitForResults",
     value: function () {
-      var _loadAndWaitForResults = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee14(options) {
+      var _loadAndWaitForResults = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee14(options) {
         var job;
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee14$(_context21) {
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee14$(_context21) {
           while (1) {
             switch (_context21.prev = _context21.next) {
               case 0:
@@ -103769,14 +94703,14 @@ var BulkV2 = /*#__PURE__*/function () {
   }, {
     key: "query",
     value: function () {
-      var _query = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee15(soql, options) {
+      var _query = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee15(soql, options) {
         var queryJob;
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee15$(_context22) {
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee15$(_context22) {
           while (1) {
             switch (_context22.prev = _context22.next) {
               case 0:
                 queryJob = new QueryJobV2({
-                  connection: _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _connection),
+                  connection: _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _connection),
                   operation: 'query',
                   query: soql,
                   pollingOptions: this
@@ -103828,83 +94762,87 @@ var BulkV2 = /*#__PURE__*/function () {
   return BulkV2;
 }();
 
-var _connection2 = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_23___default.a();
+var _connection2 = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_24___default.a();
 
-var _operation2 = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_23___default.a();
+var _operation2 = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_24___default.a();
 
-var _query2 = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_23___default.a();
+var _query2 = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_24___default.a();
 
-var _pollingOptions = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_23___default.a();
+var _pollingOptions = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_24___default.a();
 
-var _queryResults = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_23___default.a();
+var _queryResults = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_24___default.a();
 
-var _error = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_23___default.a();
+var _error = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_24___default.a();
 
 var QueryJobV2 = /*#__PURE__*/function (_EventEmitter2) {
-  _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_46___default()(QueryJobV2, _EventEmitter2);
+  _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_47___default()(QueryJobV2, _EventEmitter2);
 
   var _super7 = _createSuper(QueryJobV2);
 
   function QueryJobV2(options) {
     var _this14;
 
-    _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_43___default()(this, QueryJobV2);
+    _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_44___default()(this, QueryJobV2);
 
     _this14 = _super7.call(this);
 
-    _connection2.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this14), {
+    _connection2.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this14), {
       writable: true,
       value: void 0
     });
 
-    _operation2.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this14), {
+    _operation2.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this14), {
       writable: true,
       value: void 0
     });
 
-    _query2.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this14), {
+    _query2.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this14), {
       writable: true,
       value: void 0
     });
 
-    _pollingOptions.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this14), {
+    _pollingOptions.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this14), {
       writable: true,
       value: void 0
     });
 
-    _queryResults.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this14), {
+    _queryResults.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this14), {
       writable: true,
       value: void 0
     });
 
-    _error.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this14), {
+    _error.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this14), {
       writable: true,
       value: void 0
     });
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this14), "jobInfo", void 0);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this14), "jobInfo", void 0);
 
-    _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_28___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this14), _connection2, options.connection);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this14), "locator", void 0);
 
-    _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_28___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this14), _operation2, options.operation);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this14), "finished", false);
 
-    _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_28___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this14), _query2, options.query);
+    _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_29___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this14), _connection2, options.connection);
 
-    _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_28___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this14), _pollingOptions, options.pollingOptions); // default error handler to keep the latest error
+    _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_29___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this14), _operation2, options.operation);
+
+    _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_29___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this14), _query2, options.query);
+
+    _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_29___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this14), _pollingOptions, options.pollingOptions); // default error handler to keep the latest error
 
 
     _this14.on('error', function (error) {
-      return _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_28___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this14), _error, error);
+      return _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_29___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this14), _error, error);
     });
 
     return _this14;
   }
 
-  _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_44___default()(QueryJobV2, [{
+  _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_45___default()(QueryJobV2, [{
     key: "open",
     value: function () {
-      var _open = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee16() {
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee16$(_context23) {
+      var _open = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee16() {
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee16$(_context23) {
           while (1) {
             switch (_context23.prev = _context23.next) {
               case 0:
@@ -103913,9 +94851,9 @@ var QueryJobV2 = /*#__PURE__*/function (_EventEmitter2) {
                 return this.createQueryRequest({
                   method: 'POST',
                   path: '',
-                  body: _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_26___default()({
-                    operation: _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _operation2),
-                    query: _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _query2)
+                  body: _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_27___default()({
+                    operation: _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _operation2),
+                    query: _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _query2)
                   }),
                   headers: {
                     'Content-Type': 'application/json; charset=utf-8'
@@ -103956,10 +94894,10 @@ var QueryJobV2 = /*#__PURE__*/function (_EventEmitter2) {
   }, {
     key: "abort",
     value: function () {
-      var _abort2 = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee17() {
+      var _abort2 = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee17() {
         var _this$jobInfo, state;
 
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee17$(_context24) {
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee17$(_context24) {
           while (1) {
             switch (_context24.prev = _context24.next) {
               case 0:
@@ -103969,7 +94907,7 @@ var QueryJobV2 = /*#__PURE__*/function (_EventEmitter2) {
                 return this.createQueryRequest({
                   method: 'PATCH',
                   path: "/".concat((_this$jobInfo = this.jobInfo) === null || _this$jobInfo === void 0 ? void 0 : _this$jobInfo.id),
-                  body: _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_26___default()({
+                  body: _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_27___default()({
                     state: state
                   }),
                   headers: {
@@ -104007,7 +94945,7 @@ var QueryJobV2 = /*#__PURE__*/function (_EventEmitter2) {
   }, {
     key: "poll",
     value: function () {
-      var _poll = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee18() {
+      var _poll = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee18() {
         var interval,
             timeout,
             jobId,
@@ -104016,17 +94954,17 @@ var QueryJobV2 = /*#__PURE__*/function (_EventEmitter2) {
             timeoutError,
             _args18 = arguments;
 
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee18$(_context25) {
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee18$(_context25) {
           while (1) {
             switch (_context25.prev = _context25.next) {
               case 0:
-                interval = _args18.length > 0 && _args18[0] !== undefined ? _args18[0] : _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _pollingOptions).pollInterval;
-                timeout = _args18.length > 1 && _args18[1] !== undefined ? _args18[1] : _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _pollingOptions).pollTimeout;
+                interval = _args18.length > 0 && _args18[0] !== undefined ? _args18[0] : _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _pollingOptions).pollInterval;
+                timeout = _args18.length > 1 && _args18[1] !== undefined ? _args18[1] : _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _pollingOptions).pollTimeout;
                 jobId = getJobIdOrError(this.jobInfo);
-                startTime = _babel_runtime_corejs3_core_js_stable_date_now__WEBPACK_IMPORTED_MODULE_25___default()();
+                startTime = _babel_runtime_corejs3_core_js_stable_date_now__WEBPACK_IMPORTED_MODULE_26___default()();
 
               case 4:
-                if (!(startTime + timeout > _babel_runtime_corejs3_core_js_stable_date_now__WEBPACK_IMPORTED_MODULE_25___default()())) {
+                if (!(startTime + timeout > _babel_runtime_corejs3_core_js_stable_date_now__WEBPACK_IMPORTED_MODULE_26___default()())) {
                   _context25.next = 29;
                   break;
                 }
@@ -104102,9 +95040,9 @@ var QueryJobV2 = /*#__PURE__*/function (_EventEmitter2) {
   }, {
     key: "check",
     value: function () {
-      var _check2 = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee19() {
+      var _check2 = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee19() {
         var jobInfo;
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee19$(_context26) {
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee19$(_context26) {
           while (1) {
             switch (_context26.prev = _context26.next) {
               case 0:
@@ -104142,50 +95080,94 @@ var QueryJobV2 = /*#__PURE__*/function (_EventEmitter2) {
       return check;
     }()
   }, {
+    key: "request",
+    value: function (_request2) {
+      function request(_x5) {
+        return _request2.apply(this, arguments);
+      }
+
+      request.toString = function () {
+        return _request2.toString();
+      };
+
+      return request;
+    }(function (request) {
+      var _this15 = this;
+
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      // if request is simple string, regard it as url in GET method
+      var request_ = typeof request === 'string' ? {
+        method: 'GET',
+        url: request
+      } : request;
+      var httpApi = new _http_api__WEBPACK_IMPORTED_MODULE_55__[/* default */ "a"](_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _connection2), options);
+      httpApi.on('response', function (response) {
+        _this15.locator = response.headers['sforce-locator'];
+      });
+      return httpApi.request(request_);
+    })
+  }, {
+    key: "getResultsUrl",
+    value: function getResultsUrl() {
+      var _context27, _context28, _context29;
+
+      var url = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_42___default()(_context27 = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_42___default()(_context28 = "".concat(_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _connection2).instanceUrl, "/services/data/v")).call(_context28, _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _connection2).version, "/jobs/query/")).call(_context27, getJobIdOrError(this.jobInfo), "/results");
+
+      return this.locator ? _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_42___default()(_context29 = "".concat(url, "?locator=")).call(_context29, this.locator) : url;
+    }
+  }, {
     key: "getResults",
     value: function () {
-      var _getResults = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee20() {
-        var results;
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee20$(_context27) {
-          while (1) {
-            switch (_context27.prev = _context27.next) {
-              case 0:
-                _context27.prev = 0;
+      var _getResults = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee20() {
+        var _context30, nextResults;
 
-                if (!_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _queryResults)) {
-                  _context27.next = 3;
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee20$(_context31) {
+          while (1) {
+            switch (_context31.prev = _context31.next) {
+              case 0:
+                if (!(this.finished && _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _queryResults))) {
+                  _context31.next = 2;
                   break;
                 }
 
-                return _context27.abrupt("return", _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _queryResults));
+                return _context31.abrupt("return", _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _queryResults));
+
+              case 2:
+                _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_29___default()(this, _queryResults, []);
 
               case 3:
-                _context27.next = 5;
-                return this.createQueryRequest({
+                if (!(this.locator !== 'null')) {
+                  _context31.next = 10;
+                  break;
+                }
+
+                _context31.next = 6;
+                return this.request({
                   method: 'GET',
-                  path: "/".concat(getJobIdOrError(this.jobInfo), "/results"),
-                  responseType: 'text/csv'
+                  url: this.getResultsUrl(),
+                  headers: {
+                    'Accept': 'text/csv'
+                  }
                 });
 
-              case 5:
-                results = _context27.sent;
+              case 6:
+                nextResults = _context31.sent;
 
-                _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_28___default()(this, _queryResults, results !== null && results !== void 0 ? results : []);
+                _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_29___default()(this, _queryResults, _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_42___default()(_context30 = _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _queryResults)).call(_context30, nextResults));
 
-                return _context27.abrupt("return", _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _queryResults));
+                _context31.next = 3;
+                break;
 
               case 10:
-                _context27.prev = 10;
-                _context27.t0 = _context27["catch"](0);
-                this.emit('error', _context27.t0);
-                throw _context27.t0;
+                this.finished = true;
+                return _context31.abrupt("return", _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _queryResults));
 
-              case 14:
+              case 12:
               case "end":
-                return _context27.stop();
+                return _context31.stop();
             }
           }
-        }, _callee20, this, [[0, 10]]);
+        }, _callee20, this);
       }));
 
       function getResults() {
@@ -104197,19 +95179,19 @@ var QueryJobV2 = /*#__PURE__*/function (_EventEmitter2) {
   }, {
     key: "delete",
     value: function () {
-      var _delete2 = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee21() {
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee21$(_context28) {
+      var _delete2 = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee21() {
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee21$(_context32) {
           while (1) {
-            switch (_context28.prev = _context28.next) {
+            switch (_context32.prev = _context32.next) {
               case 0:
-                return _context28.abrupt("return", this.createQueryRequest({
+                return _context32.abrupt("return", this.createQueryRequest({
                   method: 'DELETE',
                   path: "/".concat(getJobIdOrError(this.jobInfo))
                 }));
 
               case 1:
               case "end":
-                return _context28.stop();
+                return _context32.stop();
             }
           }
         }, _callee21, this);
@@ -104226,8 +95208,8 @@ var QueryJobV2 = /*#__PURE__*/function (_EventEmitter2) {
     value: function createQueryRequest(request) {
       var path = request.path,
           responseType = request.responseType;
-      var baseUrl = [_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _connection2).instanceUrl, 'services/data', "v".concat(_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _connection2).version), 'jobs/query'].join('/');
-      return new BulkApiV2(_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _connection2), {
+      var baseUrl = [_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _connection2).instanceUrl, 'services/data', "v".concat(_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _connection2).version), 'jobs/query'].join('/');
+      return new BulkApiV2(_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _connection2), {
         responseType: responseType
       }).request(_objectSpread(_objectSpread({}, request), {}, {
         url: baseUrl + path
@@ -104236,27 +95218,27 @@ var QueryJobV2 = /*#__PURE__*/function (_EventEmitter2) {
   }]);
 
   return QueryJobV2;
-}(events__WEBPACK_IMPORTED_MODULE_50__["EventEmitter"]);
+}(events__WEBPACK_IMPORTED_MODULE_51__["EventEmitter"]);
 /**
  * Class for Bulk API V2 Ingest Job
  */
 
-var _connection3 = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_23___default.a();
+var _connection3 = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_24___default.a();
 
-var _pollingOptions2 = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_23___default.a();
+var _pollingOptions2 = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_24___default.a();
 
-var _jobData = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_23___default.a();
+var _jobData = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_24___default.a();
 
-var _bulkJobSuccessfulResults = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_23___default.a();
+var _bulkJobSuccessfulResults = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_24___default.a();
 
-var _bulkJobFailedResults = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_23___default.a();
+var _bulkJobFailedResults = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_24___default.a();
 
-var _bulkJobUnprocessedRecords = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_23___default.a();
+var _bulkJobUnprocessedRecords = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_24___default.a();
 
-var _error2 = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_23___default.a();
+var _error2 = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_24___default.a();
 
 var IngestJobV2 = /*#__PURE__*/function (_EventEmitter3) {
-  _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_46___default()(IngestJobV2, _EventEmitter3);
+  _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_47___default()(IngestJobV2, _EventEmitter3);
 
   var _super8 = _createSuper(IngestJobV2);
 
@@ -104264,86 +95246,86 @@ var IngestJobV2 = /*#__PURE__*/function (_EventEmitter3) {
    *
    */
   function IngestJobV2(options) {
-    var _this15;
+    var _this16;
 
-    _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_43___default()(this, IngestJobV2);
+    _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_44___default()(this, IngestJobV2);
 
-    _this15 = _super8.call(this);
+    _this16 = _super8.call(this);
 
-    _connection3.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this15), {
+    _connection3.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this16), {
       writable: true,
       value: void 0
     });
 
-    _pollingOptions2.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this15), {
+    _pollingOptions2.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this16), {
       writable: true,
       value: void 0
     });
 
-    _jobData.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this15), {
+    _jobData.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this16), {
       writable: true,
       value: void 0
     });
 
-    _bulkJobSuccessfulResults.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this15), {
+    _bulkJobSuccessfulResults.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this16), {
       writable: true,
       value: void 0
     });
 
-    _bulkJobFailedResults.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this15), {
+    _bulkJobFailedResults.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this16), {
       writable: true,
       value: void 0
     });
 
-    _bulkJobUnprocessedRecords.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this15), {
+    _bulkJobUnprocessedRecords.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this16), {
       writable: true,
       value: void 0
     });
 
-    _error2.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this15), {
+    _error2.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this16), {
       writable: true,
       value: void 0
     });
 
-    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_49___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this15), "jobInfo", void 0);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_50___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this16), "jobInfo", void 0);
 
-    _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_28___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this15), _connection3, options.connection);
+    _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_29___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this16), _connection3, options.connection);
 
-    _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_28___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this15), _pollingOptions2, options.pollingOptions);
+    _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_29___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this16), _pollingOptions2, options.pollingOptions);
 
-    _this15.jobInfo = options.jobInfo;
+    _this16.jobInfo = options.jobInfo;
 
-    _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_28___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this15), _jobData, new JobDataV2({
+    _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_29___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this16), _jobData, new JobDataV2({
       createRequest: function createRequest(request) {
-        return _this15.createIngestRequest(request);
+        return _this16.createIngestRequest(request);
       },
-      job: _babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this15)
+      job: _babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this16)
     })); // default error handler to keep the latest error
 
 
-    _this15.on('error', function (error) {
-      return _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_28___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this15), _error2, error);
+    _this16.on('error', function (error) {
+      return _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_29___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this16), _error2, error);
     });
 
-    return _this15;
+    return _this16;
   }
 
-  _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_44___default()(IngestJobV2, [{
+  _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_45___default()(IngestJobV2, [{
     key: "open",
     value: function () {
-      var _open2 = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee22() {
+      var _open2 = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee22() {
         var _this$jobInfo2, _this$jobInfo3, _this$jobInfo4, _this$jobInfo5;
 
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee22$(_context29) {
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee22$(_context33) {
           while (1) {
-            switch (_context29.prev = _context29.next) {
+            switch (_context33.prev = _context33.next) {
               case 0:
-                _context29.prev = 0;
-                _context29.next = 3;
+                _context33.prev = 0;
+                _context33.next = 3;
                 return this.createIngestRequest({
                   method: 'POST',
                   path: '',
-                  body: _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_26___default()({
+                  body: _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_27___default()({
                     assignmentRuleId: (_this$jobInfo2 = this.jobInfo) === null || _this$jobInfo2 === void 0 ? void 0 : _this$jobInfo2.assignmentRuleId,
                     externalIdFieldName: (_this$jobInfo3 = this.jobInfo) === null || _this$jobInfo3 === void 0 ? void 0 : _this$jobInfo3.externalIdFieldName,
                     object: (_this$jobInfo4 = this.jobInfo) === null || _this$jobInfo4 === void 0 ? void 0 : _this$jobInfo4.object,
@@ -104356,20 +95338,20 @@ var IngestJobV2 = /*#__PURE__*/function (_EventEmitter3) {
                 });
 
               case 3:
-                this.jobInfo = _context29.sent;
+                this.jobInfo = _context33.sent;
                 this.emit('open');
-                _context29.next = 11;
+                _context33.next = 11;
                 break;
 
               case 7:
-                _context29.prev = 7;
-                _context29.t0 = _context29["catch"](0);
-                this.emit('error', _context29.t0);
-                throw _context29.t0;
+                _context33.prev = 7;
+                _context33.t0 = _context33["catch"](0);
+                this.emit('error', _context33.t0);
+                throw _context33.t0;
 
               case 11:
               case "end":
-                return _context29.stop();
+                return _context33.stop();
             }
           }
         }, _callee22, this, [[0, 7]]);
@@ -104384,23 +95366,23 @@ var IngestJobV2 = /*#__PURE__*/function (_EventEmitter3) {
   }, {
     key: "uploadData",
     value: function () {
-      var _uploadData = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee23(input) {
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee23$(_context30) {
+      var _uploadData = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee23(input) {
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee23$(_context34) {
           while (1) {
-            switch (_context30.prev = _context30.next) {
+            switch (_context34.prev = _context34.next) {
               case 0:
-                _context30.next = 2;
-                return _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _jobData).execute(input);
+                _context34.next = 2;
+                return _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _jobData).execute(input);
 
               case 2:
               case "end":
-                return _context30.stop();
+                return _context34.stop();
             }
           }
         }, _callee23, this);
       }));
 
-      function uploadData(_x5) {
+      function uploadData(_x6) {
         return _uploadData.apply(this, arguments);
       }
 
@@ -104409,23 +95391,23 @@ var IngestJobV2 = /*#__PURE__*/function (_EventEmitter3) {
   }, {
     key: "getAllResults",
     value: function () {
-      var _getAllResults = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee24() {
+      var _getAllResults = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee24() {
         var _yield$Promise$all, _yield$Promise$all2, successfulResults, failedResults, unprocessedRecords;
 
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee24$(_context31) {
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee24$(_context35) {
           while (1) {
-            switch (_context31.prev = _context31.next) {
+            switch (_context35.prev = _context35.next) {
               case 0:
-                _context31.next = 2;
-                return _babel_runtime_corejs3_core_js_stable_promise__WEBPACK_IMPORTED_MODULE_37___default.a.all([this.getSuccessfulResults(), this.getFailedResults(), this.getUnprocessedRecords()]);
+                _context35.next = 2;
+                return _babel_runtime_corejs3_core_js_stable_promise__WEBPACK_IMPORTED_MODULE_38___default.a.all([this.getSuccessfulResults(), this.getFailedResults(), this.getUnprocessedRecords()]);
 
               case 2:
-                _yield$Promise$all = _context31.sent;
-                _yield$Promise$all2 = _babel_runtime_corejs3_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_24___default()(_yield$Promise$all, 3);
+                _yield$Promise$all = _context35.sent;
+                _yield$Promise$all2 = _babel_runtime_corejs3_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_25___default()(_yield$Promise$all, 3);
                 successfulResults = _yield$Promise$all2[0];
                 failedResults = _yield$Promise$all2[1];
                 unprocessedRecords = _yield$Promise$all2[2];
-                return _context31.abrupt("return", {
+                return _context35.abrupt("return", {
                   successfulResults: successfulResults,
                   failedResults: failedResults,
                   unprocessedRecords: unprocessedRecords
@@ -104433,7 +95415,7 @@ var IngestJobV2 = /*#__PURE__*/function (_EventEmitter3) {
 
               case 8:
               case "end":
-                return _context31.stop();
+                return _context35.stop();
             }
           }
         }, _callee24, this);
@@ -104452,19 +95434,19 @@ var IngestJobV2 = /*#__PURE__*/function (_EventEmitter3) {
   }, {
     key: "close",
     value: function () {
-      var _close2 = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee25() {
+      var _close2 = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee25() {
         var state;
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee25$(_context32) {
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee25$(_context36) {
           while (1) {
-            switch (_context32.prev = _context32.next) {
+            switch (_context36.prev = _context36.next) {
               case 0:
-                _context32.prev = 0;
+                _context36.prev = 0;
                 state = 'UploadComplete';
-                _context32.next = 4;
+                _context36.next = 4;
                 return this.createIngestRequest({
                   method: 'PATCH',
                   path: "/".concat(this.jobInfo.id),
-                  body: _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_26___default()({
+                  body: _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_27___default()({
                     state: state
                   }),
                   headers: {
@@ -104474,20 +95456,20 @@ var IngestJobV2 = /*#__PURE__*/function (_EventEmitter3) {
                 });
 
               case 4:
-                this.jobInfo = _context32.sent;
+                this.jobInfo = _context36.sent;
                 this.emit('uploadcomplete');
-                _context32.next = 12;
+                _context36.next = 12;
                 break;
 
               case 8:
-                _context32.prev = 8;
-                _context32.t0 = _context32["catch"](0);
-                this.emit('error', _context32.t0);
-                throw _context32.t0;
+                _context36.prev = 8;
+                _context36.t0 = _context36["catch"](0);
+                this.emit('error', _context36.t0);
+                throw _context36.t0;
 
               case 12:
               case "end":
-                return _context32.stop();
+                return _context36.stop();
             }
           }
         }, _callee25, this, [[0, 8]]);
@@ -104506,19 +95488,19 @@ var IngestJobV2 = /*#__PURE__*/function (_EventEmitter3) {
   }, {
     key: "abort",
     value: function () {
-      var _abort3 = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee26() {
+      var _abort3 = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee26() {
         var state;
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee26$(_context33) {
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee26$(_context37) {
           while (1) {
-            switch (_context33.prev = _context33.next) {
+            switch (_context37.prev = _context37.next) {
               case 0:
-                _context33.prev = 0;
+                _context37.prev = 0;
                 state = 'Aborted';
-                _context33.next = 4;
+                _context37.next = 4;
                 return this.createIngestRequest({
                   method: 'PATCH',
                   path: "/".concat(this.jobInfo.id),
-                  body: _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_26___default()({
+                  body: _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_27___default()({
                     state: state
                   }),
                   headers: {
@@ -104528,20 +95510,20 @@ var IngestJobV2 = /*#__PURE__*/function (_EventEmitter3) {
                 });
 
               case 4:
-                this.jobInfo = _context33.sent;
+                this.jobInfo = _context37.sent;
                 this.emit('aborted');
-                _context33.next = 12;
+                _context37.next = 12;
                 break;
 
               case 8:
-                _context33.prev = 8;
-                _context33.t0 = _context33["catch"](0);
-                this.emit('error', _context33.t0);
-                throw _context33.t0;
+                _context37.prev = 8;
+                _context37.t0 = _context37["catch"](0);
+                this.emit('error', _context37.t0);
+                throw _context37.t0;
 
               case 12:
               case "end":
-                return _context33.stop();
+                return _context37.stop();
             }
           }
         }, _callee26, this, [[0, 8]]);
@@ -104556,7 +95538,7 @@ var IngestJobV2 = /*#__PURE__*/function (_EventEmitter3) {
   }, {
     key: "poll",
     value: function () {
-      var _poll2 = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee27() {
+      var _poll2 = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee27() {
         var interval,
             timeout,
             jobId,
@@ -104565,29 +95547,29 @@ var IngestJobV2 = /*#__PURE__*/function (_EventEmitter3) {
             timeoutError,
             _args27 = arguments;
 
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee27$(_context34) {
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee27$(_context38) {
           while (1) {
-            switch (_context34.prev = _context34.next) {
+            switch (_context38.prev = _context38.next) {
               case 0:
-                interval = _args27.length > 0 && _args27[0] !== undefined ? _args27[0] : _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _pollingOptions2).pollInterval;
-                timeout = _args27.length > 1 && _args27[1] !== undefined ? _args27[1] : _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _pollingOptions2).pollTimeout;
+                interval = _args27.length > 0 && _args27[0] !== undefined ? _args27[0] : _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _pollingOptions2).pollInterval;
+                timeout = _args27.length > 1 && _args27[1] !== undefined ? _args27[1] : _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _pollingOptions2).pollTimeout;
                 jobId = getJobIdOrError(this.jobInfo);
-                startTime = _babel_runtime_corejs3_core_js_stable_date_now__WEBPACK_IMPORTED_MODULE_25___default()();
+                startTime = _babel_runtime_corejs3_core_js_stable_date_now__WEBPACK_IMPORTED_MODULE_26___default()();
 
               case 4:
-                if (!(startTime + timeout > _babel_runtime_corejs3_core_js_stable_date_now__WEBPACK_IMPORTED_MODULE_25___default()())) {
-                  _context34.next = 29;
+                if (!(startTime + timeout > _babel_runtime_corejs3_core_js_stable_date_now__WEBPACK_IMPORTED_MODULE_26___default()())) {
+                  _context38.next = 29;
                   break;
                 }
 
-                _context34.prev = 5;
-                _context34.next = 8;
+                _context38.prev = 5;
+                _context38.next = 8;
                 return this.check();
 
               case 8:
-                _res6 = _context34.sent;
-                _context34.t0 = _res6.state;
-                _context34.next = _context34.t0 === 'Open' ? 12 : _context34.t0 === 'Aborted' ? 13 : _context34.t0 === 'UploadComplete' ? 14 : _context34.t0 === 'InProgress' ? 14 : _context34.t0 === 'Failed' ? 17 : _context34.t0 === 'JobComplete' ? 19 : 21;
+                _res6 = _context38.sent;
+                _context38.t0 = _res6.state;
+                _context38.next = _context38.t0 === 'Open' ? 12 : _context38.t0 === 'Aborted' ? 13 : _context38.t0 === 'UploadComplete' ? 14 : _context38.t0 === 'InProgress' ? 14 : _context38.t0 === 'Failed' ? 17 : _context38.t0 === 'JobComplete' ? 19 : 21;
                 break;
 
               case 12:
@@ -104597,32 +95579,32 @@ var IngestJobV2 = /*#__PURE__*/function (_EventEmitter3) {
                 throw new Error('Job has been aborted');
 
               case 14:
-                _context34.next = 16;
+                _context38.next = 16;
                 return delay(interval);
 
               case 16:
-                return _context34.abrupt("break", 21);
+                return _context38.abrupt("break", 21);
 
               case 17:
                 this.emit('failed');
-                return _context34.abrupt("return");
+                return _context38.abrupt("return");
 
               case 19:
                 this.emit('jobcomplete');
-                return _context34.abrupt("return");
+                return _context38.abrupt("return");
 
               case 21:
-                _context34.next = 27;
+                _context38.next = 27;
                 break;
 
               case 23:
-                _context34.prev = 23;
-                _context34.t1 = _context34["catch"](5);
-                this.emit('error', _context34.t1);
-                throw _context34.t1;
+                _context38.prev = 23;
+                _context38.t1 = _context38["catch"](5);
+                this.emit('error', _context38.t1);
+                throw _context38.t1;
 
               case 27:
-                _context34.next = 4;
+                _context38.next = 4;
                 break;
 
               case 29:
@@ -104632,7 +95614,7 @@ var IngestJobV2 = /*#__PURE__*/function (_EventEmitter3) {
 
               case 32:
               case "end":
-                return _context34.stop();
+                return _context38.stop();
             }
           }
         }, _callee27, this, [[5, 23]]);
@@ -104651,14 +95633,14 @@ var IngestJobV2 = /*#__PURE__*/function (_EventEmitter3) {
   }, {
     key: "check",
     value: function () {
-      var _check3 = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee28() {
+      var _check3 = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee28() {
         var jobInfo;
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee28$(_context35) {
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee28$(_context39) {
           while (1) {
-            switch (_context35.prev = _context35.next) {
+            switch (_context39.prev = _context39.next) {
               case 0:
-                _context35.prev = 0;
-                _context35.next = 3;
+                _context39.prev = 0;
+                _context39.next = 3;
                 return this.createIngestRequest({
                   method: 'GET',
                   path: "/".concat(getJobIdOrError(this.jobInfo)),
@@ -104666,19 +95648,19 @@ var IngestJobV2 = /*#__PURE__*/function (_EventEmitter3) {
                 });
 
               case 3:
-                jobInfo = _context35.sent;
+                jobInfo = _context39.sent;
                 this.jobInfo = jobInfo;
-                return _context35.abrupt("return", jobInfo);
+                return _context39.abrupt("return", jobInfo);
 
               case 8:
-                _context35.prev = 8;
-                _context35.t0 = _context35["catch"](0);
-                this.emit('error', _context35.t0);
-                throw _context35.t0;
+                _context39.prev = 8;
+                _context39.t0 = _context39["catch"](0);
+                this.emit('error', _context39.t0);
+                throw _context39.t0;
 
               case 12:
               case "end":
-                return _context35.stop();
+                return _context39.stop();
             }
           }
         }, _callee28, this, [[0, 8]]);
@@ -104693,21 +95675,21 @@ var IngestJobV2 = /*#__PURE__*/function (_EventEmitter3) {
   }, {
     key: "getSuccessfulResults",
     value: function () {
-      var _getSuccessfulResults = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee29() {
+      var _getSuccessfulResults = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee29() {
         var results;
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee29$(_context36) {
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee29$(_context40) {
           while (1) {
-            switch (_context36.prev = _context36.next) {
+            switch (_context40.prev = _context40.next) {
               case 0:
-                if (!_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _bulkJobSuccessfulResults)) {
-                  _context36.next = 2;
+                if (!_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _bulkJobSuccessfulResults)) {
+                  _context40.next = 2;
                   break;
                 }
 
-                return _context36.abrupt("return", _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _bulkJobSuccessfulResults));
+                return _context40.abrupt("return", _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _bulkJobSuccessfulResults));
 
               case 2:
-                _context36.next = 4;
+                _context40.next = 4;
                 return this.createIngestRequest({
                   method: 'GET',
                   path: "/".concat(getJobIdOrError(this.jobInfo), "/successfulResults"),
@@ -104715,15 +95697,15 @@ var IngestJobV2 = /*#__PURE__*/function (_EventEmitter3) {
                 });
 
               case 4:
-                results = _context36.sent;
+                results = _context40.sent;
 
-                _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_28___default()(this, _bulkJobSuccessfulResults, results !== null && results !== void 0 ? results : []);
+                _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_29___default()(this, _bulkJobSuccessfulResults, results !== null && results !== void 0 ? results : []);
 
-                return _context36.abrupt("return", _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _bulkJobSuccessfulResults));
+                return _context40.abrupt("return", _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _bulkJobSuccessfulResults));
 
               case 7:
               case "end":
-                return _context36.stop();
+                return _context40.stop();
             }
           }
         }, _callee29, this);
@@ -104738,21 +95720,21 @@ var IngestJobV2 = /*#__PURE__*/function (_EventEmitter3) {
   }, {
     key: "getFailedResults",
     value: function () {
-      var _getFailedResults = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee30() {
+      var _getFailedResults = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee30() {
         var results;
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee30$(_context37) {
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee30$(_context41) {
           while (1) {
-            switch (_context37.prev = _context37.next) {
+            switch (_context41.prev = _context41.next) {
               case 0:
-                if (!_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _bulkJobFailedResults)) {
-                  _context37.next = 2;
+                if (!_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _bulkJobFailedResults)) {
+                  _context41.next = 2;
                   break;
                 }
 
-                return _context37.abrupt("return", _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _bulkJobFailedResults));
+                return _context41.abrupt("return", _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _bulkJobFailedResults));
 
               case 2:
-                _context37.next = 4;
+                _context41.next = 4;
                 return this.createIngestRequest({
                   method: 'GET',
                   path: "/".concat(getJobIdOrError(this.jobInfo), "/failedResults"),
@@ -104760,15 +95742,15 @@ var IngestJobV2 = /*#__PURE__*/function (_EventEmitter3) {
                 });
 
               case 4:
-                results = _context37.sent;
+                results = _context41.sent;
 
-                _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_28___default()(this, _bulkJobFailedResults, results !== null && results !== void 0 ? results : []);
+                _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_29___default()(this, _bulkJobFailedResults, results !== null && results !== void 0 ? results : []);
 
-                return _context37.abrupt("return", _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _bulkJobFailedResults));
+                return _context41.abrupt("return", _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _bulkJobFailedResults));
 
               case 7:
               case "end":
-                return _context37.stop();
+                return _context41.stop();
             }
           }
         }, _callee30, this);
@@ -104783,21 +95765,21 @@ var IngestJobV2 = /*#__PURE__*/function (_EventEmitter3) {
   }, {
     key: "getUnprocessedRecords",
     value: function () {
-      var _getUnprocessedRecords = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee31() {
+      var _getUnprocessedRecords = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee31() {
         var results;
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee31$(_context38) {
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee31$(_context42) {
           while (1) {
-            switch (_context38.prev = _context38.next) {
+            switch (_context42.prev = _context42.next) {
               case 0:
-                if (!_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _bulkJobUnprocessedRecords)) {
-                  _context38.next = 2;
+                if (!_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _bulkJobUnprocessedRecords)) {
+                  _context42.next = 2;
                   break;
                 }
 
-                return _context38.abrupt("return", _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _bulkJobUnprocessedRecords));
+                return _context42.abrupt("return", _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _bulkJobUnprocessedRecords));
 
               case 2:
-                _context38.next = 4;
+                _context42.next = 4;
                 return this.createIngestRequest({
                   method: 'GET',
                   path: "/".concat(getJobIdOrError(this.jobInfo), "/unprocessedrecords"),
@@ -104805,15 +95787,15 @@ var IngestJobV2 = /*#__PURE__*/function (_EventEmitter3) {
                 });
 
               case 4:
-                results = _context38.sent;
+                results = _context42.sent;
 
-                _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_28___default()(this, _bulkJobUnprocessedRecords, results !== null && results !== void 0 ? results : []);
+                _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_29___default()(this, _bulkJobUnprocessedRecords, results !== null && results !== void 0 ? results : []);
 
-                return _context38.abrupt("return", _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _bulkJobUnprocessedRecords));
+                return _context42.abrupt("return", _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _bulkJobUnprocessedRecords));
 
               case 7:
               case "end":
-                return _context38.stop();
+                return _context42.stop();
             }
           }
         }, _callee31, this);
@@ -104828,19 +95810,19 @@ var IngestJobV2 = /*#__PURE__*/function (_EventEmitter3) {
   }, {
     key: "delete",
     value: function () {
-      var _delete3 = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee32() {
-        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee32$(_context39) {
+      var _delete3 = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee32() {
+        return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee32$(_context43) {
           while (1) {
-            switch (_context39.prev = _context39.next) {
+            switch (_context43.prev = _context43.next) {
               case 0:
-                return _context39.abrupt("return", this.createIngestRequest({
+                return _context43.abrupt("return", this.createIngestRequest({
                   method: 'DELETE',
                   path: "/".concat(getJobIdOrError(this.jobInfo))
                 }));
 
               case 1:
               case "end":
-                return _context39.stop();
+                return _context43.stop();
             }
           }
         }, _callee32, this);
@@ -104857,8 +95839,8 @@ var IngestJobV2 = /*#__PURE__*/function (_EventEmitter3) {
     value: function createIngestRequest(request) {
       var path = request.path,
           responseType = request.responseType;
-      var baseUrl = [_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _connection3).instanceUrl, 'services/data', "v".concat(_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _connection3).version), 'jobs/ingest'].join('/');
-      return new BulkApiV2(_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _connection3), {
+      var baseUrl = [_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _connection3).instanceUrl, 'services/data', "v".concat(_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _connection3).version), 'jobs/ingest'].join('/');
+      return new BulkApiV2(_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _connection3), {
         responseType: responseType
       }).request(_objectSpread(_objectSpread({}, request), {}, {
         url: baseUrl + path
@@ -104872,20 +95854,20 @@ var IngestJobV2 = /*#__PURE__*/function (_EventEmitter3) {
   }]);
 
   return IngestJobV2;
-}(events__WEBPACK_IMPORTED_MODULE_50__["EventEmitter"]);
+}(events__WEBPACK_IMPORTED_MODULE_51__["EventEmitter"]);
 
-var _job = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_23___default.a();
+var _job = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_24___default.a();
 
-var _uploadStream = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_23___default.a();
+var _uploadStream = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_24___default.a();
 
-var _downloadStream = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_23___default.a();
+var _downloadStream = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_24___default.a();
 
-var _dataStream = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_23___default.a();
+var _dataStream = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_24___default.a();
 
-var _result = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_23___default.a();
+var _result = new _babel_runtime_corejs3_core_js_stable_weak_map__WEBPACK_IMPORTED_MODULE_24___default.a();
 
 var JobDataV2 = /*#__PURE__*/function (_Writable2) {
-  _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_46___default()(JobDataV2, _Writable2);
+  _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_47___default()(JobDataV2, _Writable2);
 
   var _super9 = _createSuper(JobDataV2);
 
@@ -104893,59 +95875,59 @@ var JobDataV2 = /*#__PURE__*/function (_Writable2) {
    *
    */
   function JobDataV2(options) {
-    var _this16;
+    var _this17;
 
-    _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_43___default()(this, JobDataV2);
+    _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_44___default()(this, JobDataV2);
 
-    _this16 = _super9.call(this, {
+    _this17 = _super9.call(this, {
       objectMode: true
     });
 
-    _job.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this16), {
+    _job.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this17), {
       writable: true,
       value: void 0
     });
 
-    _uploadStream.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this16), {
+    _uploadStream.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this17), {
       writable: true,
       value: void 0
     });
 
-    _downloadStream.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this16), {
+    _downloadStream.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this17), {
       writable: true,
       value: void 0
     });
 
-    _dataStream.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this16), {
+    _dataStream.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this17), {
       writable: true,
       value: void 0
     });
 
-    _result.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this16), {
+    _result.set(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this17), {
       writable: true,
       value: void 0
     });
 
     var createRequest = options.createRequest;
 
-    _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_28___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this16), _job, options.job);
+    _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_29___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this17), _job, options.job);
 
-    _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_28___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this16), _uploadStream, new _record_stream__WEBPACK_IMPORTED_MODULE_53__[/* Serializable */ "b"]());
+    _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_29___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this17), _uploadStream, new _record_stream__WEBPACK_IMPORTED_MODULE_54__[/* Serializable */ "b"]());
 
-    _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_28___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this16), _downloadStream, new _record_stream__WEBPACK_IMPORTED_MODULE_53__[/* Parsable */ "a"]());
+    _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_29___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this17), _downloadStream, new _record_stream__WEBPACK_IMPORTED_MODULE_54__[/* Parsable */ "a"]());
 
     var converterOptions = {
       nullValue: '#N/A'
     };
 
-    var uploadDataStream = _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this16), _uploadStream).stream('csv', converterOptions);
+    var uploadDataStream = _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this17), _uploadStream).stream('csv', converterOptions);
 
-    var downloadDataStream = _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this16), _downloadStream).stream('csv', converterOptions);
+    var downloadDataStream = _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this17), _downloadStream).stream('csv', converterOptions);
 
-    _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_28___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this16), _dataStream, Object(_util_stream__WEBPACK_IMPORTED_MODULE_56__[/* concatStreamsAsDuplex */ "a"])(uploadDataStream, downloadDataStream));
+    _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_29___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this17), _dataStream, Object(_util_stream__WEBPACK_IMPORTED_MODULE_57__[/* concatStreamsAsDuplex */ "a"])(uploadDataStream, downloadDataStream));
 
-    _this16.on('finish', function () {
-      return _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this16), _uploadStream).end();
+    _this17.on('finish', function () {
+      return _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this17), _uploadStream).end();
     });
 
     uploadDataStream.once('readable', function () {
@@ -104955,41 +95937,41 @@ var JobDataV2 = /*#__PURE__*/function (_Writable2) {
         // pipe upload data to batch API request stream
         var req = createRequest({
           method: 'PUT',
-          path: "/".concat((_classPrivateFieldGet2 = _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_45___default()(_this16), _job).jobInfo) === null || _classPrivateFieldGet2 === void 0 ? void 0 : _classPrivateFieldGet2.id, "/batches"),
+          path: "/".concat((_classPrivateFieldGet2 = _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_46___default()(_this17), _job).jobInfo) === null || _classPrivateFieldGet2 === void 0 ? void 0 : _classPrivateFieldGet2.id, "/batches"),
           headers: {
             'Content-Type': 'text/csv'
           },
           responseType: 'application/json'
         });
 
-        _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_40___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.mark(function _callee33() {
+        _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee33() {
           var _res7;
 
-          return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_38___default.a.wrap(function _callee33$(_context40) {
+          return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee33$(_context44) {
             while (1) {
-              switch (_context40.prev = _context40.next) {
+              switch (_context44.prev = _context44.next) {
                 case 0:
-                  _context40.prev = 0;
-                  _context40.next = 3;
+                  _context44.prev = 0;
+                  _context44.next = 3;
                   return req;
 
                 case 3:
-                  _res7 = _context40.sent;
+                  _res7 = _context44.sent;
 
-                  _this16.emit('response', _res7);
+                  _this17.emit('response', _res7);
 
-                  _context40.next = 10;
+                  _context44.next = 10;
                   break;
 
                 case 7:
-                  _context40.prev = 7;
-                  _context40.t0 = _context40["catch"](0);
+                  _context44.prev = 7;
+                  _context44.t0 = _context44["catch"](0);
 
-                  _this16.emit('error', _context40.t0);
+                  _this17.emit('error', _context44.t0);
 
                 case 10:
                 case "end":
-                  return _context40.stop();
+                  return _context44.stop();
               }
             }
           }, _callee33, null, [[0, 7]]);
@@ -104997,23 +95979,23 @@ var JobDataV2 = /*#__PURE__*/function (_Writable2) {
 
         uploadDataStream.pipe(req.stream());
       } catch (err) {
-        _this16.emit('error', err);
+        _this17.emit('error', err);
       }
     });
-    return _this16;
+    return _this17;
   }
 
-  _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_44___default()(JobDataV2, [{
+  _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_45___default()(JobDataV2, [{
     key: "_write",
     value: function _write(record_, enc, cb) {
       var Id = record_.Id,
           type = record_.type,
           attributes = record_.attributes,
-          rrec = _babel_runtime_corejs3_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_34___default()(record_, ["Id", "type", "attributes"]);
+          rrec = _babel_runtime_corejs3_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_35___default()(record_, ["Id", "type", "attributes"]);
 
       var record;
 
-      switch (_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _job).jobInfo.operation) {
+      switch (_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _job).jobInfo.operation) {
         case 'insert':
           record = rrec;
           break;
@@ -105031,7 +96013,7 @@ var JobDataV2 = /*#__PURE__*/function (_Writable2) {
           }, rrec);
       }
 
-      _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _uploadStream).write(record, enc, cb);
+      _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _uploadStream).write(record, enc, cb);
     }
     /**
      * Returns duplex stream which accepts CSV data input and batch result output
@@ -105040,7 +96022,7 @@ var JobDataV2 = /*#__PURE__*/function (_Writable2) {
   }, {
     key: "stream",
     value: function stream() {
-      return _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _dataStream);
+      return _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _dataStream);
     }
     /**
      * Execute batch operation
@@ -105049,25 +96031,25 @@ var JobDataV2 = /*#__PURE__*/function (_Writable2) {
   }, {
     key: "execute",
     value: function execute(input) {
-      var _this17 = this;
+      var _this18 = this;
 
-      if (_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _result)) {
+      if (_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _result)) {
         throw new Error('Data can only be uploaded to a job once.');
       }
 
-      _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_28___default()(this, _result, new _babel_runtime_corejs3_core_js_stable_promise__WEBPACK_IMPORTED_MODULE_37___default.a(function (resolve, reject) {
-        _this17.once('response', function () {
+      _babel_runtime_corejs3_helpers_classPrivateFieldSet__WEBPACK_IMPORTED_MODULE_29___default()(this, _result, new _babel_runtime_corejs3_core_js_stable_promise__WEBPACK_IMPORTED_MODULE_38___default.a(function (resolve, reject) {
+        _this18.once('response', function () {
           return resolve();
         });
 
-        _this17.once('error', reject);
+        _this18.once('error', reject);
       }));
 
-      if (Object(_util_function__WEBPACK_IMPORTED_MODULE_57__[/* isObject */ "c"])(input) && 'pipe' in input && Object(_util_function__WEBPACK_IMPORTED_MODULE_57__[/* isFunction */ "a"])(input.pipe)) {
+      if (Object(_util_function__WEBPACK_IMPORTED_MODULE_58__[/* isObject */ "c"])(input) && 'pipe' in input && Object(_util_function__WEBPACK_IMPORTED_MODULE_58__[/* isFunction */ "a"])(input.pipe)) {
         // if input has stream.Readable interface
-        input.pipe(_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _dataStream));
+        input.pipe(_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _dataStream));
       } else {
-        if (_babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_36___default()(input)) {
+        if (_babel_runtime_corejs3_core_js_stable_array_is_array__WEBPACK_IMPORTED_MODULE_37___default()(input)) {
           var _iterator2 = _createForOfIteratorHelper(input),
               _step2;
 
@@ -105075,7 +96057,7 @@ var JobDataV2 = /*#__PURE__*/function (_Writable2) {
             for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
               var record = _step2.value;
 
-              for (var _i2 = 0, _Object$keys3 = _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_33___default()(record); _i2 < _Object$keys3.length; _i2++) {
+              for (var _i2 = 0, _Object$keys3 = _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_34___default()(record); _i2 < _Object$keys3.length; _i2++) {
                 var key = _Object$keys3[_i2];
 
                 if (typeof record[key] === 'boolean') {
@@ -105093,9 +96075,9 @@ var JobDataV2 = /*#__PURE__*/function (_Writable2) {
 
           this.end();
         } else if (typeof input === 'string') {
-          _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _dataStream).write(input, 'utf8');
+          _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _dataStream).write(input, 'utf8');
 
-          _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _dataStream).end();
+          _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _dataStream).end();
         }
       }
 
@@ -105109,16 +96091,16 @@ var JobDataV2 = /*#__PURE__*/function (_Writable2) {
   }, {
     key: "then",
     value: function then(onResolved, onReject) {
-      if (_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _result) === undefined) {
+      if (_babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _result) === undefined) {
         this.execute();
       }
 
-      return _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_27___default()(this, _result).then(onResolved, onReject);
+      return _babel_runtime_corejs3_helpers_classPrivateFieldGet__WEBPACK_IMPORTED_MODULE_28___default()(this, _result).then(onResolved, onReject);
     }
   }]);
 
   return JobDataV2;
-}(stream__WEBPACK_IMPORTED_MODULE_51__["Writable"]);
+}(stream__WEBPACK_IMPORTED_MODULE_52__["Writable"]);
 
 function getJobIdOrError(jobInfo) {
   var jobId = jobInfo === null || jobInfo === void 0 ? void 0 : jobInfo.id;
@@ -105131,8 +96113,8 @@ function getJobIdOrError(jobInfo) {
 }
 
 function delay(ms) {
-  return new _babel_runtime_corejs3_core_js_stable_promise__WEBPACK_IMPORTED_MODULE_37___default.a(function (resolve) {
-    return _babel_runtime_corejs3_core_js_stable_set_timeout__WEBPACK_IMPORTED_MODULE_31___default()(resolve, ms);
+  return new _babel_runtime_corejs3_core_js_stable_promise__WEBPACK_IMPORTED_MODULE_38___default.a(function (resolve) {
+    return _babel_runtime_corejs3_core_js_stable_set_timeout__WEBPACK_IMPORTED_MODULE_32___default()(resolve, ms);
   });
 }
 /*--------------------------------------------*/
@@ -105142,10 +96124,10 @@ function delay(ms) {
  */
 
 
-Object(_jsforce__WEBPACK_IMPORTED_MODULE_55__[/* registerModule */ "b"])('bulk', function (conn) {
+Object(_jsforce__WEBPACK_IMPORTED_MODULE_56__[/* registerModule */ "b"])('bulk', function (conn) {
   return new Bulk(conn);
 });
-Object(_jsforce__WEBPACK_IMPORTED_MODULE_55__[/* registerModule */ "b"])('bulk2', function (conn) {
+Object(_jsforce__WEBPACK_IMPORTED_MODULE_56__[/* registerModule */ "b"])('bulk2', function (conn) {
   return new BulkV2(conn);
 });
 /* unused harmony default export */ var _unused_webpack_default_export = (Bulk);
@@ -105164,9 +96146,9 @@ module.exports = parent;
 /* 900 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(161);
+__webpack_require__(162);
 __webpack_require__(901);
-__webpack_require__(92);
+__webpack_require__(94);
 var path = __webpack_require__(28);
 
 module.exports = path.WeakMap;
@@ -105178,13 +96160,13 @@ module.exports = path.WeakMap;
 
 "use strict";
 
-var global = __webpack_require__(39);
+var global = __webpack_require__(40);
 var redefineAll = __webpack_require__(238);
 var InternalMetadataModule = __webpack_require__(239);
 var collection = __webpack_require__(292);
 var collectionWeak = __webpack_require__(902);
 var isObject = __webpack_require__(49);
-var enforceIternalState = __webpack_require__(115).enforce;
+var enforceIternalState = __webpack_require__(116).enforce;
 var NATIVE_WEAK_MAP = __webpack_require__(470);
 
 var IS_IE11 = !global.ActiveXObject && 'ActiveXObject' in global;
@@ -105257,10 +96239,10 @@ var getWeakData = __webpack_require__(239).getWeakData;
 var anObject = __webpack_require__(27);
 var isObject = __webpack_require__(49);
 var anInstance = __webpack_require__(201);
-var iterate = __webpack_require__(41);
+var iterate = __webpack_require__(42);
 var ArrayIterationModule = __webpack_require__(122);
 var $has = __webpack_require__(63);
-var InternalStateModule = __webpack_require__(115);
+var InternalStateModule = __webpack_require__(116);
 
 var setInternalState = InternalStateModule.set;
 var internalStateGetterFor = InternalStateModule.getterFor;
@@ -106041,7 +97023,7 @@ module.exports = pipeline;
 /* harmony import */ var _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(0);
 /* harmony import */ var _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_24___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_24__);
 /* harmony import */ var _jsforce__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(64);
-/* harmony import */ var _util_function__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(91);
+/* harmony import */ var _util_function__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(92);
 
 
 
@@ -106477,9 +97459,9 @@ Object(_jsforce__WEBPACK_IMPORTED_MODULE_25__[/* registerModule */ "b"])('chatte
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_object_get_own_property_symbols__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_object_get_own_property_symbols__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(10);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(100);
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(101);
 /* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(113);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(110);
 /* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_10__);
 /* harmony import */ var _babel_runtime_corejs3_helpers_get__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(80);
 /* harmony import */ var _babel_runtime_corejs3_helpers_get__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_get__WEBPACK_IMPORTED_MODULE_11__);
@@ -106525,7 +97507,7 @@ Object(_jsforce__WEBPACK_IMPORTED_MODULE_25__[/* registerModule */ "b"])('chatte
 /* harmony import */ var form_data__WEBPACK_IMPORTED_MODULE_31___default = /*#__PURE__*/__webpack_require__.n(form_data__WEBPACK_IMPORTED_MODULE_31__);
 /* harmony import */ var _jsforce__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(64);
 /* harmony import */ var _soap__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(475);
-/* harmony import */ var _util_function__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(91);
+/* harmony import */ var _util_function__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(92);
 /* harmony import */ var _metadata_schema__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(79);
 /* unused harmony reexport * */
 
@@ -109127,7 +100109,7 @@ module.exports = Subscription;
 /* harmony import */ var _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(0);
 /* harmony import */ var _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_9__);
 /* harmony import */ var _jsforce__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(64);
-/* harmony import */ var _connection__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(103);
+/* harmony import */ var _connection__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(104);
 /* harmony import */ var _cache__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(284);
 
 
