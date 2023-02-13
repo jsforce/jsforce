@@ -177,7 +177,7 @@ export type IngestJobV2Results<S extends Schema> = {
 };
 
 type NewIngestJobOptions = Required<Pick<JobInfoV2, 'object' | 'operation'>> &
-  Partial<Pick<JobInfoV2, 'assignmentRuleId' | 'externalIdFieldName'>>;
+  Partial<Pick<JobInfoV2, 'assignmentRuleId' | 'externalIdFieldName' | 'lineEnding'>>;
 
 type ExistingIngestJobOptions = Pick<JobInfoV2, 'id'>;
 
@@ -283,20 +283,20 @@ export class Job<
   <operation>${operation}</operation>
   <object>${this.type}</object>
   ${
-    options.extIdField
-      ? `<externalIdFieldName>${options.extIdField}</externalIdFieldName>`
-      : ''
-  }
+        options.extIdField
+          ? `<externalIdFieldName>${options.extIdField}</externalIdFieldName>`
+          : ''
+      }
   ${
-    options.concurrencyMode
-      ? `<concurrencyMode>${options.concurrencyMode}</concurrencyMode>`
-      : ''
-  }
+        options.concurrencyMode
+          ? `<concurrencyMode>${options.concurrencyMode}</concurrencyMode>`
+          : ''
+      }
   ${
-    options.assignmentRuleId
-      ? `<assignmentRuleId>${options.assignmentRuleId}</assignmentRuleId>`
-      : ''
-  }
+        options.assignmentRuleId
+          ? `<assignmentRuleId>${options.assignmentRuleId}</assignmentRuleId>`
+          : ''
+      }
   <contentType>CSV</contentType>
 </jobInfo>
       `.trim();
@@ -758,8 +758,8 @@ export class Batch<
         const res = resp as BulkQueryResultResponse;
         let resultId = res['result-list'].result;
         results = (Array.isArray(resultId)
-          ? resultId
-          : [resultId]
+            ? resultId
+            : [resultId]
         ).map((id) => ({ id, batchId, jobId }));
       } else {
         const res = resp as BulkIngestResultResponse;
@@ -1050,8 +1050,8 @@ export class BulkV2<S extends Schema> {
   async loadAndWaitForResults(
     options: NewIngestJobOptions &
       Partial<BulkV2PollingOptions> & {
-        input: Record[] | Readable | string;
-      },
+      input: Record[] | Readable | string;
+    },
   ): Promise<IngestJobV2Results<S>> {
     const job = this.createJob(options);
     try {
@@ -1330,6 +1330,7 @@ export class IngestJobV2<
           externalIdFieldName: this.jobInfo?.externalIdFieldName,
           object: this.jobInfo?.object,
           operation: this.jobInfo?.operation,
+          lineEnding: this.jobInfo?.lineEnding,
         }),
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
