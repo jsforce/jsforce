@@ -21,6 +21,7 @@ import {
   Optional,
 } from '../types';
 import { isFunction, isObject } from '../util/function';
+import os from 'os';
 
 /*--------------------------------------------*/
 
@@ -1330,7 +1331,7 @@ export class IngestJobV2<
           externalIdFieldName: this.jobInfo?.externalIdFieldName,
           object: this.jobInfo?.object,
           operation: this.jobInfo?.operation,
-          lineEnding: this.jobInfo?.lineEnding,
+          lineEnding: this.jobInfo?.lineEnding ?? os.platform() === 'win32' ? 'CRLF' : 'LF',
         }),
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
