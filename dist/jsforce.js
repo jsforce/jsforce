@@ -82,7 +82,7 @@ var jsforce =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 896);
+/******/ 	return __webpack_require__(__webpack_require__.s = 895);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -19492,7 +19492,7 @@ for (var COLLECTION_NAME in DOMIterables) {
 /* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(900);
+module.exports = __webpack_require__(899);
 
 /***/ }),
 /* 95 */
@@ -51017,7 +51017,7 @@ var Class    = __webpack_require__(137),
     array    = __webpack_require__(875),
     assign   = __webpack_require__(124),
     Logging  = __webpack_require__(450),
-    Timeouts = __webpack_require__(920),
+    Timeouts = __webpack_require__(919),
     Channel  = __webpack_require__(887);
 
 var Transport = assign(Class({ className: 'Transport',
@@ -71957,7 +71957,7 @@ var constants = __webpack_require__(885),
 var Faye = {
   VERSION:    constants.VERSION,
 
-  Client:     __webpack_require__(914),
+  Client:     __webpack_require__(913),
   Scheduler:  __webpack_require__(892)
 };
 
@@ -98699,7 +98699,7 @@ module.exports = {
 
 
 var assign       = __webpack_require__(124),
-    EventEmitter = __webpack_require__(917);
+    EventEmitter = __webpack_require__(916);
 
 var Publisher = {
   countListeners: function(eventType) {
@@ -98825,7 +98825,7 @@ function _isUint8Array(obj) {
 /*<replacement>*/
 
 
-var debugUtil = __webpack_require__(905);
+var debugUtil = __webpack_require__(904);
 
 var debug;
 
@@ -98837,7 +98837,7 @@ if (debugUtil && debugUtil.debuglog) {
 /*</replacement>*/
 
 
-var BufferList = __webpack_require__(906);
+var BufferList = __webpack_require__(905);
 
 var destroyImpl = __webpack_require__(881);
 
@@ -98850,7 +98850,7 @@ var _require$codes = __webpack_require__(293).codes,
     ERR_METHOD_NOT_IMPLEMENTED = _require$codes.ERR_METHOD_NOT_IMPLEMENTED,
     ERR_STREAM_UNSHIFT_AFTER_END_EVENT = _require$codes.ERR_STREAM_UNSHIFT_AFTER_END_EVENT;
 
-var _require2 = __webpack_require__(908),
+var _require2 = __webpack_require__(907),
     emitExperimentalWarning = _require2.emitExperimentalWarning; // Lazy loaded to improve the startup performance.
 
 
@@ -99757,7 +99757,7 @@ if (typeof Symbol === 'function') {
     emitExperimentalWarning('Readable[Symbol.asyncIterator]');
 
     if (createReadableStreamAsyncIterator === undefined) {
-      createReadableStreamAsyncIterator = __webpack_require__(909);
+      createReadableStreamAsyncIterator = __webpack_require__(908);
     }
 
     return createReadableStreamAsyncIterator(this);
@@ -100908,7 +100908,7 @@ module.exports = {
 
 
 // rawAsap provides everything we need except exception management.
-var rawAsap = __webpack_require__(915);
+var rawAsap = __webpack_require__(914);
 // RawTasks are recycled to reduce GC churn.
 var freeTasks = [];
 // We queue errors to ensure they are thrown in right order (FIFO).
@@ -101344,7 +101344,7 @@ module.exports = Scheduler;
 module.exports = MultiStream
 
 var inherits = __webpack_require__(12)
-var stream = __webpack_require__(904)
+var stream = __webpack_require__(903)
 
 inherits(MultiStream, stream.Readable)
 
@@ -101499,80 +101499,25 @@ function toStreams2 (s, opts) {
 /* 894 */
 /***/ (function(module, exports) {
 
-exports.endianness = function () { return 'LE' };
-
-exports.hostname = function () {
-    if (typeof location !== 'undefined') {
-        return location.hostname
-    }
-    else return '';
-};
-
-exports.loadavg = function () { return [] };
-
-exports.uptime = function () { return 0 };
-
-exports.freemem = function () {
-    return Number.MAX_VALUE;
-};
-
-exports.totalmem = function () {
-    return Number.MAX_VALUE;
-};
-
-exports.cpus = function () { return [] };
-
-exports.type = function () { return 'Browser' };
-
-exports.release = function () {
-    if (typeof navigator !== 'undefined') {
-        return navigator.appVersion;
-    }
-    return '';
-};
-
-exports.networkInterfaces
-= exports.getNetworkInterfaces
-= function () { return {} };
-
-exports.arch = function () { return 'javascript' };
-
-exports.platform = function () { return 'browser' };
-
-exports.tmpdir = exports.tmpDir = function () {
-    return '/tmp';
-};
-
-exports.EOL = '\n';
-
-exports.homedir = function () {
-	return '/'
-};
-
-
-/***/ }),
-/* 895 */
-/***/ (function(module, exports) {
-
 /* eslint-env browser */
 module.exports = typeof self == 'object' ? self.FormData : window.FormData;
 
 
 /***/ }),
-/* 896 */
+/* 895 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _jsforce__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(64);
-/* harmony import */ var _api_analytics__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(897);
-/* harmony import */ var _api_apex__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(898);
-/* harmony import */ var _api_bulk__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(899);
-/* harmony import */ var _api_chatter__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(912);
-/* harmony import */ var _api_metadata__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(913);
-/* harmony import */ var _api_soap__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(931);
-/* harmony import */ var _api_streaming__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(932);
-/* harmony import */ var _api_tooling__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(930);
+/* harmony import */ var _api_analytics__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(896);
+/* harmony import */ var _api_apex__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(897);
+/* harmony import */ var _api_bulk__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(898);
+/* harmony import */ var _api_chatter__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(911);
+/* harmony import */ var _api_metadata__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(912);
+/* harmony import */ var _api_soap__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(930);
+/* harmony import */ var _api_streaming__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(931);
+/* harmony import */ var _api_tooling__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(929);
 /* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(281);
 /* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _types__WEBPACK_IMPORTED_MODULE_9__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _types__WEBPACK_IMPORTED_MODULE_9__[key]; }) }(__WEBPACK_IMPORT_KEY__));
 /* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(473);
@@ -101592,7 +101537,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /***/ }),
-/* 897 */
+/* 896 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -102056,7 +102001,7 @@ Object(_jsforce__WEBPACK_IMPORTED_MODULE_14__[/* registerModule */ "b"])('analyt
 
 
 /***/ }),
-/* 898 */
+/* 897 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -102206,7 +102151,7 @@ Object(_jsforce__WEBPACK_IMPORTED_MODULE_5__[/* registerModule */ "b"])('apex', 
 
 
 /***/ }),
-/* 899 */
+/* 898 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -102329,8 +102274,6 @@ Object(_jsforce__WEBPACK_IMPORTED_MODULE_5__[/* registerModule */ "b"])('apex', 
 /* harmony import */ var _jsforce__WEBPACK_IMPORTED_MODULE_56__ = __webpack_require__(64);
 /* harmony import */ var _util_stream__WEBPACK_IMPORTED_MODULE_57__ = __webpack_require__(73);
 /* harmony import */ var _util_function__WEBPACK_IMPORTED_MODULE_58__ = __webpack_require__(91);
-/* harmony import */ var os__WEBPACK_IMPORTED_MODULE_59__ = __webpack_require__(894);
-/* harmony import */ var os__WEBPACK_IMPORTED_MODULE_59___default = /*#__PURE__*/__webpack_require__.n(os__WEBPACK_IMPORTED_MODULE_59__);
 
 
 
@@ -102401,7 +102344,6 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !_b
  * @file Manages Salesforce Bulk API related operations
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
-
 
 
 
@@ -104273,7 +104215,7 @@ var QueryJobV2 = /*#__PURE__*/function (_EventEmitter2) {
                   method: 'GET',
                   url: this.getResultsUrl(),
                   headers: {
-                    'Accept': 'text/csv'
+                    Accept: 'text/csv'
                   }
                 });
 
@@ -104441,7 +104383,7 @@ var IngestJobV2 = /*#__PURE__*/function (_EventEmitter3) {
     key: "open",
     value: function () {
       var _open2 = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_41___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.mark(function _callee22() {
-        var _this$jobInfo2, _this$jobInfo3, _this$jobInfo4, _this$jobInfo5, _this$jobInfo$lineEnd, _this$jobInfo6;
+        var _this$jobInfo2, _this$jobInfo3, _this$jobInfo4, _this$jobInfo5, _this$jobInfo6;
 
         return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_39___default.a.wrap(function _callee22$(_context33) {
           while (1) {
@@ -104457,7 +104399,7 @@ var IngestJobV2 = /*#__PURE__*/function (_EventEmitter3) {
                     externalIdFieldName: (_this$jobInfo3 = this.jobInfo) === null || _this$jobInfo3 === void 0 ? void 0 : _this$jobInfo3.externalIdFieldName,
                     object: (_this$jobInfo4 = this.jobInfo) === null || _this$jobInfo4 === void 0 ? void 0 : _this$jobInfo4.object,
                     operation: (_this$jobInfo5 = this.jobInfo) === null || _this$jobInfo5 === void 0 ? void 0 : _this$jobInfo5.operation,
-                    lineEnding: ((_this$jobInfo$lineEnd = (_this$jobInfo6 = this.jobInfo) === null || _this$jobInfo6 === void 0 ? void 0 : _this$jobInfo6.lineEnding) !== null && _this$jobInfo$lineEnd !== void 0 ? _this$jobInfo$lineEnd : os__WEBPACK_IMPORTED_MODULE_59___default.a.platform() === 'win32') ? 'CRLF' : 'LF'
+                    lineEnding: (_this$jobInfo6 = this.jobInfo) === null || _this$jobInfo6 === void 0 ? void 0 : _this$jobInfo6.lineEnding
                   }),
                   headers: {
                     'Content-Type': 'application/json; charset=utf-8'
@@ -105262,20 +105204,20 @@ Object(_jsforce__WEBPACK_IMPORTED_MODULE_56__[/* registerModule */ "b"])('bulk2'
 
 
 /***/ }),
-/* 900 */
+/* 899 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var parent = __webpack_require__(901);
+var parent = __webpack_require__(900);
 
 module.exports = parent;
 
 
 /***/ }),
-/* 901 */
+/* 900 */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(162);
-__webpack_require__(902);
+__webpack_require__(901);
 __webpack_require__(93);
 var path = __webpack_require__(28);
 
@@ -105283,7 +105225,7 @@ module.exports = path.WeakMap;
 
 
 /***/ }),
-/* 902 */
+/* 901 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -105292,7 +105234,7 @@ var global = __webpack_require__(40);
 var redefineAll = __webpack_require__(238);
 var InternalMetadataModule = __webpack_require__(239);
 var collection = __webpack_require__(292);
-var collectionWeak = __webpack_require__(903);
+var collectionWeak = __webpack_require__(902);
 var isObject = __webpack_require__(49);
 var enforceIternalState = __webpack_require__(115).enforce;
 var NATIVE_WEAK_MAP = __webpack_require__(470);
@@ -105357,7 +105299,7 @@ if (NATIVE_WEAK_MAP && IS_IE11) {
 
 
 /***/ }),
-/* 903 */
+/* 902 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -105485,7 +105427,7 @@ module.exports = {
 
 
 /***/ }),
-/* 904 */
+/* 903 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(879);
@@ -105494,19 +105436,19 @@ exports.Readable = exports;
 exports.Writable = __webpack_require__(883);
 exports.Duplex = __webpack_require__(294);
 exports.Transform = __webpack_require__(884);
-exports.PassThrough = __webpack_require__(910);
+exports.PassThrough = __webpack_require__(909);
 exports.finished = __webpack_require__(874);
-exports.pipeline = __webpack_require__(911);
+exports.pipeline = __webpack_require__(910);
 
 
 /***/ }),
-/* 905 */
+/* 904 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 906 */
+/* 905 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -105519,7 +105461,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var _require = __webpack_require__(26),
     Buffer = _require.Buffer;
 
-var _require2 = __webpack_require__(907),
+var _require2 = __webpack_require__(906),
     inspect = _require2.inspect;
 
 var custom = inspect && inspect.custom || 'inspect';
@@ -105701,13 +105643,13 @@ function () {
 }();
 
 /***/ }),
-/* 907 */
+/* 906 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 908 */
+/* 907 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -105732,7 +105674,7 @@ module.exports.emitExperimentalWarning = process.emitWarning
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(32)))
 
 /***/ }),
-/* 909 */
+/* 908 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -105946,7 +105888,7 @@ module.exports = createReadableStreamAsyncIterator;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(32)))
 
 /***/ }),
-/* 910 */
+/* 909 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -105991,7 +105933,7 @@ PassThrough.prototype._transform = function (chunk, encoding, cb) {
 };
 
 /***/ }),
-/* 911 */
+/* 910 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -106094,7 +106036,7 @@ function pipeline() {
 module.exports = pipeline;
 
 /***/ }),
-/* 912 */
+/* 911 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -106561,7 +106503,7 @@ Object(_jsforce__WEBPACK_IMPORTED_MODULE_25__[/* registerModule */ "b"])('chatte
 
 
 /***/ }),
-/* 913 */
+/* 912 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -106631,7 +106573,7 @@ Object(_jsforce__WEBPACK_IMPORTED_MODULE_25__[/* registerModule */ "b"])('chatte
 /* harmony import */ var events__WEBPACK_IMPORTED_MODULE_29___default = /*#__PURE__*/__webpack_require__.n(events__WEBPACK_IMPORTED_MODULE_29__);
 /* harmony import */ var stream__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(29);
 /* harmony import */ var stream__WEBPACK_IMPORTED_MODULE_30___default = /*#__PURE__*/__webpack_require__.n(stream__WEBPACK_IMPORTED_MODULE_30__);
-/* harmony import */ var form_data__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(895);
+/* harmony import */ var form_data__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(894);
 /* harmony import */ var form_data__WEBPACK_IMPORTED_MODULE_31___default = /*#__PURE__*/__webpack_require__.n(form_data__WEBPACK_IMPORTED_MODULE_31__);
 /* harmony import */ var _jsforce__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(64);
 /* harmony import */ var _soap__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(475);
@@ -107510,7 +107452,7 @@ Object(_jsforce__WEBPACK_IMPORTED_MODULE_32__[/* registerModule */ "b"])('metada
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(26).Buffer))
 
 /***/ }),
-/* 914 */
+/* 913 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -107523,16 +107465,16 @@ var asap            = __webpack_require__(886),
     browser         = __webpack_require__(876),
     constants       = __webpack_require__(885),
     assign          = __webpack_require__(124),
-    validateOptions = __webpack_require__(916),
+    validateOptions = __webpack_require__(915),
     Deferrable      = __webpack_require__(452),
     Logging         = __webpack_require__(450),
     Publisher       = __webpack_require__(877),
     Channel         = __webpack_require__(887),
-    Dispatcher      = __webpack_require__(918),
-    Error           = __webpack_require__(926),
-    Extensible      = __webpack_require__(927),
-    Publication     = __webpack_require__(928),
-    Subscription    = __webpack_require__(929);
+    Dispatcher      = __webpack_require__(917),
+    Error           = __webpack_require__(925),
+    Extensible      = __webpack_require__(926),
+    Publication     = __webpack_require__(927),
+    Subscription    = __webpack_require__(928);
 
 var Client = Class({ className: 'Client',
   UNCONNECTED:  1,
@@ -107903,7 +107845,7 @@ module.exports = Client;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(35)))
 
 /***/ }),
-/* 915 */
+/* 914 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -108134,7 +108076,7 @@ rawAsap.makeRequestCallFromTimer = makeRequestCallFromTimer;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(35)))
 
 /***/ }),
-/* 916 */
+/* 915 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -108151,7 +108093,7 @@ module.exports = function(options, validKeys) {
 
 
 /***/ }),
-/* 917 */
+/* 916 */
 /***/ (function(module, exports) {
 
 /*
@@ -108328,7 +108270,7 @@ EventEmitter.prototype.listeners = function(type) {
 
 
 /***/ }),
-/* 918 */
+/* 917 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -108340,7 +108282,7 @@ var Class     = __webpack_require__(137),
     assign    = __webpack_require__(124),
     Logging   = __webpack_require__(450),
     Publisher = __webpack_require__(877),
-    Transport = __webpack_require__(919),
+    Transport = __webpack_require__(918),
     Scheduler = __webpack_require__(892);
 
 var Dispatcher = Class({ className: 'Dispatcher',
@@ -108522,7 +108464,7 @@ module.exports = Dispatcher;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(35)))
 
 /***/ }),
-/* 919 */
+/* 918 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -108530,17 +108472,17 @@ module.exports = Dispatcher;
 
 var Transport = __webpack_require__(296);
 
-Transport.register('websocket', __webpack_require__(921));
-Transport.register('eventsource', __webpack_require__(923));
+Transport.register('websocket', __webpack_require__(920));
+Transport.register('eventsource', __webpack_require__(922));
 Transport.register('long-polling', __webpack_require__(891));
-Transport.register('cross-origin-long-polling', __webpack_require__(924));
-Transport.register('callback-polling', __webpack_require__(925));
+Transport.register('cross-origin-long-polling', __webpack_require__(923));
+Transport.register('callback-polling', __webpack_require__(924));
 
 module.exports = Transport;
 
 
 /***/ }),
-/* 920 */
+/* 919 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -108574,7 +108516,7 @@ module.exports = {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(35)))
 
 /***/ }),
-/* 921 */
+/* 920 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -108588,7 +108530,7 @@ var Class      = __webpack_require__(137),
     copyObject = __webpack_require__(878),
     assign     = __webpack_require__(124),
     toJSON     = __webpack_require__(451),
-    ws         = __webpack_require__(922),
+    ws         = __webpack_require__(921),
     Deferrable = __webpack_require__(452),
     Transport  = __webpack_require__(296);
 
@@ -108743,7 +108685,7 @@ module.exports = WebSocket;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(35)))
 
 /***/ }),
-/* 922 */
+/* 921 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -108761,7 +108703,7 @@ module.exports = {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(35)))
 
 /***/ }),
-/* 923 */
+/* 922 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -108866,7 +108808,7 @@ module.exports = EventSource;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(35)))
 
 /***/ }),
-/* 924 */
+/* 923 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -108959,7 +108901,7 @@ module.exports = CORS;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(35)))
 
 /***/ }),
-/* 925 */
+/* 924 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -109031,7 +108973,7 @@ module.exports = JSONP;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(35)))
 
 /***/ }),
-/* 926 */
+/* 925 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -109093,7 +109035,7 @@ module.exports = Error;
 
 
 /***/ }),
-/* 927 */
+/* 926 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -109147,7 +109089,7 @@ module.exports = Extensible;
 
 
 /***/ }),
-/* 928 */
+/* 927 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -109160,7 +109102,7 @@ module.exports = Class(Deferrable);
 
 
 /***/ }),
-/* 929 */
+/* 928 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -109211,7 +109153,7 @@ module.exports = Subscription;
 
 
 /***/ }),
-/* 930 */
+/* 929 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -109575,7 +109517,7 @@ Object(_jsforce__WEBPACK_IMPORTED_MODULE_10__[/* registerModule */ "b"])('toolin
 
 
 /***/ }),
-/* 931 */
+/* 930 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -111889,7 +111831,7 @@ Object(jsforce["b" /* registerModule */])('soap', function (conn) {
 
 
 /***/ }),
-/* 932 */
+/* 931 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
