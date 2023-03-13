@@ -1,5 +1,9 @@
 # Mixmax changelog (since forking)
 
+## 1.8.7
+
+* fix: don't throw `request` exception if promise is already resolved #e46f9bd
+
 ## 1.8.6
 
 * bump csv-parse to 4.16.3
