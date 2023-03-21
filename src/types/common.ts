@@ -1,5 +1,6 @@
 import { Optional } from './util';
 import { URLSearchParams } from 'url';
+import * as FormData from 'form-data';
 
 /**
  * type defs
@@ -15,6 +16,7 @@ export type HttpBody =
   | URLSearchParams
   | NodeJS.ReadableStream
   | string
+  | FormData
   | null;
 //| Blob -- from fetch-blob - can add later if needed
 
@@ -99,6 +101,12 @@ export type DmlOptions = {
   allOrNone?: boolean;
   allowRecursive?: boolean;
   headers?: { [name: string]: string };
+  multipartFileFields?: { [fieldName: string]: MultipartFileFieldOptions };
+};
+
+export type MultipartFileFieldOptions = {
+  filename?: string;
+  contentType: string;
 };
 
 export type SignedRequestObject = {
