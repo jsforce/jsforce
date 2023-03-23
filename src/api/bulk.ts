@@ -201,6 +201,12 @@ type CreateQueryJobV2Options<S extends Schema> = {
   operation: QueryOperation;
   query: string;
   pollingOptions: BulkV2PollingOptions;
+  maxRecords?: number;
+};
+
+type QueryJobV2Options = {
+  pollingOptions: BulkV2PollingOptions;
+  maxRecords: number;
 };
 
 type BulkV2PollingOptions = {
@@ -1076,18 +1082,23 @@ export class BulkV2<S extends Schema> {
    */
   async query(
     soql: string,
-    options?: Partial<BulkV2PollingOptions>,
-  ): Promise<Record[]> {
+    options?: Partial<QueryJobV2Options>,
+  ): Promise<Readable> {
     const queryJob = new QueryJobV2({
       connection: this.#connection,
       operation: 'query',
       query: soql,
       pollingOptions: this,
+      maxRecords: options?.maxRecords,
     });
     try {
       await queryJob.open();
-      await queryJob.poll(options?.pollInterval, options?.pollTimeout);
-      return await queryJob.getResults();
+      await queryJob.poll(
+        options?.pollingOptions?.pollInterval,
+        options?.pollingOptions?.pollTimeout,
+      );
+
+      return queryJob.stream();
     } catch (err) {
       if (err.name !== 'JobPollingTimeoutError') {
         // fires off one last attempt to clean up and ignores the result | error
@@ -1103,6 +1114,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
   readonly #operation: QueryOperation;
   readonly #query: string;
   readonly #pollingOptions: BulkV2PollingOptions;
+  readonly #maxRecords: number | undefined;
   #queryResults: Record[] | undefined;
   #error: Error | undefined;
   jobInfo: Partial<JobInfoV2> | undefined;
@@ -1115,6 +1127,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     this.#operation = options.operation;
     this.#query = options.query;
     this.#pollingOptions = options.pollingOptions;
+    this.#maxRecords = options.maxRecords;
     // default error handler to keep the latest error
     this.on('error', (error) => (this.#error = error));
   }
@@ -1234,34 +1247,41 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
   }
 
   private getResultsUrl() {
-    const url = `${this.#connection.instanceUrl}/services/data/v${
-      this.#connection.version
-    }/jobs/query/${getJobIdOrError(this.jobInfo)}/results`;
+    const url = new URL(
+      `${this.#connection.instanceUrl}/services/data/v${
+        this.#connection.version
+      }/jobs/query/${getJobIdOrError(this.jobInfo)}/results`,
+    );
 
-    return this.locator ? `${url}?locator=${this.locator}` : url;
-  }
-
-  async getResults(): Promise<Record[]> {
-    if (this.finished && this.#queryResults) {
-      return this.#queryResults;
+    if (this.locator) {
+      url.searchParams.set('locator', this.locator);
+    }
+    if (this.#maxRecords) {
+      url.searchParams.set('maxRecords', `${this.#maxRecords}`);
     }
 
-    this.#queryResults = [];
+    return url.toString();
+  }
 
-    while (this.locator !== 'null') {
-      const nextResults = await this.request<Record[]>({
+  async stream(): Promise<Readable> {
+    return Readable.from(this.getResultsIterableGenerator());
+  }
+
+  async *getResultsIterableGenerator(): AsyncGenerator<
+    Record[],
+    void,
+    unknown
+  > {
+    do {
+      const results = await this.request<Record[]>({
         method: 'GET',
         url: this.getResultsUrl(),
         headers: {
           Accept: 'text/csv',
         },
       });
-
-      this.#queryResults = this.#queryResults.concat(nextResults);
-    }
-    this.finished = true;
-
-    return this.#queryResults;
+      yield results;
+    } while (this.locator !== 'null');
   }
 
   async delete(): Promise<void> {

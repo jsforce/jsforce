@@ -176,15 +176,60 @@ if (isNodeJS()) {
     }
   });
 
-  it('should bulk query and get records', async () => {
+  it('should return a stream of records when querying using bulk api v2', async () => {
     const count = await conn.sobject(config.bigTable).count({});
-    const records = await conn.bulk2.query(
+    const readStream = await conn.bulk2.query(
       `SELECT Id, Name FROM ${config.bigTable}`,
     );
+
+    const records = await new Promise((resolve, reject) => {
+      let r = [];
+
+      readStream
+        .on('data', (data) => {
+          r = r.concat(data);
+        })
+        .on('error', (e) => {
+          reject(e);
+        })
+        .on('end', () => {
+          resolve(r);
+        });
+    });
+
     assert.ok(Array.isArray(records) && records.length === count);
     for (const rec of records) {
       assert.ok(isString(rec.Id));
-      // assert.ok(isString(rec.Name));
+    }
+  });
+
+  it('should return a stream of records when querying using bulk api v2 and given a maxRecords', async () => {
+    const count = await conn.sobject(config.bigTable).count({});
+    const readStream = await conn.bulk2.query(
+      `SELECT Id, Name FROM ${config.bigTable}`,
+      {
+        maxRecords: 500,
+      },
+    );
+
+    const records = await new Promise((resolve, reject) => {
+      let r = [];
+
+      readStream
+        .on('data', (data) => {
+          r = r.concat(data);
+        })
+        .on('error', (e) => {
+          reject(e);
+        })
+        .on('end', () => {
+          resolve(r);
+        });
+    });
+
+    assert.ok(Array.isArray(records) && records.length === count);
+    for (const rec of records) {
+      assert.ok(isString(rec.Id));
     }
   });
 }
