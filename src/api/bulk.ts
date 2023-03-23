@@ -1115,7 +1115,6 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
   readonly #query: string;
   readonly #pollingOptions: BulkV2PollingOptions;
   readonly #maxRecords: number | undefined;
-  #queryResults: Record[] | undefined;
   #error: Error | undefined;
   jobInfo: Partial<JobInfoV2> | undefined;
   locator: Optional<string>;
@@ -1257,7 +1256,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
       url.searchParams.set('locator', this.locator);
     }
     if (this.#maxRecords) {
-      url.searchParams.set('maxRecords', `${this.#maxRecords}`);
+      url.searchParams.set('maxRecords', this.#maxRecords.toString());
     }
 
     return url.toString();
