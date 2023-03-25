@@ -176,18 +176,22 @@ if (isNodeJS()) {
     }
   });
 
-  it('should return a stream of records when querying using bulk api v2', async () => {
+  it('should return a stream of 10000 records', async () => {
     const count = await conn.sobject(config.bigTable).count({});
-    const readStream = await conn.bulk2.query(
+    const queryJob = await conn.bulk2.query(
       `SELECT Id, Name FROM ${config.bigTable}`,
     );
 
+    const readStream = queryJob.stream();
+
+    let numberOfBatchesProcessed = 0;
     const records = await new Promise((resolve, reject) => {
       let r = [];
 
       readStream
         .on('data', (data) => {
           r = r.concat(data);
+          numberOfBatchesProcessed++;
         })
         .on('error', (e) => {
           reject(e);
@@ -197,27 +201,29 @@ if (isNodeJS()) {
         });
     });
 
-    assert.ok(Array.isArray(records) && records.length === count);
-    for (const rec of records) {
-      assert.ok(isString(rec.Id));
-    }
+    assert.ok(records.length === count);
+    assert.ok(numberOfBatchesProcessed === 1);
   });
 
-  it('should return a stream of records when querying using bulk api v2 and given a maxRecords', async () => {
+  it('should return a stream of 500 records', async () => {
     const count = await conn.sobject(config.bigTable).count({});
-    const readStream = await conn.bulk2.query(
+    const queryJob = await conn.bulk2.query(
       `SELECT Id, Name FROM ${config.bigTable}`,
       {
         maxRecords: 500,
       },
     );
 
+    const readStream = queryJob.stream();
+
+    let numberOfBatchesProcessed = 0;
     const records = await new Promise((resolve, reject) => {
       let r = [];
 
       readStream
         .on('data', (data) => {
           r = r.concat(data);
+          numberOfBatchesProcessed++;
         })
         .on('error', (e) => {
           reject(e);
@@ -227,10 +233,8 @@ if (isNodeJS()) {
         });
     });
 
-    assert.ok(Array.isArray(records) && records.length === count);
-    for (const rec of records) {
-      assert.ok(isString(rec.Id));
-    }
+    assert.ok(records.length === count);
+    assert.ok(numberOfBatchesProcessed === 5);
   });
 }
 

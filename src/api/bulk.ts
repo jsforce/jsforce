@@ -1025,6 +1025,7 @@ export class BulkV2<S extends Schema> {
    */
   pollTimeout = 10000;
 
+
   constructor(connection: Connection<S>) {
     this.#connection = connection;
   }
@@ -1078,12 +1079,12 @@ export class BulkV2<S extends Schema> {
   }
 
   /**
-   * Execute bulk query and get record stream
+   * Execute bulk query and return a query job
    */
   async query(
     soql: string,
     options?: Partial<QueryJobV2Options>,
-  ): Promise<Readable> {
+  ): Promise<QueryJobV2<S>> {
     const queryJob = new QueryJobV2({
       connection: this.#connection,
       operation: 'query',
@@ -1093,12 +1094,9 @@ export class BulkV2<S extends Schema> {
     });
     try {
       await queryJob.open();
-      await queryJob.poll(
-        options?.pollingOptions?.pollInterval,
-        options?.pollingOptions?.pollTimeout,
-      );
+      await queryJob.poll();
 
-      return queryJob.stream();
+      return queryJob;
     } catch (err) {
       if (err.name !== 'JobPollingTimeoutError') {
         // fires off one last attempt to clean up and ignores the result | error
@@ -1114,11 +1112,12 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
   readonly #operation: QueryOperation;
   readonly #query: string;
   readonly #pollingOptions: BulkV2PollingOptions;
-  readonly #maxRecords: number | undefined;
+  readonly #maxRecords: number;
   #error: Error | undefined;
   jobInfo: Partial<JobInfoV2> | undefined;
   locator: Optional<string>;
   finished: boolean = false;
+  numberOfRecordsProcessed: number;
 
   constructor(options: CreateQueryJobV2Options<S>) {
     super();
@@ -1126,7 +1125,8 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     this.#operation = options.operation;
     this.#query = options.query;
     this.#pollingOptions = options.pollingOptions;
-    this.#maxRecords = options.maxRecords;
+    this.#maxRecords = options.maxRecords || 10000;
+    this.numberOfRecordsProcessed = 0;
     // default error handler to keep the latest error
     this.on('error', (error) => (this.#error = error));
   }
@@ -1262,15 +1262,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     return url.toString();
   }
 
-  async stream(): Promise<Readable> {
-    return Readable.from(this.getResultsIterableGenerator());
-  }
-
-  async *getResultsIterableGenerator(): AsyncGenerator<
-    Record[],
-    void,
-    unknown
-  > {
+  private async *getResults(): AsyncGenerator<Record[], void, unknown> {
     do {
       const results = await this.request<Record[]>({
         method: 'GET',
@@ -1279,8 +1271,13 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
           Accept: 'text/csv',
         },
       });
+      this.numberOfRecordsProcessed += results.length;
       yield results;
     } while (this.locator !== 'null');
+  }
+
+  stream(): Readable {
+    return Readable.from(this.getResults());
   }
 
   async delete(): Promise<void> {
