@@ -6,6 +6,7 @@ import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject, isString } from './util';
 import { isNodeJS } from './helper/env';
+import { MAX_RECORDS } from '../src/api/bulk';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();
@@ -151,7 +152,7 @@ it('should bulk delete with empty input and not raise client input error', async
 });
 
 // /*------------------------------------------------------------------------*/
-if(isNodeJS()){
+if (isNodeJS()) {
   it('should bulk insert from file and return inserted results', async () => {
     const csvStream = fs.createReadStream(
       path.join(__dirname, 'data/Account.csv'),
@@ -204,15 +205,16 @@ if(isNodeJS()){
     const { records, numberOfBatchesProcessed } = await getRecords(readStream);
 
     assert.ok(records.length === count);
-    assert.ok(numberOfBatchesProcessed === 1);
+    assert.ok(numberOfBatchesProcessed === Math.ceil(count / MAX_RECORDS));
   });
 
   it('should read 500 records per batch', async () => {
+    const maxRecords = 500;
     const count = await conn.sobject(config.bigTable).count({});
     const queryJob = await conn.bulk2.query(
       `SELECT Id, Name FROM ${config.bigTable}`,
       {
-        maxRecords: 500,
+        maxRecords,
       },
     );
 
@@ -220,7 +222,7 @@ if(isNodeJS()){
     const { records, numberOfBatchesProcessed } = await getRecords(readStream);
 
     assert.ok(records.length === count);
-    assert.ok(numberOfBatchesProcessed === 5);
+    assert.ok(numberOfBatchesProcessed === Math.ceil(count / maxRecords));
   });
 }
 

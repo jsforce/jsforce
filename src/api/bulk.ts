@@ -214,6 +214,8 @@ type BulkV2PollingOptions = {
   pollTimeout: number;
 };
 
+export const MAX_RECORDS = 10000;
+
 /**
  * Class for Bulk API Job
  */
@@ -1112,13 +1114,13 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
   readonly #operation: QueryOperation;
   readonly #query: string;
   readonly #pollingOptions: BulkV2PollingOptions;
-  readonly #maxRecords: number = 10000;
+  readonly #maxRecords: number = MAX_RECORDS;
   #error: Error | undefined;
   jobInfo: Partial<JobInfoV2> | undefined;
   locator: Optional<string>;
   finished: boolean = false;
   numberOfRecordsProcessed: number;
-  
+
   constructor(options: CreateQueryJobV2Options<S>) {
     super();
     this.#connection = options.connection;
