@@ -1112,20 +1112,20 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
   readonly #operation: QueryOperation;
   readonly #query: string;
   readonly #pollingOptions: BulkV2PollingOptions;
-  readonly #maxRecords: number;
+  readonly #maxRecords: number = 10000;
   #error: Error | undefined;
   jobInfo: Partial<JobInfoV2> | undefined;
   locator: Optional<string>;
   finished: boolean = false;
   numberOfRecordsProcessed: number;
-
+  
   constructor(options: CreateQueryJobV2Options<S>) {
     super();
     this.#connection = options.connection;
     this.#operation = options.operation;
     this.#query = options.query;
     this.#pollingOptions = options.pollingOptions;
-    this.#maxRecords = options.maxRecords || 10000;
+    this.#maxRecords = options.maxRecords!;
     this.numberOfRecordsProcessed = 0;
     // default error handler to keep the latest error
     this.on('error', (error) => (this.#error = error));

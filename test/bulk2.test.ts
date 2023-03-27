@@ -18,6 +18,24 @@ beforeAll(async () => {
   await connMgr.establishConnection(conn);
 });
 
+function getRecords(readStream) {
+  return new Promise((resolve) => {
+    let records = [];
+    let numberOfBatchesProcessed = 0;
+    readStream
+      .on('data', (data) => {
+        records = records.concat(data);
+        numberOfBatchesProcessed++;
+      })
+      .on('end', () => {
+        resolve({
+          records,
+          numberOfBatchesProcessed,
+        });
+      });
+  });
+}
+
 it('should bulk insert records and return result status', async () => {
   const records = [
     ...Array.from(Array(200), (a, i) => ({
@@ -133,7 +151,7 @@ it('should bulk delete with empty input and not raise client input error', async
 });
 
 // /*------------------------------------------------------------------------*/
-if (isNodeJS()) {
+if(isNodeJS()){
   it('should bulk insert from file and return inserted results', async () => {
     const csvStream = fs.createReadStream(
       path.join(__dirname, 'data/Account.csv'),
@@ -176,36 +194,20 @@ if (isNodeJS()) {
     }
   });
 
-  it('should return a stream of 10000 records', async () => {
+  it('should read 10000 records per batch', async () => {
     const count = await conn.sobject(config.bigTable).count({});
     const queryJob = await conn.bulk2.query(
       `SELECT Id, Name FROM ${config.bigTable}`,
     );
 
     const readStream = queryJob.stream();
-
-    let numberOfBatchesProcessed = 0;
-    const records = await new Promise((resolve, reject) => {
-      let r = [];
-
-      readStream
-        .on('data', (data) => {
-          r = r.concat(data);
-          numberOfBatchesProcessed++;
-        })
-        .on('error', (e) => {
-          reject(e);
-        })
-        .on('end', () => {
-          resolve(r);
-        });
-    });
+    const { records, numberOfBatchesProcessed } = await getRecords(readStream);
 
     assert.ok(records.length === count);
     assert.ok(numberOfBatchesProcessed === 1);
   });
 
-  it('should return a stream of 500 records', async () => {
+  it('should read 500 records per batch', async () => {
     const count = await conn.sobject(config.bigTable).count({});
     const queryJob = await conn.bulk2.query(
       `SELECT Id, Name FROM ${config.bigTable}`,
@@ -215,23 +217,7 @@ if (isNodeJS()) {
     );
 
     const readStream = queryJob.stream();
-
-    let numberOfBatchesProcessed = 0;
-    const records = await new Promise((resolve, reject) => {
-      let r = [];
-
-      readStream
-        .on('data', (data) => {
-          r = r.concat(data);
-          numberOfBatchesProcessed++;
-        })
-        .on('error', (e) => {
-          reject(e);
-        })
-        .on('end', () => {
-          resolve(r);
-        });
-    });
+    const { records, numberOfBatchesProcessed } = await getRecords(readStream);
 
     assert.ok(records.length === count);
     assert.ok(numberOfBatchesProcessed === 5);
