@@ -1119,7 +1119,8 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
   jobInfo: Partial<JobInfoV2> | undefined;
   locator: Optional<string>;
   finished: boolean = false;
-  numberOfRecordsProcessed: number;
+  numberRecordsRetrieved: number;
+  numberBatchesProcessed: number;
 
   constructor(options: CreateQueryJobV2Options<S>) {
     super();
@@ -1128,7 +1129,8 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     this.#query = options.query;
     this.#pollingOptions = options.pollingOptions;
     this.#maxRecords = options.maxRecords!;
-    this.numberOfRecordsProcessed = 0;
+    this.numberRecordsRetrieved = 0;
+    this.numberBatchesProcessed = 0;
     // default error handler to keep the latest error
     this.on('error', (error) => (this.#error = error));
   }
@@ -1273,7 +1275,8 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
           Accept: 'text/csv',
         },
       });
-      this.numberOfRecordsProcessed += results.length;
+      this.numberRecordsRetrieved += results.length;
+      this.numberBatchesProcessed++;
       yield results;
     } while (this.locator !== 'null');
   }

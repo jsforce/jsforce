@@ -22,17 +22,12 @@ beforeAll(async () => {
 function getRecords(readStream) {
   return new Promise((resolve) => {
     let records = [];
-    let numberOfBatchesProcessed = 0;
     readStream
       .on('data', (data) => {
         records = records.concat(data);
-        numberOfBatchesProcessed++;
       })
       .on('end', () => {
-        resolve({
-          records,
-          numberOfBatchesProcessed,
-        });
+        resolve(records);
       });
   });
 }
@@ -152,7 +147,7 @@ it('should bulk delete with empty input and not raise client input error', async
 });
 
 // /*------------------------------------------------------------------------*/
-if (isNodeJS()) {
+if(isNodeJS()) {
   it('should bulk insert from file and return inserted results', async () => {
     const csvStream = fs.createReadStream(
       path.join(__dirname, 'data/Account.csv'),
@@ -195,17 +190,30 @@ if (isNodeJS()) {
     }
   });
 
-  it('should read 10000 records per batch', async () => {
+  it('should query all records', async () => {
+    const queryJob = await conn.bulk2.query(
+      `SELECT Id, Name FROM ${config.bigTable}`
+    );
+
+    const readStream = queryJob.stream();
+    await getRecords(readStream);
+
+    assert.ok(
+      queryJob.numberRecordsRetrieved ===
+        queryJob.jobInfo?.numberRecordsProcessed,
+    );
+  });
+
+  it('should read 10000 records per batch when not providing maxRecords', async () => {
     const count = await conn.sobject(config.bigTable).count({});
     const queryJob = await conn.bulk2.query(
       `SELECT Id, Name FROM ${config.bigTable}`,
     );
 
     const readStream = queryJob.stream();
-    const { records, numberOfBatchesProcessed } = await getRecords(readStream);
+    await getRecords(readStream);
 
-    assert.ok(records.length === count);
-    assert.ok(numberOfBatchesProcessed === Math.ceil(count / MAX_RECORDS));
+    assert.ok(queryJob.numberBatchesProcessed === Math.ceil(count / MAX_RECORDS));
   });
 
   it('should read 500 records per batch', async () => {
@@ -219,11 +227,27 @@ if (isNodeJS()) {
     );
 
     const readStream = queryJob.stream();
-    const { records, numberOfBatchesProcessed } = await getRecords(readStream);
+    await getRecords(readStream);
 
-    assert.ok(records.length === count);
-    assert.ok(numberOfBatchesProcessed === Math.ceil(count / maxRecords));
+    assert.ok(queryJob.numberBatchesProcessed === Math.ceil(count / maxRecords));
   });
+
+  // Because the number of batches is determine by the API, and the API's doc doesn't explain how this number is calculated, this test can't really assert the possible number of batches when not providing maxRecords to the API. 
+  // However, because we are working with 2200 records only, it is certain that the API will always return all records in 1 single batch.
+  it('should query all records in 1 batch when maxRecords is not added to the request url', async () => {
+    const queryJob = await conn.bulk2.query(
+      `SELECT Id, Name FROM ${config.bigTable}`,
+      {
+        maxRecords: 0
+      }
+    );
+
+    const readStream = queryJob.stream();
+    await getRecords(readStream);
+
+    assert.ok(queryJob.numberBatchesProcessed === 1);
+  });
+
 }
 
 /*------------------------------------------------------------------------*/
