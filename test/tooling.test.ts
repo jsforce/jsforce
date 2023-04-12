@@ -3,6 +3,7 @@ import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isNumber, isString, isObject } from './util';
 import fs from './helper/fs';
+import { isNodeJS } from './helper/env';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();
@@ -92,45 +93,51 @@ it('should get completions and return completions', async () => {
 });
 
 it('can create static resource using application/json content type', async () => {
-  const request = createStaticResourceRequest(
-    fs.readFileSync('test/data/test.zip').toString('base64'),
-  );
-  const record = await conn.tooling.create('StaticResource', request);
-  assert.ok(record.success);
+  if (isNodeJS()) {
+    const request = createStaticResourceRequest(
+      fs.readFileSync('test/data/test.zip').toString('base64'),
+    );
+    const record = await conn.tooling.create('StaticResource', request);
+    assert.ok(record.success);
+  }
 });
 
 it('can create static resource using multipart/form-data content type with a buffer', async () => {
-  const request = createStaticResourceRequest(
-    fs.readFileSync('test/data/test.zip'),
-  );
-  const options = {
-    multipartFileFields: {
-      Body: {
-        contentType: 'application/zip',
-        filename: 'test.zip',
+  if (isNodeJS()) {
+    const request = createStaticResourceRequest(
+      fs.readFileSync('test/data/test.zip'),
+    );
+    const options = {
+      multipartFileFields: {
+        Body: {
+          contentType: 'application/zip',
+          filename: 'test.zip',
+        },
       },
-    },
-  };
-  const record = await conn.tooling.create('StaticResource', request, options);
-  assert.ok(record.success);
+    };
+    const record = await conn.tooling.create('StaticResource', request, options);
+    assert.ok(record.success);
+  }
 });
 
 it('can create static resource using multipart/form-data content type with a base64 encoded string', async () => {
-  const request = createStaticResourceRequest(
-    fs.readFileSync('test/data/test.zip').toString('base64'),
-  );
+  if (isNodeJS()) {
+    const request = createStaticResourceRequest(
+      fs.readFileSync('test/data/test.zip').toString('base64'),
+    );
 
-  const options = {
-    multipartFileFields: {
-      Body: {
-        contentType: 'application/zip',
-        filename: 'test.zip',
+    const options = {
+      multipartFileFields: {
+        Body: {
+          contentType: 'application/zip',
+          filename: 'test.zip',
+        },
       },
-    },
-  };
+    };
 
-  const record = await conn.tooling.create('StaticResource', request, options);
-  assert.ok(record.success);
+    const record = await conn.tooling.create('StaticResource', request, options);
+    assert.ok(record.success);
+  }
 });
 
 function createStaticResourceRequest(body: String | Buffer) {
