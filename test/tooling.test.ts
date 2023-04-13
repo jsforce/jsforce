@@ -115,7 +115,11 @@ it('can create static resource using multipart/form-data content type with a buf
         },
       },
     };
-    const record = await conn.tooling.create('StaticResource', request, options);
+    const record = await conn.tooling.create(
+      'StaticResource',
+      request,
+      options,
+    );
     assert.ok(record.success);
   }
 });
@@ -135,7 +139,11 @@ it('can create static resource using multipart/form-data content type with a bas
       },
     };
 
-    const record = await conn.tooling.create('StaticResource', request, options);
+    const record = await conn.tooling.create(
+      'StaticResource',
+      request,
+      options,
+    );
     assert.ok(record.success);
   }
 });
