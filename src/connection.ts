@@ -63,6 +63,7 @@ import SoapApi from './api/soap';
 import Streaming from './api/streaming';
 import Tooling from './api/tooling';
 import { JwtOAuth2Config, JwtOAuth2 } from './jwtOAuth2';
+import FormData from 'form-data';
 
 /**
  * type definitions
@@ -969,13 +970,41 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
       throw new Error('No SObject Type defined in record');
     }
     const url = [this._baseUrl(), 'sobjects', sobjectType].join('/');
+    let contentType, body;
+
+    if (options && options.multipartFileFields) {
+      // Send the record as a multipart/form-data request. Useful for fields containing large binary blobs.
+      const form = new FormData();
+      // Extract the fields requested to be sent separately from the JSON
+      Object.entries(options.multipartFileFields).forEach(
+        ([fieldName, fileDetails]) => {
+          form.append(
+            fieldName,
+            Buffer.from(rec[fieldName], 'base64'),
+            fileDetails,
+          );
+          delete rec[fieldName];
+        },
+      );
+      // Serialize the remaining fields as JSON
+      form.append(type, JSON.stringify(rec), {
+        contentType: 'application/json',
+      });
+      contentType = form.getHeaders()['content-type']; // This is necessary to ensure the 'boundary' is present
+      body = form;
+    } else {
+      // Default behavior: send the request as JSON
+      contentType = 'application/json';
+      body = JSON.stringify(rec);
+    }
+
     return this.request({
       method: 'POST',
       url,
-      body: JSON.stringify(rec),
+      body: body,
       headers: {
         ...(options.headers || {}),
-        'content-type': 'application/json',
+        'content-type': contentType,
       },
     });
   }

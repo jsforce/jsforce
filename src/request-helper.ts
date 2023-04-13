@@ -1,6 +1,7 @@
 import { PassThrough } from 'stream';
 import { concatStreamsAsDuplex, readAll } from './util/stream';
 import { HttpRequest, HttpRequestOptions, HttpResponse } from './types';
+import FormData from 'form-data';
 
 /**
  *
@@ -10,9 +11,14 @@ export function createHttpRequestHandlerStreams(req: HttpRequest) {
   const input = new PassThrough();
   const output = new PassThrough();
   const duplex = concatStreamsAsDuplex(input, output);
+
   if (typeof reqBody !== 'undefined') {
     setTimeout(() => {
-      duplex.end(reqBody, 'utf8');
+      if (reqBody instanceof FormData) {
+        duplex.end(reqBody.getBuffer());
+      } else {
+        duplex.end(reqBody, 'utf8');
+      }
     }, 0);
   }
   duplex.on('response', async (res) => {
