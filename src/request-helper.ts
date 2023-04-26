@@ -23,7 +23,15 @@ export function createHttpRequestHandlerStreams(req: HttpRequest) {
   }
   duplex.on('response', async (res) => {
     if (duplex.listenerCount('complete') > 0) {
-      const resBody = await readAll(duplex);
+      const contentType: string | null =
+        res.headers && res.headers['content-type'];
+      const encoding =
+        contentType == null ||
+        /^text\/(.*)(;|$)/.test(contentType) ||
+        /^application\/json(;|$)/.test(contentType)
+          ? 'utf-8'
+          : 'base64';
+      const resBody = await readAll(duplex, encoding);
       duplex.emit('complete', {
         ...res,
         body: resBody,

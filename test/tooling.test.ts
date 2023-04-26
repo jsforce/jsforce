@@ -148,6 +148,23 @@ it('can create static resource using multipart/form-data content type with a bas
   }
 });
 
+it('can download a static resource binary blob and properly interpret the results', async () => {
+  if (isNodeJS()) {
+    const base64bytes = fs
+      .readFileSync('test/data/test.zip')
+      .toString('base64');
+    const request = createStaticResourceRequest(base64bytes);
+    const result = await conn.tooling.create('StaticResource', request);
+    assert.ok(result.success);
+
+    const record = await conn.tooling.retrieve('StaticResource', result.id);
+    assert.ok(isString(record.Body));
+
+    const response = await conn.tooling.request<string>(record.Body);
+    assert.ok(response == base64bytes);
+  }
+});
+
 function createStaticResourceRequest(body: String | Buffer) {
   return {
     ContentType: 'application/zip',
