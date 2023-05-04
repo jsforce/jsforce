@@ -2,6 +2,15 @@ const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
+  resolve: {
+    fallback: {
+      "querystring": require.resolve("querystring-es3"),
+      "crypto": require.resolve("crypto-browserify"),
+      "stream": require.resolve("stream-browserify"),
+      "timers": require.resolve("timers-browserify"),
+      "util": require.resolve("util"),
+    }
+  },
   entry: {
     jsforce: '.',
     'jsforce.min': '.',
@@ -9,8 +18,6 @@ module.exports = {
     'jsforce-core.min': './core',
   },
   output: {
-    path: path.join(__dirname, 'dist'),
-    filename: '[name].js',
     library: 'jsforce',
   },
   module: {
