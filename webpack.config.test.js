@@ -3,6 +3,13 @@ const webpack = require('webpack');
 
 module.exports = {
   mode: 'development',
+  resolve: {
+    fallback: {
+      "path": require.resolve("path-browserify"),
+      "stream": require.resolve("stream-browserify"),
+      "assert": require.resolve("assert/"),
+    }
+  },
   module: {
     rules: [
       {
