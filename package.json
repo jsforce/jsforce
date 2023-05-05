@@ -47,7 +47,7 @@
     "typecheck": "tsc --noEmit",
     "pretest:node": "run-s build:transpile",
     "pretest:browser": "run-s build:browser build:bundle",
-    "test": "run-s build:browser build:bundle && run-s test:node test:browser",
+    "test": "run-s test:node test:browser",
     "test:node": "jest `if (test \"${SF_POOL_USERNAME}\" = \"\"); then echo \"-w 1\"; else echo \"-w 5\"; fi`",
     "test:browser": "karma start"
   },
