@@ -100,7 +100,10 @@ export default function request(
   options_: HttpRequestOptions = {},
 ): Duplex {
   const options = { ...defaults, ...options_ };
-  const { input, output, stream } = createHttpRequestHandlerStreams(req);
+  const { input, output, stream } = createHttpRequestHandlerStreams(
+    req,
+    options,
+  );
   startFetchRequest(req, options, input, output, stream);
   return stream;
 }

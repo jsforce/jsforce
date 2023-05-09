@@ -160,7 +160,9 @@ it('can download a static resource binary blob and properly interpret the result
     const record = await conn.tooling.retrieve('StaticResource', result.id);
     assert.ok(isString(record.Body));
 
-    const response = await conn.tooling.request<string>(record.Body);
+    const response = await conn.tooling.request<string>(record.Body, {
+      decodeResponseAs: 'base64',
+    });
     assert.ok(response == base64bytes);
   }
 });

@@ -8,7 +8,13 @@ import { StreamPromise } from './util/promise';
 import Connection from './connection';
 import Transport from './transport';
 import { parseCSV } from './csv';
-import { HttpRequest, HttpResponse, Optional, Schema } from './types';
+import {
+  HttpRequest,
+  HttpRequestOptions,
+  HttpResponse,
+  Optional,
+  Schema,
+} from './types';
 import { createLazyStream } from './util/stream';
 
 /** @private */
@@ -37,6 +43,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
   _transport: Transport;
   _responseType: string | void;
   _noContentResponse: string | void;
+  _options: HttpRequestOptions;
 
   constructor(conn: Connection<S>, options: any) {
     super();
@@ -47,6 +54,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
     this._responseType = options.responseType;
     this._transport = options.transport || conn._transport;
     this._noContentResponse = options.noContentResponse;
+    this._options = options;
   }
 
   /**
@@ -86,7 +94,10 @@ export class HttpApi<S extends Schema> extends EventEmitter {
           `<request> method=${request.method}, url=${request.url}`,
         );
         const requestTime = Date.now();
-        const requestPromise = this._transport.httpRequest(request);
+        const requestPromise = this._transport.httpRequest(
+          request,
+          this._options,
+        );
 
         setStream(requestPromise.stream());
 

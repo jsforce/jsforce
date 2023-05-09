@@ -6,7 +6,10 @@ import FormData from 'form-data';
 /**
  *
  */
-export function createHttpRequestHandlerStreams(req: HttpRequest) {
+export function createHttpRequestHandlerStreams(
+  req: HttpRequest,
+  options: HttpRequestOptions = { decodeResponseAs: 'utf-8' },
+) {
   const { body: reqBody } = req;
   const input = new PassThrough();
   const output = new PassThrough();
@@ -23,15 +26,7 @@ export function createHttpRequestHandlerStreams(req: HttpRequest) {
   }
   duplex.on('response', async (res) => {
     if (duplex.listenerCount('complete') > 0) {
-      const contentType: string | null =
-        res.headers && res.headers['content-type'];
-      const encoding =
-        contentType == null ||
-        /^text\/(.*)(;|$)/.test(contentType) ||
-        /^application\/json(;|$)/.test(contentType)
-          ? 'utf-8'
-          : 'base64';
-      const resBody = await readAll(duplex, encoding);
+      const resBody = await readAll(duplex, options.decodeResponseAs);
       duplex.emit('complete', {
         ...res,
         body: resBody,
