@@ -8,7 +8,7 @@ import FormData from 'form-data';
  */
 export function createHttpRequestHandlerStreams(
   req: HttpRequest,
-  options: HttpRequestOptions = { decodeResponseAs: 'utf-8' },
+  options: HttpRequestOptions = {},
 ) {
   const { body: reqBody } = req;
   const input = new PassThrough();

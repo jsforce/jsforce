@@ -26631,9 +26631,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
  */
 
 function createHttpRequestHandlerStreams(req) {
-  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {
-    decodeResponseAs: 'utf-8'
-  };
+  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
   var reqBody = req.body;
   var input = new stream__WEBPACK_IMPORTED_MODULE_14__["PassThrough"]();
   var output = new stream__WEBPACK_IMPORTED_MODULE_14__["PassThrough"]();
