@@ -1,11 +1,11 @@
 version: 2.1
 executors:
-  node10:
+  node-lts:
     docker:
-      - image: circleci/node:10.16.0-browsers
+      - image: cimg/node:lts-browsers
 jobs:
   test_node:
-    executor: node10
+    executor: node-lts
     steps:
       - checkout
       - restore_cache:
@@ -28,7 +28,7 @@ jobs:
           command: |
             npm run test:node
   test_browser:
-    executor: node10
+    executor: node-lts
     steps:
       - checkout
       - restore_cache:
