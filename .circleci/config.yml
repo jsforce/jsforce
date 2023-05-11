@@ -2,7 +2,7 @@ version: 2.1
 executors:
   node-lts:
     docker:
-      - image: circleci/node:10.16.0-browsers
+      - image: cimg/node:lts-browsers
 jobs:
   test_node:
     executor: node-lts
