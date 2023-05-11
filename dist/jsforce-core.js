@@ -126,15 +126,10 @@ var jsforce;
 
 
 
-
 function ownKeys(object, enumerableOnly) { var keys = _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_7___default()(object); if ((_babel_runtime_corejs3_core_js_stable_object_get_own_property_symbols__WEBPACK_IMPORTED_MODULE_6___default())) { var symbols = _babel_runtime_corejs3_core_js_stable_object_get_own_property_symbols__WEBPACK_IMPORTED_MODULE_6___default()(object); if (enumerableOnly) symbols = _babel_runtime_corejs3_core_js_stable_instance_filter__WEBPACK_IMPORTED_MODULE_5___default()(symbols).call(symbols, function (sym) { return _babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptor__WEBPACK_IMPORTED_MODULE_4___default()(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { var _context5; _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_3___default()(_context5 = ownKeys(Object(source), true)).call(_context5, function (key) { _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_30___default()(target, key, source[key]); }); } else if ((_babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptors__WEBPACK_IMPORTED_MODULE_2___default())) { _babel_runtime_corejs3_core_js_stable_object_define_properties__WEBPACK_IMPORTED_MODULE_1___default()(target, _babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptors__WEBPACK_IMPORTED_MODULE_2___default()(source)); } else { var _context6; _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_3___default()(_context6 = ownKeys(Object(source))).call(_context6, function (key) { _babel_runtime_corejs3_core_js_stable_object_define_property__WEBPACK_IMPORTED_MODULE_0___default()(target, key, _babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptor__WEBPACK_IMPORTED_MODULE_4___default()(source, key)); }); } } return target; }
-
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_29___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_29___default()(this).constructor; result = _babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_8___default()(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_28___default()(this, result); }; }
-
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_8___default())) return false; if ((_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_8___default().sham)) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_8___default()(Date, [], function () {})); return true; } catch (e) { return false; } }
-
 /**
  * @file Browser client connection management class
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -143,62 +138,50 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(_
 
 
 
+
 /**
  * @private
  */
-
 function popupWin(url, w, h) {
   var _context, _context2, _context3;
-
   var left = screen.width / 2 - w / 2;
   var top = screen.height / 2 - h / 2;
   return window.open(url, undefined, _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_32___default()(_context = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_32___default()(_context2 = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_32___default()(_context3 = "location=yes,toolbar=no,status=no,menubar=no,width=".concat(w, ",height=")).call(_context3, h, ",top=")).call(_context2, top, ",left=")).call(_context, left));
 }
+
 /**
  * @private
  */
-
-
 function handleCallbackResponse() {
   var res = checkCallbackResponse();
   var state = localStorage.getItem('jsforce_state');
-
   if (res && state && res.body.state === state) {
     localStorage.removeItem('jsforce_state');
-
     var _state$split = state.split('.'),
-        _state$split2 = _babel_runtime_corejs3_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_31___default()(_state$split, 2),
-        prefix = _state$split2[0],
-        promptType = _state$split2[1];
-
+      _state$split2 = _babel_runtime_corejs3_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_31___default()(_state$split, 2),
+      prefix = _state$split2[0],
+      promptType = _state$split2[1];
     var cli = new BrowserClient(prefix);
-
     if (res.success) {
       cli._storeTokens(res.body);
-
       location.hash = '';
     } else {
       cli._storeError(res.body);
     }
-
     if (promptType === 'popup') {
       window.close();
     }
-
     return true;
   }
 }
+
 /**
  * @private
  */
-
-
 function checkCallbackResponse() {
   var params;
-
   if (window.location.hash) {
     params = querystring__WEBPACK_IMPORTED_MODULE_34__.parse(window.location.hash.substring(1));
-
     if (params.access_token) {
       return {
         success: true,
@@ -207,7 +190,6 @@ function checkCallbackResponse() {
     }
   } else if (window.location.search) {
     params = querystring__WEBPACK_IMPORTED_MODULE_34__.parse(window.location.search.substring(1));
-
     if (params.error) {
       return {
         success: false,
@@ -216,68 +198,53 @@ function checkCallbackResponse() {
     }
   }
 }
+
 /**
  *
  */
-
 
 /**
  *
  */
 var DEFAULT_POPUP_WIN_WIDTH = 912;
 var DEFAULT_POPUP_WIN_HEIGHT = 513;
-/** @private **/
 
+/** @private **/
 var clientIdx = 0;
+
 /**
  *
  */
-
 var BrowserClient = /*#__PURE__*/function (_EventEmitter) {
   _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_27___default()(BrowserClient, _EventEmitter);
-
   var _super = _createSuper(BrowserClient);
-
   /**
    *
    */
   function BrowserClient(prefix) {
     var _this;
-
     _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_24___default()(this, BrowserClient);
-
     _this = _super.call(this);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_30___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_26___default()(_this), "_prefix", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_30___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_26___default()(_this), "_config", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_30___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_26___default()(_this), "_connection", void 0);
-
     _this._prefix = prefix || 'jsforce' + clientIdx++;
     return _this;
   }
-
   _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_25___default()(BrowserClient, [{
     key: "init",
-
     /**
      *
      */
     value: function init(config) {
       var _this2 = this;
-
       if (handleCallbackResponse()) {
         return;
       }
-
       this._config = config;
-
       var tokens = this._getTokens();
-
       if (tokens) {
         this.connection._establish(tokens);
-
         _babel_runtime_corejs3_core_js_stable_set_timeout__WEBPACK_IMPORTED_MODULE_23___default()(function () {
           _this2.emit('connect', _this2.connection);
         }, 10);
@@ -286,18 +253,16 @@ var BrowserClient = /*#__PURE__*/function (_EventEmitter) {
     /**
      *
      */
-
   }, {
     key: "login",
     value: function login() {
       var _this$_config,
-          _size$width,
-          _size$height,
-          _this3 = this;
-
+        _size$width,
+        _size$height,
+        _this3 = this;
       var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
       var scope = options.scope,
-          size = options.size;
+        size = options.size;
       var oauth2 = new _oauth2__WEBPACK_IMPORTED_MODULE_36__/* ["default"] */ .Z((_this$_config = this._config) !== null && _this$_config !== void 0 ? _this$_config : {});
       var rand = Math.random().toString(36).substring(2);
       var state = [this._prefix, 'popup', rand].join('.');
@@ -312,40 +277,30 @@ var BrowserClient = /*#__PURE__*/function (_EventEmitter) {
       return new (_babel_runtime_corejs3_core_js_stable_promise__WEBPACK_IMPORTED_MODULE_22___default())(function (resolve, reject) {
         if (!pw) {
           var _state = [_this3._prefix, 'redirect', rand].join('.');
-
           localStorage.setItem('jsforce_state', _state);
-
           var _authzUrl = oauth2.getAuthorizationUrl(_objectSpread({
             response_type: 'token',
             state: _state
           }, scope ? {
             scope: scope
           } : {}));
-
           location.href = _authzUrl;
           return;
         }
-
         _this3._removeTokens();
-
         var pid = _babel_runtime_corejs3_core_js_stable_set_interval__WEBPACK_IMPORTED_MODULE_21___default()(function () {
           try {
             if (!pw || pw.closed) {
               clearInterval(pid);
-
               var tokens = _this3._getTokens();
-
               if (tokens) {
                 _this3.connection._establish(tokens);
-
                 _this3.emit('connect', _this3.connection);
-
                 resolve({
                   status: 'connect'
                 });
               } else {
                 var err = _this3._getError();
-
                 if (err) {
                   reject(new Error(err.error + ': ' + err.error_description));
                 } else {
@@ -355,7 +310,8 @@ var BrowserClient = /*#__PURE__*/function (_EventEmitter) {
                 }
               }
             }
-          } catch (e) {//
+          } catch (e) {
+            //
           }
         }, 1000);
       });
@@ -363,7 +319,6 @@ var BrowserClient = /*#__PURE__*/function (_EventEmitter) {
     /**
      *
      */
-
   }, {
     key: "isLoggedIn",
     value: function isLoggedIn() {
@@ -372,47 +327,38 @@ var BrowserClient = /*#__PURE__*/function (_EventEmitter) {
     /**
      *
      */
-
   }, {
     key: "logout",
     value: function logout() {
       this.connection.logout();
-
       this._removeTokens();
-
       this.emit('disconnect');
     }
     /**
      * @private
      */
-
   }, {
     key: "_getTokens",
     value: function _getTokens() {
       var regexp = new RegExp('(^|;\\s*)' + this._prefix + '_loggedin=true(;|$)');
-
       if (document.cookie.match(regexp)) {
-        var issuedAt = Number(localStorage.getItem(this._prefix + '_issued_at')); // 2 hours
-
+        var issuedAt = Number(localStorage.getItem(this._prefix + '_issued_at'));
+        // 2 hours
         if (_babel_runtime_corejs3_core_js_stable_date_now__WEBPACK_IMPORTED_MODULE_20___default()() < issuedAt + 2 * 60 * 60 * 1000) {
           var userInfo;
           var idUrl = localStorage.getItem(this._prefix + '_id');
-
           if (idUrl) {
             var _context4;
-
             var _idUrl$split$reverse = _babel_runtime_corejs3_core_js_stable_instance_reverse__WEBPACK_IMPORTED_MODULE_19___default()(_context4 = idUrl.split('/')).call(_context4),
-                _idUrl$split$reverse2 = _babel_runtime_corejs3_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_31___default()(_idUrl$split$reverse, 2),
-                id = _idUrl$split$reverse2[0],
-                organizationId = _idUrl$split$reverse2[1];
-
+              _idUrl$split$reverse2 = _babel_runtime_corejs3_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_31___default()(_idUrl$split$reverse, 2),
+              id = _idUrl$split$reverse2[0],
+              organizationId = _idUrl$split$reverse2[1];
             userInfo = {
               id: id,
               organizationId: organizationId,
               url: idUrl
             };
           }
-
           return {
             accessToken: localStorage.getItem(this._prefix + '_access_token'),
             instanceUrl: localStorage.getItem(this._prefix + '_instance_url'),
@@ -420,13 +366,11 @@ var BrowserClient = /*#__PURE__*/function (_EventEmitter) {
           };
         }
       }
-
       return null;
     }
     /**
      * @private
      */
-
   }, {
     key: "_storeTokens",
     value: function _storeTokens(params) {
@@ -439,7 +383,6 @@ var BrowserClient = /*#__PURE__*/function (_EventEmitter) {
     /**
      * @private
      */
-
   }, {
     key: "_removeTokens",
     value: function _removeTokens() {
@@ -452,23 +395,21 @@ var BrowserClient = /*#__PURE__*/function (_EventEmitter) {
     /**
      * @private
      */
-
   }, {
     key: "_getError",
     value: function _getError() {
       try {
         var _localStorage$getItem;
-
         var err = JSON.parse((_localStorage$getItem = localStorage.getItem(this._prefix + '_error')) !== null && _localStorage$getItem !== void 0 ? _localStorage$getItem : '');
         localStorage.removeItem(this._prefix + '_error');
         return err;
-      } catch (e) {//
+      } catch (e) {
+        //
       }
     }
     /**
      * @private
      */
-
   }, {
     key: "_storeError",
     value: function _storeError(err) {
@@ -480,17 +421,15 @@ var BrowserClient = /*#__PURE__*/function (_EventEmitter) {
       if (!this._connection) {
         this._connection = new _connection__WEBPACK_IMPORTED_MODULE_35__/* ["default"] */ .Z(this._config);
       }
-
       return this._connection;
     }
   }]);
-
   return BrowserClient;
 }(events__WEBPACK_IMPORTED_MODULE_33__.EventEmitter);
+
 /**
  *
  */
-
 var client = new BrowserClient();
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (client);
 
@@ -581,12 +520,8 @@ var connection = __webpack_require__(61323);
 
 
 
-
 function ownKeys(object, enumerableOnly) { var keys = keys_default()(object); if ((get_own_property_symbols_default())) { var symbols = get_own_property_symbols_default()(object); if (enumerableOnly) symbols = filter_default()(symbols).call(symbols, function (sym) { return get_own_property_descriptor_default()(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { var _context10; for_each_default()(_context10 = ownKeys(Object(source), true)).call(_context10, function (key) { defineProperty_default()(target, key, source[key]); }); } else if ((get_own_property_descriptors_default())) { define_properties_default()(target, get_own_property_descriptors_default()(source)); } else { var _context11; for_each_default()(_context11 = ownKeys(Object(source))).call(_context11, function (key) { define_property_default()(target, key, get_own_property_descriptor_default()(source, key)); }); } } return target; }
-
-
 
 /**
  *
@@ -594,10 +529,8 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 var BaseRegistry = /*#__PURE__*/function () {
   function BaseRegistry() {
     classCallCheck_default()(this, BaseRegistry);
-
     defineProperty_default()(this, "_registryConfig", {});
   }
-
   createClass_default()(BaseRegistry, [{
     key: "_saveConfig",
     value: function _saveConfig() {
@@ -622,7 +555,6 @@ var BaseRegistry = /*#__PURE__*/function () {
             switch (_context.prev = _context.next) {
               case 0:
                 return _context.abrupt("return", keys_default()(this._getConnections()));
-
               case 1:
               case "end":
                 return _context.stop();
@@ -630,11 +562,9 @@ var BaseRegistry = /*#__PURE__*/function () {
           }
         }, _callee, this);
       }));
-
       function getConnectionNames() {
         return _getConnectionNames.apply(this, arguments);
       }
-
       return getConnectionNames;
     }()
   }, {
@@ -648,11 +578,9 @@ var BaseRegistry = /*#__PURE__*/function () {
               case 0:
                 _context2.next = 2;
                 return this.getConnectionConfig(name);
-
               case 2:
                 config = _context2.sent;
                 return _context2.abrupt("return", config ? new connection/* default */.Z(config) : null);
-
               case 4:
               case "end":
                 return _context2.stop();
@@ -660,11 +588,9 @@ var BaseRegistry = /*#__PURE__*/function () {
           }
         }, _callee2, this);
       }));
-
       function getConnection(_x) {
         return _getConnection.apply(this, arguments);
       }
-
       return getConnection;
     }()
   }, {
@@ -679,25 +605,19 @@ var BaseRegistry = /*#__PURE__*/function () {
                 if (!name) {
                   name = this._registryConfig['default'];
                 }
-
                 connections = this._getConnections();
                 connConfig = name ? connections[name] : undefined;
-
                 if (connConfig) {
                   _context3.next = 5;
                   break;
                 }
-
                 return _context3.abrupt("return", null);
-
               case 5:
                 client = connConfig.client, connConfig_ = objectWithoutProperties_default()(connConfig, ["client"]);
-
                 if (!client) {
                   _context3.next = 18;
                   break;
                 }
-
                 _context3.t0 = _objectSpread;
                 _context3.t1 = _objectSpread({}, connConfig_);
                 _context3.t2 = {};
@@ -705,7 +625,6 @@ var BaseRegistry = /*#__PURE__*/function () {
                 _context3.t4 = {};
                 _context3.next = 14;
                 return this.getClientConfig(client);
-
               case 14:
                 _context3.t5 = _context3.sent;
                 _context3.t6 = (0, _context3.t3)(_context3.t4, _context3.t5);
@@ -713,10 +632,8 @@ var BaseRegistry = /*#__PURE__*/function () {
                   oauth2: _context3.t6
                 };
                 return _context3.abrupt("return", (0, _context3.t0)(_context3.t1, _context3.t2, _context3.t7));
-
               case 18:
                 return _context3.abrupt("return", connConfig_);
-
               case 19:
               case "end":
                 return _context3.stop();
@@ -724,11 +641,9 @@ var BaseRegistry = /*#__PURE__*/function () {
           }
         }, _callee3, this);
       }));
-
       function getConnectionConfig(_x2) {
         return _getConnectionConfig.apply(this, arguments);
       }
-
       return getConnectionConfig;
     }()
   }, {
@@ -743,23 +658,17 @@ var BaseRegistry = /*#__PURE__*/function () {
                 connections = this._getConnections();
                 oauth2 = connConfig.oauth2, connConfig_ = objectWithoutProperties_default()(connConfig, ["oauth2"]);
                 persistConnConfig = connConfig_;
-
                 if (oauth2) {
                   clientName = this._findClientName(oauth2);
-
                   if (clientName) {
                     persistConnConfig = _objectSpread(_objectSpread({}, persistConnConfig), {}, {
                       client: clientName
                     });
                   }
-
                   delete connConfig.oauth2;
                 }
-
                 connections[name] = persistConnConfig;
-
                 this._saveConfig();
-
               case 6:
               case "end":
                 return _context4.stop();
@@ -767,30 +676,24 @@ var BaseRegistry = /*#__PURE__*/function () {
           }
         }, _callee4, this);
       }));
-
       function saveConnectionConfig(_x3, _x4) {
         return _saveConnectionConfig.apply(this, arguments);
       }
-
       return saveConnectionConfig;
     }()
   }, {
     key: "_findClientName",
     value: function _findClientName(_ref) {
       var clientId = _ref.clientId,
-          loginUrl = _ref.loginUrl;
-
+        loginUrl = _ref.loginUrl;
       var clients = this._getClients();
-
       for (var _i = 0, _Object$keys2 = keys_default()(clients); _i < _Object$keys2.length; _i++) {
         var name = _Object$keys2[_i];
         var client = clients[name];
-
         if (client.clientId === clientId && (client.loginUrl || 'https://login.salesforce.com') === loginUrl) {
           return name;
         }
       }
-
       return null;
     }
   }, {
@@ -802,9 +705,7 @@ var BaseRegistry = /*#__PURE__*/function () {
             switch (_context5.prev = _context5.next) {
               case 0:
                 this._registryConfig['default'] = name;
-
                 this._saveConfig();
-
               case 2:
               case "end":
                 return _context5.stop();
@@ -812,11 +713,9 @@ var BaseRegistry = /*#__PURE__*/function () {
           }
         }, _callee5, this);
       }));
-
       function setDefaultConnection(_x5) {
         return _setDefaultConnection.apply(this, arguments);
       }
-
       return setDefaultConnection;
     }()
   }, {
@@ -830,9 +729,7 @@ var BaseRegistry = /*#__PURE__*/function () {
               case 0:
                 connections = this._getConnections();
                 delete connections[name];
-
                 this._saveConfig();
-
               case 3:
               case "end":
                 return _context6.stop();
@@ -840,11 +737,9 @@ var BaseRegistry = /*#__PURE__*/function () {
           }
         }, _callee6, this);
       }));
-
       function removeConnectionConfig(_x6) {
         return _removeConnectionConfig.apply(this, arguments);
       }
-
       return removeConnectionConfig;
     }()
   }, {
@@ -859,7 +754,6 @@ var BaseRegistry = /*#__PURE__*/function () {
                 clients = this._getClients();
                 clientConfig = clients[name];
                 return _context7.abrupt("return", clientConfig && _objectSpread({}, clientConfig));
-
               case 3:
               case "end":
                 return _context7.stop();
@@ -867,11 +761,9 @@ var BaseRegistry = /*#__PURE__*/function () {
           }
         }, _callee7, this);
       }));
-
       function getClientConfig(_x7) {
         return _getClientConfig.apply(this, arguments);
       }
-
       return getClientConfig;
     }()
   }, {
@@ -883,7 +775,6 @@ var BaseRegistry = /*#__PURE__*/function () {
             switch (_context8.prev = _context8.next) {
               case 0:
                 return _context8.abrupt("return", keys_default()(this._getClients()));
-
               case 1:
               case "end":
                 return _context8.stop();
@@ -891,11 +782,9 @@ var BaseRegistry = /*#__PURE__*/function () {
           }
         }, _callee8, this);
       }));
-
       function getClientNames() {
         return _getClientNames.apply(this, arguments);
       }
-
       return getClientNames;
     }()
   }, {
@@ -909,9 +798,7 @@ var BaseRegistry = /*#__PURE__*/function () {
               case 0:
                 clients = this._getClients();
                 clients[name] = clientConfig;
-
                 this._saveConfig();
-
               case 3:
               case "end":
                 return _context9.stop();
@@ -919,15 +806,12 @@ var BaseRegistry = /*#__PURE__*/function () {
           }
         }, _callee9, this);
       }));
-
       function registerClientConfig(_x8, _x9) {
         return _registerClientConfig.apply(this, arguments);
       }
-
       return registerClientConfig;
     }()
   }]);
-
   return BaseRegistry;
 }();
 
@@ -938,33 +822,26 @@ var BaseRegistry = /*#__PURE__*/function () {
 
 
 
-
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = getPrototypeOf_default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf_default()(this).constructor; result = construct_default()(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn_default()(this, result); }; }
-
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(construct_default())) return false; if ((construct_default()).sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(construct_default()(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 
 /**
  *
  */
-
 var EmptyRegistry = /*#__PURE__*/function (_BaseRegistry) {
   inherits_default()(EmptyRegistry, _BaseRegistry);
-
   var _super = _createSuper(EmptyRegistry);
-
   function EmptyRegistry() {
     classCallCheck_default()(this, EmptyRegistry);
-
     return _super.apply(this, arguments);
   }
-
   createClass_default()(EmptyRegistry, [{
     key: "_saveConfig",
-    value: function _saveConfig() {// ignore all call requests
+    value: function _saveConfig() {
+      // ignore all call requests
     }
   }]);
-
   return EmptyRegistry;
 }(BaseRegistry);
 
@@ -1043,20 +920,17 @@ var registry = new EmptyRegistry();
 
 
 
-
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_17___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_17___default()(this).constructor; result = _babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default()(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_16___default()(this, result); }; }
-
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default())) return false; if ((_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default().sham)) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default()(Date, [], function () {})); return true; } catch (e) { return false; } }
-
 /**
  * @file Manages asynchronous method response cache
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
 
+
 /**
  * type def
  */
-
 /**
  * Class for managing cache entry
  *
@@ -1067,32 +941,21 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(_
  */
 var CacheEntry = /*#__PURE__*/function (_EventEmitter) {
   _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_15___default()(CacheEntry, _EventEmitter);
-
   var _super = _createSuper(CacheEntry);
-
   function CacheEntry() {
     var _context;
-
     var _this;
-
     _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_12___default()(this, CacheEntry);
-
     for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
       args[_key] = arguments[_key];
     }
-
     _this = _super.call.apply(_super, _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_11___default()(_context = [this]).call(_context, args));
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_14___default()(_this), "_fetching", false);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_14___default()(_this), "_value", undefined);
-
     return _this;
   }
-
   _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_13___default()(CacheEntry, [{
     key: "get",
-
     /**
      * Get value in the cache entry
      *
@@ -1105,18 +968,15 @@ var CacheEntry = /*#__PURE__*/function (_EventEmitter) {
         this.once('value', function (v) {
           return cb(v);
         });
-
         if (typeof this._value !== 'undefined') {
           this.emit('value', this._value);
         }
       }
-
       return this._value;
     }
     /**
      * Set value in the cache entry
      */
-
   }, {
     key: "set",
     value: function set(value) {
@@ -1126,7 +986,6 @@ var CacheEntry = /*#__PURE__*/function (_EventEmitter) {
     /**
      * Clear cached value
      */
-
   }, {
     key: "clear",
     value: function clear() {
@@ -1134,44 +993,35 @@ var CacheEntry = /*#__PURE__*/function (_EventEmitter) {
       this._value = undefined;
     }
   }]);
-
   return CacheEntry;
 }(events__WEBPACK_IMPORTED_MODULE_19__.EventEmitter);
 /**
  * create and return cache key from namespace and serialized arguments.
  * @private
  */
-
-
 function createCacheKey(namespace, args) {
   var _context2, _context3;
-
   return _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_11___default()(_context2 = "".concat(namespace || '', "(")).call(_context2, _babel_runtime_corejs3_core_js_stable_instance_map__WEBPACK_IMPORTED_MODULE_10___default()(_context3 = _babel_runtime_corejs3_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_9___default()(args)).call(_context3, function (a) {
     return _babel_runtime_corejs3_core_js_stable_json_stringify__WEBPACK_IMPORTED_MODULE_8___default()(a);
   }).join(','), ")");
 }
-
 function generateKeyString(options, scope, args) {
   return typeof options.key === 'string' ? options.key : typeof options.key === 'function' ? options.key.apply(scope, args) : createCacheKey(options.namespace, args);
 }
+
 /**
  * Caching manager for async methods
  *
  * @class
  * @constructor
  */
-
-
 var Cache = /*#__PURE__*/function () {
   function Cache() {
     _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_12___default()(this, Cache);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(this, "_entries", {});
   }
-
   _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_13___default()(Cache, [{
     key: "get",
-
     /**
      * retrive cache entry, or create if not exists.
      *
@@ -1182,7 +1032,6 @@ var Cache = /*#__PURE__*/function () {
       if (this._entries[key]) {
         return this._entries[key];
       }
-
       var entry = new CacheEntry();
       this._entries[key] = entry;
       return entry;
@@ -1190,13 +1039,11 @@ var Cache = /*#__PURE__*/function () {
     /**
      * clear cache entries prefix matching given key
      */
-
   }, {
     key: "clear",
     value: function clear(key) {
       for (var _i = 0, _Object$keys = _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_7___default()(this._entries); _i < _Object$keys.length; _i++) {
         var k = _Object$keys[_i];
-
         if (!key || _babel_runtime_corejs3_core_js_stable_instance_index_of__WEBPACK_IMPORTED_MODULE_6___default()(k).call(k, key) === 0) {
           this._entries[k].clear();
         }
@@ -1206,26 +1053,20 @@ var Cache = /*#__PURE__*/function () {
      * Enable caching for async call fn to lookup the response cache first,
      * then invoke original if no cached value.
      */
-
   }, {
     key: "createCachedFunction",
     value: function createCachedFunction(fn, scope) {
       var _this2 = this;
-
       var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {
         strategy: 'NOCACHE'
       };
       var strategy = options.strategy;
-
       var $fn = function $fn() {
         for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
           args[_key2] = arguments[_key2];
         }
-
         var key = generateKeyString(options, scope, args);
-
         var entry = _this2.get(key);
-
         var executeFetch = /*#__PURE__*/function () {
           var _ref = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_3___default().mark(function _callee() {
             var result;
@@ -1237,7 +1078,6 @@ var Cache = /*#__PURE__*/function () {
                     _context4.prev = 1;
                     _context4.next = 4;
                     return fn.apply(scope || _this2, args);
-
                   case 4:
                     result = _context4.sent;
                     entry.set({
@@ -1245,7 +1085,6 @@ var Cache = /*#__PURE__*/function () {
                       result: result
                     });
                     return _context4.abrupt("return", result);
-
                   case 9:
                     _context4.prev = 9;
                     _context4.t0 = _context4["catch"](1);
@@ -1254,7 +1093,6 @@ var Cache = /*#__PURE__*/function () {
                       result: undefined
                     });
                     throw _context4.t0;
-
                   case 13:
                   case "end":
                     return _context4.stop();
@@ -1262,28 +1100,21 @@ var Cache = /*#__PURE__*/function () {
               }
             }, _callee, null, [[1, 9]]);
           }));
-
           return function executeFetch() {
             return _ref.apply(this, arguments);
           };
         }();
-
         var value;
-
         switch (strategy) {
           case 'IMMEDIATE':
             value = entry.get();
-
             if (!value) {
               throw new Error('Function call result is not cached yet.');
             }
-
             if (value.error) {
               throw value.error;
             }
-
             return value.result;
-
           case 'HIT':
             return _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_3___default().mark(function _callee2() {
               return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_3___default().wrap(function _callee2$(_context5) {
@@ -1294,19 +1125,16 @@ var Cache = /*#__PURE__*/function () {
                         _context5.next = 3;
                         break;
                       }
-
                       _context5.next = 3;
                       return executeFetch();
-
                     case 3:
                       return _context5.abrupt("return", new (_babel_runtime_corejs3_core_js_stable_promise__WEBPACK_IMPORTED_MODULE_2___default())(function (resolve, reject) {
                         entry.get(function (_ref3) {
                           var error = _ref3.error,
-                              result = _ref3.result;
+                            result = _ref3.result;
                           if (error) reject(error);else resolve(result);
                         });
                       }));
-
                     case 4:
                     case "end":
                       return _context5.stop();
@@ -1314,27 +1142,21 @@ var Cache = /*#__PURE__*/function () {
                 }
               }, _callee2);
             }))();
-
           case 'NOCACHE':
           default:
             return executeFetch();
         }
       };
-
       $fn.clear = function () {
         for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
           args[_key3] = arguments[_key3];
         }
-
         var key = generateKeyString(options, scope, args);
-
         _this2.clear(key);
       };
-
       return $fn;
     }
   }]);
-
   return Cache;
 }();
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Cache);
@@ -1513,11 +1335,14 @@ var now_default = /*#__PURE__*/__webpack_require__.n(now);
 
 
 
-
 /**
  *
  */
 
+
+/**
+ *
+ */
 
 /**
  *
@@ -1525,33 +1350,25 @@ var now_default = /*#__PURE__*/__webpack_require__.n(now);
 var SessionRefreshDelegate = /*#__PURE__*/function () {
   function SessionRefreshDelegate(conn, refreshFn) {
     classCallCheck_default()(this, SessionRefreshDelegate);
-
     defineProperty_default()(this, "_refreshFn", void 0);
-
     defineProperty_default()(this, "_conn", void 0);
-
     defineProperty_default()(this, "_logger", void 0);
-
     defineProperty_default()(this, "_lastRefreshedAt", undefined);
-
     defineProperty_default()(this, "_refreshPromise", undefined);
-
     this._conn = conn;
     this._logger = conn._logLevel ? SessionRefreshDelegate._logger.createInstance(conn._logLevel) : SessionRefreshDelegate._logger;
     this._refreshFn = refreshFn;
   }
+
   /**
    * Refresh access token
    * @private
    */
-
-
   createClass_default()(SessionRefreshDelegate, [{
     key: "refresh",
     value: function () {
       var _refresh = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee(since) {
         var _this = this;
-
         return regenerator_default().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -1560,35 +1377,25 @@ var SessionRefreshDelegate = /*#__PURE__*/function () {
                   _context.next = 2;
                   break;
                 }
-
                 return _context.abrupt("return");
-
               case 2:
                 if (!this._refreshPromise) {
                   _context.next = 6;
                   break;
                 }
-
                 _context.next = 5;
                 return this._refreshPromise;
-
               case 5:
                 return _context.abrupt("return");
-
               case 6:
                 _context.prev = 6;
-
                 this._logger.info('<refresh token>');
-
                 this._refreshPromise = new (promise_default())(function (resolve, reject) {
                   _this._refreshFn(_this._conn, function (err, accessToken, res) {
                     if (!err) {
                       _this._logger.debug('Connection refresh completed.');
-
                       _this._conn.accessToken = accessToken;
-
                       _this._conn.emit('refresh', accessToken, res);
-
                       resolve();
                     } else {
                       reject(err);
@@ -1597,16 +1404,13 @@ var SessionRefreshDelegate = /*#__PURE__*/function () {
                 });
                 _context.next = 11;
                 return this._refreshPromise;
-
               case 11:
                 this._logger.info('<refresh complete>');
-
               case 12:
                 _context.prev = 12;
                 this._refreshPromise = undefined;
                 this._lastRefreshedAt = now_default()();
                 return _context.finish(12);
-
               case 16:
               case "end":
                 return _context.stop();
@@ -1614,11 +1418,9 @@ var SessionRefreshDelegate = /*#__PURE__*/function () {
           }
         }, _callee, this, [[6,, 12, 16]]);
       }));
-
       function refresh(_x) {
         return _refresh.apply(this, arguments);
       }
-
       return refresh;
     }()
   }, {
@@ -1635,7 +1437,6 @@ var SessionRefreshDelegate = /*#__PURE__*/function () {
             switch (_context2.prev = _context2.next) {
               case 0:
                 return _context2.abrupt("return", this._refreshPromise);
-
               case 1:
               case "end":
                 return _context2.stop();
@@ -1643,20 +1444,15 @@ var SessionRefreshDelegate = /*#__PURE__*/function () {
           }
         }, _callee2, this);
       }));
-
       function waitRefresh() {
         return _waitRefresh.apply(this, arguments);
       }
-
       return waitRefresh;
     }()
   }]);
-
   return SessionRefreshDelegate;
 }();
-
 defineProperty_default()(SessionRefreshDelegate, "_logger", (0,logger/* getLogger */.jl)('session-refresh-delegate'));
-
 /* harmony default export */ const session_refresh_delegate = (SessionRefreshDelegate);
 
 // EXTERNAL MODULE: ./browser/query.js + 1 modules
@@ -1683,11 +1479,8 @@ var quick_action = __webpack_require__(61934);
 
 
 
-
 function ownKeys(object, enumerableOnly) { var keys = keys_default()(object); if ((get_own_property_symbols_default())) { var symbols = get_own_property_symbols_default()(object); if (enumerableOnly) symbols = filter_default()(symbols).call(symbols, function (sym) { return get_own_property_descriptor_default()(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { var _context3; for_each_default()(_context3 = ownKeys(Object(source), true)).call(_context3, function (key) { defineProperty_default()(target, key, source[key]); }); } else if ((get_own_property_descriptors_default())) { define_properties_default()(target, get_own_property_descriptors_default()(source)); } else { var _context4; for_each_default()(_context4 = ownKeys(Object(source))).call(_context4, function (key) { define_property_default()(target, key, get_own_property_descriptor_default()(source, key)); }); } } return target; }
-
 /**
  * @file Process class to manage/run workflow rule and approval process
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -1710,16 +1503,13 @@ var ProcessRule = /*#__PURE__*/function () {
    */
   function ProcessRule(conn) {
     classCallCheck_default()(this, ProcessRule);
-
     defineProperty_default()(this, "_conn", void 0);
-
     this._conn = conn;
   }
+
   /**
    * Get all process rule definitions registered to sobjects
    */
-
-
   createClass_default()(ProcessRule, [{
     key: "list",
     value: function () {
@@ -1731,11 +1521,9 @@ var ProcessRule = /*#__PURE__*/function () {
               case 0:
                 _context.next = 2;
                 return this._conn.request('/process/rules');
-
               case 2:
                 res = _context.sent;
                 return _context.abrupt("return", res.rules);
-
               case 4:
               case "end":
                 return _context.stop();
@@ -1743,22 +1531,19 @@ var ProcessRule = /*#__PURE__*/function () {
           }
         }, _callee, this);
       }));
-
       function list() {
         return _list.apply(this, arguments);
       }
-
       return list;
     }()
     /**
      * Trigger process rule for given entities
      */
-
   }, {
     key: "trigger",
     value: function trigger(contextIds) {
-      var contextIds_ = is_array_default()(contextIds) ? contextIds : [contextIds]; // https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_process_rules_trigger.htm
-
+      var contextIds_ = is_array_default()(contextIds) ? contextIds : [contextIds];
+      // https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_process_rules_trigger.htm
       return this._conn.request({
         method: 'POST',
         url: '/process/rules/',
@@ -1771,9 +1556,17 @@ var ProcessRule = /*#__PURE__*/function () {
       });
     }
   }]);
-
   return ProcessRule;
 }();
+
+/**
+ *
+ */
+
+/**
+ *
+ */
+
 /**
  *
  */
@@ -1787,16 +1580,13 @@ var ApprovalProcess = /*#__PURE__*/function () {
    */
   function ApprovalProcess(conn) {
     classCallCheck_default()(this, ApprovalProcess);
-
     defineProperty_default()(this, "_conn", void 0);
-
     this._conn = conn;
   }
+
   /**
    * Get all approval process definitions registered to sobjects
    */
-
-
   createClass_default()(ApprovalProcess, [{
     key: "list",
     value: function () {
@@ -1808,11 +1598,9 @@ var ApprovalProcess = /*#__PURE__*/function () {
               case 0:
                 _context2.next = 2;
                 return this._conn.request('/process/approvals');
-
               case 2:
                 res = _context2.sent;
                 return _context2.abrupt("return", res.approvals);
-
               case 4:
               case "end":
                 return _context2.stop();
@@ -1820,24 +1608,20 @@ var ApprovalProcess = /*#__PURE__*/function () {
           }
         }, _callee2, this);
       }));
-
       function list() {
         return _list2.apply(this, arguments);
       }
-
       return list;
     }()
     /**
      * Send bulk requests for approval process
      */
-
   }, {
     key: "request",
     value: function request(requests) {
       var requests_ = map_default()(requests).call(requests, function (req) {
         return '_request' in req ? req._request : req;
       });
-
       return this._conn.request({
         method: 'POST',
         url: '/process/approvals',
@@ -1854,7 +1638,6 @@ var ApprovalProcess = /*#__PURE__*/function () {
      *
      * @private
      */
-
   }, {
     key: "_createRequest",
     value: function _createRequest(actionType, contextId, comments) {
@@ -1868,7 +1651,6 @@ var ApprovalProcess = /*#__PURE__*/function () {
     /**
      * Submit approval request for an item
      */
-
   }, {
     key: "submit",
     value: function submit(contextId, comments, options) {
@@ -1877,7 +1659,6 @@ var ApprovalProcess = /*#__PURE__*/function () {
     /**
      * Approve approval request for an item
      */
-
   }, {
     key: "approve",
     value: function approve(workitemId, comments) {
@@ -1887,7 +1668,6 @@ var ApprovalProcess = /*#__PURE__*/function () {
     /**
      * Reject approval request for an item
      */
-
   }, {
     key: "reject",
     value: function reject(workitemId, comments) {
@@ -1895,35 +1675,29 @@ var ApprovalProcess = /*#__PURE__*/function () {
       return this._createRequest('Reject', workitemId, comments, options);
     }
   }]);
-
   return ApprovalProcess;
 }();
+
 /**
  *
  */
-
 /**
  * A class representing approval process request
  */
 var ApprovalProcessRequest = /*#__PURE__*/function () {
   function ApprovalProcessRequest(process, request) {
     classCallCheck_default()(this, ApprovalProcessRequest);
-
     defineProperty_default()(this, "_process", void 0);
-
     defineProperty_default()(this, "_request", void 0);
-
     defineProperty_default()(this, "_promise", void 0);
-
     this._process = process;
     this._request = request;
   }
+
   /**
    * Promise/A+ interface
    * http://promises-aplus.github.io/promises-spec/
    */
-
-
   createClass_default()(ApprovalProcessRequest, [{
     key: "then",
     value: function then(onResolve, onReject) {
@@ -1932,29 +1706,22 @@ var ApprovalProcessRequest = /*#__PURE__*/function () {
           return rets[0];
         });
       }
-
       this._promise.then(onResolve, onReject);
     }
   }]);
-
   return ApprovalProcessRequest;
 }();
 /**
  * A class which manages process rules and approval processes
  */
-
-
 var Process =
 /**
  *
  */
 function Process(conn) {
   classCallCheck_default()(this, Process);
-
   defineProperty_default()(this, "rule", void 0);
-
   defineProperty_default()(this, "approval", void 0);
-
   this.rule = new ProcessRule(conn);
   this.approval = new ApprovalProcess(conn);
 };
@@ -2016,28 +1783,19 @@ var browser_default = /*#__PURE__*/__webpack_require__.n(browser);
 
 
 
-
 function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return typeof_default()(key) === "symbol" ? key : String(key); }
-
 function _toPrimitive(input, hint) { if (typeof_default()(input) !== "object" || input === null) return input; var prim = input[(to_primitive_default())]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (typeof_default()(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
-
 function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof (symbol_default()) === "undefined" || get_iterator_method_default()(o) == null) { if (is_array_default()(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = get_iterator_default()(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-
 function _unsupportedIterableToArray(o, minLen) { var _context52; if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = slice_default()(_context52 = Object.prototype.toString.call(o)).call(_context52, 8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return from_default()(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
 function connection_ownKeys(object, enumerableOnly) { var keys = keys_default()(object); if ((get_own_property_symbols_default())) { var symbols = get_own_property_symbols_default()(object); if (enumerableOnly) symbols = filter_default()(symbols).call(symbols, function (sym) { return get_own_property_descriptor_default()(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
 function connection_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { var _context50; for_each_default()(_context50 = connection_ownKeys(Object(source), true)).call(_context50, function (key) { defineProperty_default()(target, key, source[key]); }); } else if ((get_own_property_descriptors_default())) { define_properties_default()(target, get_own_property_descriptors_default()(source)); } else { var _context51; for_each_default()(_context51 = connection_ownKeys(Object(source))).call(_context51, function (key) { define_property_default()(target, key, get_own_property_descriptor_default()(source, key)); }); } } return target; }
-
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = getPrototypeOf_default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf_default()(this).constructor; result = construct_default()(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn_default()(this, result); }; }
-
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(construct_default())) return false; if ((construct_default()).sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(construct_default()(Date, [], function () {})); return true; } catch (e) { return false; } }
-
 /**
  *
  */
+
 
 
 
@@ -2066,61 +1824,51 @@ var defaultConnectionConfig = {
   logLevel: 'NONE',
   maxRequest: 10
 };
+
 /**
  *
  */
-
 function esc(str) {
   return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
+
 /**
  *
  */
-
-
 function parseSignedRequest(sr) {
   if (typeof sr === 'string') {
     if (sr[0] === '{') {
       // might be JSON
       return JSON.parse(sr);
     } // might be original base64-encoded signed request
-
-
     var msg = sr.split('.').pop(); // retrieve latter part
-
     if (!msg) {
       throw new Error('Invalid signed request');
     }
-
     var json = Buffer.from(msg, 'base64').toString('utf-8');
     return JSON.parse(json);
   }
-
   return sr;
 }
+
 /** @private **/
-
-
 function parseIdUrl(url) {
   var _context;
-
   var _url$split$slice = slice_default()(_context = url.split('/')).call(_context, -2),
-      _url$split$slice2 = slicedToArray_default()(_url$split$slice, 2),
-      organizationId = _url$split$slice2[0],
-      id = _url$split$slice2[1];
-
+    _url$split$slice2 = slicedToArray_default()(_url$split$slice, 2),
+    organizationId = _url$split$slice2[0],
+    id = _url$split$slice2[1];
   return {
     id: id,
     organizationId: organizationId,
     url: url
   };
 }
+
 /**
  * Session Refresh delegate function for OAuth2 authz code flow
  * @private
  */
-
-
 function oauthRefreshFn(_x, _x2) {
   return _oauthRefreshFn.apply(this, arguments);
 }
@@ -2128,8 +1876,6 @@ function oauthRefreshFn(_x, _x2) {
  * Session Refresh delegate function for username/password login
  * @private
  */
-
-
 function _oauthRefreshFn() {
   _oauthRefreshFn = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee35(conn, callback) {
     var res, userInfo;
@@ -2138,48 +1884,37 @@ function _oauthRefreshFn() {
         switch (_context49.prev = _context49.next) {
           case 0:
             _context49.prev = 0;
-
             if (conn.refreshToken) {
               _context49.next = 3;
               break;
             }
-
             throw new Error('No refresh token found in the connection');
-
           case 3:
             _context49.next = 5;
             return conn.oauth2.refreshToken(conn.refreshToken);
-
           case 5:
             res = _context49.sent;
             userInfo = parseIdUrl(res.id);
-
             conn._establish({
               instanceUrl: res.instance_url,
               accessToken: res.access_token,
               userInfo: userInfo
             });
-
             callback(undefined, res.access_token, res);
             _context49.next = 18;
             break;
-
           case 11:
             _context49.prev = 11;
             _context49.t0 = _context49["catch"](0);
-
             if (!(_context49.t0 instanceof Error)) {
               _context49.next = 17;
               break;
             }
-
             callback(_context49.t0);
             _context49.next = 18;
             break;
-
           case 17:
             throw _context49.t0;
-
           case 18:
           case "end":
             return _context49.stop();
@@ -2189,7 +1924,6 @@ function _oauthRefreshFn() {
   }));
   return _oauthRefreshFn.apply(this, arguments);
 }
-
 function createUsernamePasswordRefreshFn(username, password) {
   return /*#__PURE__*/function () {
     var _ref = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee(conn, callback) {
@@ -2200,36 +1934,28 @@ function createUsernamePasswordRefreshFn(username, password) {
               _context2.prev = 0;
               _context2.next = 3;
               return conn.login(username, password);
-
             case 3:
               if (conn.accessToken) {
                 _context2.next = 5;
                 break;
               }
-
               throw new Error('Access token not found after login');
-
             case 5:
               callback(null, conn.accessToken);
               _context2.next = 15;
               break;
-
             case 8:
               _context2.prev = 8;
               _context2.t0 = _context2["catch"](0);
-
               if (!(_context2.t0 instanceof Error)) {
                 _context2.next = 14;
                 break;
               }
-
               callback(_context2.t0);
               _context2.next = 15;
               break;
-
             case 14:
               throw _context2.t0;
-
             case 15:
             case "end":
               return _context2.stop();
@@ -2237,48 +1963,41 @@ function createUsernamePasswordRefreshFn(username, password) {
         }
       }, _callee, null, [[0, 8]]);
     }));
-
     return function (_x3, _x4) {
       return _ref.apply(this, arguments);
     };
   }();
 }
+
 /**
  * @private
  */
-
-
 function toSaveResult(err) {
   return {
     success: false,
     errors: [err]
   };
 }
+
 /**
  *
  */
-
-
 function raiseNoModuleError(name) {
   var _context3;
-
   throw new Error(concat_default()(_context3 = "API module '".concat(name, "' is not loaded, load 'jsforce/api/")).call(_context3, name, "' explicitly"));
 }
+
 /*
  * Constant of maximum records num in DML operation (update/delete)
  */
-
-
 var MAX_DML_COUNT = 200;
+
 /**
  *
  */
-
 var Connection = /*#__PURE__*/function (_EventEmitter) {
   inherits_default()(Connection, _EventEmitter);
-
   var _super = _createSuper(Connection);
-
   createClass_default()(Connection, [{
     key: "analytics",
     // describe: (name: string) => Promise<DescribeSObjectResult>;
@@ -2331,82 +2050,48 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
     /**
      *
      */
-
   }]);
-
   function Connection() {
     var _this;
-
     var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
     classCallCheck_default()(this, Connection);
-
     _this = _super.call(this);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "version", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "loginUrl", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "instanceUrl", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "accessToken", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "refreshToken", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "userInfo", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "limitInfo", {});
-
     defineProperty_default()(assertThisInitialized_default()(_this), "oauth2", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "sobjects", {});
-
     defineProperty_default()(assertThisInitialized_default()(_this), "cache", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "_callOptions", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "_maxRequest", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "_logger", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "_logLevel", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "_transport", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "_sessionType", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "_refreshDelegate", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "describe$", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "describe$$", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "describeSObject", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "describeSObject$", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "describeSObject$$", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "describeGlobal$", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "describeGlobal$$", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "insert", _this.create);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "delete", _this.destroy);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "del", _this.destroy);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "process", new process(assertThisInitialized_default()(_this)));
-
     var loginUrl = config.loginUrl,
-        instanceUrl = config.instanceUrl,
-        version = config.version,
-        oauth2 = config.oauth2,
-        maxRequest = config.maxRequest,
-        logLevel = config.logLevel,
-        proxyUrl = config.proxyUrl,
-        httpProxy = config.httpProxy;
+      instanceUrl = config.instanceUrl,
+      version = config.version,
+      oauth2 = config.oauth2,
+      maxRequest = config.maxRequest,
+      logLevel = config.logLevel,
+      proxyUrl = config.proxyUrl,
+      httpProxy = config.httpProxy;
     _this.loginUrl = loginUrl || defaultConnectionConfig.loginUrl;
     _this.instanceUrl = instanceUrl || defaultConnectionConfig.instanceUrl;
     _this.version = version || defaultConnectionConfig.version;
@@ -2416,26 +2101,21 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
       httpProxy: httpProxy
     }, oauth2));
     var refreshFn = config.refreshFn;
-
     if (!refreshFn && _this.oauth2.clientId) {
       refreshFn = oauthRefreshFn;
     }
-
     if (refreshFn) {
       _this._refreshDelegate = new session_refresh_delegate(assertThisInitialized_default()(_this), refreshFn);
     }
-
     _this._maxRequest = maxRequest || defaultConnectionConfig.maxRequest;
     _this._logger = logLevel ? Connection._logger.createInstance(logLevel) : Connection._logger;
     _this._logLevel = logLevel;
     _this._transport = proxyUrl ? new transport/* XdProxyTransport */.P7(proxyUrl) : httpProxy ? new transport/* HttpProxyTransport */._W(httpProxy) : new transport/* default */.ZP();
     _this._callOptions = config.callOptions;
     _this.cache = new cache/* default */.Z();
-
     var describeCacheKey = function describeCacheKey(type) {
       return type ? "describe.".concat(type) : 'describe';
     };
-
     var describe = Connection.prototype.describe;
     _this.describe = _this.cache.createCachedFunction(describe, assertThisInitialized_default()(_this), {
       key: describeCacheKey,
@@ -2466,11 +2146,10 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
       strategy: 'IMMEDIATE'
     });
     var accessToken = config.accessToken,
-        refreshToken = config.refreshToken,
-        sessionId = config.sessionId,
-        serverUrl = config.serverUrl,
-        signedRequest = config.signedRequest;
-
+      refreshToken = config.refreshToken,
+      sessionId = config.sessionId,
+      serverUrl = config.serverUrl,
+      signedRequest = config.signedRequest;
     _this._establish({
       accessToken: accessToken,
       refreshToken: refreshToken,
@@ -2479,50 +2158,39 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
       serverUrl: serverUrl,
       signedRequest: signedRequest
     });
-
     jsforce/* default.emit */.Z.emit('connection:new', assertThisInitialized_default()(_this));
     return _this;
   }
+
   /* @private */
-
-
   createClass_default()(Connection, [{
     key: "_establish",
     value: function _establish(options) {
       var _context4;
-
       var accessToken = options.accessToken,
-          refreshToken = options.refreshToken,
-          instanceUrl = options.instanceUrl,
-          sessionId = options.sessionId,
-          serverUrl = options.serverUrl,
-          signedRequest = options.signedRequest,
-          userInfo = options.userInfo;
+        refreshToken = options.refreshToken,
+        instanceUrl = options.instanceUrl,
+        sessionId = options.sessionId,
+        serverUrl = options.serverUrl,
+        signedRequest = options.signedRequest,
+        userInfo = options.userInfo;
       this.instanceUrl = serverUrl ? slice_default()(_context4 = serverUrl.split('/')).call(_context4, 0, 3).join('/') : instanceUrl || this.instanceUrl;
       this.accessToken = sessionId || accessToken || this.accessToken;
       this.refreshToken = refreshToken || this.refreshToken;
-
       if (this.refreshToken && !this._refreshDelegate) {
         throw new Error('Refresh token is specified without oauth2 client information or refresh function');
       }
-
       var signedRequestObject = signedRequest && parseSignedRequest(signedRequest);
-
       if (signedRequestObject) {
         this.accessToken = signedRequestObject.client.oauthToken;
-
         if (transport/* CanvasTransport.supported */.vj.supported) {
           this._transport = new transport/* CanvasTransport */.vj(signedRequestObject);
         }
       }
-
       this.userInfo = userInfo || this.userInfo;
       this._sessionType = sessionId ? 'soap' : 'oauth2';
-
       this._resetInstance();
-    }
-    /* @priveate */
-
+    } /* @priveate */
   }, {
     key: "_clearSession",
     value: function _clearSession() {
@@ -2531,30 +2199,24 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
       this.instanceUrl = defaultConnectionConfig.instanceUrl;
       this.userInfo = null;
       this._sessionType = null;
-    }
-    /* @priveate */
-
+    } /* @priveate */
   }, {
     key: "_resetInstance",
     value: function _resetInstance() {
       var _this2 = this;
-
       this.limitInfo = {};
-      this.sobjects = {}; // TODO impl cache
-
+      this.sobjects = {};
+      // TODO impl cache
       this.cache.clear();
       this.cache.get('describeGlobal').removeAllListeners('value');
       this.cache.get('describeGlobal').on('value', function (_ref2) {
         var result = _ref2.result;
-
         if (result) {
           var _iterator = _createForOfIteratorHelper(result.sobjects),
-              _step;
-
+            _step;
           try {
             for (_iterator.s(); !(_step = _iterator.n()).done;) {
               var so = _step.value;
-
               _this2.sobject(so.name);
             }
           } catch (err) {
@@ -2573,17 +2235,15 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
     /**
      * Authorize (using oauth2 web server flow)
      */
-
   }, {
     key: "authorize",
     value: function () {
       var _authorize = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee2(code) {
         var _context5;
-
         var params,
-            res,
-            userInfo,
-            _args2 = arguments;
+          res,
+          userInfo,
+          _args2 = arguments;
         return regenerator_default().wrap(function _callee2$(_context6) {
           while (1) {
             switch (_context6.prev = _context6.next) {
@@ -2591,22 +2251,17 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                 params = _args2.length > 1 && _args2[1] !== undefined ? _args2[1] : {};
                 _context6.next = 3;
                 return this.oauth2.requestToken(code, params);
-
               case 3:
                 res = _context6.sent;
                 userInfo = parseIdUrl(res.id);
-
                 this._establish({
                   instanceUrl: res.instance_url,
                   accessToken: res.access_token,
                   refreshToken: res.refresh_token,
                   userInfo: userInfo
                 });
-
                 this._logger.debug(concat_default()(_context5 = "<login> completed. user id = ".concat(userInfo.id, ", org id = ")).call(_context5, userInfo.organizationId));
-
                 return _context6.abrupt("return", userInfo);
-
               case 8:
               case "end":
                 return _context6.stop();
@@ -2614,17 +2269,14 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee2, this);
       }));
-
       function authorize(_x5) {
         return _authorize.apply(this, arguments);
       }
-
       return authorize;
     }()
     /**
      *
      */
-
   }, {
     key: "login",
     value: function () {
@@ -2634,17 +2286,13 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
             switch (_context7.prev = _context7.next) {
               case 0:
                 this._refreshDelegate = new session_refresh_delegate(this, createUsernamePasswordRefreshFn(username, password));
-
                 if (!(this.oauth2 && this.oauth2.clientId && this.oauth2.clientSecret)) {
                   _context7.next = 3;
                   break;
                 }
-
                 return _context7.abrupt("return", this.loginByOAuth2(username, password));
-
               case 3:
                 return _context7.abrupt("return", this.loginBySoap(username, password));
-
               case 4:
               case "end":
                 return _context7.stop();
@@ -2652,23 +2300,19 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee3, this);
       }));
-
       function login(_x6, _x7) {
         return _login.apply(this, arguments);
       }
-
       return login;
     }()
     /**
      * Login by OAuth2 username & password flow
      */
-
   }, {
     key: "loginByOAuth2",
     value: function () {
       var _loginByOAuth = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee4(username, password) {
         var _context8;
-
         var res, userInfo;
         return regenerator_default().wrap(function _callee4$(_context9) {
           while (1) {
@@ -2676,21 +2320,16 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
               case 0:
                 _context9.next = 2;
                 return this.oauth2.authenticate(username, password);
-
               case 2:
                 res = _context9.sent;
                 userInfo = parseIdUrl(res.id);
-
                 this._establish({
                   instanceUrl: res.instance_url,
                   accessToken: res.access_token,
                   userInfo: userInfo
                 });
-
                 this._logger.info(concat_default()(_context8 = "<login> completed. user id = ".concat(userInfo.id, ", org id = ")).call(_context8, userInfo.organizationId));
-
                 return _context9.abrupt("return", userInfo);
-
               case 7:
               case "end":
                 return _context9.stop();
@@ -2698,23 +2337,19 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee4, this);
       }));
-
       function loginByOAuth2(_x8, _x9) {
         return _loginByOAuth.apply(this, arguments);
       }
-
       return loginByOAuth2;
     }()
     /**
      *
      */
-
   }, {
     key: "loginBySoap",
     value: function () {
       var _loginBySoap = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee5(username, password) {
         var _context10, _context11;
-
         var body, soapLoginEndpoint, response, m, faultstring, serverUrl, sessionId, userId, organizationId, idUrl, userInfo;
         return regenerator_default().wrap(function _callee5$(_context12) {
           while (1) {
@@ -2724,9 +2359,7 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                   _context12.next = 2;
                   break;
                 }
-
                 return _context12.abrupt("return", promise_default().reject(new Error('no username password given')));
-
               case 2:
                 body = ['<se:Envelope xmlns:se="http://schemas.xmlsoap.org/soap/envelope/">', '<se:Header/>', '<se:Body>', '<login xmlns="urn:partner.soap.sforce.com">', "<username>".concat(esc(username), "</username>"), "<password>".concat(esc(password), "</password>"), '</login>', '</se:Body>', '</se:Envelope>'].join('');
                 soapLoginEndpoint = [this.loginUrl, 'services/Soap/u', this.version].join('/');
@@ -2740,22 +2373,17 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                     SOAPAction: '""'
                   }
                 });
-
               case 6:
                 response = _context12.sent;
-
                 if (!(response.statusCode >= 400)) {
                   _context12.next = 11;
                   break;
                 }
-
                 m = response.body.match(/<faultstring>([^<]+)<\/faultstring>/);
                 faultstring = m && m[1];
                 throw new Error(faultstring || response.body);
-
               case 11:
                 this._logger.debug("SOAP response = ".concat(response.body));
-
                 m = response.body.match(/<serverUrl>([^<]+)<\/serverUrl>/);
                 serverUrl = m && m[1];
                 m = response.body.match(/<sessionId>([^<]+)<\/sessionId>/);
@@ -2764,14 +2392,11 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                 userId = m && m[1];
                 m = response.body.match(/<organizationId>([^<]+)<\/organizationId>/);
                 organizationId = m && m[1];
-
                 if (!(!serverUrl || !sessionId || !userId || !organizationId)) {
                   _context12.next = 22;
                   break;
                 }
-
                 throw new Error('could not extract session information from login response');
-
               case 22:
                 idUrl = [this.loginUrl, 'id', organizationId, userId].join('/');
                 userInfo = {
@@ -2779,17 +2404,13 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                   organizationId: organizationId,
                   url: idUrl
                 };
-
                 this._establish({
                   serverUrl: slice_default()(_context10 = serverUrl.split('/')).call(_context10, 0, 3).join('/'),
                   sessionId: sessionId,
                   userInfo: userInfo
                 });
-
                 this._logger.info(concat_default()(_context11 = "<login> completed. user id = ".concat(userId, ", org id = ")).call(_context11, organizationId));
-
                 return _context12.abrupt("return", userInfo);
-
               case 27:
               case "end":
                 return _context12.stop();
@@ -2797,17 +2418,14 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee5, this);
       }));
-
       function loginBySoap(_x10, _x11) {
         return _loginBySoap.apply(this, arguments);
       }
-
       return loginBySoap;
     }()
     /**
      * Logout the current session
      */
-
   }, {
     key: "logout",
     value: function () {
@@ -2817,17 +2435,13 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
             switch (_context13.prev = _context13.next) {
               case 0:
                 this._refreshDelegate = undefined;
-
                 if (!(this._sessionType === 'oauth2')) {
                   _context13.next = 3;
                   break;
                 }
-
                 return _context13.abrupt("return", this.logoutByOAuth2(revoke));
-
               case 3:
                 return _context13.abrupt("return", this.logoutBySoap(revoke));
-
               case 4:
               case "end":
                 return _context13.stop();
@@ -2835,17 +2449,14 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee6, this);
       }));
-
       function logout(_x12) {
         return _logout.apply(this, arguments);
       }
-
       return logout;
     }()
     /**
      * Logout the current session by revoking access token via OAuth2 session revoke
      */
-
   }, {
     key: "logoutByOAuth2",
     value: function () {
@@ -2856,21 +2467,16 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
             switch (_context14.prev = _context14.next) {
               case 0:
                 token = revoke ? this.refreshToken : this.accessToken;
-
                 if (!token) {
                   _context14.next = 4;
                   break;
                 }
-
                 _context14.next = 4;
                 return this.oauth2.revokeToken(token);
-
               case 4:
                 // Destroy the session bound to this connection
                 this._clearSession();
-
                 this._resetInstance();
-
               case 6:
               case "end":
                 return _context14.stop();
@@ -2878,23 +2484,19 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee7, this);
       }));
-
       function logoutByOAuth2(_x13) {
         return _logoutByOAuth.apply(this, arguments);
       }
-
       return logoutByOAuth2;
     }()
     /**
      * Logout the session by using SOAP web service API
      */
-
   }, {
     key: "logoutBySoap",
     value: function () {
       var _logoutBySoap = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee8(revoke) {
         var _context15;
-
         var body, response, m, faultstring;
         return regenerator_default().wrap(function _callee8$(_context16) {
           while (1) {
@@ -2911,27 +2513,20 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                     SOAPAction: '""'
                   }
                 });
-
               case 3:
                 response = _context16.sent;
-
                 this._logger.debug(concat_default()(_context15 = "SOAP statusCode = ".concat(response.statusCode, ", response = ")).call(_context15, response.body));
-
                 if (!(response.statusCode >= 400)) {
                   _context16.next = 9;
                   break;
                 }
-
                 m = response.body.match(/<faultstring>([^<]+)<\/faultstring>/);
                 faultstring = m && m[1];
                 throw new Error(faultstring || response.body);
-
               case 9:
                 // Destroy the session bound to this connection
                 this._clearSession();
-
                 this._resetInstance();
-
               case 11:
               case "end":
                 return _context16.stop();
@@ -2939,11 +2534,9 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee8, this);
       }));
-
       function logoutBySoap(_x14) {
         return _logoutBySoap.apply(this, arguments);
       }
-
       return logoutBySoap;
     }()
     /**
@@ -2953,28 +2546,25 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
      * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
      * , or relative path from version root ('/sobjects/Account/describe').
      */
-
   }, {
     key: "request",
     value: function request(_request) {
       var _this3 = this;
-
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       // if request is simple string, regard it as url in GET method
       var request_ = typeof _request === 'string' ? {
         method: 'GET',
         url: _request
-      } : _request; // if url is given in relative path, prepend base url or instance url before.
-
+      } : _request;
+      // if url is given in relative path, prepend base url or instance url before.
       request_ = connection_objectSpread(connection_objectSpread({}, request_), {}, {
         url: this._normalizeUrl(request_.url)
       });
-      var httpApi = new http_api/* default */.Z(this, options); // log api usage and its quota
-
+      var httpApi = new http_api/* default */.Z(this, options);
+      // log api usage and its quota
       httpApi.on('response', function (response) {
         if (response.headers && response.headers['sforce-limit-info']) {
           var apiUsage = response.headers['sforce-limit-info'].match(/api-usage=(\d+)\/(\d+)/);
-
           if (apiUsage) {
             _this3.limitInfo = {
               apiUsage: {
@@ -2994,7 +2584,6 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
      * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
      * , or relative path from version root ('/sobjects/Account/describe').
      */
-
   }, {
     key: "requestGet",
     value: function requestGet(url, options) {
@@ -3011,7 +2600,6 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
      * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
      * , or relative path from version root ('/sobjects/Account/describe').
      */
-
   }, {
     key: "requestPost",
     value: function requestPost(url, body, options) {
@@ -3032,7 +2620,6 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
      * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
      * , or relative path from version root ('/sobjects/Account/describe').
      */
-
   }, {
     key: "requestPut",
     value: function requestPut(url, body, options) {
@@ -3053,7 +2640,6 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
      * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
      * , or relative path from version root ('/sobjects/Account/describe').
      */
-
   }, {
     key: "requestPatch",
     value: function requestPatch(url, body, options) {
@@ -3074,7 +2660,6 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
      * , relative path from root ('/services/data/v32.0/sobjects/Account/describe')
      * , or relative path from version root ('/sobjects/Account/describe').
      */
-
   }, {
     key: "requestDelete",
     value: function requestDelete(url, options) {
@@ -3083,9 +2668,7 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
         url: url
       };
       return this.request(request, options);
-    }
-    /** @private **/
-
+    } /** @private **/
   }, {
     key: "_baseUrl",
     value: function _baseUrl() {
@@ -3095,7 +2678,6 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
      * Convert path to absolute url
      * @private
      */
-
   }, {
     key: "_normalizeUrl",
     value: function _normalizeUrl(url) {
@@ -3103,20 +2685,16 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
         if (index_of_default()(url).call(url, this.instanceUrl + '/services/') === 0) {
           return url;
         }
-
         if (index_of_default()(url).call(url, '/services/') === 0) {
           return this.instanceUrl + url;
         }
-
         return this._baseUrl() + url;
       }
-
       return url;
     }
     /**
      *
      */
-
   }, {
     key: "query",
     value: function query(soql, options) {
@@ -3129,7 +2707,6 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
      * @param {Callback.<Array.<RecordResult>>} [callback] - Callback function
      * @returns {Promise.<Array.<RecordResult>>}
      */
-
   }, {
     key: "search",
     value: function search(sosl) {
@@ -3139,24 +2716,19 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
     /**
      *
      */
-
   }, {
     key: "queryMore",
     value: function queryMore(locator, options) {
       return new browser_query/* default */.ZP(this, {
         locator: locator
       }, options);
-    }
-    /* */
-
+    } /* */
   }, {
     key: "_ensureVersion",
     value: function _ensureVersion(majorVersion) {
       var versions = this.version.split('.');
       return parse_int_default()(versions[0], 10) >= majorVersion;
-    }
-    /* */
-
+    } /* */
   }, {
     key: "_supports",
     value: function _supports(feature) {
@@ -3164,7 +2736,6 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
         case 'sobject-collection':
           // sobject collection is available only in API ver 42.0+
           return this._ensureVersion(42);
-
         default:
           return false;
       }
@@ -3172,21 +2743,20 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
     /**
      * Retrieve specified records
      */
-
   }, {
     key: "retrieve",
     value: function () {
       var _retrieve = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee9(type, ids) {
         var options,
-            _args9 = arguments;
+          _args9 = arguments;
         return regenerator_default().wrap(function _callee9$(_context17) {
           while (1) {
             switch (_context17.prev = _context17.next) {
               case 0:
                 options = _args9.length > 2 && _args9[2] !== undefined ? _args9[2] : {};
-                return _context17.abrupt("return", is_array_default()(ids) ? // check the version whether SObject collection API is supported (42.0)
+                return _context17.abrupt("return", is_array_default()(ids) ?
+                // check the version whether SObject collection API is supported (42.0)
                 this._ensureVersion(42) ? this._retrieveMany(type, ids, options) : this._retrieveParallel(type, ids, options) : this._retrieveSingle(type, ids, options));
-
               case 2:
               case "end":
                 return _context17.stop();
@@ -3194,15 +2764,11 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee9, this);
       }));
-
       function retrieve(_x15, _x16) {
         return _retrieve.apply(this, arguments);
       }
-
       return retrieve;
-    }()
-    /** @private */
-
+    }() /** @private */
   }, {
     key: "_retrieveSingle",
     value: function () {
@@ -3216,23 +2782,18 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                   _context18.next = 2;
                   break;
                 }
-
                 throw new Error('Invalid record ID. Specify valid record ID value');
-
               case 2:
                 url = [this._baseUrl(), 'sobjects', type, id].join('/');
                 fields = options.fields, headers = options.headers;
-
                 if (fields) {
                   url += "?fields=".concat(fields.join(','));
                 }
-
                 return _context18.abrupt("return", this.request({
                   method: 'GET',
                   url: url,
                   headers: headers
                 }));
-
               case 6:
               case "end":
                 return _context18.stop();
@@ -3240,21 +2801,16 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee10, this);
       }));
-
       function _retrieveSingle(_x17, _x18, _x19) {
         return _retrieveSingle2.apply(this, arguments);
       }
-
       return _retrieveSingle;
-    }()
-    /** @private */
-
+    }() /** @private */
   }, {
     key: "_retrieveParallel",
     value: function () {
       var _retrieveParallel2 = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee11(type, ids, options) {
         var _this4 = this;
-
         return regenerator_default().wrap(function _callee11$(_context19) {
           while (1) {
             switch (_context19.prev = _context19.next) {
@@ -3263,20 +2819,16 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                   _context19.next = 2;
                   break;
                 }
-
                 throw new Error('Exceeded max limit of concurrent call');
-
               case 2:
                 return _context19.abrupt("return", promise_default().all(map_default()(ids).call(ids, function (id) {
                   return _this4._retrieveSingle(type, id, options).catch(function (err) {
                     if (options.allOrNone || err.errorCode !== 'NOT_FOUND') {
                       throw err;
                     }
-
                     return null;
                   });
                 })));
-
               case 3:
               case "end":
                 return _context19.stop();
@@ -3284,21 +2836,16 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee11, this);
       }));
-
       function _retrieveParallel(_x20, _x21, _x22) {
         return _retrieveParallel2.apply(this, arguments);
       }
-
       return _retrieveParallel;
-    }()
-    /** @private */
-
+    }() /** @private */
   }, {
     key: "_retrieveMany",
     value: function () {
       var _retrieveMany2 = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee12(type, ids, options) {
         var _context20;
-
         var url, fields;
         return regenerator_default().wrap(function _callee12$(_context21) {
           while (1) {
@@ -3308,28 +2855,22 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                   _context21.next = 2;
                   break;
                 }
-
                 return _context21.abrupt("return", []);
-
               case 2:
                 url = [this._baseUrl(), 'composite', 'sobjects', type].join('/');
                 _context21.t0 = options.fields;
-
                 if (_context21.t0) {
                   _context21.next = 10;
                   break;
                 }
-
                 _context21.t1 = (map_default());
                 _context21.next = 8;
                 return this.describe$(type);
-
               case 8:
                 _context21.t2 = _context20 = _context21.sent.fields;
                 _context21.t0 = (0, _context21.t1)(_context21.t2).call(_context20, function (field) {
                   return field.name;
                 });
-
               case 10:
                 fields = _context21.t0;
                 return _context21.abrupt("return", this.request({
@@ -3343,7 +2884,6 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                     'content-type': 'application/json'
                   })
                 }));
-
               case 12:
               case "end":
                 return _context21.stop();
@@ -3351,20 +2891,16 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee12, this);
       }));
-
       function _retrieveMany(_x23, _x24, _x25) {
         return _retrieveMany2.apply(this, arguments);
       }
-
       return _retrieveMany;
     }()
     /**
      * Create records
      */
-
   }, {
     key: "create",
-
     /**
      * @param type
      * @param records
@@ -3373,55 +2909,44 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
     value: function () {
       var _create = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee13(type, records) {
         var options,
-            ret,
-            _args13 = arguments;
+          ret,
+          _args13 = arguments;
         return regenerator_default().wrap(function _callee13$(_context22) {
           while (1) {
             switch (_context22.prev = _context22.next) {
               case 0:
                 options = _args13.length > 2 && _args13[2] !== undefined ? _args13[2] : {};
-
                 if (!is_array_default()(records)) {
                   _context22.next = 14;
                   break;
                 }
-
                 if (!this._ensureVersion(42)) {
                   _context22.next = 8;
                   break;
                 }
-
                 _context22.next = 5;
                 return this._createMany(type, records, options);
-
               case 5:
                 _context22.t1 = _context22.sent;
                 _context22.next = 11;
                 break;
-
               case 8:
                 _context22.next = 10;
                 return this._createParallel(type, records, options);
-
               case 10:
                 _context22.t1 = _context22.sent;
-
               case 11:
                 _context22.t0 = _context22.t1;
                 _context22.next = 17;
                 break;
-
               case 14:
                 _context22.next = 16;
                 return this._createSingle(type, records, options);
-
               case 16:
                 _context22.t0 = _context22.sent;
-
               case 17:
                 ret = _context22.t0;
                 return _context22.abrupt("return", ret);
-
               case 19:
               case "end":
                 return _context22.stop();
@@ -3429,64 +2954,50 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee13, this);
       }));
-
       function create(_x26, _x27) {
         return _create.apply(this, arguments);
       }
-
       return create;
-    }()
-    /** @private */
-
+    }() /** @private */
   }, {
     key: "_createSingle",
     value: function () {
       var _createSingle2 = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee14(type, record, options) {
         var Id, rtype, attributes, rec, sobjectType, url, contentType, body, _context23, form;
-
         return regenerator_default().wrap(function _callee14$(_context24) {
           while (1) {
             switch (_context24.prev = _context24.next) {
               case 0:
                 Id = record.Id, rtype = record.type, attributes = record.attributes, rec = objectWithoutProperties_default()(record, ["Id", "type", "attributes"]);
                 sobjectType = type || attributes && attributes.type || rtype;
-
                 if (sobjectType) {
                   _context24.next = 4;
                   break;
                 }
-
                 throw new Error('No SObject Type defined in record');
-
               case 4:
                 url = [this._baseUrl(), 'sobjects', sobjectType].join('/');
-
                 if (options && options.multipartFileFields) {
                   // Send the record as a multipart/form-data request. Useful for fields containing large binary blobs.
                   form = new (browser_default())(); // Extract the fields requested to be sent separately from the JSON
-
                   for_each_default()(_context23 = entries_default()(options.multipartFileFields)).call(_context23, function (_ref3) {
                     var _ref4 = slicedToArray_default()(_ref3, 2),
-                        fieldName = _ref4[0],
-                        fileDetails = _ref4[1];
-
+                      fieldName = _ref4[0],
+                      fileDetails = _ref4[1];
                     form.append(fieldName, Buffer.from(rec[fieldName], 'base64'), fileDetails);
                     delete rec[fieldName];
-                  }); // Serialize the remaining fields as JSON
-
-
+                  });
+                  // Serialize the remaining fields as JSON
                   form.append(type, stringify_default()(rec), {
                     contentType: 'application/json'
                   });
                   contentType = form.getHeaders()['content-type']; // This is necessary to ensure the 'boundary' is present
-
                   body = form;
                 } else {
                   // Default behavior: send the request as JSON
                   contentType = 'application/json';
                   body = stringify_default()(rec);
                 }
-
                 return _context24.abrupt("return", this.request({
                   method: 'POST',
                   url: url,
@@ -3495,7 +3006,6 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                     'content-type': contentType
                   })
                 }));
-
               case 7:
               case "end":
                 return _context24.stop();
@@ -3503,21 +3013,16 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee14, this);
       }));
-
       function _createSingle(_x28, _x29, _x30) {
         return _createSingle2.apply(this, arguments);
       }
-
       return _createSingle;
-    }()
-    /** @private */
-
+    }() /** @private */
   }, {
     key: "_createParallel",
     value: function () {
       var _createParallel2 = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee15(type, records, options) {
         var _this5 = this;
-
         return regenerator_default().wrap(function _callee15$(_context25) {
           while (1) {
             switch (_context25.prev = _context25.next) {
@@ -3526,9 +3031,7 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                   _context25.next = 2;
                   break;
                 }
-
                 throw new Error('Exceeded max limit of concurrent call');
-
               case 2:
                 return _context25.abrupt("return", promise_default().all(map_default()(records).call(records, function (record) {
                   return _this5._createSingle(type, record, options).catch(function (err) {
@@ -3537,11 +3040,9 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                     if (options.allOrNone || !err.errorCode) {
                       throw err;
                     }
-
                     return toSaveResult(err);
                   });
                 })));
-
               case 3:
               case "end":
                 return _context25.stop();
@@ -3549,21 +3050,16 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee15, this);
       }));
-
       function _createParallel(_x31, _x32, _x33) {
         return _createParallel2.apply(this, arguments);
       }
-
       return _createParallel;
-    }()
-    /** @private */
-
+    }() /** @private */
   }, {
     key: "_createMany",
     value: function () {
       var _createMany2 = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee16(type, records, options) {
         var _context26, _records, url;
-
         return regenerator_default().wrap(function _callee16$(_context27) {
           while (1) {
             switch (_context27.prev = _context27.next) {
@@ -3572,46 +3068,37 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                   _context27.next = 2;
                   break;
                 }
-
                 return _context27.abrupt("return", promise_default().resolve([]));
-
               case 2:
                 if (!(records.length > MAX_DML_COUNT && options.allowRecursive)) {
                   _context27.next = 16;
                   break;
                 }
-
                 _context27.t0 = concat_default()(_context26 = []);
                 _context27.t1 = _context26;
                 _context27.t2 = (toConsumableArray_default());
                 _context27.next = 8;
                 return this._createMany(type, slice_default()(records).call(records, 0, MAX_DML_COUNT), options);
-
               case 8:
                 _context27.t3 = _context27.sent;
                 _context27.t4 = (0, _context27.t2)(_context27.t3);
                 _context27.t5 = (toConsumableArray_default());
                 _context27.next = 13;
                 return this._createMany(type, slice_default()(records).call(records, MAX_DML_COUNT), options);
-
               case 13:
                 _context27.t6 = _context27.sent;
                 _context27.t7 = (0, _context27.t5)(_context27.t6);
                 return _context27.abrupt("return", _context27.t0.call.call(_context27.t0, _context27.t1, _context27.t4, _context27.t7));
-
               case 16:
                 _records = map_default()(records).call(records, function (record) {
                   var Id = record.Id,
-                      rtype = record.type,
-                      attributes = record.attributes,
-                      rec = objectWithoutProperties_default()(record, ["Id", "type", "attributes"]);
-
+                    rtype = record.type,
+                    attributes = record.attributes,
+                    rec = objectWithoutProperties_default()(record, ["Id", "type", "attributes"]);
                   var sobjectType = type || attributes && attributes.type || rtype;
-
                   if (!sobjectType) {
                     throw new Error('No SObject Type defined in record');
                   }
-
                   return connection_objectSpread({
                     attributes: {
                       type: sobjectType
@@ -3630,7 +3117,6 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                     'content-type': 'application/json'
                   })
                 }));
-
               case 19:
               case "end":
                 return _context27.stop();
@@ -3638,20 +3124,16 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee16, this);
       }));
-
       function _createMany(_x34, _x35, _x36) {
         return _createMany2.apply(this, arguments);
       }
-
       return _createMany;
     }()
     /**
      * Synonym of Connection#create()
      */
-
   }, {
     key: "update",
-
     /**
      * @param type
      * @param records
@@ -3659,11 +3141,10 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
      */
     value: function update(type, records) {
       var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      return is_array_default()(records) ? // check the version whether SObject collection API is supported (42.0)
+      return is_array_default()(records) ?
+      // check the version whether SObject collection API is supported (42.0)
       this._ensureVersion(42) ? this._updateMany(type, records, options) : this._updateParallel(type, records, options) : this._updateSingle(type, records, options);
-    }
-    /** @private */
-
+    } /** @private */
   }, {
     key: "_updateSingle",
     value: function () {
@@ -3674,24 +3155,18 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
             switch (_context28.prev = _context28.next) {
               case 0:
                 id = record.Id, rtype = record.type, attributes = record.attributes, rec = objectWithoutProperties_default()(record, ["Id", "type", "attributes"]);
-
                 if (id) {
                   _context28.next = 3;
                   break;
                 }
-
                 throw new Error('Record id is not found in record.');
-
               case 3:
                 sobjectType = type || attributes && attributes.type || rtype;
-
                 if (sobjectType) {
                   _context28.next = 6;
                   break;
                 }
-
                 throw new Error('No SObject Type defined in record');
-
               case 6:
                 url = [this._baseUrl(), 'sobjects', sobjectType, id].join('/');
                 return _context28.abrupt("return", this.request({
@@ -3708,7 +3183,6 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                     errors: []
                   }
                 }));
-
               case 8:
               case "end":
                 return _context28.stop();
@@ -3716,21 +3190,16 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee17, this);
       }));
-
       function _updateSingle(_x37, _x38, _x39) {
         return _updateSingle2.apply(this, arguments);
       }
-
       return _updateSingle;
-    }()
-    /** @private */
-
+    }() /** @private */
   }, {
     key: "_updateParallel",
     value: function () {
       var _updateParallel2 = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee18(type, records, options) {
         var _this6 = this;
-
         return regenerator_default().wrap(function _callee18$(_context29) {
           while (1) {
             switch (_context29.prev = _context29.next) {
@@ -3739,9 +3208,7 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                   _context29.next = 2;
                   break;
                 }
-
                 throw new Error('Exceeded max limit of concurrent call');
-
               case 2:
                 return _context29.abrupt("return", promise_default().all(map_default()(records).call(records, function (record) {
                   return _this6._updateSingle(type, record, options).catch(function (err) {
@@ -3750,11 +3217,9 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                     if (options.allOrNone || !err.errorCode) {
                       throw err;
                     }
-
                     return toSaveResult(err);
                   });
                 })));
-
               case 3:
               case "end":
                 return _context29.stop();
@@ -3762,21 +3227,16 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee18, this);
       }));
-
       function _updateParallel(_x40, _x41, _x42) {
         return _updateParallel2.apply(this, arguments);
       }
-
       return _updateParallel;
-    }()
-    /** @private */
-
+    }() /** @private */
   }, {
     key: "_updateMany",
     value: function () {
       var _updateMany2 = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee19(type, records, options) {
         var _context30, _records, url;
-
         return regenerator_default().wrap(function _callee19$(_context31) {
           while (1) {
             switch (_context31.prev = _context31.next) {
@@ -3785,50 +3245,40 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                   _context31.next = 2;
                   break;
                 }
-
                 return _context31.abrupt("return", []);
-
               case 2:
                 if (!(records.length > MAX_DML_COUNT && options.allowRecursive)) {
                   _context31.next = 16;
                   break;
                 }
-
                 _context31.t0 = concat_default()(_context30 = []);
                 _context31.t1 = _context30;
                 _context31.t2 = (toConsumableArray_default());
                 _context31.next = 8;
                 return this._updateMany(type, slice_default()(records).call(records, 0, MAX_DML_COUNT), options);
-
               case 8:
                 _context31.t3 = _context31.sent;
                 _context31.t4 = (0, _context31.t2)(_context31.t3);
                 _context31.t5 = (toConsumableArray_default());
                 _context31.next = 13;
                 return this._updateMany(type, slice_default()(records).call(records, MAX_DML_COUNT), options);
-
               case 13:
                 _context31.t6 = _context31.sent;
                 _context31.t7 = (0, _context31.t5)(_context31.t6);
                 return _context31.abrupt("return", _context31.t0.call.call(_context31.t0, _context31.t1, _context31.t4, _context31.t7));
-
               case 16:
                 _records = map_default()(records).call(records, function (record) {
                   var id = record.Id,
-                      rtype = record.type,
-                      attributes = record.attributes,
-                      rec = objectWithoutProperties_default()(record, ["Id", "type", "attributes"]);
-
+                    rtype = record.type,
+                    attributes = record.attributes,
+                    rec = objectWithoutProperties_default()(record, ["Id", "type", "attributes"]);
                   if (!id) {
                     throw new Error('Record id is not found in record.');
                   }
-
                   var sobjectType = type || attributes && attributes.type || rtype;
-
                   if (!sobjectType) {
                     throw new Error('No SObject Type defined in record');
                   }
-
                   return connection_objectSpread({
                     id: id,
                     attributes: {
@@ -3848,7 +3298,6 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                     'content-type': 'application/json'
                   })
                 }));
-
               case 19:
               case "end":
                 return _context31.stop();
@@ -3856,20 +3305,16 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee19, this);
       }));
-
       function _updateMany(_x43, _x44, _x45) {
         return _updateMany2.apply(this, arguments);
       }
-
       return _updateMany;
     }()
     /**
      * Upsert records
      */
-
   }, {
     key: "upsert",
-
     /**
      *
      * @param type
@@ -3880,13 +3325,11 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
     value: function () {
       var _upsert = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee20(type, records, extIdField) {
         var _this7 = this;
-
         var options,
-            isArray,
-            _records,
-            results,
-            _args20 = arguments;
-
+          isArray,
+          _records,
+          results,
+          _args20 = arguments;
         return regenerator_default().wrap(function _callee20$(_context33) {
           while (1) {
             switch (_context33.prev = _context33.next) {
@@ -3894,24 +3337,19 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                 options = _args20.length > 3 && _args20[3] !== undefined ? _args20[3] : {};
                 isArray = is_array_default()(records);
                 _records = is_array_default()(records) ? records : [records];
-
                 if (!(_records.length > this._maxRequest)) {
                   _context33.next = 5;
                   break;
                 }
-
                 throw new Error('Exceeded max limit of concurrent call');
-
               case 5:
                 _context33.next = 7;
                 return promise_default().all(map_default()(_records).call(_records, function (record) {
                   var _context32;
-
                   var extId = record[extIdField],
-                      rtype = record.type,
-                      attributes = record.attributes,
-                      rec = objectWithoutProperties_default()(record, map_default()(_context32 = [extIdField, "type", "attributes"]).call(_context32, _toPropertyKey));
-
+                    rtype = record.type,
+                    attributes = record.attributes,
+                    rec = objectWithoutProperties_default()(record, map_default()(_context32 = [extIdField, "type", "attributes"]).call(_context32, _toPropertyKey));
                   var url = [_this7._baseUrl(), 'sobjects', type, extIdField, extId].join('/');
                   return _this7.request({
                     method: 'PATCH',
@@ -3932,15 +3370,12 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                     if (!isArray || options.allOrNone || !err.errorCode) {
                       throw err;
                     }
-
                     return toSaveResult(err);
                   });
                 }));
-
               case 7:
                 results = _context33.sent;
                 return _context33.abrupt("return", isArray ? results : results[0]);
-
               case 9:
               case "end":
                 return _context33.stop();
@@ -3948,20 +3383,16 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee20, this);
       }));
-
       function upsert(_x46, _x47, _x48) {
         return _upsert.apply(this, arguments);
       }
-
       return upsert;
     }()
     /**
      * Delete records
      */
-
   }, {
     key: "destroy",
-
     /**
      * @param type
      * @param ids
@@ -3970,15 +3401,15 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
     value: function () {
       var _destroy = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee21(type, ids) {
         var options,
-            _args21 = arguments;
+          _args21 = arguments;
         return regenerator_default().wrap(function _callee21$(_context34) {
           while (1) {
             switch (_context34.prev = _context34.next) {
               case 0:
                 options = _args21.length > 2 && _args21[2] !== undefined ? _args21[2] : {};
-                return _context34.abrupt("return", is_array_default()(ids) ? // check the version whether SObject collection API is supported (42.0)
+                return _context34.abrupt("return", is_array_default()(ids) ?
+                // check the version whether SObject collection API is supported (42.0)
                 this._ensureVersion(42) ? this._destroyMany(type, ids, options) : this._destroyParallel(type, ids, options) : this._destroySingle(type, ids, options));
-
               case 2:
               case "end":
                 return _context34.stop();
@@ -3986,15 +3417,11 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee21, this);
       }));
-
       function destroy(_x49, _x50) {
         return _destroy.apply(this, arguments);
       }
-
       return destroy;
-    }()
-    /** @private */
-
+    }() /** @private */
   }, {
     key: "_destroySingle",
     value: function () {
@@ -4016,7 +3443,6 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                     errors: []
                   }
                 }));
-
               case 2:
               case "end":
                 return _context35.stop();
@@ -4024,21 +3450,16 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee22, this);
       }));
-
       function _destroySingle(_x51, _x52, _x53) {
         return _destroySingle2.apply(this, arguments);
       }
-
       return _destroySingle;
-    }()
-    /** @private */
-
+    }() /** @private */
   }, {
     key: "_destroyParallel",
     value: function () {
       var _destroyParallel2 = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee23(type, ids, options) {
         var _this8 = this;
-
         return regenerator_default().wrap(function _callee23$(_context36) {
           while (1) {
             switch (_context36.prev = _context36.next) {
@@ -4047,9 +3468,7 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                   _context36.next = 2;
                   break;
                 }
-
                 throw new Error('Exceeded max limit of concurrent call');
-
               case 2:
                 return _context36.abrupt("return", promise_default().all(map_default()(ids).call(ids, function (id) {
                   return _this8._destroySingle(type, id, options).catch(function (err) {
@@ -4059,11 +3478,9 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                     if (options.allOrNone || !err.errorCode) {
                       throw err;
                     }
-
                     return toSaveResult(err);
                   });
                 })));
-
               case 3:
               case "end":
                 return _context36.stop();
@@ -4071,21 +3488,16 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee23, this);
       }));
-
       function _destroyParallel(_x54, _x55, _x56) {
         return _destroyParallel2.apply(this, arguments);
       }
-
       return _destroyParallel;
-    }()
-    /** @private */
-
+    }() /** @private */
   }, {
     key: "_destroyMany",
     value: function () {
       var _destroyMany2 = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee24(type, ids, options) {
         var _context37, url;
-
         return regenerator_default().wrap(function _callee24$(_context38) {
           while (1) {
             switch (_context38.prev = _context38.next) {
@@ -4094,46 +3506,37 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                   _context38.next = 2;
                   break;
                 }
-
                 return _context38.abrupt("return", []);
-
               case 2:
                 if (!(ids.length > MAX_DML_COUNT && options.allowRecursive)) {
                   _context38.next = 16;
                   break;
                 }
-
                 _context38.t0 = concat_default()(_context37 = []);
                 _context38.t1 = _context37;
                 _context38.t2 = (toConsumableArray_default());
                 _context38.next = 8;
                 return this._destroyMany(type, slice_default()(ids).call(ids, 0, MAX_DML_COUNT), options);
-
               case 8:
                 _context38.t3 = _context38.sent;
                 _context38.t4 = (0, _context38.t2)(_context38.t3);
                 _context38.t5 = (toConsumableArray_default());
                 _context38.next = 13;
                 return this._destroyMany(type, slice_default()(ids).call(ids, MAX_DML_COUNT), options);
-
               case 13:
                 _context38.t6 = _context38.sent;
                 _context38.t7 = (0, _context38.t5)(_context38.t6);
                 return _context38.abrupt("return", _context38.t0.call.call(_context38.t0, _context38.t1, _context38.t4, _context38.t7));
-
               case 16:
                 url = [this._baseUrl(), 'composite', 'sobjects?ids='].join('/') + ids.join(',');
-
                 if (options.allOrNone) {
                   url += '&allOrNone=true';
                 }
-
                 return _context38.abrupt("return", this.request({
                   method: 'DELETE',
                   url: url,
                   headers: options.headers || {}
                 }));
-
               case 19:
               case "end":
                 return _context38.stop();
@@ -4141,20 +3544,19 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee24, this);
       }));
-
       function _destroyMany(_x57, _x58, _x59) {
         return _destroyMany2.apply(this, arguments);
       }
-
       return _destroyMany;
     }()
     /**
      * Synonym of Connection#destroy()
      */
-
+    /**
+     * Synonym of Connection#destroy()
+     */
   }, {
     key: "describe",
-
     /**
      * Describe SObject metadata
      */
@@ -4168,11 +3570,9 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                 url = [this._baseUrl(), 'sobjects', type, 'describe'].join('/');
                 _context39.next = 3;
                 return this.request(url);
-
               case 3:
                 body = _context39.sent;
                 return _context39.abrupt("return", body);
-
               case 5:
               case "end":
                 return _context39.stop();
@@ -4180,17 +3580,14 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee25, this);
       }));
-
       function describe(_x60) {
         return _describe.apply(this, arguments);
       }
-
       return describe;
     }()
     /**
      * Describe global SObjects
      */
-
   }, {
     key: "describeGlobal",
     value: function () {
@@ -4203,11 +3600,9 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                 url = "".concat(this._baseUrl(), "/sobjects");
                 _context40.next = 3;
                 return this.request(url);
-
               case 3:
                 body = _context40.sent;
                 return _context40.abrupt("return", body);
-
               case 5:
               case "end":
                 return _context40.stop();
@@ -4215,17 +3610,14 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee26, this);
       }));
-
       function describeGlobal() {
         return _describeGlobal.apply(this, arguments);
       }
-
       return describeGlobal;
     }()
     /**
      * Get SObject instance
      */
-
   }, {
     key: "sobject",
     value: function sobject(type) {
@@ -4236,53 +3628,44 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
     /**
      * Get identity information of current user
      */
-
   }, {
     key: "identity",
     value: function () {
       var _identity = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee27() {
         var options,
-            url,
-            _res,
-            res,
-            _args27 = arguments;
-
+          url,
+          _res,
+          res,
+          _args27 = arguments;
         return regenerator_default().wrap(function _callee27$(_context41) {
           while (1) {
             switch (_context41.prev = _context41.next) {
               case 0:
                 options = _args27.length > 0 && _args27[0] !== undefined ? _args27[0] : {};
                 url = this.userInfo && this.userInfo.url;
-
                 if (url) {
                   _context41.next = 7;
                   break;
                 }
-
                 _context41.next = 5;
                 return this.request({
                   method: 'GET',
                   url: this._baseUrl(),
                   headers: options.headers
                 });
-
               case 5:
                 _res = _context41.sent;
                 url = _res.identity;
-
               case 7:
                 url += '?format=json';
-
                 if (this.accessToken) {
                   url += "&oauth_token=".concat(encodeURIComponent(this.accessToken));
                 }
-
                 _context41.next = 11;
                 return this.request({
                   method: 'GET',
                   url: url
                 });
-
               case 11:
                 res = _context41.sent;
                 this.userInfo = {
@@ -4291,7 +3674,6 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                   url: res.id
                 };
                 return _context41.abrupt("return", res);
-
               case 14:
               case "end":
                 return _context41.stop();
@@ -4299,23 +3681,19 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee27, this);
       }));
-
       function identity() {
         return _identity.apply(this, arguments);
       }
-
       return identity;
     }()
     /**
      * List recently viewed records
      */
-
   }, {
     key: "recent",
     value: function () {
       var _recent = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee28(type, limit) {
         var url, _yield$this$request, recentItems;
-
         return regenerator_default().wrap(function _callee28$(_context42) {
           while (1) {
             switch (_context42.prev = _context42.next) {
@@ -4325,30 +3703,23 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                   limit = type;
                   type = undefined;
                 }
-
                 if (!type) {
                   _context42.next = 8;
                   break;
                 }
-
                 url = [this._baseUrl(), 'sobjects', type].join('/');
                 _context42.next = 5;
                 return this.request(url);
-
               case 5:
                 _yield$this$request = _context42.sent;
                 recentItems = _yield$this$request.recentItems;
                 return _context42.abrupt("return", limit ? slice_default()(recentItems).call(recentItems, 0, limit) : recentItems);
-
               case 8:
                 url = "".concat(this._baseUrl(), "/recent");
-
                 if (limit) {
                   url += "?limit=".concat(limit);
                 }
-
                 return _context42.abrupt("return", this.request(url));
-
               case 11:
               case "end":
                 return _context42.stop();
@@ -4356,17 +3727,14 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee28, this);
       }));
-
       function recent(_x61, _x62) {
         return _recent.apply(this, arguments);
       }
-
       return recent;
     }()
     /**
      * Retrieve updated records
      */
-
   }, {
     key: "updated",
     value: function () {
@@ -4378,27 +3746,21 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
               case 0:
                 /* eslint-disable no-param-reassign */
                 url = [this._baseUrl(), 'sobjects', type, 'updated'].join('/');
-
                 if (typeof start === 'string') {
                   start = new Date(start);
                 }
-
                 start = (0,formatter/* formatDate */.p)(start);
                 url += "?start=".concat(encodeURIComponent(start));
-
                 if (typeof end === 'string') {
                   end = new Date(end);
                 }
-
                 end = (0,formatter/* formatDate */.p)(end);
                 url += "&end=".concat(encodeURIComponent(end));
                 _context43.next = 9;
                 return this.request(url);
-
               case 9:
                 body = _context43.sent;
                 return _context43.abrupt("return", body);
-
               case 11:
               case "end":
                 return _context43.stop();
@@ -4406,17 +3768,14 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee29, this);
       }));
-
       function updated(_x63, _x64, _x65) {
         return _updated.apply(this, arguments);
       }
-
       return updated;
     }()
     /**
      * Retrieve deleted records
      */
-
   }, {
     key: "deleted",
     value: function () {
@@ -4428,27 +3787,21 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
               case 0:
                 /* eslint-disable no-param-reassign */
                 url = [this._baseUrl(), 'sobjects', type, 'deleted'].join('/');
-
                 if (typeof start === 'string') {
                   start = new Date(start);
                 }
-
                 start = (0,formatter/* formatDate */.p)(start);
                 url += "?start=".concat(encodeURIComponent(start));
-
                 if (typeof end === 'string') {
                   end = new Date(end);
                 }
-
                 end = (0,formatter/* formatDate */.p)(end);
                 url += "&end=".concat(encodeURIComponent(end));
                 _context44.next = 9;
                 return this.request(url);
-
               case 9:
                 body = _context44.sent;
                 return _context44.abrupt("return", body);
-
               case 11:
               case "end":
                 return _context44.stop();
@@ -4456,17 +3809,14 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee30, this);
       }));
-
       function deleted(_x66, _x67, _x68) {
         return _deleted.apply(this, arguments);
       }
-
       return deleted;
     }()
     /**
      * Returns a list of all tabs
      */
-
   }, {
     key: "tabs",
     value: function () {
@@ -4479,11 +3829,9 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                 url = [this._baseUrl(), 'tabs'].join('/');
                 _context45.next = 3;
                 return this.request(url);
-
               case 3:
                 body = _context45.sent;
                 return _context45.abrupt("return", body);
-
               case 5:
               case "end":
                 return _context45.stop();
@@ -4491,17 +3839,14 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee31, this);
       }));
-
       function tabs() {
         return _tabs.apply(this, arguments);
       }
-
       return tabs;
     }()
     /**
      * Returns current system limit in the organization
      */
-
   }, {
     key: "limits",
     value: function () {
@@ -4514,11 +3859,9 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                 url = [this._baseUrl(), 'limits'].join('/');
                 _context46.next = 3;
                 return this.request(url);
-
               case 3:
                 body = _context46.sent;
                 return _context46.abrupt("return", body);
-
               case 5:
               case "end":
                 return _context46.stop();
@@ -4526,17 +3869,14 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee32, this);
       }));
-
       function limits() {
         return _limits.apply(this, arguments);
       }
-
       return limits;
     }()
     /**
      * Returns a theme info
      */
-
   }, {
     key: "theme",
     value: function () {
@@ -4549,11 +3889,9 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
                 url = [this._baseUrl(), 'theme'].join('/');
                 _context47.next = 3;
                 return this.request(url);
-
               case 3:
                 body = _context47.sent;
                 return _context47.abrupt("return", body);
-
               case 5:
               case "end":
                 return _context47.stop();
@@ -4561,17 +3899,14 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee33, this);
       }));
-
       function theme() {
         return _theme.apply(this, arguments);
       }
-
       return theme;
     }()
     /**
      * Returns all registered global quick actions
      */
-
   }, {
     key: "quickActions",
     value: function () {
@@ -4583,11 +3918,9 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
               case 0:
                 _context48.next = 2;
                 return this.request('/quickActions');
-
               case 2:
                 body = _context48.sent;
                 return _context48.abrupt("return", body);
-
               case 4:
               case "end":
                 return _context48.stop();
@@ -4595,17 +3928,14 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee34, this);
       }));
-
       function quickActions() {
         return _quickActions.apply(this, arguments);
       }
-
       return quickActions;
     }()
     /**
      * Get reference for specified global quick action
      */
-
   }, {
     key: "quickAction",
     value: function quickAction(actionName) {
@@ -4614,14 +3944,10 @@ var Connection = /*#__PURE__*/function (_EventEmitter) {
     /**
      * Module which manages process rules and approval processes
      */
-
   }]);
-
   return Connection;
 }(events.EventEmitter);
-
 defineProperty_default()(Connection, "_logger", (0,logger/* getLogger */.jl)('connection'));
-
 /* harmony default export */ const connection = (Connection);
 
 
@@ -4672,11 +3998,8 @@ defineProperty_default()(Connection, "_logger", (0,logger/* getLogger */.jl)('co
 
 
 
-
 function ownKeys(object, enumerableOnly) { var keys = _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_7___default()(object); if ((_babel_runtime_corejs3_core_js_stable_object_get_own_property_symbols__WEBPACK_IMPORTED_MODULE_6___default())) { var symbols = _babel_runtime_corejs3_core_js_stable_object_get_own_property_symbols__WEBPACK_IMPORTED_MODULE_6___default()(object); if (enumerableOnly) symbols = _babel_runtime_corejs3_core_js_stable_instance_filter__WEBPACK_IMPORTED_MODULE_5___default()(symbols).call(symbols, function (sym) { return _babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptor__WEBPACK_IMPORTED_MODULE_4___default()(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { var _context; _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_3___default()(_context = ownKeys(Object(source), true)).call(_context, function (key) { _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_8___default()(target, key, source[key]); }); } else if ((_babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptors__WEBPACK_IMPORTED_MODULE_2___default())) { _babel_runtime_corejs3_core_js_stable_object_define_properties__WEBPACK_IMPORTED_MODULE_1___default()(target, _babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptors__WEBPACK_IMPORTED_MODULE_2___default()(source)); } else { var _context2; _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_3___default()(_context2 = ownKeys(Object(source))).call(_context2, function (key) { _babel_runtime_corejs3_core_js_stable_object_define_property__WEBPACK_IMPORTED_MODULE_0___default()(target, key, _babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptor__WEBPACK_IMPORTED_MODULE_4___default()(source, key)); }); } } return target; }
-
 /**
  *
  */
@@ -4684,37 +4007,38 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 
 
+
+
 /**
  * @private
  */
-
 function parseCSV(str, options) {
   return csv_parse_lib_es5_sync__WEBPACK_IMPORTED_MODULE_10___default()(str, _objectSpread(_objectSpread({}, options), {}, {
     columns: true
   }));
 }
+
 /**
  * @private
  */
-
 function toCSV(records, options) {
   return csvStringifySync(records, _objectSpread(_objectSpread({}, options), {}, {
     header: true
   }));
 }
+
 /**
  * @private
  */
-
 function parseCSVStream(options) {
   return csv_parse_lib_es5__WEBPACK_IMPORTED_MODULE_9___default()(_objectSpread(_objectSpread({}, options), {}, {
     columns: true
   }));
 }
+
 /**
  * @private
  */
-
 function serializeCSVStream(options) {
   return csv_stringify_lib_es5__WEBPACK_IMPORTED_MODULE_11___default()(_objectSpread(_objectSpread({}, options), {}, {
     header: true
@@ -4760,20 +4084,19 @@ function serializeCSVStream(options) {
 
 
 
-
 /**
  *
  */
 
-/** @private **/
 
+/** @private **/
 function createLiteralBuilder(literal) {
   return function (num) {
     var _context;
-
     return new SfDate(_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_8___default()(_context = "".concat(literal, ":")).call(_context, String(num)));
   }; // eslint-disable-line no-use-before-define
 }
+
 /**
  * A date object to keep Salesforce date literal
  *
@@ -4781,26 +4104,20 @@ function createLiteralBuilder(literal) {
  * @constructor
  * @see http://www.salesforce.com/us/developer/docs/soql_sosl/Content/sforce_api_calls_soql_select_dateformats.htm
  */
-
-
 var SfDate = /*#__PURE__*/function () {
   /**
    *
    */
   function SfDate(literal) {
     _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_5___default()(this, SfDate);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(this, "_literal", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(this, "toString", this.toJSON);
-
     this._literal = literal;
   }
+
   /**
    * Returns literal when converted to string
    */
-
-
   _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_6___default()(SfDate, [{
     key: "toJSON",
     value: function toJSON() {
@@ -4808,7 +4125,6 @@ var SfDate = /*#__PURE__*/function () {
     }
   }], [{
     key: "toDateLiteral",
-
     /**
      * Convert JavaScript date object to ISO8601 Date format (e.g. 2012-10-31)
      *
@@ -4817,7 +4133,6 @@ var SfDate = /*#__PURE__*/function () {
      */
     value: function toDateLiteral(date) {
       var _date;
-
       if (typeof date === 'number') {
         _date = new Date(date);
       } else if (typeof date === 'string') {
@@ -4825,13 +4140,9 @@ var SfDate = /*#__PURE__*/function () {
       } else {
         _date = date;
       }
-
       var yy = _date.getFullYear();
-
       var mm = _date.getMonth() + 1;
-
       var dd = _date.getDate();
-
       var dstr = [yy, (0,_util_formatter__WEBPACK_IMPORTED_MODULE_9__/* .zeroPad */ .B)(mm), (0,_util_formatter__WEBPACK_IMPORTED_MODULE_9__/* .zeroPad */ .B)(dd)].join('-');
       return new SfDate(dstr);
     }
@@ -4839,14 +4150,11 @@ var SfDate = /*#__PURE__*/function () {
      * Convert JavaScript date object to ISO8601 DateTime format
      * (e.g. 2012-10-31T12:34:56Z)
      */
-
   }, {
     key: "toDateTimeLiteral",
     value: function toDateTimeLiteral(date) {
       var _context2;
-
       var _date;
-
       if (typeof date === 'number') {
         _date = new Date(date);
       } else if (typeof date === 'string') {
@@ -4854,35 +4162,24 @@ var SfDate = /*#__PURE__*/function () {
       } else {
         _date = date;
       }
-
       var yy = _date.getUTCFullYear();
-
       var mm = _date.getUTCMonth() + 1;
-
       var dd = _date.getUTCDate();
-
       var hh = _date.getUTCHours();
-
       var mi = _date.getUTCMinutes();
-
       var ss = _date.getUTCSeconds();
-
       var dtstr = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_8___default()(_context2 = "".concat([yy, (0,_util_formatter__WEBPACK_IMPORTED_MODULE_9__/* .zeroPad */ .B)(mm), (0,_util_formatter__WEBPACK_IMPORTED_MODULE_9__/* .zeroPad */ .B)(dd)].join('-'), "T")).call(_context2, [(0,_util_formatter__WEBPACK_IMPORTED_MODULE_9__/* .zeroPad */ .B)(hh), (0,_util_formatter__WEBPACK_IMPORTED_MODULE_9__/* .zeroPad */ .B)(mi), (0,_util_formatter__WEBPACK_IMPORTED_MODULE_9__/* .zeroPad */ .B)(ss)].join(':'), "Z");
-
       return new SfDate(dtstr);
     }
     /**
      * Convert JavaScript date object to ISO8601 time format
      * (e.g. 12:34:56.789Z)
      */
-
   }, {
     key: "toTimeLiteral",
     value: function toTimeLiteral(time) {
       var _context3, _context4, _context5;
-
       var _date = new Date(0);
-
       if (typeof time === 'string') {
         _date = SfDate.parseTime(time);
       } else if (typeof time === 'number') {
@@ -4890,33 +4187,24 @@ var SfDate = /*#__PURE__*/function () {
       } else {
         _date = time;
       }
-
       var hh = _date.getUTCHours();
-
       var mi = _date.getUTCMinutes();
-
       var ss = _date.getUTCSeconds();
-
       var sss = _date.getUTCMilliseconds();
-
       var tstr = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_8___default()(_context3 = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_8___default()(_context4 = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_8___default()(_context5 = "".concat((0,_util_formatter__WEBPACK_IMPORTED_MODULE_9__/* .zeroPad */ .B)(hh), ":")).call(_context5, (0,_util_formatter__WEBPACK_IMPORTED_MODULE_9__/* .zeroPad */ .B)(mi), ":")).call(_context4, (0,_util_formatter__WEBPACK_IMPORTED_MODULE_9__/* .zeroPad */ .B)(ss), ".")).call(_context3, (0,_util_formatter__WEBPACK_IMPORTED_MODULE_9__/* .zeroPad */ .B)(sss, 3), "Z");
-
       return new SfDate(tstr);
     }
     /**
      * Parse IS08601 date(time) formatted string and return date instance
      */
-
   }, {
     key: "parseDate",
     value: function parseDate(str) {
       var d = new Date();
       var regexp = /^([\d]{4})-?([\d]{2})-?([\d]{2})(T([\d]{2}):?([\d]{2}):?([\d]{2})(.([\d]{3}))?(Z|([+-])([\d]{2}):?([\d]{2})))?$/;
       var m = str.match(regexp);
-
       if (m) {
         d = new Date(0);
-
         if (!m[4]) {
           d.setFullYear(_babel_runtime_corejs3_core_js_stable_parse_int__WEBPACK_IMPORTED_MODULE_4___default()(m[1], 10));
           d.setDate(_babel_runtime_corejs3_core_js_stable_parse_int__WEBPACK_IMPORTED_MODULE_4___default()(m[3], 10));
@@ -4933,128 +4221,77 @@ var SfDate = /*#__PURE__*/function () {
           d.setUTCMinutes(_babel_runtime_corejs3_core_js_stable_parse_int__WEBPACK_IMPORTED_MODULE_4___default()(m[6], 10));
           d.setUTCSeconds(_babel_runtime_corejs3_core_js_stable_parse_int__WEBPACK_IMPORTED_MODULE_4___default()(m[7], 10));
           d.setUTCMilliseconds(_babel_runtime_corejs3_core_js_stable_parse_int__WEBPACK_IMPORTED_MODULE_4___default()(m[9] || '0', 10));
-
           if (m[10] && m[10] !== 'Z') {
             var offset = _babel_runtime_corejs3_core_js_stable_parse_int__WEBPACK_IMPORTED_MODULE_4___default()(m[12], 10) * 60 + _babel_runtime_corejs3_core_js_stable_parse_int__WEBPACK_IMPORTED_MODULE_4___default()(m[13], 10);
-
             d.setTime((m[11] === '+' ? -1 : 1) * offset * 60 * 1000 + d.getTime());
           }
         }
-
         return d;
       }
-
       throw new Error("Invalid date format is specified : ".concat(str));
     }
     /**
      * Parse IS08601 time formatted string and convert to parse string
      */
-
   }, {
     key: "parseTime",
     value: function parseTime(str) {
       var regexp = /^([\d]{2}):?([\d]{2}):?([\d]{2})(.([\d]{3}))?Z?$/;
       var m = str.match(regexp);
-
       if (m) {
         var d = new Date(0);
-
         var hh = _babel_runtime_corejs3_core_js_stable_parse_int__WEBPACK_IMPORTED_MODULE_4___default()(m[1], 10);
-
         var mi = _babel_runtime_corejs3_core_js_stable_parse_int__WEBPACK_IMPORTED_MODULE_4___default()(m[2], 10);
-
         var ss = _babel_runtime_corejs3_core_js_stable_parse_int__WEBPACK_IMPORTED_MODULE_4___default()(m[3], 10);
-
         var sss = _babel_runtime_corejs3_core_js_stable_parse_int__WEBPACK_IMPORTED_MODULE_4___default()(m[5] || '0', 10);
-
         d.setUTCHours(hh);
         d.setUTCMinutes(mi);
         d.setUTCSeconds(ss);
         d.setUTCMilliseconds(sss);
         return d;
       }
-
       throw new Error("Invalid time format is specified : ".concat(str));
     }
   }]);
-
   return SfDate;
 }();
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "YESTERDAY", new SfDate('YESTERDAY'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "TODAY", new SfDate('TODAY'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "TOMORROW", new SfDate('TOMORROW'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "LAST_WEEK", new SfDate('LAST_WEEK'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "THIS_WEEK", new SfDate('THIS_WEEK'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "NEXT_WEEK", new SfDate('NEXT_WEEK'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "LAST_MONTH", new SfDate('LAST_MONTH'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "THIS_MONTH", new SfDate('THIS_MONTH'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "NEXT_MONTH", new SfDate('NEXT_MONTH'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "LAST_90_DAYS", new SfDate('LAST_90_DAYS'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "NEXT_90_DAYS", new SfDate('NEXT_90_DAYS'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "LAST_N_DAYS", createLiteralBuilder('LAST_N_DAYS'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "NEXT_N_DAYS", createLiteralBuilder('NEXT_N_DAYS'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "NEXT_N_WEEKS", createLiteralBuilder('NEXT_N_WEEKS'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "LAST_N_WEEKS", createLiteralBuilder('LAST_N_WEEKS'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "NEXT_N_MONTHS", createLiteralBuilder('NEXT_N_MONTHS'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "LAST_N_MONTHS", createLiteralBuilder('LAST_N_MONTHS'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "THIS_QUARTER", new SfDate('THIS_QUARTER'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "LAST_QUARTER", new SfDate('LAST_QUARTER'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "NEXT_QUARTER", new SfDate('NEXT_QUARTER'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "NEXT_N_QUARTERS", createLiteralBuilder('NEXT_N_QUARTERS'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "LAST_N_QUARTERS", createLiteralBuilder('LAST_N_QUARTERS'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "THIS_YEAR", new SfDate('THIS_YEAR'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "LAST_YEAR", new SfDate('LAST_YEAR'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "NEXT_YEAR", new SfDate('NEXT_YEAR'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "NEXT_N_YEARS", createLiteralBuilder('NEXT_N_YEARS'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "LAST_N_YEARS", createLiteralBuilder('LAST_N_YEARS'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "THIS_FISCAL_QUARTER", new SfDate('THIS_FISCAL_QUARTER'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "LAST_FISCAL_QUARTER", new SfDate('LAST_FISCAL_QUARTER'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "NEXT_FISCAL_QUARTER", new SfDate('NEXT_FISCAL_QUARTER'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "THIS_FISCAL_YEAR", new SfDate('THIS_FISCAL_YEAR'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "NEXT_N_FISCAL_QUARTERS", createLiteralBuilder('NEXT_N_FISCAL_QUARTERS'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "LAST_N_FISCAL_QUARTERS", createLiteralBuilder('LAST_N_FISCAL_QUARTERS'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "LAST_FISCAL_YEAR", new SfDate('LAST_FISCAL_YEAR'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "NEXT_FISCAL_YEAR", new SfDate('NEXT_FISCAL_YEAR'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "NEXT_N_FISCAL_YEARS", createLiteralBuilder('NEXT_N_FISCAL_YEARS'));
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___default()(SfDate, "LAST_N_FISCAL_YEARS", createLiteralBuilder('LAST_N_FISCAL_YEARS'));
-
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (SfDate);
 
 
@@ -5133,11 +4370,8 @@ _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_7___defau
 
 
 
-
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_16___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_16___default()(this).constructor; result = _babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default()(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_15___default()(this, result); }; }
-
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default())) return false; if ((_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default().sham)) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default()(Date, [], function () {})); return true; } catch (e) { return false; } }
-
 /**
  *
  */
@@ -5147,20 +4381,17 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(_
 
 
 
-/** @private */
 
+/** @private */
 function parseJSON(str) {
   return JSON.parse(str);
 }
+
 /** @private */
-
-
 function parseXML(_x) {
   return _parseXML.apply(this, arguments);
 }
 /** @private */
-
-
 function _parseXML() {
   _parseXML = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_18___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_7___default().mark(function _callee5(str) {
     return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_7___default().wrap(function _callee5$(_context8) {
@@ -5170,7 +4401,6 @@ function _parseXML() {
             return _context8.abrupt("return", xml2js__WEBPACK_IMPORTED_MODULE_20___default().parseStringPromise(str, {
               explicitArray: false
             }));
-
           case 1:
           case "end":
             return _context8.stop();
@@ -5180,37 +4410,25 @@ function _parseXML() {
   }));
   return _parseXML.apply(this, arguments);
 }
-
 function parseText(str) {
   return str;
 }
+
 /**
  * HTTP based API class with authorization hook
  */
-
-
 var HttpApi = /*#__PURE__*/function (_EventEmitter) {
   _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_14___default()(HttpApi, _EventEmitter);
-
   var _super = _createSuper(HttpApi);
-
   function HttpApi(conn, options) {
     var _this;
-
     _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_11___default()(this, HttpApi);
-
     _this = _super.call(this);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_17___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_13___default()(_this), "_conn", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_17___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_13___default()(_this), "_logger", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_17___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_13___default()(_this), "_transport", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_17___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_13___default()(_this), "_responseType", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_17___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_13___default()(_this), "_noContentResponse", void 0);
-
     _this._conn = conn;
     _this._logger = conn._logLevel ? HttpApi._logger.createInstance(conn._logLevel) : HttpApi._logger;
     _this._responseType = options.responseType;
@@ -5218,33 +4436,27 @@ var HttpApi = /*#__PURE__*/function (_EventEmitter) {
     _this._noContentResponse = options.noContentResponse;
     return _this;
   }
+
   /**
    * Callout to API endpoint using http
    */
-
-
   _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_12___default()(HttpApi, [{
     key: "request",
     value: function request(_request) {
       var _this2 = this;
-
       return _util_promise__WEBPACK_IMPORTED_MODULE_22__/* .StreamPromise.create */ .E.create(function () {
         var _createLazyStream = (0,_util_stream__WEBPACK_IMPORTED_MODULE_24__/* .createLazyStream */ .Hw)(),
-            stream = _createLazyStream.stream,
-            setStream = _createLazyStream.setStream;
-
+          stream = _createLazyStream.stream,
+          setStream = _createLazyStream.setStream;
         var promise = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_18___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_7___default().mark(function _callee() {
           var _context, _context2;
-
           var refreshDelegate, bodyPromise, _body2, requestTime, requestPromise, response, responseTime, err, body;
-
           return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_7___default().wrap(function _callee$(_context3) {
             while (1) {
               switch (_context3.prev = _context3.next) {
                 case 0:
                   refreshDelegate = _this2.getRefreshDelegate();
                   /* TODO decide remove or not this section */
-
                   /*
                   // remember previous instance url in case it changes after a refresh
                   const lastInstanceUrl = conn.instanceUrl;
@@ -5256,108 +4468,80 @@ var HttpApi = /*#__PURE__*/function (_EventEmitter) {
                     request.url = request.url.replace(lastInstanceUrl,conn.instanceUrl);
                   }
                   */
-
                   if (!(refreshDelegate && refreshDelegate.isRefreshing())) {
                     _context3.next = 10;
                     break;
                   }
-
                   _context3.next = 4;
                   return refreshDelegate.waitRefresh();
-
                 case 4:
                   bodyPromise = _this2.request(_request);
                   setStream(bodyPromise.stream());
                   _context3.next = 8;
                   return bodyPromise;
-
                 case 8:
                   _body2 = _context3.sent;
                   return _context3.abrupt("return", _body2);
-
                 case 10:
                   // hook before sending
                   _this2.beforeSend(_request);
-
                   _this2.emit('request', _request);
-
                   _this2._logger.debug(_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_9___default()(_context = "<request> method=".concat(_request.method, ", url=")).call(_context, _request.url));
-
                   requestTime = _babel_runtime_corejs3_core_js_stable_date_now__WEBPACK_IMPORTED_MODULE_8___default()();
                   requestPromise = _this2._transport.httpRequest(_request);
                   setStream(requestPromise.stream());
                   _context3.prev = 16;
                   _context3.next = 19;
                   return requestPromise;
-
                 case 19:
                   response = _context3.sent;
                   _context3.next = 26;
                   break;
-
                 case 22:
                   _context3.prev = 22;
                   _context3.t0 = _context3["catch"](16);
-
                   _this2._logger.error(_context3.t0);
-
                   throw _context3.t0;
-
                 case 26:
                   _context3.prev = 26;
                   responseTime = _babel_runtime_corejs3_core_js_stable_date_now__WEBPACK_IMPORTED_MODULE_8___default()();
-
                   _this2._logger.debug("elapsed time: ".concat(responseTime - requestTime, " msec"));
-
                   return _context3.finish(26);
-
                 case 30:
                   if (response) {
                     _context3.next = 32;
                     break;
                   }
-
                   return _context3.abrupt("return");
-
                 case 32:
                   _this2._logger.debug(_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_9___default()(_context2 = "<response> status=".concat(String(response.statusCode), ", url=")).call(_context2, _request.url));
-
-                  _this2.emit('response', response); // Refresh token if session has been expired and requires authentication
+                  _this2.emit('response', response);
+                  // Refresh token if session has been expired and requires authentication
                   // when session refresh delegate is available
-
-
                   if (!(_this2.isSessionExpired(response) && refreshDelegate)) {
                     _context3.next = 38;
                     break;
                   }
-
                   _context3.next = 37;
                   return refreshDelegate.refresh(requestTime);
-
                 case 37:
                   return _context3.abrupt("return", _this2.request(_request));
-
                 case 38:
                   if (!_this2.isErrorResponse(response)) {
                     _context3.next = 43;
                     break;
                   }
-
                   _context3.next = 41;
                   return _this2.getError(response);
-
                 case 41:
                   err = _context3.sent;
                   throw err;
-
                 case 43:
                   _context3.next = 45;
                   return _this2.getResponseBody(response);
-
                 case 45:
                   body = _context3.sent;
                   return _context3.abrupt("return", body);
-
                 case 47:
                 case "end":
                   return _context3.stop();
@@ -5365,7 +4549,6 @@ var HttpApi = /*#__PURE__*/function (_EventEmitter) {
             }
           }, _callee, null, [[16, 22, 26, 30]]);
         }))();
-
         return {
           stream: stream,
           promise: promise
@@ -5375,7 +4558,6 @@ var HttpApi = /*#__PURE__*/function (_EventEmitter) {
     /**
      * @protected
      */
-
   }, {
     key: "getRefreshDelegate",
     value: function getRefreshDelegate() {
@@ -5384,37 +4566,29 @@ var HttpApi = /*#__PURE__*/function (_EventEmitter) {
     /**
      * @protected
      */
-
   }, {
     key: "beforeSend",
     value: function beforeSend(request) {
       /* eslint-disable no-param-reassign */
       var headers = request.headers || {};
-
       if (this._conn.accessToken) {
         headers.Authorization = "Bearer ".concat(this._conn.accessToken);
       }
-
       if (this._conn._callOptions) {
         var callOptions = [];
-
         for (var _i = 0, _Object$keys = _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_6___default()(this._conn._callOptions); _i < _Object$keys.length; _i++) {
           var _context4;
-
           var name = _Object$keys[_i];
           callOptions.push(_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_9___default()(_context4 = "".concat(name, "=")).call(_context4, this._conn._callOptions[name]));
         }
-
         headers['Sforce-Call-Options'] = callOptions.join(', ');
       }
-
       request.headers = headers;
     }
     /**
      * Detect response content mime-type
      * @protected
      */
-
   }, {
     key: "getResponseContentType",
     value: function getResponseContentType(response) {
@@ -5423,7 +4597,6 @@ var HttpApi = /*#__PURE__*/function (_EventEmitter) {
     /**
      * @private
      */
-
   }, {
     key: "parseResponseBody",
     value: function () {
@@ -5437,12 +4610,10 @@ var HttpApi = /*#__PURE__*/function (_EventEmitter) {
                 parseBody = /^(text|application)\/xml(;|$)/.test(contentType) ? parseXML : /^application\/json(;|$)/.test(contentType) ? parseJSON : /^text\/csv(;|$)/.test(contentType) ? _csv__WEBPACK_IMPORTED_MODULE_23__/* .parseCSV */ .bW : parseText;
                 _context5.prev = 2;
                 return _context5.abrupt("return", parseBody(response.body));
-
               case 6:
                 _context5.prev = 6;
                 _context5.t0 = _context5["catch"](2);
                 return _context5.abrupt("return", response.body);
-
               case 9:
               case "end":
                 return _context5.stop();
@@ -5450,18 +4621,15 @@ var HttpApi = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee2, this, [[2, 6]]);
       }));
-
       function parseResponseBody(_x2) {
         return _parseResponseBody.apply(this, arguments);
       }
-
       return parseResponseBody;
     }()
     /**
      * Get response body
      * @protected
      */
-
   }, {
     key: "getResponseBody",
     value: function () {
@@ -5475,39 +4643,29 @@ var HttpApi = /*#__PURE__*/function (_EventEmitter) {
                   _context6.next = 2;
                   break;
                 }
-
                 return _context6.abrupt("return", this._noContentResponse);
-
               case 2:
                 _context6.next = 4;
                 return this.parseResponseBody(response);
-
               case 4:
                 body = _context6.sent;
-
                 if (!this.hasErrorInResponseBody(body)) {
                   _context6.next = 10;
                   break;
                 }
-
                 _context6.next = 8;
                 return this.getError(response, body);
-
               case 8:
                 err = _context6.sent;
                 throw err;
-
               case 10:
                 if (!(response.statusCode === 300)) {
                   _context6.next = 12;
                   break;
                 }
-
                 throw new HttpApiError('Multiple records found', 'MULTIPLE_CHOICES', body);
-
               case 12:
                 return _context6.abrupt("return", body);
-
               case 13:
               case "end":
                 return _context6.stop();
@@ -5515,18 +4673,15 @@ var HttpApi = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee3, this);
       }));
-
       function getResponseBody(_x3) {
         return _getResponseBody.apply(this, arguments);
       }
-
       return getResponseBody;
     }()
     /**
      * Detect session expiry
      * @protected
      */
-
   }, {
     key: "isSessionExpired",
     value: function isSessionExpired(response) {
@@ -5536,7 +4691,6 @@ var HttpApi = /*#__PURE__*/function (_EventEmitter) {
      * Detect error response
      * @protected
      */
-
   }, {
     key: "isErrorResponse",
     value: function isErrorResponse(response) {
@@ -5546,7 +4700,6 @@ var HttpApi = /*#__PURE__*/function (_EventEmitter) {
      * Detect error in response body
      * @protected
      */
-
   }, {
     key: "hasErrorInResponseBody",
     value: function hasErrorInResponseBody(_body) {
@@ -5556,7 +4709,6 @@ var HttpApi = /*#__PURE__*/function (_EventEmitter) {
      * Parsing error message in response
      * @protected
      */
-
   }, {
     key: "parseError",
     value: function parseError(body) {
@@ -5567,7 +4719,6 @@ var HttpApi = /*#__PURE__*/function (_EventEmitter) {
      * Get error message in response
      * @protected
      */
-
   }, {
     key: "getError",
     value: function () {
@@ -5580,35 +4731,28 @@ var HttpApi = /*#__PURE__*/function (_EventEmitter) {
                 _context7.prev = 0;
                 _context7.t0 = this;
                 _context7.t1 = body;
-
                 if (_context7.t1) {
                   _context7.next = 7;
                   break;
                 }
-
                 _context7.next = 6;
                 return this.parseResponseBody(response);
-
               case 6:
                 _context7.t1 = _context7.sent;
-
               case 7:
                 _context7.t2 = _context7.t1;
                 error = _context7.t0.parseError.call(_context7.t0, _context7.t2);
                 _context7.next = 13;
                 break;
-
               case 11:
                 _context7.prev = 11;
                 _context7.t3 = _context7["catch"](0);
-
               case 13:
                 error = _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_4___default()(error) === 'object' && error !== null && typeof error.message === 'string' ? error : {
                   errorCode: "ERROR_HTTP_".concat(response.statusCode),
                   message: response.body
                 };
                 return _context7.abrupt("return", new HttpApiError(error.message, error.errorCode));
-
               case 15:
               case "end":
                 return _context7.stop();
@@ -5616,48 +4760,35 @@ var HttpApi = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee4, this, [[0, 11]]);
       }));
-
       function getError(_x4, _x5) {
         return _getError.apply(this, arguments);
       }
-
       return getError;
     }()
   }]);
-
   return HttpApi;
 }(events__WEBPACK_IMPORTED_MODULE_19__.EventEmitter);
+
 /**
  *
  */
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_17___default()(HttpApi, "_logger", (0,_util_logger__WEBPACK_IMPORTED_MODULE_21__/* .getLogger */ .jl)('http-api'));
-
 var HttpApiError = /*#__PURE__*/function (_Error) {
   _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_14___default()(HttpApiError, _Error);
-
   var _super2 = _createSuper(HttpApiError);
-
   function HttpApiError(message, errorCode, content) {
     var _this3;
-
     _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_11___default()(this, HttpApiError);
-
     _this3 = _super2.call(this, message);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_17___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_13___default()(_this3), "errorCode", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_17___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_13___default()(_this3), "content", void 0);
-
     _this3.name = errorCode || _this3.name;
     _this3.errorCode = _this3.name;
     _this3.content = content;
     return _this3;
   }
-
   return HttpApiError;
 }( /*#__PURE__*/_babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_3___default()(Error));
-
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (HttpApi);
 
 
@@ -5707,9 +4838,7 @@ var HttpApiError = /*#__PURE__*/function (_Error) {
 
 
 
-
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_7___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_7___default()(this).constructor; result = _babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default()(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_6___default()(this, result); }; }
-
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default())) return false; if ((_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default().sham)) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default()(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 
@@ -5723,57 +4852,36 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(_
 /**
  *
  */
-
 var JSforce = /*#__PURE__*/function (_EventEmitter) {
   _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_5___default()(JSforce, _EventEmitter);
-
   var _super = _createSuper(JSforce);
-
   function JSforce() {
     var _context;
-
     var _this;
-
     _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_3___default()(this, JSforce);
-
     for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
       args[_key] = arguments[_key];
     }
-
     _this = _super.call.apply(_super, _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_2___default()(_context = [this]).call(_context, args));
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_8___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_4___default()(_this), "VERSION", _VERSION__WEBPACK_IMPORTED_MODULE_16__/* ["default"] */ .Z);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_8___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_4___default()(_this), "Connection", _connection__WEBPACK_IMPORTED_MODULE_10__/* ["default"] */ .Z);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_8___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_4___default()(_this), "OAuth2", _oauth2__WEBPACK_IMPORTED_MODULE_11__/* ["default"] */ .Z);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_8___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_4___default()(_this), "JwtOAuth2", _jwtOAuth2__WEBPACK_IMPORTED_MODULE_15__/* .JwtOAuth2 */ .I);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_8___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_4___default()(_this), "SfDate", _date__WEBPACK_IMPORTED_MODULE_12__/* ["default"] */ .Z);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_8___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_4___default()(_this), "Date", _date__WEBPACK_IMPORTED_MODULE_12__/* ["default"] */ .Z);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_8___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_4___default()(_this), "BrowserClient", _browser_client__WEBPACK_IMPORTED_MODULE_14__/* .BrowserClient */ .R);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_8___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_4___default()(_this), "registry", _registry__WEBPACK_IMPORTED_MODULE_13__/* ["default"] */ .Z);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_8___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_4___default()(_this), "browser", _browser_client__WEBPACK_IMPORTED_MODULE_14__/* ["default"] */ .Z);
-
     return _this;
   }
-
   return JSforce;
 }(events__WEBPACK_IMPORTED_MODULE_9__.EventEmitter);
-
 function registerModule(name, factory) {
   jsforce.on('connection:new', function (conn) {
     var obj = undefined;
-
     _Object$defineProperty(conn, name, {
       get: function get() {
         var _obj;
-
         obj = (_obj = obj) !== null && _obj !== void 0 ? _obj : factory(conn);
         return obj;
       },
@@ -5817,23 +4925,16 @@ var jsforce = new JSforce();
 
 
 
-
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_6___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_6___default()(this).constructor; result = _babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default()(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_5___default()(this, result); }; }
-
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default())) return false; if ((_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default().sham)) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default()(Date, [], function () {})); return true; } catch (e) { return false; } }
-
 
 var JwtOAuth2 = /*#__PURE__*/function (_OAuth) {
   _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_4___default()(JwtOAuth2, _OAuth);
-
   var _super = _createSuper(JwtOAuth2);
-
   function JwtOAuth2(config) {
     _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1___default()(this, JwtOAuth2);
-
     return _super.call(this, config);
   }
-
   _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_2___default()(JwtOAuth2, [{
     key: "jwtAuthorize",
     value: function jwtAuthorize(innerToken) {
@@ -5843,7 +4944,6 @@ var JwtOAuth2 = /*#__PURE__*/function (_OAuth) {
       });
     }
   }]);
-
   return JwtOAuth2;
 }(_oauth2__WEBPACK_IMPORTED_MODULE_7__/* ["default"] */ .Z);
 
@@ -5945,15 +5045,10 @@ var JwtOAuth2 = /*#__PURE__*/function (_OAuth) {
 
 
 
-
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_18___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_18___default()(this).constructor; result = _babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default()(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_17___default()(this, result); }; }
-
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default())) return false; if ((_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default().sham)) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default()(Date, [], function () {})); return true; } catch (e) { return false; } }
-
 function ownKeys(object, enumerableOnly) { var keys = _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_8___default()(object); if ((_babel_runtime_corejs3_core_js_stable_object_get_own_property_symbols__WEBPACK_IMPORTED_MODULE_7___default())) { var symbols = _babel_runtime_corejs3_core_js_stable_object_get_own_property_symbols__WEBPACK_IMPORTED_MODULE_7___default()(object); if (enumerableOnly) symbols = _babel_runtime_corejs3_core_js_stable_instance_filter__WEBPACK_IMPORTED_MODULE_6___default()(symbols).call(symbols, function (sym) { return _babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptor__WEBPACK_IMPORTED_MODULE_5___default()(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { var _context8; _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_4___default()(_context8 = ownKeys(Object(source), true)).call(_context8, function (key) { _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_27___default()(target, key, source[key]); }); } else if ((_babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptors__WEBPACK_IMPORTED_MODULE_3___default())) { _babel_runtime_corejs3_core_js_stable_object_define_properties__WEBPACK_IMPORTED_MODULE_2___default()(target, _babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptors__WEBPACK_IMPORTED_MODULE_3___default()(source)); } else { var _context9; _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_4___default()(_context9 = ownKeys(Object(source))).call(_context9, function (key) { _babel_runtime_corejs3_core_js_stable_object_define_property__WEBPACK_IMPORTED_MODULE_1___default()(target, key, _babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptor__WEBPACK_IMPORTED_MODULE_5___default()(source, key)); }); } } return target; }
-
 /**
  *
  */
@@ -5962,18 +5057,19 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 var defaultOAuth2Config = {
   loginUrl: 'https://login.salesforce.com'
-}; // Makes a nodejs base64 encoded string compatible with rfc4648 alternative encoding for urls.
-// @param base64Encoded a nodejs base64 encoded string
+};
 
+// Makes a nodejs base64 encoded string compatible with rfc4648 alternative encoding for urls.
+// @param base64Encoded a nodejs base64 encoded string
 function base64UrlEscape(base64Encoded) {
   // builtin node js base 64 encoding is not 64 url compatible.
   // See https://toolsn.ietf.org/html/rfc4648#section-5
   return base64Encoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 }
+
 /**
  * type defs
  */
-
 
 /**
  * OAuth2 class
@@ -5984,39 +5080,27 @@ var OAuth2 = /*#__PURE__*/function () {
    */
   function OAuth2(config) {
     _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_25___default()(this, OAuth2);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_27___default()(this, "loginUrl", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_27___default()(this, "authzServiceUrl", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_27___default()(this, "tokenServiceUrl", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_27___default()(this, "revokeServiceUrl", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_27___default()(this, "clientId", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_27___default()(this, "clientSecret", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_27___default()(this, "redirectUri", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_27___default()(this, "codeVerifier", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_27___default()(this, "_transport", void 0);
-
     var loginUrl = config.loginUrl,
-        authzServiceUrl = config.authzServiceUrl,
-        tokenServiceUrl = config.tokenServiceUrl,
-        revokeServiceUrl = config.revokeServiceUrl,
-        clientId = config.clientId,
-        clientSecret = config.clientSecret,
-        redirectUri = config.redirectUri,
-        proxyUrl = config.proxyUrl,
-        httpProxy = config.httpProxy,
-        useVerifier = config.useVerifier;
-
+      authzServiceUrl = config.authzServiceUrl,
+      tokenServiceUrl = config.tokenServiceUrl,
+      revokeServiceUrl = config.revokeServiceUrl,
+      clientId = config.clientId,
+      clientSecret = config.clientSecret,
+      redirectUri = config.redirectUri,
+      proxyUrl = config.proxyUrl,
+      httpProxy = config.httpProxy,
+      useVerifier = config.useVerifier;
     if (authzServiceUrl && tokenServiceUrl) {
       var _context;
-
       this.loginUrl = _babel_runtime_corejs3_core_js_stable_instance_slice__WEBPACK_IMPORTED_MODULE_24___default()(_context = authzServiceUrl.split('/')).call(_context, 0, 3).join('/');
       this.authzServiceUrl = authzServiceUrl;
       this.tokenServiceUrl = tokenServiceUrl;
@@ -6027,11 +5111,9 @@ var OAuth2 = /*#__PURE__*/function () {
       this.tokenServiceUrl = "".concat(this.loginUrl, "/services/oauth2/token");
       this.revokeServiceUrl = "".concat(this.loginUrl, "/services/oauth2/revoke");
     }
-
     this.clientId = clientId;
     this.clientSecret = clientSecret;
     this.redirectUri = redirectUri;
-
     if (proxyUrl) {
       this._transport = new _transport__WEBPACK_IMPORTED_MODULE_30__/* .XdProxyTransport */ .P7(proxyUrl);
     } else if (httpProxy) {
@@ -6039,43 +5121,36 @@ var OAuth2 = /*#__PURE__*/function () {
     } else {
       this._transport = new _transport__WEBPACK_IMPORTED_MODULE_30__/* ["default"] */ .ZP();
     }
-
     if (useVerifier) {
       // Set a code verifier string for OAuth authorization
       this.codeVerifier = base64UrlEscape((0,crypto__WEBPACK_IMPORTED_MODULE_28__/* .randomBytes */ .O6)(Math.ceil(128)).toString('base64'));
     }
   }
+
   /**
    * Get Salesforce OAuth2 authorization page URL to redirect user agent.
    */
-
-
   _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_26___default()(OAuth2, [{
     key: "getAuthorizationUrl",
     value: function getAuthorizationUrl() {
       var _context2;
-
       var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
       if (this.codeVerifier) {
         // code verifier must be a base 64 url encoded hash of 128 bytes of random data. Our random data is also
         // base 64 url encoded. See Connection.create();
         var codeChallenge = base64UrlEscape((0,crypto__WEBPACK_IMPORTED_MODULE_28__/* .createHash */ .js)('sha256').update(this.codeVerifier).digest('base64'));
         params.code_challenge = codeChallenge;
       }
-
       var _params = _objectSpread(_objectSpread({}, params), {}, {
         response_type: 'code',
         client_id: this.clientId,
         redirect_uri: this.redirectUri
       });
-
       return this.authzServiceUrl + (_babel_runtime_corejs3_core_js_stable_instance_index_of__WEBPACK_IMPORTED_MODULE_23___default()(_context2 = this.authzServiceUrl).call(_context2, '?') >= 0 ? '&' : '?') + querystring__WEBPACK_IMPORTED_MODULE_29__.stringify(_params);
     }
     /**
      * OAuth2 Refresh Token Flow
      */
-
   }, {
     key: "refreshToken",
     value: function () {
@@ -6089,27 +5164,21 @@ var OAuth2 = /*#__PURE__*/function () {
                   _context3.next = 2;
                   break;
                 }
-
                 throw new Error('No OAuth2 client id information is specified');
-
               case 2:
                 params = {
                   grant_type: 'refresh_token',
                   refresh_token: _refreshToken,
                   client_id: this.clientId
                 };
-
                 if (this.clientSecret) {
                   params.client_secret = this.clientSecret;
                 }
-
                 _context3.next = 6;
                 return this._postParams(params);
-
               case 6:
                 ret = _context3.sent;
                 return _context3.abrupt("return", ret);
-
               case 8:
               case "end":
                 return _context3.stop();
@@ -6117,40 +5186,33 @@ var OAuth2 = /*#__PURE__*/function () {
           }
         }, _callee, this);
       }));
-
       function refreshToken(_x) {
         return _refreshToken2.apply(this, arguments);
       }
-
       return refreshToken;
     }()
     /**
      * OAuth2 Web Server Authentication Flow (Authorization Code)
      * Access Token Request
      */
-
   }, {
     key: "requestToken",
     value: function () {
       var _requestToken = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_22___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_20___default().mark(function _callee2(code) {
         var params,
-            _params,
-            ret,
-            _args2 = arguments;
-
+          _params,
+          ret,
+          _args2 = arguments;
         return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_20___default().wrap(function _callee2$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
                 params = _args2.length > 1 && _args2[1] !== undefined ? _args2[1] : {};
-
                 if (!(!this.clientId || !this.redirectUri)) {
                   _context4.next = 3;
                   break;
                 }
-
                 throw new Error('No OAuth2 client id or redirect uri configuration is specified');
-
               case 3:
                 _params = _objectSpread(_objectSpread({}, params), {}, {
                   grant_type: 'authorization_code',
@@ -6158,18 +5220,14 @@ var OAuth2 = /*#__PURE__*/function () {
                   client_id: this.clientId,
                   redirect_uri: this.redirectUri
                 });
-
                 if (this.clientSecret) {
                   _params.client_secret = this.clientSecret;
                 }
-
                 _context4.next = 7;
                 return this._postParams(_params);
-
               case 7:
                 ret = _context4.sent;
                 return _context4.abrupt("return", ret);
-
               case 9:
               case "end":
                 return _context4.stop();
@@ -6177,17 +5235,14 @@ var OAuth2 = /*#__PURE__*/function () {
           }
         }, _callee2, this);
       }));
-
       function requestToken(_x2) {
         return _requestToken.apply(this, arguments);
       }
-
       return requestToken;
     }()
     /**
      * OAuth2 Username-Password Flow (Resource Owner Password Credentials)
      */
-
   }, {
     key: "authenticate",
     value: function () {
@@ -6201,9 +5256,7 @@ var OAuth2 = /*#__PURE__*/function () {
                   _context5.next = 2;
                   break;
                 }
-
                 throw new Error('No valid OAuth2 client configuration set');
-
               case 2:
                 _context5.next = 4;
                 return this._postParams({
@@ -6214,11 +5267,9 @@ var OAuth2 = /*#__PURE__*/function () {
                   client_secret: this.clientSecret,
                   redirect_uri: this.redirectUri
                 });
-
               case 4:
                 ret = _context5.sent;
                 return _context5.abrupt("return", ret);
-
               case 6:
               case "end":
                 return _context5.stop();
@@ -6226,17 +5277,14 @@ var OAuth2 = /*#__PURE__*/function () {
           }
         }, _callee3, this);
       }));
-
       function authenticate(_x3, _x4) {
         return _authenticate.apply(this, arguments);
       }
-
       return authenticate;
     }()
     /**
      * OAuth2 Revoke Session Token
      */
-
   }, {
     key: "revokeToken",
     value: function () {
@@ -6257,45 +5305,33 @@ var OAuth2 = /*#__PURE__*/function () {
                     'content-type': 'application/x-www-form-urlencoded'
                   }
                 });
-
               case 2:
                 response = _context6.sent;
-
                 if (!(response.statusCode >= 400)) {
                   _context6.next = 7;
                   break;
                 }
-
                 res = querystring__WEBPACK_IMPORTED_MODULE_29__.parse(response.body);
-
                 if (!res || !res.error) {
                   res = {
                     error: "ERROR_HTTP_".concat(response.statusCode),
                     error_description: response.body
                   };
                 }
-
                 throw new ( /*#__PURE__*/function (_Error) {
                   _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_16___default()(_class, _Error);
-
                   var _super = _createSuper(_class);
-
                   function _class(_ref) {
                     var _this;
-
                     var error = _ref.error,
-                        error_description = _ref.error_description;
-
+                      error_description = _ref.error_description;
                     _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_25___default()(this, _class);
-
                     _this = _super.call(this, error_description);
                     _this.name = error;
                     return _this;
                   }
-
                   return _class;
                 }( /*#__PURE__*/_babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_19___default()(Error)))(res);
-
               case 7:
               case "end":
                 return _context6.stop();
@@ -6303,17 +5339,14 @@ var OAuth2 = /*#__PURE__*/function () {
           }
         }, _callee4, this);
       }));
-
       function revokeToken(_x5) {
         return _revokeToken.apply(this, arguments);
       }
-
       return revokeToken;
     }()
     /**
      * @private
      */
-
   }, {
     key: "_postParams",
     value: function () {
@@ -6333,49 +5366,37 @@ var OAuth2 = /*#__PURE__*/function () {
                     'content-type': 'application/x-www-form-urlencoded'
                   }
                 });
-
               case 3:
                 response = _context7.sent;
-
                 try {
                   res = JSON.parse(response.body);
                 } catch (e) {
                   /* eslint-disable no-empty */
                 }
-
                 if (!(response.statusCode >= 400)) {
                   _context7.next = 8;
                   break;
                 }
-
                 res = res || {
                   error: "ERROR_HTTP_".concat(response.statusCode),
                   error_description: response.body
                 };
                 throw new ( /*#__PURE__*/function (_Error2) {
                   _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_16___default()(_class2, _Error2);
-
                   var _super2 = _createSuper(_class2);
-
                   function _class2(_ref2) {
                     var _this2;
-
                     var error = _ref2.error,
-                        error_description = _ref2.error_description;
-
+                      error_description = _ref2.error_description;
                     _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_25___default()(this, _class2);
-
                     _this2 = _super2.call(this, error_description);
                     _this2.name = error;
                     return _this2;
                   }
-
                   return _class2;
                 }( /*#__PURE__*/_babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_19___default()(Error)))(res);
-
               case 8:
                 return _context7.abrupt("return", res);
-
               case 9:
               case "end":
                 return _context7.stop();
@@ -6383,15 +5404,12 @@ var OAuth2 = /*#__PURE__*/function () {
           }
         }, _callee5, this);
       }));
-
       function _postParams(_x6) {
         return _postParams2.apply(this, arguments);
       }
-
       return _postParams;
     }()
   }]);
-
   return OAuth2;
 }();
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (OAuth2);
@@ -6576,59 +5594,46 @@ var date = __webpack_require__(96371);
 
 
 
-
 /**
  * @file Create and build SOQL string from configuration
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
 
-
 /** @private **/
 function escapeSOQLString(str) {
   return String(str || '').replace(/'/g, "\\'");
 }
+
 /** @private **/
-
-
 function createFieldsClause(fields) {
   var _context;
-
   var childQueries = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-  var cqueries = values_default()(childQueries); // eslint-disable-next-line no-use-before-define
-
-
+  var cqueries = values_default()(childQueries);
+  // eslint-disable-next-line no-use-before-define
   return concat_default()(_context = []).call(_context, toConsumableArray_default()(fields || ['Id']), toConsumableArray_default()(map_default()(cqueries).call(cqueries, function (cquery) {
     return "(".concat(createSOQL(cquery), ")");
   }))).join(', ');
 }
+
 /** @private **/
-
-
 function createValueExpression(value) {
   if (is_array_default()(value)) {
     return value.length > 0 ? "(".concat(map_default()(value).call(value, createValueExpression).join(', '), ")") : undefined;
   }
-
   if (value instanceof date/* default */.Z) {
     return value.toString();
   }
-
   if (typeof value === 'string') {
     return "'".concat(escapeSOQLString(value), "'");
   }
-
   if (typeof value === 'number') {
     return value.toString();
   }
-
   if (value === null) {
     return 'null';
   }
-
   return value;
 }
-
 var opMap = {
   '=': '=',
   $eq: '=',
@@ -6650,19 +5655,19 @@ var opMap = {
   $excludes: 'EXCLUDES',
   $exists: 'EXISTS'
 };
-/** @private **/
 
+/** @private **/
 function createFieldExpression(field, value) {
   var op = '$eq';
-  var _value = value; // Assume the `$in` operator if value is an array and none was supplied.
+  var _value = value;
 
+  // Assume the `$in` operator if value is an array and none was supplied.
   if (is_array_default()(value)) {
     op = '$in';
   } else if (typeof_default()(value) === 'object' && value !== null) {
     // Otherwise, if an object was passed then process the supplied ops.
     for (var _i = 0, _Object$keys = keys_default()(value); _i < _Object$keys.length; _i++) {
       var k = _Object$keys[_i];
-
       if (k[0] === '$') {
         op = k;
         _value = value[k];
@@ -6670,52 +5675,39 @@ function createFieldExpression(field, value) {
       }
     }
   }
-
   var sfop = opMap[op];
-
   if (!sfop || typeof _value === 'undefined') {
     return null;
   }
-
   var valueExpr = createValueExpression(_value);
-
   if (typeof valueExpr === 'undefined') {
     return null;
   }
-
   switch (sfop) {
     case 'NOT LIKE':
       return "(".concat(['NOT', field, 'LIKE', valueExpr].join(' '), ")");
-
     case 'EXISTS':
       return [field, _value ? '!=' : '=', 'null'].join(' ');
-
     default:
       return [field, sfop, valueExpr].join(' ');
   }
 }
+
 /** @private **/
-
-
 function createOrderByClause() {
   var sort = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
   var _sort = [];
-
   if (typeof sort === 'string') {
     var _context2;
-
     if (/,|\s+(asc|desc)\s*$/.test(sort)) {
       // must be specified in pure "order by" clause. Return raw config.
       return sort;
-    } // sort order in mongoose-style expression.
+    }
+    // sort order in mongoose-style expression.
     // e.g. "FieldA -FieldB" => "ORDER BY FieldA ASC, FieldB DESC"
-
-
     _sort = map_default()(_context2 = sort.split(/\s+/)).call(_context2, function (field) {
       var dir = 'ASC'; // ascending
-
       var flag = field[0];
-
       if (flag === '-') {
         dir = 'DESC';
         field = field.substring(1); // eslint-disable-line no-param-reassign
@@ -6729,23 +5721,18 @@ function createOrderByClause() {
     _sort = sort;
   } else {
     var _context3;
-
     _sort = map_default()(_context3 = entries_default()(sort)).call(_context3, function (_ref) {
       var _ref2 = slicedToArray_default()(_ref, 2),
-          field = _ref2[0],
-          dir = _ref2[1];
-
+        field = _ref2[0],
+        dir = _ref2[1];
       return [field, dir];
     });
   }
-
   return map_default()(_sort).call(_sort, function (_ref3) {
     var _context4;
-
     var _ref4 = slicedToArray_default()(_ref3, 2),
-        field = _ref4[0],
-        dir = _ref4[1];
-
+      field = _ref4[0],
+      dir = _ref4[1];
     /* eslint-disable no-param-reassign */
     switch (String(dir)) {
       case 'DESC':
@@ -6755,32 +5742,24 @@ function createOrderByClause() {
       case '-1':
         dir = 'DESC';
         break;
-
       default:
         dir = 'ASC';
     }
-
     return concat_default()(_context4 = "".concat(field, " ")).call(_context4, dir);
   }).join(', ');
 }
-
 /** @private **/
 function createConditionClause() {
   var _context7;
-
   var conditions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   var operator = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'AND';
   var depth = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-
   if (typeof conditions === 'string') {
     return conditions;
   }
-
   var conditionList = [];
-
   if (!is_array_default()(conditions)) {
     var _context5;
-
     // if passed in hash object
     var conditionsMap = conditions;
     conditionList = map_default()(_context5 = keys_default()(conditionsMap)).call(_context5, function (key) {
@@ -6792,14 +5771,12 @@ function createConditionClause() {
   } else {
     conditionList = map_default()(conditions).call(conditions, function (cond) {
       var _context6;
-
       var conds = map_default()(_context6 = keys_default()(cond)).call(_context6, function (key) {
         return {
           key: key,
           value: cond[key]
         };
       });
-
       return conds.length > 1 ? {
         key: '$and',
         value: map_default()(conds).call(conds, function (c) {
@@ -6808,11 +5785,9 @@ function createConditionClause() {
       } : conds[0];
     });
   }
-
   var conditionClauses = filter_default()(_context7 = map_default()(conditionList).call(conditionList, function (cond) {
     var d = depth + 1;
     var op;
-
     switch (cond.key) {
       case '$or':
       case '$and':
@@ -6823,54 +5798,42 @@ function createConditionClause() {
 
         op = cond.key === '$or' ? 'OR' : cond.key === '$and' ? 'AND' : 'NOT';
         return createConditionClause(cond.value, op, d);
-
       default:
         return createFieldExpression(cond.key, cond.value);
     }
   })).call(_context7, function (expr) {
     return expr;
   });
-
   var hasParen;
-
   if (operator === 'NOT') {
     var _context8, _context9;
-
     hasParen = depth > 0;
     return concat_default()(_context8 = concat_default()(_context9 = "".concat(hasParen ? '(' : '', "NOT ")).call(_context9, conditionClauses[0])).call(_context8, hasParen ? ')' : '');
   }
-
   hasParen = depth > 0 && conditionClauses.length > 1;
   return (hasParen ? '(' : '') + conditionClauses.join(" ".concat(operator, " ")) + (hasParen ? ')' : '');
 }
+
 /**
  * Create SOQL
  * @private
  */
-
-
 function createSOQL(query) {
   var soql = ['SELECT ', createFieldsClause(query.fields, includes_default()(query)), ' FROM ', query.table].join('');
   var cond = createConditionClause(query.conditions);
-
   if (cond) {
     soql += " WHERE ".concat(cond);
   }
-
   var orderby = createOrderByClause(sort_default()(query));
-
   if (orderby) {
     soql += " ORDER BY ".concat(orderby);
   }
-
   if (query.limit) {
     soql += " LIMIT ".concat(query.limit);
   }
-
   if (query.offset) {
     soql += " OFFSET ".concat(query.offset);
   }
-
   return soql;
 }
 
@@ -6923,21 +5886,13 @@ function createSOQL(query) {
 
 
 
-
 function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof (symbol_default()) === "undefined" || get_iterator_method_default()(o) == null) { if (is_array_default()(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = get_iterator_default()(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-
 function _unsupportedIterableToArray(o, minLen) { var _context38; if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = slice_default()(_context38 = Object.prototype.toString.call(o)).call(_context38, 8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return from_default()(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = getPrototypeOf_default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf_default()(this).constructor; result = construct_default()(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn_default()(this, result); }; }
-
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(construct_default())) return false; if ((construct_default()).sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(construct_default()(Date, [], function () {})); return true; } catch (e) { return false; } }
-
 function ownKeys(object, enumerableOnly) { var keys = keys_default()(object); if ((get_own_property_symbols_default())) { var symbols = get_own_property_symbols_default()(object); if (enumerableOnly) symbols = filter_default()(symbols).call(symbols, function (sym) { return get_own_property_descriptor_default()(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { var _context36; for_each_default()(_context36 = ownKeys(Object(source), true)).call(_context36, function (key) { defineProperty_default()(target, key, source[key]); }); } else if ((get_own_property_descriptors_default())) { define_properties_default()(target, get_own_property_descriptors_default()(source)); } else { var _context37; for_each_default()(_context37 = ownKeys(Object(source))).call(_context37, function (key) { define_property_default()(target, key, get_own_property_descriptor_default()(source, key)); }); } } return target; }
-
 /**
  * @file Manages query for records in Salesforce
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -6946,279 +5901,229 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 
 
+
+/**
+ *
+ */
+
+/**
+ *
+ */
+
+/**
+ *
+ */
+
 var ResponseTargetValues = ['QueryResult', 'Records', 'SingleRecord', 'Count'];
 var ResponseTargets = reduce_default()(ResponseTargetValues).call(ResponseTargetValues, function (values, target) {
   return _objectSpread(_objectSpread({}, values), {}, defineProperty_default()({}, target, target));
 }, {});
+
+// QRT extends 'Count'
 
 /**
  *
  */
 var DEFAULT_BULK_THRESHOLD = 200;
 var DEFAULT_BULK_API_VERSION = 1;
+
 /**
  * Query
  */
-
 var Query = /*#__PURE__*/function (_EventEmitter) {
   inherits_default()(Query, _EventEmitter);
-
   var _super = _createSuper(Query);
-
   /**
    *
    */
   function Query(conn, config, options) {
     var _this;
-
     classCallCheck_default()(this, Query);
-
     _this = _super.call(this);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "_conn", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "_logger", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "_soql", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "_locator", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "_config", {});
-
     defineProperty_default()(assertThisInitialized_default()(_this), "_children", []);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "_options", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "_executed", false);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "_finished", false);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "_chaining", false);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "_promise", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "_stream", void 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "totalSize", 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "totalFetched", 0);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "records", []);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "offset", _this.skip);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "orderby", sort_default()(_this));
-
     defineProperty_default()(assertThisInitialized_default()(_this), "exec", _this.execute);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "run", _this.execute);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "delete", _this.destroy);
-
     defineProperty_default()(assertThisInitialized_default()(_this), "del", _this.destroy);
-
     _this._conn = conn;
     _this._logger = conn._logLevel ? Query._logger.createInstance(conn._logLevel) : Query._logger;
-
     if (typeof config === 'string') {
       _this._soql = config;
-
       _this._logger.debug("config is soql: ".concat(config));
     } else if (typeof config.locator === 'string') {
       var locator = config.locator;
-
       _this._logger.debug("config is locator: ".concat(locator));
-
       _this._locator = includes_default()(locator).call(locator, '/') ? _this.urlToLocator(locator) : locator;
     } else {
       _this._logger.debug("config is QueryConfig: ".concat(config));
-
       var _ref = config,
-          _fields = _ref.fields,
-          includes = includes_default()(_ref),
-          _sort2 = sort_default()(_ref),
-          _config = objectWithoutProperties_default()(_ref, ["fields", "includes", "sort"]);
-
+        _fields = _ref.fields,
+        includes = includes_default()(_ref),
+        _sort2 = sort_default()(_ref),
+        _config = objectWithoutProperties_default()(_ref, ["fields", "includes", "sort"]);
       _this._config = _config;
-
       _this.select(_fields);
-
       if (includes) {
         _this.includeChildren(includes);
       }
-
       if (_sort2) {
         sort_default()(_this).call(_this, _sort2);
       }
     }
-
     _this._options = _objectSpread({
       headers: {},
       maxFetch: 10000,
       autoFetch: false,
       scanAll: false,
       responseTarget: 'QueryResult'
-    }, options || {}); // promise instance
-
+    }, options || {});
+    // promise instance
     _this._promise = new (promise_default())(function (resolve, reject) {
       _this.on('response', resolve);
-
       _this.on('error', reject);
     });
     _this._stream = new record_stream/* Serializable */.iV();
-
     _this.on('record', function (record) {
       return _this._stream.push(record);
     });
-
     _this.on('end', function () {
       return _this._stream.push(null);
     });
-
     _this.on('error', function (err) {
       try {
         _this._stream.emit('error', err);
-      } catch (e) {// eslint-disable-line no-empty
+      } catch (e) {
+        // eslint-disable-line no-empty
       }
     });
-
     return _this;
   }
+
   /**
    * Select fields to include in the returning result
    */
-
-
   createClass_default()(Query, [{
     key: "select",
     value: function select() {
       var fields = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '*';
-
       if (this._soql) {
         throw Error('Cannot set select fields for the query which has already built SOQL.');
       }
-
       function toFieldArray(fields) {
         var _context, _context2, _context4, _context5;
-
         return typeof fields === 'string' ? fields.split(/\s*,\s*/) : is_array_default()(fields) ? reduce_default()(_context = map_default()(_context2 = fields).call(_context2, toFieldArray)).call(_context, function (fs, f) {
           var _context3;
-
           return concat_default()(_context3 = []).call(_context3, toConsumableArray_default()(fs), toConsumableArray_default()(f));
         }, []) : reduce_default()(_context4 = map_default()(_context5 = entries_default()(fields)).call(_context5, function (_ref2) {
           var _ref3 = slicedToArray_default()(_ref2, 2),
-              f = _ref3[0],
-              v = _ref3[1];
-
+            f = _ref3[0],
+            v = _ref3[1];
           if (typeof v === 'number' || typeof v === 'boolean') {
             return v ? [f] : [];
           } else {
             var _context6;
-
             return map_default()(_context6 = toFieldArray(v)).call(_context6, function (p) {
               var _context7;
-
               return concat_default()(_context7 = "".concat(f, ".")).call(_context7, p);
             });
           }
         })).call(_context4, function (fs, f) {
           var _context8;
-
           return concat_default()(_context8 = []).call(_context8, toConsumableArray_default()(fs), toConsumableArray_default()(f));
         }, []);
       }
-
       if (fields) {
         this._config.fields = toFieldArray(fields);
-      } // force convert query record type without changing instance;
-
-
+      }
+      // force convert query record type without changing instance;
       return this;
     }
     /**
      * Set query conditions to filter the result records
      */
-
   }, {
     key: "where",
     value: function where(conditions) {
       if (this._soql) {
         throw Error('Cannot set where conditions for the query which has already built SOQL.');
       }
-
       this._config.conditions = conditions;
       return this;
     }
     /**
      * Limit the returning result
      */
-
   }, {
     key: "limit",
     value: function limit(_limit) {
       if (this._soql) {
         throw Error('Cannot set limit for the query which has already built SOQL.');
       }
-
       this._config.limit = _limit;
       return this;
     }
     /**
      * Skip records
      */
-
   }, {
     key: "skip",
     value: function skip(offset) {
       if (this._soql) {
         throw Error('Cannot set skip/offset for the query which has already built SOQL.');
       }
-
       this._config.offset = offset;
       return this;
     }
     /**
      * Synonym of Query#skip()
      */
-
   }, {
     key: "sort",
     value: function (_sort) {
       function sort(_x, _x2) {
         return _sort.apply(this, arguments);
       }
-
       sort.toString = function () {
         return _sort.toString();
       };
-
       return sort;
     }(function (sort, dir) {
       if (this._soql) {
         throw Error('Cannot set sort for the query which has already built SOQL.');
       }
-
       if (typeof sort === 'string' && typeof dir !== 'undefined') {
         this._config.sort = [[sort, dir]];
       } else {
         this._config.sort = sort;
       }
-
       return this;
     })
     /**
      * Synonym of Query#sort()
      */
-
   }, {
     key: "include",
     value: function include(childRelName, conditions, fields) {
       var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-
       if (this._soql) {
         throw Error('Cannot include child relationship into the query which has already built SOQL.');
       }
-
       var childConfig = {
         fields: fields === null ? undefined : fields,
         table: childRelName,
@@ -7226,51 +6131,34 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
         limit: options.limit,
         offset: options.offset,
         sort: sort_default()(options)
-      }; // eslint-disable-next-line no-use-before-define
-
+      };
+      // eslint-disable-next-line no-use-before-define
       var childQuery = new SubQuery(this._conn, childRelName, childConfig, this);
-
       this._children.push(childQuery);
-
       return childQuery;
     }
     /**
      * Include child relationship queries, but not moving down to the children context
      */
-
   }, {
     key: "includeChildren",
     value: function includeChildren(includes) {
       if (this._soql) {
         throw Error('Cannot include child relationship into the query which has already built SOQL.');
       }
-
-      var _iterator = _createForOfIteratorHelper(keys_default()(includes)),
-          _step;
-
-      try {
-        for (_iterator.s(); !(_step = _iterator.n()).done;) {
-          var crname = _step.value;
-
-          var _ref4 = includes[crname],
-              _conditions = _ref4.conditions,
-              _fields2 = _ref4.fields,
-              _options = objectWithoutProperties_default()(_ref4, ["conditions", "fields"]);
-
-          this.include(crname, _conditions, _fields2, _options);
-        }
-      } catch (err) {
-        _iterator.e(err);
-      } finally {
-        _iterator.f();
+      for (var _i = 0, _arr = keys_default()(includes); _i < _arr.length; _i++) {
+        var crname = _arr[_i];
+        var _ref4 = includes[crname],
+          _conditions = _ref4.conditions,
+          _fields2 = _ref4.fields,
+          _options = objectWithoutProperties_default()(_ref4, ["conditions", "fields"]);
+        this.include(crname, _conditions, _fields2, _options);
       }
-
       return this;
     }
     /**
      * Setting maxFetch query option
      */
-
   }, {
     key: "maxFetch",
     value: function maxFetch(_maxFetch) {
@@ -7280,7 +6168,6 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
     /**
      * Switching auto fetch mode
      */
-
   }, {
     key: "autoFetch",
     value: function autoFetch(_autoFetch) {
@@ -7290,7 +6177,6 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
     /**
      * Set flag to scan all records including deleted and archived.
      */
-
   }, {
     key: "scanAll",
     value: function scanAll(_scanAll) {
@@ -7300,68 +6186,57 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
     /**
      *
      */
-
   }, {
     key: "setResponseTarget",
     value: function setResponseTarget(responseTarget) {
       if (responseTarget in ResponseTargets) {
         this._options.responseTarget = responseTarget;
-      } // force change query response target without changing instance
-
-
+      }
+      // force change query response target without changing instance
       return this;
     }
     /**
      * Execute query and fetch records from server.
      */
-
   }, {
     key: "execute",
     value: function execute() {
       var _this2 = this;
-
       var options_ = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
       if (this._executed) {
         throw new Error('re-executing already executed query');
       }
-
       if (this._finished) {
         throw new Error('executing already closed query');
       }
-
       var options = {
         headers: options_.headers || this._options.headers,
         responseTarget: options_.responseTarget || this._options.responseTarget,
         autoFetch: options_.autoFetch || this._options.autoFetch,
         maxFetch: options_.maxFetch || this._options.maxFetch,
         scanAll: options_.scanAll || this._options.scanAll
-      }; // collect fetched records in array
+      };
+
+      // collect fetched records in array
       // only when response target is Records and
       // either callback or chaining promises are available to this query.
-
       this.once('fetch', function () {
         if (options.responseTarget === ResponseTargets.Records && _this2._chaining) {
           _this2._logger.debug('--- collecting all fetched records ---');
-
           var records = [];
-
           var onRecord = function onRecord(record) {
             return records.push(record);
           };
-
           _this2.on('record', onRecord);
-
           _this2.once('end', function () {
             _this2.removeListener('record', onRecord);
-
             _this2.emit('response', records, _this2);
           });
         }
-      }); // flag to prevent re-execution
+      });
 
+      // flag to prevent re-execution
       this._executed = true;
-
       asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee() {
         return regenerator_default().wrap(function _callee$(_context9) {
           while (1) {
@@ -7369,40 +6244,35 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
               case 0:
                 // start actual query
                 _this2._logger.debug('>>> Query start >>>');
-
                 _context9.prev = 1;
                 _context9.next = 4;
                 return _this2._execute(options);
-
               case 4:
                 _this2._logger.debug('*** Query finished ***');
-
                 _context9.next = 11;
                 break;
-
               case 7:
                 _context9.prev = 7;
                 _context9.t0 = _context9["catch"](1);
-
                 _this2._logger.debug('--- Query error ---', _context9.t0);
-
                 _this2.emit('error', _context9.t0);
-
               case 11:
               case "end":
                 return _context9.stop();
             }
           }
         }, _callee, null, [[1, 7]]);
-      }))(); // return Query instance for chaining
+      }))();
 
-
+      // return Query instance for chaining
       return this;
     }
     /**
      * Synonym of Query#execute()
      */
-
+    /**
+     * Synonym of Query#execute()
+     */
   }, {
     key: "locatorToUrl",
     value: function locatorToUrl() {
@@ -7417,24 +6287,19 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
     key: "constructResponse",
     value: function constructResponse(rawDone, responseTarget) {
       var _this$records$, _this$records;
-
       switch (responseTarget) {
         case 'Count':
           return this.totalSize;
-
         case 'SingleRecord':
           return (_this$records$ = (_this$records = this.records) === null || _this$records === void 0 ? void 0 : _this$records[0]) !== null && _this$records$ !== void 0 ? _this$records$ : null;
-
         case 'Records':
           return this.records;
         // QueryResult is default response target
-
         default:
           return _objectSpread(_objectSpread({}, {
             records: this.records,
             totalSize: this.totalSize,
             done: rawDone !== null && rawDone !== void 0 ? rawDone : true // when no records, done is omitted
-
           }), this._locator ? {
             nextRecordsUrl: this.locatorToUrl()
           } : {});
@@ -7443,42 +6308,32 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
     /**
      * @private
      */
-
   }, {
     key: "_execute",
     value: function () {
       var _execute2 = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee2(options) {
         var _this$records2, _context10, _data$records$length, _data$records;
-
         var headers, responseTarget, autoFetch, maxFetch, scanAll, url, soql, data, numRecords, totalFetched, i, record, response;
         return regenerator_default().wrap(function _callee2$(_context11) {
           while (1) {
             switch (_context11.prev = _context11.next) {
               case 0:
                 headers = options.headers, responseTarget = options.responseTarget, autoFetch = options.autoFetch, maxFetch = options.maxFetch, scanAll = options.scanAll;
-
                 this._logger.debug('execute with options', options);
-
                 if (!this._locator) {
                   _context11.next = 6;
                   break;
                 }
-
                 url = this.locatorToUrl();
                 _context11.next = 11;
                 break;
-
               case 6:
                 _context11.next = 8;
                 return this.toSOQL();
-
               case 8:
                 soql = _context11.sent;
-
                 this._logger.debug("SOQL = ".concat(soql));
-
                 url = [this._conn._baseUrl(), '/', scanAll ? 'queryAll' : 'query', '?q=', encodeURIComponent(soql)].join('');
-
               case 11:
                 _context11.next = 13;
                 return this._conn.request({
@@ -7486,64 +6341,53 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
                   url: url,
                   headers: headers
                 });
-
               case 13:
                 data = _context11.sent;
                 this.emit('fetch');
                 this.totalSize = data.totalSize;
                 this.records = (_this$records2 = this.records) === null || _this$records2 === void 0 ? void 0 : concat_default()(_this$records2).call(_this$records2, maxFetch - this.records.length > data.records.length ? data.records : slice_default()(_context10 = data.records).call(_context10, 0, maxFetch - this.records.length));
                 this._locator = data.nextRecordsUrl ? this.urlToLocator(data.nextRecordsUrl) : undefined;
-                this._finished = this._finished || data.done || !autoFetch || // this is what the response looks like when there are no results
-                data.records.length === 0 && data.done === undefined; // streaming record instances
+                this._finished = this._finished || data.done || !autoFetch ||
+                // this is what the response looks like when there are no results
+                data.records.length === 0 && data.done === undefined;
 
+                // streaming record instances
                 numRecords = (_data$records$length = (_data$records = data.records) === null || _data$records === void 0 ? void 0 : _data$records.length) !== null && _data$records$length !== void 0 ? _data$records$length : 0;
                 totalFetched = this.totalFetched;
                 i = 0;
-
               case 22:
                 if (!(i < numRecords)) {
                   _context11.next = 32;
                   break;
                 }
-
                 if (!(totalFetched >= maxFetch)) {
                   _context11.next = 26;
                   break;
                 }
-
                 this._finished = true;
                 return _context11.abrupt("break", 32);
-
               case 26:
                 record = data.records[i];
                 this.emit('record', record, totalFetched, this);
                 totalFetched += 1;
-
               case 29:
                 i++;
                 _context11.next = 22;
                 break;
-
               case 32:
                 this.totalFetched = totalFetched;
-
                 if (!this._finished) {
                   _context11.next = 40;
                   break;
                 }
-
                 response = this.constructResponse(data.done, responseTarget); // only fire response event when it should be notified per fetch
-
                 if (responseTarget !== ResponseTargets.Records) {
                   this.emit('response', response, this);
                 }
-
                 this.emit('end');
                 return _context11.abrupt("return", response);
-
               case 40:
                 return _context11.abrupt("return", this._execute(options));
-
               case 41:
               case "end":
                 return _context11.stop();
@@ -7551,28 +6395,23 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee2, this);
       }));
-
       function _execute(_x3) {
         return _execute2.apply(this, arguments);
       }
-
       return _execute;
     }()
     /**
      * Obtain readable stream instance
      */
-
   }, {
     key: "stream",
     value: function stream() {
       var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'csv';
-
       if (!this._finished && !this._executed) {
         this.execute({
           autoFetch: true
         });
       }
-
       return type === 'record' ? this._stream : this._stream.stream(type);
     }
     /**
@@ -7580,7 +6419,6 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
      * This is for backward compatibility; Query is not a record stream instance anymore in 2.0.
      * If you want a record stream instance, use `Query#stream('record')`.
      */
-
   }, {
     key: "pipe",
     value: function pipe(stream) {
@@ -7589,15 +6427,12 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
     /**
      * @protected
      */
-
   }, {
     key: "_expandFields",
     value: function () {
       var _expandFields2 = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee4(sobject_) {
         var _context12, _context13, _context14, _context16, _context17;
-
         var _this$_config, _this$_config$fields, fields, _this$_config$table, table, sobject, _yield$Promise$all, _yield$Promise$all2, efields;
-
         return regenerator_default().wrap(function _callee4$(_context18) {
           while (1) {
             switch (_context18.prev = _context18.next) {
@@ -7606,15 +6441,11 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
                   _context18.next = 2;
                   break;
                 }
-
                 throw new Error('Cannot expand fields for the query which has already built SOQL.');
-
               case 2:
                 _this$_config = this._config, _this$_config$fields = _this$_config.fields, fields = _this$_config$fields === void 0 ? [] : _this$_config$fields, _this$_config$table = _this$_config.table, table = _this$_config$table === void 0 ? '' : _this$_config$table;
                 sobject = sobject_ || table;
-
                 this._logger.debug(concat_default()(_context12 = "_expandFields: sobject = ".concat(sobject, ", fields = ")).call(_context12, fields.join(', ')));
-
                 _context18.next = 7;
                 return promise_default().all(concat_default()(_context13 = [this._expandAsteriskFields(sobject, fields)]).call(_context13, toConsumableArray_default()(map_default()(_context14 = this._children).call(_context14, /*#__PURE__*/function () {
                   var _ref6 = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee3(childQuery) {
@@ -7624,10 +6455,8 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
                           case 0:
                             _context15.next = 2;
                             return childQuery._expandFields();
-
                           case 2:
                             return _context15.abrupt("return", []);
-
                           case 3:
                           case "end":
                             return _context15.stop();
@@ -7635,12 +6464,10 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
                       }
                     }, _callee3);
                   }));
-
                   return function (_x5) {
                     return _ref6.apply(this, arguments);
                   };
                 }()))));
-
               case 7:
                 _yield$Promise$all = _context18.sent;
                 _yield$Promise$all2 = slicedToArray_default()(_yield$Promise$all, 1);
@@ -7651,12 +6478,10 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
                   return [cconfig.table, cconfig];
                 })).call(_context16, function (includes, _ref7) {
                   var _ref8 = slicedToArray_default()(_ref7, 2),
-                      ctable = _ref8[0],
-                      cconfig = _ref8[1];
-
+                    ctable = _ref8[0],
+                    cconfig = _ref8[1];
                   return _objectSpread(_objectSpread({}, includes), {}, defineProperty_default()({}, ctable, cconfig));
                 }, {});
-
               case 12:
               case "end":
                 return _context18.stop();
@@ -7664,91 +6489,67 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee4, this);
       }));
-
       function _expandFields(_x4) {
         return _expandFields2.apply(this, arguments);
       }
-
       return _expandFields;
     }()
     /**
      *
      */
-
   }, {
     key: "_findRelationObject",
     value: function () {
       var _findRelationObject2 = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee5(relName) {
         var _context19;
-
-        var table, sobject, upperRname, _iterator2, _step2, cr;
-
+        var table, sobject, upperRname, _iterator, _step, cr;
         return regenerator_default().wrap(function _callee5$(_context20) {
           while (1) {
             switch (_context20.prev = _context20.next) {
               case 0:
                 table = this._config.table;
-
                 if (table) {
                   _context20.next = 3;
                   break;
                 }
-
                 throw new Error('No table information provided in the query');
-
               case 3:
                 this._logger.debug(concat_default()(_context19 = "finding table for relation \"".concat(relName, "\" in \"")).call(_context19, table, "\"..."));
-
                 _context20.next = 6;
                 return this._conn.describe$(table);
-
               case 6:
                 sobject = _context20.sent;
                 upperRname = relName.toUpperCase();
-                _iterator2 = _createForOfIteratorHelper(sobject.childRelationships);
+                _iterator = _createForOfIteratorHelper(sobject.childRelationships);
                 _context20.prev = 9;
-
-                _iterator2.s();
-
+                _iterator.s();
               case 11:
-                if ((_step2 = _iterator2.n()).done) {
+                if ((_step = _iterator.n()).done) {
                   _context20.next = 17;
                   break;
                 }
-
-                cr = _step2.value;
-
+                cr = _step.value;
                 if (!((cr.relationshipName || '').toUpperCase() === upperRname && cr.childSObject)) {
                   _context20.next = 15;
                   break;
                 }
-
                 return _context20.abrupt("return", cr.childSObject);
-
               case 15:
                 _context20.next = 11;
                 break;
-
               case 17:
                 _context20.next = 22;
                 break;
-
               case 19:
                 _context20.prev = 19;
                 _context20.t0 = _context20["catch"](9);
-
-                _iterator2.e(_context20.t0);
-
+                _iterator.e(_context20.t0);
               case 22:
                 _context20.prev = 22;
-
-                _iterator2.f();
-
+                _iterator.f();
                 return _context20.finish(22);
-
               case 25:
                 throw new Error("No child relationship found: ".concat(relName));
-
               case 26:
               case "end":
                 return _context20.stop();
@@ -7756,23 +6557,19 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee5, this, [[9, 19, 22, 25]]);
       }));
-
       function _findRelationObject(_x6) {
         return _findRelationObject2.apply(this, arguments);
       }
-
       return _findRelationObject;
     }()
     /**
      *
      */
-
   }, {
     key: "_expandAsteriskFields",
     value: function () {
       var _expandAsteriskFields2 = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee7(sobject, fields) {
         var _this3 = this;
-
         var expandedFields;
         return regenerator_default().wrap(function _callee7$(_context23) {
           while (1) {
@@ -7786,7 +6583,6 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
                         switch (_context21.prev = _context21.next) {
                           case 0:
                             return _context21.abrupt("return", _this3._expandAsteriskField(sobject, field));
-
                           case 1:
                           case "end":
                             return _context21.stop();
@@ -7794,20 +6590,16 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
                       }
                     }, _callee6);
                   }));
-
                   return function (_x9) {
                     return _ref9.apply(this, arguments);
                   };
                 }()));
-
               case 2:
                 expandedFields = _context23.sent;
                 return _context23.abrupt("return", reduce_default()(expandedFields).call(expandedFields, function (eflds, flds) {
                   var _context22;
-
                   return concat_default()(_context22 = []).call(_context22, toConsumableArray_default()(eflds), toConsumableArray_default()(flds));
                 }, []));
-
               case 4:
               case "end":
                 return _context23.stop();
@@ -7815,120 +6607,91 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee7);
       }));
-
       function _expandAsteriskFields(_x7, _x8) {
         return _expandAsteriskFields2.apply(this, arguments);
       }
-
       return _expandAsteriskFields;
     }()
     /**
      *
      */
-
   }, {
     key: "_expandAsteriskField",
     value: function () {
       var _expandAsteriskField2 = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee9(sobject, field) {
         var _context24,
-            _this4 = this;
-
+          _this4 = this;
         var fpath, _context27, so, _ret;
-
         return regenerator_default().wrap(function _callee9$(_context28) {
           while (1) {
             switch (_context28.prev = _context28.next) {
               case 0:
                 this._logger.debug(concat_default()(_context24 = "expanding field \"".concat(field, "\" in \"")).call(_context24, sobject, "\"..."));
-
                 fpath = field.split('.');
-
                 if (!(fpath[fpath.length - 1] === '*')) {
                   _context28.next = 13;
                   break;
                 }
-
                 _context28.next = 5;
                 return this._conn.describe$(sobject);
-
               case 5:
                 so = _context28.sent;
-
                 this._logger.debug("table ".concat(sobject, " has been described"));
-
                 if (!(fpath.length > 1)) {
                   _context28.next = 12;
                   break;
                 }
-
                 return _context28.delegateYield( /*#__PURE__*/regenerator_default().mark(function _callee8() {
-                  var rname, _iterator3, _step3, f, rfield, referenceTo, rtable, fpaths;
-
+                  var rname, _iterator2, _step2, f, rfield, referenceTo, rtable, fpaths;
                   return regenerator_default().wrap(function _callee8$(_context26) {
                     while (1) {
                       switch (_context26.prev = _context26.next) {
                         case 0:
                           rname = fpath.shift();
-                          _iterator3 = _createForOfIteratorHelper(so.fields);
+                          _iterator2 = _createForOfIteratorHelper(so.fields);
                           _context26.prev = 2;
-
-                          _iterator3.s();
-
+                          _iterator2.s();
                         case 4:
-                          if ((_step3 = _iterator3.n()).done) {
+                          if ((_step2 = _iterator2.n()).done) {
                             _context26.next = 16;
                             break;
                           }
-
-                          f = _step3.value;
-
+                          f = _step2.value;
                           if (!(f.relationshipName && rname && f.relationshipName.toUpperCase() === rname.toUpperCase())) {
                             _context26.next = 14;
                             break;
                           }
-
                           rfield = f;
                           referenceTo = rfield.referenceTo || [];
                           rtable = referenceTo.length === 1 ? referenceTo[0] : 'Name';
                           _context26.next = 12;
                           return _this4._expandAsteriskField(rtable, fpath.join('.'));
-
                         case 12:
                           fpaths = _context26.sent;
                           return _context26.abrupt("return", {
                             v: map_default()(fpaths).call(fpaths, function (fp) {
                               var _context25;
-
                               return concat_default()(_context25 = "".concat(rname, ".")).call(_context25, fp);
                             })
                           });
-
                         case 14:
                           _context26.next = 4;
                           break;
-
                         case 16:
                           _context26.next = 21;
                           break;
-
                         case 18:
                           _context26.prev = 18;
                           _context26.t0 = _context26["catch"](2);
-
-                          _iterator3.e(_context26.t0);
-
+                          _iterator2.e(_context26.t0);
                         case 21:
                           _context26.prev = 21;
-
-                          _iterator3.f();
-
+                          _iterator2.f();
                           return _context26.finish(21);
-
                         case 24:
                           return _context26.abrupt("return", {
                             v: []
                           });
-
                         case 25:
                         case "end":
                           return _context26.stop();
@@ -7936,25 +6699,19 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
                     }
                   }, _callee8, null, [[2, 18, 21, 24]]);
                 })(), "t0", 9);
-
               case 9:
                 _ret = _context28.t0;
-
                 if (!(typeof_default()(_ret) === "object")) {
                   _context28.next = 12;
                   break;
                 }
-
                 return _context28.abrupt("return", _ret.v);
-
               case 12:
                 return _context28.abrupt("return", map_default()(_context27 = so.fields).call(_context27, function (f) {
                   return f.name;
                 }));
-
               case 13:
                 return _context28.abrupt("return", [field]);
-
               case 14:
               case "end":
                 return _context28.stop();
@@ -7962,17 +6719,14 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee9, this);
       }));
-
       function _expandAsteriskField(_x10, _x11) {
         return _expandAsteriskField2.apply(this, arguments);
       }
-
       return _expandAsteriskField;
     }()
     /**
      * Explain plan for executing query
      */
-
   }, {
     key: "explain",
     value: function () {
@@ -7984,15 +6738,11 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
               case 0:
                 _context29.next = 2;
                 return this.toSOQL();
-
               case 2:
                 soql = _context29.sent;
-
                 this._logger.debug("SOQL = ".concat(soql));
-
                 url = "/query/?explain=".concat(encodeURIComponent(soql));
                 return _context29.abrupt("return", this._conn.request(url));
-
               case 6:
               case "end":
                 return _context29.stop();
@@ -8000,17 +6750,14 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee10, this);
       }));
-
       function explain() {
         return _explain.apply(this, arguments);
       }
-
       return explain;
     }()
     /**
      * Return SOQL expression for the query
      */
-
   }, {
     key: "toSOQL",
     value: function () {
@@ -8023,16 +6770,12 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
                   _context30.next = 2;
                   break;
                 }
-
                 return _context30.abrupt("return", this._soql);
-
               case 2:
                 _context30.next = 4;
                 return this._expandFields();
-
               case 4:
                 return _context30.abrupt("return", createSOQL(this._config));
-
               case 5:
               case "end":
                 return _context30.stop();
@@ -8040,11 +6783,9 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee11, this);
       }));
-
       function toSOQL() {
         return _toSOQL.apply(this, arguments);
       }
-
       return toSOQL;
     }()
     /**
@@ -8053,20 +6794,16 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
      *
      * Delegate to deferred promise, return promise instance for query result
      */
-
   }, {
     key: "then",
     value: function then(onResolve, onReject) {
       this._chaining = true;
-
       if (!this._finished && !this._executed) {
         this.execute();
       }
-
       if (!this._promise) {
         throw new Error('invalid state: promise is not set after query execution');
       }
-
       return this._promise.then(onResolve, onReject);
     }
   }, {
@@ -8082,78 +6819,55 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
     /**
      * Bulk delete queried records
      */
-
   }, {
     key: "destroy",
     value: function destroy(type, options) {
       var _options$bulkApiVersi,
-          _this5 = this;
-
+        _this5 = this;
       if (typeof_default()(type) === 'object' && type !== null) {
         options = type;
         type = undefined;
       }
-
       options = options || {};
       var type_ = type || this._config.table;
-
       if (!type_) {
         throw new Error('SOQL based query needs SObject type information to bulk delete.');
-      } // Set the threshold number to pass to bulk API
-
-
-      var thresholdNum = options.allowBulk === false ? -1 : typeof options.bulkThreshold === 'number' ? options.bulkThreshold : // determine threshold if the connection version supports SObject collection API or not
+      }
+      // Set the threshold number to pass to bulk API
+      var thresholdNum = options.allowBulk === false ? -1 : typeof options.bulkThreshold === 'number' ? options.bulkThreshold :
+      // determine threshold if the connection version supports SObject collection API or not
       this._conn._ensureVersion(42) ? DEFAULT_BULK_THRESHOLD : this._conn._maxRequest / 2;
       var bulkApiVersion = (_options$bulkApiVersi = options.bulkApiVersion) !== null && _options$bulkApiVersi !== void 0 ? _options$bulkApiVersi : DEFAULT_BULK_API_VERSION;
       return new (promise_default())(function (resolve, reject) {
         var createBatch = function createBatch() {
           return _this5._conn.sobject(type_).deleteBulk().on('response', resolve).on('error', reject);
         };
-
         var records = [];
         var batch = null;
-
         var handleRecord = function handleRecord(rec) {
           if (!rec.Id) {
             var _err = new Error('Queried record does not include Salesforce record ID.');
-
             _this5.emit('error', _err);
-
             return;
           }
-
           var record = {
             Id: rec.Id
           };
-
           if (batch) {
             batch.write(record);
           } else {
             records.push(record);
-
             if (thresholdNum >= 0 && records.length > thresholdNum && bulkApiVersion === 1) {
               // Use bulk delete instead of SObject REST API
               batch = createBatch();
-
-              var _iterator4 = _createForOfIteratorHelper(records),
-                  _step4;
-
-              try {
-                for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-                  var _record = _step4.value;
-                  batch.write(_record);
-                }
-              } catch (err) {
-                _iterator4.e(err);
-              } finally {
-                _iterator4.f();
+              for (var _i2 = 0, _records = records; _i2 < _records.length; _i2++) {
+                var _record = _records[_i2];
+                batch.write(_record);
               }
-
               records = [];
             }
           }
         };
-
         var handleEnd = function handleEnd() {
           if (batch) {
             batch.end();
@@ -8161,7 +6875,6 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
             var ids = map_default()(records).call(records, function (record) {
               return record.Id;
             });
-
             if (records.length > thresholdNum && bulkApiVersion === 2) {
               _this5._conn.bulk2.loadAndWaitForResults({
                 object: type_,
@@ -8177,74 +6890,57 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
             }
           }
         };
-
         _this5.stream('record').on('data', handleRecord).on('end', handleEnd).on('error', reject);
       });
     }
     /**
      * Synonym of Query#destroy()
      */
-
+    /**
+     * Synonym of Query#destroy()
+     */
   }, {
     key: "update",
     value: function update(mapping, type, options) {
       var _options$bulkApiVersi2,
-          _this6 = this;
-
+        _this6 = this;
       if (typeof_default()(type) === 'object' && type !== null) {
         options = type;
         type = undefined;
       }
-
       options = options || {};
       var type_ = type || this._config && this._config.table;
-
       if (!type_) {
         throw new Error('SOQL based query needs SObject type information to bulk update.');
       }
-
-      var updateStream = typeof mapping === 'function' ? map_default()(record_stream/* default */.ZP).call(record_stream/* default */.ZP, mapping) : record_stream/* default.recordMapStream */.ZP.recordMapStream(mapping); // Set the threshold number to pass to bulk API
-
-      var thresholdNum = options.allowBulk === false ? -1 : typeof options.bulkThreshold === 'number' ? options.bulkThreshold : // determine threshold if the connection version supports SObject collection API or not
+      var updateStream = typeof mapping === 'function' ? map_default()(record_stream/* default */.ZP).call(record_stream/* default */.ZP, mapping) : record_stream/* default.recordMapStream */.ZP.recordMapStream(mapping);
+      // Set the threshold number to pass to bulk API
+      var thresholdNum = options.allowBulk === false ? -1 : typeof options.bulkThreshold === 'number' ? options.bulkThreshold :
+      // determine threshold if the connection version supports SObject collection API or not
       this._conn._ensureVersion(42) ? DEFAULT_BULK_THRESHOLD : this._conn._maxRequest / 2;
       var bulkApiVersion = (_options$bulkApiVersi2 = options.bulkApiVersion) !== null && _options$bulkApiVersi2 !== void 0 ? _options$bulkApiVersi2 : DEFAULT_BULK_API_VERSION;
       return new (promise_default())(function (resolve, reject) {
         var createBatch = function createBatch() {
           return _this6._conn.sobject(type_).updateBulk().on('response', resolve).on('error', reject);
         };
-
         var records = [];
         var batch = null;
-
         var handleRecord = function handleRecord(record) {
           if (batch) {
             batch.write(record);
           } else {
             records.push(record);
           }
-
           if (thresholdNum >= 0 && records.length > thresholdNum && bulkApiVersion === 1) {
             // Use bulk update instead of SObject REST API
             batch = createBatch();
-
-            var _iterator5 = _createForOfIteratorHelper(records),
-                _step5;
-
-            try {
-              for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-                var _record2 = _step5.value;
-                batch.write(_record2);
-              }
-            } catch (err) {
-              _iterator5.e(err);
-            } finally {
-              _iterator5.f();
+            for (var _i3 = 0, _records2 = records; _i3 < _records2.length; _i3++) {
+              var _record2 = _records2[_i3];
+              batch.write(_record2);
             }
-
             records = [];
           }
         };
-
         var handleEnd = function handleEnd() {
           if (batch) {
             batch.end();
@@ -8264,7 +6960,6 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
             }
           }
         };
-
         _this6.stream('record').on('error', reject).pipe(updateStream).on('data', handleRecord).on('end', handleEnd).on('error', reject);
       });
     }
@@ -8272,7 +6967,6 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
     key: "mapBulkV2ResultsToSaveResults",
     value: function mapBulkV2ResultsToSaveResults(bulkJobAllResults) {
       var _context31, _context32, _context33;
-
       var successSaveResults = map_default()(_context31 = bulkJobAllResults.successfulResults).call(_context31, function (r) {
         var saveResult = {
           id: r.sf__Id,
@@ -8281,7 +6975,6 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
         };
         return saveResult;
       });
-
       var failedSaveResults = map_default()(_context32 = bulkJobAllResults.failedResults).call(_context32, function (r) {
         var saveResult = {
           success: false,
@@ -8292,47 +6985,37 @@ var Query = /*#__PURE__*/function (_EventEmitter) {
         };
         return saveResult;
       });
-
       return concat_default()(_context33 = []).call(_context33, toConsumableArray_default()(successSaveResults), toConsumableArray_default()(failedSaveResults));
     }
   }]);
-
   return Query;
 }(events.EventEmitter);
+
 /*--------------------------------------------*/
 
 /**
  * SubQuery object for representing child relationship query
  */
-
 defineProperty_default()(Query, "_logger", (0,logger/* getLogger */.jl)('query'));
-
 var SubQuery = /*#__PURE__*/function () {
   /**
    *
    */
   function SubQuery(conn, relName, config, parent) {
     classCallCheck_default()(this, SubQuery);
-
     defineProperty_default()(this, "_relName", void 0);
-
     defineProperty_default()(this, "_query", void 0);
-
     defineProperty_default()(this, "_parent", void 0);
-
     defineProperty_default()(this, "offset", this.skip);
-
     defineProperty_default()(this, "orderby", sort_default()(this));
-
     this._relName = relName;
     this._query = new Query(conn, config);
     this._parent = parent;
   }
+
   /**
    *
    */
-
-
   createClass_default()(SubQuery, [{
     key: "select",
     value: function select(fields) {
@@ -8343,7 +7026,6 @@ var SubQuery = /*#__PURE__*/function () {
     /**
      *
      */
-
   }, {
     key: "where",
     value: function where(conditions) {
@@ -8353,7 +7035,6 @@ var SubQuery = /*#__PURE__*/function () {
     /**
      * Limit the returning result
      */
-
   }, {
     key: "limit",
     value: function limit(_limit2) {
@@ -8363,7 +7044,6 @@ var SubQuery = /*#__PURE__*/function () {
     /**
      * Skip records
      */
-
   }, {
     key: "skip",
     value: function skip(offset) {
@@ -8373,32 +7053,26 @@ var SubQuery = /*#__PURE__*/function () {
     /**
      * Synonym of SubQuery#skip()
      */
-
   }, {
     key: "sort",
     value: function (_sort3) {
       function sort(_x12, _x13) {
         return _sort3.apply(this, arguments);
       }
-
       sort.toString = function () {
         return _sort3.toString();
       };
-
       return sort;
     }(function (sort, dir) {
       var _context34;
-
       this._query = sort_default()(_context34 = this._query).call(_context34, sort, dir);
       return this;
     })
     /**
      * Synonym of SubQuery#sort()
      */
-
   }, {
     key: "_expandFields",
-
     /**
      *
      */
@@ -8411,11 +7085,9 @@ var SubQuery = /*#__PURE__*/function () {
               case 0:
                 _context35.next = 2;
                 return this._parent._findRelationObject(this._relName);
-
               case 2:
                 sobject = _context35.sent;
                 return _context35.abrupt("return", this._query._expandFields(sobject));
-
               case 4:
               case "end":
                 return _context35.stop();
@@ -8423,24 +7095,20 @@ var SubQuery = /*#__PURE__*/function () {
           }
         }, _callee12, this);
       }));
-
       function _expandFields() {
         return _expandFields3.apply(this, arguments);
       }
-
       return _expandFields;
     }()
     /**
      * Back the context to parent query object
      */
-
   }, {
     key: "end",
     value: function end() {
       return this._parent;
     }
   }]);
-
   return SubQuery;
 }();
 /* harmony default export */ const query = (Query);
@@ -8474,7 +7142,6 @@ var SubQuery = /*#__PURE__*/function () {
 
 
 
-
 /**
  * @file Represents Salesforce QuickAction
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -8493,19 +7160,15 @@ var QuickAction = /*#__PURE__*/function () {
    */
   function QuickAction(conn, path) {
     _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_3___default()(this, QuickAction);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "_conn", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "_path", void 0);
-
     this._conn = conn;
     this._path = path;
   }
+
   /**
    * Describe the action's information (including layout, etc.)
    */
-
-
   _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_4___default()(QuickAction, [{
     key: "describe",
     value: function () {
@@ -8518,11 +7181,9 @@ var QuickAction = /*#__PURE__*/function () {
                 url = "".concat(this._path, "/describe");
                 _context.next = 3;
                 return this._conn.request(url);
-
               case 3:
                 body = _context.sent;
                 return _context.abrupt("return", body);
-
               case 5:
               case "end":
                 return _context.stop();
@@ -8530,17 +7191,14 @@ var QuickAction = /*#__PURE__*/function () {
           }
         }, _callee, this);
       }));
-
       function describe() {
         return _describe.apply(this, arguments);
       }
-
       return describe;
     }()
     /**
      * Retrieve default field values in the action (for given record, if specified)
      */
-
   }, {
     key: "defaultValues",
     value: function () {
@@ -8551,18 +7209,14 @@ var QuickAction = /*#__PURE__*/function () {
             switch (_context2.prev = _context2.next) {
               case 0:
                 url = "".concat(this._path, "/defaultValues");
-
                 if (contextId) {
                   url += "/".concat(contextId);
                 }
-
                 _context2.next = 4;
                 return this._conn.request(url);
-
               case 4:
                 body = _context2.sent;
                 return _context2.abrupt("return", body);
-
               case 6:
               case "end":
                 return _context2.stop();
@@ -8570,17 +7224,14 @@ var QuickAction = /*#__PURE__*/function () {
           }
         }, _callee2, this);
       }));
-
       function defaultValues(_x) {
         return _defaultValues.apply(this, arguments);
       }
-
       return defaultValues;
     }()
     /**
      * Execute the action for given context Id and record information
      */
-
   }, {
     key: "execute",
     value: function () {
@@ -8596,11 +7247,9 @@ var QuickAction = /*#__PURE__*/function () {
                 };
                 _context3.next = 3;
                 return this._conn.requestPost(this._path, requestBody);
-
               case 3:
                 resBody = _context3.sent;
                 return _context3.abrupt("return", resBody);
-
               case 5:
               case "end":
                 return _context3.stop();
@@ -8608,15 +7257,12 @@ var QuickAction = /*#__PURE__*/function () {
           }
         }, _callee3, this);
       }));
-
       function execute(_x2, _x3) {
         return _execute.apply(this, arguments);
       }
-
       return execute;
     }()
   }]);
-
   return QuickAction;
 }();
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (QuickAction);
@@ -8677,11 +7323,8 @@ var QuickAction = /*#__PURE__*/function () {
 
 
 
-
 function ownKeys(object, enumerableOnly) { var keys = _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_7___default()(object); if ((_babel_runtime_corejs3_core_js_stable_object_get_own_property_symbols__WEBPACK_IMPORTED_MODULE_6___default())) { var symbols = _babel_runtime_corejs3_core_js_stable_object_get_own_property_symbols__WEBPACK_IMPORTED_MODULE_6___default()(object); if (enumerableOnly) symbols = _babel_runtime_corejs3_core_js_stable_instance_filter__WEBPACK_IMPORTED_MODULE_5___default()(symbols).call(symbols, function (sym) { return _babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptor__WEBPACK_IMPORTED_MODULE_4___default()(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { var _context3; _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_3___default()(_context3 = ownKeys(Object(source), true)).call(_context3, function (key) { _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_14___default()(target, key, source[key]); }); } else if ((_babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptors__WEBPACK_IMPORTED_MODULE_2___default())) { _babel_runtime_corejs3_core_js_stable_object_define_properties__WEBPACK_IMPORTED_MODULE_1___default()(target, _babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptors__WEBPACK_IMPORTED_MODULE_2___default()(source)); } else { var _context4; _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_3___default()(_context4 = ownKeys(Object(source))).call(_context4, function (key) { _babel_runtime_corejs3_core_js_stable_object_define_property__WEBPACK_IMPORTED_MODULE_0___default()(target, key, _babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptor__WEBPACK_IMPORTED_MODULE_4___default()(source, key)); }); } } return target; }
-
 /**
  *
  */
@@ -8695,26 +7338,19 @@ var RecordReference = /*#__PURE__*/function () {
    */
   function RecordReference(conn, type, id) {
     _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_12___default()(this, RecordReference);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_14___default()(this, "type", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_14___default()(this, "id", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_14___default()(this, "_conn", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_14___default()(this, "delete", this.destroy);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_14___default()(this, "del", this.destroy);
-
     this._conn = conn;
     this.type = type;
     this.id = id;
   }
+
   /**
    * Retrieve record field information
    */
-
-
   _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_13___default()(RecordReference, [{
     key: "retrieve",
     value: function () {
@@ -8726,11 +7362,9 @@ var RecordReference = /*#__PURE__*/function () {
               case 0:
                 _context.next = 2;
                 return this._conn.retrieve(this.type, this.id, options);
-
               case 2:
                 rec = _context.sent;
                 return _context.abrupt("return", rec);
-
               case 4:
               case "end":
                 return _context.stop();
@@ -8738,17 +7372,14 @@ var RecordReference = /*#__PURE__*/function () {
           }
         }, _callee, this);
       }));
-
       function retrieve(_x) {
         return _retrieve.apply(this, arguments);
       }
-
       return retrieve;
     }()
     /**
      * Update record field information
      */
-
   }, {
     key: "update",
     value: function () {
@@ -8762,7 +7393,6 @@ var RecordReference = /*#__PURE__*/function () {
                   Id: this.id
                 });
                 return _context2.abrupt("return", this._conn.update(this.type, record_, options));
-
               case 2:
               case "end":
                 return _context2.stop();
@@ -8770,17 +7400,14 @@ var RecordReference = /*#__PURE__*/function () {
           }
         }, _callee2, this);
       }));
-
       function update(_x2, _x3) {
         return _update.apply(this, arguments);
       }
-
       return update;
     }()
     /**
      * Delete record field
      */
-
   }, {
     key: "destroy",
     value: function destroy(options) {
@@ -8789,10 +7416,11 @@ var RecordReference = /*#__PURE__*/function () {
     /**
      * Synonym of Record#destroy()
      */
-
+    /**
+     * Synonym of Record#destroy()
+     */
   }, {
     key: "blob",
-
     /**
      * Get blob field as stream
      *
@@ -8804,7 +7432,6 @@ var RecordReference = /*#__PURE__*/function () {
       return this._conn.request(url).stream();
     }
   }]);
-
   return RecordReference;
 }();
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (RecordReference);
@@ -8918,25 +7545,18 @@ var RecordReference = /*#__PURE__*/function () {
 
 
 
-
 function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof _Symbol === "undefined" || _getIteratorMethod(o) == null) { if (_Array$isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = _getIterator(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-
 function _unsupportedIterableToArray(o, minLen) { var _context8; if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = _sliceInstanceProperty(_context8 = Object.prototype.toString.call(o)).call(_context8, 8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return _Array$from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_23___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_23___default()(this).constructor; result = _babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_6___default()(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_22___default()(this, result); }; }
-
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_6___default())) return false; if ((_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_6___default().sham)) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_6___default()(Date, [], function () {})); return true; } catch (e) { return false; } }
-
 function ownKeys(object, enumerableOnly) { var keys = _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_29___default()(object); if ((_babel_runtime_corejs3_core_js_stable_object_get_own_property_symbols__WEBPACK_IMPORTED_MODULE_12___default())) { var symbols = _babel_runtime_corejs3_core_js_stable_object_get_own_property_symbols__WEBPACK_IMPORTED_MODULE_12___default()(object); if (enumerableOnly) symbols = _babel_runtime_corejs3_core_js_stable_instance_filter__WEBPACK_IMPORTED_MODULE_16___default()(symbols).call(symbols, function (sym) { return _babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptor__WEBPACK_IMPORTED_MODULE_11___default()(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { var _context6; _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_10___default()(_context6 = ownKeys(Object(source), true)).call(_context6, function (key) { _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_28___default()(target, key, source[key]); }); } else if ((_babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptors__WEBPACK_IMPORTED_MODULE_9___default())) { _babel_runtime_corejs3_core_js_stable_object_define_properties__WEBPACK_IMPORTED_MODULE_8___default()(target, _babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptors__WEBPACK_IMPORTED_MODULE_9___default()(source)); } else { var _context7; _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_10___default()(_context7 = ownKeys(Object(source))).call(_context7, function (key) { _babel_runtime_corejs3_core_js_stable_object_define_property__WEBPACK_IMPORTED_MODULE_7___default()(target, key, _babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptor__WEBPACK_IMPORTED_MODULE_11___default()(source, key)); }); } } return target; }
-
 /**
  * @file Represents stream that handles Salesforce record as stream data
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
+
 
 
 
@@ -8950,32 +7570,26 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 function evalMapping(value, mapping) {
   if (typeof value === 'string') {
     var m = /^\$\{(\w+)\}$/.exec(value);
-
     if (m) {
       return mapping[m[1]];
     }
-
     return value.replace(/\$\{(\w+)\}/g, function ($0, prop) {
       var v = mapping[prop];
       return typeof v === 'undefined' || v === null ? '' : String(v);
     });
   }
-
   return value;
 }
+
 /**
  * @private
  */
-
-
 function convertRecordForSerialization(record) {
   var _context;
-
   var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
   return _babel_runtime_corejs3_core_js_stable_instance_reduce__WEBPACK_IMPORTED_MODULE_30___default()(_context = _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_29___default()(record)).call(_context, function (rec, key) {
     var value = rec[key];
     var urec;
-
     if (key === 'attributes') {
       // 'attributes' prop will be ignored
       urec = _objectSpread({}, rec);
@@ -8985,43 +7599,36 @@ function convertRecordForSerialization(record) {
       return _objectSpread(_objectSpread({}, rec), {}, _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_28___default()({}, key, options.nullValue));
     } else if (value !== null && _babel_runtime_corejs3_helpers_typeof__WEBPACK_IMPORTED_MODULE_27___default()(value) === 'object') {
       var _context2;
-
       var precord = convertRecordForSerialization(value, options);
       return _babel_runtime_corejs3_core_js_stable_instance_reduce__WEBPACK_IMPORTED_MODULE_30___default()(_context2 = _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_29___default()(precord)).call(_context2, function (prec, pkey) {
         var _context3;
-
         prec[_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_26___default()(_context3 = "".concat(key, ".")).call(_context3, pkey)] = precord[pkey]; // eslint-disable-line no-param-reassign
-
         return prec;
       }, _objectSpread({}, rec));
     }
-
     return rec;
   }, record);
 }
+
 /**
  * @private
  */
-
-
 function createPipelineStream(s1, s2) {
   s1.pipe(s2);
   return (0,_util_stream__WEBPACK_IMPORTED_MODULE_33__/* .concatStreamsAsDuplex */ .sD)(s1, s2, {
     writableObjectMode: true
   });
 }
-
 /**
  * @private
  */
 var CSVStreamConverter = {
   serialize: function serialize() {
     var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
     var nullValue = options.nullValue,
-        csvOpts = _babel_runtime_corejs3_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_25___default()(options, ["nullValue"]);
-
-    return createPipelineStream( // eslint-disable-next-line no-use-before-define
+      csvOpts = _babel_runtime_corejs3_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_25___default()(options, ["nullValue"]);
+    return createPipelineStream(
+    // eslint-disable-next-line no-use-before-define
     _babel_runtime_corejs3_core_js_stable_instance_map__WEBPACK_IMPORTED_MODULE_24___default()(RecordStream).call(RecordStream, function (record) {
       return convertRecordForSerialization(record, options);
     }), (0,_csv__WEBPACK_IMPORTED_MODULE_32__/* .serializeCSVStream */ .kM)(csvOpts));
@@ -9031,13 +7638,14 @@ var CSVStreamConverter = {
     return (0,_csv__WEBPACK_IMPORTED_MODULE_32__/* .parseCSVStream */ .H6)(options);
   }
 };
+
 /**
  * @private
  */
-
 var DataStreamConverters = {
   csv: CSVStreamConverter
 };
+
 /**
  * Class for Record Stream
  *
@@ -9045,33 +7653,25 @@ var DataStreamConverters = {
  * @constructor
  * @extends stream.Transform
  */
-
 var RecordStream = /*#__PURE__*/function (_PassThrough) {
   _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_21___default()(RecordStream, _PassThrough);
-
   var _super = _createSuper(RecordStream);
-
   /**
    *
    */
   function RecordStream() {
     var _this;
-
     _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_17___default()(this, RecordStream);
-
     _this = _super.call(this, {
       objectMode: true
     });
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_28___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_19___default()(_this), "addListener", _this.on);
-
     return _this;
   }
+
   /**
    * Get record stream of queried records applying the given mapping function
    */
-
-
   _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_18___default()(RecordStream, [{
     key: "map",
     value: function map(fn) {
@@ -9080,26 +7680,19 @@ var RecordStream = /*#__PURE__*/function (_PassThrough) {
     /**
      * Get record stream of queried records, applying the given filter function
      */
-
   }, {
     key: "filter",
     value: function filter(fn) {
       return this.pipe(_babel_runtime_corejs3_core_js_stable_instance_filter__WEBPACK_IMPORTED_MODULE_16___default()(RecordStream).call(RecordStream, fn));
-    }
-    /* @override */
-
+    } /* @override */
   }, {
     key: "on",
     value: function on(ev, fn) {
       return _babel_runtime_corejs3_helpers_get__WEBPACK_IMPORTED_MODULE_20___default()(_babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_23___default()(RecordStream.prototype), "on", this).call(this, ev === 'record' ? 'data' : ev, fn);
-    }
-    /* @override */
-
+    } /* @override */
   }], [{
     key: "map",
-
     /* --------------------------------------------------- */
-
     /**
      * Create a record stream which maps records and pass them to downstream
      */
@@ -9108,7 +7701,6 @@ var RecordStream = /*#__PURE__*/function (_PassThrough) {
         objectMode: true,
         transform: function transform(record, enc, callback) {
           var rec = fn(record) || record; // if not returned record, use same record
-
           mapStream.push(rec);
           callback();
         }
@@ -9118,7 +7710,6 @@ var RecordStream = /*#__PURE__*/function (_PassThrough) {
     /**
      * Create mapping stream using given record template
      */
-
   }, {
     key: "recordMapStream",
     value: function recordMapStream(record, noeval) {
@@ -9126,12 +7717,10 @@ var RecordStream = /*#__PURE__*/function (_PassThrough) {
         var mapped = {
           Id: rec.Id
         };
-
         for (var _i = 0, _Object$keys2 = _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_29___default()(record); _i < _Object$keys2.length; _i++) {
           var _prop = _Object$keys2[_i];
           mapped[_prop] = noeval ? record[_prop] : evalMapping(record[_prop], rec);
         }
-
         return mapped;
       });
     }
@@ -9141,7 +7730,6 @@ var RecordStream = /*#__PURE__*/function (_PassThrough) {
      * @param {RecordFilterFunction} fn - Record filtering function
      * @returns {RecordStream.Serializable}
      */
-
   }, {
     key: "filter",
     value: function filter(fn) {
@@ -9151,129 +7739,94 @@ var RecordStream = /*#__PURE__*/function (_PassThrough) {
           if (fn(record)) {
             filterStream.push(record);
           }
-
           callback();
         }
       });
       return filterStream;
     }
   }]);
-
   return RecordStream;
 }(stream__WEBPACK_IMPORTED_MODULE_31__.PassThrough);
+
 /**
  * @class RecordStream.Serializable
  * @extends {RecordStream}
  */
-
 var Serializable = /*#__PURE__*/function (_RecordStream) {
   _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_21___default()(Serializable, _RecordStream);
-
   var _super2 = _createSuper(Serializable);
-
   function Serializable() {
     var _context4;
-
     var _this2;
-
     _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_17___default()(this, Serializable);
-
     for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
       args[_key] = arguments[_key];
     }
-
     _this2 = _super2.call.apply(_super2, _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_26___default()(_context4 = [this]).call(_context4, args));
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_28___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_19___default()(_this2), "_dataStreams", {});
-
     return _this2;
   }
-
   _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_18___default()(Serializable, [{
     key: "stream",
-
     /**
      * Get readable data stream which emits serialized record data
      */
     value: function stream() {
       var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'csv';
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
       if (this._dataStreams[type]) {
         return this._dataStreams[type];
       }
-
       var converter = DataStreamConverters[type];
-
       if (!converter) {
         throw new Error("Converting [".concat(type, "] data stream is not supported."));
       }
-
       var dataStream = new stream__WEBPACK_IMPORTED_MODULE_31__.PassThrough();
       this.pipe(converter.serialize(options)).pipe(dataStream);
       this._dataStreams[type] = dataStream;
       return dataStream;
     }
   }]);
-
   return Serializable;
 }(RecordStream);
+
 /**
  * @class RecordStream.Parsable
  * @extends {RecordStream}
  */
-
 var Parsable = /*#__PURE__*/(/* unused pure expression or super */ null && (function (_RecordStream2) {
   _inherits(Parsable, _RecordStream2);
-
   var _super3 = _createSuper(Parsable);
-
   function Parsable() {
     var _context5;
-
     var _this3;
-
     _classCallCheck(this, Parsable);
-
     for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
       args[_key3] = arguments[_key3];
     }
-
     _this3 = _super3.call.apply(_super3, _concatInstanceProperty(_context5 = [this]).call(_context5, args));
-
     _defineProperty(_assertThisInitialized(_this3), "_dataStreams", {});
-
     _defineProperty(_assertThisInitialized(_this3), "_execParse", false);
-
     _defineProperty(_assertThisInitialized(_this3), "_incomings", []);
-
     _defineProperty(_assertThisInitialized(_this3), "addListener", _this3.on);
-
     return _this3;
   }
-
   _createClass(Parsable, [{
     key: "stream",
-
     /**
      * Get writable data stream which accepts serialized record data
      */
     value: function stream() {
       var _this4 = this;
-
       var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'csv';
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
       if (this._dataStreams[type]) {
         return this._dataStreams[type];
       }
-
       var converter = DataStreamConverters[type];
-
       if (!converter) {
         throw new Error("Converting [".concat(type, "] data stream is not supported."));
       }
-
       var dataStream = new PassThrough();
       var parserStream = converter.parse(options);
       parserStream.on('error', function (err) {
@@ -9283,34 +7836,27 @@ var Parsable = /*#__PURE__*/(/* unused pure expression or super */ null && (func
         objectMode: true,
         highWaterMark: 500 * 1000
       }));
-
       if (this._execParse) {
         dataStream.pipe(parserStream);
       } else {
         this._incomings.push([dataStream, parserStream]);
       }
-
       this._dataStreams[type] = dataStream;
       return dataStream;
-    }
-    /* @override */
-
+    } /* @override */
   }, {
     key: "on",
     value: function on(ev, fn) {
       if (ev === 'readable' || ev === 'record') {
         if (!this._execParse) {
           this._execParse = true;
-
           var _iterator = _createForOfIteratorHelper(this._incomings),
-              _step;
-
+            _step;
           try {
             for (_iterator.s(); !(_step = _iterator.n()).done;) {
               var _step$value = _slicedToArray(_step.value, 2),
-                  dataStream = _step$value[0],
-                  parserStream = _step$value[1];
-
+                dataStream = _step$value[0],
+                parserStream = _step$value[1];
               dataStream.pipe(parserStream);
             }
           } catch (err) {
@@ -9320,13 +7866,9 @@ var Parsable = /*#__PURE__*/(/* unused pure expression or super */ null && (func
           }
         }
       }
-
       return _get(_getPrototypeOf(Parsable.prototype), "on", this).call(this, ev, fn);
-    }
-    /* @override */
-
+    } /* @override */
   }]);
-
   return Parsable;
 }(RecordStream)));
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (RecordStream);
@@ -9403,15 +7945,11 @@ var Parsable = /*#__PURE__*/(/* unused pure expression or super */ null && (func
 
 
 
-
 function ownKeys(object, enumerableOnly) { var keys = _babel_runtime_corejs3_core_js_stable_object_keys__WEBPACK_IMPORTED_MODULE_7___default()(object); if ((_babel_runtime_corejs3_core_js_stable_object_get_own_property_symbols__WEBPACK_IMPORTED_MODULE_6___default())) { var symbols = _babel_runtime_corejs3_core_js_stable_object_get_own_property_symbols__WEBPACK_IMPORTED_MODULE_6___default()(object); if (enumerableOnly) symbols = _babel_runtime_corejs3_core_js_stable_instance_filter__WEBPACK_IMPORTED_MODULE_5___default()(symbols).call(symbols, function (sym) { return _babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptor__WEBPACK_IMPORTED_MODULE_4___default()(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { var _context14; _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_3___default()(_context14 = ownKeys(Object(source), true)).call(_context14, function (key) { _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(target, key, source[key]); }); } else if ((_babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptors__WEBPACK_IMPORTED_MODULE_2___default())) { _babel_runtime_corejs3_core_js_stable_object_define_properties__WEBPACK_IMPORTED_MODULE_1___default()(target, _babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptors__WEBPACK_IMPORTED_MODULE_2___default()(source)); } else { var _context15; _babel_runtime_corejs3_core_js_stable_instance_for_each__WEBPACK_IMPORTED_MODULE_3___default()(_context15 = ownKeys(Object(source))).call(_context15, function (key) { _babel_runtime_corejs3_core_js_stable_object_define_property__WEBPACK_IMPORTED_MODULE_0___default()(target, key, _babel_runtime_corejs3_core_js_stable_object_get_own_property_descriptor__WEBPACK_IMPORTED_MODULE_4___default()(source, key)); }); } } return target; }
-
 /**
  *
  */
-
 
 
 
@@ -9421,7 +7959,9 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
  */
 var SObject = /*#__PURE__*/function () {
   // layouts: (ln?: string) => Promise<DescribeLayoutResult>;
+
   // compactLayouts: () => Promise<DescribeCompactLayoutsResult>;
+
   // approvalLayouts: () => Promise<DescribeApprovalLayoutsResult>;
 
   /**
@@ -9429,48 +7969,29 @@ var SObject = /*#__PURE__*/function () {
    */
   function SObject(conn, type) {
     var _this = this;
-
     _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_16___default()(this, SObject);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(this, "type", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(this, "_conn", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(this, "_logger", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(this, "layouts$", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(this, "layouts$$", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(this, "compactLayouts$", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(this, "compactLayouts$$", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(this, "approvalLayouts$", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(this, "approvalLayouts$$", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(this, "insert", this.create);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(this, "delete", this.destroy);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(this, "del", this.destroy);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(this, "insertBulk", this.createBulk);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(this, "deleteBulk", this.destroyBulk);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(this, "deleteHardBulk", this.destroyHardBulk);
-
     this.type = type;
     this._conn = conn;
     this._logger = conn._logLevel ? SObject._logger.createInstance(conn._logLevel) : SObject._logger;
     var cache = this._conn.cache;
-
     var layoutCacheKey = function layoutCacheKey(layoutName) {
       return layoutName ? "layouts.namedLayouts.".concat(layoutName) : "layouts.".concat(_this.type);
     };
-
     var layouts = SObject.prototype.layouts;
     this.layouts = cache.createCachedFunction(layouts, this, {
       key: layoutCacheKey,
@@ -9513,11 +8034,10 @@ var SObject = /*#__PURE__*/function () {
       strategy: 'IMMEDIATE'
     });
   }
+
   /**
    * Create records
    */
-
-
   _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_17___default()(SObject, [{
     key: "create",
     value: function create(records, options) {
@@ -9526,7 +8046,6 @@ var SObject = /*#__PURE__*/function () {
     /**
      * Synonym of SObject#create()
      */
-
   }, {
     key: "retrieve",
     value: function retrieve(ids, options) {
@@ -9535,7 +8054,6 @@ var SObject = /*#__PURE__*/function () {
     /**
      * Update records
      */
-
   }, {
     key: "update",
     value: function update(records, options) {
@@ -9544,7 +8062,6 @@ var SObject = /*#__PURE__*/function () {
     /**
      * Upsert records
      */
-
   }, {
     key: "upsert",
     value: function upsert(records, extIdField, options) {
@@ -9553,7 +8070,6 @@ var SObject = /*#__PURE__*/function () {
     /**
      * Delete records
      */
-
   }, {
     key: "destroy",
     value: function destroy(ids, options) {
@@ -9562,10 +8078,11 @@ var SObject = /*#__PURE__*/function () {
     /**
      * Synonym of SObject#destroy()
      */
-
+    /**
+     * Synonym of SObject#destroy()
+     */
   }, {
     key: "bulkload",
-
     /**
      * Call Bulk#load() to execute bulkload, returning batch object
      */
@@ -9575,7 +8092,6 @@ var SObject = /*#__PURE__*/function () {
     /**
      * Bulkly insert input data using bulk API
      */
-
   }, {
     key: "createBulk",
     value: function createBulk(input) {
@@ -9584,10 +8100,8 @@ var SObject = /*#__PURE__*/function () {
     /**
      * Synonym of SObject#createBulk()
      */
-
   }, {
     key: "updateBulk",
-
     /**
      * Bulkly update records by input data using bulk API
      */
@@ -9597,7 +8111,6 @@ var SObject = /*#__PURE__*/function () {
     /**
      * Bulkly upsert records by input data using bulk API
      */
-
   }, {
     key: "upsertBulk",
     value: function upsertBulk(input, extIdField) {
@@ -9608,7 +8121,6 @@ var SObject = /*#__PURE__*/function () {
     /**
      * Bulkly delete records specified by input data using bulk API
      */
-
   }, {
     key: "destroyBulk",
     value: function destroyBulk(input) {
@@ -9617,10 +8129,8 @@ var SObject = /*#__PURE__*/function () {
     /**
      * Synonym of SObject#destroyBulk()
      */
-
   }, {
     key: "destroyHardBulk",
-
     /**
      * Bulkly hard delete records specified in input data using bulk API
      */
@@ -9630,10 +8140,8 @@ var SObject = /*#__PURE__*/function () {
     /**
      * Synonym of SObject#destroyHardBulk()
      */
-
   }, {
     key: "describe",
-
     /**
      * Describe SObject metadata
      */
@@ -9643,7 +8151,6 @@ var SObject = /*#__PURE__*/function () {
     /**
      *
      */
-
   }, {
     key: "describe$",
     value: function describe$() {
@@ -9652,7 +8159,6 @@ var SObject = /*#__PURE__*/function () {
     /**
      *
      */
-
   }, {
     key: "describe$$",
     value: function describe$$() {
@@ -9661,7 +8167,6 @@ var SObject = /*#__PURE__*/function () {
     /**
      * Get record representation instance by given id
      */
-
   }, {
     key: "record",
     value: function record(id) {
@@ -9670,7 +8175,6 @@ var SObject = /*#__PURE__*/function () {
     /**
      * Retrieve recently accessed records
      */
-
   }, {
     key: "recent",
     value: function recent() {
@@ -9679,7 +8183,6 @@ var SObject = /*#__PURE__*/function () {
     /**
      * Retrieve the updated records
      */
-
   }, {
     key: "updated",
     value: function updated(start, end) {
@@ -9688,7 +8191,6 @@ var SObject = /*#__PURE__*/function () {
     /**
      * Retrieve the deleted records
      */
-
   }, {
     key: "deleted",
     value: function deleted(start, end) {
@@ -9697,13 +8199,11 @@ var SObject = /*#__PURE__*/function () {
     /**
      * Describe layout information for SObject
      */
-
   }, {
     key: "layouts",
     value: function () {
       var _layouts = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_15___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_12___default().mark(function _callee(layoutName) {
         var _context;
-
         var url, body;
         return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_12___default().wrap(function _callee$(_context2) {
           while (1) {
@@ -9712,11 +8212,9 @@ var SObject = /*#__PURE__*/function () {
                 url = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_13___default()(_context = "/sobjects/".concat(this.type, "/describe/")).call(_context, layoutName ? "namedLayouts/".concat(layoutName) : 'layouts');
                 _context2.next = 3;
                 return this._conn.request(url);
-
               case 3:
                 body = _context2.sent;
                 return _context2.abrupt("return", body);
-
               case 5:
               case "end":
                 return _context2.stop();
@@ -9724,11 +8222,9 @@ var SObject = /*#__PURE__*/function () {
           }
         }, _callee, this);
       }));
-
       function layouts(_x) {
         return _layouts.apply(this, arguments);
       }
-
       return layouts;
     }()
     /**
@@ -9737,14 +8233,12 @@ var SObject = /*#__PURE__*/function () {
      * @prop {String} defaultCompactLayoutId - ID of default compact layout
      * @prop {Array.<Object>} recordTypeCompactLayoutMappings - Array of record type mappings
      */
-
     /**
      * Describe compact layout information defined for SObject
      *
      * @param {Callback.<CompactLayoutInfo>} [callback] - Callback function
      * @returns {Promise.<CompactLayoutInfo>}
      */
-
   }, {
     key: "compactLayouts",
     value: function () {
@@ -9757,11 +8251,9 @@ var SObject = /*#__PURE__*/function () {
                 url = "/sobjects/".concat(this.type, "/describe/compactLayouts");
                 _context3.next = 3;
                 return this._conn.request(url);
-
               case 3:
                 body = _context3.sent;
                 return _context3.abrupt("return", body);
-
               case 5:
               case "end":
                 return _context3.stop();
@@ -9769,11 +8261,9 @@ var SObject = /*#__PURE__*/function () {
           }
         }, _callee2, this);
       }));
-
       function compactLayouts() {
         return _compactLayouts.apply(this, arguments);
       }
-
       return compactLayouts;
     }()
     /**
@@ -9782,7 +8272,6 @@ var SObject = /*#__PURE__*/function () {
      * @param {Callback.<ApprovalLayoutInfo>} [callback] - Callback function
      * @returns {Promise.<ApprovalLayoutInfo>}
      */
-
   }, {
     key: "approvalLayouts",
     value: function () {
@@ -9795,11 +8284,9 @@ var SObject = /*#__PURE__*/function () {
                 url = "/sobjects/".concat(this.type, "/describe/approvalLayouts");
                 _context4.next = 3;
                 return this._conn.request(url);
-
               case 3:
                 body = _context4.sent;
                 return _context4.abrupt("return", body);
-
               case 5:
               case "end":
                 return _context4.stop();
@@ -9807,27 +8294,22 @@ var SObject = /*#__PURE__*/function () {
           }
         }, _callee3, this);
       }));
-
       function approvalLayouts() {
         return _approvalLayouts.apply(this, arguments);
       }
-
       return approvalLayouts;
     }()
     /**
      * Find and fetch records which matches given conditions
      */
-
   }, {
     key: "find",
     value: function find(conditions, fields) {
       var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
       var sort = _babel_runtime_corejs3_core_js_stable_instance_sort__WEBPACK_IMPORTED_MODULE_10___default()(options),
-          limit = options.limit,
-          offset = options.offset,
-          qoptions = _babel_runtime_corejs3_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_11___default()(options, ["sort", "limit", "offset"]);
-
+        limit = options.limit,
+        offset = options.offset,
+        qoptions = _babel_runtime_corejs3_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_11___default()(options, ["sort", "limit", "offset"]);
       var config = {
         fields: fields == null ? undefined : fields,
         includes: _babel_runtime_corejs3_core_js_stable_instance_includes__WEBPACK_IMPORTED_MODULE_9___default()(options),
@@ -9843,42 +8325,33 @@ var SObject = /*#__PURE__*/function () {
     /**
      * Fetch one record which matches given conditions
      */
-
   }, {
     key: "findOne",
     value: function findOne(conditions, fields) {
       var _context5;
-
       var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
       var query = _babel_runtime_corejs3_core_js_stable_instance_find__WEBPACK_IMPORTED_MODULE_8___default()(_context5 = this).call(_context5, conditions, fields, _objectSpread(_objectSpread({}, options), {}, {
         limit: 1
       }));
-
       return query.setResponseTarget(_query__WEBPACK_IMPORTED_MODULE_21__/* .ResponseTargets.SingleRecord */ .ac.SingleRecord);
     }
     /**
      * Find and fetch records only by specifying fields to fetch.
      */
-
   }, {
     key: "select",
     value: function select(fields) {
       var _context6;
-
       return _babel_runtime_corejs3_core_js_stable_instance_find__WEBPACK_IMPORTED_MODULE_8___default()(_context6 = this).call(_context6, null, fields);
     }
     /**
      * Count num of records which matches given conditions
      */
-
   }, {
     key: "count",
     value: function count(conditions) {
       var _context7;
-
       var query = _babel_runtime_corejs3_core_js_stable_instance_find__WEBPACK_IMPORTED_MODULE_8___default()(_context7 = this).call(_context7, conditions, 'count()');
-
       return query.setResponseTarget(_query__WEBPACK_IMPORTED_MODULE_21__/* .ResponseTargets.Count */ .ac.Count);
     }
     /**
@@ -9887,14 +8360,11 @@ var SObject = /*#__PURE__*/function () {
      * @param {Callback.<ListViewsInfo>} [callback] - Callback function
      * @returns {Promise.<ListViewsInfo>}
      */
-
   }, {
     key: "listviews",
     value: function listviews() {
       var _context8;
-
       var url = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_13___default()(_context8 = "".concat(this._conn._baseUrl(), "/sobjects/")).call(_context8, this.type, "/listviews");
-
       return this._conn.request(url);
     }
     /**
@@ -9903,7 +8373,6 @@ var SObject = /*#__PURE__*/function () {
      * @param {String} id - List view ID
      * @returns {ListView}
      */
-
   }, {
     key: "listview",
     value: function listview(id) {
@@ -9915,7 +8384,6 @@ var SObject = /*#__PURE__*/function () {
      * @param {Callback.<Array.<QuickAction~QuickActionInfo>>} [callback] - Callback function
      * @returns {Promise.<Array.<QuickAction~QuickActionInfo>>}
      */
-
   }, {
     key: "quickActions",
     value: function quickActions() {
@@ -9927,18 +8395,16 @@ var SObject = /*#__PURE__*/function () {
      * @param {String} actionName - Name of the quick action
      * @returns {QuickAction}
      */
-
   }, {
     key: "quickAction",
     value: function quickAction(actionName) {
       var _context9;
-
       return new _quick_action__WEBPACK_IMPORTED_MODULE_22__/* ["default"] */ .Z(this._conn, _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_13___default()(_context9 = "/sobjects/".concat(this.type, "/quickActions/")).call(_context9, actionName));
     }
   }]);
-
   return SObject;
 }();
+
 /**
  * A class for organizing list view information
  *
@@ -9948,53 +8414,40 @@ var SObject = /*#__PURE__*/function () {
  * @param {SObject} type - SObject type
  * @param {String} id - List view ID
  */
-
 _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(SObject, "_logger", (0,_util_logger__WEBPACK_IMPORTED_MODULE_19__/* .getLogger */ .jl)('sobject'));
-
 var ListView = /*#__PURE__*/function () {
   /**
    *
    */
   function ListView(conn, type, id) {
     _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_16___default()(this, ListView);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(this, "_conn", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(this, "type", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_18___default()(this, "id", void 0);
-
     this._conn = conn;
     this.type = type;
     this.id = id;
   }
+
   /**
    * Executes query for the list view and returns the resulting data and presentation information.
    */
-
-
   _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_17___default()(ListView, [{
     key: "results",
     value: function results() {
       var _context10, _context11;
-
       var url = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_13___default()(_context10 = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_13___default()(_context11 = "".concat(this._conn._baseUrl(), "/sobjects/")).call(_context11, this.type, "/listviews/")).call(_context10, this.id, "/results");
-
       return this._conn.request(url);
     }
     /**
      * Returns detailed information about a list view
      */
-
   }, {
     key: "describe",
     value: function describe() {
       var _context12, _context13;
-
       var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
       var url = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_13___default()(_context12 = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_13___default()(_context13 = "".concat(this._conn._baseUrl(), "/sobjects/")).call(_context13, this.type, "/listviews/")).call(_context12, this.id, "/describe");
-
       return this._conn.request({
         method: 'GET',
         url: url,
@@ -10004,7 +8457,6 @@ var ListView = /*#__PURE__*/function () {
     /**
      * Explain plan for executing list view
      */
-
   }, {
     key: "explain",
     value: function explain() {
@@ -10012,11 +8464,11 @@ var ListView = /*#__PURE__*/function () {
       return this._conn.request(url);
     }
   }]);
-
   return ListView;
 }();
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (SObject);
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (SObject); // TODO Bulk
+// TODO Bulk
 
 
 /***/ }),
@@ -10179,9 +8631,7 @@ var browser_default = /*#__PURE__*/__webpack_require__.n(browser);
 
 
 
-
 function ownKeys(object, enumerableOnly) { var keys = keys_default()(object); if ((get_own_property_symbols_default())) { var symbols = get_own_property_symbols_default()(object); if (enumerableOnly) symbols = filter_default()(symbols).call(symbols, function (sym) { return get_own_property_descriptor_default()(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { var _context3; for_each_default()(_context3 = ownKeys(Object(source), true)).call(_context3, function (key) { defineProperty_default()(target, key, source[key]); }); } else if ((get_own_property_descriptors_default())) { define_properties_default()(target, get_own_property_descriptors_default()(source)); } else { var _context4; for_each_default()(_context4 = ownKeys(Object(source))).call(_context4, function (key) { define_property_default()(target, key, get_own_property_descriptor_default()(source, key)); }); } } return target; }
 
 
@@ -10190,13 +8640,11 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 /**
  *
  */
-
 function createHttpRequestHandlerStreams(req) {
   var reqBody = req.body;
   var input = new stream_browserify.PassThrough();
   var output = new stream_browserify.PassThrough();
   var duplex = (0,stream/* concatStreamsAsDuplex */.sD)(input, output);
-
   if (typeof reqBody !== 'undefined') {
     set_timeout_default()(function () {
       if (reqBody instanceof (browser_default())) {
@@ -10206,7 +8654,6 @@ function createHttpRequestHandlerStreams(req) {
       }
     }, 0);
   }
-
   duplex.on('response', /*#__PURE__*/function () {
     var _ref = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee(res) {
       var resBody;
@@ -10218,16 +8665,13 @@ function createHttpRequestHandlerStreams(req) {
                 _context.next = 5;
                 break;
               }
-
               _context.next = 3;
               return (0,stream/* readAll */.dG)(duplex);
-
             case 3:
               resBody = _context.sent;
               duplex.emit('complete', _objectSpread(_objectSpread({}, res), {}, {
                 body: resBody
               }));
-
             case 5:
             case "end":
               return _context.stop();
@@ -10235,7 +8679,6 @@ function createHttpRequestHandlerStreams(req) {
         }
       }, _callee);
     }));
-
     return function (_x) {
       return _ref.apply(this, arguments);
     };
@@ -10247,33 +8690,30 @@ function createHttpRequestHandlerStreams(req) {
   };
 }
 var redirectStatuses = new (set_default())([301, 302, 303, 307, 308]);
+
 /**
  *
  */
-
 function isRedirect(status) {
   return redirectStatuses.has(status);
 }
+
 /**
  *
  */
-
 var MAX_REDIRECT_COUNT = 10;
+
 /**
  *
  */
-
 function performRedirectRequest(req, res, followRedirect, counter, redirectCallback) {
   if (counter >= MAX_REDIRECT_COUNT) {
     throw new Error('Reached to maximum redirect count');
   }
-
   var redirectUrl = res.headers['location'];
-
   if (!redirectUrl) {
     throw new Error('No redirect URI found');
   }
-
   var getRedirectRequest = typeof followRedirect === 'function' ? followRedirect : function () {
     return {
       method: 'GET',
@@ -10282,21 +8722,18 @@ function performRedirectRequest(req, res, followRedirect, counter, redirectCallb
     };
   };
   var nextReqParams = getRedirectRequest(redirectUrl);
-
   if (!nextReqParams) {
     throw new Error('Cannot handle redirect for ' + redirectUrl);
   }
-
   redirectCallback(nextReqParams);
 }
+
 /**
  *
  */
-
 function executeWithTimeout(_x2, _x3, _x4) {
   return _executeWithTimeout.apply(this, arguments);
 }
-
 function _executeWithTimeout() {
   _executeWithTimeout = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee2(execFn, msec, cancelCallback) {
     var timeout, pid, res;
@@ -10312,30 +8749,22 @@ function _executeWithTimeout() {
             _context2.prev = 2;
             _context2.next = 5;
             return execFn();
-
           case 5:
             res = _context2.sent;
-
           case 6:
             _context2.prev = 6;
-
             if (pid) {
               clearTimeout(pid);
             }
-
             return _context2.finish(6);
-
           case 9:
             if (!timeout) {
               _context2.next = 11;
               break;
             }
-
             throw new Error('Request Timeout');
-
           case 11:
             return _context2.abrupt("return", res);
-
           case 12:
           case "end":
             return _context2.stop();
@@ -10376,18 +8805,11 @@ function _executeWithTimeout() {
 
 
 
-
 function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof (symbol_default()) === "undefined" || get_iterator_method_default()(o) == null) { if (is_array_default()(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = get_iterator_default()(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-
 function _unsupportedIterableToArray(o, minLen) { var _context9; if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = slice_default()(_context9 = Object.prototype.toString.call(o)).call(_context9, 8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return from_default()(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
 function request_ownKeys(object, enumerableOnly) { var keys = keys_default()(object); if ((get_own_property_symbols_default())) { var symbols = get_own_property_symbols_default()(object); if (enumerableOnly) symbols = filter_default()(symbols).call(symbols, function (sym) { return get_own_property_descriptor_default()(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
 function request_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { var _context7; for_each_default()(_context7 = request_ownKeys(Object(source), true)).call(_context7, function (key) { defineProperty_default()(target, key, source[key]); }); } else if ((get_own_property_descriptors_default())) { define_properties_default()(target, get_own_property_descriptors_default()(source)); } else { var _context8; for_each_default()(_context8 = request_ownKeys(Object(source))).call(_context8, function (key) { define_property_default()(target, key, get_own_property_descriptor_default()(source, key)); }); } } return target; }
-
-
 
 
 /**
@@ -10395,6 +8817,7 @@ function request_objectSpread(target) { for (var i = 1; i < arguments.length; i+
  * it is set to false for now.
  */
 var supportsReadableStream = false;
+
 /*
 (async () => {
   try {
@@ -10426,7 +8849,6 @@ var supportsReadableStream = false;
 /**
  *
  */
-
 function toWhatwgReadableStream(ins) {
   return new ReadableStream({
     start: function start(controller) {
@@ -10439,23 +8861,19 @@ function toWhatwgReadableStream(ins) {
     }
   });
 }
+
 /**
  *
  */
-
-
 function readWhatwgReadableStream(_x, _x2) {
   return _readWhatwgReadableStream.apply(this, arguments);
 }
 /**
  *
  */
-
-
 function _readWhatwgReadableStream() {
   _readWhatwgReadableStream = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee2(rs, outs) {
     var reader, readAndWrite, _readAndWrite;
-
     return regenerator_default().wrap(function _callee2$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
@@ -10463,31 +8881,25 @@ function _readWhatwgReadableStream() {
             _readAndWrite = function _readAndWrite3() {
               _readAndWrite = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee() {
                 var _yield$reader$read, done, value;
-
                 return regenerator_default().wrap(function _callee$(_context2) {
                   while (1) {
                     switch (_context2.prev = _context2.next) {
                       case 0:
                         _context2.next = 2;
                         return reader.read();
-
                       case 2:
                         _yield$reader$read = _context2.sent;
                         done = _yield$reader$read.done;
                         value = _yield$reader$read.value;
-
                         if (!done) {
                           _context2.next = 8;
                           break;
                         }
-
                         outs.end();
                         return _context2.abrupt("return", false);
-
                       case 8:
                         outs.write(value);
                         return _context2.abrupt("return", true);
-
                       case 10:
                       case "end":
                         return _context2.stop();
@@ -10497,27 +8909,21 @@ function _readWhatwgReadableStream() {
               }));
               return _readAndWrite.apply(this, arguments);
             };
-
             readAndWrite = function _readAndWrite2() {
               return _readAndWrite.apply(this, arguments);
             };
-
             reader = rs.getReader();
-
           case 3:
             _context3.next = 5;
             return readAndWrite();
-
           case 5:
             if (!_context3.sent) {
               _context3.next = 9;
               break;
             }
-
             ;
             _context3.next = 3;
             break;
-
           case 9:
           case "end":
             return _context3.stop();
@@ -10527,34 +8933,29 @@ function _readWhatwgReadableStream() {
   }));
   return _readWhatwgReadableStream.apply(this, arguments);
 }
-
 function startFetchRequest(_x3, _x4, _x5, _x6, _x7) {
   return _startFetchRequest.apply(this, arguments);
 }
 /**
  *
  */
-
-
 function _startFetchRequest() {
   _startFetchRequest = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee3(request, options, input, output, emitter) {
     var _context4;
-
     var counter,
-        followRedirect,
-        url,
-        reqBody,
-        rreq,
-        body,
-        controller,
-        res,
-        headers,
-        _iterator,
-        _step,
-        headerName,
-        response,
-        _args3 = arguments;
-
+      followRedirect,
+      url,
+      reqBody,
+      rreq,
+      body,
+      controller,
+      res,
+      headers,
+      _iterator,
+      _step,
+      headerName,
+      response,
+      _args3 = arguments;
     return regenerator_default().wrap(function _callee3$(_context5) {
       while (1) {
         switch (_context5.prev = _context5.next) {
@@ -10562,36 +8963,28 @@ function _startFetchRequest() {
             counter = _args3.length > 5 && _args3[5] !== undefined ? _args3[5] : 0;
             followRedirect = options.followRedirect;
             url = request.url, reqBody = request.body, rreq = objectWithoutProperties_default()(request, ["url", "body"]);
-
             if (!(input && /^(post|put|patch)$/i.test(request.method))) {
               _context5.next = 14;
               break;
             }
-
             if (!supportsReadableStream) {
               _context5.next = 8;
               break;
             }
-
             _context5.t1 = toWhatwgReadableStream(input);
             _context5.next = 11;
             break;
-
           case 8:
             _context5.next = 10;
             return (0,stream/* readAll */.dG)(input);
-
           case 10:
             _context5.t1 = _context5.sent;
-
           case 11:
             _context5.t0 = _context5.t1;
             _context5.next = 15;
             break;
-
           case 14:
             _context5.t0 = undefined;
-
           case 15:
             body = _context5.t0;
             controller = typeof AbortController !== 'undefined' ? new AbortController() : undefined;
@@ -10609,12 +9002,10 @@ function _startFetchRequest() {
             }, options.timeout, function () {
               return controller === null || controller === void 0 ? void 0 : controller.abort();
             });
-
           case 19:
             res = _context5.sent;
             headers = {};
             _iterator = _createForOfIteratorHelper(instance_keys_default()(_context4 = res.headers).call(_context4));
-
             try {
               for (_iterator.s(); !(_step = _iterator.n()).done;) {
                 headerName = _step.value;
@@ -10625,17 +9016,14 @@ function _startFetchRequest() {
             } finally {
               _iterator.f();
             }
-
             response = {
               statusCode: res.status,
               headers: headers
             };
-
             if (!(followRedirect && isRedirect(response.statusCode))) {
               _context5.next = 27;
               break;
             }
-
             try {
               performRedirectRequest(request, response, followRedirect, counter, function (req) {
                 return startFetchRequest(req, options, undefined, output, emitter, counter + 1);
@@ -10643,18 +9031,14 @@ function _startFetchRequest() {
             } catch (err) {
               emitter.emit('error', err);
             }
-
             return _context5.abrupt("return");
-
           case 27:
             emitter.emit('response', response);
-
             if (res.body) {
               readWhatwgReadableStream(res.body, output);
             } else {
               output.end();
             }
-
           case 29:
           case "end":
             return _context5.stop();
@@ -10664,45 +9048,39 @@ function _startFetchRequest() {
   }));
   return _startFetchRequest.apply(this, arguments);
 }
-
 function getResponseHeaderNames(xhr) {
   var _context;
-
   var headerLines = filter_default()(_context = (xhr.getAllResponseHeaders() || '').split(/[\r\n]+/)).call(_context, function (l) {
     return trim_default()(l).call(l) !== '';
   });
-
   return map_default()(headerLines).call(headerLines, function (headerLine) {
     return headerLine.split(/\s*:/)[0].toLowerCase();
   });
 }
+
 /**
  *
  */
-
-
 function startXmlHttpRequest(_x8, _x9, _x10, _x11, _x12) {
   return _startXmlHttpRequest.apply(this, arguments);
 }
 /**
  *
  */
-
-
 function _startXmlHttpRequest() {
   _startXmlHttpRequest = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee4(request, options, input, output, emitter) {
     var counter,
-        method,
-        url,
-        reqHeaders,
-        followRedirect,
-        reqBody,
-        xhr,
-        headerNames,
-        headers,
-        response,
-        body,
-        _args4 = arguments;
+      method,
+      url,
+      reqHeaders,
+      followRedirect,
+      reqBody,
+      xhr,
+      headerNames,
+      headers,
+      response,
+      body,
+      _args4 = arguments;
     return regenerator_default().wrap(function _callee4$(_context6) {
       while (1) {
         switch (_context6.prev = _context6.next) {
@@ -10710,47 +9088,38 @@ function _startXmlHttpRequest() {
             counter = _args4.length > 5 && _args4[5] !== undefined ? _args4[5] : 0;
             method = request.method, url = request.url, reqHeaders = request.headers;
             followRedirect = options.followRedirect;
-
             if (!(input && /^(post|put|patch)$/i.test(method))) {
               _context6.next = 9;
               break;
             }
-
             _context6.next = 6;
             return (0,stream/* readAll */.dG)(input);
-
           case 6:
             _context6.t0 = _context6.sent;
             _context6.next = 10;
             break;
-
           case 9:
             _context6.t0 = null;
-
           case 10:
             reqBody = _context6.t0;
             xhr = new XMLHttpRequest();
             _context6.next = 14;
             return executeWithTimeout(function () {
               xhr.open(method, url);
-
               if (reqHeaders) {
                 for (var header in reqHeaders) {
                   xhr.setRequestHeader(header, reqHeaders[header]);
                 }
               }
-
               if (options.timeout) {
                 xhr.timeout = options.timeout;
               }
-
               xhr.responseType = 'arraybuffer';
               xhr.send(reqBody);
               return new (promise_default())(function (resolve, reject) {
                 xhr.onload = function () {
                   return resolve();
                 };
-
                 xhr.onerror = reject;
                 xhr.ontimeout = reject;
                 xhr.onabort = reject;
@@ -10758,7 +9127,6 @@ function _startXmlHttpRequest() {
             }, options.timeout, function () {
               return xhr.abort();
             });
-
           case 14:
             headerNames = getResponseHeaderNames(xhr);
             headers = reduce_default()(headerNames).call(headerNames, function (headers, headerName) {
@@ -10768,12 +9136,10 @@ function _startXmlHttpRequest() {
               statusCode: xhr.status,
               headers: headers
             };
-
             if (!(followRedirect && isRedirect(response.statusCode))) {
               _context6.next = 20;
               break;
             }
-
             try {
               performRedirectRequest(request, response, followRedirect, counter, function (req) {
                 return startXmlHttpRequest(req, options, undefined, output, emitter, counter + 1);
@@ -10781,9 +9147,7 @@ function _startXmlHttpRequest() {
             } catch (err) {
               emitter.emit('error', err);
             }
-
             return _context6.abrupt("return");
-
           case 20:
             if (!response.statusCode) {
               response.statusCode = 400;
@@ -10791,11 +9155,9 @@ function _startXmlHttpRequest() {
             } else {
               body = Buffer.from(xhr.response);
             }
-
             emitter.emit('response', response);
             output.write(body);
             output.end();
-
           case 24:
           case "end":
             return _context6.stop();
@@ -10805,35 +9167,30 @@ function _startXmlHttpRequest() {
   }));
   return _startXmlHttpRequest.apply(this, arguments);
 }
-
 var defaults = {};
+
 /**
  *
  */
-
 function setDefaults(defaults_) {
   defaults = defaults_;
 }
+
 /**
  *
  */
-
 function request(req) {
   var options_ = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
   var options = request_objectSpread(request_objectSpread({}, defaults), options_);
-
   var _createHttpRequestHan = createHttpRequestHandlerStreams(req),
-      input = _createHttpRequestHan.input,
-      output = _createHttpRequestHan.output,
-      stream = _createHttpRequestHan.stream;
-
+    input = _createHttpRequestHan.input,
+    output = _createHttpRequestHan.output,
+    stream = _createHttpRequestHan.stream;
   if (typeof window !== 'undefined' && typeof window.fetch === 'function') {
     startFetchRequest(req, options, input, output, stream);
   } else {
     startXmlHttpRequest(req, options, input, output, stream);
   }
-
   return stream;
 }
 
@@ -10851,21 +9208,17 @@ var stringify_default = /*#__PURE__*/__webpack_require__.n(stringify);
 
 
 
-
 /**
  *
  */
 
 var _index = 0;
-
 function processJsonpRequest(_x, _x2, _x3) {
   return _processJsonpRequest.apply(this, arguments);
 }
-
 function _processJsonpRequest() {
   _processJsonpRequest = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee2(params, jsonpParam, timeout) {
     var _context2;
-
     var cbFuncName, callbacks, url, script, pid, res;
     return regenerator_default().wrap(function _callee2$(_context3) {
       while (1) {
@@ -10875,9 +9228,7 @@ function _processJsonpRequest() {
               _context3.next = 2;
               break;
             }
-
             throw new Error('JSONP only supports GET request.');
-
           case 2:
             _index += 1;
             cbFuncName = "_jsforce_jsonpCallback_".concat(_index);
@@ -10888,11 +9239,9 @@ function _processJsonpRequest() {
             script = document.createElement('script');
             script.type = 'text/javascript';
             script.src = url;
-
             if (document.documentElement) {
               document.documentElement.appendChild(script);
             }
-
             _context3.prev = 12;
             _context3.next = 15;
             return new (promise_default())(function (resolve, reject) {
@@ -10901,7 +9250,6 @@ function _processJsonpRequest() {
               }, timeout);
               callbacks[cbFuncName] = resolve;
             });
-
           case 15:
             res = _context3.sent;
             return _context3.abrupt("return", {
@@ -10911,18 +9259,14 @@ function _processJsonpRequest() {
               },
               body: stringify_default()(res)
             });
-
           case 17:
             _context3.prev = 17;
             clearTimeout(pid);
-
             if (document.documentElement) {
               document.documentElement.removeChild(script);
             }
-
             delete callbacks[cbFuncName];
             return _context3.finish(17);
-
           case 22:
           case "end":
             return _context3.stop();
@@ -10932,7 +9276,6 @@ function _processJsonpRequest() {
   }));
   return _processJsonpRequest.apply(this, arguments);
 }
-
 function createRequest() {
   var jsonpParam = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'callback';
   var timeout = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 10000;
@@ -10950,14 +9293,12 @@ function createRequest() {
                 case 0:
                   _context.next = 2;
                   return processJsonpRequest(params, jsonpParam, timeout);
-
                 case 2:
                   response = _context.sent;
                   stream.emit('response', response);
                   stream.emit('complete', response);
                   stream.push(response.body);
                   stream.push(null);
-
                 case 7:
                 case "end":
                   return _context.stop();
@@ -10971,7 +9312,6 @@ function createRequest() {
     return stream;
   };
 }
-
 /* harmony default export */ const jsonp = ({
   supported: typeof window !== 'undefined' && typeof document !== 'undefined',
   createRequest: createRequest
@@ -10979,8 +9319,6 @@ function createRequest() {
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.join.js
 var es_array_join = __webpack_require__(85005);
-// EXTERNAL MODULE: ./node_modules/core-js/modules/es.function.name.js
-var es_function_name = __webpack_require__(54994);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.regexp.to-string.js
 var es_regexp_to_string = __webpack_require__(33290);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/helpers/typeof.js
@@ -11009,34 +9347,24 @@ var slicedToArray_default = /*#__PURE__*/__webpack_require__.n(slicedToArray);
 
 
 
-
-
 function canvas_createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof (symbol_default()) === "undefined" || get_iterator_method_default()(o) == null) { if (is_array_default()(o) || (it = canvas_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = get_iterator_default()(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-
-function canvas_unsupportedIterableToArray(o, minLen) { var _context2; if (!o) return; if (typeof o === "string") return canvas_arrayLikeToArray(o, minLen); var n = slice_default()(_context2 = Object.prototype.toString.call(o)).call(_context2, 8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return from_default()(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return canvas_arrayLikeToArray(o, minLen); }
-
+function canvas_unsupportedIterableToArray(o, minLen) { var _context3; if (!o) return; if (typeof o === "string") return canvas_arrayLikeToArray(o, minLen); var n = slice_default()(_context3 = Object.prototype.toString.call(o)).call(_context3, 8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return from_default()(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return canvas_arrayLikeToArray(o, minLen); }
 function canvas_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
 /**
  *
  */
 
-
 function parseHeaders(hs) {
   var headers = {};
-
   var _iterator = canvas_createForOfIteratorHelper(hs.split(/\n/)),
-      _step;
-
+    _step;
   try {
     for (_iterator.s(); !(_step = _iterator.n()).done;) {
       var line = _step.value;
-
       var _line$split = line.split(/\s*:\s*/),
-          _line$split2 = slicedToArray_default()(_line$split, 2),
-          name = _line$split2[0],
-          value = _line$split2[1];
-
+        _line$split2 = slicedToArray_default()(_line$split, 2),
+        name = _line$split2[0],
+        value = _line$split2[1];
       headers[name.toLowerCase()] = value;
     }
   } catch (err) {
@@ -11044,21 +9372,17 @@ function parseHeaders(hs) {
   } finally {
     _iterator.f();
   }
-
   return headers;
 }
-
 function processCanvasRequest(_x, _x2, _x3) {
   return _processCanvasRequest.apply(this, arguments);
 }
-
 function _processCanvasRequest() {
   _processCanvasRequest = asyncToGenerator_default()( /*#__PURE__*/regenerator_default().mark(function _callee2(params, signedRequest, requestBody) {
     var settings, paramHeaders, _i, _Object$keys, name, data, headers, responseBody;
-
-    return regenerator_default().wrap(function _callee2$(_context3) {
+    return regenerator_default().wrap(function _callee2$(_context2) {
       while (1) {
-        switch (_context3.prev = _context3.next) {
+        switch (_context2.prev = _context2.next) {
           case 0:
             settings = {
               client: signedRequest.client,
@@ -11066,13 +9390,10 @@ function _processCanvasRequest() {
               data: requestBody
             };
             paramHeaders = params.headers;
-
             if (paramHeaders) {
               settings.headers = {};
-
               for (_i = 0, _Object$keys = keys_default()(paramHeaders); _i < _Object$keys.length; _i++) {
                 name = _Object$keys[_i];
-
                 if (name.toLowerCase() === 'content-type') {
                   settings.contentType = paramHeaders[name];
                 } else {
@@ -11080,39 +9401,33 @@ function _processCanvasRequest() {
                 }
               }
             }
-
-            _context3.next = 5;
+            _context2.next = 5;
             return new (promise_default())(function (resolve, reject) {
               settings.success = resolve;
               settings.failure = reject;
               Sfdc.canvas.client.ajax(params.url, settings);
             });
-
           case 5:
-            data = _context3.sent;
+            data = _context2.sent;
             headers = parseHeaders(data.responseHeaders);
             responseBody = data.payload;
-
             if (typeof responseBody !== 'string') {
               responseBody = stringify_default()(responseBody);
             }
-
-            return _context3.abrupt("return", {
+            return _context2.abrupt("return", {
               statusCode: data.status,
               headers: headers,
               body: responseBody
             });
-
           case 10:
           case "end":
-            return _context3.stop();
+            return _context2.stop();
         }
       }
     }, _callee2);
   }));
   return _processCanvasRequest.apply(this, arguments);
 }
-
 function canvas_createRequest(signedRequest) {
   return function (params) {
     var buf = [];
@@ -11131,14 +9446,12 @@ function canvas_createRequest(signedRequest) {
                   body = buf.join('');
                   _context.next = 3;
                   return processCanvasRequest(params, signedRequest, body);
-
                 case 3:
                   response = _context.sent;
                   stream.emit('response', response);
                   stream.emit('complete', response);
                   stream.push(response.body);
                   stream.push(null);
-
                 case 8:
                 case "end":
                   return _context.stop();
@@ -11148,15 +9461,12 @@ function canvas_createRequest(signedRequest) {
         }))();
       }
     });
-
     if (params.body) {
       stream.end(params.body);
     }
-
     return stream;
   };
 }
-
 /* harmony default export */ const canvas = ({
   supported: (typeof Sfdc === "undefined" ? "undefined" : typeof_default()(Sfdc)) === 'object' && typeof Sfdc.canvas !== 'undefined',
   createRequest: canvas_createRequest
@@ -11188,20 +9498,16 @@ function canvas_createRequest(signedRequest) {
 
 
 
-
 var _ref, _process$env$HTTPS_PR;
-
 function transport_ownKeys(object, enumerableOnly) { var keys = keys_default()(object); if ((get_own_property_symbols_default())) { var symbols = get_own_property_symbols_default()(object); if (enumerableOnly) symbols = filter_default()(symbols).call(symbols, function (sym) { return get_own_property_descriptor_default()(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
 function transport_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { var _context3; for_each_default()(_context3 = transport_ownKeys(Object(source), true)).call(_context3, function (key) { defineProperty_default()(target, key, source[key]); }); } else if ((get_own_property_descriptors_default())) { define_properties_default()(target, get_own_property_descriptors_default()(source)); } else { var _context4; for_each_default()(_context4 = transport_ownKeys(Object(source))).call(_context4, function (key) { define_property_default()(target, key, get_own_property_descriptor_default()(source, key)); }); } } return target; }
-
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = getPrototypeOf_default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf_default()(this).constructor; result = construct_default()(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn_default()(this, result); }; }
-
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(construct_default())) return false; if ((construct_default()).sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(construct_default()(Date, [], function () {})); return true; } catch (e) { return false; } }
-
 /**
  *
  */
+
+
 
 
 
@@ -11210,47 +9516,39 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(c
  * Normarize Salesforce API host name
  * @private
  */
-
 function normalizeApiHost(apiHost) {
   var m = /(\w+)\.(visual\.force|salesforce)\.com$/.exec(apiHost);
-
   if (m) {
     return "".concat(m[1], ".salesforce.com");
   }
-
   return apiHost;
 }
-
 setDefaults({
   httpProxy: (_ref = (_process$env$HTTPS_PR = process.env.HTTPS_PROXY) !== null && _process$env$HTTPS_PR !== void 0 ? _process$env$HTTPS_PR : process.env.HTTP_PROXY) !== null && _ref !== void 0 ? _ref : undefined,
   timeout: process.env.HTTP_TIMEOUT ? parse_int_default()(process.env.HTTP_TIMEOUT, 10) : undefined,
   followRedirect: true
 });
 var baseUrl = typeof window !== 'undefined' && window.location && window.location.host ? "https://".concat(normalizeApiHost(window.location.host)) : process.env.LOCATION_BASE_URL || '';
+
 /**
  * Class for HTTP request transport
  *
  * @class
  * @protected
  */
-
 var Transport = /*#__PURE__*/function () {
   function Transport() {
     classCallCheck_default()(this, Transport);
   }
-
   createClass_default()(Transport, [{
     key: "httpRequest",
-
     /**
      */
     value: function httpRequest(req) {
       var _this = this;
-
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       return promise/* StreamPromise.create */.E.create(function () {
         var createStream = _this.getRequestStreamCreator();
-
         var stream = createStream(req, options);
         var promise = new (promise_default())(function (resolve, reject) {
           stream.on('complete', function (res) {
@@ -11266,38 +9564,29 @@ var Transport = /*#__PURE__*/function () {
     /**
      * @protected
      */
-
   }, {
     key: "getRequestStreamCreator",
     value: function getRequestStreamCreator() {
       return request;
     }
   }]);
-
   return Transport;
 }();
+
 /**
  * Class for JSONP request transport
  */
-
 var JsonpTransport = /*#__PURE__*/function (_Transport) {
   inherits_default()(JsonpTransport, _Transport);
-
   var _super = _createSuper(JsonpTransport);
-
   function JsonpTransport(jsonpParam) {
     var _this2;
-
     classCallCheck_default()(this, JsonpTransport);
-
     _this2 = _super.call(this);
-
     defineProperty_default()(assertThisInitialized_default()(_this2), "_jsonpParam", void 0);
-
     _this2._jsonpParam = jsonpParam;
     return _this2;
   }
-
   createClass_default()(JsonpTransport, [{
     key: "getRequestStreamCreator",
     value: function getRequestStreamCreator() {
@@ -11307,33 +9596,24 @@ var JsonpTransport = /*#__PURE__*/function (_Transport) {
       };
     }
   }]);
-
   return JsonpTransport;
 }(Transport);
+
 /**
  * Class for Sfdc Canvas request transport
  */
-
 defineProperty_default()(JsonpTransport, "supprted", jsonp.supported);
-
 var CanvasTransport = /*#__PURE__*/function (_Transport2) {
   inherits_default()(CanvasTransport, _Transport2);
-
   var _super2 = _createSuper(CanvasTransport);
-
   function CanvasTransport(signedRequest) {
     var _this3;
-
     classCallCheck_default()(this, CanvasTransport);
-
     _this3 = _super2.call(this);
-
     defineProperty_default()(assertThisInitialized_default()(_this3), "_signedRequest", void 0);
-
     _this3._signedRequest = signedRequest;
     return _this3;
   }
-
   createClass_default()(CanvasTransport, [{
     key: "getRequestStreamCreator",
     value: function getRequestStreamCreator() {
@@ -11343,29 +9623,23 @@ var CanvasTransport = /*#__PURE__*/function (_Transport2) {
       };
     }
   }]);
-
   return CanvasTransport;
 }(Transport);
+
 /* @private */
-
 defineProperty_default()(CanvasTransport, "supported", canvas.supported);
-
 function createXdProxyRequest(req, proxyUrl) {
   var _context, _context2;
-
   var headers = {
     'salesforceproxy-endpoint': req.url
   };
-
   if (req.headers) {
     for (var _i = 0, _Object$keys = keys_default()(req.headers); _i < _Object$keys.length; _i++) {
       var _name = _Object$keys[_i];
       headers[_name] = req.headers[_name];
     }
   }
-
   var nocache = concat_default()(_context = "".concat(now_default()(), ".")).call(_context, String(Math.random()).substring(2));
-
   return transport_objectSpread({
     method: req.method,
     url: concat_default()(_context2 = "".concat(proxyUrl, "?")).call(_context2, nocache),
@@ -11374,44 +9648,33 @@ function createXdProxyRequest(req, proxyUrl) {
     body: req.body
   } : {});
 }
+
 /**
  * Class for HTTP request transport using cross-domain AJAX proxy service
  */
-
-
 var XdProxyTransport = /*#__PURE__*/function (_Transport3) {
   inherits_default()(XdProxyTransport, _Transport3);
-
   var _super3 = _createSuper(XdProxyTransport);
-
   function XdProxyTransport(xdProxyUrl) {
     var _this4;
-
     classCallCheck_default()(this, XdProxyTransport);
-
     _this4 = _super3.call(this);
-
     defineProperty_default()(assertThisInitialized_default()(_this4), "_xdProxyUrl", void 0);
-
     _this4._xdProxyUrl = xdProxyUrl;
     return _this4;
   }
+
   /**
    * Make HTTP request via AJAX proxy
    */
-
-
   createClass_default()(XdProxyTransport, [{
     key: "httpRequest",
     value: function httpRequest(req) {
       var _options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
       var xdProxyUrl = this._xdProxyUrl;
-
       var url = req.url,
-          body = req.body,
-          rreq = objectWithoutProperties_default()(req, ["url", "body"]);
-
+        body = req.body,
+        rreq = objectWithoutProperties_default()(req, ["url", "body"]);
       var canonicalUrl = index_of_default()(url).call(url, '/') === 0 ? baseUrl + url : url;
       var xdProxyReq = createXdProxyRequest(transport_objectSpread(transport_objectSpread({}, rreq), {}, {
         url: canonicalUrl,
@@ -11427,48 +9690,37 @@ var XdProxyTransport = /*#__PURE__*/function (_Transport3) {
       });
     }
   }]);
-
   return XdProxyTransport;
 }(Transport);
+
 /**
  * Class for HTTP request transport using a proxy server
  */
-
 var HttpProxyTransport = /*#__PURE__*/function (_Transport4) {
   inherits_default()(HttpProxyTransport, _Transport4);
-
   var _super4 = _createSuper(HttpProxyTransport);
-
   function HttpProxyTransport(httpProxy) {
     var _this5;
-
     classCallCheck_default()(this, HttpProxyTransport);
-
     _this5 = _super4.call(this);
-
     defineProperty_default()(assertThisInitialized_default()(_this5), "_httpProxy", void 0);
-
     _this5._httpProxy = httpProxy;
     return _this5;
   }
+
   /**
    * Make HTTP request via proxy server
    */
-
-
   createClass_default()(HttpProxyTransport, [{
     key: "httpRequest",
     value: function httpRequest(req) {
       var options_ = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
       var options = transport_objectSpread(transport_objectSpread({}, options_), {}, {
         httpProxy: this._httpProxy
       });
-
       return get_default()(getPrototypeOf_default()(HttpProxyTransport.prototype), "httpRequest", this).call(this, req, options);
     }
   }]);
-
   return HttpProxyTransport;
 }(Transport);
 /* harmony default export */ const transport = (Transport);
@@ -11594,31 +9846,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(86922);
 /* harmony import */ var _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_0__);
 
-
 /**
  *
  */
 function zeroPad(num) {
   var digits = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
   var nstr = '';
-
   for (var d = digits - 1; d > 0; d--) {
     if (num >= Math.pow(10, d)) {
       break;
     }
-
     nstr += '0';
   }
-
   return nstr + String(num);
 }
+
 /**
  *
  */
-
 function formatDate(date) {
   var _context, _context2, _context3, _context4, _context5;
-
   return _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_0___default()(_context = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_0___default()(_context2 = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_0___default()(_context3 = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_0___default()(_context4 = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_0___default()(_context5 = "".concat(date.getUTCFullYear(), "-")).call(_context5, zeroPad(date.getUTCMonth() + 1), "-")).call(_context4, zeroPad(date.getUTCDate()), "T")).call(_context3, zeroPad(date.getUTCHours()), ":")).call(_context2, zeroPad(date.getUTCMinutes()), ":")).call(_context, zeroPad(date.getUTCSeconds()), "+00:00");
 }
 
@@ -11649,7 +9896,6 @@ function formatDate(date) {
 
 
 
-
 /**
  *
  */
@@ -11662,16 +9908,13 @@ var LogLevels = {
   NONE: 6
 };
 var LogLevelLabels = ['', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL', 'NONE'];
-
 var globalLogLevelConfig = function () {
   var globalLogLevelStr = process.env.JSFORCE_LOG_LEVEL || __webpack_require__.g.__JSFORCE_LOG_LEVEL__ || 'NONE';
-
   if (/^(DEBUG|INFO|WARN|ERROR|FATAL|NONE)$/i.test(globalLogLevelStr)) {
     return {
       '*': globalLogLevelStr
     };
   }
-
   try {
     return JSON.parse(globalLogLevelStr);
   } catch (e) {
@@ -11680,30 +9923,23 @@ var globalLogLevelConfig = function () {
     };
   }
 }();
-
 function getModuleLogLevel(logLevelConfig, moduleName) {
   var logLevel = logLevelConfig[moduleName] || logLevelConfig['*'];
   return typeof logLevel === 'number' ? logLevel : LogLevels[logLevel] || LogLevels.NONE;
 }
+
 /**
  *
  */
-
-
 var Logger = /*#__PURE__*/function () {
   function Logger(moduleName) {
     var logLevelConfig = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : globalLogLevelConfig;
-
     _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, Logger);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_4___default()(this, "_moduleName", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_4___default()(this, "_logLevel", void 0);
-
     this._moduleName = moduleName;
     this._logLevel = typeof logLevelConfig === 'number' ? logLevelConfig : typeof logLevelConfig === 'string' ? LogLevels[logLevelConfig] || LogLevels.NONE : getModuleLogLevel(logLevelConfig, moduleName);
   }
-
   _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_3___default()(Logger, [{
     key: "createInstance",
     value: function createInstance() {
@@ -11724,23 +9960,16 @@ var Logger = /*#__PURE__*/function () {
     value: function log(logLevel) {
       if (this._logLevel <= logLevel) {
         var _context, _context2;
-
         for (var _len = arguments.length, messages = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
           messages[_key - 1] = arguments[_key];
         }
-
         var msgs = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_1___default()(_context = [_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_1___default()(_context2 = "".concat(LogLevelLabels[logLevel], "\t[")).call(_context2, this._moduleName, "] ")]).call(_context, messages);
-
         if (logLevel < LogLevels.ERROR) {
           var _console;
-
           (_console = console).log.apply(_console, _babel_runtime_corejs3_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(msgs)); // eslint-disable-line no-console
-
         } else {
           var _console2;
-
           (_console2 = console).error.apply(_console2, _babel_runtime_corejs3_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(msgs)); // eslint-disable-line no-console
-
         }
       }
     }
@@ -11748,66 +9977,55 @@ var Logger = /*#__PURE__*/function () {
     key: "debug",
     value: function debug() {
       var _context3;
-
       for (var _len2 = arguments.length, messages = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
         messages[_key2] = arguments[_key2];
       }
-
       this.log.apply(this, _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_1___default()(_context3 = [LogLevels.DEBUG]).call(_context3, messages));
     }
   }, {
     key: "info",
     value: function info() {
       var _context4;
-
       for (var _len3 = arguments.length, messages = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
         messages[_key3] = arguments[_key3];
       }
-
       this.log.apply(this, _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_1___default()(_context4 = [LogLevels.INFO]).call(_context4, messages));
     }
   }, {
     key: "warn",
     value: function warn() {
       var _context5;
-
       for (var _len4 = arguments.length, messages = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
         messages[_key4] = arguments[_key4];
       }
-
       this.log.apply(this, _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_1___default()(_context5 = [LogLevels.WARN]).call(_context5, messages));
     }
   }, {
     key: "error",
     value: function error() {
       var _context6;
-
       for (var _len5 = arguments.length, messages = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
         messages[_key5] = arguments[_key5];
       }
-
       this.log.apply(this, _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_1___default()(_context6 = [LogLevels.ERROR]).call(_context6, messages));
     }
   }, {
     key: "fatal",
     value: function fatal() {
       var _context7;
-
       for (var _len6 = arguments.length, messages = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
         messages[_key6] = arguments[_key6];
       }
-
       this.log.apply(this, _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_1___default()(_context7 = [LogLevels.FATAL]).call(_context7, messages));
     }
   }]);
-
   return Logger;
 }();
 var loggers = {};
+
 /**
  *
  */
-
 function getLogger(moduleName) {
   var logger = loggers[moduleName] || new Logger(moduleName);
   loggers[moduleName] = logger;
@@ -11850,14 +10068,12 @@ function getLogger(moduleName) {
 
 
 
-
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_6___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_6___default()(this).constructor; result = _babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default()(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_5___default()(this, result); }; }
-
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default())) return false; if ((_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default().sham)) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default()(Date, [], function () {})); return true; } catch (e) { return false; } }
-
 /**
  *
  */
+
 
 /**
  *
@@ -11868,15 +10084,11 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(_
  */
 var StreamPromise = /*#__PURE__*/function (_Promise) {
   _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_4___default()(StreamPromise, _Promise);
-
   var _super = _createSuper(StreamPromise);
-
   function StreamPromise() {
     _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, StreamPromise);
-
     return _super.apply(this, arguments);
   }
-
   _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_3___default()(StreamPromise, [{
     key: "stream",
     value: function stream() {
@@ -11887,21 +10099,17 @@ var StreamPromise = /*#__PURE__*/function (_Promise) {
     key: "create",
     value: function create(builder) {
       var _builder = builder(),
-          stream = _builder.stream,
-          promise = _builder.promise;
-
+        stream = _builder.stream,
+        promise = _builder.promise;
       var streamPromise = new StreamPromise(function (resolve, reject) {
         promise.then(resolve, reject);
       });
-
       streamPromise.stream = function () {
         return stream;
       };
-
       return streamPromise;
     }
   }]);
-
   return StreamPromise;
 }( /*#__PURE__*/_babel_runtime_corejs3_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_7___default()((_babel_runtime_corejs3_core_js_stable_promise__WEBPACK_IMPORTED_MODULE_1___default())));
 
@@ -11971,51 +10179,37 @@ var StreamPromise = /*#__PURE__*/function (_Promise) {
 
 
 
-
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_15___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_corejs3_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_15___default()(this).constructor; result = _babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default()(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_corejs3_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_14___default()(this, result); }; }
-
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default())) return false; if ((_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default().sham)) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(_babel_runtime_corejs3_core_js_stable_reflect_construct__WEBPACK_IMPORTED_MODULE_0___default()(Date, [], function () {})); return true; } catch (e) { return false; } }
-
 
 function createLazyStream() {
   var ins = new stream__WEBPACK_IMPORTED_MODULE_17__.PassThrough();
   var outs = new stream__WEBPACK_IMPORTED_MODULE_17__.PassThrough();
   var stream = concatStreamsAsDuplex(ins, outs);
   var piped = false;
-
   var setStream = function setStream(str) {
     if (piped) {
       throw new Error('stream is already piped to actual stream');
     }
-
     piped = true;
     ins.pipe(str).pipe(outs);
   };
-
   return {
     stream: stream,
     setStream: setStream
   };
 }
-
 var MemoryWriteStream = /*#__PURE__*/function (_Writable) {
   _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_13___default()(MemoryWriteStream, _Writable);
-
   var _super = _createSuper(MemoryWriteStream);
-
   function MemoryWriteStream() {
     var _this;
-
     _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_10___default()(this, MemoryWriteStream);
-
     _this = _super.call(this);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_16___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_12___default()(_this), "_buf", void 0);
-
     _this._buf = Buffer.alloc(0);
     return _this;
   }
-
   _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_11___default()(MemoryWriteStream, [{
     key: "_write",
     value: function _write(chunk, encoding, callback) {
@@ -12026,7 +10220,6 @@ var MemoryWriteStream = /*#__PURE__*/function (_Writable) {
     key: "_writev",
     value: function _writev(data, callback) {
       var _context;
-
       this._buf = _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_9___default()(Buffer).call(Buffer, _babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_9___default()(_context = [this._buf]).call(_context, _babel_runtime_corejs3_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_8___default()(_babel_runtime_corejs3_core_js_stable_instance_map__WEBPACK_IMPORTED_MODULE_7___default()(data).call(data, function (_ref) {
         var chunk = _ref.chunk;
         return chunk;
@@ -12039,14 +10232,11 @@ var MemoryWriteStream = /*#__PURE__*/function (_Writable) {
       return this._buf.toString();
     }
   }]);
-
   return MemoryWriteStream;
 }(stream__WEBPACK_IMPORTED_MODULE_17__.Writable);
-
 function readAll(_x) {
   return _readAll.apply(this, arguments);
 }
-
 function _readAll() {
   _readAll = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_6___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_3___default().mark(function _callee(rs) {
     return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_3___default().wrap(function _callee$(_context2) {
@@ -12059,7 +10249,6 @@ function _readAll() {
                 return resolve(ws.toString());
               });
             }));
-
           case 1:
           case "end":
             return _context2.stop();
@@ -12069,40 +10258,28 @@ function _readAll() {
   }));
   return _readAll.apply(this, arguments);
 }
-
 var DuplexifiedStream = /*#__PURE__*/function (_Duplex) {
   _babel_runtime_corejs3_helpers_inherits__WEBPACK_IMPORTED_MODULE_13___default()(DuplexifiedStream, _Duplex);
-
   var _super2 = _createSuper(DuplexifiedStream);
-
   function DuplexifiedStream(ws, rs) {
     var _opts$writableObjectM, _opts$readableObjectM;
-
     var _this2;
-
     var opts = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
     _babel_runtime_corejs3_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_10___default()(this, DuplexifiedStream);
-
     _this2 = _super2.call(this, {
       writableObjectMode: (_opts$writableObjectM = opts.writableObjectMode) !== null && _opts$writableObjectM !== void 0 ? _opts$writableObjectM : ws.writableObjectMode,
       readableObjectMode: (_opts$readableObjectM = opts.readableObjectMode) !== null && _opts$readableObjectM !== void 0 ? _opts$readableObjectM : rs.readableObjectMode
     });
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_16___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_12___default()(_this2), "_writable", void 0);
-
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_16___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_12___default()(_this2), "_readable", void 0);
-
     _this2._writable = ws;
     _this2._readable = rs;
     ws.once('finish', function () {
       _this2.end();
     });
-
     _this2.once('finish', function () {
       ws.end();
     });
-
     rs.on('readable', function () {
       _this2._readStream();
     });
@@ -12117,7 +10294,6 @@ var DuplexifiedStream = /*#__PURE__*/function (_Duplex) {
     });
     return _this2;
   }
-
   _babel_runtime_corejs3_helpers_createClass__WEBPACK_IMPORTED_MODULE_11___default()(DuplexifiedStream, [{
     key: "_write",
     value: function _write(chunk, encoding, callback) {
@@ -12132,16 +10308,13 @@ var DuplexifiedStream = /*#__PURE__*/function (_Duplex) {
     key: "_readStream",
     value: function _readStream(n) {
       var data;
-
       while ((data = this._readable.read(n)) !== null) {
         this.push(data);
       }
     }
   }]);
-
   return DuplexifiedStream;
 }(stream__WEBPACK_IMPORTED_MODULE_17__.Duplex);
-
 function concatStreamsAsDuplex(ws, rs, opts) {
   return new DuplexifiedStream(ws, rs, opts);
 }
