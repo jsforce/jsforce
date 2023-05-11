@@ -111,6 +111,7 @@
     "@babel/register": "^7.12.1",
     "@types/fs-extra": "^8.0.1",
     "@types/inquirer": "^6.5.0",
+    "@types/jest": "^29.5.1",
     "@types/multistream": "^2.1.1",
     "@types/node-fetch": "^2.5.7",
     "@types/through2": "^2.0.34",
