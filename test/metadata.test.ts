@@ -222,8 +222,8 @@ if (isNodeJS()) {
   });
 }
 
-describe('deployRecentValidation', () => {
-  if (isNodeJS()) {
+if (isNodeJS()) {
+  describe('deployRecentValidation', () => {
     it('deployRecentValidation() should return string, and different id (REST)', async () => {
       const zipBuffer = await fs.promises.readFile(
         path.join(__dirname, '/data/MyPackage.zip'),
@@ -259,8 +259,8 @@ describe('deployRecentValidation', () => {
       assert.ok(typeof result === 'string');
       assert.ok(result !== deploy.id);
     });
-  }
-});
+  });
+}
 /**
  *
  */
