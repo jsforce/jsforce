@@ -195,11 +195,11 @@ describe('CRUD based call', () => {
 
 /*------------------------------------------------------------------------*/
 
-/**
- * Test metadata rest api with form data from zip file
- */
-describe('REST API deploy', () => {
-  if (isNodeJS()) {
+if (isNodeJS()) {
+  /**
+   * Test metadata rest api with form data from zip file
+   */
+  describe('REST API deploy', () => {
     it('should deploy metadata in packaged file and deploy package', async () => {
       const zipBuffer = await fs.promises.readFile(
         path.join(__dirname, '/data/MyPackage.zip'),
@@ -219,8 +219,8 @@ describe('REST API deploy', () => {
       );
       assert.ok(result.numberTestsCompleted === 1);
     });
-  }
-});
+  });
+}
 
 describe('deployRecentValidation', () => {
   if (isNodeJS()) {
