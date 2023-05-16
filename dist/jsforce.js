@@ -21026,11 +21026,13 @@ var HttpApi = /*#__PURE__*/function (_EventEmitter) {
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_17___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_13___default()(_this), "_transport", void 0);
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_17___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_13___default()(_this), "_responseType", void 0);
     _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_17___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_13___default()(_this), "_noContentResponse", void 0);
+    _babel_runtime_corejs3_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_17___default()(_babel_runtime_corejs3_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_13___default()(_this), "_options", void 0);
     _this._conn = conn;
     _this._logger = conn._logLevel ? HttpApi._logger.createInstance(conn._logLevel) : HttpApi._logger;
     _this._responseType = options.responseType;
     _this._transport = options.transport || conn._transport;
     _this._noContentResponse = options.noContentResponse;
+    _this._options = options;
     return _this;
   }
 
@@ -21085,7 +21087,7 @@ var HttpApi = /*#__PURE__*/function (_EventEmitter) {
                   _this2.emit('request', _request);
                   _this2._logger.debug(_babel_runtime_corejs3_core_js_stable_instance_concat__WEBPACK_IMPORTED_MODULE_9___default()(_context = "<request> method=".concat(_request.method, ", url=")).call(_context, _request.url));
                   requestTime = _babel_runtime_corejs3_core_js_stable_date_now__WEBPACK_IMPORTED_MODULE_8___default()();
-                  requestPromise = _this2._transport.httpRequest(_request);
+                  requestPromise = _this2._transport.httpRequest(_request, _this2._options);
                   setStream(requestPromise.stream());
                   _context3.prev = 16;
                   _context3.next = 19;
@@ -25609,6 +25611,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
  *
  */
 function createHttpRequestHandlerStreams(req) {
+  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
   var reqBody = req.body;
   var input = new stream_browserify.PassThrough();
   var output = new stream_browserify.PassThrough();
@@ -25634,7 +25637,7 @@ function createHttpRequestHandlerStreams(req) {
                 break;
               }
               _context.next = 3;
-              return (0,stream/* readAll */.dG)(duplex);
+              return (0,stream/* readAll */.dG)(duplex, options.decodeResponseAs);
             case 3:
               resBody = _context.sent;
               duplex.emit('complete', _objectSpread(_objectSpread({}, res), {}, {
@@ -26150,7 +26153,7 @@ function setDefaults(defaults_) {
 function request(req) {
   var options_ = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
   var options = request_objectSpread(request_objectSpread({}, defaults), options_);
-  var _createHttpRequestHan = createHttpRequestHandlerStreams(req),
+  var _createHttpRequestHan = createHttpRequestHandlerStreams(req, options),
     input = _createHttpRequestHan.input,
     output = _createHttpRequestHan.output,
     stream = _createHttpRequestHan.stream;
@@ -27262,7 +27265,8 @@ var MemoryWriteStream = /*#__PURE__*/function (_Writable) {
   }, {
     key: "toString",
     value: function toString() {
-      return this._buf.toString();
+      var encoding = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'utf-8';
+      return this._buf.toString(encoding);
     }
   }]);
   return MemoryWriteStream;
@@ -27272,17 +27276,20 @@ function readAll(_x) {
 }
 function _readAll() {
   _readAll = _babel_runtime_corejs3_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_6___default()( /*#__PURE__*/_babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_3___default().mark(function _callee(rs) {
+    var encoding,
+      _args = arguments;
     return _babel_runtime_corejs3_regenerator__WEBPACK_IMPORTED_MODULE_3___default().wrap(function _callee$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
+            encoding = _args.length > 1 && _args[1] !== undefined ? _args[1] : 'utf-8';
             return _context2.abrupt("return", new (_babel_runtime_corejs3_core_js_stable_promise__WEBPACK_IMPORTED_MODULE_4___default())(function (resolve, reject) {
               var ws = new MemoryWriteStream();
               rs.on('error', reject).pipe(ws).on('finish', function () {
-                return resolve(ws.toString());
+                return resolve(ws.toString(encoding));
               });
             }));
-          case 1:
+          case 2:
           case "end":
             return _context2.stop();
         }
