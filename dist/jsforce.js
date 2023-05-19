@@ -25637,7 +25637,7 @@ function createHttpRequestHandlerStreams(req) {
                 break;
               }
               _context.next = 3;
-              return (0,stream/* readAll */.dG)(duplex, options.decodeResponseAs);
+              return (0,stream/* readAll */.dG)(duplex, options.encoding);
             case 3:
               resBody = _context.sent;
               duplex.emit('complete', _objectSpread(_objectSpread({}, res), {}, {

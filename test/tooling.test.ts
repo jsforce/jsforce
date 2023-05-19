@@ -161,7 +161,7 @@ it('can download a static resource binary blob and properly interpret the result
     assert.ok(isString(record.Body));
 
     const response = await conn.tooling.request<string>(record.Body, {
-      decodeResponseAs: 'base64',
+      encoding: 'base64',
     });
     assert.ok(response == base64bytes);
   }
