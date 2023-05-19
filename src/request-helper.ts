@@ -6,7 +6,10 @@ import FormData from 'form-data';
 /**
  *
  */
-export function createHttpRequestHandlerStreams(req: HttpRequest) {
+export function createHttpRequestHandlerStreams(
+  req: HttpRequest,
+  options: HttpRequestOptions = {},
+) {
   const { body: reqBody } = req;
   const input = new PassThrough();
   const output = new PassThrough();
@@ -23,7 +26,7 @@ export function createHttpRequestHandlerStreams(req: HttpRequest) {
   }
   duplex.on('response', async (res) => {
     if (duplex.listenerCount('complete') > 0) {
-      const resBody = await readAll(duplex);
+      const resBody = await readAll(duplex, options.encoding);
       duplex.emit('complete', {
         ...res,
         body: resBody,

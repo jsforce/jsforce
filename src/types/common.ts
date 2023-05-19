@@ -39,6 +39,7 @@ export type HttpRequestOptions = {
   httpProxy?: string;
   timeout?: number;
   followRedirect?: boolean | ((redirectUrl: string) => HttpRequest | null);
+  encoding?: string;
 };
 
 export type HttpResponse = {

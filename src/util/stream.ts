@@ -36,17 +36,17 @@ class MemoryWriteStream extends Writable {
     callback();
   }
 
-  toString() {
-    return this._buf.toString();
+  toString(encoding: string = 'utf-8') {
+    return this._buf.toString(encoding);
   }
 }
 
-export async function readAll(rs: Readable) {
+export async function readAll(rs: Readable, encoding: string = 'utf-8') {
   return new Promise<string>((resolve, reject) => {
     const ws = new MemoryWriteStream();
     rs.on('error', reject)
       .pipe(ws)
-      .on('finish', () => resolve(ws.toString()));
+      .on('finish', () => resolve(ws.toString(encoding)));
   });
 }
 
