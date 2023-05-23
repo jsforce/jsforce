@@ -172,7 +172,10 @@ export class OAuth2 {
     codeOrParams: string | { grant_type: string; [name: string]: string },
     params: { [prop: string]: string } = {},
   ): Promise<TokenResponse> {
-    if (!this.clientId || !this.redirectUri) {
+    if (
+      typeof codeOrParams === 'string' &&
+      (!this.clientId || !this.redirectUri)
+    ) {
       throw new Error(
         'No OAuth2 client id or redirect uri configuration is specified',
       );
@@ -182,11 +185,15 @@ export class OAuth2 {
       ...(typeof codeOrParams === 'string'
         ? { grant_type: 'authorization_code', code: codeOrParams }
         : codeOrParams),
-      client_id: this.clientId,
-      redirect_uri: this.redirectUri,
     };
+    if (this.clientId) {
+      _params.client_id = this.clientId;
+    }
     if (this.clientSecret) {
       _params.client_secret = this.clientSecret;
+    }
+    if (this.redirectUri) {
+      _params.redirect_uri = this.redirectUri;
     }
     const ret = await this._postParams(_params);
     return ret as TokenResponse;
