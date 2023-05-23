@@ -469,13 +469,15 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   }
 
   /**
-   * Authorize (using oauth2 web server flow)
+   * Authorize the connection using OAuth2 flow.
+   * Typically, just pass the code returned from authorization server in the first argument to complete authorization.
+   * If you want to authorize with grant types other than `authorization_code`, you can also pass params object with the grant type.
    */
   async authorize(
-    code: string,
+    codeOrParams: string | { grant_type: string; [name: string]: string },
     params: { [name: string]: string } = {},
   ): Promise<UserInfo> {
-    const res = await this.oauth2.requestToken(code, params);
+    const res = await this.oauth2.requestToken(codeOrParams, params);
     const userInfo = parseIdUrl(res.id);
     this._establish({
       instanceUrl: res.instance_url,

@@ -164,11 +164,12 @@ export class OAuth2 {
   }
 
   /**
-   * OAuth2 Web Server Authentication Flow (Authorization Code)
-   * Access Token Request
+   * Send access token request to the token endpoint.
+   * When a code (string) is passed in first argument, it will use Web Server Authentication Flow (Authorization Code Grant).
+   * Otherwise, it will use the specified `grant_type` and pass parameters to the endpoint.
    */
   async requestToken(
-    code: string,
+    codeOrParams: string | { grant_type: string; [name: string]: string },
     params: { [prop: string]: string } = {},
   ): Promise<TokenResponse> {
     if (!this.clientId || !this.redirectUri) {
@@ -178,8 +179,9 @@ export class OAuth2 {
     }
     const _params: { [prop: string]: string } = {
       ...params,
-      grant_type: 'authorization_code',
-      code,
+      ...(typeof codeOrParams === 'string'
+        ? { grant_type: 'authorization_code', code: codeOrParams }
+        : codeOrParams),
       client_id: this.clientId,
       redirect_uri: this.redirectUri,
     };
