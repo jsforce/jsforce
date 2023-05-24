@@ -1,5 +1,5 @@
-import assert from 'assert';
-import { SfDate } from 'jsforce';
+import { expect } from '@esm-bundle/chai'
+import { SfDate } from '../src/date';
 import { createSOQL } from '../src/soql-builder';
 
 /**
@@ -15,11 +15,7 @@ describe('soql-builder', () => {
       limit: 10,
       offset: 20,
     });
-    assert.ok(
-      soql ===
-        'SELECT Id, Name FROM Account ' +
-          "WHERE Id = '0011000000NPNrW' LIMIT 10 OFFSET 20",
-    );
+    expect(soql).to.equal("SELECT Id, Name FROM Account WHERE Id = '0011000000NPNrW' LIMIT 10 OFFSET 20")
   });
 
   /**
@@ -33,11 +29,7 @@ describe('soql-builder', () => {
         $or: [{ Id: '0011000000NPNrW' }, { Id: '00110000005WlZd' }],
       },
     });
-    assert.ok(
-      soql ===
-        'SELECT Id, Name FROM Account ' +
-          "WHERE Id = '0011000000NPNrW' OR Id = '00110000005WlZd'",
-    );
+    expect(soql).to.equal("SELECT Id, Name FROM Account WHERE Id = '0011000000NPNrW' OR Id = '00110000005WlZd'")
   });
 
   //
@@ -50,11 +42,7 @@ describe('soql-builder', () => {
         $or: [{ Id: '0011000000NPNrW' }, { Id: '00110000005WlZd' }],
       },
     });
-    assert.ok(
-      soql ===
-        'SELECT Id, Name FROM Account ' +
-          "WHERE Type = 'Partner' AND (Id = '0011000000NPNrW' OR Id = '00110000005WlZd')",
-    );
+    expect(soql).to.equal("SELECT Id, Name FROM Account WHERE Type = 'Partner' AND (Id = '0011000000NPNrW' OR Id = '00110000005WlZd')")
   });
 
   //
@@ -70,11 +58,7 @@ describe('soql-builder', () => {
         ],
       },
     });
-    assert.ok(
-      soql ===
-        'SELECT Id FROM Opportunity ' +
-          "WHERE Account.Type = 'Partner' OR (Amount >= 1000 AND Amount < 2000)",
-    );
+    expect(soql).to.equal("SELECT Id FROM Opportunity WHERE Account.Type = 'Partner' OR (Amount >= 1000 AND Amount < 2000)")
   });
 
   //
@@ -91,11 +75,7 @@ describe('soql-builder', () => {
         },
       },
     });
-    assert.ok(
-      soql ===
-        'SELECT Id FROM Opportunity ' +
-          "WHERE NOT (Amount >= 1000 AND Amount < 2000 AND Account.Type = 'Customer')",
-    );
+    expect(soql).to.equal("SELECT Id FROM Opportunity WHERE NOT (Amount >= 1000 AND Amount < 2000 AND Account.Type = 'Customer')")
   });
 
   //
@@ -109,11 +89,7 @@ describe('soql-builder', () => {
         Amount: { $gte: 1000 },
       },
     });
-    assert.ok(
-      soql ===
-        'SELECT Id FROM Opportunity ' +
-          "WHERE (NOT Name LIKE 'Test%') AND Amount >= 1000",
-    );
+    expect(soql).to.equal("SELECT Id FROM Opportunity WHERE (NOT Name LIKE 'Test%') AND Amount >= 1000")
   });
 
   //
@@ -135,11 +111,7 @@ describe('soql-builder', () => {
         ],
       },
     });
-    assert.ok(
-      soql ===
-        'SELECT Id FROM Opportunity ' +
-          "WHERE Account.Type = 'Partner' OR (NOT (Amount >= 1000 AND Amount < 2000 AND Account.Type = 'Customer'))",
-    );
+    expect(soql).to.equal("SELECT Id FROM Opportunity WHERE Account.Type = 'Partner' OR (NOT (Amount >= 1000 AND Amount < 2000 AND Account.Type = 'Customer'))")
   });
 
   //
@@ -159,12 +131,7 @@ describe('soql-builder', () => {
         ],
       },
     });
-    assert.ok(
-      soql ===
-        'SELECT Id FROM Opportunity ' +
-          'WHERE CloseDate >= LAST_N_DAYS:10 AND CloseDate <= TOMORROW ' +
-          'AND CloseDate > 2010-11-05 AND CreatedDate < 2010-11-01T19:45:04Z',
-    );
+    expect(soql).to.equal("SELECT Id FROM Opportunity WHERE CloseDate >= LAST_N_DAYS:10 AND CloseDate <= TOMORROW AND CloseDate > 2010-11-05 AND CreatedDate < 2010-11-01T19:45:04Z")
   });
 
   //
@@ -176,11 +143,7 @@ describe('soql-builder', () => {
         'Owner.Name': { $nlike: '%Test%' },
       },
     });
-    assert.ok(
-      soql ===
-        'SELECT Id FROM Account ' +
-          "WHERE Name LIKE 'John\\'s%' AND (NOT Owner.Name LIKE '%Test%')",
-    );
+    expect(soql).to.equal("SELECT Id FROM Account WHERE Name LIKE 'John\\'s%' AND (NOT Owner.Name LIKE '%Test%')")
   });
 
   //
@@ -193,12 +156,7 @@ describe('soql-builder', () => {
         'Owner.Id': { $nin: ['00510000000N2C2'] },
       },
     });
-    assert.ok(
-      soql ===
-        'SELECT Id FROM Contact ' +
-          "WHERE Account.Id IN ('0011000000NPNrW', '00110000005WlZd') " +
-          "AND Owner.Id NOT IN ('00510000000N2C2')",
-    );
+    expect(soql).to.equal("SELECT Id FROM Contact WHERE Account.Id IN ('0011000000NPNrW', '00110000005WlZd') AND Owner.Id NOT IN ('00510000000N2C2')")
   });
 
   //
@@ -210,9 +168,7 @@ describe('soql-builder', () => {
         WhoId: { $exists: false },
       },
     });
-    assert.ok(
-      soql === 'SELECT Id FROM Task ' + 'WHERE WhatId != null AND WhoId = null',
-    );
+    expect(soql).to.equal("SELECT Id FROM Task WHERE WhatId != null AND WhoId = null")
   });
 
   //
@@ -224,12 +180,7 @@ describe('soql-builder', () => {
         Certifications__c: { $excludes: ['Oracle'] },
       },
     });
-    assert.ok(
-      soql ===
-        'SELECT Id FROM Contact ' +
-          "WHERE Languages__c INCLUDES ('English', 'Japanese') " +
-          "AND Certifications__c EXCLUDES ('Oracle')",
-    );
+    expect(soql).to.equal("SELECT Id FROM Contact WHERE Languages__c INCLUDES ('English', 'Japanese') AND Certifications__c EXCLUDES ('Oracle')")
   });
 
   //
@@ -241,11 +192,7 @@ describe('soql-builder', () => {
         LastActivityDate: null,
       },
     });
-    assert.ok(
-      soql ===
-        'SELECT Id FROM Account ' +
-          'WHERE Type != null AND LastActivityDate = null',
-    );
+    expect(soql).to.equal("SELECT Id FROM Account WHERE Type != null AND LastActivityDate = null")
   });
 
   //
@@ -256,7 +203,7 @@ describe('soql-builder', () => {
         Type: undefined,
       },
     });
-    assert.ok(soql === 'SELECT Id FROM Account');
+    expect(soql).to.equal("SELECT Id FROM Account")
   });
 
   //
@@ -266,12 +213,7 @@ describe('soql-builder', () => {
       sort: '-CreatedDate',
       limit: 10,
     });
-    assert.ok(
-      soql ===
-        'SELECT Id FROM Opportunity ' +
-          'ORDER BY CreatedDate DESC ' +
-          'LIMIT 10',
-    );
+    expect(soql).to.equal("SELECT Id FROM Opportunity ORDER BY CreatedDate DESC LIMIT 10")
   });
 
   //
@@ -287,13 +229,7 @@ describe('soql-builder', () => {
       ] as any, // TODO: remove any
       limit: 10,
     });
-    assert.ok(
-      soql ===
-        'SELECT Id FROM Opportunity ' +
-          "WHERE Owner.Name LIKE 'A%' " +
-          'ORDER BY CreatedDate DESC, Name ASC ' +
-          'LIMIT 10',
-    );
+    expect(soql).to.equal("SELECT Id FROM Opportunity WHERE Owner.Name LIKE 'A%' ORDER BY CreatedDate DESC, Name ASC LIMIT 10")
   });
 
   //
@@ -309,12 +245,6 @@ describe('soql-builder', () => {
       } as any, // TODO: remove any
       limit: 10,
     });
-    assert.ok(
-      soql ===
-        'SELECT Id FROM Opportunity ' +
-          "WHERE Owner.Name LIKE 'A%' " +
-          'ORDER BY CreatedDate DESC, Name ASC ' +
-          'LIMIT 10',
-    );
+    expect(soql).to.equal("SELECT Id FROM Opportunity WHERE Owner.Name LIKE 'A%' ORDER BY CreatedDate DESC, Name ASC LIMIT 10")
   });
 });

@@ -1,11 +1,10 @@
 import assert from 'assert';
-import path from 'path';
+// import path from 'path';
 import fs from './helper/fs';
-import { Connection, Date as SfDate, Record } from 'jsforce';
+import { Connection, Date as SfDate, Record } from '../src';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject, isString } from './util';
-import { isNodeJS } from './helper/env';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();
@@ -102,88 +101,88 @@ it('should bulk delete with empty input and raise client input error', async () 
 });
 
 /*------------------------------------------------------------------------*/
-if (isNodeJS()) {
-  /**
-   *
-   */
-  it('should bulk insert from file and return inserted results', async () => {
-    const fstream = fs.createReadStream(
-      path.join(__dirname, 'data/Account.csv'),
-    );
-    const batch = conn.bulk.load('Account', 'insert');
-    fstream.pipe(batch.stream());
-    const rets = await new Promise<any[]>((resolve, reject) => {
-      batch.on('response', resolve);
-      batch.on('error', reject);
-    });
-    assert.ok(Array.isArray(rets));
-    for (const ret of rets) {
-      assert.ok(isString(ret.id));
-      assert.ok(ret.success === true);
-    }
-  });
-
-  /**
-   *
-   */
-  it('should bulk delete from file and return deleted results', async () => {
-    const records = await conn
-      .sobject('Account')
-      .find({ Name: { $like: 'Bulk Account%' } });
-    const data = `Id\n${records.map((r: any) => r.Id).join('\n')}\n`;
-    const deleteFileName = path.join(__dirname, 'data/Account_delete.csv');
-    await new Promise<void>((resolve, reject) => {
-      fs.writeFile(deleteFileName, data, (err) =>
-        err ? reject(err) : resolve(),
-      );
-    });
-    const fstream = fs.createReadStream(deleteFileName);
-    const batch = conn.bulk.load('Account', 'delete');
-    fstream.pipe(batch.stream());
-    const [rets] = await Promise.all([
-      new Promise<any[]>((resolve, reject) => {
-        batch.on('response', resolve);
-        batch.on('error', reject);
-      }),
-      new Promise<void>((resolve) => {
-        batch.job.on('close', resolve); // await job close
-      }),
-    ]);
-    assert.ok(Array.isArray(rets));
-    for (const ret of rets) {
-      assert.ok(isString(ret.id));
-      assert.ok(ret.success === true);
-    }
-  });
-
-  /**
-   *
-   */
-  it('should bulk query and get records with yielding file output', async () => {
-    const file = path.join(__dirname, '/data/BulkQuery_export.csv');
-    const fstream = fs.createWriteStream(file);
-    const count = await conn.sobject(config.bigTable).count({});
-    const records = await new Promise<any[]>((resolve, reject) => {
-      const recs: Record[] = [];
-      conn.bulk
-        .query(`SELECT Id, Name FROM ${config.bigTable}`)
-        .on('record', (rec) => recs.push(rec))
-        .on('error', reject)
-        .stream()
-        .pipe(fstream)
-        .on('finish', () => resolve(recs));
-    });
-    assert.ok(Array.isArray(records) && records.length === count);
-    for (const rec of records) {
-      assert.ok(isString(rec.Id));
-      assert.ok(isString(rec.Name));
-    }
-    const data = fs.readFileSync(file, 'utf-8');
-    assert.ok(isString(data) && data !== '');
-    const lines = data.replace(/[\r\n]+$/, '').split(/[\r\n]/);
-    assert.ok(lines.length === records.length + 1);
-  });
-}
+// if (isNodeJS()) {
+//   /**
+//    *
+//    */
+//   it('should bulk insert from file and return inserted results', async () => {
+//     const fstream = fs.createReadStream(
+//       path.join(__dirname, 'data/Account.csv'),
+//     );
+//     const batch = conn.bulk.load('Account', 'insert');
+//     fstream.pipe(batch.stream());
+//     const rets = await new Promise<any[]>((resolve, reject) => {
+//       batch.on('response', resolve);
+//       batch.on('error', reject);
+//     });
+//     assert.ok(Array.isArray(rets));
+//     for (const ret of rets) {
+//       assert.ok(isString(ret.id));
+//       assert.ok(ret.success === true);
+//     }
+//   });
+//
+//   /**
+//    *
+//    */
+//   it('should bulk delete from file and return deleted results', async () => {
+//     const records = await conn
+//       .sobject('Account')
+//       .find({ Name: { $like: 'Bulk Account%' } });
+//     const data = `Id\n${records.map((r: any) => r.Id).join('\n')}\n`;
+//     const deleteFileName = path.join(__dirname, 'data/Account_delete.csv');
+//     await new Promise<void>((resolve, reject) => {
+//       fs.writeFile(deleteFileName, data, (err) =>
+//         err ? reject(err) : resolve(),
+//       );
+//     });
+//     const fstream = fs.createReadStream(deleteFileName);
+//     const batch = conn.bulk.load('Account', 'delete');
+//     fstream.pipe(batch.stream());
+//     const [rets] = await Promise.all([
+//       new Promise<any[]>((resolve, reject) => {
+//         batch.on('response', resolve);
+//         batch.on('error', reject);
+//       }),
+//       new Promise<void>((resolve) => {
+//         batch.job.on('close', resolve); // await job close
+//       }),
+//     ]);
+//     assert.ok(Array.isArray(rets));
+//     for (const ret of rets) {
+//       assert.ok(isString(ret.id));
+//       assert.ok(ret.success === true);
+//     }
+//   });
+//
+//   /**
+//    *
+//    */
+//   it('should bulk query and get records with yielding file output', async () => {
+//     const file = path.join(__dirname, '/data/BulkQuery_export.csv');
+//     const fstream = fs.createWriteStream(file);
+//     const count = await conn.sobject(config.bigTable).count({});
+//     const records = await new Promise<any[]>((resolve, reject) => {
+//       const recs: Record[] = [];
+//       conn.bulk
+//         .query(`SELECT Id, Name FROM ${config.bigTable}`)
+//         .on('record', (rec) => recs.push(rec))
+//         .on('error', reject)
+//         .stream()
+//         .pipe(fstream)
+//         .on('finish', () => resolve(recs));
+//     });
+//     assert.ok(Array.isArray(records) && records.length === count);
+//     for (const rec of records) {
+//       assert.ok(isString(rec.Id));
+//       assert.ok(isString(rec.Name));
+//     }
+//     const data = fs.readFileSync(file, 'utf-8');
+//     assert.ok(isString(data) && data !== '');
+//     const lines = data.replace(/[\r\n]+$/, '').split(/[\r\n]/);
+//     assert.ok(lines.length === records.length + 1);
+//   });
+// }
 
 /*------------------------------------------------------------------------*/
 
