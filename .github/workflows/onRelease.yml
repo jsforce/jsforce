@@ -1,0 +1,33 @@
+name: publish
+
+on:
+  release:
+    types: [released]
+  # support manual release in case something goes wrong and needs to be repeated or tested
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: tag that needs to publish
+        type: string
+        required: true
+jobs:
+  npm-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Release
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.release.tag_name }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: lts
+          cache: npm
+        env:
+          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
+      - name: Install dependencies
+        run: npm install 
+      - name: Build
+        run: npm run clean && npm run build
+      - name: Publish
+        run: npm publish --tag beta
+
