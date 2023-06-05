@@ -1,4 +1,6 @@
 name: manual release
+permissions:
+  contents: write
 
 on:
   workflow_dispatch:
@@ -11,6 +13,11 @@ jobs:
         with:
           token: ${{ secrets.SVC_CLI_BOT_GITHUB_TOKEN }}
           ref: ${{ github.ref }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+          cache: npm
+      - run: npm install
       - name: Conventional Changelog Action
         id: changelog
         uses: TriPSs/conventional-changelog-action@d479ae227c5362744063d6bc7469352a0730fdcd
