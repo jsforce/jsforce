@@ -21,7 +21,7 @@ jobs:
           ref: ${{ github.event.release.tag_name || inputs.tag }}
       - uses: actions/setup-node@v3
         with:
-          node-version: lts
+          node-version: lts/*
           cache: npm
         env:
           NPM_TOKEN: ${{secrets.NPM_TOKEN}}
