@@ -18,7 +18,7 @@ jobs:
       - name: Release
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.release.tag_name }}
+          ref: ${{ github.event.release.tag_name || inputs.tag }}
       - uses: actions/setup-node@v3
         with:
           node-version: lts
