@@ -10,9 +10,10 @@ jobs:
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.SVC_CLI_BOT_GITHUB_TOKEN }}
+          ref: ${{ github.ref }}
       - name: Conventional Changelog Action
         id: changelog
-        uses: TriPSs/conventional-changelog-action@d360fad3a42feca6462f72c97c165d60a02d4bf2
+        uses: TriPSs/conventional-changelog-action@d479ae227c5362744063d6bc7469352a0730fdcd
         # overriding some of the basic behaviors to just get the changelog
         with:
           git-user-name: svc-cli-bot
@@ -21,7 +22,7 @@ jobs:
           output-file: false
           pre-commit: ./scripts/build.js
           pre-release: true
-          pre-release-identifier: "beta"
+          pre-release-identifier: 'beta'
           # always do the release, even if there are no semantic commits
           skip-on-empty: false
           tag-prefix: ''
