@@ -2,7 +2,8 @@ name: publish
 
 on:
   release:
-    types: [released]
+    # TODO: when this goes to main branch, change it to released
+    types: [prereleased]
   # support manual release in case something goes wrong and needs to be repeated or tested
   workflow_dispatch:
     inputs:
@@ -25,9 +26,8 @@ jobs:
         env:
           NPM_TOKEN: ${{secrets.NPM_TOKEN}}
       - name: Install dependencies
-        run: npm install 
+        run: npm install
       - name: Build
         run: npm run clean && npm run build
       - name: Publish
         run: npm publish --tag beta
-
