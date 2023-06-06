@@ -3,6 +3,8 @@ import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isNumber, isString, isObject } from './util';
 import type { Record } from 'jsforce';
+import fs from './helper/fs';
+import { isNodeJS } from './helper/env';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();
@@ -90,6 +92,90 @@ it('should get completions and return completions', async () => {
   assert.ok(isObject(res));
   assert.ok(isObject(res.publicDeclarations));
 });
+
+it('can create static resource using application/json content type', async () => {
+  if (isNodeJS()) {
+    const request = createStaticResourceRequest(
+      fs.readFileSync('test/data/test.zip').toString('base64'),
+    );
+    const record = await conn.tooling.create('StaticResource', request);
+    assert.ok(record.success);
+  }
+});
+
+it('can create static resource using multipart/form-data content type with a buffer', async () => {
+  if (isNodeJS()) {
+    const request = createStaticResourceRequest(
+      fs.readFileSync('test/data/test.zip'),
+    );
+    const options = {
+      multipartFileFields: {
+        Body: {
+          contentType: 'application/zip',
+          filename: 'test.zip',
+        },
+      },
+    };
+    const record = await conn.tooling.create(
+      'StaticResource',
+      request,
+      options,
+    );
+    assert.ok(record.success);
+  }
+});
+
+it('can create static resource using multipart/form-data content type with a base64 encoded string', async () => {
+  if (isNodeJS()) {
+    const request = createStaticResourceRequest(
+      fs.readFileSync('test/data/test.zip').toString('base64'),
+    );
+
+    const options = {
+      multipartFileFields: {
+        Body: {
+          contentType: 'application/zip',
+          filename: 'test.zip',
+        },
+      },
+    };
+
+    const record = await conn.tooling.create(
+      'StaticResource',
+      request,
+      options,
+    );
+    assert.ok(record.success);
+  }
+});
+
+it('can download a static resource binary blob and properly interpret the results', async () => {
+  if (isNodeJS()) {
+    const base64bytes = fs
+      .readFileSync('test/data/test.zip')
+      .toString('base64');
+    const request = createStaticResourceRequest(base64bytes);
+    const result = await conn.tooling.create('StaticResource', request);
+    assert.ok(result.success);
+
+    const record = await conn.tooling.retrieve('StaticResource', result.id);
+    assert.ok(isString(record.Body));
+
+    const response = await conn.tooling.request<string>(record.Body, {
+      encoding: 'base64',
+    });
+    assert.ok(response == base64bytes);
+  }
+});
+
+function createStaticResourceRequest(body: String | Buffer) {
+  return {
+    ContentType: 'application/zip',
+    CacheControl: 'Private',
+    Name: 'TestZip_' + Date.now(),
+    Body: body,
+  };
+}
 
 /**
  *

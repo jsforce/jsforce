@@ -63,6 +63,7 @@ import SoapApi from './api/soap';
 import Streaming from './api/streaming';
 import Tooling from './api/tooling';
 import { JwtOAuth2Config, JwtOAuth2 } from './jwtOAuth2';
+import FormData from 'form-data';
 
 /**
  * type definitions
@@ -468,13 +469,15 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   }
 
   /**
-   * Authorize (using oauth2 web server flow)
+   * Authorize the connection using OAuth2 flow.
+   * Typically, just pass the code returned from authorization server in the first argument to complete authorization.
+   * If you want to authorize with grant types other than `authorization_code`, you can also pass params object with the grant type.
    */
   async authorize(
-    code: string,
+    codeOrParams: string | { grant_type: string; [name: string]: string },
     params: { [name: string]: string } = {},
   ): Promise<UserInfo> {
-    const res = await this.oauth2.requestToken(code, params);
+    const res = await this.oauth2.requestToken(codeOrParams, params);
     const userInfo = parseIdUrl(res.id);
     this._establish({
       instanceUrl: res.instance_url,
@@ -969,13 +972,41 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
       throw new Error('No SObject Type defined in record');
     }
     const url = [this._baseUrl(), 'sobjects', sobjectType].join('/');
+    let contentType, body;
+
+    if (options && options.multipartFileFields) {
+      // Send the record as a multipart/form-data request. Useful for fields containing large binary blobs.
+      const form = new FormData();
+      // Extract the fields requested to be sent separately from the JSON
+      Object.entries(options.multipartFileFields).forEach(
+        ([fieldName, fileDetails]) => {
+          form.append(
+            fieldName,
+            Buffer.from(rec[fieldName], 'base64'),
+            fileDetails,
+          );
+          delete rec[fieldName];
+        },
+      );
+      // Serialize the remaining fields as JSON
+      form.append(type, JSON.stringify(rec), {
+        contentType: 'application/json',
+      });
+      contentType = form.getHeaders()['content-type']; // This is necessary to ensure the 'boundary' is present
+      body = form;
+    } else {
+      // Default behavior: send the request as JSON
+      contentType = 'application/json';
+      body = JSON.stringify(rec);
+    }
+
     return this.request({
       method: 'POST',
       url,
-      body: JSON.stringify(rec),
+      body: body,
       headers: {
         ...(options.headers || {}),
-        'content-type': 'application/json',
+        'content-type': contentType,
       },
     });
   }

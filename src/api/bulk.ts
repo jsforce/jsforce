@@ -177,7 +177,9 @@ export type IngestJobV2Results<S extends Schema> = {
 };
 
 type NewIngestJobOptions = Required<Pick<JobInfoV2, 'object' | 'operation'>> &
-  Partial<Pick<JobInfoV2, 'assignmentRuleId' | 'externalIdFieldName'>>;
+  Partial<
+    Pick<JobInfoV2, 'assignmentRuleId' | 'externalIdFieldName' | 'lineEnding'>
+  >;
 
 type ExistingIngestJobOptions = Pick<JobInfoV2, 'id'>;
 
@@ -1226,38 +1228,40 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
 
     const httpApi = new HttpApi(this.#connection, options);
     httpApi.on('response', (response: HttpResponse) => {
-      this.locator = response.headers['sforce-locator']
-    })
+      this.locator = response.headers['sforce-locator'];
+    });
     return httpApi.request<R>(request_);
   }
 
   private getResultsUrl() {
-    const url = `${this.#connection.instanceUrl}/services/data/v${this.#connection.version}/jobs/query/${getJobIdOrError(this.jobInfo)}/results`
+    const url = `${this.#connection.instanceUrl}/services/data/v${
+      this.#connection.version
+    }/jobs/query/${getJobIdOrError(this.jobInfo)}/results`;
 
-    return this.locator ? `${url}?locator=${this.locator}` : url
+    return this.locator ? `${url}?locator=${this.locator}` : url;
   }
 
   async getResults(): Promise<Record[]> {
     if (this.finished && this.#queryResults) {
-      return this.#queryResults
+      return this.#queryResults;
     }
 
-    this.#queryResults = []
+    this.#queryResults = [];
 
     while (this.locator !== 'null') {
       const nextResults = await this.request<Record[]>({
         method: 'GET',
         url: this.getResultsUrl(),
         headers: {
-          'Accept': 'text/csv',
-        }
-      })
+          Accept: 'text/csv',
+        },
+      });
 
-      this.#queryResults = this.#queryResults.concat(nextResults)
+      this.#queryResults = this.#queryResults.concat(nextResults);
     }
-    this.finished = true
+    this.finished = true;
 
-    return this.#queryResults
+    return this.#queryResults;
   }
 
   async delete(): Promise<void> {
@@ -1330,6 +1334,7 @@ export class IngestJobV2<
           externalIdFieldName: this.jobInfo?.externalIdFieldName,
           object: this.jobInfo?.object,
           operation: this.jobInfo?.operation,
+          lineEnding: this.jobInfo?.lineEnding,
         }),
         headers: {
           'Content-Type': 'application/json; charset=utf-8',

@@ -260,7 +260,10 @@ export default function request(
   options_: HttpRequestOptions = {},
 ) {
   const options = { ...defaults, ...options_ };
-  const { input, output, stream } = createHttpRequestHandlerStreams(req);
+  const { input, output, stream } = createHttpRequestHandlerStreams(
+    req,
+    options,
+  );
   if (typeof window !== 'undefined' && typeof window.fetch === 'function') {
     startFetchRequest(req, options, input, output, stream);
   } else {
