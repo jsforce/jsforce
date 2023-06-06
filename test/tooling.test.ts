@@ -2,6 +2,7 @@ import assert from 'assert';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isNumber, isString, isObject } from './util';
+import type { Record } from 'jsforce';
 import fs from './helper/fs';
 import { isNodeJS } from './helper/env';
 
@@ -175,6 +176,78 @@ function createStaticResourceRequest(body: String | Buffer) {
     Body: body,
   };
 }
+
+/**
+ *
+ */
+describe('single record crud', () => {
+  let debugLevelId: string;
+  let debugLevel: Record;
+
+  //
+  it('should create debuglevel and get created obj', async () => {
+    const ret = await conn.tooling.sobject('DebugLevel').create({
+      ApexCode: 'ERROR',
+      ApexProfiling: 'ERROR',
+      Callout: 'ERROR',
+      Database: 'ERROR',
+      DeveloperName: 'jsforce_testing',
+      MasterLabel: 'jsforce Testing',
+      Nba: 'ERROR',
+      System: 'ERROR',
+      Validation: 'ERROR',
+      Visualforce: 'ERROR',
+      Wave: 'ERROR',
+      Workflow: 'ERROR',
+    });
+    assert.ok(ret.success);
+    assert.ok(typeof ret.id === 'string');
+    debugLevelId = ret.id as string;
+  });
+
+  //
+  it('should retrieve debuglevel and return a record', async () => {
+    const record = await conn.tooling
+      .sobject('DebugLevel')
+      .retrieve(debugLevelId);
+    assert.ok(typeof record.Id === 'string');
+    assert.ok(isObject(record.attributes));
+    debugLevel = record;
+  });
+
+  //
+  it('should update debuglevel, get successful result, and retrieve the updated record', async () => {
+    const ret = await conn.tooling
+      .sobject('DebugLevel')
+      .record(debugLevel.Id as string)
+      .update({ ApexCode: 'WARN' });
+    assert.ok(ret.success);
+    const record = await conn.tooling
+      .sobject('DebugLevel')
+      .record(debugLevelId)
+      .retrieve();
+    assert.ok(record.ApexCode === 'WARN');
+    assert.ok(isObject(record.attributes));
+  });
+
+  //
+  it('should delete debuglevel, get successful results, and not get any records', async () => {
+    const ret = await conn.tooling
+      .sobject('DebugLevel')
+      .record(debugLevelId)
+      .destroy();
+    assert.ok(ret.success);
+    let record;
+    let err;
+    try {
+      record = await conn.tooling.sobject('DebugLevel').retrieve(debugLevelId);
+    } catch (error) {
+      err = error;
+    }
+    assert.ok(record === undefined);
+    assert.ok(err.name === 'NOT_FOUND');
+  });
+});
 
 /**
  *
