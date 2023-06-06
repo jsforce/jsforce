@@ -220,6 +220,7 @@ type DescribeGlobalSObjectResult = {
   deprecatedAndHidden: boolean;
   feedEnabled: boolean;
   hasSubtypes: boolean;
+  idEnabled: boolean;
   isInterface: boolean;
   isSubtype: boolean;
   keyPrefix: Optional<string>;
