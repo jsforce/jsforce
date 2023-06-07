@@ -18,11 +18,11 @@ export {
   VERSION,
   SfDate as Date,
   SfDate,
-  Registry,
   BrowserClient,
   RecordReference,
   RecordStream,
   registry,
   browser,
 };
+export type { Registry };
 export default jsforce;

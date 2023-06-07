@@ -21,7 +21,7 @@ import {
 import { QueryExplainResult } from '../query';
 
 /*----------------------------------------------------------------------------------*/
-export {
+export type {
   ReportMetadata,
   ReportExecuteResult,
   ReportRetrieveResult,
