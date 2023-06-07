@@ -14,20 +14,6 @@ jobs:
   npm-publish:
     runs-on: ubuntu-latest
     steps:
-      - name: Release
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.release.tag_name }}
-      - uses: actions/setup-node@v3
-        with:
-          node-version: lts
-          cache: npm
-        env:
-          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
-      - name: Install dependencies
-        run: npm install 
-      - name: Build
-        run: npm run clean && npm run build
-      - name: Publish
-        run: npm publish --tag beta
-
+      - run: |
+          echo "Do not run the release action on main.  Use 2.0 as the branch"
+          exit 1
