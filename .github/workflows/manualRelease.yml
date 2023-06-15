@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          token: ${{ secrets.SVC_CLI_BOT_GITHUB_TOKEN }}
+          token: ${{ secrets.SVC_CLI_BOT_JSFORCE_GITHUB_TOKEN }}
           ref: ${{ github.ref }}
       - uses: actions/setup-node@v3
         with:
@@ -25,7 +25,7 @@ jobs:
         with:
           git-user-name: svc-cli-bot
           git-user-email: svc_cli_bot@salesforce.com
-          github-token: ${{ secrets.SVC_CLI_BOT_GITHUB_TOKEN }}
+          github-token: ${{ secrets.SVC_CLI_BOT_JSFORCE_GITHUB_TOKEN }}
           output-file: false
           pre-commit: ./scripts/build.js
           pre-release: true
@@ -41,7 +41,7 @@ jobs:
       - name: Create Github Release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.SVC_CLI_BOT_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.SVC_CLI_BOT_JSFORCE_GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.packageVersion.outputs.prop }}
           release_name: ${{ steps.packageVersion.outputs.prop }}
