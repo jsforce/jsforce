@@ -1,4 +1,4 @@
-import { Registry } from './types';
+import type { Registry } from './types';
 import { FileRegistry } from './file';
 import { SfdxRegistry } from './sfdx';
 import { EmptyRegistry } from './empty';
@@ -15,5 +15,5 @@ try {
 }
 
 export default registry;
-
-export { Registry, FileRegistry, SfdxRegistry, EmptyRegistry };
+export type { Registry };
+export { FileRegistry, SfdxRegistry, EmptyRegistry };
