@@ -1076,11 +1076,11 @@ export class BulkV2<S extends Schema> {
    */
   async query(
     soql: string,
-    options?: Partial<BulkV2PollingOptions>,
+    options?: Partial<BulkV2PollingOptions> & { scanAll?: boolean },
   ): Promise<Record[]> {
     const queryJob = new QueryJobV2({
       connection: this.#connection,
-      operation: 'query',
+      operation: options?.scanAll ? 'queryAll' : 'query',
       query: soql,
       pollingOptions: this,
     });
