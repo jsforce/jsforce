@@ -1,16 +1,13 @@
 import OAuth2, { OAuth2Config } from './oauth2';
 
-export type JwtOAuth2Config = OAuth2Config & {
-  privateKey?: string;
-  privateKeyFile?: string;
-  authCode?: string;
-  refreshToken?: string;
-  loginUrl?: string;
-  username?: string;
-};
-
+/**
+ * @deprecated
+ */
 export class JwtOAuth2 extends OAuth2 {
   constructor(config: OAuth2Config) {
+    console.warn(
+      'JwtOAuth2 is deprecated and will be removed in next stable release, please use OAuth2 instead.',
+    );
     super(config);
   }
 

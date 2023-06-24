@@ -62,7 +62,6 @@ import Metadata from './api/metadata';
 import SoapApi from './api/soap';
 import Streaming from './api/streaming';
 import Tooling from './api/tooling';
-import { JwtOAuth2Config, JwtOAuth2 } from './jwtOAuth2';
 import FormData from 'form-data';
 
 /**
@@ -78,7 +77,6 @@ export type ConnectionConfig<S extends Schema = Schema> = {
   serverUrl?: string;
   signedRequest?: string;
   oauth2?: OAuth2 | OAuth2Config;
-  jwtOAuth2?: JwtOAuth2 | JwtOAuth2Config;
   maxRequest?: number;
   proxyUrl?: string;
   httpProxy?: string;
