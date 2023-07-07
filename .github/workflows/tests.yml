@@ -1,0 +1,105 @@
+name: tests
+on:
+  push:
+    branches-ignore: [2.0]
+  workflow_dispatch:
+
+jobs:
+  test-browser:
+    runs-on: ubuntu-latest
+    env:
+      SF_USERNAME: ${{ secrets.SF_USERNAME }}
+      SF_PASSWORD: ${{ secrets.SF_PASSWORD }}
+      SF_LOGIN_URL: ${{ secrets.SF_LOGIN_URL }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+        id: setup-chrome
+      - run: |
+          echo Installed Chrome version: ${{ steps.setup-chrome.outputs.chrome-version }}
+          ${{ steps.setup-chrome.outputs.chrome-path }} --version
+
+          CHROME_VERSION=$(echo "${{ steps.setup-chrome.outputs.chrome-version }}" cut -f 1 -d ' ' | cut -d '.' -f 1)
+
+          CHROMEDRIVER_VERSION=$(curl --location --fail --retry 10 http://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION)
+
+          echo "chromedriver_version=$CHROMEDRIVER_VERSION" >> "$GITHUB_ENV"
+      - uses: nanasess/setup-chromedriver@v2
+        with:
+          # nanasess/setup-chromedriver looks for `google-chrome` bin:
+          # https://github.com/nanasess/setup-chromedriver/blob/7802dc85ecfc7fc2bac8b5e5bf057b2df439b2ed/lib/setup-chromedriver.sh#L9
+          #
+          # but browser-actions/setup-chrome uses different names for the binaries:
+          # https://github.com/browser-actions/setup-chrome#usage
+          #
+          # Specify version to avoid mismatch with `chrome` binary.
+          chromedriver-version: ${{ env.chromedriver_version }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+      - run: |
+          export DISPLAY=:99
+          chromedriver --url-base=/wd/hub &
+          sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
+      - name: Install dependencies
+        run: npm install
+      - name: Run browser tests
+        run: DISPLAY=:99 CHROME_BIN=$(which chrome) npm run test:browser-ci
+
+  test-node-linux:
+    runs-on: ubuntu-latest
+    env:
+      SF_USERNAME: ${{ secrets.SF_USERNAME }}
+      SF_PASSWORD: ${{ secrets.SF_PASSWORD }}
+      SF_LOGIN_URL: ${{ secrets.SF_LOGIN_URL }}
+    strategy:
+      matrix:
+        node_version: [lts/-1, lts/*, latest]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node_version }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint and Type Check
+        run: |
+          npm run lint
+          npm run build:types
+          npm run typecheck
+
+      - name: Run Node tests
+        run: npm run test:node
+
+  test-node-windows:
+    runs-on: windows-latest
+    env:
+      SF_USERNAME: ${{ secrets.SF_USERNAME }}
+      SF_PASSWORD: ${{ secrets.SF_PASSWORD }}
+      SF_LOGIN_URL: ${{ secrets.SF_LOGIN_URL }}
+    strategy:
+      matrix:
+        node_version: [lts/-1, lts/*, latest]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node_version }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint and Type Check
+        run: |
+          npm run lint
+          npm run build:types
+          npm run typecheck
+
+      - name: Run Node tests
+        run: npm run test:node
