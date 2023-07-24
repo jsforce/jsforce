@@ -61,5 +61,13 @@
         <members>*</members>
         <name>Workflow</name>
     </types>
-    <version>34.0</version>
+    <types>
+        <members>Admin</members>
+        <name>Profile</name>
+    </types>
+    <types>
+        <members>OauthOidc</members>
+        <name>Settings</name>
+    </types>
+    <version>58.0</version>
 </Package>
