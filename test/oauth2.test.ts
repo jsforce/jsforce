@@ -1,6 +1,5 @@
 import assert from 'assert';
 import { OAuth2 } from 'jsforce';
-import {jest} from '@jest/globals';
 import { isString } from './util';
 import { isNodeJS } from './helper/env';
 import authorize from './helper/webauth';
@@ -8,7 +7,9 @@ import config from './config';
 
 const oauth2 = new OAuth2(config);
 
-jest.retryTimes(2)
+if (typeof jest !== 'undefined') {
+  jest.retryTimes(2);
+}
 
 /**
  *

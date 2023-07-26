@@ -1,12 +1,13 @@
 import assert from 'assert';
-import {jest} from '@jest/globals';
 import { Connection } from 'jsforce';
 import { delay } from './util';
 import authorize from './helper/webauth';
 import config from './config';
 import { isNodeJS } from './helper/env';
 
-jest.retryTimes(2)
+if (typeof jest !== 'undefined') {
+  jest.retryTimes(2);
+}
 
 /**
  *

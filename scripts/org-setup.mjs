@@ -7,7 +7,6 @@ if (!process.env.SF_HUB_USERNAME || !process.env.SF_OAUTH2_JWT_KEY || !process.e
   throw new Error('Set SF_HUB_USERNAME, SF_OAUTH2_JWT_KEY and SF_OAUTH2_CLIENT_ID env vars.')
 }
 
-$.shell = process.env.SHELL
 $.verbose = false
 
 const hubOpts = {
@@ -18,19 +17,18 @@ const hubOpts = {
 
 await writeFile(hubOpts.jwtKeyFile, formatJwtKey())
 
-await $`sf org login jwt --username ${hubOpts.username} --jwt-key-file ${hubOpts.jwtKeyFile} --set-default-dev-hub --client-id ${hubOpts.clientId}`
-
+await $`sf org login jwt --username ${hubOpts.username} --jwt-key-file "${hubOpts.jwtKeyFile}" --set-default-dev-hub --client-id ${hubOpts.clientId}`
 
 const orgDefinitionFile = join('test','org-setup','project-scratch-def.json')
-const username = JSON.parse(await $`sf org create scratch --definition-file ${orgDefinitionFile} --wait 20 --duration-days 1 --json`).result.username
+await $`sf org create scratch --definition-file ${orgDefinitionFile} --wait 20 --duration-days 1 --alias jsforce-test-org --json`
 
-await $`sf org generate password --target-org ${username} --json`
+await $`sf org generate password --target-org jsforce-test-org --json`
 
-await $`sf project deploy start --metadata-dir test/package/JSForceTestSuite --wait 20 --target-org ${username}`
+await $`sf project deploy start --metadata-dir ${join(process.cwd(), 'test','package','JSforceTestSuite')} --wait 20 --target-org jsforce-test-org`
 
-await $`sf org assign permset --name JSForceTestPowerUser --target-org ${username}`
+await $`sf org assign permset --name JSForceTestPowerUser --target-org jsforce-test-org`
 
-const orgDisplayUserRes= JSON.parse(await $`sf org display user --target-org ${username} --json`)
+const orgDisplayUserRes= JSON.parse(await $`sf org display user --target-org jsforce-test-org --json`)
 
 const userId= orgDisplayUserRes.result.id
 
@@ -43,17 +41,19 @@ for (let i = 0; i <= 5000; i++) {
 const bigTableCsv = join('test','data','BigTable.csv')
 await fs.writeFile(bigTableCsv, csv)
 
-await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --external-id Id --target-org ${username}`
-await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --external-id Id --target-org ${username}`
-await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --external-id Id --target-org ${username}`
-await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --external-id Id --target-org ${username}`
-await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --external-id Id --target-org ${username}`
+await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --external-id Id --target-org jsforce-test-org`
+await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --external-id Id --target-org jsforce-test-org`
+await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --external-id Id --target-org jsforce-test-org`
+await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --external-id Id --target-org jsforce-test-org`
+await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --external-id Id --target-org jsforce-test-org`
 
 const pushTopicValues = "Name='JSforceTestAccountUpdates' Query='SELECT Id, Name FROM Account' ApiVersion='54.0' NotifyForFields=Referenced NotifyForOperationCreate=true NotifyForOperationUpdate=true NotifyForOperationDelete=false NotifyForOperationUndelete=false"
 
-await $`sf data create record --sobject PushTopic --values ${pushTopicValues} --target-org ${username}`
+await $`sf data create record --sobject PushTopic --values ${pushTopicValues} --target-org jsforce-test-org`
 
-console.log(`Run tests using this scratch org by appending SF_LOGIN_URL=${orgDisplayUserRes.result.instanceUrl} SF_USERNAME=${orgDisplayUserRes.result.username} SF_PASSWORD=${orgDisplayUserRes.result.password}`)
+if (!process.env.CI) {
+  console.log(`Run tests using this scratch org by appending SF_LOGIN_URL=${orgDisplayUserRes.result.instanceUrl} SF_USERNAME=${orgDisplayUserRes.result.username} SF_PASSWORD=${orgDisplayUserRes.result.password}`)
+}
 
 /**
  * Function examines the env var SF_OAUTH2_JWT_KEY to determine if it needs to be
