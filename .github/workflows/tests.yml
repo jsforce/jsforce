@@ -6,7 +6,7 @@ on:
 
 jobs:
   # test-browser:
-  #   needs: lockfile-check
+ #    needs: [lockfile-check,lint-and-typecheck]
   #   runs-on: ubuntu-latest
   #   steps:
   #     - uses: actions/checkout@v3
@@ -90,7 +90,7 @@ jobs:
 
 
   test-node-linux:
-    needs: lockfile-check
+    needs: [lockfile-check,lint-and-typecheck]
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -132,7 +132,7 @@ jobs:
         run: sf org delete scratch --target-org jsforce-test-org --no-prompt
 
  #  test-node-windows:
- #    needs: lockfile-check
+ #    needs: [lockfile-check,lint-and-typecheck]
  #    runs-on: windows-latest
  #    strategy:
  #      matrix:
