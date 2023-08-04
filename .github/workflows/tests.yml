@@ -6,7 +6,7 @@ on:
 
 jobs:
   # test-browser:
-  #   needs: yarn-lockfile-check
+  #   needs: lockfile-check
   #   runs-on: ubuntu-latest
   #   steps:
   #     - uses: actions/checkout@v3
@@ -71,7 +71,7 @@ jobs:
           lockfile-lint --path package-lock.json --allowed-hosts npm yarn --validate-https
   
   lint-and-typecheck:
-    needs: yarn-lockfile-check
+    needs: lockfile-check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -90,7 +90,7 @@ jobs:
 
 
   test-node-linux:
-    needs: yarn-lockfile-check
+    needs: lockfile-check
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -131,7 +131,7 @@ jobs:
         run: sf org delete scratch --target-org jsforce-test-org --no-prompt
 
  #  test-node-windows:
- #    needs: yarn-lockfile-check
+ #    needs: lockfile-check
  #    runs-on: windows-latest
  #    strategy:
  #      matrix:
