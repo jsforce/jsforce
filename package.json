@@ -44,7 +44,7 @@
     "build:src": "babel src --extensions \".ts\" --source-maps inline",
     "build:bundle": "webpack",
     "lint": "eslint --ext .ts,.js src test",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc -p src --noEmit",
     "pretest:node": "run-s build:transpile",
     "pretest:browser": "run-s build:browser build:bundle",
     "pretest:browser-ci": "npm run pretest:browser",
