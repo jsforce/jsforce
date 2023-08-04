@@ -22,7 +22,7 @@ jobs:
   #         CHROMEDRIVER_VERSION=$(curl --location --fail --retry 10 http://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION)
   #
   #         echo "chromedriver_version=$CHROMEDRIVER_VERSION" >> "$GITHUB_ENV"
-  #     - uses: nanasess/setup-chromedriver@v2
+  #     - uses: nanasess/setup-chromedriver@788c980aa31e9357d8724aafa7928ce78d394422
   #       with:
   #         # nanasess/setup-chromedriver looks for `google-chrome` bin:
   #         # https://github.com/nanasess/setup-chromedriver/blob/7802dc85ecfc7fc2bac8b5e5bf057b2df439b2ed/lib/setup-chromedriver.sh#L9
