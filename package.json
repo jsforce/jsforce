@@ -146,7 +146,7 @@
     "power-assert": "^1.6.1",
     "prettier": "^2.2.1",
     "process": "^0.11.10",
-    "puppeteer": "^10.0.0",
+    "puppeteer": "^21.0.1",
     "querystring-es3": "^0.2.1",
     "rimraf": "^3.0.0",
     "source-map-loader": "^1.1.3",
