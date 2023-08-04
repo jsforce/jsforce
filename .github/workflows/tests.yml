@@ -6,6 +6,7 @@ on:
 
 jobs:
   # test-browser:
+  #   needs: yarn-lockfile-check
   #   runs-on: ubuntu-latest
   #   steps:
   #     - uses: actions/checkout@v3
@@ -60,8 +61,36 @@ jobs:
   #         SF_LOGIN_URL=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.instanceUrl') \
   #         DISPLAY=:99 CHROME_BIN=$(which chrome) \
   #         npm run test:browser-ci
+  lockfile-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - run: |
+          npm install -g lockfile-lint
+          lockfile-lint --path package-lock.json --allowed-hosts npm yarn --validate-https
+  
+  lint-and-typecheck:
+    needs: yarn-lockfile-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+
+      - name: Install dependencies
+        run: npm install
+  
+      - name: Lint and Type Check
+        run: |
+          npm run lint
+          npm run build:types
+          npm run typecheck
+
 
   test-node-linux:
+    needs: yarn-lockfile-check
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -75,12 +104,6 @@ jobs:
   
       - name: Install dependencies
         run: npm install
-  
-      - name: Lint and Type Check
-        run: |
-          npm run lint
-          npm run build:types
-          npm run typecheck
   
       - name: Install sf CLI
         run: npm install --global @salesforce/cli
@@ -108,6 +131,7 @@ jobs:
         run: sf org delete scratch --target-org jsforce-test-org --no-prompt
 
  #  test-node-windows:
+ #    needs: yarn-lockfile-check
  #    runs-on: windows-latest
  #    strategy:
  #      matrix:
@@ -121,12 +145,6 @@ jobs:
  #
  #      - name: Install dependencies
  #        run: npm install
- #
- #      - name: Lint and Type Check
- #        run: |
- #          npm run lint
- #          npm run build:types
- #          npm run typecheck
  #
  #      - name: Install sf CLI
  #        run: npm install --global @salesforce/cli
