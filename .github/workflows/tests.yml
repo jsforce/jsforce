@@ -120,6 +120,7 @@ jobs:
         env:
           SF_OAUTH2_CLIENT_ID: ${{ secrets.SF_OAUTH2_CLIENT_ID }}
           SF_OAUTH2_CLIENT_SECRET: ${{ secrets.SF_OAUTH2_CLIENT_SECRET }}
+          SF_OAUTH2_REDIRECT_URI: ${{ secrets.SF_OAUTH2_REDIRECT_URI }}
         run: |
           SF_USERNAME=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.username') \
           SF_PASSWORD=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.password') \
@@ -161,6 +162,7 @@ jobs:
  #        env:
  #          SF_OAUTH2_CLIENT_ID: ${{ secrets.SF_OAUTH2_CLIENT_ID }}
  #          SF_OAUTH2_CLIENT_SECRET: ${{ secrets.SF_OAUTH2_CLIENT_SECRET }}
+ #          SF_OAUTH2_REDIRECT_URI: ${{ secrets.SF_OAUTH2_REDIRECT_URI }}
  #        run: |
  #          $env:SF_USERNAME=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.username') `
  #          $env:SF_PASSWORD=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.password') `
