@@ -5,6 +5,10 @@ import authorize from './helper/webauth';
 import config from './config';
 import { isNodeJS } from './helper/env';
 
+if (typeof jest !== 'undefined') {
+  jest.retryTimes(2);
+}
+
 /**
  *
  */

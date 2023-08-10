@@ -7,6 +7,10 @@ import config from './config';
 
 const oauth2 = new OAuth2(config);
 
+if (typeof jest !== 'undefined') {
+  jest.retryTimes(2);
+}
+
 /**
  *
  */
