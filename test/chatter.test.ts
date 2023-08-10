@@ -383,13 +383,15 @@ describe('batch', () => {
     assert.ok(result.hasErrors === false);
     assert.ok(Array.isArray(result.results) && result.results.length === 3);
 
-    const elemsIndex = result.results.findIndex(res => res.statusCode === 200)
+    const elemsIndex = result.results.findIndex(
+      (res) => res.statusCode === 200,
+    );
 
     // get feed elements response and remove it from the results array
-    const elems = (result.results.splice(elemsIndex,1))[0].result
+    const elems = result.results.splice(elemsIndex, 1)[0].result;
 
-    const [el1, el2] = result.results
-    
+    const [el1, el2] = result.results;
+
     const elem1 = el1.result;
     const elem2 = el2.result;
     urls = [elem1.url, elem2.url];
