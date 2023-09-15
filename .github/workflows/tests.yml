@@ -129,7 +129,7 @@ jobs:
       command: 'yarn test:nuts'
       os: ${{ matrix.os }}
       useCache: false
-      preExternalBuildCommands: 'shx rm -rf node_modules/jsforce'
+      preSwapCommands: 'shx rm -rf node_modules/jsforce'
     secrets:
       TESTKIT_AUTH_URL: ${{ secrets.SF_HUB_AUTH_URL }}
       TESTKIT_HUB_USERNAME: ${{ secrets.SF_HUB_USERNAME }}
