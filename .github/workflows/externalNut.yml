@@ -122,17 +122,15 @@ jobs:
         if: ${{ steps.cache-nodemodules.outputs.cache-hit != 'true' }}
         working-directory: node_modules/${{ inputs.packageName }}
         run: |
-          yarn install  --network-timeout 600000
+          npm install
           ${{ inputs.preBuildCommands }}
-          yarn compile
+          npm run clean && npm run build
           ${{ inputs.postBuildCommands }}
       - name: preExternalBuildCommands
         if: ${{ steps.cache-nodemodules.outputs.cache-hit != 'true' }}
         run: ${{ inputs.preExternalBuildCommands }}
       - name: Build the external project (where the NUTs are)
         run: yarn compile
-      - run: echo "TESTKIT_EXECUTABLE_PATH=${{inputs.sfdxExecutablePath}}" >> $GITHUB_ENV
-        if: inputs.sfdxExecutablePath
       - uses: nick-fields/retry@943e742917ac94714d2f408a0e8320f2d1fcafcd
         name: NUTs with ${{ inputs.attempts }} attempts
         with:
