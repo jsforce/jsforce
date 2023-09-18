@@ -1,0 +1,73 @@
+<!DOCTYPE html><html class="default"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>jsforce</title><meta name="description" content="Documentation for jsforce"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script async src="assets/search.js" id="search-script"></script></head><body><script>document.body.classList.add(localStorage.getItem("tsd-theme") || "os")</script><header><div class="tsd-page-toolbar"><div class="container"><div class="table-wrap"><div class="table-cell" id="tsd-search" data-base="."><div class="field"><label for="tsd-search-field" class="tsd-widget search no-caption">Search</label><input type="text" id="tsd-search-field"/></div><ul class="results"><li class="state loading">Preparing search index...</li><li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">jsforce</a></div><div class="table-cell" id="tsd-widgets"><div id="tsd-filter"><a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a><div class="tsd-filter-group"><div class="tsd-select" id="tsd-filter-visibility"><span class="tsd-select-label">All</span><ul class="tsd-select-list"><li data-value="public">Public</li><li data-value="protected">Public/Protected</li><li data-value="private" class="selected">All</li></ul></div> <input type="checkbox" id="tsd-filter-inherited" checked/><label class="tsd-widget" for="tsd-filter-inherited">Inherited</label><input type="checkbox" id="tsd-filter-externals" checked/><label class="tsd-widget" for="tsd-filter-externals">Externals</label></div></div><a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a></div></div></div></div><div class="tsd-page-title"><div class="container"><h1> jsforce </h1></div></div></header><div class="container container-main"><div class="row"><div class="col-8 col-content"><div class="tsd-panel tsd-typography">
+<a href="#jsforce" id="jsforce" style="color: inherit; text-decoration: none;">
+  <h1>jsforce</h1>
+</a>
+<p>Salesforce API Library for JavaScript applications (both on web browser and Node.js)</p>
+<p><a href="https://circleci.com/gh/jsforce/jsforce"><img src="https://circleci.com/gh/jsforce/jsforce.svg?style=svg" alt="CircleCI"></a></p>
+
+<a href="#overview" id="overview" style="color: inherit; text-decoration: none;">
+  <h2>Overview</h2>
+</a>
+<p>JSforce (f.k.a. Node-Salesforce) is an isomorphic JavaScript Library utilizing Salesforce&#39;s API: It works both in the browser and with Node.js.</p>
+<p>It capsulates the access to various APIs provided by Salesforce in asynchronous JavaScript function calls.</p>
+<p>It also has command line interface (CLI) which gives interactive console (REPL), so you can learn the usage without hassle.</p>
+<p>Supported Salesforce APIs are the following:</p>
+<ul>
+<li>REST API (SOQL, SOSL, describe, etc.)</li>
+<li>Apex REST</li>
+<li>Analytics API</li>
+<li>Bulk API</li>
+<li>Chatter API</li>
+<li>Metadata API</li>
+<li>SOAP API</li>
+<li>Streaming API</li>
+<li>Tooling API</li>
+</ul>
+
+<a href="#documentation" id="documentation" style="color: inherit; text-decoration: none;">
+  <h2>Documentation</h2>
+</a>
+<p>See documentation in <a href="http://jsforce.github.io/">http://jsforce.github.io/</a> .</p>
+
+<a href="#releases" id="releases" style="color: inherit; text-decoration: none;">
+  <h2>Releases</h2>
+</a>
+<p>See <a href="https://github.com/jsforce/jsforce/releases">Releases</a>.</p>
+
+<a href="#license" id="license" style="color: inherit; text-decoration: none;">
+  <h2>License</h2>
+</a>
+<p>See <a href="LICENSE">license</a> (MIT License).</p>
+
+<a href="#authors" id="authors" style="color: inherit; text-decoration: none;">
+  <h2>Authors</h2>
+</a>
+<ul>
+<li>Shinichi Tomita <a href="mailto:shinichi.tomita@gmail.com">shinichi.tomita@gmail.com</a></li>
+</ul>
+
+<a href="#notes" id="notes" style="color: inherit; text-decoration: none;">
+  <h2>Notes</h2>
+</a>
+<p>If you have any questions first file it on <a href="https://github.com/jsforce/jsforce/issues">issues</a> before contacting authors via e-mail.</p>
+
+<a href="#tests" id="tests" style="color: inherit; text-decoration: none;">
+  <h2>Tests</h2>
+</a>
+<p>In order to run tests you will need a <a href="https://developer.salesforce.com/signup">Salesforce Developer Org</a></p>
+<p>You will also need to install the JsforceTestSuite package, which can be done by running:</p>
+<pre><code><span class="hl-0">SF_USERNAME</span><span class="hl-1">=</span><span class="hl-2">myusername</span><span class="hl-1"> </span><span class="hl-0">SF_PASSWORD</span><span class="hl-1">=</span><span class="hl-2">password</span><span class="hl-1">+</span><span class="hl-2">securityToken</span><span class="hl-1"> ./</span><span class="hl-2">test</span><span class="hl-1">/</span><span class="hl-2">bin</span><span class="hl-1">/</span><span class="hl-2">org</span><span class="hl-1">-</span><span class="hl-2">setup</span>
+</code></pre>
+<p>You may need to run this more then once if you encounter timeouts or dropped connections/</p>
+<p>Finally, to run the tests simply do:</p>
+<pre><code><span class="hl-0">SF_USERNAME</span><span class="hl-1">=</span><span class="hl-2">myusername</span><span class="hl-1"> </span><span class="hl-0">SF_PASSWORD</span><span class="hl-1">=</span><span class="hl-2">password</span><span class="hl-1">+</span><span class="hl-2">securityToken</span><span class="hl-1"> </span><span class="hl-2">npm</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-3">test</span><span class="hl-1">:</span><span class="hl-2">node</span><br/><br/><span class="hl-0">SF_USERNAME</span><span class="hl-1">=</span><span class="hl-2">myusername</span><span class="hl-1"> </span><span class="hl-0">SF_PASSWORD</span><span class="hl-1">=</span><span class="hl-2">password</span><span class="hl-1">+</span><span class="hl-2">securityToken</span><span class="hl-1"> </span><span class="hl-2">npm</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-3">test</span><span class="hl-1">:</span><span class="hl-2">browser</span>
+</code></pre>
+<p>Alternatively, if you are using <code>sfdx</code> and have a default DevHub set up, you can create a scratch org with all the test setup ready by running <code>./test/bin/org-setup-sfdx.sh</code> (it&#39;s a bash script and probably won&#39;t help most windows users)</p>
+
+<a href="#contributions" id="contributions" style="color: inherit; text-decoration: none;">
+  <h2>Contributions</h2>
+</a>
+<p>Your contributions are welcome: both by reporting issues on <a href="https://github.com/jsforce/jsforce/issues">GitHub issues</a> or pull-requesting patches.</p>
+<p>If you want to implement any additional features, to be added to JSforce to our master branch, which may or may not be merged please first check current <a href="https://github.com/jsforce/jsforce/issues?q=is%3Aopen">opening issues</a> with milestones and confirm whether the feature is on road map or not.</p>
+<p>If your feature implementation is brand-new or fixing unsupposed bugs in the library&#39;s test cases, please include additional test codes in the <code>test/</code> directory.</p>
+</div></div><div class="col-4 col-menu menu-sticky-wrap menu-highlight"><nav class="tsd-navigation primary"><ul><li class="current"><a href="modules.html">Modules</a></li><li class=" tsd-kind-module"><a href="modules/api_analytics.html">api/analytics</a></li><li class=" tsd-kind-module"><a href="modules/api_analytics_types.html">api/analytics/types</a></li><li class=" tsd-kind-module"><a href="modules/api_apex.html">api/apex</a></li><li class=" tsd-kind-module"><a href="modules/api_bulk.html">api/bulk</a></li><li class=" tsd-kind-module"><a href="modules/api_chatter.html">api/chatter</a></li><li class=" tsd-kind-module"><a href="modules/api_metadata.html">api/metadata</a></li><li class=" tsd-kind-module"><a href="modules/api_metadata_schema.html">api/metadata/schema</a></li><li class=" tsd-kind-module"><a href="modules/api_soap.html">api/soap</a></li><li class=" tsd-kind-module"><a href="modules/api_soap_schema.html">api/soap/schema</a></li><li class=" tsd-kind-module"><a href="modules/api_streaming.html">api/streaming</a></li><li class=" tsd-kind-module"><a href="modules/api_streaming_extension.html">api/streaming/extension</a></li><li class=" tsd-kind-module"><a href="modules/api_tooling.html">api/tooling</a></li><li class=" tsd-kind-module"><a href="modules/browser_canvas.html">browser/canvas</a></li><li class=" tsd-kind-module"><a href="modules/browser_client.html">browser/client</a></li><li class=" tsd-kind-module"><a href="modules/browser_jsonp.html">browser/jsonp</a></li><li class=" tsd-kind-module"><a href="modules/browser_registry.html">browser/registry</a></li><li class=" tsd-kind-module"><a href="modules/browser_request.html">browser/request</a></li><li class=" tsd-kind-module"><a href="modules/cache.html">cache</a></li><li class=" tsd-kind-module"><a href="modules/connection.html">connection</a></li><li class=" tsd-kind-module"><a href="modules/core.html">core</a></li><li class=" tsd-kind-module"><a href="modules/csv.html">csv</a></li><li class=" tsd-kind-module"><a href="modules/date.html">date</a></li><li class=" tsd-kind-module"><a href="modules/http_api.html">http-<wbr/>api</a></li><li class=" tsd-kind-module"><a href="modules/index.html">index</a></li><li class=" tsd-kind-module"><a href="modules/jsforce.html">jsforce</a></li><li class=" tsd-kind-module"><a href="modules/jwtOAuth2.html">jwtOAuth2</a></li><li class=" tsd-kind-module"><a href="modules/oauth2.html">oauth2</a></li><li class=" tsd-kind-module"><a href="modules/process.html">process</a></li><li class=" tsd-kind-module"><a href="modules/query.html">query</a></li><li class=" tsd-kind-module"><a href="modules/quick_action.html">quick-<wbr/>action</a></li><li class=" tsd-kind-module"><a href="modules/record_reference.html">record-<wbr/>reference</a></li><li class=" tsd-kind-module"><a href="modules/record_stream.html">record-<wbr/>stream</a></li><li class=" tsd-kind-module"><a href="modules/registry.html">registry</a></li><li class=" tsd-kind-module"><a href="modules/registry_base.html">registry/base</a></li><li class=" tsd-kind-module"><a href="modules/registry_empty.html">registry/empty</a></li><li class=" tsd-kind-module"><a href="modules/registry_file.html">registry/file</a></li><li class=" tsd-kind-module"><a href="modules/registry_sfdx.html">registry/sfdx</a></li><li class=" tsd-kind-module"><a href="modules/registry_types.html">registry/types</a></li><li class=" tsd-kind-module"><a href="modules/request.html">request</a></li><li class=" tsd-kind-module"><a href="modules/request_helper.html">request-<wbr/>helper</a></li><li class=" tsd-kind-module"><a href="modules/schema_generator.html">schema/generator</a></li><li class=" tsd-kind-module"><a href="modules/session_refresh_delegate.html">session-<wbr/>refresh-<wbr/>delegate</a></li><li class=" tsd-kind-module"><a href="modules/soap.html">soap</a></li><li class=" tsd-kind-module"><a href="modules/sobject.html">sobject</a></li><li class=" tsd-kind-module"><a href="modules/soql_builder.html">soql-<wbr/>builder</a></li><li class=" tsd-kind-module"><a href="modules/transport.html">transport</a></li><li class=" tsd-kind-module"><a href="modules/types.html">types</a></li><li class=" tsd-kind-module"><a href="modules/types_common.html">types/common</a></li><li class=" tsd-kind-module"><a href="modules/types_projection.html">types/projection</a></li><li class=" tsd-kind-module"><a href="modules/types_record.html">types/record</a></li><li class=" tsd-kind-module"><a href="modules/types_schema.html">types/schema</a></li><li class=" tsd-kind-module"><a href="modules/types_soap.html">types/soap</a></li><li class=" tsd-kind-module"><a href="modules/types_standard_schema.html">types/standard-<wbr/>schema</a></li><li class=" tsd-kind-module"><a href="modules/types_util.html">types/util</a></li><li class=" tsd-kind-module"><a href="modules/util_formatter.html">util/formatter</a></li><li class=" tsd-kind-module"><a href="modules/util_function.html">util/function</a></li><li class=" tsd-kind-module"><a href="modules/util_logger.html">util/logger</a></li><li class=" tsd-kind-module"><a href="modules/util_promise.html">util/promise</a></li><li class=" tsd-kind-module"><a href="modules/util_stream.html">util/stream</a></li></ul></nav></div></div></div><footer class="with-border-bottom"><div class="container"><h2>Legend</h2><div class="tsd-legend-group"><ul class="tsd-legend"><li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li><li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li><li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li><li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li><li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li><li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li><li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li></ul></div><h2>Settings</h2><p>Theme <select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></p></div></footer><div class="container tsd-generator"><p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div><div class="overlay"></div><script src="assets/main.js"></script></body></html>
