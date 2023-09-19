@@ -1,0 +1,13 @@
+
+name: publish-docs
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Do not run the publish-docs action on main.  Use 2.0 as the branch"
+          exit 1
