@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: date.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: date.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+
+var _ = require('lodash/core');
+
+/**
+ * A date object to keep Salesforce date literal
+ *
+ * @class
+ * @constructor
+ * @see http://www.salesforce.com/us/developer/docs/soql_sosl/Content/sforce_api_calls_soql_select_dateformats.htm
+ */
+var SfDate = module.exports = function(literal) {
+  this._literal = literal;
+};
+
+/**
+ * Returns literal when converted to string
+ *
+ * @override
+ */
+SfDate.prototype.toString =
+SfDate.prototype.toJSON = function() { return this._literal; };
+
+
+/** @private **/
+function zeropad(n) { return (n&lt;10 ? "0" : "") + n; }
+
+/**
+ * Convert JavaScript date object to ISO8601 Date format (e.g. 2012-10-31)
+ *
+ * @param {String|Number|Date} date - Input date
+ * @returns {SfDate} - Salesforce date literal with ISO8601 date format
+ */
+SfDate.toDateLiteral = function(date) {
+  if (_.isNumber(date)) {
+    date = new Date(date);
+  } else if (_.isString(date)) {
+    date = SfDate.parseDate(date);
+  }
+  var yy = date.getFullYear();
+  var mm = date.getMonth()+1;
+  var dd = date.getDate();
+  var dstr = [ yy, zeropad(mm), zeropad(dd) ].join("-");
+  return new SfDate(dstr);
+};
+
+/**
+ * Convert JavaScript date object to ISO8601 DateTime format
+ * (e.g. 2012-10-31T12:34:56Z)
+ *
+ * @param {String|Number|Date} date - Input date
+ * @returns {SfDate} - Salesforce date literal with ISO8601 datetime format
+ */
+SfDate.toDateTimeLiteral = function(date) {
+  if (_.isNumber(date)) {
+    date = new Date(date);
+  } else if (_.isString(date)) {
+    date = SfDate.parseDate(date);
+  }
+  var yy = date.getUTCFullYear();
+  var mm = date.getUTCMonth()+1;
+  var dd = date.getUTCDate();
+  var hh = date.getUTCHours();
+  var mi = date.getUTCMinutes();
+  var ss = date.getUTCSeconds();
+  var dtstr =
+    [ yy, zeropad(mm), zeropad(dd) ].join("-") + "T" +
+    [ zeropad(hh), zeropad(mi), zeropad(ss) ].join(":") + "Z";
+  return new SfDate(dtstr);
+};
+
+/**
+ * Parse IS08601 date(time) formatted string and return date instance
+ *
+ * @param {String} str
+ * @returns {Date}
+ */
+SfDate.parseDate = function(str) {
+  var d = new Date();
+  var regexp = /^([\d]{4})-?([\d]{2})-?([\d]{2})(T([\d]{2}):?([\d]{2}):?([\d]{2})(.([\d]{3}))?(Z|([\+\-])([\d]{2}):?([\d]{2})))?$/;
+  var m = str.match(regexp);
+  if (m) {
+    d = new Date(0);
+    if (!m[4]) {
+      d.setFullYear(parseInt(m[1], 10));
+      d.setDate(parseInt(m[3], 10));
+      d.setMonth(parseInt(m[2], 10) - 1);
+      d.setHours(0);
+      d.setMinutes(0);
+      d.setSeconds(0);
+      d.setMilliseconds(0);
+    } else {
+      d.setUTCFullYear(parseInt(m[1], 10));
+      d.setUTCDate(parseInt(m[3], 10));
+      d.setUTCMonth(parseInt(m[2], 10) - 1);
+      d.setUTCHours(parseInt(m[5], 10));
+      d.setUTCMinutes(parseInt(m[6], 10));
+      d.setUTCSeconds(parseInt(m[7], 10));
+      d.setUTCMilliseconds(parseInt(m[9] || '0', 10));
+      if (m[10] &amp;&amp; m[10] !== 'Z') {
+        var offset = parseInt(m[12],10) * 60 + parseInt(m[13], 10);
+        d.setTime((m[11] === '+' ? -1 : 1) * offset * 60 * 1000 +d.getTime());
+      }
+    }
+    return d;
+  } else {
+    throw new Error("Invalid date format is specified : " + str);
+  }
+};
+
+/*
+ * Pre-defined Salesforce Date Literals
+ */
+var SfDateLiterals = {
+  YESTERDAY: 1,
+  TODAY: 1,
+  TOMORROW: 1,
+  LAST_WEEK: 1,
+  THIS_WEEK: 1,
+  NEXT_WEEK: 1,
+  LAST_MONTH: 1,
+  THIS_MONTH: 1,
+  NEXT_MONTH: 1,
+  LAST_90_DAYS: 1,
+  NEXT_90_DAYS: 1,
+  LAST_N_DAYS: 2,
+  NEXT_N_DAYS: 2,
+  NEXT_N_WEEKS: 2,
+  LAST_N_WEEKS: 2,
+  NEXT_N_MONTHS: 2,
+  LAST_N_MONTHS: 2,
+  THIS_QUARTER: 1,
+  LAST_QUARTER: 1,
+  NEXT_QUARTER: 1,
+  NEXT_N_QUARTERS: 2,
+  LAST_N_QUARTERS: 2,
+  THIS_YEAR: 1,
+  LAST_YEAR: 1,
+  NEXT_YEAR: 1,
+  NEXT_N_YEARS: 2,
+  LAST_N_YEARS: 2,
+  THIS_FISCAL_QUARTER: 1,
+  LAST_FISCAL_QUARTER: 1,
+  NEXT_FISCAL_QUARTER: 1,
+  NEXT_N_FISCAL_QUARTERS:2,
+  LAST_N_FISCAL_QUARTERS:2,
+  THIS_FISCAL_YEAR:1,
+  LAST_FISCAL_YEAR:1,
+  NEXT_FISCAL_YEAR:1,
+  NEXT_N_FISCAL_YEARS: 2,
+  LAST_N_FISCAL_YEARS: 2
+};
+
+for (var literal in SfDateLiterals) {
+  var type = SfDateLiterals[literal];
+  SfDate[literal] =
+   type === 1 ? new SfDate(literal) : createLiteralBuilder(literal);
+}
+
+/** @private **/
+function createLiteralBuilder(literal) {
+  return function(num) { return new SfDate(literal + ":" + num); };
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="HttpApi.html">HttpApi</a></li><li><a href="ListView.html">ListView</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Process.html">Process</a></li><li><a href="Process-ApprovalProcess.html">ApprovalProcess</a></li><li><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></li><li><a href="Process-ProcessRule.html">ProcessRule</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="QuickAction.html">QuickAction</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.Parsable.html">Parsable</a></li><li><a href="RecordStream.Serializable.html">Serializable</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SoapApi.html">SoapApi</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Channel.html">Channel</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SessionRefreshDelegate">SessionRefreshDelegate</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Mar 30 2016 04:18:43 GMT+0900 (JST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

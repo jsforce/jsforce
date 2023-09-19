@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: soap.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: soap.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file Manages method call to SOAP endpoint
+ * @author Shinichi Tomita &lt;shinichi.tomita@gmail.com>
+ */
+
+'use strict';
+
+var inherits = require('inherits'),
+    _ = require('lodash/core'),
+    xml2js = require('xml2js'),
+    HttpApi = require('./http-api');
+
+
+/**
+ * Class for SOAP endpoint of Salesforce
+ *
+ * @protected
+ * @class
+ * @constructor
+ * @param {Connection} conn - Connection instance
+ * @param {Object} options - SOAP endpoint setting options
+ * @param {String} options.endpointUrl - SOAP endpoint URL
+ * @param {String} [options.xmlns] - XML namespace for method call (default is "urn:partner.soap.sforce.com")
+ */
+var SOAP = module.exports = function(conn, options) {
+  SOAP.super_.apply(this, arguments);
+  this._endpointUrl = options.endpointUrl;
+  this._xmlns = options.xmlns || 'urn:partner.soap.sforce.com';
+};
+
+inherits(SOAP, HttpApi);
+
+/**
+ * Invoke SOAP call using method and arguments
+ *
+ * @param {String} method - Method name
+ * @param {Object} args - Arguments for the method call
+ * @param {Object} [schema] - Schema definition of response message
+ * @param {Callback.&lt;Object>} [callback] - Callback function
+ * @returns {Promise.&lt;Object>}
+ */
+SOAP.prototype.invoke = function(method, args, schema, callback) {
+  if (typeof schema === 'function') {
+    callback = schema;
+    schema = null;
+  }
+  var message = {};
+  message[method] = args;
+  return this.request({
+    method: 'POST',
+    url: this._endpointUrl,
+    headers: {
+      'Content-Type': 'text/xml',
+      'SOAPAction': '""'
+    },
+    message: message
+  }).then(function(res) {
+    return schema ? convertType(res, schema) : res;
+  }).thenCall(callback);
+};
+
+/* @private */
+function convertType(value, schema) {
+  if (_.isArray(value)) {
+    return value.map(function(v) {
+      return convertType(v, schema &amp;&amp; schema[0])
+    });
+  } else if (_.isObject(value)) {
+    if (value.$ &amp;&amp; value.$['xsi:nil'] === 'true') {
+      return null;
+    } else if (_.isArray(schema)) {
+      return [ convertType(value, schema[0]) ];
+    } else {
+      var o = {};
+      for (var key in value) {
+        o[key] = convertType(value[key], schema &amp;&amp; schema[key]);
+      }
+      return o;
+    }
+  } else {
+    if (_.isArray(schema)) {
+      return [ convertType(value, schema[0]) ];
+    } else if (_.isObject(schema)) {
+      return {};
+    } else {
+      switch(schema) {
+        case 'string':
+          return String(value);
+        case 'number':
+          return Number(value);
+        case 'boolean':
+          return value === 'true';
+        default:
+          return value;
+      }
+    }
+  }
+}
+
+/** @override **/
+SOAP.prototype.beforeSend = function(request) {
+  request.body = this._createEnvelope(request.message);
+};
+
+/** @override **/
+SOAP.prototype.isSessionExpired = function(response) {
+  return response.statusCode === 500 &amp;&amp;
+    /&lt;faultcode>[a-zA-Z]+:INVALID_SESSION_ID&lt;\/faultcode>/.test(response.body);
+};
+
+/** @override **/
+SOAP.prototype.parseError = function(body) {
+  var error = lookupValue(body, [ /:Envelope$/, /:Body$/, /:Fault$/ ]);
+  return {
+    errorCode: error.faultcode,
+    message: error.faultstring
+  };
+};
+
+/** @override **/
+SOAP.prototype.getResponseBody = function(response) {
+  var body = SOAP.super_.prototype.getResponseBody.call(this, response);
+  return lookupValue(body, [ /:Envelope$/, /:Body$/, /.+/ ]);
+};
+
+/**
+ * @private
+ */
+function lookupValue(obj, propRegExps) {
+  var regexp = propRegExps.shift();
+  if (!regexp) {
+    return obj;
+  }
+  else {
+    for (var prop in obj) {
+      if (regexp.test(prop)) {
+        return lookupValue(obj[prop], propRegExps);
+      }
+    }
+    return null;
+  }
+}
+
+/**
+ * @private
+ */
+function toXML(name, value) {
+  if (_.isObject(name)) {
+    value = name;
+    name = null;
+  }
+  if (_.isArray(value)) {
+    return _.map(value, function(v) { return toXML(name, v); }).join('');
+  } else {
+    var attrs = [];
+    var elems = [];
+    if (_.isObject(value)) {
+      for (var k in value) {
+        var v = value[k];
+        if (k[0] === '@') {
+          k = k.substring(1);
+          attrs.push(k + '="' + v + '"');
+        } else {
+          elems.push(toXML(k, v));
+        }
+      }
+      value = elems.join('');
+    } else {
+      value = String(value)
+        .replace(/&amp;/g, '&amp;amp;')
+        .replace(/&lt;/g, '&amp;lt;')
+        .replace(/>/g, '&amp;gt;')
+        .replace(/"/g, '&amp;quot;')
+        .replace(/'/g, '&amp;apos;');
+    }
+    var startTag = name ? '&lt;' + name + (attrs.length > 0 ? ' ' + attrs.join(' ') : '') + '>' : '';
+    var endTag = name ? '&lt;/' + name + '>' : '';
+    return  startTag + value + endTag;
+  }
+}
+
+/**
+ * @private
+ */
+SOAP.prototype._createEnvelope = function(message) {
+  var header = {};
+  var conn = this._conn;
+  if (conn.accessToken) {
+    header.SessionHeader = { sessionId: this._conn.accessToken };
+  }
+  if (conn.callOptions) {
+    header.CallOptions = conn.callOptions;
+  }
+  return [
+    '&lt;?xml version="1.0" encoding="UTF-8"?>',
+    '&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"',
+    ' xmlns:xsd="http://www.w3.org/2001/XMLSchema"',
+    ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">',
+    '&lt;soapenv:Header xmlns="' + this._xmlns + '">',
+    toXML(header),
+    '&lt;/soapenv:Header>',
+    '&lt;soapenv:Body xmlns="' + this._xmlns + '">',
+    toXML(message),
+    '&lt;/soapenv:Body>',
+    '&lt;/soapenv:Envelope>'
+  ].join('');
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="HttpApi.html">HttpApi</a></li><li><a href="ListView.html">ListView</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Process.html">Process</a></li><li><a href="Process-ApprovalProcess.html">ApprovalProcess</a></li><li><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></li><li><a href="Process-ProcessRule.html">ProcessRule</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="QuickAction.html">QuickAction</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.Parsable.html">Parsable</a></li><li><a href="RecordStream.Serializable.html">Serializable</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SoapApi.html">SoapApi</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Channel.html">Channel</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SessionRefreshDelegate">SessionRefreshDelegate</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Mar 30 2016 04:18:43 GMT+0900 (JST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

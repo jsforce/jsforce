@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: sobject.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: sobject.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file Represents Salesforce SObject
+ * @author Shinichi Tomita &lt;shinichi.tomita@gmail.com>
+ */
+
+'use strict';
+
+var _      = require('lodash/core'),
+    Record = require('./record'),
+    Query  = require('./query'),
+    Cache  = require('./cache'),
+    QuickAction = require('./quick-action');
+
+/**
+ * A class for organizing all SObject access
+ *
+ * @constructor
+ */
+var SObject = module.exports = function(conn, type) {
+  this._conn = conn;
+  this.type = type;
+  var cacheOptions = { key: "describe." + this.type };
+  this.describe$ = conn.cache.makeCacheable(this.describe, this, cacheOptions);
+  this.describe = conn.cache.makeResponseCacheable(this.describe, this, cacheOptions);
+
+  cacheOptions = { key: "layouts." + this.type };
+  this.layouts$ = conn.cache.makeCacheable(this.layouts, this, cacheOptions);
+  this.layouts = conn.cache.makeResponseCacheable(this.layouts, this, cacheOptions);
+
+  cacheOptions = { key: "compactLayouts." + this.type };
+  this.compactLayouts$ = conn.cache.makeCacheable(this.compactLayouts, this, cacheOptions);
+  this.compactLayouts = conn.cache.makeResponseCacheable(this.compactLayouts, this, cacheOptions);
+
+  cacheOptions = { key: "approvalLayouts." + this.type };
+  this.approvalLayouts$ = conn.cache.makeCacheable(this.approvalLayouts, this, cacheOptions);
+  this.approvalLayouts = conn.cache.makeResponseCacheable(this.approvalLayouts, this, cacheOptions);
+};
+
+/**
+ * Synonym of SObject#create()
+ *
+ * @method SObject#insert
+ * @param {Record|Array.&lt;Record>} records - A record or array of records to create
+ * @param {Callback.&lt;RecordResult|Array.&lt;RecordResult>>} [callback] - Callback function
+ * @returns {Promise.&lt;RecordResult|Array.&lt;RecordResult>>}
+ */
+/**
+ * Create records
+ *
+ * @method SObject#create
+ * @param {Record|Array.&lt;Record>} records - A record or array of records to create
+ * @param {Object} [options] - Options for rest api.
+ * @param {Callback.&lt;RecordResult|Array.&lt;RecordResult>>} [callback] - Callback function
+ * @returns {Promise.&lt;RecordResult|Array.&lt;RecordResult>>}
+ */
+SObject.prototype.insert =
+SObject.prototype.create = function(records, options, callback) {
+  if (typeof options === 'function') {
+    callback = options;
+    options = {};
+  }
+  return this._conn.create(this.type, records, options, callback);
+};
+
+/**
+ * Retrieve specified records
+ *
+ * @param {String|Array.&lt;String>} ids - A record ID or array of record IDs
+ * @param {Object} [options] - Options for rest api.
+ * @param {Callback.&lt;Record|Array.&lt;Record>>} [callback] - Callback function
+ * @returns {Promise.&lt;Record|Array.&lt;Record>>}
+ */
+SObject.prototype.retrieve = function(ids, options, callback) {
+  if (typeof options === 'function') {
+    callback = options;
+    options = {};
+  }
+  return this._conn.retrieve(this.type, ids, options, callback);
+};
+
+/**
+ * Update records
+ *
+ * @param {Record|Array.&lt;Record>} records - A record or array of records to update
+ * @param {Object} [options] - Options for rest api.
+ * @param {Callback.&lt;RecordResult|Array.&lt;RecordResult>>} [callback] - Callback function
+ * @returns {Promise.&lt;RecordResult|Array.&lt;RecordResult>>}
+ */
+SObject.prototype.update = function(records, options, callback) {
+  if (typeof options === 'function') {
+    callback = options;
+    options = {};
+  }
+  return this._conn.update(this.type, records, options, callback);
+};
+
+/**
+ * Upsert records
+ *
+ * @param {Record|Array.&lt;Record>} records - Record or array of records to upsert
+ * @param {String} extIdField - External ID field name
+ * @param {Object} [options] - Options for rest api.
+ * @param {Callback.&lt;RecordResult|Array.&lt;RecordResult>>} [callback] - Callback
+ * @returns {Promise.&lt;RecordResult|Array.&lt;RecordResult>>}
+ */
+SObject.prototype.upsert = function(records, extIdField, options, callback) {
+  if (typeof options === 'function') {
+    callback = options;
+    options = {};
+  }
+  return this._conn.upsert(this.type, records, extIdField, options, callback);
+};
+
+/**
+ * Synonym of SObject#destroy()
+ *
+ * @method SObject#delete
+ * @param {String|Array.&lt;String>} ids - A ID or array of IDs to delete
+ * @param {Callback.&lt;RecordResult|Array.&lt;RecordResult>>} [callback] - Callback function
+ * @returns {Promise.&lt;RecordResult|Array.&lt;RecordResult>>}
+ */
+/**
+ * Synonym of SObject#destroy()
+ *
+ * @method SObject#del
+ * @param {String|Array.&lt;String>} ids - A ID or array of IDs to delete
+ * @param {Callback.&lt;RecordResult|Array.&lt;RecordResult>>} [callback] - Callback function
+ * @returns {Promise.&lt;RecordResult|Array.&lt;RecordResult>>}
+ */
+/**
+ * Delete records
+ *
+ * @method SObject#destroy
+ * @param {String|Array.&lt;String>} ids - A ID or array of IDs to delete
+ * @param {Object} [options] - Options for rest api.
+ * @param {Callback.&lt;RecordResult|Array.&lt;RecordResult>>} [callback] - Callback function
+ * @returns {Promise.&lt;RecordResult|Array.&lt;RecordResult>>}
+ */
+SObject.prototype["delete"] =
+SObject.prototype.del =
+SObject.prototype.destroy = function(ids, options, callback) {
+  if (typeof options === 'function') {
+    callback = options;
+    options = {};
+  }
+  return this._conn.destroy(this.type, ids, options, callback);
+};
+
+/**
+ * Describe SObject metadata
+ *
+ * @param {Callback.&lt;DescribeSObjectResult>} [callback] - Callback function
+ * @returns {Promise.&lt;DescribeSObjectResult>}
+ */
+SObject.prototype.describe = function(callback) {
+  return this._conn.describe(this.type, callback);
+};
+
+/**
+ * Get record representation instance by given id
+ *
+ * @param {String} id - A record ID
+ * @returns {RecordReference}
+ */
+SObject.prototype.record = function(id) {
+  return new Record(this._conn, this.type, id);
+};
+
+/**
+ * Find and fetch records which matches given conditions
+ *
+ * @param {Object|String} [conditions] - Conditions in JSON object (MongoDB-like), or raw SOQL WHERE clause string.
+ * @param {Object|Array.&lt;String>|String} [fields] - Fields to fetch. Format can be in JSON object (MongoDB-like), array of field names, or comma-separated field names.
+ * @param {Object} [options] - Query options.
+ * @param {Number} [options.limit] - Maximum number of records the query will return.
+ * @param {Number} [options.offset] - Offset number where begins returning results.
+ * @param {Number} [options.skip] - Synonym of options.offset.
+ * @param {Callback.&lt;Array.&lt;Record>>} [callback] - Callback function
+ * @returns {Query.&lt;Array.&lt;Record>>}
+ */
+SObject.prototype.find = function(conditions, fields, options, callback) {
+  if (typeof conditions === 'function') {
+    callback = conditions;
+    conditions = {};
+    fields = null;
+    options = null;
+  } else if (typeof fields === 'function') {
+    callback = fields;
+    fields = null;
+    options = null;
+  } else if (typeof options === 'function') {
+    callback = options;
+    options = null;
+  }
+  options = options || {};
+  var config = {
+    fields: fields,
+    includes: options.includes,
+    table: this.type,
+    conditions: conditions,
+    limit: options.limit,
+    offset: options.offset || options.skip
+  };
+  var query = new Query(this._conn, config);
+  query.setResponseTarget(Query.ResponseTargets.Records);
+  if (callback) { query.run(callback); }
+  return query;
+};
+
+/**
+ * Fetch one record which matches given conditions
+ *
+ * @param {Object|String} [conditions] - Conditions in JSON object (MongoDB-like), or raw SOQL WHERE clause string.
+ * @param {Object|Array.&lt;String>|String} [fields] - Fields to fetch. Format can be in JSON object (MongoDB-like), array of field names, or comma-separated field names.
+ * @param {Object} [options] - Query options.
+ * @param {Number} [options.limit] - Maximum number of records the query will return.
+ * @param {Number} [options.offset] - Offset number where begins returning results.
+ * @param {Number} [options.skip] - Synonym of options.offset.
+ * @param {Callback.&lt;Record>} [callback] - Callback function
+ * @returns {Query.&lt;Record>}
+ */
+SObject.prototype.findOne = function(conditions, fields, options, callback) {
+  if (typeof conditions === 'function') {
+    callback = conditions;
+    conditions = {};
+    fields = null;
+    options = null;
+  } else if (typeof fields === 'function') {
+    callback = fields;
+    fields = null;
+    options = null;
+  } else if (typeof options === 'function') {
+    callback = options;
+    options = null;
+  }
+  options = _.extend(options || {}, { limit: 1 });
+  var query = this.find(conditions, fields, options);
+  query.setResponseTarget(Query.ResponseTargets.SingleRecord);
+  if (callback) { query.run(callback); }
+  return query;
+};
+
+/**
+ * Find and fetch records only by specifying fields to fetch.
+ *
+ * @param {Object|Array.&lt;String>|String} [fields] - Fields to fetch. Format can be in JSON object (MongoDB-like), array of field names, or comma-separated field names.
+ * @param {Callback.&lt;Array.&lt;Record>>} [callback] - Callback function
+ * @returns {Query.&lt;Array.&lt;Record>>}
+ */
+SObject.prototype.select = function(fields, callback) {
+  return this.find(null, fields, null, callback);
+};
+
+/**
+ * Count num of records which matches given conditions
+ *
+ * @param {Object|String} [conditions] - Conditions in JSON object (MongoDB-like), or raw SOQL WHERE clause string.
+ * @param {Callback.&lt;Number>} [callback] - Callback function
+ * @returns {Query.&lt;Number>}
+ */
+SObject.prototype.count = function(conditions, callback) {
+  if (typeof conditions === 'function') {
+    callback = conditions;
+    conditions = {};
+  }
+  var query = this.find(conditions, { "count()" : true });
+  query.setResponseTarget("Count");
+  if (callback) { query.run(callback); }
+  return query;
+};
+
+
+/**
+ * Call Bulk#load() to execute bulkload, returning batch object
+ *
+ * @param {String} operation - Bulk load operation ('insert', 'update', 'upsert', 'delete', or 'hardDelete')
+ * @param {Object} [options] - Options for bulk loading operation
+ * @param {String} [options.extIdField] - External ID field name (used when upsert operation).
+ * @param {Array.&lt;Record>|stream.Stream|String} [input] - Input source for bulkload. Accepts array of records, CSv string, and CSV data input stream.
+ * @param {Callback.&lt;Array.&lt;RecordResult>>} [callback] - Callback function
+ * @returns {Bulk~Batch}
+ */
+SObject.prototype.bulkload = function(operation, options, input, callback) {
+  return this._conn.bulk.load(this.type, operation, options, input, callback);
+};
+
+/**
+ * Synonym of SObject#createBulk()
+ *
+ * @method SObject#insertBulk
+ * @param {Array.&lt;Record>|stream.Stream|String} [input] - Input source for bulk insert. Accepts array of records, CSv string, and CSV data input stream.
+ * @param {Callback.&lt;Array.&lt;RecordResult>>} [callback] - Callback function
+ * @returns {Bulk~Batch}
+ */
+/**
+ * Bulkly insert input data using bulk API
+ *
+ * @method SObject#createBulk
+ * @param {Array.&lt;Record>|stream.Stream|String} [input] - Input source for bulk insert. Accepts array of records, CSv string, and CSV data input stream.
+ * @param {Callback.&lt;Array.&lt;RecordResult>>} [callback] - Callback function
+ * @returns {Bulk~Batch}
+ */
+SObject.prototype.insertBulk =
+SObject.prototype.createBulk = function(input, callback) {
+  return this.bulkload("insert", input, callback);
+};
+
+/**
+ * Bulkly update records by input data using bulk API
+ *
+ * @param {Array.&lt;Record>|stream.Stream|String} [input] - Input source for bulk update Accepts array of records, CSv string, and CSV data input stream.
+ * @param {Callback.&lt;Array.&lt;RecordResult>>} [callback] - Callback function
+ * @returns {Bulk~Batch}
+ */
+SObject.prototype.updateBulk = function(input, callback) {
+  return this.bulkload("update", input, callback);
+};
+
+/**
+ * Bulkly upsert records by input data using bulk API
+ *
+ * @param {Array.&lt;Record>|stream.Stream|String} [input] - Input source for bulk upsert. Accepts array of records, CSv string, and CSV data input stream.
+ * @param {String} [options.extIdField] - External ID field name
+ * @param {Callback.&lt;Array.&lt;RecordResult>>} [callback] - Callback function
+ * @returns {Bulk~Batch}
+ */
+SObject.prototype.upsertBulk = function(input, extIdField, callback) {
+  return this.bulkload("upsert", { extIdField: extIdField }, input, callback);
+};
+
+/**
+ * Synonym of SObject#destroyBulk()
+ *
+ * @method SObject#deleteBulk
+ * @param {Array.&lt;Record>|stream.Stream|String} [input] - Input source for bulk delete. Accepts array of records, CSv string, and CSV data input stream.
+ * @param {Callback.&lt;Array.&lt;RecordResult>>} [callback] - Callback function
+ * @returns {Bulk~Batch}
+ */
+/**
+ * Bulkly delete records specified by input data using bulk API
+ *
+ * @method SObject#destroyBulk
+ * @param {Array.&lt;Record>|stream.Stream|String} [input] - Input source for bulk delete. Accepts array of records, CSv string, and CSV data input stream.
+ * @param {Callback.&lt;Array.&lt;RecordResult>>} [callback] - Callback function
+ * @returns {Bulk~Batch}
+ */
+SObject.prototype.deleteBulk =
+SObject.prototype.destroyBulk = function(input, callback) {
+  return this.bulkload("delete", input, callback);
+};
+
+/**
+ * Synonym of SObject#destroyHardBulk()
+ *
+ * @method SObject#deleteHardBulk
+ * @param {Array.&lt;Record>|stream.Stream|String} [input] - Input source for bulk delete. Accepts array of records, CSv string, and CSV data input stream.
+ * @param {Callback.&lt;Array.&lt;RecordResult>>} [callback] - Callback function
+ * @returns {Bulk~Batch}
+ */
+/**
+ * Bulkly hard delete records specified in input data using bulk API
+ *
+ * @method SObject#destroyHardBulk
+ * @param {Array.&lt;Record>|stream.Stream|String} [input] - Input source for bulk delete. Accepts array of records, CSv string, and CSV data input stream.
+ * @param {Callback.&lt;Array.&lt;RecordResult>>} [callback] - Callback function
+ * @returns {Bulk~Batch}
+ */
+SObject.prototype.deleteHardBulk =
+SObject.prototype.destroyHardBulk = function(input, callback) {
+  return this.bulkload("hardDelete", input, callback);
+};
+
+/**
+ * Retrieve recently accessed records
+ *
+ * @param {Callback.&lt;Array.&lt;RecordResult>>} [callback] - Callback function
+ * @returns {Promise.&lt;Array.&lt;RecordResult>>}
+ */
+SObject.prototype.recent = function (callback) {
+  return this._conn.recent(this.type, callback);
+};
+
+/**
+ * Retrieve the updated records
+ *
+ * @param {String|Date} start - start date or string representing the start of the interval
+ * @param {String|Date} end - start date or string representing the end of the interval, must be > start
+ * @param {Callback.&lt;UpdatedRecordsInfo>} [callback] - Callback function
+ * @returns {Promise.&lt;UpdatedRecordsInfo>}
+ */
+SObject.prototype.updated = function (start, end, callback) {
+  return this._conn.updated(this.type, start, end, callback);
+};
+
+/**
+ * Retrieve the deleted records
+ *
+ * @param {String|Date} start - start date or string representing the start of the interval
+ * @param {String|Date} end - start date or string representing the end of the interval, must be > start
+ * @param {Callback.&lt;DeletedRecordsInfo>} [callback] - Callback function
+ * @returns {Promise.&lt;DeletedRecordsInfo>}
+ */
+SObject.prototype.deleted = function (start, end, callback) {
+  return this._conn.deleted(this.type, start, end, callback);
+};
+
+/**
+ * @typedef {Object} LayoutInfo
+ * @prop {Array.&lt;Object>} layouts - Array of layouts
+ * @prop {Array.&lt;Object>} recordTypeMappings - Array of record type mappings
+ */
+/**
+ * Describe layout information for SObject
+ *
+ * @param {String} [layoutName] - Name of named layout. (e.g. UserAlt in User SObject)
+ * @param {Callback.&lt;LayoutInfo>} [callback] - Callback function
+ * @returns {Promise.&lt;LayoutInfo>}
+ */
+SObject.prototype.layouts = function(layoutName, callback) {
+  if (typeof layoutName === 'function') {
+    callback = layoutName;
+    layoutName = null;
+  }
+  var url = "/sobjects/" + this.type + "/describe/" + (layoutName ? "namedLayouts/"+layoutName : "layouts");
+  return this._conn.request(url, callback);
+};
+
+/**
+ * @typedef {Object} CompactLayoutInfo
+ * @prop {Array.&lt;Object>} compactLayouts - Array of compact layouts
+ * @prop {String} defaultCompactLayoutId - ID of default compact layout
+ * @prop {Array.&lt;Object>} recordTypeCompactLayoutMappings - Array of record type mappings
+ */
+/**
+ * Describe compact layout information defined for SObject
+ *
+ * @param {Callback.&lt;CompactLayoutInfo>} [callback] - Callback function
+ * @returns {Promise.&lt;CompactLayoutInfo>}
+ */
+SObject.prototype.compactLayouts = function(callback) {
+  var url = "/sobjects/" + this.type + "/describe/compactLayouts";
+  return this._conn.request(url, callback);
+};
+
+
+/**
+ * @typedef {Object} ApprovalLayoutInfo
+ * @prop {Array.&lt;Object>} approvalLayouts - Array of approval layouts
+ */
+/**
+ * Describe compact layout information defined for SObject
+ *
+ * @param {Callback.&lt;ApprovalLayoutInfo>} [callback] - Callback function
+ * @returns {Promise.&lt;ApprovalLayoutInfo>}
+ */
+SObject.prototype.approvalLayouts = function(callback) {
+  var url = "/sobjects/" + this.type + "/describe/approvalLayouts";
+  return this._conn.request(url, callback);
+};
+
+/**
+ * Returns the list of list views for the SObject
+ *
+ * @param {Callback.&lt;ListViewsInfo>} [callback] - Callback function
+ * @returns {Promise.&lt;ListViewsInfo>}
+ */
+SObject.prototype.listviews = function(callback) {
+  var url = this._conn._baseUrl() + '/sobjects/' + this.type + '/listviews';
+  return this._conn.request(url, callback);
+};
+
+/**
+ * Returns the list view info in specifed view id
+ *
+ * @param {String} id - List view ID
+ * @returns {ListView}
+ */
+SObject.prototype.listview = function(id) {
+  return new ListView(this._conn, this.type, id);
+};
+
+/**
+ * Returns all registered quick actions for the SObject
+ *
+ * @param {Callback.&lt;Array.&lt;QuickAction~QuickActionInfo>>} [callback] - Callback function
+ * @returns {Promise.&lt;Array.&lt;QuickAction~QuickActionInfo>>}
+ */
+SObject.prototype.quickActions = function(callback) {
+  return this._conn.request("/sobjects/" + this.type + "/quickActions").thenCall(callback);
+};
+
+/**
+ * Get reference for specified quick aciton in the SObject
+ *
+ * @param {String} actionName - Name of the quick action
+ * @returns {QuickAction}
+ */
+SObject.prototype.quickAction = function(actionName) {
+  return new QuickAction(this._conn, "/sobjects/" + this.type + "/quickActions/" + actionName);
+};
+
+
+/**
+ * A class for organizing list view information
+ *
+ * @protected
+ * @class ListView
+ * @param {Connection} conn - Connection instance
+ * @param {SObject} type - SObject type
+ * @param {String} id - List view ID
+ */
+var ListView = function(conn, type, id) {
+  this._conn = conn;
+  this.type = type;
+  this.id = id;
+};
+
+/**
+ * Executes query for the list view and returns the resulting data and presentation information.
+ *
+ * @param {Callback.&lt;ListViewResultInfo>} [callback] - Callback function
+ * @returns {Promise.&lt;ListViewResultInfo>}
+ */
+ListView.prototype.results = function(callback) {
+  var url =  this._conn._baseUrl() + '/sobjects/' + this.type + '/listviews/' + this.id + '/results';
+  return this._conn.request(url, callback);
+};
+
+
+/**
+ * Returns detailed information about a list view
+ *
+ * @param {Callback.&lt;ListViewDescribeInfo>} [callback] - Callback function
+ * @returns {Promise.&lt;ListViewDescribeInfo>}
+ */
+ListView.prototype.describe = function(callback) {
+  var url =  this._conn._baseUrl() + '/sobjects/' + this.type + '/listviews/' + this.id + '/describe';
+  return this._conn.request(url, callback);
+};
+
+/**
+ * Explain plan for executing list view
+ *
+ * @param {Callback.&lt;ExplainInfo>} [callback] - Callback function
+ * @returns {Promise.&lt;ExplainInfo>}
+ */
+ListView.prototype.explain = function(callback) {
+  var url = "/query/?explain=" + this.id;
+  return this._conn.request(url, callback);
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="HttpApi.html">HttpApi</a></li><li><a href="ListView.html">ListView</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Process.html">Process</a></li><li><a href="Process-ApprovalProcess.html">ApprovalProcess</a></li><li><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></li><li><a href="Process-ProcessRule.html">ProcessRule</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="QuickAction.html">QuickAction</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.Parsable.html">Parsable</a></li><li><a href="RecordStream.Serializable.html">Serializable</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SoapApi.html">SoapApi</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Channel.html">Channel</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SessionRefreshDelegate">SessionRefreshDelegate</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Mar 30 2016 04:18:43 GMT+0900 (JST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

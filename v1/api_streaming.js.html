@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: api/streaming.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: api/streaming.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file Manages Streaming APIs
+ * @author Shinichi Tomita &lt;shinichi.tomita@gmail.com>
+ */
+
+'use strict';
+
+var events = require('events'),
+    inherits = require('inherits'),
+    _ = require('lodash/core'),
+    Faye   = require('faye'),
+    jsforce = require('../core');
+
+/**
+ * Streaming API topic class
+ *
+ * @class Streaming~Topic
+ * @param {Streaming} steaming - Streaming API object
+ * @param {String} name - Topic name
+ */
+var Topic = function(streaming, name) {
+  this._streaming = streaming;
+  this.name = name;
+};
+
+/**
+ * @typedef {Object} Streaming~StreamingMessage
+ * @prop {Object} event
+ * @prop {Object} event.type - Event type
+ * @prop {Record} sobject - Record information
+ */
+/**
+ * Subscribe listener to topic
+ *
+ * @method Streaming~Topic#subscribe
+ * @param {Callback.&lt;Streaming~StreamingMesasge>} listener - Streaming message listener
+ * @returns {Subscription} - Faye subscription object
+ */
+Topic.prototype.subscribe = function(listener) {
+  return this._streaming.subscribe(this.name, listener);
+};
+
+/**
+ * Unsubscribe listener from topic
+ *
+ * @method Streaming~Topic#unsubscribe
+ * @param {Callback.&lt;Streaming~StreamingMesasge>} listener - Streaming message listener
+ * @returns {Streaming~Topic}
+ */
+Topic.prototype.unsubscribe = function(listener) {
+  this._streaming.unsubscribe(this.name, listener);
+  return this;
+};
+
+/*--------------------------------------------*/
+
+/**
+ * Streaming API Generic Streaming Channel
+ *
+ * @class Streaming~Channel
+ * @param {Streaming} steaming - Streaming API object
+ * @param {String} name - Channel name (starts with "/u/")
+ */
+var Channel = function(streaming, name) {
+  this._streaming = streaming;
+  this._name = name;
+};
+
+/**
+ * Subscribe to hannel
+ *
+ * @param {Callback.&lt;Streaming~StreamingMessage>} listener - Streaming message listener
+ * @returns {Subscription} - Faye subscription object
+ */
+Channel.prototype.subscribe = function(listener) {
+  return this._streaming.subscribe(this._name, listener);
+};
+
+Channel.prototype.unsubscribe = function(listener) {
+  this._streaming.unsubscribe(this._name, listener);
+  return this;
+};
+
+Channel.prototype.push = function(events, callback) {
+  var isArray = _.isArray(events);
+  events = isArray ? events : [ events ];
+  var conn = this._streaming._conn;
+  if (!this._id) {
+    this._id = conn.sobject('StreamingChannel').findOne({ Name: this._name }, 'Id')
+      .then(function(rec) { return rec.Id });
+  }
+  return this._id.then(function(id) {
+    var channelUrl = '/sobjects/StreamingChannel/' + id + '/push';
+    return conn.requestPost(channelUrl, { pushEvents: events });
+  }).then(function(rets) {
+    return isArray ? rets : rets[0];
+  }).thenCall(callback);
+};
+
+/*--------------------------------------------*/
+
+/**
+ * Streaming API class
+ *
+ * @class
+ * @extends events.EventEmitter
+ * @param {Connection} conn - Connection object
+ */
+var Streaming = function(conn) {
+  this._conn = conn;
+};
+
+inherits(Streaming, events.EventEmitter);
+
+/** @private **/
+Streaming.prototype._createClient = function(replay) {
+  var endpointUrl = [ this._conn.instanceUrl, "cometd" + (replay ? "/replay" : ""), this._conn.version ].join('/');
+  var fayeClient = new Faye.Client(endpointUrl, {});
+  fayeClient.setHeader('Authorization', 'OAuth '+this._conn.accessToken);
+  return fayeClient;
+};
+
+/** @private **/
+Streaming.prototype._getFayeClient = function(channelName) {
+  var isGeneric = channelName.indexOf('/u/') === 0;
+  var clientType = isGeneric ? 'generic' : 'pushTopic';
+  if (!this._fayeClients || !this._fayeClients[clientType]) {
+    this._fayeClients = this._fayeClients || {};
+    this._fayeClients[clientType] = this._createClient(isGeneric);
+    if (Faye.Transport.NodeHttp) {
+      Faye.Transport.NodeHttp.prototype.batching = false; // prevent streaming API server error
+    }
+  }
+  return this._fayeClients[clientType];
+};
+
+
+/**
+ * Get named topic
+ *
+ * @param {String} name - Topic name
+ * @returns {Streaming~Topic}
+ */
+Streaming.prototype.topic = function(name) {
+  this._topics = this._topics || {};
+  var topic = this._topics[name] =
+    this._topics[name] || new Topic(this, name);
+  return topic;
+};
+
+/**
+ * Get Channel for Id
+ * @param {String} channelId - Id of StreamingChannel object
+ * @returns {Streaming~Channel}
+ */
+Streaming.prototype.channel = function(channelId) {
+  return new Channel(this, channelId);
+};
+
+/**
+ * Subscribe topic/channel
+ *
+ * @param {String} name - Topic name
+ * @param {Callback.&lt;Streaming~StreamingMessage>} listener - Streaming message listener
+ * @returns {Subscription} - Faye subscription object
+ */
+Streaming.prototype.subscribe = function(name, listener) {
+  var channelName = name.indexOf('/') === 0 ? name : '/topic/' + name;
+  var fayeClient = this._getFayeClient(channelName);
+  return fayeClient.subscribe(channelName, listener);
+};
+
+/**
+ * Unsubscribe topic
+ *
+ * @param {String} name - Topic name
+ * @param {Callback.&lt;Streaming~StreamingMessage>} listener - Streaming message listener
+ * @returns {Streaming}
+ */
+Streaming.prototype.unsubscribe = function(name, listener) {
+  var channelName = name.indexOf('/') === 0 ? name : '/topic/' + name;
+  var fayeClient = this._getFayeClient(channelName);
+  fayeClient.unsubscribe(channelName, listener);
+  return this;
+};
+
+
+/*--------------------------------------------*/
+/*
+ * Register hook in connection instantiation for dynamically adding this API module features
+ */
+jsforce.on('connection:new', function(conn) {
+  conn.streaming = new Streaming(conn);
+});
+
+
+module.exports = Streaming;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Analytics.html">Analytics</a></li><li><a href="Analytics-Report.html">Report</a></li><li><a href="Analytics-ReportInstance.html">ReportInstance</a></li><li><a href="Apex.html">Apex</a></li><li><a href="Bulk.html">Bulk</a></li><li><a href="Bulk-Batch.html">Batch</a></li><li><a href="Bulk-Job.html">Job</a></li><li><a href="Cache.html">Cache</a></li><li><a href="Chatter.html">Chatter</a></li><li><a href="Chatter-Request.html">Request</a></li><li><a href="Chatter-Resource.html">Resource</a></li><li><a href="Client.html">Client</a></li><li><a href="Connection.html">Connection</a></li><li><a href="Deferred.html">Deferred</a></li><li><a href="HttpApi.html">HttpApi</a></li><li><a href="ListView.html">ListView</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Metadata.html">Metadata</a></li><li><a href="Metadata-AsyncResultLocator.html">AsyncResultLocator</a></li><li><a href="Metadata-DeployResultLocator.html">DeployResultLocator</a></li><li><a href="Metadata-RetrieveResultLocator.html">RetrieveResultLocator</a></li><li><a href="OAuth2.html">OAuth2</a></li><li><a href="Process.html">Process</a></li><li><a href="Process-ApprovalProcess.html">ApprovalProcess</a></li><li><a href="Process-ApprovalProcessRequest.html">ApprovalProcessRequest</a></li><li><a href="Process-ProcessRule.html">ProcessRule</a></li><li><a href="Promise.html">Promise</a></li><li><a href="Query.html">Query</a></li><li><a href="Query-SubQuery.html">SubQuery</a></li><li><a href="QuickAction.html">QuickAction</a></li><li><a href="RecordReference.html">RecordReference</a></li><li><a href="RecordStream.html">RecordStream</a></li><li><a href="RecordStream.Parsable.html">Parsable</a></li><li><a href="RecordStream.Serializable.html">Serializable</a></li><li><a href="SfDate.html">SfDate</a></li><li><a href="SOAP.html">SOAP</a></li><li><a href="SoapApi.html">SoapApi</a></li><li><a href="SObject.html">SObject</a></li><li><a href="Streaming.html">Streaming</a></li><li><a href="Streaming-Channel.html">Channel</a></li><li><a href="Streaming-Topic.html">Topic</a></li><li><a href="Tooling.html">Tooling</a></li><li><a href="Transport.html">Transport</a></li><li><a href="Transport-ProxyTransport.html">ProxyTransport</a></li></ul><h3>Global</h3><ul><li><a href="global.html#SessionRefreshDelegate">SessionRefreshDelegate</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Mar 30 2016 04:18:43 GMT+0900 (JST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
