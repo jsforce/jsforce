@@ -65,6 +65,19 @@ if (TestEnv.isNodeJS) {
     });
   });
 
+  var oauth2 = new OAuth2({
+    jwt: config
+  });
+
+  describe("OAuth2 JWT bearer flow : authenticate", function() {
+    it("should receive access token", function(done) {
+      oauth2.authenticateWithJWT(function(err, res) {
+        if (err) { throw err; }
+        assert.ok(_.isString(res.access_token));
+      }.check(done));
+    });
+  });
+
 }
 /*------------------------------------------------------------------------*/
 
