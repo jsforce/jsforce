@@ -155,6 +155,7 @@
     "through2": "^3.0.1",
     "timers-browserify": "^2.0.12",
     "ts-node": "^9.0.0",
+    "typedoc": "^0.22.18",
     "typescript": "^4.1.2",
     "util": "^0.12.5",
     "webpack": "^5.82.0",

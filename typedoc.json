@@ -1,0 +1,11 @@
+{
+  "theme": "default",
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "exclude": ["src/cli/*.ts","src/VERSION.ts"],
+  "entryPoints": ["src"],
+  "entryPointStrategy": "expand",
+  "compilerOptions": {
+    "skipLibCheck": true
+  }
+}
