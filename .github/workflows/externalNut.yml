@@ -114,13 +114,15 @@ jobs:
 
       - name: swap this dependency for the version on this branch
         if: ${{ steps.cache-nodemodules.outputs.cache-hit != 'true' }}
+        working-directory: node_modules/@salesforce/core/node_modules/${{ inputs.packageName }}
         run: |
+          yarn remove ${{ inputs.packageName }}
           yarn add ${{ github.repository }}#${{ github.sha }}
           npx yarn-deduplicate
           yarn install  --network-timeout 600000
-      - name: install/build ${{ inputs.packageName}} in node_modules
+      - name: install/build ${{ inputs.packageName }} in node_modules
         if: ${{ steps.cache-nodemodules.outputs.cache-hit != 'true' }}
-        working-directory: node_modules/${{ inputs.packageName }}
+        working-directory: node_modules/@salesforce/core/node_modules/${{ inputs.packageName }}
         run: |
           npm install
           ${{ inputs.preBuildCommands }}
