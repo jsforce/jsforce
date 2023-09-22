@@ -184,7 +184,7 @@ export class OAuth2 {
       ...params,
       ...(typeof codeOrParams === 'string'
         ? { grant_type: 'authorization_code', code: codeOrParams }
-        : {}),
+        : codeOrParams),
     };
     if (this.clientId) {
       _params.client_id = this.clientId;
