@@ -97,14 +97,10 @@ jobs:
           # backoff 60 seconds because most failures are 429 (too many requests)
           retry_wait_seconds: 60
           timeout_minutes: 20
-      - uses: nick-fields/retry@943e742917ac94714d2f408a0e8320f2d1fcafcd
+      - uses: actions/checkout@v3
         name: git clone jsforce
         with:
-          max_attempts: 20
-          command: git clone -b ${{ github.ref_name }} --single-branch ${{ github.repositoryUrl }} jsforce
-          # backoff 60 seconds because most failures are 429 (too many requests)
-          retry_wait_seconds: 60
-          timeout_minutes: 20
+          path: jsforce
       - name: Cache node modules
         if: inputs.useCache
         id: cache-nodemodules
