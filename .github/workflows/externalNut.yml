@@ -13,11 +13,6 @@ on:
         required: false
 
     inputs:
-      # could we get this from pjson?
-      packageName:
-        description: "The npm package that this repository publishes.  ex: @salesforce/core"
-        required: true
-        type: string
       externalProjectGitUrl:
         description: "The url that will be cloned.  This contains the NUTs you want to run.  Ex: https://github.com/salesforcecli/plugin-user"
         type: string
@@ -37,30 +32,6 @@ on:
         description: "runs-on property, ex: ubuntu-latest, windows-latest"
         type: string
         default: "ubuntu-latest"
-      sfdxExecutablePath:
-        required: false
-        description: "Path to sfdx executable to be used by NUTs, defaults to ''"
-        type: string
-      preBuildCommands:
-        required: false
-        description: "commands to run before the build...for example, to delete known module conflicts"
-        type: string
-        default: 'echo "no preBuildCommands passed"'
-      postBuildCommands:
-        required: false
-        description: "script to run after the build"
-        type: string
-        default: 'echo "no postBuildCommands passed"'
-      preExternalBuildCommands:
-        required: false
-        description: "commands to run before the build of the external repo...for example, to delete known module conflicts"
-        type: string
-        default: 'echo "no preExternalBuildCommands passed"'
-      preSwapCommands:
-        required: false
-        description: "commands to run before ANY modifications happen.  For example, changes that modify the lockfile like yarn add or remove need to happen before the action manually swaps the dependency under test"
-        type: string
-        default: 'echo "no preSwapCommands passed"'
       useCache:
         required: false
         type: boolean
@@ -87,12 +58,12 @@ jobs:
         name: cli install
         with:
           max_attempts: ${{ inputs.attempts }}
-          command: npm install -g @salesforce/cli@nightly shx yarn-deduplicate --omit=dev
+          command: npm install -g @salesforce/cli@nightly --omit=dev
           timeout_minutes: 20
       - uses: nick-fields/retry@943e742917ac94714d2f408a0e8320f2d1fcafcd
-        name: git clone {{ inputs.externalProjectGitUrl }}
+        name: git clone project
         with:
-          max_attempts: 20
+          max_attempts: 5
           command: git clone -b ${{ inputs.branch}} --single-branch ${{ inputs.externalProjectGitUrl}} $(pwd)
           # backoff 60 seconds because most failures are 429 (too many requests)
           retry_wait_seconds: 60
@@ -113,22 +84,19 @@ jobs:
           key: ${{ runner.os }}-externalNuts-${{ env.cache-name }}-${{ inputs.externalProjectGitUrl}}-${{ inputs.branch}}-${{ github.sha }}
       - uses: salesforcecli/github-workflows/.github/actions/yarnInstallWithRetries@main
         if: ${{ steps.cache-nodemodules.outputs.cache-hit != 'true' }}
-      - run: ${{inputs.preSwapCommands}}
-        if: ${{ steps.cache-nodemodules.outputs.cache-hit != 'true' }}
-
       - name: build and create symlink to jsforce
         if: ${{ steps.cache-nodemodules.outputs.cache-hit != 'true' }}
         run: |
           cd ./jsforce
           npm install
+          ## skip webpack, we are only interested in types and node build
           npm run clean && npm run build:types && npm run build:lib
           yarn link
       - name: link jsforce into plugin
         if: ${{ steps.cache-nodemodules.outputs.cache-hit != 'true' }}
+        # this rely on plugins having just 1 version of jsforce
+        # in its top-level node_modules.
         run: yarn link "jsforce"
-      - name: preExternalBuildCommands
-        if: ${{ steps.cache-nodemodules.outputs.cache-hit != 'true' }}
-        run: ${{ inputs.preExternalBuildCommands }}
       - name: Build the external project (where the NUTs are)
         run: yarn compile
       - uses: nick-fields/retry@943e742917ac94714d2f408a0e8320f2d1fcafcd
