@@ -391,12 +391,14 @@ describe('batch', () => {
     const elems = result.results.splice(elemsIndex, 1)[0].result;
 
     const [el1, el2] = result.results;
+    const elemIDs = [el1.result.id,el2.result.id]
 
-    const elem1 = el1.result;
-    const elem2 = el2.result;
-    urls = [elem1.url, elem2.url];
-    assert.ok(elems.elements[1].id === elem1.id);
-    assert.ok(elems.elements[0].id === elem2.id);
+    urls = [el1.result.url, el2.result.url];
+
+    // don't rely on order of elements, just find the ID in the payload
+    for (const id of elemIDs) {
+      assert.ok(elems.elements.find((el: { id: string }) => el.id === id))
+    }
   });
 
   /**
