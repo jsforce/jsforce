@@ -391,13 +391,13 @@ describe('batch', () => {
     const elems = result.results.splice(elemsIndex, 1)[0].result;
 
     const [el1, el2] = result.results;
-    const elemIDs = [el1.result.id,el2.result.id]
+    const elemIDs = [el1.result.id, el2.result.id];
 
     urls = [el1.result.url, el2.result.url];
 
     // don't rely on order of elements, just find the ID in the payload
     for (const id of elemIDs) {
-      assert.ok(elems.elements.find((el: { id: string }) => el.id === id))
+      assert.ok(elems.elements.find((el: { id: string }) => el.id === id));
     }
   });
 
