@@ -18,6 +18,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Generated docs
+docs
+
 # Runtime data
 pids
 *.pid
