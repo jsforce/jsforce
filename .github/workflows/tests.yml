@@ -65,13 +65,12 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-  
+
       - name: Lint and Type Check
         run: |
           npm run lint
           npm run build:types
           npm run typecheck
-
 
   test-node-linux:
     needs: lint-and-typecheck
@@ -114,6 +113,31 @@ jobs:
       - name: Delete scratch org
         if: always()
         run: sf org delete scratch --target-org jsforce-test-org --no-prompt
+
+  salesforce-cli-external-nuts:
+    needs: test-node-linux
+    uses: ./.github/workflows/externalNut.yml
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ['ubuntu-latest', 'windows-latest']
+        externalProjectGitUrl:
+          - https://github.com/salesforcecli/plugin-org
+          - https://github.com/salesforcecli/plugin-auth
+          - https://github.com/salesforcecli/plugin-data
+          - https://github.com/salesforcecli/plugin-user
+          - https://github.com/salesforcecli/plugin-custom-metadata
+    with:
+      externalProjectGitUrl: ${{ matrix.externalProjectGitUrl }}
+      command: 'yarn test:nuts'
+      os: ${{ matrix.os }}
+      useCache: false
+    secrets:
+      TESTKIT_AUTH_URL: ${{ secrets.SF_HUB_AUTH_URL }}
+      TESTKIT_HUB_USERNAME: ${{ secrets.SF_HUB_USERNAME }}
+      TESTKIT_JWT_CLIENT_ID: ${{ secrets.SF_OAUTH2_CLIENT_ID }}
+      TESTKIT_JWT_KEY: ${{ secrets.SF_OAUTH2_JWT_KEY }}
+      TESTKIT_HUB_INSTANCE: ${{ secrets.SF_HUB_INSTANCE }}
 
  #  test-node-windows:
  #    needs: lint-and-typecheck
