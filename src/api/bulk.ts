@@ -1024,7 +1024,24 @@ export class BulkV2<S extends Schema> {
   }
 
   /**
-   * Create a new job instance
+   * Create an instance of an ingest job object.
+   *
+   * @example
+   * // Upsert records to the Account object.
+   *
+   * const job = connection.bulk2.createJob({
+   *   operation: 'insert'
+   *   object: 'Account',
+   * });
+   *
+   * // create the job in the org
+   * await job.open()
+   *
+   * // upload data 
+   * await job.uploadData(csvFile)
+   *
+   * // finished uploading data, mark it as ready for processing
+   * await job.close()
    */
   createJob<Opr extends IngestOperation>(
     options: NewIngestJobOptions,
@@ -1036,6 +1053,12 @@ export class BulkV2<S extends Schema> {
     });
   }
 
+  /**
+   * Get a ingest job instance specified by a given job ID
+   *
+   * @param options Options object with a job ID
+   * @returns IngestJobV2 An ingest job
+   */
   job<Opr extends IngestOperation>(
     options: ExistingIngestJobOptions,
   ): IngestJobV2<S, Opr> {
@@ -1055,6 +1078,9 @@ export class BulkV2<S extends Schema> {
         input: Record[] | Readable | string;
       },
   ): Promise<IngestJobV2Results<S>> {
+    if (!options.pollTimeout) options.pollTimeout = this.pollTimeout
+    if (!options.pollInterval) options.pollInterval = this.pollInterval
+
     const job = this.createJob(options);
     try {
       await job.open();
@@ -1072,7 +1098,9 @@ export class BulkV2<S extends Schema> {
   }
 
   /**
-   * Execute bulk query and get record stream
+   * Execute bulk query and get records
+   * 
+   * @returns Record[]
    */
   async query(
     soql: string,
@@ -1119,6 +1147,9 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     this.on('error', (error) => (this.#error = error));
   }
 
+  /**
+   * Creates a query job
+   */
   async open(): Promise<void> {
     try {
       this.jobInfo = await this.createQueryRequest<JobInfoV2>({
@@ -1160,6 +1191,12 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     }
   }
 
+  /**
+   * Poll for the state of the processing for the job.
+   *
+   * @param interval Polling interval in milliseconds
+   * @param timeout Polling timeout in milliseconds
+   */
   async poll(
     interval: number = this.#pollingOptions.pollInterval,
     timeout: number = this.#pollingOptions.pollTimeout,
@@ -1193,7 +1230,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     }
 
     const timeoutError = new JobPollingTimeoutError(
-      `Polling time out. Job Id = ${jobId}`,
+      `Polling timed out after ${timeout}ms. Job Id = ${jobId}`,
       jobId,
     );
     this.emit('error', timeoutError);
@@ -1233,7 +1270,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     return httpApi.request<R>(request_);
   }
 
-  private getResultsUrl() {
+  private getResultsUrl(): string {
     const url = `${this.#connection.instanceUrl}/services/data/v${
       this.#connection.version
     }/jobs/query/${getJobIdOrError(this.jobInfo)}/results`;
@@ -1241,6 +1278,9 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     return this.locator ? `${url}?locator=${this.locator}` : url;
   }
 
+  /**
+   * Get the results for a query job.
+   */
   async getResults(): Promise<Record[]> {
     if (this.finished && this.#queryResults) {
       return this.#queryResults;
@@ -1264,6 +1304,9 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     return this.#queryResults;
   }
 
+  /**
+   * Deletes a query job. 
+   */
   async delete(): Promise<void> {
     return this.createQueryRequest<void>({
       method: 'DELETE',
@@ -1324,6 +1367,9 @@ export class IngestJobV2<
     return this.jobInfo.id;
   }
 
+  /**
+   * Create a job representing a bulk operation in the org
+   */
   async open(): Promise<void> {
     try {
       this.jobInfo = await this.createIngestRequest<JobInfoV2>({
@@ -1348,6 +1394,10 @@ export class IngestJobV2<
     }
   }
 
+  /** Upload data for a job in CSV format
+   *
+   *  @param input CSV as a string, or array of records or readable stream
+   */ 
   async uploadData(input: string | Record[] | Readable): Promise<void> {
     await this.#jobData.execute(input);
   }
@@ -1405,6 +1455,12 @@ export class IngestJobV2<
     }
   }
 
+  /**
+   * Poll for the state of the processing for the job.
+   *
+   * @param interval Polling interval in milliseconds
+   * @param timeout Polling timeout in milliseconds
+   */
   async poll(
     interval: number = this.#pollingOptions.pollInterval,
     timeout: number = this.#pollingOptions.pollTimeout,
@@ -1438,7 +1494,7 @@ export class IngestJobV2<
     }
 
     const timeoutError = new JobPollingTimeoutError(
-      `Polling time out. Job Id = ${jobId}`,
+      `Polling timed out after ${timeout}ms. Job Id = ${jobId}`,
       jobId,
     );
     this.emit('error', timeoutError);
@@ -1517,6 +1573,9 @@ export class IngestJobV2<
     return this.#bulkJobUnprocessedRecords;
   }
 
+  /**
+   * Deletes an ingest job. 
+   */
   async delete(): Promise<void> {
     return this.createIngestRequest<void>({
       method: 'DELETE',
