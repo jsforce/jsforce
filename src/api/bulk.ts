@@ -1037,7 +1037,7 @@ export class BulkV2<S extends Schema> {
    * // create the job in the org
    * await job.open()
    *
-   * // upload data 
+   * // upload data
    * await job.uploadData(csvFile)
    *
    * // finished uploading data, mark it as ready for processing
@@ -1078,8 +1078,8 @@ export class BulkV2<S extends Schema> {
         input: Record[] | Readable | string;
       },
   ): Promise<IngestJobV2Results<S>> {
-    if (!options.pollTimeout) options.pollTimeout = this.pollTimeout
-    if (!options.pollInterval) options.pollInterval = this.pollInterval
+    if (!options.pollTimeout) options.pollTimeout = this.pollTimeout;
+    if (!options.pollInterval) options.pollInterval = this.pollInterval;
 
     const job = this.createJob(options);
     try {
@@ -1099,7 +1099,12 @@ export class BulkV2<S extends Schema> {
 
   /**
    * Execute bulk query and get records
-   * 
+   *
+   * Default timeout: 10000ms
+   *
+   * @param soql SOQL query
+   * @param BulkV2PollingOptions options object
+   *
    * @returns Record[]
    */
   async query(
@@ -1194,6 +1199,13 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
   /**
    * Poll for the state of the processing for the job.
    *
+   * This method will only throw after a timeout. To capture a
+   * job failure while polling you must set a listener for the
+   * `failed` event before calling it:
+   *
+   * job.on('failed', (err) => console.error(err))
+   * await job.poll()
+   *
    * @param interval Polling interval in milliseconds
    * @param timeout Polling timeout in milliseconds
    */
@@ -1217,7 +1229,9 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
             await delay(interval);
             break;
           case 'Failed':
-            this.emit('failed');
+            // unlike ingest jobs, the API doesn't return an error msg:
+            // https://developer.salesforce.com/docs/atlas.en-us.api_asynch.meta/api_asynch/query_get_one_job.htm
+            this.emit('failed', new Error('Query job failed to complete.'));
             return;
           case 'JobComplete':
             this.emit('jobcomplete');
@@ -1305,7 +1319,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
   }
 
   /**
-   * Deletes a query job. 
+   * Deletes a query job.
    */
   async delete(): Promise<void> {
     return this.createQueryRequest<void>({
@@ -1397,7 +1411,7 @@ export class IngestJobV2<
   /** Upload data for a job in CSV format
    *
    *  @param input CSV as a string, or array of records or readable stream
-   */ 
+   */
   async uploadData(input: string | Record[] | Readable): Promise<void> {
     await this.#jobData.execute(input);
   }
@@ -1458,6 +1472,13 @@ export class IngestJobV2<
   /**
    * Poll for the state of the processing for the job.
    *
+   * This method will only throw after a timeout. To capture a
+   * job failure while polling you must set a listener for the
+   * `failed` event before calling it:
+   *
+   * job.on('failed', (err) => console.error(err))
+   * await job.poll()
+   *
    * @param interval Polling interval in milliseconds
    * @param timeout Polling timeout in milliseconds
    */
@@ -1481,7 +1502,7 @@ export class IngestJobV2<
             await delay(interval);
             break;
           case 'Failed':
-            this.emit('failed');
+            this.emit('failed', new Error('Ingest job failed to complete.'));
             return;
           case 'JobComplete':
             this.emit('jobcomplete');
@@ -1574,7 +1595,7 @@ export class IngestJobV2<
   }
 
   /**
-   * Deletes an ingest job. 
+   * Deletes an ingest job.
    */
   async delete(): Promise<void> {
     return this.createIngestRequest<void>({
