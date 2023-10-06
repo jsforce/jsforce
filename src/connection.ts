@@ -471,7 +471,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
    * Typically, just pass the code returned from authorization server in the first argument to complete authorization.
    * If you want to authorize with grant types other than `authorization_code`, you can also pass params object with the grant type.
    *
-   * @returns {Promise<AuthInfo>} An object that contains the user ID, org ID and identity URL.
+   * @returns {Promise<UserInfo>} An object that contains the user ID, org ID and identity URL.
    *
    */
   async authorize(
