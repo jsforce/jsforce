@@ -1026,6 +1026,8 @@ export class BulkV2<S extends Schema> {
   /**
    * Create an instance of an ingest job object.
    *
+   * @params {NewIngestJobOptions} options object
+   * @returns {IngestJobV2} An ingest job instance
    * @example
    * // Upsert records to the Account object.
    *
@@ -1208,6 +1210,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
    *
    * @param interval Polling interval in milliseconds
    * @param timeout Polling timeout in milliseconds
+   * @returns {Promise<Record[]>} A promise that resolves to an array of records
    */
   async poll(
     interval: number = this.#pollingOptions.pollInterval,
@@ -1294,6 +1297,8 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
 
   /**
    * Get the results for a query job.
+   *
+   * @returns {Promise<Record[]>} A promise that resolves to an array of records
    */
   async getResults(): Promise<Record[]> {
     if (this.finished && this.#queryResults) {
@@ -1481,6 +1486,7 @@ export class IngestJobV2<
    *
    * @param interval Polling interval in milliseconds
    * @param timeout Polling timeout in milliseconds
+   * @returns {Promise<void>} A promise that resolves when the job finishes successfully
    */
   async poll(
     interval: number = this.#pollingOptions.pollInterval,
