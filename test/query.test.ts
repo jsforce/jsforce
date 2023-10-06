@@ -8,6 +8,7 @@ import { isString, isNumber } from './util';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection(); // TODO: remove any
+conn.bulk2.pollTimeout = 60 * 1000; // adjust poll timeout to test timeout.
 
 /**
  *
