@@ -603,6 +603,8 @@ export class Batch<
       default:
         record = { Id, ...rrec };
     }
+    // TODO(cristian): fix type
+    // @ts-ignore
     this._uploadStream.write(record, enc, cb);
   }
 
@@ -1062,7 +1064,8 @@ export class BulkV2<S extends Schema> {
       await job.close();
       await job.poll(options.pollInterval, options.pollTimeout);
       return await job.getAllResults();
-    } catch (err) {
+    } catch (error) {
+      const err = error as Error
       if (err.name !== 'JobPollingTimeoutError') {
         // fires off one last attempt to clean up and ignores the result | error
         job.delete().catch((ignored) => ignored);
@@ -1088,7 +1091,8 @@ export class BulkV2<S extends Schema> {
       await queryJob.open();
       await queryJob.poll(options?.pollInterval, options?.pollTimeout);
       return await queryJob.getResults();
-    } catch (err) {
+    } catch (error) {
+      const err = error as Error
       if (err.name !== 'JobPollingTimeoutError') {
         // fires off one last attempt to clean up and ignores the result | error
         queryJob.delete().catch((ignored) => ignored);
@@ -1618,6 +1622,8 @@ class JobDataV2<
       default:
         record = { Id, ...rrec };
     }
+    // TODO(cristian): fix type
+    // @ts-ignore
     this.#uploadStream.write(record, enc, cb);
   }
 

@@ -87,7 +87,8 @@ describe('logout', () => {
     try {
       await conn2.query('SELECT Id FROM User');
       assert.fail();
-    } catch (err) {
+    } catch (error) {
+      const err = error as Error
       assert.ok(err && typeof err.message === 'string');
     }
   });
@@ -133,7 +134,8 @@ describe('logout', () => {
     try {
       await conn.query('SELECT Id FROM User');
       assert.fail();
-    } catch (err) {
+    } catch (error) {
+      const err = error as Error
       assert.ok(err && typeof err.message === 'string');
     }
   });

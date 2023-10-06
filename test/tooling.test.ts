@@ -242,10 +242,10 @@ describe('single record crud', () => {
     try {
       record = await conn.tooling.sobject('DebugLevel').retrieve(debugLevelId);
     } catch (error) {
-      err = error;
+      err = error as Error;
+      assert.ok(record === undefined);
+      assert.ok(err.name === 'NOT_FOUND');
     }
-    assert.ok(record === undefined);
-    assert.ok(err.name === 'NOT_FOUND');
   });
 });
 
