@@ -8,7 +8,7 @@ on:
 jobs:
   docs:
     needs: release
-    if: github.ref_name === '2.0'
+    if: github.ref_name == '2.0'
     uses: ./.github/workflows/publishDocs.yml
   release:
     runs-on: ubuntu-latest
