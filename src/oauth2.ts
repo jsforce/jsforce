@@ -47,6 +47,11 @@ export type AuthzRequestParams = {
 
 export type TokenResponse = {
   token_type: 'Bearer';
+  /**
+   * Identity URL
+   *
+   * The format of the URL is https://login.salesforce.com/id/orgID/userID.
+   */
   id: string;
   access_token: string;
   refresh_token?: string;
