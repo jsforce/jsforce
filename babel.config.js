@@ -5,7 +5,7 @@ module.exports = {
       {
         useBuiltIns: 'usage',
         corejs: 3,
-        targets: { node: '8' },
+        targets: { node: 18 },
       },
     ],
     '@babel/preset-typescript',
@@ -22,20 +22,6 @@ module.exports = {
     ],
   ],
   env: {
-    module: {
-      presets: [
-        [
-          '@babel/preset-env',
-          {
-            modules: false,
-            useBuiltIns: 'usage',
-            corejs: 3,
-            targets: { node: '8' },
-          },
-        ],
-        '@babel/preset-typescript',
-      ],
-    },
     browser: {
       presets: [
         [
@@ -55,7 +41,7 @@ module.exports = {
         [
           '@babel/preset-env',
           {
-            targets: { node: '8' },
+            targets: { node: 18 },
           },
         ],
         '@babel/preset-typescript',
