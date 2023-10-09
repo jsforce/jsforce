@@ -193,7 +193,7 @@ describe('upsert', () => {
       await conn.sobject(config.upsertTable).upsert(rec2, config.upsertField);
       assert.fail();
     } catch (error) {
-      const err = error as HttpApiError
+      const err = error as HttpApiError;
       assert.ok(err.name === 'MULTIPLE_CHOICES');
       assert.ok(Array.isArray(err.content));
       assert.ok(typeof err.content[0] === 'string');

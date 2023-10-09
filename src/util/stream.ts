@@ -41,7 +41,10 @@ class MemoryWriteStream extends Writable {
   }
 }
 
-export async function readAll(rs: Readable, encoding: BufferEncoding = 'utf-8') {
+export async function readAll(
+  rs: Readable,
+  encoding: BufferEncoding = 'utf-8',
+) {
   return new Promise<string>((resolve, reject) => {
     const ws = new MemoryWriteStream();
     rs.on('error', reject)
