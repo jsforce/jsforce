@@ -4,6 +4,7 @@ import { isString } from './util';
 import { isNodeJS } from './helper/env';
 import authorize from './helper/webauth';
 import config from './config';
+import { it, describe, jest } from '@jest/globals';
 
 const oauth2 = new OAuth2(config);
 

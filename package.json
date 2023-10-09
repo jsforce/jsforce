@@ -35,13 +35,13 @@
   "types": "./index",
   "scripts": {
     "build:node:cjs": "tsc -p src",
-    "clean": "rimraf lib/* module/* browser/*",
+    "clean": "rimraf --glob lib/* module/* browser/*",
     "build": "npm run build:transpile && npm run build:bundle",
     "build:transpile": "npm run build:node:cjs && npm run build:browser",
     "build:browser": "babel src --extensions \".ts\" --source-maps inline --env-name browser --out-dir browser",
     "build:bundle": "webpack",
     "lint": "eslint --ext .ts,.js src test",
-    "typecheck": "tsc -p test && tsc -p src --noEmit",
+    "typecheck": "npm run build:node:cjs && tsc -p test",
     "pretest:node": "npm run build:node:cjs",
     "pretest:browser": "npm run build:browser && npm run build:bundle",
     "pretest:browser-ci": "npm run pretest:browser",
@@ -108,9 +108,9 @@
     "@babel/preset-env": "^7.22.20",
     "@babel/preset-typescript": "^7.23.0",
     "@babel/register": "^7.22.15",
+    "@jest/globals": "^29.7.0",
     "@types/fs-extra": "^8.0.1",
     "@types/inquirer": "^6.5.0",
-    "@types/jest": "^28",
     "@types/multistream": "^2.1.1",
     "@types/node-fetch": "^2.5.7",
     "@types/through2": "^2.0.34",
@@ -154,6 +154,7 @@
     "util": "^0.12.5",
     "webpack": "^5.82.0",
     "webpack-cli": "^5.0.2",
+    "wireit": "^0.14.0",
     "zx": "^7.2.3"
   }
 }

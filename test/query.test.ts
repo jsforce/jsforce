@@ -5,6 +5,7 @@ import { SfDate } from 'jsforce';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isString, isNumber } from './util';
+import { it, describe, beforeAll, afterAll, expect } from '@jest/globals';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection(); // TODO: remove any

@@ -4,6 +4,7 @@ import { delay } from './util';
 import authorize from './helper/webauth';
 import config from './config';
 import { isNodeJS } from './helper/env';
+import { it, describe, jest } from '@jest/globals';
 
 if (typeof jest !== 'undefined') {
   jest.retryTimes(2);

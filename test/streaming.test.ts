@@ -8,6 +8,7 @@ import type {
   Subscription,
 } from 'jsforce/api/streaming';
 import { isNodeJS } from './helper/env';
+import { it, beforeAll, afterAll } from '@jest/globals';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();

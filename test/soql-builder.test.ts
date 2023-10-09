@@ -1,6 +1,7 @@
 import assert from 'assert';
 import { SfDate } from 'jsforce';
 import { createSOQL } from '../src/soql-builder';
+import { it, describe } from '@jest/globals';
 
 /**
  *

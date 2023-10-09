@@ -1,8 +1,18 @@
 {
-  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "rootDir": "..",
-    "noEmit": true
+    "target": "es2022",
+    "skipLibCheck": true,
+    "noEmit": true,
+    "lib": ["es2022", "dom"],
+    "module": "commonjs",
+    "strict": true,
+    "moduleResolution": "nodenext",
+    "paths": {
+      "jsforce": ["../"],
+      "jsforce/*": ["../*"]
+    },
+    "typeRoots": ["typings", "node_modules/@types"],
+    "esModuleInterop": true
   },
   "include": ["./**/*.ts"]
 }
