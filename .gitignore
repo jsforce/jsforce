@@ -7,6 +7,10 @@ module
 .env
 .env*
 
+.wireit
+*.tsbuildinfo
+.eslintcache
+
 
 # Dependency directories
 node_modules

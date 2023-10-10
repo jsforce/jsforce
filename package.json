@@ -33,23 +33,113 @@
     "./browser/request.js": "./browser/browser/request.js"
   },
   "types": "./index",
+  "wireit": {
+    "build": {
+      "dependencies": [
+        "build:transpile",
+        "build:bundle"
+      ]
+    },
+    "build:transpile": {
+      "dependencies": [
+        "build:node:cjs",
+        "build:browser"
+      ]
+    },
+    "build:node:cjs": {
+      "command": "tsc -p . --pretty --incremental",
+      "files": [
+        "src/**/*.ts",
+        "**/tsconfig.json"
+      ],
+      "output": [
+        "lib/**",
+        "*.tsbuildinfo"
+      ],
+      "clean": "if-file-deleted"
+    },
+    "build:browser": {
+      "command": "babel src --extensions .ts --source-maps inline --env-name browser --out-dir browser",
+      "files": [
+        "src/**/*.ts",
+        "babel.config.js"
+      ],
+      "output": [
+        "browser/**"
+      ]
+    },
+    "build:bundle": {
+      "command": "webpack",
+      "dependencies": ["build:browser"],
+      "files": [
+        "browser/**/*.js",
+        "webpack.config.js"
+      ],
+      "output": [
+        "dist"
+      ]
+    },
+    "lint": {
+      "command": "eslint --ext .ts src test --color --cache --cache-location .eslintcache",
+      "files": [
+        "src/**/*.ts",
+        "test/**/*.ts",
+        "**/.eslint*"
+      ],
+      "output": []
+    },
+    "test": {
+      "dependencies": [
+        "test:node",
+        "test:browser",
+        "lint"
+      ]
+    },
+    "test:node": {
+      "command": "jest --forceExit",
+      "files": [
+        "test/**/*.ts",
+        "jest.setup.js",
+        "jest.config.js"
+      ],
+      "output": []
+    },
+    "test:browser": {
+      "command": "karma start",
+      "files": [
+        "test/**/*.ts",
+        "karma.conf.js",
+        "webpack.config.test.js"
+      ],
+      "output": []
+    },
+    "test:browser-ci": {  
+      "command": "concurrently --success first --kill-others \"karma start\" \"npm:proxy-server\"",
+      "files": [
+        "test/**/*.ts",
+        "karma.conf.js",
+        "webpack.config.test.js"
+      ],
+      "output": []
+    }
+  },
   "scripts": {
-    "build:node:cjs": "tsc -p src",
+    "build": "wireit",
+    "build:node:cjs": "wireit",
+    "build:transpile": "wireit",
+    "build:browser": "wireit",
+    "build:bundle": "wireit",
+    "lint": "wireit",
+    "test": "wireit",
+    "test:node": "wireit",
+    "test:browser": "wireit",
+    "test:browser-ci": "wireit",
     "clean": "rimraf --glob lib/* module/* browser/*",
-    "build": "npm run build:transpile && npm run build:bundle",
-    "build:transpile": "npm run build:node:cjs && npm run build:browser",
-    "build:browser": "babel src --extensions \".ts\" --source-maps inline --env-name browser --out-dir browser",
-    "build:bundle": "webpack",
-    "lint": "eslint --ext .ts,.js src test",
     "typecheck": "npm run build:node:cjs && tsc -p test",
     "pretest:node": "npm run build:node:cjs",
     "pretest:browser": "npm run build:browser && npm run build:bundle",
     "pretest:browser-ci": "npm run pretest:browser",
-    "proxy-server": "node node_modules/jsforce-ajax-proxy/lib/server.js",
-    "test": "npm run test:node && npm run test:browser",
-    "test:node": "jest --forceExit",
-    "test:browser": "karma start",
-    "test:browser-ci": "concurrently --success first --kill-others \"karma start\" \"npm:proxy-server\""
+    "proxy-server": "node node_modules/jsforce-ajax-proxy/lib/server.js"
   },
   "directories": {
     "test": "test/"
