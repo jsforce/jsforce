@@ -1,7 +1,6 @@
 import assert from 'assert';
 import { isNumber } from './util';
 import Cache from '../src/cache';
-import { it, describe } from '@jest/globals';
 
 /**
  *

@@ -2,7 +2,6 @@ import assert from 'assert';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject, isString, isUndefined } from './util';
-import { beforeAll, it, describe, afterAll } from '@jest/globals';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();

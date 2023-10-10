@@ -18,7 +18,6 @@ import type {
   DateString,
   Address,
 } from 'jsforce';
-import { it, beforeAll, afterAll, describe } from '@jest/globals';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection<StandardSchema>();

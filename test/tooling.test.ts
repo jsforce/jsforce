@@ -5,7 +5,6 @@ import { isNumber, isString, isObject } from './util';
 import type { Record } from 'jsforce';
 import fs from './helper/fs';
 import { isNodeJS } from './helper/env';
-import { it, describe, beforeAll, afterAll } from '@jest/globals';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();

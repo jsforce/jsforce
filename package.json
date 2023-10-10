@@ -70,7 +70,9 @@
     },
     "build:bundle": {
       "command": "webpack",
-      "dependencies": ["build:browser"],
+      "dependencies": [
+        "build:browser"
+      ],
       "files": [
         "browser/**/*.js",
         "webpack.config.js"
@@ -113,7 +115,7 @@
       ],
       "output": []
     },
-    "test:browser-ci": {  
+    "test:browser-ci": {
       "command": "concurrently --success first --kill-others \"karma start\" \"npm:proxy-server\"",
       "files": [
         "test/**/*.ts",
@@ -201,6 +203,7 @@
     "@jest/globals": "^29.7.0",
     "@types/fs-extra": "^8.0.1",
     "@types/inquirer": "^6.5.0",
+    "@types/jest": "^29.5.5",
     "@types/multistream": "^2.1.1",
     "@types/node-fetch": "^2.5.7",
     "@types/through2": "^2.0.34",
