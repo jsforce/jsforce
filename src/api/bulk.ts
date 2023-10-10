@@ -760,7 +760,7 @@ export class Batch<
       let results: BulkIngestBatchResult | BulkQueryBatchResult;
       if (job.operation === 'query' || job.operation === 'queryAll') {
         const res = resp as BulkQueryResultResponse;
-        let resultId = res['result-list'].result;
+        const resultId = res['result-list'].result;
         results = (Array.isArray(resultId)
           ? resultId
           : [resultId]
@@ -1227,7 +1227,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     options: Object = {},
   ): StreamPromise<R> {
     // if request is simple string, regard it as url in GET method
-    let request_: HttpRequest =
+    const request_: HttpRequest =
       typeof request === 'string' ? { method: 'GET', url: request } : request;
 
     const httpApi = new HttpApi(this.#connection, options);

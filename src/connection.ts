@@ -804,7 +804,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
    * @returns {Promise.<Array.<RecordResult>>}
    */
   search(sosl: string) {
-    var url = this._baseUrl() + '/search?q=' + encodeURIComponent(sosl);
+    const url = this._baseUrl() + '/search?q=' + encodeURIComponent(sosl);
     return this.request<SearchResult>(url);
   }
 

@@ -168,7 +168,7 @@ it('can download a static resource binary blob and properly interpret the result
   }
 });
 
-function createStaticResourceRequest(body: String | Buffer) {
+function createStaticResourceRequest(body: string | Buffer) {
   return {
     ContentType: 'application/zip',
     CacheControl: 'Private',

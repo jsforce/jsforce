@@ -91,7 +91,7 @@ export async function executeWithTimeout<T>(
   cancelCallback?: () => void,
 ): Promise<T> {
   let timeout = false;
-  let pid =
+  const pid =
     msec != null
       ? setTimeout(() => {
           timeout = true;

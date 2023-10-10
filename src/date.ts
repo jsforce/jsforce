@@ -152,7 +152,7 @@ export class SfDate {
     const m = str.match(regexp);
     if (m) {
       const d = new Date(0);
-      let hh = parseInt(m[1], 10);
+      const hh = parseInt(m[1], 10);
       const mi = parseInt(m[2], 10);
       const ss = parseInt(m[3], 10);
       const sss = parseInt(m[5] || '0', 10);

@@ -151,7 +151,11 @@ describe('CRUD based call', () => {
       conn.version = '35.0';
     }
     try {
-      let result = await conn.metadata.rename('CustomObject', oldName, newName);
+      const result = await conn.metadata.rename(
+        'CustomObject',
+        oldName,
+        newName,
+      );
       assert.ok(result.success === true);
       assert.ok(isString(result.fullName));
       assert.ok(result.fullName === oldName);
