@@ -158,9 +158,6 @@
     "typecheck": "npm run build:node:cjs && tsc -p test",
     "proxy-server": "wireit"
   },
-  "directories": {
-    "test": "test/"
-  },
   "files": [
     "README.md",
     "LICENSE",
