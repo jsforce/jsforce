@@ -99,6 +99,9 @@
     },
     "test:node": {
       "command": "jest --forceExit",
+      "dependencies": [
+        "build:node:cjs"
+      ],
       "files": [
         "test/**/*.ts",
         "jest.setup.js",
@@ -108,6 +111,9 @@
     },
     "test:browser": {
       "command": "karma start",
+      "dependencies": [
+        "build:bundle"
+      ],
       "files": [
         "test/**/*.ts",
         "karma.conf.js",
@@ -116,13 +122,25 @@
       "output": []
     },
     "test:browser-ci": {
-      "command": "concurrently --success first --kill-others \"karma start\" \"npm:proxy-server\"",
+      "command": "karma start",
+      "dependencies": [
+        "build:bundle",
+        "proxy-server"
+      ],
       "files": [
         "test/**/*.ts",
         "karma.conf.js",
         "webpack.config.test.js"
       ],
       "output": []
+    },
+    "proxy-server": {
+      "command": "node node_modules/jsforce-ajax-proxy/lib/server.js",
+      "service": {
+        "readyWhen": {
+          "lineMatches": "Express server listening on port \\d+"
+        }
+      }
     }
   },
   "scripts": {
@@ -138,10 +156,7 @@
     "test:browser-ci": "wireit",
     "clean": "rimraf --glob lib/* module/* browser/*",
     "typecheck": "npm run build:node:cjs && tsc -p test",
-    "pretest:node": "npm run build:node:cjs",
-    "pretest:browser": "npm run build:browser && npm run build:bundle",
-    "pretest:browser-ci": "npm run pretest:browser",
-    "proxy-server": "node node_modules/jsforce-ajax-proxy/lib/server.js"
+    "proxy-server": "wireit"
   },
   "directories": {
     "test": "test/"
@@ -215,7 +230,6 @@
     "babel-loader": "^8.2.2",
     "babel-preset-power-assert": "^3.0.0",
     "buffer": "^6.0.3",
-    "concurrently": "^8.2.0",
     "conditional-type-checks": "^1.0.5",
     "crypto-browserify": "^3.12.0",
     "eslint": "^7.14.0",
