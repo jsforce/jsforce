@@ -21,7 +21,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: lts/*
-
+      - uses: google/wireit@setup-github-actions-caching/v1
       - name: Install dependencies
         run: npm install
 
@@ -57,6 +57,8 @@ jobs:
         with:
           node-version: lts/*
 
+      - uses: google/wireit@setup-github-actions-caching/v1
+
       - name: Lockfile lint
         run: |
           npm install -g lockfile-lint
@@ -85,6 +87,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node_version }}
+      - uses: google/wireit@setup-github-actions-caching/v1
 
       - name: Install dependencies
         run: npm install
@@ -152,6 +155,7 @@ jobs:
  #      - uses: actions/setup-node@v3
  #        with:
  #          node-version: ${{ matrix.node_version }}
+ #      - uses: google/wireit@setup-github-actions-caching/v1
  #
  #      - name: Install dependencies
  #        run: npm install
