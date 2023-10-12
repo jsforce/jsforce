@@ -99,9 +99,7 @@
     },
     "test:node": {
       "command": "jest --forceExit",
-      "dependencies": [
-        "build:node:cjs"
-      ],
+      "dependencies": ["build:node:cjs"],
       "files": [
         "test/**/*.ts",
         "jest.setup.js",
@@ -141,6 +139,15 @@
           "lineMatches": "Express server listening on port \\d+"
         }
       }
+    },
+    "typecheck": {
+      "command": "npm run build:node:cjs && npx tsc -p test --pretty",
+      "files": [
+        "src/**/*.ts",
+        "test/**/*.ts",
+        "**/tsconfig.json"
+      ],
+      "output": []
     }
   },
   "scripts": {
@@ -154,9 +161,9 @@
     "test:node": "wireit",
     "test:browser": "wireit",
     "test:browser-ci": "wireit",
-    "clean": "rimraf --glob lib/* module/* browser/*",
-    "typecheck": "npm run build:node:cjs && tsc -p test",
-    "proxy-server": "wireit"
+    "typecheck": "wireit",
+    "proxy-server": "wireit",
+    "clean": "rimraf --glob lib/* module/* browser/*"
   },
   "files": [
     "README.md",

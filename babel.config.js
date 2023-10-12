@@ -31,8 +31,10 @@ module.exports = {
         '@babel/preset-typescript',
       ],
     },
-    // This is env config is used by jest for TS:
+    // This env config is used by jest for TS:
     // https://jestjs.io/docs/getting-started#using-babel
+    //
+    // for type-check run `tsc` before running tests.
     test: {
       presets: [
         [

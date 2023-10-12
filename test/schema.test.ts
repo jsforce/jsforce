@@ -10,6 +10,8 @@ import type {
 } from 'conditional-type-checks';
 import type {
   Record,
+  Schema,
+  StandardSchema,
   SObjectRecord,
   SObjectInputRecord,
   SObjectUpdateRecord,
