@@ -1,5 +1,4 @@
-import { Connection, ConnectionConfig } from '../../src/connection';
-import { Schema } from '../../src/types/schema';
+import { Connection, ConnectionConfig, Schema } from 'jsforce';
 import UserPool, { UserPoolConfig } from './user-pool';
 import { getConnectionConfig } from './connection';
 

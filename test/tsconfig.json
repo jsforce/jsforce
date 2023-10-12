@@ -6,11 +6,11 @@
     "lib": ["es2022", "dom"],
     "module": "commonjs",
     "strict": true,
-    "typeRoots": [
-      "../typings",
-      "../node_modules/@types"
-    ],
     "moduleResolution": "nodenext",
+    "paths": {
+      "jsforce": ["../"],
+      "jsforce/*": ["../*"]
+    },
     "esModuleInterop": true
   },
   "include": ["./**/*.ts"]

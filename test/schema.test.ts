@@ -8,14 +8,14 @@ import type {
   IsExact,
   IsAny,
 } from 'conditional-type-checks';
-import type { Schema, DateString, Address } from '../src/types/schema';
-import type { StandardSchema } from '../src/types/standard-schema';
 import type {
   Record,
   SObjectRecord,
   SObjectInputRecord,
   SObjectUpdateRecord,
-} from '../src/types';
+  DateString,
+  Address,
+} from 'jsforce';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection<StandardSchema>();

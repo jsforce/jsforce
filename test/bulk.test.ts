@@ -1,9 +1,7 @@
 import assert from 'assert';
 import path from 'path';
 import fs from './helper/fs';
-import { Connection } from '../src/connection';
-import { SfDate } from '../src/date';
-import type { Record } from '../src/types';
+import { Connection, Date as SfDate, Record } from 'jsforce';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject, isString } from './util';

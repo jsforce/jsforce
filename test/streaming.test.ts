@@ -6,7 +6,7 @@ import type {
   StreamingMessage,
   GenericStreamingMessage,
   Subscription,
-} from '../src/api/streaming';
+} from 'jsforce/api/streaming';
 import { isNodeJS } from './helper/env';
 
 const connMgr = new ConnectionManager(config);

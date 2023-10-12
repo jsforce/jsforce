@@ -69,6 +69,8 @@ jobs:
       - name: Lint and Type Check
         run: |
           npm run lint
+          # TODO: typecheck fails if there is no build, see if tests are importing from lib
+          npm run build:node:cjs
           npm run typecheck
 
   test-node-linux:
