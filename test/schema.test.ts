@@ -17,7 +17,7 @@ import type {
   Record,
   DateString,
   Address,
-} from 'jsforce';
+} from '../src/index';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection<StandardSchema>();

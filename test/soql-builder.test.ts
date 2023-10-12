@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { SfDate } from 'jsforce';
+import { SfDate } from '../src/date';
 import { createSOQL } from '../src/soql-builder';
 
 /**

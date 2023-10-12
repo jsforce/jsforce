@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { OAuth2 } from 'jsforce';
+import { OAuth2 } from '../src/index';
 import { isString } from './util';
 import { isNodeJS } from './helper/env';
 import authorize from './helper/webauth';

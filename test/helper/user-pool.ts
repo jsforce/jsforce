@@ -1,4 +1,4 @@
-import type { Connection, Schema } from 'jsforce';
+import type { Connection, Schema } from '../../src/index';
 import { delay } from '../util';
 
 export type UserPoolConfig = {

@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { Connection } from 'jsforce';
+import { Connection } from '../src/index';
 import { delay } from './util';
 import authorize from './helper/webauth';
 import config from './config';
