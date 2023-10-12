@@ -25,12 +25,12 @@ function popupWin(url: string, w: number, h: number) {
 function handleCallbackResponse() {
   const res = checkCallbackResponse();
   const state = localStorage.getItem('jsforce_state');
-  if (res && state && res.body.state === state) {
+  if (res && state && res.body.get('state') === state) {
     localStorage.removeItem('jsforce_state');
     const [prefix, promptType] = state.split('.');
     const cli = new BrowserClient(prefix);
     if (res.success) {
-      cli._storeTokens(res.body as TokenResponse);
+      cli._storeTokens(Object.fromEntries(res.body) as TokenResponse);
       location.hash = '';
     } else {
       cli._storeError(res.body);
