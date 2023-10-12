@@ -1,7 +1,8 @@
 import assert from 'assert';
 import path from 'path';
 import fs from './helper/fs';
-import { Connection, Date as SfDate } from '../src/index';
+import { Connection } from '../src/connection';
+import { SfDate } from '../src/date';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject, isString } from './util';

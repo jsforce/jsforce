@@ -2,7 +2,7 @@ import assert from 'assert';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject, isString } from './util';
-import type { QuickAction } from '../src/index';
+import type { QuickAction } from '../src/quick-action';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();

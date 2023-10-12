@@ -1,5 +1,5 @@
 import assert from 'assert';
-import type { Record } from '../src/index';
+import type { Record } from '../src/types';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject, isString, isNumber, isBoolean, isUndefined } from './util';

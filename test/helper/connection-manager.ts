@@ -1,4 +1,5 @@
-import { Connection, ConnectionConfig, Schema } from '../../src/index';
+import { Connection, ConnectionConfig } from '../../src/connection';
+import { Schema } from '../../src/types/schema';
 import UserPool, { UserPoolConfig } from './user-pool';
 import { getConnectionConfig } from './connection';
 

@@ -1,7 +1,7 @@
 import stream from 'stream';
 import through2 from 'through2';
 import assert from 'assert';
-import { SfDate } from '../src/index';
+import { SfDate } from '../src/date';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isString, isNumber } from './util';
