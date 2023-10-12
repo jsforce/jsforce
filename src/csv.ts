@@ -2,10 +2,10 @@
  *
  */
 import { Transform } from 'stream';
-import csvParse, { Options as ParseOpts } from 'csv-parse/lib/es5';
-import csvParseSync from 'csv-parse/lib/es5/sync';
-import csvStringify, { Options as StringifyOpts } from 'csv-stringify/lib/es5';
-import csvStringifySync from 'csv-stringify/lib/es5/sync';
+import { Parser as csvParse } from 'csv-parse';
+import { Options as ParseOpts, parse as csvParseSync } from 'csv-parse/sync';
+import { Options as StringifyOpts, stringify as csvStringify } from 'csv-stringify';
+import { stringify as csvStringifySync } from 'csv-stringify/sync';
 
 /**
  * @private
@@ -25,7 +25,7 @@ export function toCSV(records: Object[], options?: StringifyOpts): string {
  * @private
  */
 export function parseCSVStream(options?: ParseOpts): Transform {
-  return csvParse({ ...options, columns: true });
+  return new csvParse({ ...options, columns: true });
 }
 
 /**
