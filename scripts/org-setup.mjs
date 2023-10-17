@@ -1,58 +1,80 @@
-import 'zx/globals'
-import { writeFile } from 'node:fs/promises'
-import { join } from 'node:path'
-import { EOL } from 'node:os'
+import 'zx/globals';
+import { writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import { EOL } from 'node:os';
 
-if (!process.env.SF_HUB_USERNAME || !process.env.SF_OAUTH2_JWT_KEY || !process.env.SF_OAUTH2_CLIENT_ID) {
-  throw new Error('Set SF_HUB_USERNAME, SF_OAUTH2_JWT_KEY and SF_OAUTH2_CLIENT_ID env vars.')
+$.verbose = false;
+
+if (
+  process.env.SF_HUB_USERNAME &&
+  process.env.SF_OAUTH2_JWT_KEY &&
+  process.env.SF_OAUTH2_CLIENT_ID
+) {
+  const hubOpts = {
+    username: process.env.SF_HUB_USERNAME,
+    clientId: process.env.SF_OAUTH2_CLIENT_ID,
+    jwtKeyFile: join(process.cwd(), 'jwtKey.txt'),
+  };
+
+  await writeFile(hubOpts.jwtKeyFile, formatJwtKey());
+
+  await $`sf org login jwt --username ${hubOpts.username} --jwt-key-file "${hubOpts.jwtKeyFile}" --set-default-dev-hub --client-id ${hubOpts.clientId}`;
+} else {
+  // ensure there's a default devhub
+  const defaultHub = JSON.parse(await $`sf config get target-dev-hub --json`);
+  console.log(defaultHub);
+
+  if (defaultHub.result.find((res) => res.sucesss && res.value) !== undefined) {
+    throw new Error(
+      'Set SF_HUB_USERNAME, SF_OAUTH2_JWT_KEY and SF_OAUTH2_CLIENT_ID env vars.',
+    );
+  }
 }
 
-$.verbose = false
+const orgDefinitionFile = join('test', 'org-setup', 'project-scratch-def.json');
+await $`sf org create scratch --definition-file ${orgDefinitionFile} --wait 20 --duration-days 1 --alias jsforce-test-org --json`;
 
-const hubOpts = {
-  username: process.env.SF_HUB_USERNAME,
-  clientId: process.env.SF_OAUTH2_CLIENT_ID,
-  jwtKeyFile: join(process.cwd(), 'jwtKey.txt')
-}
+await $`sf org generate password --target-org jsforce-test-org --json`;
 
-await writeFile(hubOpts.jwtKeyFile, formatJwtKey())
+await $`sf project deploy start --metadata-dir ${join(
+  process.cwd(),
+  'test',
+  'package',
+  'JSforceTestSuite',
+)} --wait 20 --target-org jsforce-test-org`;
 
-await $`sf org login jwt --username ${hubOpts.username} --jwt-key-file "${hubOpts.jwtKeyFile}" --set-default-dev-hub --client-id ${hubOpts.clientId}`
+await $`sf org assign permset --name JSForceTestPowerUser --target-org jsforce-test-org`;
 
-const orgDefinitionFile = join('test','org-setup','project-scratch-def.json')
-await $`sf org create scratch --definition-file ${orgDefinitionFile} --wait 20 --duration-days 1 --alias jsforce-test-org --json`
+const orgDisplayUserRes = JSON.parse(
+  await $`sf org display user --target-org jsforce-test-org --json`,
+);
 
-await $`sf org generate password --target-org jsforce-test-org --json`
+const userId = orgDisplayUserRes.result.id;
 
-await $`sf project deploy start --metadata-dir ${join(process.cwd(), 'test','package','JSforceTestSuite')} --wait 20 --target-org jsforce-test-org`
-
-await $`sf org assign permset --name JSForceTestPowerUser --target-org jsforce-test-org`
-
-const orgDisplayUserRes= JSON.parse(await $`sf org display user --target-org jsforce-test-org --json`)
-
-const userId= orgDisplayUserRes.result.id
-
-let csv ='OwnerId' + EOL
+let csv = 'OwnerId' + EOL;
 
 for (let i = 0; i <= 5000; i++) {
-  csv += userId + EOL
+  csv += userId + EOL;
 }
 
-const bigTableCsv = join('test','data','BigTable.csv')
-await fs.writeFile(bigTableCsv, csv)
+const bigTableCsv = join('test', 'data', 'BigTable.csv');
+await fs.writeFile(bigTableCsv, csv);
 
-await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --external-id Id --target-org jsforce-test-org`
-await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --external-id Id --target-org jsforce-test-org`
-await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --external-id Id --target-org jsforce-test-org`
-await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --external-id Id --target-org jsforce-test-org`
-await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --external-id Id --target-org jsforce-test-org`
+await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --external-id Id --target-org jsforce-test-org`;
+await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --external-id Id --target-org jsforce-test-org`;
+await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --external-id Id --target-org jsforce-test-org`;
+await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --external-id Id --target-org jsforce-test-org`;
+await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --external-id Id --target-org jsforce-test-org`;
 
-const pushTopicValues = "Name='JSforceTestAccountUpdates' Query='SELECT Id, Name FROM Account' ApiVersion='54.0' NotifyForFields=Referenced NotifyForOperationCreate=true NotifyForOperationUpdate=true NotifyForOperationDelete=false NotifyForOperationUndelete=false"
+const pushTopicValues =
+  "Name='JSforceTestAccountUpdates' Query='SELECT Id, Name FROM Account' ApiVersion='54.0' NotifyForFields=Referenced NotifyForOperationCreate=true NotifyForOperationUpdate=true NotifyForOperationDelete=false NotifyForOperationUndelete=false";
 
-await $`sf data create record --sobject PushTopic --values ${pushTopicValues} --target-org jsforce-test-org`
+await $`sf data create record --sobject PushTopic --values ${pushTopicValues} --target-org jsforce-test-org`;
 
 if (!process.env.CI) {
-  console.log(`Run tests using this scratch org by appending SF_LOGIN_URL=${orgDisplayUserRes.result.instanceUrl} SF_USERNAME=${orgDisplayUserRes.result.username} SF_PASSWORD=${orgDisplayUserRes.result.password}`)
+  console.log(
+    `Run tests using this scratch org by appending SF_LOGIN_URL=${orgDisplayUserRes.result.instanceUrl} SF_USERNAME=${orgDisplayUserRes.result.username} SF_PASSWORD=${orgDisplayUserRes.result.password}`,
+  );
 }
 
 /**
@@ -72,13 +94,16 @@ function formatJwtKey() {
       const footer = '-----END RSA PRIVATE KEY-----';
       const header = '-----BEGIN RSA PRIVATE KEY-----';
       // strip out header, footer and spaces
-      const newKeyContents = jwtKey.replace(header, '').replace(footer, '').replace(/\s/g, '');
+      const newKeyContents = jwtKey
+        .replace(header, '')
+        .replace(footer, '')
+        .replace(/\s/g, '');
       // one big string, split into 64 byte chucks
       // const chunks = newKeyContents.match(/.{1,64}/g) as string[];
-      keyLines = [header, ...(newKeyContents.match(/.{1,64}/g)), footer];
+      keyLines = [header, ...newKeyContents.match(/.{1,64}/g), footer];
     }
     return keyLines.join('\n');
   } else {
     throw new Error('Set SF_OAUTH2_JWT_KEY env var.');
   }
-};
+}
