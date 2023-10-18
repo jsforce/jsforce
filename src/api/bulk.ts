@@ -589,7 +589,7 @@ export class Batch<
   /**
    * Implementation of Writable
    */
-  _write(record_: Record, enc: string, cb: () => void) {
+  _write(record_: Record, enc: BufferEncoding, cb: () => void) {
     const { Id, type, attributes, ...rrec } = record_;
     let record;
     switch (this.job.operation) {
@@ -603,8 +603,6 @@ export class Batch<
       default:
         record = { Id, ...rrec };
     }
-    // TODO(cristian): fix type
-    // @ts-ignore
     this._uploadStream.write(record, enc, cb);
   }
 
@@ -1608,7 +1606,7 @@ class JobDataV2<
     });
   }
 
-  _write(record_: Record, enc: string, cb: () => void) {
+  _write(record_: Record, enc: BufferEncoding, cb: () => void) {
     const { Id, type, attributes, ...rrec } = record_;
     let record;
     switch (this.#job.jobInfo.operation) {
@@ -1622,8 +1620,6 @@ class JobDataV2<
       default:
         record = { Id, ...rrec };
     }
-    // TODO(cristian): fix type
-    // @ts-ignore
     this.#uploadStream.write(record, enc, cb);
   }
 
