@@ -229,7 +229,7 @@ export class Cli {
    */
   async disconnect(connName?: string) {
     const name = connName || this._connName;
-    if (name && await registry.getConnectionConfig(name)) {
+    if (name && (await registry.getConnectionConfig(name))) {
       await registry.removeConnectionConfig(name);
       this.print(`Disconnect connection '${name}'`);
     }
