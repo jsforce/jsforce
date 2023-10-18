@@ -106,7 +106,8 @@ async function startFetchRequest(
     () => controller?.abort(),
   );
   const headers: { [key: string]: any } = {};
-  for (const headerName in res.headers) {
+  // @ts-ignore
+  for (const headerName of res.headers.keys()) {
     headers[headerName.toLowerCase()] = res.headers.get(headerName);
   }
   const response = {
