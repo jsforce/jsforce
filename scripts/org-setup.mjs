@@ -5,6 +5,16 @@ import { EOL } from 'node:os';
 
 $.verbose = false;
 
+// node v21 deprecates the `punycode` module:
+// https://nodejs.org/en/blog/announcements/v21-release-announce#deprecations
+// The `sf` CLI is getting it via node-fetch v2 so we disable deprecations on node v21
+// to be able to parse JSON output.
+//
+// Remove once `sf` no longer depends on node-fetch v2.
+if (process.version.split('.')[0] === 'v21') {
+  process.env.NODE_OPTIONS = '--no-deprecation';
+}
+
 if (
   process.env.SF_HUB_USERNAME &&
   process.env.SF_OAUTH2_JWT_KEY &&
@@ -20,15 +30,6 @@ if (
 
   await $`sf org login jwt --username ${hubOpts.username} --jwt-key-file "${hubOpts.jwtKeyFile}" --set-default-dev-hub --client-id ${hubOpts.clientId}`;
 } else {
-  // node v21 deprecates the `punycode` module:
-  // https://nodejs.org/en/blog/announcements/v21-release-announce#deprecations
-  // The `sf` CLI is getting it via node-fetch v2 so we disable deprecations on node v21.
-  //
-  // Remove once `sf` no longer depends on node-fetch v2.
-  if (process.version.split('.')[0] === 'v21') {
-    process.env.NODE_OPTIONS = '--no-deprecation';
-  }
-
   // ensure there's a default devhub
   const defaultHub = JSON.parse(await $`sf config get target-dev-hub --json`);
   console.log(defaultHub);
