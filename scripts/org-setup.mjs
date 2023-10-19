@@ -32,7 +32,6 @@ if (
 } else {
   // ensure there's a default devhub
   const defaultHub = JSON.parse(await $`sf config get target-dev-hub --json`);
-  console.log(defaultHub);
 
   if (defaultHub.result.find((res) => res.sucesss && res.value) !== undefined) {
     throw new Error(
