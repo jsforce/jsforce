@@ -4,6 +4,7 @@
         <members>JSforceTestApexRest</members>
         <members>JSforceTestData</members>
         <members>JSforceTestDataCleaningScheduler</members>
+        <members>JSforceTestUnitTest</members>
         <members>JSforceTestUserPool</members>
         <members>JSforceTestUtil</members>
         <name>ApexClass</name>
