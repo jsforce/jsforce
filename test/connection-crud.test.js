@@ -261,6 +261,17 @@ describe("connection-crud", function() {
           }.check(done));
         });
       });
+
+      describe("then retrieve the record by external id", function() {
+        it("should return a record", function(done) {
+          conn.sobject(config.upsertTable).retrieveByExtId(config.upsertField, extId, function(err, record) {
+            if (err) { throw err; }
+            assert.ok(_.isString(record.Id));
+            assert.ok(_.isObject(record.attributes));
+            assert.ok(record.Name === 'Updated Record');
+          }.check(done));
+        });
+      });
     });
 
     describe("for duplicated external id record", function() {
