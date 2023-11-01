@@ -53,7 +53,7 @@ You will also need to install the JsforceTestSuite package, which can be done by
 
     SF_USERNAME=myusername SF_PASSWORD=password+securityToken ./test/bin/org-setup
 
-You may need to run this more then once if you encounter timeouts or dropped connections/
+You may need to run this more than once if you encounter timeouts or dropped connections.
 
 Finally, to run the tests simply do:
 
