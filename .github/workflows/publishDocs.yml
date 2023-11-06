@@ -26,8 +26,8 @@ jobs:
         run: |
           rm -rf docs
           git worktree prune
-          git fetch origin v2-docs:v2-docs
-          git worktree add docs v2-docs
+          git fetch origin v3-docs:v3-docs
+          git worktree add docs v3-docs
           npx typedoc --out docs/tmp
           cp -r docs/tmp/* docs/tmp/..
           rm -rf docs/tmp
@@ -35,5 +35,5 @@ jobs:
         run: |
           cd docs
           git add .
-          git commit -m 'docs: publishing v2-docs [skip ci]' --no-verify
-          git push origin v2-docs --no-verify
+          git commit -m 'docs: publishing v3-docs [skip ci]' --no-verify
+          git push origin v3-docs --no-verify
