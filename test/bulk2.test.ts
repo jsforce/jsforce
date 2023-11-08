@@ -9,7 +9,7 @@ import { isNodeJS } from './helper/env';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();
-conn.bulk2.pollTimeout = 40 * 1000; // adjust poll timeout to test timeout.
+conn.bulk2.pollTimeout = 90000; // set bulk2 poll timeout to 90s for tests in this file
 
 /**
  *
