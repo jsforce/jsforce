@@ -33,7 +33,7 @@ jobs:
           output-file: false
           pre-commit: ./scripts/build.js
           pre-release: true
-          pre-release-identifier: 'beta'
+          pre-release-identifier: 'next'
           # always do the release, even if there are no semantic commits
           skip-on-empty: false
           tag-prefix: ''

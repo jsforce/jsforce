@@ -13,9 +13,9 @@ npm run build
 ```
 
 `npm run build` will generate all the distributions for node and browsers:
-* Node CJS build
-* Browser ESM build
-* Browser bundles
+* Node CJS build (dir: `lib`)
+* Browser ESM build (dir: `browser`)
+* Browser bundles (dir: `dist`)
 
 # Type-checking
 

@@ -31,7 +31,7 @@ jobs:
       - name: Build
         run: npm run clean && npm run build
       - name: Publish
-        run: npm publish --tag beta
+        run: npm publish --tag next
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
   npm-publish-jsforce-node:
