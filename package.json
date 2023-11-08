@@ -99,7 +99,9 @@
     },
     "test:node": {
       "command": "jest --forceExit",
-      "dependencies": ["build:node:cjs"],
+      "dependencies": [
+        "build:node:cjs"
+      ],
       "files": [
         "test/**/*.ts",
         "jest.setup.js",
@@ -163,7 +165,9 @@
     "test:browser-ci": "wireit",
     "typecheck": "wireit",
     "proxy-server": "wireit",
-    "clean": "rimraf --glob lib/* module/* browser/*"
+    "clean": "rimraf --glob lib/* module/* browser/*",
+    "node-pkg": "ts-node scripts/jsforce-node.ts",
+    "node-pkg-dev": "ts-node scripts/jsforce-node.ts --dev"
   },
   "files": [
     "README.md",
@@ -220,6 +224,7 @@
     "@types/jest": "^29.5.5",
     "@types/multistream": "^2.1.1",
     "@types/node-fetch": "^2.5.7",
+    "@types/shelljs": "^0.8.15",
     "@types/through2": "^2.0.34",
     "@types/xml2js": "^0.4.5",
     "@typescript-eslint/eslint-plugin": "^6.7.5",
@@ -249,6 +254,7 @@
     "puppeteer": "^21.0.1",
     "querystring-es3": "^0.2.1",
     "rimraf": "^5.0.5",
+    "shelljs": "^0.8.5",
     "source-map-loader": "^1.1.3",
     "stream-browserify": "^3.0.0",
     "terser-webpack-plugin": "^5.3.7",
