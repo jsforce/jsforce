@@ -274,7 +274,14 @@ export class HttpApi<S extends Schema> extends EventEmitter {
             errorCode: `ERROR_HTTP_${response.statusCode}`,
             message: response.body,
           };
-    return new HttpApiError(error.message, error.errorCode);
+
+    return error.message.includes('<html ')
+      ? new HttpApiError(
+          'HTTP response contains html content.  See error.content for the full html response.',
+          error.errorCode,
+          error.message,
+        )
+      : new HttpApiError(error.message, error.errorCode);
   }
 }
 
