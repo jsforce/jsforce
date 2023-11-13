@@ -275,13 +275,15 @@ export class HttpApi<S extends Schema> extends EventEmitter {
             message: response.body,
           };
 
-    return error.message.includes('<html ')
-      ? new HttpApiError(
-          'HTTP response contains html content.  See error.content for the full html response.',
-          error.errorCode,
-          error.message,
-        )
-      : new HttpApiError(error.message, error.errorCode);
+    if (response.headers['content-type'] === 'text/html') {
+      this._logger.debug(`html response.body: ${response.body}`);
+      return new HttpApiError(
+        'HTTP response contains html content.  See error.content for the full html response.',
+        error.errorCode,
+        error.message,
+      );
+    }
+    return new HttpApiError(error.message, error.errorCode);
   }
 }
 
