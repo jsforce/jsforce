@@ -278,7 +278,9 @@ export class HttpApi<S extends Schema> extends EventEmitter {
     if (response.headers['content-type'] === 'text/html') {
       this._logger.debug(`html response.body: ${response.body}`);
       return new HttpApiError(
-        'HTTP response contains html content.  See error.content for the full html response.',
+        `HTTP response contains html content.
+Check that the org exists and can be reached.
+See error.content for the full html response.`,
         error.errorCode,
         error.message,
       );
