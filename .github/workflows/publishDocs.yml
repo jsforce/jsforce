@@ -1,7 +1,6 @@
 name: publish-docs
 
-on:
-  workflow_dispatch:
+on: workflow_call
 
 jobs:
   publish:
