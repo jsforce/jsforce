@@ -12,26 +12,33 @@ const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();
 conn.bulk.pollTimeout = 90 * 1000; // adjust poll timeout to test timeout.
 
-async function insertAccounts(id: string | number, qty: number = 20): Promise<BulkIngestBatchResult> {
+async function insertAccounts(
+  id: string | number,
+  qty: number = 20,
+): Promise<BulkIngestBatchResult> {
   if (typeof id === 'number') {
-    id = id.toString()
+    id = id.toString();
   }
 
   const insertRecords = [
     ...Array.from(Array(qty), (a, i) => ({
       Name: `Bulk Account ${id} #${i + 1}`,
-    }))
+    })),
   ];
-  const batchInsertRes = await conn.bulk.load('Account', 'insert', insertRecords);
+  const batchInsertRes = await conn.bulk.load(
+    'Account',
+    'insert',
+    insertRecords,
+  );
 
   assert.ok(Array.isArray(batchInsertRes));
-  assert.ok(batchInsertRes.length === qty)
+  assert.ok(batchInsertRes.length === qty);
   for (const res of batchInsertRes) {
-    assert.ok(isString(res.id))
-    assert.ok(res.success === true)
+    assert.ok(isString(res.id));
+    assert.ok(res.success === true);
   }
 
-  return batchInsertRes
+  return batchInsertRes;
 }
 
 /**
@@ -45,7 +52,7 @@ beforeAll(async () => {
  *
  */
 it('should bulk insert records and return result status', async () => {
-  const id = Date.now()
+  const id = Date.now();
 
   const bulkAccountNum = 200;
 
@@ -61,29 +68,39 @@ it('should bulk insert records and return result status', async () => {
   assert.ok(Array.isArray(batchInsertRes));
 
   // should successfully insert the first 200 records.
-  for (const res of batchInsertRes.slice(0,-1)) {
+  for (const res of batchInsertRes.slice(0, -1)) {
     assert.ok(isString(res.id));
     assert.ok(res.success === true);
   }
 
-  const failedToInsert = batchInsertRes[bulkAccountNum]
-  assert.ok(failedToInsert.id===null)
-  assert.ok(failedToInsert.success===false)
-  assert.ok(failedToInsert.errors[0]==='REQUIRED_FIELD_MISSING:Required fields are missing: [Name]:Name --')
+  const failedToInsert = batchInsertRes[bulkAccountNum];
+  assert.ok(failedToInsert.id === null);
+  assert.ok(failedToInsert.success === false);
+  assert.ok(
+    failedToInsert.errors[0] ===
+      'REQUIRED_FIELD_MISSING:Required fields are missing: [Name]:Name --',
+  );
 });
 
 it('should bulk update and return updated status', async () => {
-  const id = Date.now()
+  const id = Date.now();
 
-  await insertAccounts(id)
+  await insertAccounts(id);
 
   const records = await conn
     .sobject('Account')
     .find({ Name: { $like: `Bulk Account ${id}%` } }, ['Id', 'Name'])
     .execute();
 
-  const updatedRecords = records.map((rec) => ({ ...rec, Name: `${rec.Name} (Updated)` }));
-  const batchUpdateRes = await conn.bulk.load('Account', 'update', updatedRecords);
+  const updatedRecords = records.map((rec) => ({
+    ...rec,
+    Name: `${rec.Name} (Updated)`,
+  }));
+  const batchUpdateRes = await conn.bulk.load(
+    'Account',
+    'update',
+    updatedRecords,
+  );
 
   assert.ok(Array.isArray(batchUpdateRes));
   for (const ret of batchUpdateRes) {
@@ -103,9 +120,9 @@ it('should bulk update with empty input and raise client input error', async () 
 });
 
 it('should bulk delete and return deleted status', async () => {
-  const id = Date.now()
+  const id = Date.now();
 
-  await insertAccounts(id, bulkAccountNum)
+  await insertAccounts(id, bulkAccountNum);
 
   const records = await conn
     .sobject('Account')
@@ -115,7 +132,7 @@ it('should bulk delete and return deleted status', async () => {
   const batchDeleteRes = await conn.bulk.load('Account', 'delete', records);
 
   assert.ok(Array.isArray(batchDeleteRes));
-  assert.ok(batchDeleteRes.length === bulkAccountNum)
+  assert.ok(batchDeleteRes.length === bulkAccountNum);
   for (const ret of batchDeleteRes) {
     assert.ok(isString(ret.id));
     assert.ok(ret.success === true);
@@ -152,22 +169,22 @@ if (isNodeJS()) {
   });
 
   it('should bulk delete from file and return deleted results', async () => {
-    const id = Date.now()
+    const id = Date.now();
 
-    await insertAccounts(id)
+    await insertAccounts(id);
 
     const records = await conn
       .sobject('Account')
       .find({ Name: { $like: `Bulk Account ${id}%` } });
 
-    assert.ok(Array.isArray(records))
-    assert.ok(records.length === 20)
+    assert.ok(Array.isArray(records));
+    assert.ok(records.length === 20);
 
     const data = `Id\n${records.map((r: Record) => r.Id).join('\n')}\n`;
-    
-    const deleteFile = path.join(__dirname,'data/Account_delete.csv');
 
-    await fs.promises.writeFile(deleteFile,data)
+    const deleteFile = path.join(__dirname, 'data/Account_delete.csv');
+
+    await fs.promises.writeFile(deleteFile, data);
 
     const fstream = fs.createReadStream(deleteFile);
     const batch = conn.bulk.load('Account', 'delete');
@@ -182,13 +199,13 @@ if (isNodeJS()) {
       }),
     ]);
     assert.ok(Array.isArray(rets));
-    assert.ok(rets.length === 20)
+    assert.ok(rets.length === 20);
     for (const ret of rets) {
       assert.ok(isString(ret.id));
       assert.ok(ret.success === true);
     }
 
-    await fs.promises.rm(deleteFile)
+    await fs.promises.rm(deleteFile);
   });
 
   it('should bulk query and get records with yielding file output', async () => {
@@ -215,7 +232,7 @@ if (isNodeJS()) {
     const lines = data.replace(/[\r\n]+$/, '').split(/[\r\n]/);
     assert.ok(lines.length === records.length + 1);
 
-    await fs.promises.rm(file)
+    await fs.promises.rm(file);
   });
 }
 
@@ -278,9 +295,9 @@ const bulkAccountNum = 250;
  *
  */
 it('should bulk update using Query#update and return updated status', async () => {
-  const id = Date.now()
+  const id = Date.now();
 
-  await insertAccounts(id,bulkAccountNum)
+  await insertAccounts(id, bulkAccountNum);
 
   const rets = await conn
     .sobject('Account')
@@ -326,9 +343,9 @@ it('should bulk update using Query#update with unmatching query and return empty
  *
  */
 it('should bulk delete using Query#destroy and return deleted status', async () => {
-  const id = Date.now()
+  const id = Date.now();
 
-  await insertAccounts(id,bulkAccountNum)
+  await insertAccounts(id, bulkAccountNum);
 
   const batchDeleteRes = await conn
     .sobject('Account')
@@ -363,7 +380,7 @@ const smallAccountNum = 20;
  *
  */
 it('should bulk update using Query#update with bulkThreshold modified and return updated status', async () => {
-  const id = Date.now()
+  const id = Date.now();
 
   const records = Array.from({ length: smallAccountNum }).map((_, i) => ({
     Name: `New Bulk Account ${id} #${i + 1}`,
@@ -373,10 +390,10 @@ it('should bulk update using Query#update with bulkThreshold modified and return
   const batchInsertRes = await conn.bulk.load('Account', 'insert', records);
 
   assert.ok(Array.isArray(batchInsertRes));
-  assert.ok(batchInsertRes.length === smallAccountNum)
+  assert.ok(batchInsertRes.length === smallAccountNum);
   for (const res of batchInsertRes) {
-    assert.ok(isString(res.id))
-    assert.ok(res.success === true)
+    assert.ok(isString(res.id));
+    assert.ok(res.success === true);
   }
 
   const rets = await conn
@@ -397,7 +414,10 @@ it('should bulk update using Query#update with bulkThreshold modified and return
   }
   const updatedRecords = await conn
     .sobject('Account')
-    .find({ Name: { $like: `New Bulk Account ${id}%` } }, 'Id, Name, BillingState');
+    .find(
+      { Name: { $like: `New Bulk Account ${id}%` } },
+      'Id, Name, BillingState',
+    );
   assert.ok(Array.isArray(updatedRecords));
   assert.ok(records.length === smallAccountNum);
   for (const record of updatedRecords) {
@@ -411,7 +431,7 @@ it('should bulk update using Query#update with bulkThreshold modified and return
  *
  */
 it('should bulk delete using Query#destroy with bulkThreshold modified and return deleted status', async () => {
-  const id = Date.now()
+  const id = Date.now();
 
   const bulkAccountNum = 20;
 
@@ -419,22 +439,26 @@ it('should bulk delete using Query#destroy with bulkThreshold modified and retur
     ...Array.from(Array(bulkAccountNum), (a, i) => ({
       Name: `New Bulk Account ${id} #${i + 1}`,
       NumberOfEmployees: 300 * (i + 1),
-    }))
+    })),
   ];
-  const batchInsertRes = await conn.bulk.load('Account', 'insert', insertRecords);
+  const batchInsertRes = await conn.bulk.load(
+    'Account',
+    'insert',
+    insertRecords,
+  );
 
   assert.ok(Array.isArray(batchInsertRes));
-  assert.ok(batchInsertRes.length === bulkAccountNum)
+  assert.ok(batchInsertRes.length === bulkAccountNum);
   for (const res of batchInsertRes) {
-    assert.ok(isString(res.id))
-    assert.ok(res.success === true)
+    assert.ok(isString(res.id));
+    assert.ok(res.success === true);
   }
 
   const batchDeleteRes = await conn
     .sobject('Account')
     .find({ Name: { $like: `New Bulk Account ${id}%` } })
-    .destroy({ 
-      bulkThreshold: 0 
+    .destroy({
+      bulkThreshold: 0,
     });
 
   assert.ok(Array.isArray(batchDeleteRes));
