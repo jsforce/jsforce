@@ -251,25 +251,30 @@ it('should setup for query and update / destroy test', async () => {
  *
  */
 it('should update queried records using Query#update and return updated records', async () => {
+  const id = Date.now();
+
+  await insertAccounts(id, accountNum);
+
   const rets = await conn
     .sobject('Account')
-    .find({ Name: { $like: 'New Bulk Account%' } })
+    .find({ Name: { $like: `Bulk Account ${id}%` } })
     .update({
       Name: '${Name} (Updated)', // eslint-disable-line no-template-curly-in-string
       BillingState: null,
     });
+
   assert.ok(Array.isArray(rets));
   assert.ok(rets.length === accountNum);
   for (const ret of rets) {
     assert.ok(isString(ret.id));
     assert.ok(ret.success === true);
   }
-  const urecords = await conn
+  const updatedRecords = await conn
     .sobject('Account')
-    .find({ Name: { $like: 'New Bulk Account%' } });
-  assert.ok(Array.isArray(urecords));
-  assert.ok(urecords.length === accountNum);
-  for (const record of urecords) {
+    .find({ Name: { $like: `Bulk Account ${id}%` } });
+  assert.ok(Array.isArray(updatedRecords));
+  assert.ok(updatedRecords.length === accountNum);
+  for (const record of updatedRecords) {
     assert.ok(isString(record.Id));
     assert.ok(/\(Updated\)$/.test(record.Name));
     assert.ok(record.BillingState === null);
@@ -295,10 +300,15 @@ it('should update queried records using Query#update, for unmatching query, and 
  *
  */
 it('should delete queried records using Query#destroy and return deleted status', async () => {
+  const id = Date.now();
+
+  await insertAccounts(id, accountNum);
+
   const rets = await conn
     .sobject('Account')
-    .find({ Name: { $like: 'New Bulk Account%' } })
+    .find({ Name: { $like: `Bulk Account ${id}%` } })
     .destroy();
+
   assert.ok(Array.isArray(rets));
   assert.ok(rets.length === accountNum);
   for (const ret of rets) {
