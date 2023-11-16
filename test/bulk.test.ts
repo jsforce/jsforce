@@ -12,7 +12,7 @@ const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();
 conn.bulk.pollTimeout = 90 * 1000; // adjust poll timeout to test timeout.
 
-async function insertAccounts(
+export async function insertAccounts(
   id: string | number,
   qty: number = 20,
 ): Promise<BulkIngestBatchResult> {
