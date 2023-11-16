@@ -213,7 +213,7 @@ if (isNodeJS()) {
   it('should bulk insert from file and return inserted results', async () => {
     // insert 100 account records from csv file
     const csvStream = fs.createReadStream(
-      path.join(__dirname, 'data/Account.csv'),
+      path.join(__dirname, 'data/Account_bulk2_test.csv'),
     );
 
     const res = await conn.bulk2.loadAndWaitForResults({

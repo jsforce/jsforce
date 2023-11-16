@@ -153,7 +153,7 @@ if (isNodeJS()) {
   // TODO: make this test idempotent, right now it fails after a second run in the same org
   it('should bulk insert from file and return inserted results', async () => {
     const fstream = fs.createReadStream(
-      path.join(__dirname, 'data/Account.csv'),
+      path.join(__dirname, 'data/Account_bulk1_test.csv'),
     );
     const batch = conn.bulk.load('Account', 'insert');
     fstream.pipe(batch.stream());
