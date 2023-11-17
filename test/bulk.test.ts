@@ -150,8 +150,8 @@ it('should bulk delete with empty input and raise client input error', async () 
 
 /*------------------------------------------------------------------------*/
 if (isNodeJS()) {
-  // TODO: make this test idempotent, right now it fails after a second run in the same org
   it('should bulk insert from file and return inserted results', async () => {
+    // insert 100 account records from csv file
     const fstream = fs.createReadStream(
       path.join(__dirname, 'data/Account_bulk1_test.csv'),
     );
@@ -161,10 +161,22 @@ if (isNodeJS()) {
       batch.on('response', resolve);
       batch.on('error', reject);
     });
-    assert.ok(Array.isArray(rets));
-    for (const ret of rets) {
-      assert.ok(isString(ret.id));
-      assert.ok(ret.success === true);
+
+    try {
+      assert.ok(Array.isArray(rets));
+      assert.ok(rets.length === 100);
+      for (const ret of rets) {
+        assert.ok(isString(ret.id));
+        assert.ok(ret.success === true);
+      }
+    } finally {
+      // cleanup:
+      // always delete successfully inserted records.
+      const deleteRecords = rets.map((r) => ({
+        Id: r.id,
+      }));
+
+      await conn.bulk.load('Account', 'delete', deleteRecords);
     }
   });
 

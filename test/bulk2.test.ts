@@ -209,7 +209,6 @@ it('should bulk delete with empty input and not raise client input error', async
 
 // /*------------------------------------------------------------------------*/
 if (isNodeJS()) {
-  // TODO: make this test idempotent, right now it fails after a second run in the same org
   it('should bulk insert from file and return inserted results', async () => {
     // insert 100 account records from csv file
     const csvStream = fs.createReadStream(
@@ -222,7 +221,21 @@ if (isNodeJS()) {
       input: csvStream,
     });
 
-    ensureSuccessfulBulkResults(res, 100, 'insert');
+    try {
+      ensureSuccessfulBulkResults(res, 100, 'insert');
+    } finally {
+      // cleanup:
+      // always delete successfully inserted records.
+      const deleteRecords = res.successfulResults.map((r) => ({
+        Id: r.sf__Id,
+      }));
+
+      await conn.bulk2.loadAndWaitForResults({
+        object: 'Account',
+        operation: 'delete',
+        input: deleteRecords,
+      });
+    }
   });
 
   it('should bulk delete from file and return deleted results', async () => {
