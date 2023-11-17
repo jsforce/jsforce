@@ -26,31 +26,15 @@ async function insertAccounts(
     })),
   ];
 
-  // TODO: use `ensureBulkSuccssffulresults` func here
-  const {
-    successfulResults,
-    failedResults,
-    unprocessedRecords,
-  } = await conn.bulk2.loadAndWaitForResults({
+  const res = await conn.bulk2.loadAndWaitForResults({
     object: 'Account',
     operation: 'insert',
     input: insertRecords,
   });
 
-  assert.ok(Array.isArray(successfulResults));
-  assert.ok(successfulResults.length === qty);
-  for (const successfulResult of successfulResults) {
-    assert.ok(isString(successfulResult.sf__Id));
-    assert.ok(successfulResult.sf__Created === 'true');
-  }
+  ensureSuccessfulBulkResults(res, qty, 'insert');
 
-  assert.ok(Array.isArray(failedResults));
-  assert.ok(failedResults.length === 0);
-
-  assert.ok(Array.isArray(unprocessedRecords));
-  assert.ok(unprocessedRecords.length === 0);
-
-  return { successfulResults, failedResults, unprocessedRecords };
+  return res;
 }
 
 function ensureSuccessfulBulkResults(
