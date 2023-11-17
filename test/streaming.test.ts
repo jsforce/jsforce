@@ -32,10 +32,14 @@ if (isNodeJS()) {
         .subscribe(resolve);
     });
     await delay(5000);
-    await conn
-      .sobject('Account')
-      .create({ Name: `My New Account #${Date.now()}` });
+    const accountName = `My New Account #${Date.now()}`;
+
+    await conn.sobject('Account').create({ Name: accountName });
+
     const msg = await msgArrived;
+    assert.ok(isObject(msg.sobject));
+    assert.ok(msg.sobject.Name === accountName);
+
     assert.ok(isObject(msg.event));
     assert.ok(msg.event.type === 'created');
     assert.ok(isObject(msg.sobject));
