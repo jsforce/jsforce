@@ -1,7 +1,6 @@
 {
-  "author": "Shinichi Tomita <shinichi.tomita@gmail.com>",
-  "name": "jsforce",
-  "description": "Salesforce API Library for JavaScript",
+  "name": "@salto-io/jsforce",
+  "description": "Fork of jsforce with some modifications",
   "keywords": [
     "salesforce",
     "salesforce.com",
@@ -9,11 +8,11 @@
     "force.com",
     "database.com"
   ],
-  "homepage": "http://github.com/jsforce/jsforce",
+  "homepage": "https://github.com/salto-io/jsforce.git",
   "version": "1.9.3",
   "repository": {
     "type": "git",
-    "url": "git://github.com/jsforce/jsforce.git"
+    "url": "https://github.com/salto-io/jsforce.git"
   },
   "license": "MIT",
   "licenses": [
