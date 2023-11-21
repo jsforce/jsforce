@@ -135,7 +135,7 @@
       "output": []
     },
     "test:browser-ci:retry": {
-      "command": "karma start -- --retry-failed",
+      "command": "karma start --retry-failed",
       "dependencies": [
         "build:bundle",
         "proxy-server"
