@@ -78,7 +78,7 @@ it('should bulk insert records and return result status', async () => {
   assert.ok(failedToInsert.success === false);
   assert.ok(
     failedToInsert.errors[0] ===
-      'REQUIRED_FIELD_MISSING:Required fields are missing: [Name]:Name --',
+      'REQUIRED_FIELD_MISSINGRequired fields are missing: [Name]:Name --',
   );
 });
 

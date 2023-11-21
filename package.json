@@ -122,6 +122,7 @@
     "test:browser-ci": {
       "command": "karma start",
       "dependencies": [
+        "clean-failures-file",
         "build:bundle",
         "proxy-server"
       ],
@@ -161,9 +162,11 @@
     "test:node": "wireit",
     "test:browser": "wireit",
     "test:browser-ci": "wireit",
+    "test:browser-ci:retry": "npm run test:browser-ci -- --retry-failed",
     "typecheck": "wireit",
     "proxy-server": "wireit",
-    "clean": "rimraf --glob lib/* module/* browser/*"
+    "clean": "rimraf --glob lib/* module/* browser/*",
+    "clean-failures-file": "rimraf failures.txt"
   },
   "files": [
     "README.md",
