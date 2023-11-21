@@ -110,6 +110,7 @@
     "test:browser": {
       "command": "karma start",
       "dependencies": [
+        "clean-failures-file",
         "build:bundle"
       ],
       "files": [
@@ -123,6 +124,19 @@
       "command": "karma start",
       "dependencies": [
         "clean-failures-file",
+        "build:bundle",
+        "proxy-server"
+      ],
+      "files": [
+        "test/**/*.ts",
+        "karma.conf.js",
+        "webpack.config.test.js"
+      ],
+      "output": []
+    },
+    "test:browser-ci:retry": {
+      "command": "karma start -- --retry-failed",
+      "dependencies": [
         "build:bundle",
         "proxy-server"
       ],
@@ -162,7 +176,7 @@
     "test:node": "wireit",
     "test:browser": "wireit",
     "test:browser-ci": "wireit",
-    "test:browser-ci:retry": "npm run test:browser-ci -- --retry-failed",
+    "test:browser-ci:retry": "wireit",
     "typecheck": "wireit",
     "proxy-server": "wireit",
     "clean": "rimraf --glob lib/* module/* browser/*",
