@@ -211,7 +211,8 @@ describe('search', () => {
 
     await insertAccounts(id, 20);
 
-    await delay(5000);
+    // wait 10s before running executing sosl search
+    await delay(10000);
 
     const { searchRecords } = await conn.search(
       `FIND {"${id}"} IN NAME FIELDS RETURNING Account(Id, Name)`,
