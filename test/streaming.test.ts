@@ -31,7 +31,7 @@ if (isNodeJS()) {
         .topic<Account>('JSforceTestAccountUpdates')
         .subscribe(resolve);
     });
-    await delay(5000);
+    await delay(10000);
     const accountName = `My New Account #${Date.now()}`;
 
     await conn.sobject('Account').create({ Name: accountName });
