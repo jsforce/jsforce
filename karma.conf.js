@@ -8,11 +8,12 @@ process.env.NODE_ENV = 'test';
 process.env.BABEL_ENV = 'test';
 
 module.exports = function (config) {
+
   let specsToRetry;
   if (config.retryFailed) {
     // Loads names of failed specs and prepares them for use in a regex.
     specsToRetry = readFileSync(
-      'failures.txt',
+      'test/karma/karma-failed-tests.txt',
       'utf-8'
     )
       .replace(/[|\\{}()[\]^$+*?.]/g, '\\$&')
@@ -31,7 +32,7 @@ module.exports = function (config) {
       'karma-sourcemap-loader',
       'karma-jasmine-html-reporter',
       'karma-chrome-launcher',
-      require('./karma-failed-tests-reporter.js'),
+      require('./test/karma/karma-failed-tests-reporter.js'),
     ],
 
     // frameworks to use
@@ -56,7 +57,7 @@ module.exports = function (config) {
     reporters: ['kjhtml', 'progress','failed-tests'],
 
     failedTestsReporter: {
-      outputFile: 'failures.txt',
+      outputFile: 'test/karma/karma-failed-tests.txt',
     },
 
     // web server port

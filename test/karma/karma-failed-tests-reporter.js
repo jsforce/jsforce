@@ -14,6 +14,15 @@
  * limitations under the License.
  */
 
+
+/* 
+ * Credits:
+ * This karma reporter was written by Pascal Birchler:
+ *
+ * https://github.com/GoogleForCreators/web-stories-wp/pull/4676
+ * https://github.com/swissspidy
+ */
+
 /**
  * External dependencies
  */

@@ -110,7 +110,7 @@
     "test:browser": {
       "command": "karma start",
       "dependencies": [
-        "clean-failures-file",
+        "clean-test-failures-file",
         "build:bundle"
       ],
       "files": [
@@ -123,7 +123,7 @@
     "test:browser-ci": {
       "command": "karma start",
       "dependencies": [
-        "clean-failures-file",
+        "clean-test-failures-file",
         "build:bundle",
         "proxy-server"
       ],
@@ -180,7 +180,7 @@
     "typecheck": "wireit",
     "proxy-server": "wireit",
     "clean": "rimraf --glob lib/* module/* browser/*",
-    "clean-failures-file": "rimraf failures.txt"
+    "clean-test-failures-file": "rimraf test/karma/karma-failed-tests.txt"
   },
   "files": [
     "README.md",
