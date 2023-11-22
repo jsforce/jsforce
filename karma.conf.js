@@ -1,5 +1,6 @@
 // Karma configuration
 
+const { readFileSync } = require('fs');
 const webpackConfig = require('./webpack.config.test');
 
 // Set BABEL_ENV to use proper preset config
@@ -7,9 +8,32 @@ process.env.NODE_ENV = 'test';
 process.env.BABEL_ENV = 'test';
 
 module.exports = function (config) {
+
+  let specsToRetry;
+  if (config.retryFailed) {
+    // Loads names of failed specs and prepares them for use in a regex.
+    specsToRetry = readFileSync(
+      'test/karma/karma-failed-tests.txt',
+      'utf-8'
+    )
+      .replace(/[|\\{}()[\]^$+*?.]/g, '\\$&')
+      .replace(/-/g, '\\x2d')
+      .split('\n')
+      .join('|');
+  }
+
   config.set({
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
+
+    plugins: [
+      'karma-webpack',
+      'karma-jasmine',
+      'karma-sourcemap-loader',
+      'karma-jasmine-html-reporter',
+      'karma-chrome-launcher',
+      require('./test/karma/karma-failed-tests-reporter.js'),
+    ],
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
@@ -30,7 +54,11 @@ module.exports = function (config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['kjhtml', 'progress'],
+    reporters: ['kjhtml', 'progress','failed-tests'],
+
+    failedTestsReporter: {
+      outputFile: 'test/karma/karma-failed-tests.txt',
+    },
 
     // web server port
     port: 9876,
@@ -62,6 +90,10 @@ module.exports = function (config) {
 
     // Jasmine Setting
     client: {
+      args: [
+        specsToRetry && '--grep',
+        specsToRetry && `/${specsToRetry}/`,
+      ].filter(Boolean),
       jasmine: {
         random: false,
         timeoutInterval: 120000,

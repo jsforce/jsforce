@@ -1,0 +1,537 @@
+NAME,TYPE,PARENTID,BILLINGSTREET,BILLINGCITY,BILLINGSTATE,BILLINGPOSTALCODE,BILLINGCOUNTRY,SHIPPINGSTREET,SHIPPINGCITY,SHIPPINGSTATE,SHIPPINGPOSTALCODE,SHIPPINGCOUNTRY,PHONE,FAX,ACCOUNTNUMBER,WEBSITE,SIC,INDUSTRY,ANNUALREVENUE,NUMBEROFEMPLOYEES,OWNERSHIP,TICKERSYMBOL,DESCRIPTION,RATING,SITE,JIGSAW,JIGSAWCOMPANYID,ACCOUNTSOURCE,SICDESC
+Bulk Account from CSV (bulk2) - #1,Customer - Channel,,"345 Shoreline Park
+Mountain View, CA 94043
+USA",Mountain View,CA,,,"345 Shoreline Park
+Mountain View, CA 94043
+USA",,,,,(650) 867-3450,(650) 867-9895,CC978213,www.genepoint.com,3712,Biotechnology,3.00E+07,265,Private,,"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nunc erat, molestie et interdum sit amet, lobortis laoreet ante. Cras imperdiet felis sit amet nunc tincidunt laoreet. Maecenas eu semper arcu. Suspendisse eu pretium magna. Nam tincidunt ligula dolor. Cras nec lacus odio, sed accumsan erat. Vivamus sed tellus sit amet nisi condimentum imperdiet at at nibh. Phasellus dignissim, urna sed faucibus porta, nisi felis ullamcorper est, eget sagittis sapien lacus eu dui. Praesent arcu odio, vestibulum a lacinia vitae, condimentum ac metus. Nullam pellentesque, nibh non fringilla iaculis, tortor est convallis libero, id malesuada tortor purus vitae orci",Cold,,,,,
+Bulk Account from CSV (bulk2) - #2,Customer - Direct,,"Kings Park, 17th Avenue, Team Valley Trading Estate,
+Gateshead, Tyne and Wear NE26 3HS
+United Kingdom",,UK,,,"Kings Park, 17th Avenue, Team Valley Trading Estate,
+Gateshead, Tyne and Wear NE26 3HS
+United Kingdom",,,,,+44 191 4956203,+44 191 4956620,CD355119-A,http://www.uos.com,4437,Energy,,24000,Public,UOS,"Cras facilisis, leo id auctor condimentum, elit quam consectetur ligula, in cursus arcu nulla nec ipsum. Sed id orci quam. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent rutrum, augue at egestas porta, nibh felis dignissim odio, in mattis massa velit nec libero. 
+Quisque volutpat quam at turpis accumsan a accumsan diam volutpat. Praesent nec nibh a nulla tristique congue. Mauris egestas iaculis ipsum ac suscipit. Donec facilisis accumsan lacus vel porta. Mauris suscipit tempus ipsum, in ornare lacus interdum sed.",,,,,,
+Bulk Account from CSV (bulk2) - #3,Customer - Direct,,"9 Tagore Lane
+Singapore, Singapore 787472
+Singapore",Singapore,Singapore,,,"9 Tagore Lane
+Singapore, Singapore 787472
+Singapore",,,,,(650) 450-8810,(650) 450-8820,CD355120-B,http://www.uos.com,4437,Energy,,3000,Public,UOS,"Curabitur fermentum, mi eu adipiscing tincidunt, justo diam interdum dolor, tempor feugiat turpis erat et justo. Nunc sed nisi et eros tempor porttitor.
+Curabitur blandit, tortor volutpat rhoncus gravida, nibh orci posuere purus, nec pellentesque lorem sapien a odio.
+Donec semper nunc quis metus fringilla semper. Aliquam dapibus euismod imperdiet.
+Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+Etiam gravida, nulla sit amet sollicitudin dictum, diam ante tempor ligula, sed imperdiet turpis urna a augue.",,,,,,
+Bulk Account from CSV (bulk2) - #4,Customer - Direct,,"312 Constitution Place
+Austin, TX 78767
+USA",Austin,TX,,,"312 Constitution Place
+Austin, TX 78767
+USA",,,,,(512) 757-6000,(512) 757-9000,CD451796,http://edgecomm.com,6576,Electronics,1.39E+08,1000,Public,EDGE,"Curabitur eget urna non dolor dapibus faucibus. Nulla posuere, tellus a vestibulum rutrum, enim neque elementum nibh, ac luctus quam urna a nisi.
+Phasellus nec ligula non dolor aliquam scelerisque ac id felis. Integer semper pellentesque hendrerit. 
+Quisque vitae felis nunc. Aliquam eu nisi lacus, scelerisque aliquet leo. Donec elementum mollis tortor id viverra. Curabitur molestie gravida fringilla. Donec pharetra metus nec velit consectetur quis placerat quam euismod.",Hot,,,,,
+Bulk Account from CSV (bulk2) - #5,Customer - Direct,,525 S. Lexington Ave,Burlington,NC,27215,USA,,,,,,(336) 222-7000,(336) 222-8000,CD656092,www.burlington.com,546732,Apparel,3.50E+08,9000,Public,BTXT,"Donec orci magna, tristique tempus faucibus id, dignissim at neque. Proin quis ipsum leo. Vivamus vitae libero ut ipsum gravida accumsan. Proin ut massa sapien, ac hendrerit nisi. Nulla commodo enim id turpis varius nec cursus leo dignissim. Mauris laoreet tempor mi, sit amet molestie nisi tincidunt eget. Nulla elit orci, dictum sed tempus id, suscipit at lacus. Sed hendrerit, nisi id pretium ultricies, arcu nibh ornare erat, et venenatis augue ligula aliquam risus.",Warm,,,,,
+Bulk Account from CSV (bulk2) - #6,Customer - Channel,,2 Place Jussieu,Paris,,75251,France,2 Place Jussieu,Paris,,75251,France,(014) 427-4427,(014) 427-4428,CC213425,www.pyramid.com,4253,Construction,9.50E+08,2680,Public,PYR,"Suspendisse potenti. Donec tortor libero, facilisis quis mattis in, faucibus sit amet orci. 
+Curabitur nec turpis vel mi lobortis tincidunt. Sed vulputate diam eu enim vestibulum in porta turpis aliquam. Integer porta mollis scelerisque. Quisque accumsan ultrices nisi, et elementum libero adipiscing et. Pellentesque sem est, bibendum nec iaculis sit amet, tempus ut nibh. In porta laoreet lorem sed rhoncus. 
+Etiam feugiat turpis non sapien rutrum aliquam. Aenean ac nisl lorem.",,,,,,
+Bulk Account from CSV (bulk2) - #7,Customer - Channel,,1301 Hoch Drive,Lawrence,KS,66045,USA,1301 Hoch Drive,Lawrence,KS,66045,USA,(785) 241-6200,(785) 241-6201,CC634267,dickenson-consulting.com,6752,Consulting,5.00E+07,120,Private,,"Nullam nisi turpis, sagittis in malesuada quis, feugiat sed lorem. Donec tortor justo, feugiat in tempor luctus, imperdiet nec sapien. Sed id dui in sapien varius aliquet eget ac mauris. Nullam tincidunt sodales risus nec semper. 
+Fusce pellentesque porta turpis non iaculis. Vivamus varius, dolor vel vulputate tristique, nunc augue elementum risus, sit amet sodales urna ligula eu risus. Suspendisse iaculis nulla non eros vulputate varius.
+Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.",,,,,,
+Bulk Account from CSV (bulk2) - #8,Customer - Direct,,"2334 N. Michigan Avenue, Suite 1500
+Chicago, IL 60601, USA",Chicago,IL,,,"2334 N. Michigan Avenue, Suite 1500
+Chicago, IL 60601, USA",,,,,(312) 596-1000,(312) 596-1500,CD439877,www.grandhotels.com,2268,Hospitality,5.00E+08,5600,Public,GHTL,"Morbi mollis pellentesque sem, vitae lobortis diam sollicitudin quis. Donec fermentum mauris vitae odio fringilla eget suscipit dolor fringilla. Nunc id lacus et purus ornare hendrerit in ut velit. Vivamus at tortor nisi. Curabitur lacinia volutpat urna, vel mollis lorem vulputate in. Aliquam erat volutpat. Integer et nibh sed sapien adipiscing sagittis non non nisi. Donec quis urna ac augue suscipit ultrices.",Warm,,,,,
+Bulk Account from CSV (bulk2) - #9,Customer - Channel,,"620 SW 5th Avenue Suite 400
+Portland, Oregon 97204
+United States",Portland,OR,,,"620 SW 5th Avenue Suite 400
+Portland, Oregon 97204
+United States",,,,,(503) 421-7800,(503) 421-7801,CC947211,www.expressl&t.net,8742,Transportation,9.50E+08,12300,Public,EXLT,"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nunc erat, molestie et interdum sit amet, lobortis laoreet ante. Cras imperdiet felis sit amet nunc tincidunt laoreet. Maecenas eu semper arcu. Suspendisse eu pretium magna. Nam tincidunt ligula dolor. Cras nec lacus odio, sed accumsan erat. Vivamus sed tellus sit amet nisi condimentum imperdiet at at nibh. Phasellus dignissim, urna sed faucibus porta, nisi felis ullamcorper est, eget sagittis sapien lacus eu dui. Praesent arcu odio, vestibulum a lacinia vitae, condimentum ac metus. Nullam pellentesque, nibh non fringilla iaculis, tortor est convallis libero, id malesuada tortor purus vitae orci",Cold,,,,,
+Bulk Account from CSV (bulk2) - #10,Customer - Direct,,"888 N Euclid 
+Hallis Center, Room 501
+Tucson, AZ 85721
+United States",Tucson,AZ,,,"888 N Euclid 
+Hallis Center, Room 501
+Tucson, AZ 85721
+United States",,,,,(520) 773-9050,(520) 773-9060,CD736025,www.universityofarizona.com,7321,Education,,39000,Other,,"Cras facilisis, leo id auctor condimentum, elit quam consectetur ligula, in cursus arcu nulla nec ipsum. Sed id orci quam. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent rutrum, augue at egestas porta, nibh felis dignissim odio, in mattis massa velit nec libero. 
+Quisque volutpat quam at turpis accumsan a accumsan diam volutpat. Praesent nec nibh a nulla tristique congue. Mauris egestas iaculis ipsum ac suscipit. Donec facilisis accumsan lacus vel porta. Mauris suscipit tempus ipsum, in ornare lacus interdum sed.",Warm,,,,,
+Bulk Account from CSV (bulk2) - #11,Customer - Direct,,"1301 Avenue of the Americas 
+New York, NY 10019
+USA",New York,NY,,,"1301 Avenue of the Americas 
+New York, NY 10019
+USA",,,,,(212) 842-5500,(212) 842-5501,CD355118,http://www.uos.com,4437,Energy,5.60E+09,145000,Public,UOS,"Curabitur fermentum, mi eu adipiscing tincidunt, justo diam interdum dolor, tempor feugiat turpis erat et justo. Nunc sed nisi et eros tempor porttitor.
+Curabitur blandit, tortor volutpat rhoncus gravida, nibh orci posuere purus, nec pellentesque lorem sapien a odio.
+Donec semper nunc quis metus fringilla semper. Aliquam dapibus euismod imperdiet.
+Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+Etiam gravida, nulla sit amet sollicitudin dictum, diam ante tempor ligula, sed imperdiet turpis urna a augue.",Hot,,,,,
+Bulk Account from CSV (bulk2) - #12,Customer - Channel,,"345 Shoreline Park
+Mountain View, CA 94043
+USA",Mountain View,CA,,,"345 Shoreline Park
+Mountain View, CA 94043
+USA",,,,,(650) 867-3450,(650) 867-9895,CC978213,www.genepoint.com,3712,Biotechnology,3.00E+07,265,Private,,"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nunc erat, molestie et interdum sit amet, lobortis laoreet ante. Cras imperdiet felis sit amet nunc tincidunt laoreet. Maecenas eu semper arcu. Suspendisse eu pretium magna. Nam tincidunt ligula dolor. Cras nec lacus odio, sed accumsan erat. Vivamus sed tellus sit amet nisi condimentum imperdiet at at nibh. Phasellus dignissim, urna sed faucibus porta, nisi felis ullamcorper est, eget sagittis sapien lacus eu dui. Praesent arcu odio, vestibulum a lacinia vitae, condimentum ac metus. Nullam pellentesque, nibh non fringilla iaculis, tortor est convallis libero, id malesuada tortor purus vitae orci",Cold,,,,,
+Bulk Account from CSV (bulk2) - #13,Customer - Direct,,"Kings Park, 17th Avenue, Team Valley Trading Estate,
+Gateshead, Tyne and Wear NE26 3HS
+United Kingdom",,UK,,,"Kings Park, 17th Avenue, Team Valley Trading Estate,
+Gateshead, Tyne and Wear NE26 3HS
+United Kingdom",,,,,+44 191 4956203,+44 191 4956620,CD355119-A,http://www.uos.com,4437,Energy,,24000,Public,UOS,"Cras facilisis, leo id auctor condimentum, elit quam consectetur ligula, in cursus arcu nulla nec ipsum. Sed id orci quam. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent rutrum, augue at egestas porta, nibh felis dignissim odio, in mattis massa velit nec libero. 
+Quisque volutpat quam at turpis accumsan a accumsan diam volutpat. Praesent nec nibh a nulla tristique congue. Mauris egestas iaculis ipsum ac suscipit. Donec facilisis accumsan lacus vel porta. Mauris suscipit tempus ipsum, in ornare lacus interdum sed.",,,,,,
+Bulk Account from CSV (bulk2) - #14,Customer - Direct,,"9 Tagore Lane
+Singapore, Singapore 787472
+Singapore",Singapore,Singapore,,,"9 Tagore Lane
+Singapore, Singapore 787472
+Singapore",,,,,(650) 450-8810,(650) 450-8820,CD355120-B,http://www.uos.com,4437,Energy,,3000,Public,UOS,"Curabitur fermentum, mi eu adipiscing tincidunt, justo diam interdum dolor, tempor feugiat turpis erat et justo. Nunc sed nisi et eros tempor porttitor.
+Curabitur blandit, tortor volutpat rhoncus gravida, nibh orci posuere purus, nec pellentesque lorem sapien a odio.
+Donec semper nunc quis metus fringilla semper. Aliquam dapibus euismod imperdiet.
+Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+Etiam gravida, nulla sit amet sollicitudin dictum, diam ante tempor ligula, sed imperdiet turpis urna a augue.",,,,,,
+Bulk Account from CSV (bulk2) - #15,Customer - Direct,,"312 Constitution Place
+Austin, TX 78767
+USA",Austin,TX,,,"312 Constitution Place
+Austin, TX 78767
+USA",,,,,(512) 757-6000,(512) 757-9000,CD451796,http://edgecomm.com,6576,Electronics,1.39E+08,1000,Public,EDGE,"Curabitur eget urna non dolor dapibus faucibus. Nulla posuere, tellus a vestibulum rutrum, enim neque elementum nibh, ac luctus quam urna a nisi.
+Phasellus nec ligula non dolor aliquam scelerisque ac id felis. Integer semper pellentesque hendrerit. 
+Quisque vitae felis nunc. Aliquam eu nisi lacus, scelerisque aliquet leo. Donec elementum mollis tortor id viverra. Curabitur molestie gravida fringilla. Donec pharetra metus nec velit consectetur quis placerat quam euismod.",Hot,,,,,
+Bulk Account from CSV (bulk2) - #16,Customer - Direct,,525 S. Lexington Ave,Burlington,NC,27215,USA,,,,,,(336) 222-7000,(336) 222-8000,CD656092,www.burlington.com,546732,Apparel,3.50E+08,9000,Public,BTXT,"Donec orci magna, tristique tempus faucibus id, dignissim at neque. Proin quis ipsum leo. Vivamus vitae libero ut ipsum gravida accumsan. Proin ut massa sapien, ac hendrerit nisi. Nulla commodo enim id turpis varius nec cursus leo dignissim. Mauris laoreet tempor mi, sit amet molestie nisi tincidunt eget. Nulla elit orci, dictum sed tempus id, suscipit at lacus. Sed hendrerit, nisi id pretium ultricies, arcu nibh ornare erat, et venenatis augue ligula aliquam risus.",Warm,,,,,
+Bulk Account from CSV (bulk2) - #17,Customer - Channel,,2 Place Jussieu,Paris,,75251,France,2 Place Jussieu,Paris,,75251,France,(014) 427-4427,(014) 427-4428,CC213425,www.pyramid.com,4253,Construction,9.50E+08,2680,Public,PYR,"Suspendisse potenti. Donec tortor libero, facilisis quis mattis in, faucibus sit amet orci. 
+Curabitur nec turpis vel mi lobortis tincidunt. Sed vulputate diam eu enim vestibulum in porta turpis aliquam. Integer porta mollis scelerisque. Quisque accumsan ultrices nisi, et elementum libero adipiscing et. Pellentesque sem est, bibendum nec iaculis sit amet, tempus ut nibh. In porta laoreet lorem sed rhoncus. 
+Etiam feugiat turpis non sapien rutrum aliquam. Aenean ac nisl lorem.",,,,,,
+Bulk Account from CSV (bulk2) - #18,Customer - Channel,,1301 Hoch Drive,Lawrence,KS,66045,USA,1301 Hoch Drive,Lawrence,KS,66045,USA,(785) 241-6200,(785) 241-6201,CC634267,dickenson-consulting.com,6752,Consulting,5.00E+07,120,Private,,"Nullam nisi turpis, sagittis in malesuada quis, feugiat sed lorem. Donec tortor justo, feugiat in tempor luctus, imperdiet nec sapien. Sed id dui in sapien varius aliquet eget ac mauris. Nullam tincidunt sodales risus nec semper. 
+Fusce pellentesque porta turpis non iaculis. Vivamus varius, dolor vel vulputate tristique, nunc augue elementum risus, sit amet sodales urna ligula eu risus. Suspendisse iaculis nulla non eros vulputate varius.
+Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.",,,,,,
+Bulk Account from CSV (bulk2) - #19,Customer - Direct,,"2334 N. Michigan Avenue, Suite 1500
+Chicago, IL 60601, USA",Chicago,IL,,,"2334 N. Michigan Avenue, Suite 1500
+Chicago, IL 60601, USA",,,,,(312) 596-1000,(312) 596-1500,CD439877,www.grandhotels.com,2268,Hospitality,5.00E+08,5600,Public,GHTL,"Morbi mollis pellentesque sem, vitae lobortis diam sollicitudin quis. Donec fermentum mauris vitae odio fringilla eget suscipit dolor fringilla. Nunc id lacus et purus ornare hendrerit in ut velit. Vivamus at tortor nisi. Curabitur lacinia volutpat urna, vel mollis lorem vulputate in. Aliquam erat volutpat. Integer et nibh sed sapien adipiscing sagittis non non nisi. Donec quis urna ac augue suscipit ultrices.",Warm,,,,,
+Bulk Account from CSV (bulk2) - #20,Customer - Channel,,"620 SW 5th Avenue Suite 400
+Portland, Oregon 97204
+United States",Portland,OR,,,"620 SW 5th Avenue Suite 400
+Portland, Oregon 97204
+United States",,,,,(503) 421-7800,(503) 421-7801,CC947211,www.expressl&t.net,8742,Transportation,9.50E+08,12300,Public,EXLT,"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nunc erat, molestie et interdum sit amet, lobortis laoreet ante. Cras imperdiet felis sit amet nunc tincidunt laoreet. Maecenas eu semper arcu. Suspendisse eu pretium magna. Nam tincidunt ligula dolor. Cras nec lacus odio, sed accumsan erat. Vivamus sed tellus sit amet nisi condimentum imperdiet at at nibh. Phasellus dignissim, urna sed faucibus porta, nisi felis ullamcorper est, eget sagittis sapien lacus eu dui. Praesent arcu odio, vestibulum a lacinia vitae, condimentum ac metus. Nullam pellentesque, nibh non fringilla iaculis, tortor est convallis libero, id malesuada tortor purus vitae orci",Cold,,,,,
+Bulk Account from CSV (bulk2) - #21,Customer - Direct,,"888 N Euclid 
+Hallis Center, Room 501
+Tucson, AZ 85721
+United States",Tucson,AZ,,,"888 N Euclid 
+Hallis Center, Room 501
+Tucson, AZ 85721
+United States",,,,,(520) 773-9050,(520) 773-9060,CD736025,www.universityofarizona.com,7321,Education,,39000,Other,,"Cras facilisis, leo id auctor condimentum, elit quam consectetur ligula, in cursus arcu nulla nec ipsum. Sed id orci quam. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent rutrum, augue at egestas porta, nibh felis dignissim odio, in mattis massa velit nec libero. 
+Quisque volutpat quam at turpis accumsan a accumsan diam volutpat. Praesent nec nibh a nulla tristique congue. Mauris egestas iaculis ipsum ac suscipit. Donec facilisis accumsan lacus vel porta. Mauris suscipit tempus ipsum, in ornare lacus interdum sed.",Warm,,,,,
+Bulk Account from CSV (bulk2) - #22,Customer - Direct,,"1301 Avenue of the Americas 
+New York, NY 10019
+USA",New York,NY,,,"1301 Avenue of the Americas 
+New York, NY 10019
+USA",,,,,(212) 842-5500,(212) 842-5501,CD355118,http://www.uos.com,4437,Energy,5.60E+09,145000,Public,UOS,"Curabitur fermentum, mi eu adipiscing tincidunt, justo diam interdum dolor, tempor feugiat turpis erat et justo. Nunc sed nisi et eros tempor porttitor.
+Curabitur blandit, tortor volutpat rhoncus gravida, nibh orci posuere purus, nec pellentesque lorem sapien a odio.
+Donec semper nunc quis metus fringilla semper. Aliquam dapibus euismod imperdiet.
+Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+Etiam gravida, nulla sit amet sollicitudin dictum, diam ante tempor ligula, sed imperdiet turpis urna a augue.",Hot,,,,,
+Bulk Account from CSV (bulk2) - #23,Customer - Channel,,"345 Shoreline Park
+Mountain View, CA 94043
+USA",Mountain View,CA,,,"345 Shoreline Park
+Mountain View, CA 94043
+USA",,,,,(650) 867-3450,(650) 867-9895,CC978213,www.genepoint.com,3712,Biotechnology,3.00E+07,265,Private,,"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nunc erat, molestie et interdum sit amet, lobortis laoreet ante. Cras imperdiet felis sit amet nunc tincidunt laoreet. Maecenas eu semper arcu. Suspendisse eu pretium magna. Nam tincidunt ligula dolor. Cras nec lacus odio, sed accumsan erat. Vivamus sed tellus sit amet nisi condimentum imperdiet at at nibh. Phasellus dignissim, urna sed faucibus porta, nisi felis ullamcorper est, eget sagittis sapien lacus eu dui. Praesent arcu odio, vestibulum a lacinia vitae, condimentum ac metus. Nullam pellentesque, nibh non fringilla iaculis, tortor est convallis libero, id malesuada tortor purus vitae orci",Cold,,,,,
+Bulk Account from CSV (bulk2) - #24,Customer - Direct,,"Kings Park, 17th Avenue, Team Valley Trading Estate,
+Gateshead, Tyne and Wear NE26 3HS
+United Kingdom",,UK,,,"Kings Park, 17th Avenue, Team Valley Trading Estate,
+Gateshead, Tyne and Wear NE26 3HS
+United Kingdom",,,,,+44 191 4956203,+44 191 4956620,CD355119-A,http://www.uos.com,4437,Energy,,24000,Public,UOS,"Cras facilisis, leo id auctor condimentum, elit quam consectetur ligula, in cursus arcu nulla nec ipsum. Sed id orci quam. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent rutrum, augue at egestas porta, nibh felis dignissim odio, in mattis massa velit nec libero. 
+Quisque volutpat quam at turpis accumsan a accumsan diam volutpat. Praesent nec nibh a nulla tristique congue. Mauris egestas iaculis ipsum ac suscipit. Donec facilisis accumsan lacus vel porta. Mauris suscipit tempus ipsum, in ornare lacus interdum sed.",,,,,,
+Bulk Account from CSV (bulk2) - #25,Customer - Direct,,"9 Tagore Lane
+Singapore, Singapore 787472
+Singapore",Singapore,Singapore,,,"9 Tagore Lane
+Singapore, Singapore 787472
+Singapore",,,,,(650) 450-8810,(650) 450-8820,CD355120-B,http://www.uos.com,4437,Energy,,3000,Public,UOS,"Curabitur fermentum, mi eu adipiscing tincidunt, justo diam interdum dolor, tempor feugiat turpis erat et justo. Nunc sed nisi et eros tempor porttitor.
+Curabitur blandit, tortor volutpat rhoncus gravida, nibh orci posuere purus, nec pellentesque lorem sapien a odio.
+Donec semper nunc quis metus fringilla semper. Aliquam dapibus euismod imperdiet.
+Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+Etiam gravida, nulla sit amet sollicitudin dictum, diam ante tempor ligula, sed imperdiet turpis urna a augue.",,,,,,
+Bulk Account from CSV (bulk2) - #26,Customer - Direct,,"312 Constitution Place
+Austin, TX 78767
+USA",Austin,TX,,,"312 Constitution Place
+Austin, TX 78767
+USA",,,,,(512) 757-6000,(512) 757-9000,CD451796,http://edgecomm.com,6576,Electronics,1.39E+08,1000,Public,EDGE,"Curabitur eget urna non dolor dapibus faucibus. Nulla posuere, tellus a vestibulum rutrum, enim neque elementum nibh, ac luctus quam urna a nisi.
+Phasellus nec ligula non dolor aliquam scelerisque ac id felis. Integer semper pellentesque hendrerit. 
+Quisque vitae felis nunc. Aliquam eu nisi lacus, scelerisque aliquet leo. Donec elementum mollis tortor id viverra. Curabitur molestie gravida fringilla. Donec pharetra metus nec velit consectetur quis placerat quam euismod.",Hot,,,,,
+Bulk Account from CSV (bulk2) - #27,Customer - Direct,,525 S. Lexington Ave,Burlington,NC,27215,USA,,,,,,(336) 222-7000,(336) 222-8000,CD656092,www.burlington.com,546732,Apparel,3.50E+08,9000,Public,BTXT,"Donec orci magna, tristique tempus faucibus id, dignissim at neque. Proin quis ipsum leo. Vivamus vitae libero ut ipsum gravida accumsan. Proin ut massa sapien, ac hendrerit nisi. Nulla commodo enim id turpis varius nec cursus leo dignissim. Mauris laoreet tempor mi, sit amet molestie nisi tincidunt eget. Nulla elit orci, dictum sed tempus id, suscipit at lacus. Sed hendrerit, nisi id pretium ultricies, arcu nibh ornare erat, et venenatis augue ligula aliquam risus.",Warm,,,,,
+Bulk Account from CSV (bulk2) - #28,Customer - Channel,,2 Place Jussieu,Paris,,75251,France,2 Place Jussieu,Paris,,75251,France,(014) 427-4427,(014) 427-4428,CC213425,www.pyramid.com,4253,Construction,9.50E+08,2680,Public,PYR,"Suspendisse potenti. Donec tortor libero, facilisis quis mattis in, faucibus sit amet orci. 
+Curabitur nec turpis vel mi lobortis tincidunt. Sed vulputate diam eu enim vestibulum in porta turpis aliquam. Integer porta mollis scelerisque. Quisque accumsan ultrices nisi, et elementum libero adipiscing et. Pellentesque sem est, bibendum nec iaculis sit amet, tempus ut nibh. In porta laoreet lorem sed rhoncus. 
+Etiam feugiat turpis non sapien rutrum aliquam. Aenean ac nisl lorem.",,,,,,
+Bulk Account from CSV (bulk2) - #29,Customer - Channel,,1301 Hoch Drive,Lawrence,KS,66045,USA,1301 Hoch Drive,Lawrence,KS,66045,USA,(785) 241-6200,(785) 241-6201,CC634267,dickenson-consulting.com,6752,Consulting,5.00E+07,120,Private,,"Nullam nisi turpis, sagittis in malesuada quis, feugiat sed lorem. Donec tortor justo, feugiat in tempor luctus, imperdiet nec sapien. Sed id dui in sapien varius aliquet eget ac mauris. Nullam tincidunt sodales risus nec semper. 
+Fusce pellentesque porta turpis non iaculis. Vivamus varius, dolor vel vulputate tristique, nunc augue elementum risus, sit amet sodales urna ligula eu risus. Suspendisse iaculis nulla non eros vulputate varius.
+Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.",,,,,,
+Bulk Account from CSV (bulk2) - #30,Customer - Direct,,"2334 N. Michigan Avenue, Suite 1500
+Chicago, IL 60601, USA",Chicago,IL,,,"2334 N. Michigan Avenue, Suite 1500
+Chicago, IL 60601, USA",,,,,(312) 596-1000,(312) 596-1500,CD439877,www.grandhotels.com,2268,Hospitality,5.00E+08,5600,Public,GHTL,"Morbi mollis pellentesque sem, vitae lobortis diam sollicitudin quis. Donec fermentum mauris vitae odio fringilla eget suscipit dolor fringilla. Nunc id lacus et purus ornare hendrerit in ut velit. Vivamus at tortor nisi. Curabitur lacinia volutpat urna, vel mollis lorem vulputate in. Aliquam erat volutpat. Integer et nibh sed sapien adipiscing sagittis non non nisi. Donec quis urna ac augue suscipit ultrices.",Warm,,,,,
+Bulk Account from CSV (bulk2) - #31,Customer - Channel,,"620 SW 5th Avenue Suite 400
+Portland, Oregon 97204
+United States",Portland,OR,,,"620 SW 5th Avenue Suite 400
+Portland, Oregon 97204
+United States",,,,,(503) 421-7800,(503) 421-7801,CC947211,www.expressl&t.net,8742,Transportation,9.50E+08,12300,Public,EXLT,"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nunc erat, molestie et interdum sit amet, lobortis laoreet ante. Cras imperdiet felis sit amet nunc tincidunt laoreet. Maecenas eu semper arcu. Suspendisse eu pretium magna. Nam tincidunt ligula dolor. Cras nec lacus odio, sed accumsan erat. Vivamus sed tellus sit amet nisi condimentum imperdiet at at nibh. Phasellus dignissim, urna sed faucibus porta, nisi felis ullamcorper est, eget sagittis sapien lacus eu dui. Praesent arcu odio, vestibulum a lacinia vitae, condimentum ac metus. Nullam pellentesque, nibh non fringilla iaculis, tortor est convallis libero, id malesuada tortor purus vitae orci",Cold,,,,,
+Bulk Account from CSV (bulk2) - #32,Customer - Direct,,"888 N Euclid 
+Hallis Center, Room 501
+Tucson, AZ 85721
+United States",Tucson,AZ,,,"888 N Euclid 
+Hallis Center, Room 501
+Tucson, AZ 85721
+United States",,,,,(520) 773-9050,(520) 773-9060,CD736025,www.universityofarizona.com,7321,Education,,39000,Other,,"Cras facilisis, leo id auctor condimentum, elit quam consectetur ligula, in cursus arcu nulla nec ipsum. Sed id orci quam. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent rutrum, augue at egestas porta, nibh felis dignissim odio, in mattis massa velit nec libero. 
+Quisque volutpat quam at turpis accumsan a accumsan diam volutpat. Praesent nec nibh a nulla tristique congue. Mauris egestas iaculis ipsum ac suscipit. Donec facilisis accumsan lacus vel porta. Mauris suscipit tempus ipsum, in ornare lacus interdum sed.",Warm,,,,,
+Bulk Account from CSV (bulk2) - #33,Customer - Direct,,"1301 Avenue of the Americas 
+New York, NY 10019
+USA",New York,NY,,,"1301 Avenue of the Americas 
+New York, NY 10019
+USA",,,,,(212) 842-5500,(212) 842-5501,CD355118,http://www.uos.com,4437,Energy,5.60E+09,145000,Public,UOS,"Curabitur fermentum, mi eu adipiscing tincidunt, justo diam interdum dolor, tempor feugiat turpis erat et justo. Nunc sed nisi et eros tempor porttitor.
+Curabitur blandit, tortor volutpat rhoncus gravida, nibh orci posuere purus, nec pellentesque lorem sapien a odio.
+Donec semper nunc quis metus fringilla semper. Aliquam dapibus euismod imperdiet.
+Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+Etiam gravida, nulla sit amet sollicitudin dictum, diam ante tempor ligula, sed imperdiet turpis urna a augue.",Hot,,,,,
+Bulk Account from CSV (bulk2) - #34,Customer - Channel,,"345 Shoreline Park
+Mountain View, CA 94043
+USA",Mountain View,CA,,,"345 Shoreline Park
+Mountain View, CA 94043
+USA",,,,,(650) 867-3450,(650) 867-9895,CC978213,www.genepoint.com,3712,Biotechnology,3.00E+07,265,Private,,"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nunc erat, molestie et interdum sit amet, lobortis laoreet ante. Cras imperdiet felis sit amet nunc tincidunt laoreet. Maecenas eu semper arcu. Suspendisse eu pretium magna. Nam tincidunt ligula dolor. Cras nec lacus odio, sed accumsan erat. Vivamus sed tellus sit amet nisi condimentum imperdiet at at nibh. Phasellus dignissim, urna sed faucibus porta, nisi felis ullamcorper est, eget sagittis sapien lacus eu dui. Praesent arcu odio, vestibulum a lacinia vitae, condimentum ac metus. Nullam pellentesque, nibh non fringilla iaculis, tortor est convallis libero, id malesuada tortor purus vitae orci",Cold,,,,,
+Bulk Account from CSV (bulk2) - #35,Customer - Direct,,"Kings Park, 17th Avenue, Team Valley Trading Estate,
+Gateshead, Tyne and Wear NE26 3HS
+United Kingdom",,UK,,,"Kings Park, 17th Avenue, Team Valley Trading Estate,
+Gateshead, Tyne and Wear NE26 3HS
+United Kingdom",,,,,+44 191 4956203,+44 191 4956620,CD355119-A,http://www.uos.com,4437,Energy,,24000,Public,UOS,"Cras facilisis, leo id auctor condimentum, elit quam consectetur ligula, in cursus arcu nulla nec ipsum. Sed id orci quam. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent rutrum, augue at egestas porta, nibh felis dignissim odio, in mattis massa velit nec libero. 
+Quisque volutpat quam at turpis accumsan a accumsan diam volutpat. Praesent nec nibh a nulla tristique congue. Mauris egestas iaculis ipsum ac suscipit. Donec facilisis accumsan lacus vel porta. Mauris suscipit tempus ipsum, in ornare lacus interdum sed.",,,,,,
+Bulk Account from CSV (bulk2) - #36,Customer - Direct,,"9 Tagore Lane
+Singapore, Singapore 787472
+Singapore",Singapore,Singapore,,,"9 Tagore Lane
+Singapore, Singapore 787472
+Singapore",,,,,(650) 450-8810,(650) 450-8820,CD355120-B,http://www.uos.com,4437,Energy,,3000,Public,UOS,"Curabitur fermentum, mi eu adipiscing tincidunt, justo diam interdum dolor, tempor feugiat turpis erat et justo. Nunc sed nisi et eros tempor porttitor.
+Curabitur blandit, tortor volutpat rhoncus gravida, nibh orci posuere purus, nec pellentesque lorem sapien a odio.
+Donec semper nunc quis metus fringilla semper. Aliquam dapibus euismod imperdiet.
+Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+Etiam gravida, nulla sit amet sollicitudin dictum, diam ante tempor ligula, sed imperdiet turpis urna a augue.",,,,,,
+Bulk Account from CSV (bulk2) - #37,Customer - Direct,,"312 Constitution Place
+Austin, TX 78767
+USA",Austin,TX,,,"312 Constitution Place
+Austin, TX 78767
+USA",,,,,(512) 757-6000,(512) 757-9000,CD451796,http://edgecomm.com,6576,Electronics,1.39E+08,1000,Public,EDGE,"Curabitur eget urna non dolor dapibus faucibus. Nulla posuere, tellus a vestibulum rutrum, enim neque elementum nibh, ac luctus quam urna a nisi.
+Phasellus nec ligula non dolor aliquam scelerisque ac id felis. Integer semper pellentesque hendrerit. 
+Quisque vitae felis nunc. Aliquam eu nisi lacus, scelerisque aliquet leo. Donec elementum mollis tortor id viverra. Curabitur molestie gravida fringilla. Donec pharetra metus nec velit consectetur quis placerat quam euismod.",Hot,,,,,
+Bulk Account from CSV (bulk2) - #38,Customer - Direct,,525 S. Lexington Ave,Burlington,NC,27215,USA,,,,,,(336) 222-7000,(336) 222-8000,CD656092,www.burlington.com,546732,Apparel,3.50E+08,9000,Public,BTXT,"Donec orci magna, tristique tempus faucibus id, dignissim at neque. Proin quis ipsum leo. Vivamus vitae libero ut ipsum gravida accumsan. Proin ut massa sapien, ac hendrerit nisi. Nulla commodo enim id turpis varius nec cursus leo dignissim. Mauris laoreet tempor mi, sit amet molestie nisi tincidunt eget. Nulla elit orci, dictum sed tempus id, suscipit at lacus. Sed hendrerit, nisi id pretium ultricies, arcu nibh ornare erat, et venenatis augue ligula aliquam risus.",Warm,,,,,
+Bulk Account from CSV (bulk2) - #39,Customer - Channel,,2 Place Jussieu,Paris,,75251,France,2 Place Jussieu,Paris,,75251,France,(014) 427-4427,(014) 427-4428,CC213425,www.pyramid.com,4253,Construction,9.50E+08,2680,Public,PYR,"Suspendisse potenti. Donec tortor libero, facilisis quis mattis in, faucibus sit amet orci. 
+Curabitur nec turpis vel mi lobortis tincidunt. Sed vulputate diam eu enim vestibulum in porta turpis aliquam. Integer porta mollis scelerisque. Quisque accumsan ultrices nisi, et elementum libero adipiscing et. Pellentesque sem est, bibendum nec iaculis sit amet, tempus ut nibh. In porta laoreet lorem sed rhoncus. 
+Etiam feugiat turpis non sapien rutrum aliquam. Aenean ac nisl lorem.",,,,,,
+Bulk Account from CSV (bulk2) - #40,Customer - Channel,,1301 Hoch Drive,Lawrence,KS,66045,USA,1301 Hoch Drive,Lawrence,KS,66045,USA,(785) 241-6200,(785) 241-6201,CC634267,dickenson-consulting.com,6752,Consulting,5.00E+07,120,Private,,"Nullam nisi turpis, sagittis in malesuada quis, feugiat sed lorem. Donec tortor justo, feugiat in tempor luctus, imperdiet nec sapien. Sed id dui in sapien varius aliquet eget ac mauris. Nullam tincidunt sodales risus nec semper. 
+Fusce pellentesque porta turpis non iaculis. Vivamus varius, dolor vel vulputate tristique, nunc augue elementum risus, sit amet sodales urna ligula eu risus. Suspendisse iaculis nulla non eros vulputate varius.
+Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.",,,,,,
+Bulk Account from CSV (bulk2) - #41,Customer - Direct,,"2334 N. Michigan Avenue, Suite 1500
+Chicago, IL 60601, USA",Chicago,IL,,,"2334 N. Michigan Avenue, Suite 1500
+Chicago, IL 60601, USA",,,,,(312) 596-1000,(312) 596-1500,CD439877,www.grandhotels.com,2268,Hospitality,5.00E+08,5600,Public,GHTL,"Morbi mollis pellentesque sem, vitae lobortis diam sollicitudin quis. Donec fermentum mauris vitae odio fringilla eget suscipit dolor fringilla. Nunc id lacus et purus ornare hendrerit in ut velit. Vivamus at tortor nisi. Curabitur lacinia volutpat urna, vel mollis lorem vulputate in. Aliquam erat volutpat. Integer et nibh sed sapien adipiscing sagittis non non nisi. Donec quis urna ac augue suscipit ultrices.",Warm,,,,,
+Bulk Account from CSV (bulk2) - #42,Customer - Channel,,"620 SW 5th Avenue Suite 400
+Portland, Oregon 97204
+United States",Portland,OR,,,"620 SW 5th Avenue Suite 400
+Portland, Oregon 97204
+United States",,,,,(503) 421-7800,(503) 421-7801,CC947211,www.expressl&t.net,8742,Transportation,9.50E+08,12300,Public,EXLT,"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nunc erat, molestie et interdum sit amet, lobortis laoreet ante. Cras imperdiet felis sit amet nunc tincidunt laoreet. Maecenas eu semper arcu. Suspendisse eu pretium magna. Nam tincidunt ligula dolor. Cras nec lacus odio, sed accumsan erat. Vivamus sed tellus sit amet nisi condimentum imperdiet at at nibh. Phasellus dignissim, urna sed faucibus porta, nisi felis ullamcorper est, eget sagittis sapien lacus eu dui. Praesent arcu odio, vestibulum a lacinia vitae, condimentum ac metus. Nullam pellentesque, nibh non fringilla iaculis, tortor est convallis libero, id malesuada tortor purus vitae orci",Cold,,,,,
+Bulk Account from CSV (bulk2) - #43,Customer - Direct,,"888 N Euclid 
+Hallis Center, Room 501
+Tucson, AZ 85721
+United States",Tucson,AZ,,,"888 N Euclid 
+Hallis Center, Room 501
+Tucson, AZ 85721
+United States",,,,,(520) 773-9050,(520) 773-9060,CD736025,www.universityofarizona.com,7321,Education,,39000,Other,,"Cras facilisis, leo id auctor condimentum, elit quam consectetur ligula, in cursus arcu nulla nec ipsum. Sed id orci quam. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent rutrum, augue at egestas porta, nibh felis dignissim odio, in mattis massa velit nec libero. 
+Quisque volutpat quam at turpis accumsan a accumsan diam volutpat. Praesent nec nibh a nulla tristique congue. Mauris egestas iaculis ipsum ac suscipit. Donec facilisis accumsan lacus vel porta. Mauris suscipit tempus ipsum, in ornare lacus interdum sed.",Warm,,,,,
+Bulk Account from CSV (bulk2) - #44,Customer - Direct,,"1301 Avenue of the Americas 
+New York, NY 10019
+USA",New York,NY,,,"1301 Avenue of the Americas 
+New York, NY 10019
+USA",,,,,(212) 842-5500,(212) 842-5501,CD355118,http://www.uos.com,4437,Energy,5.60E+09,145000,Public,UOS,"Curabitur fermentum, mi eu adipiscing tincidunt, justo diam interdum dolor, tempor feugiat turpis erat et justo. Nunc sed nisi et eros tempor porttitor.
+Curabitur blandit, tortor volutpat rhoncus gravida, nibh orci posuere purus, nec pellentesque lorem sapien a odio.
+Donec semper nunc quis metus fringilla semper. Aliquam dapibus euismod imperdiet.
+Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+Etiam gravida, nulla sit amet sollicitudin dictum, diam ante tempor ligula, sed imperdiet turpis urna a augue.",Hot,,,,,
+Bulk Account from CSV (bulk2) - #45,Customer - Channel,,"345 Shoreline Park
+Mountain View, CA 94043
+USA",Mountain View,CA,,,"345 Shoreline Park
+Mountain View, CA 94043
+USA",,,,,(650) 867-3450,(650) 867-9895,CC978213,www.genepoint.com,3712,Biotechnology,3.00E+07,265,Private,,"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nunc erat, molestie et interdum sit amet, lobortis laoreet ante. Cras imperdiet felis sit amet nunc tincidunt laoreet. Maecenas eu semper arcu. Suspendisse eu pretium magna. Nam tincidunt ligula dolor. Cras nec lacus odio, sed accumsan erat. Vivamus sed tellus sit amet nisi condimentum imperdiet at at nibh. Phasellus dignissim, urna sed faucibus porta, nisi felis ullamcorper est, eget sagittis sapien lacus eu dui. Praesent arcu odio, vestibulum a lacinia vitae, condimentum ac metus. Nullam pellentesque, nibh non fringilla iaculis, tortor est convallis libero, id malesuada tortor purus vitae orci",Cold,,,,,
+Bulk Account from CSV (bulk2) - #46,Customer - Direct,,"Kings Park, 17th Avenue, Team Valley Trading Estate,
+Gateshead, Tyne and Wear NE26 3HS
+United Kingdom",,UK,,,"Kings Park, 17th Avenue, Team Valley Trading Estate,
+Gateshead, Tyne and Wear NE26 3HS
+United Kingdom",,,,,+44 191 4956203,+44 191 4956620,CD355119-A,http://www.uos.com,4437,Energy,,24000,Public,UOS,"Cras facilisis, leo id auctor condimentum, elit quam consectetur ligula, in cursus arcu nulla nec ipsum. Sed id orci quam. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent rutrum, augue at egestas porta, nibh felis dignissim odio, in mattis massa velit nec libero. 
+Quisque volutpat quam at turpis accumsan a accumsan diam volutpat. Praesent nec nibh a nulla tristique congue. Mauris egestas iaculis ipsum ac suscipit. Donec facilisis accumsan lacus vel porta. Mauris suscipit tempus ipsum, in ornare lacus interdum sed.",,,,,,
+Bulk Account from CSV (bulk2) - #47,Customer - Direct,,"9 Tagore Lane
+Singapore, Singapore 787472
+Singapore",Singapore,Singapore,,,"9 Tagore Lane
+Singapore, Singapore 787472
+Singapore",,,,,(650) 450-8810,(650) 450-8820,CD355120-B,http://www.uos.com,4437,Energy,,3000,Public,UOS,"Curabitur fermentum, mi eu adipiscing tincidunt, justo diam interdum dolor, tempor feugiat turpis erat et justo. Nunc sed nisi et eros tempor porttitor.
+Curabitur blandit, tortor volutpat rhoncus gravida, nibh orci posuere purus, nec pellentesque lorem sapien a odio.
+Donec semper nunc quis metus fringilla semper. Aliquam dapibus euismod imperdiet.
+Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+Etiam gravida, nulla sit amet sollicitudin dictum, diam ante tempor ligula, sed imperdiet turpis urna a augue.",,,,,,
+Bulk Account from CSV (bulk2) - #48,Customer - Direct,,"312 Constitution Place
+Austin, TX 78767
+USA",Austin,TX,,,"312 Constitution Place
+Austin, TX 78767
+USA",,,,,(512) 757-6000,(512) 757-9000,CD451796,http://edgecomm.com,6576,Electronics,1.39E+08,1000,Public,EDGE,"Curabitur eget urna non dolor dapibus faucibus. Nulla posuere, tellus a vestibulum rutrum, enim neque elementum nibh, ac luctus quam urna a nisi.
+Phasellus nec ligula non dolor aliquam scelerisque ac id felis. Integer semper pellentesque hendrerit. 
+Quisque vitae felis nunc. Aliquam eu nisi lacus, scelerisque aliquet leo. Donec elementum mollis tortor id viverra. Curabitur molestie gravida fringilla. Donec pharetra metus nec velit consectetur quis placerat quam euismod.",Hot,,,,,
+Bulk Account from CSV (bulk2) - #49,Customer - Direct,,525 S. Lexington Ave,Burlington,NC,27215,USA,,,,,,(336) 222-7000,(336) 222-8000,CD656092,www.burlington.com,546732,Apparel,3.50E+08,9000,Public,BTXT,"Donec orci magna, tristique tempus faucibus id, dignissim at neque. Proin quis ipsum leo. Vivamus vitae libero ut ipsum gravida accumsan. Proin ut massa sapien, ac hendrerit nisi. Nulla commodo enim id turpis varius nec cursus leo dignissim. Mauris laoreet tempor mi, sit amet molestie nisi tincidunt eget. Nulla elit orci, dictum sed tempus id, suscipit at lacus. Sed hendrerit, nisi id pretium ultricies, arcu nibh ornare erat, et venenatis augue ligula aliquam risus.",Warm,,,,,
+Bulk Account from CSV (bulk2) - #50,Customer - Channel,,2 Place Jussieu,Paris,,75251,France,2 Place Jussieu,Paris,,75251,France,(014) 427-4427,(014) 427-4428,CC213425,www.pyramid.com,4253,Construction,9.50E+08,2680,Public,PYR,"Suspendisse potenti. Donec tortor libero, facilisis quis mattis in, faucibus sit amet orci. 
+Curabitur nec turpis vel mi lobortis tincidunt. Sed vulputate diam eu enim vestibulum in porta turpis aliquam. Integer porta mollis scelerisque. Quisque accumsan ultrices nisi, et elementum libero adipiscing et. Pellentesque sem est, bibendum nec iaculis sit amet, tempus ut nibh. In porta laoreet lorem sed rhoncus. 
+Etiam feugiat turpis non sapien rutrum aliquam. Aenean ac nisl lorem.",,,,,,
+Bulk Account from CSV (bulk2) - #51,Customer - Channel,,1301 Hoch Drive,Lawrence,KS,66045,USA,1301 Hoch Drive,Lawrence,KS,66045,USA,(785) 241-6200,(785) 241-6201,CC634267,dickenson-consulting.com,6752,Consulting,5.00E+07,120,Private,,"Nullam nisi turpis, sagittis in malesuada quis, feugiat sed lorem. Donec tortor justo, feugiat in tempor luctus, imperdiet nec sapien. Sed id dui in sapien varius aliquet eget ac mauris. Nullam tincidunt sodales risus nec semper. 
+Fusce pellentesque porta turpis non iaculis. Vivamus varius, dolor vel vulputate tristique, nunc augue elementum risus, sit amet sodales urna ligula eu risus. Suspendisse iaculis nulla non eros vulputate varius.
+Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.",,,,,,
+Bulk Account from CSV (bulk2) - #52,Customer - Direct,,"2334 N. Michigan Avenue, Suite 1500
+Chicago, IL 60601, USA",Chicago,IL,,,"2334 N. Michigan Avenue, Suite 1500
+Chicago, IL 60601, USA",,,,,(312) 596-1000,(312) 596-1500,CD439877,www.grandhotels.com,2268,Hospitality,5.00E+08,5600,Public,GHTL,"Morbi mollis pellentesque sem, vitae lobortis diam sollicitudin quis. Donec fermentum mauris vitae odio fringilla eget suscipit dolor fringilla. Nunc id lacus et purus ornare hendrerit in ut velit. Vivamus at tortor nisi. Curabitur lacinia volutpat urna, vel mollis lorem vulputate in. Aliquam erat volutpat. Integer et nibh sed sapien adipiscing sagittis non non nisi. Donec quis urna ac augue suscipit ultrices.",Warm,,,,,
+Bulk Account from CSV (bulk2) - #53,Customer - Channel,,"620 SW 5th Avenue Suite 400
+Portland, Oregon 97204
+United States",Portland,OR,,,"620 SW 5th Avenue Suite 400
+Portland, Oregon 97204
+United States",,,,,(503) 421-7800,(503) 421-7801,CC947211,www.expressl&t.net,8742,Transportation,9.50E+08,12300,Public,EXLT,"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nunc erat, molestie et interdum sit amet, lobortis laoreet ante. Cras imperdiet felis sit amet nunc tincidunt laoreet. Maecenas eu semper arcu. Suspendisse eu pretium magna. Nam tincidunt ligula dolor. Cras nec lacus odio, sed accumsan erat. Vivamus sed tellus sit amet nisi condimentum imperdiet at at nibh. Phasellus dignissim, urna sed faucibus porta, nisi felis ullamcorper est, eget sagittis sapien lacus eu dui. Praesent arcu odio, vestibulum a lacinia vitae, condimentum ac metus. Nullam pellentesque, nibh non fringilla iaculis, tortor est convallis libero, id malesuada tortor purus vitae orci",Cold,,,,,
+Bulk Account from CSV (bulk2) - #54,Customer - Direct,,"888 N Euclid 
+Hallis Center, Room 501
+Tucson, AZ 85721
+United States",Tucson,AZ,,,"888 N Euclid 
+Hallis Center, Room 501
+Tucson, AZ 85721
+United States",,,,,(520) 773-9050,(520) 773-9060,CD736025,www.universityofarizona.com,7321,Education,,39000,Other,,"Cras facilisis, leo id auctor condimentum, elit quam consectetur ligula, in cursus arcu nulla nec ipsum. Sed id orci quam. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent rutrum, augue at egestas porta, nibh felis dignissim odio, in mattis massa velit nec libero. 
+Quisque volutpat quam at turpis accumsan a accumsan diam volutpat. Praesent nec nibh a nulla tristique congue. Mauris egestas iaculis ipsum ac suscipit. Donec facilisis accumsan lacus vel porta. Mauris suscipit tempus ipsum, in ornare lacus interdum sed.",Warm,,,,,
+Bulk Account from CSV (bulk2) - #55,Customer - Direct,,"1301 Avenue of the Americas 
+New York, NY 10019
+USA",New York,NY,,,"1301 Avenue of the Americas 
+New York, NY 10019
+USA",,,,,(212) 842-5500,(212) 842-5501,CD355118,http://www.uos.com,4437,Energy,5.60E+09,145000,Public,UOS,"Curabitur fermentum, mi eu adipiscing tincidunt, justo diam interdum dolor, tempor feugiat turpis erat et justo. Nunc sed nisi et eros tempor porttitor.
+Curabitur blandit, tortor volutpat rhoncus gravida, nibh orci posuere purus, nec pellentesque lorem sapien a odio.
+Donec semper nunc quis metus fringilla semper. Aliquam dapibus euismod imperdiet.
+Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+Etiam gravida, nulla sit amet sollicitudin dictum, diam ante tempor ligula, sed imperdiet turpis urna a augue.",Hot,,,,,
+Bulk Account from CSV (bulk2) - #56,Customer - Channel,,"345 Shoreline Park
+Mountain View, CA 94043
+USA",Mountain View,CA,,,"345 Shoreline Park
+Mountain View, CA 94043
+USA",,,,,(650) 867-3450,(650) 867-9895,CC978213,www.genepoint.com,3712,Biotechnology,3.00E+07,265,Private,,"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nunc erat, molestie et interdum sit amet, lobortis laoreet ante. Cras imperdiet felis sit amet nunc tincidunt laoreet. Maecenas eu semper arcu. Suspendisse eu pretium magna. Nam tincidunt ligula dolor. Cras nec lacus odio, sed accumsan erat. Vivamus sed tellus sit amet nisi condimentum imperdiet at at nibh. Phasellus dignissim, urna sed faucibus porta, nisi felis ullamcorper est, eget sagittis sapien lacus eu dui. Praesent arcu odio, vestibulum a lacinia vitae, condimentum ac metus. Nullam pellentesque, nibh non fringilla iaculis, tortor est convallis libero, id malesuada tortor purus vitae orci",Cold,,,,,
+Bulk Account from CSV (bulk2) - #57,Customer - Direct,,"Kings Park, 17th Avenue, Team Valley Trading Estate,
+Gateshead, Tyne and Wear NE26 3HS
+United Kingdom",,UK,,,"Kings Park, 17th Avenue, Team Valley Trading Estate,
+Gateshead, Tyne and Wear NE26 3HS
+United Kingdom",,,,,+44 191 4956203,+44 191 4956620,CD355119-A,http://www.uos.com,4437,Energy,,24000,Public,UOS,"Cras facilisis, leo id auctor condimentum, elit quam consectetur ligula, in cursus arcu nulla nec ipsum. Sed id orci quam. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent rutrum, augue at egestas porta, nibh felis dignissim odio, in mattis massa velit nec libero. 
+Quisque volutpat quam at turpis accumsan a accumsan diam volutpat. Praesent nec nibh a nulla tristique congue. Mauris egestas iaculis ipsum ac suscipit. Donec facilisis accumsan lacus vel porta. Mauris suscipit tempus ipsum, in ornare lacus interdum sed.",,,,,,
+Bulk Account from CSV (bulk2) - #58,Customer - Direct,,"9 Tagore Lane
+Singapore, Singapore 787472
+Singapore",Singapore,Singapore,,,"9 Tagore Lane
+Singapore, Singapore 787472
+Singapore",,,,,(650) 450-8810,(650) 450-8820,CD355120-B,http://www.uos.com,4437,Energy,,3000,Public,UOS,"Curabitur fermentum, mi eu adipiscing tincidunt, justo diam interdum dolor, tempor feugiat turpis erat et justo. Nunc sed nisi et eros tempor porttitor.
+Curabitur blandit, tortor volutpat rhoncus gravida, nibh orci posuere purus, nec pellentesque lorem sapien a odio.
+Donec semper nunc quis metus fringilla semper. Aliquam dapibus euismod imperdiet.
+Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+Etiam gravida, nulla sit amet sollicitudin dictum, diam ante tempor ligula, sed imperdiet turpis urna a augue.",,,,,,
+Bulk Account from CSV (bulk2) - #59,Customer - Direct,,"312 Constitution Place
+Austin, TX 78767
+USA",Austin,TX,,,"312 Constitution Place
+Austin, TX 78767
+USA",,,,,(512) 757-6000,(512) 757-9000,CD451796,http://edgecomm.com,6576,Electronics,1.39E+08,1000,Public,EDGE,"Curabitur eget urna non dolor dapibus faucibus. Nulla posuere, tellus a vestibulum rutrum, enim neque elementum nibh, ac luctus quam urna a nisi.
+Phasellus nec ligula non dolor aliquam scelerisque ac id felis. Integer semper pellentesque hendrerit. 
+Quisque vitae felis nunc. Aliquam eu nisi lacus, scelerisque aliquet leo. Donec elementum mollis tortor id viverra. Curabitur molestie gravida fringilla. Donec pharetra metus nec velit consectetur quis placerat quam euismod.",Hot,,,,,
+Bulk Account from CSV (bulk2) - #60,Customer - Direct,,525 S. Lexington Ave,Burlington,NC,27215,USA,,,,,,(336) 222-7000,(336) 222-8000,CD656092,www.burlington.com,546732,Apparel,3.50E+08,9000,Public,BTXT,"Donec orci magna, tristique tempus faucibus id, dignissim at neque. Proin quis ipsum leo. Vivamus vitae libero ut ipsum gravida accumsan. Proin ut massa sapien, ac hendrerit nisi. Nulla commodo enim id turpis varius nec cursus leo dignissim. Mauris laoreet tempor mi, sit amet molestie nisi tincidunt eget. Nulla elit orci, dictum sed tempus id, suscipit at lacus. Sed hendrerit, nisi id pretium ultricies, arcu nibh ornare erat, et venenatis augue ligula aliquam risus.",Warm,,,,,
+Bulk Account from CSV (bulk2) - #61,Customer - Channel,,2 Place Jussieu,Paris,,75251,France,2 Place Jussieu,Paris,,75251,France,(014) 427-4427,(014) 427-4428,CC213425,www.pyramid.com,4253,Construction,9.50E+08,2680,Public,PYR,"Suspendisse potenti. Donec tortor libero, facilisis quis mattis in, faucibus sit amet orci. 
+Curabitur nec turpis vel mi lobortis tincidunt. Sed vulputate diam eu enim vestibulum in porta turpis aliquam. Integer porta mollis scelerisque. Quisque accumsan ultrices nisi, et elementum libero adipiscing et. Pellentesque sem est, bibendum nec iaculis sit amet, tempus ut nibh. In porta laoreet lorem sed rhoncus. 
+Etiam feugiat turpis non sapien rutrum aliquam. Aenean ac nisl lorem.",,,,,,
+Bulk Account from CSV (bulk2) - #62,Customer - Channel,,1301 Hoch Drive,Lawrence,KS,66045,USA,1301 Hoch Drive,Lawrence,KS,66045,USA,(785) 241-6200,(785) 241-6201,CC634267,dickenson-consulting.com,6752,Consulting,5.00E+07,120,Private,,"Nullam nisi turpis, sagittis in malesuada quis, feugiat sed lorem. Donec tortor justo, feugiat in tempor luctus, imperdiet nec sapien. Sed id dui in sapien varius aliquet eget ac mauris. Nullam tincidunt sodales risus nec semper. 
+Fusce pellentesque porta turpis non iaculis. Vivamus varius, dolor vel vulputate tristique, nunc augue elementum risus, sit amet sodales urna ligula eu risus. Suspendisse iaculis nulla non eros vulputate varius.
+Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.",,,,,,
+Bulk Account from CSV (bulk2) - #63,Customer - Direct,,"2334 N. Michigan Avenue, Suite 1500
+Chicago, IL 60601, USA",Chicago,IL,,,"2334 N. Michigan Avenue, Suite 1500
+Chicago, IL 60601, USA",,,,,(312) 596-1000,(312) 596-1500,CD439877,www.grandhotels.com,2268,Hospitality,5.00E+08,5600,Public,GHTL,"Morbi mollis pellentesque sem, vitae lobortis diam sollicitudin quis. Donec fermentum mauris vitae odio fringilla eget suscipit dolor fringilla. Nunc id lacus et purus ornare hendrerit in ut velit. Vivamus at tortor nisi. Curabitur lacinia volutpat urna, vel mollis lorem vulputate in. Aliquam erat volutpat. Integer et nibh sed sapien adipiscing sagittis non non nisi. Donec quis urna ac augue suscipit ultrices.",Warm,,,,,
+Bulk Account from CSV (bulk2) - #64,Customer - Channel,,"620 SW 5th Avenue Suite 400
+Portland, Oregon 97204
+United States",Portland,OR,,,"620 SW 5th Avenue Suite 400
+Portland, Oregon 97204
+United States",,,,,(503) 421-7800,(503) 421-7801,CC947211,www.expressl&t.net,8742,Transportation,9.50E+08,12300,Public,EXLT,"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nunc erat, molestie et interdum sit amet, lobortis laoreet ante. Cras imperdiet felis sit amet nunc tincidunt laoreet. Maecenas eu semper arcu. Suspendisse eu pretium magna. Nam tincidunt ligula dolor. Cras nec lacus odio, sed accumsan erat. Vivamus sed tellus sit amet nisi condimentum imperdiet at at nibh. Phasellus dignissim, urna sed faucibus porta, nisi felis ullamcorper est, eget sagittis sapien lacus eu dui. Praesent arcu odio, vestibulum a lacinia vitae, condimentum ac metus. Nullam pellentesque, nibh non fringilla iaculis, tortor est convallis libero, id malesuada tortor purus vitae orci",Cold,,,,,
+Bulk Account from CSV (bulk2) - #65,Customer - Direct,,"888 N Euclid 
+Hallis Center, Room 501
+Tucson, AZ 85721
+United States",Tucson,AZ,,,"888 N Euclid 
+Hallis Center, Room 501
+Tucson, AZ 85721
+United States",,,,,(520) 773-9050,(520) 773-9060,CD736025,www.universityofarizona.com,7321,Education,,39000,Other,,"Cras facilisis, leo id auctor condimentum, elit quam consectetur ligula, in cursus arcu nulla nec ipsum. Sed id orci quam. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent rutrum, augue at egestas porta, nibh felis dignissim odio, in mattis massa velit nec libero. 
+Quisque volutpat quam at turpis accumsan a accumsan diam volutpat. Praesent nec nibh a nulla tristique congue. Mauris egestas iaculis ipsum ac suscipit. Donec facilisis accumsan lacus vel porta. Mauris suscipit tempus ipsum, in ornare lacus interdum sed.",Warm,,,,,
+Bulk Account from CSV (bulk2) - #66,Customer - Direct,,"1301 Avenue of the Americas 
+New York, NY 10019
+USA",New York,NY,,,"1301 Avenue of the Americas 
+New York, NY 10019
+USA",,,,,(212) 842-5500,(212) 842-5501,CD355118,http://www.uos.com,4437,Energy,5.60E+09,145000,Public,UOS,"Curabitur fermentum, mi eu adipiscing tincidunt, justo diam interdum dolor, tempor feugiat turpis erat et justo. Nunc sed nisi et eros tempor porttitor.
+Curabitur blandit, tortor volutpat rhoncus gravida, nibh orci posuere purus, nec pellentesque lorem sapien a odio.
+Donec semper nunc quis metus fringilla semper. Aliquam dapibus euismod imperdiet.
+Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+Etiam gravida, nulla sit amet sollicitudin dictum, diam ante tempor ligula, sed imperdiet turpis urna a augue.",Hot,,,,,
+Bulk Account from CSV (bulk2) - #67,Customer - Channel,,"345 Shoreline Park
+Mountain View, CA 94043
+USA",Mountain View,CA,,,"345 Shoreline Park
+Mountain View, CA 94043
+USA",,,,,(650) 867-3450,(650) 867-9895,CC978213,www.genepoint.com,3712,Biotechnology,3.00E+07,265,Private,,"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nunc erat, molestie et interdum sit amet, lobortis laoreet ante. Cras imperdiet felis sit amet nunc tincidunt laoreet. Maecenas eu semper arcu. Suspendisse eu pretium magna. Nam tincidunt ligula dolor. Cras nec lacus odio, sed accumsan erat. Vivamus sed tellus sit amet nisi condimentum imperdiet at at nibh. Phasellus dignissim, urna sed faucibus porta, nisi felis ullamcorper est, eget sagittis sapien lacus eu dui. Praesent arcu odio, vestibulum a lacinia vitae, condimentum ac metus. Nullam pellentesque, nibh non fringilla iaculis, tortor est convallis libero, id malesuada tortor purus vitae orci",Cold,,,,,
+Bulk Account from CSV (bulk2) - #68,Customer - Direct,,"Kings Park, 17th Avenue, Team Valley Trading Estate,
+Gateshead, Tyne and Wear NE26 3HS
+United Kingdom",,UK,,,"Kings Park, 17th Avenue, Team Valley Trading Estate,
+Gateshead, Tyne and Wear NE26 3HS
+United Kingdom",,,,,+44 191 4956203,+44 191 4956620,CD355119-A,http://www.uos.com,4437,Energy,,24000,Public,UOS,"Cras facilisis, leo id auctor condimentum, elit quam consectetur ligula, in cursus arcu nulla nec ipsum. Sed id orci quam. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent rutrum, augue at egestas porta, nibh felis dignissim odio, in mattis massa velit nec libero. 
+Quisque volutpat quam at turpis accumsan a accumsan diam volutpat. Praesent nec nibh a nulla tristique congue. Mauris egestas iaculis ipsum ac suscipit. Donec facilisis accumsan lacus vel porta. Mauris suscipit tempus ipsum, in ornare lacus interdum sed.",,,,,,
+Bulk Account from CSV (bulk2) - #69,Customer - Direct,,"9 Tagore Lane
+Singapore, Singapore 787472
+Singapore",Singapore,Singapore,,,"9 Tagore Lane
+Singapore, Singapore 787472
+Singapore",,,,,(650) 450-8810,(650) 450-8820,CD355120-B,http://www.uos.com,4437,Energy,,3000,Public,UOS,"Curabitur fermentum, mi eu adipiscing tincidunt, justo diam interdum dolor, tempor feugiat turpis erat et justo. Nunc sed nisi et eros tempor porttitor.
+Curabitur blandit, tortor volutpat rhoncus gravida, nibh orci posuere purus, nec pellentesque lorem sapien a odio.
+Donec semper nunc quis metus fringilla semper. Aliquam dapibus euismod imperdiet.
+Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+Etiam gravida, nulla sit amet sollicitudin dictum, diam ante tempor ligula, sed imperdiet turpis urna a augue.",,,,,,
+Bulk Account from CSV (bulk2) - #70,Customer - Direct,,"312 Constitution Place
+Austin, TX 78767
+USA",Austin,TX,,,"312 Constitution Place
+Austin, TX 78767
+USA",,,,,(512) 757-6000,(512) 757-9000,CD451796,http://edgecomm.com,6576,Electronics,1.39E+08,1000,Public,EDGE,"Curabitur eget urna non dolor dapibus faucibus. Nulla posuere, tellus a vestibulum rutrum, enim neque elementum nibh, ac luctus quam urna a nisi.
+Phasellus nec ligula non dolor aliquam scelerisque ac id felis. Integer semper pellentesque hendrerit. 
+Quisque vitae felis nunc. Aliquam eu nisi lacus, scelerisque aliquet leo. Donec elementum mollis tortor id viverra. Curabitur molestie gravida fringilla. Donec pharetra metus nec velit consectetur quis placerat quam euismod.",Hot,,,,,
+Bulk Account from CSV (bulk2) - #71,Customer - Direct,,525 S. Lexington Ave,Burlington,NC,27215,USA,,,,,,(336) 222-7000,(336) 222-8000,CD656092,www.burlington.com,546732,Apparel,3.50E+08,9000,Public,BTXT,"Donec orci magna, tristique tempus faucibus id, dignissim at neque. Proin quis ipsum leo. Vivamus vitae libero ut ipsum gravida accumsan. Proin ut massa sapien, ac hendrerit nisi. Nulla commodo enim id turpis varius nec cursus leo dignissim. Mauris laoreet tempor mi, sit amet molestie nisi tincidunt eget. Nulla elit orci, dictum sed tempus id, suscipit at lacus. Sed hendrerit, nisi id pretium ultricies, arcu nibh ornare erat, et venenatis augue ligula aliquam risus.",Warm,,,,,
+Bulk Account from CSV (bulk2) - #72,Customer - Channel,,2 Place Jussieu,Paris,,75251,France,2 Place Jussieu,Paris,,75251,France,(014) 427-4427,(014) 427-4428,CC213425,www.pyramid.com,4253,Construction,9.50E+08,2680,Public,PYR,"Suspendisse potenti. Donec tortor libero, facilisis quis mattis in, faucibus sit amet orci. 
+Curabitur nec turpis vel mi lobortis tincidunt. Sed vulputate diam eu enim vestibulum in porta turpis aliquam. Integer porta mollis scelerisque. Quisque accumsan ultrices nisi, et elementum libero adipiscing et. Pellentesque sem est, bibendum nec iaculis sit amet, tempus ut nibh. In porta laoreet lorem sed rhoncus. 
+Etiam feugiat turpis non sapien rutrum aliquam. Aenean ac nisl lorem.",,,,,,
+Bulk Account from CSV (bulk2) - #73,Customer - Channel,,1301 Hoch Drive,Lawrence,KS,66045,USA,1301 Hoch Drive,Lawrence,KS,66045,USA,(785) 241-6200,(785) 241-6201,CC634267,dickenson-consulting.com,6752,Consulting,5.00E+07,120,Private,,"Nullam nisi turpis, sagittis in malesuada quis, feugiat sed lorem. Donec tortor justo, feugiat in tempor luctus, imperdiet nec sapien. Sed id dui in sapien varius aliquet eget ac mauris. Nullam tincidunt sodales risus nec semper. 
+Fusce pellentesque porta turpis non iaculis. Vivamus varius, dolor vel vulputate tristique, nunc augue elementum risus, sit amet sodales urna ligula eu risus. Suspendisse iaculis nulla non eros vulputate varius.
+Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.",,,,,,
+Bulk Account from CSV (bulk2) - #74,Customer - Direct,,"2334 N. Michigan Avenue, Suite 1500
+Chicago, IL 60601, USA",Chicago,IL,,,"2334 N. Michigan Avenue, Suite 1500
+Chicago, IL 60601, USA",,,,,(312) 596-1000,(312) 596-1500,CD439877,www.grandhotels.com,2268,Hospitality,5.00E+08,5600,Public,GHTL,"Morbi mollis pellentesque sem, vitae lobortis diam sollicitudin quis. Donec fermentum mauris vitae odio fringilla eget suscipit dolor fringilla. Nunc id lacus et purus ornare hendrerit in ut velit. Vivamus at tortor nisi. Curabitur lacinia volutpat urna, vel mollis lorem vulputate in. Aliquam erat volutpat. Integer et nibh sed sapien adipiscing sagittis non non nisi. Donec quis urna ac augue suscipit ultrices.",Warm,,,,,
+Bulk Account from CSV (bulk2) - #75,Customer - Channel,,"620 SW 5th Avenue Suite 400
+Portland, Oregon 97204
+United States",Portland,OR,,,"620 SW 5th Avenue Suite 400
+Portland, Oregon 97204
+United States",,,,,(503) 421-7800,(503) 421-7801,CC947211,www.expressl&t.net,8742,Transportation,9.50E+08,12300,Public,EXLT,"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nunc erat, molestie et interdum sit amet, lobortis laoreet ante. Cras imperdiet felis sit amet nunc tincidunt laoreet. Maecenas eu semper arcu. Suspendisse eu pretium magna. Nam tincidunt ligula dolor. Cras nec lacus odio, sed accumsan erat. Vivamus sed tellus sit amet nisi condimentum imperdiet at at nibh. Phasellus dignissim, urna sed faucibus porta, nisi felis ullamcorper est, eget sagittis sapien lacus eu dui. Praesent arcu odio, vestibulum a lacinia vitae, condimentum ac metus. Nullam pellentesque, nibh non fringilla iaculis, tortor est convallis libero, id malesuada tortor purus vitae orci",Cold,,,,,
+Bulk Account from CSV (bulk2) - #76,Customer - Direct,,"888 N Euclid 
+Hallis Center, Room 501
+Tucson, AZ 85721
+United States",Tucson,AZ,,,"888 N Euclid 
+Hallis Center, Room 501
+Tucson, AZ 85721
+United States",,,,,(520) 773-9050,(520) 773-9060,CD736025,www.universityofarizona.com,7321,Education,,39000,Other,,"Cras facilisis, leo id auctor condimentum, elit quam consectetur ligula, in cursus arcu nulla nec ipsum. Sed id orci quam. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent rutrum, augue at egestas porta, nibh felis dignissim odio, in mattis massa velit nec libero. 
+Quisque volutpat quam at turpis accumsan a accumsan diam volutpat. Praesent nec nibh a nulla tristique congue. Mauris egestas iaculis ipsum ac suscipit. Donec facilisis accumsan lacus vel porta. Mauris suscipit tempus ipsum, in ornare lacus interdum sed.",Warm,,,,,
+Bulk Account from CSV (bulk2) - #77,Customer - Direct,,"1301 Avenue of the Americas 
+New York, NY 10019
+USA",New York,NY,,,"1301 Avenue of the Americas 
+New York, NY 10019
+USA",,,,,(212) 842-5500,(212) 842-5501,CD355118,http://www.uos.com,4437,Energy,5.60E+09,145000,Public,UOS,"Curabitur fermentum, mi eu adipiscing tincidunt, justo diam interdum dolor, tempor feugiat turpis erat et justo. Nunc sed nisi et eros tempor porttitor.
+Curabitur blandit, tortor volutpat rhoncus gravida, nibh orci posuere purus, nec pellentesque lorem sapien a odio.
+Donec semper nunc quis metus fringilla semper. Aliquam dapibus euismod imperdiet.
+Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+Etiam gravida, nulla sit amet sollicitudin dictum, diam ante tempor ligula, sed imperdiet turpis urna a augue.",Hot,,,,,
+Bulk Account from CSV (bulk2) - #78,Customer - Channel,,"345 Shoreline Park
+Mountain View, CA 94043
+USA",Mountain View,CA,,,"345 Shoreline Park
+Mountain View, CA 94043
+USA",,,,,(650) 867-3450,(650) 867-9895,CC978213,www.genepoint.com,3712,Biotechnology,3.00E+07,265,Private,,"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nunc erat, molestie et interdum sit amet, lobortis laoreet ante. Cras imperdiet felis sit amet nunc tincidunt laoreet. Maecenas eu semper arcu. Suspendisse eu pretium magna. Nam tincidunt ligula dolor. Cras nec lacus odio, sed accumsan erat. Vivamus sed tellus sit amet nisi condimentum imperdiet at at nibh. Phasellus dignissim, urna sed faucibus porta, nisi felis ullamcorper est, eget sagittis sapien lacus eu dui. Praesent arcu odio, vestibulum a lacinia vitae, condimentum ac metus. Nullam pellentesque, nibh non fringilla iaculis, tortor est convallis libero, id malesuada tortor purus vitae orci",Cold,,,,,
+Bulk Account from CSV (bulk2) - #79,Customer - Direct,,"Kings Park, 17th Avenue, Team Valley Trading Estate,
+Gateshead, Tyne and Wear NE26 3HS
+United Kingdom",,UK,,,"Kings Park, 17th Avenue, Team Valley Trading Estate,
+Gateshead, Tyne and Wear NE26 3HS
+United Kingdom",,,,,+44 191 4956203,+44 191 4956620,CD355119-A,http://www.uos.com,4437,Energy,,24000,Public,UOS,"Cras facilisis, leo id auctor condimentum, elit quam consectetur ligula, in cursus arcu nulla nec ipsum. Sed id orci quam. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent rutrum, augue at egestas porta, nibh felis dignissim odio, in mattis massa velit nec libero. 
+Quisque volutpat quam at turpis accumsan a accumsan diam volutpat. Praesent nec nibh a nulla tristique congue. Mauris egestas iaculis ipsum ac suscipit. Donec facilisis accumsan lacus vel porta. Mauris suscipit tempus ipsum, in ornare lacus interdum sed.",,,,,,
+Bulk Account from CSV (bulk2) - #80,Customer - Direct,,"9 Tagore Lane
+Singapore, Singapore 787472
+Singapore",Singapore,Singapore,,,"9 Tagore Lane
+Singapore, Singapore 787472
+Singapore",,,,,(650) 450-8810,(650) 450-8820,CD355120-B,http://www.uos.com,4437,Energy,,3000,Public,UOS,"Curabitur fermentum, mi eu adipiscing tincidunt, justo diam interdum dolor, tempor feugiat turpis erat et justo. Nunc sed nisi et eros tempor porttitor.
+Curabitur blandit, tortor volutpat rhoncus gravida, nibh orci posuere purus, nec pellentesque lorem sapien a odio.
+Donec semper nunc quis metus fringilla semper. Aliquam dapibus euismod imperdiet.
+Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+Etiam gravida, nulla sit amet sollicitudin dictum, diam ante tempor ligula, sed imperdiet turpis urna a augue.",,,,,,
+Bulk Account from CSV (bulk2) - #81,Customer - Direct,,"312 Constitution Place
+Austin, TX 78767
+USA",Austin,TX,,,"312 Constitution Place
+Austin, TX 78767
+USA",,,,,(512) 757-6000,(512) 757-9000,CD451796,http://edgecomm.com,6576,Electronics,1.39E+08,1000,Public,EDGE,"Curabitur eget urna non dolor dapibus faucibus. Nulla posuere, tellus a vestibulum rutrum, enim neque elementum nibh, ac luctus quam urna a nisi.
+Phasellus nec ligula non dolor aliquam scelerisque ac id felis. Integer semper pellentesque hendrerit. 
+Quisque vitae felis nunc. Aliquam eu nisi lacus, scelerisque aliquet leo. Donec elementum mollis tortor id viverra. Curabitur molestie gravida fringilla. Donec pharetra metus nec velit consectetur quis placerat quam euismod.",Hot,,,,,
+Bulk Account from CSV (bulk2) - #82,Customer - Direct,,525 S. Lexington Ave,Burlington,NC,27215,USA,,,,,,(336) 222-7000,(336) 222-8000,CD656092,www.burlington.com,546732,Apparel,3.50E+08,9000,Public,BTXT,"Donec orci magna, tristique tempus faucibus id, dignissim at neque. Proin quis ipsum leo. Vivamus vitae libero ut ipsum gravida accumsan. Proin ut massa sapien, ac hendrerit nisi. Nulla commodo enim id turpis varius nec cursus leo dignissim. Mauris laoreet tempor mi, sit amet molestie nisi tincidunt eget. Nulla elit orci, dictum sed tempus id, suscipit at lacus. Sed hendrerit, nisi id pretium ultricies, arcu nibh ornare erat, et venenatis augue ligula aliquam risus.",Warm,,,,,
+Bulk Account from CSV (bulk2) - #83,Customer - Channel,,2 Place Jussieu,Paris,,75251,France,2 Place Jussieu,Paris,,75251,France,(014) 427-4427,(014) 427-4428,CC213425,www.pyramid.com,4253,Construction,9.50E+08,2680,Public,PYR,"Suspendisse potenti. Donec tortor libero, facilisis quis mattis in, faucibus sit amet orci. 
+Curabitur nec turpis vel mi lobortis tincidunt. Sed vulputate diam eu enim vestibulum in porta turpis aliquam. Integer porta mollis scelerisque. Quisque accumsan ultrices nisi, et elementum libero adipiscing et. Pellentesque sem est, bibendum nec iaculis sit amet, tempus ut nibh. In porta laoreet lorem sed rhoncus. 
+Etiam feugiat turpis non sapien rutrum aliquam. Aenean ac nisl lorem.",,,,,,
+Bulk Account from CSV (bulk2) - #84,Customer - Channel,,1301 Hoch Drive,Lawrence,KS,66045,USA,1301 Hoch Drive,Lawrence,KS,66045,USA,(785) 241-6200,(785) 241-6201,CC634267,dickenson-consulting.com,6752,Consulting,5.00E+07,120,Private,,"Nullam nisi turpis, sagittis in malesuada quis, feugiat sed lorem. Donec tortor justo, feugiat in tempor luctus, imperdiet nec sapien. Sed id dui in sapien varius aliquet eget ac mauris. Nullam tincidunt sodales risus nec semper. 
+Fusce pellentesque porta turpis non iaculis. Vivamus varius, dolor vel vulputate tristique, nunc augue elementum risus, sit amet sodales urna ligula eu risus. Suspendisse iaculis nulla non eros vulputate varius.
+Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.",,,,,,
+Bulk Account from CSV (bulk2) - #85,Customer - Direct,,"2334 N. Michigan Avenue, Suite 1500
+Chicago, IL 60601, USA",Chicago,IL,,,"2334 N. Michigan Avenue, Suite 1500
+Chicago, IL 60601, USA",,,,,(312) 596-1000,(312) 596-1500,CD439877,www.grandhotels.com,2268,Hospitality,5.00E+08,5600,Public,GHTL,"Morbi mollis pellentesque sem, vitae lobortis diam sollicitudin quis. Donec fermentum mauris vitae odio fringilla eget suscipit dolor fringilla. Nunc id lacus et purus ornare hendrerit in ut velit. Vivamus at tortor nisi. Curabitur lacinia volutpat urna, vel mollis lorem vulputate in. Aliquam erat volutpat. Integer et nibh sed sapien adipiscing sagittis non non nisi. Donec quis urna ac augue suscipit ultrices.",Warm,,,,,
+Bulk Account from CSV (bulk2) - #86,Customer - Channel,,"620 SW 5th Avenue Suite 400
+Portland, Oregon 97204
+United States",Portland,OR,,,"620 SW 5th Avenue Suite 400
+Portland, Oregon 97204
+United States",,,,,(503) 421-7800,(503) 421-7801,CC947211,www.expressl&t.net,8742,Transportation,9.50E+08,12300,Public,EXLT,"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nunc erat, molestie et interdum sit amet, lobortis laoreet ante. Cras imperdiet felis sit amet nunc tincidunt laoreet. Maecenas eu semper arcu. Suspendisse eu pretium magna. Nam tincidunt ligula dolor. Cras nec lacus odio, sed accumsan erat. Vivamus sed tellus sit amet nisi condimentum imperdiet at at nibh. Phasellus dignissim, urna sed faucibus porta, nisi felis ullamcorper est, eget sagittis sapien lacus eu dui. Praesent arcu odio, vestibulum a lacinia vitae, condimentum ac metus. Nullam pellentesque, nibh non fringilla iaculis, tortor est convallis libero, id malesuada tortor purus vitae orci",Cold,,,,,
+Bulk Account from CSV (bulk2) - #87,Customer - Direct,,"888 N Euclid 
+Hallis Center, Room 501
+Tucson, AZ 85721
+United States",Tucson,AZ,,,"888 N Euclid 
+Hallis Center, Room 501
+Tucson, AZ 85721
+United States",,,,,(520) 773-9050,(520) 773-9060,CD736025,www.universityofarizona.com,7321,Education,,39000,Other,,"Cras facilisis, leo id auctor condimentum, elit quam consectetur ligula, in cursus arcu nulla nec ipsum. Sed id orci quam. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent rutrum, augue at egestas porta, nibh felis dignissim odio, in mattis massa velit nec libero. 
+Quisque volutpat quam at turpis accumsan a accumsan diam volutpat. Praesent nec nibh a nulla tristique congue. Mauris egestas iaculis ipsum ac suscipit. Donec facilisis accumsan lacus vel porta. Mauris suscipit tempus ipsum, in ornare lacus interdum sed.",Warm,,,,,
+Bulk Account from CSV (bulk2) - #88,Customer - Direct,,"1301 Avenue of the Americas 
+New York, NY 10019
+USA",New York,NY,,,"1301 Avenue of the Americas 
+New York, NY 10019
+USA",,,,,(212) 842-5500,(212) 842-5501,CD355118,http://www.uos.com,4437,Energy,5.60E+09,145000,Public,UOS,"Curabitur fermentum, mi eu adipiscing tincidunt, justo diam interdum dolor, tempor feugiat turpis erat et justo. Nunc sed nisi et eros tempor porttitor.
+Curabitur blandit, tortor volutpat rhoncus gravida, nibh orci posuere purus, nec pellentesque lorem sapien a odio.
+Donec semper nunc quis metus fringilla semper. Aliquam dapibus euismod imperdiet.
+Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+Etiam gravida, nulla sit amet sollicitudin dictum, diam ante tempor ligula, sed imperdiet turpis urna a augue.",Hot,,,,,
+Bulk Account from CSV (bulk2) - #89,Customer - Channel,,"345 Shoreline Park
+Mountain View, CA 94043
+USA",Mountain View,CA,,,"345 Shoreline Park
+Mountain View, CA 94043
+USA",,,,,(650) 867-3450,(650) 867-9895,CC978213,www.genepoint.com,3712,Biotechnology,3.00E+07,265,Private,,"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nunc erat, molestie et interdum sit amet, lobortis laoreet ante. Cras imperdiet felis sit amet nunc tincidunt laoreet. Maecenas eu semper arcu. Suspendisse eu pretium magna. Nam tincidunt ligula dolor. Cras nec lacus odio, sed accumsan erat. Vivamus sed tellus sit amet nisi condimentum imperdiet at at nibh. Phasellus dignissim, urna sed faucibus porta, nisi felis ullamcorper est, eget sagittis sapien lacus eu dui. Praesent arcu odio, vestibulum a lacinia vitae, condimentum ac metus. Nullam pellentesque, nibh non fringilla iaculis, tortor est convallis libero, id malesuada tortor purus vitae orci",Cold,,,,,
+Bulk Account from CSV (bulk2) - #90,Customer - Direct,,"Kings Park, 17th Avenue, Team Valley Trading Estate,
+Gateshead, Tyne and Wear NE26 3HS
+United Kingdom",,UK,,,"Kings Park, 17th Avenue, Team Valley Trading Estate,
+Gateshead, Tyne and Wear NE26 3HS
+United Kingdom",,,,,+44 191 4956203,+44 191 4956620,CD355119-A,http://www.uos.com,4437,Energy,,24000,Public,UOS,"Cras facilisis, leo id auctor condimentum, elit quam consectetur ligula, in cursus arcu nulla nec ipsum. Sed id orci quam. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent rutrum, augue at egestas porta, nibh felis dignissim odio, in mattis massa velit nec libero. 
+Quisque volutpat quam at turpis accumsan a accumsan diam volutpat. Praesent nec nibh a nulla tristique congue. Mauris egestas iaculis ipsum ac suscipit. Donec facilisis accumsan lacus vel porta. Mauris suscipit tempus ipsum, in ornare lacus interdum sed.",,,,,,
+Bulk Account from CSV (bulk2) - #91,Customer - Direct,,"9 Tagore Lane
+Singapore, Singapore 787472
+Singapore",Singapore,Singapore,,,"9 Tagore Lane
+Singapore, Singapore 787472
+Singapore",,,,,(650) 450-8810,(650) 450-8820,CD355120-B,http://www.uos.com,4437,Energy,,3000,Public,UOS,"Curabitur fermentum, mi eu adipiscing tincidunt, justo diam interdum dolor, tempor feugiat turpis erat et justo. Nunc sed nisi et eros tempor porttitor.
+Curabitur blandit, tortor volutpat rhoncus gravida, nibh orci posuere purus, nec pellentesque lorem sapien a odio.
+Donec semper nunc quis metus fringilla semper. Aliquam dapibus euismod imperdiet.
+Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+Etiam gravida, nulla sit amet sollicitudin dictum, diam ante tempor ligula, sed imperdiet turpis urna a augue.",,,,,,
+Bulk Account from CSV (bulk2) - #92,Customer - Direct,,"312 Constitution Place
+Austin, TX 78767
+USA",Austin,TX,,,"312 Constitution Place
+Austin, TX 78767
+USA",,,,,(512) 757-6000,(512) 757-9000,CD451796,http://edgecomm.com,6576,Electronics,1.39E+08,1000,Public,EDGE,"Curabitur eget urna non dolor dapibus faucibus. Nulla posuere, tellus a vestibulum rutrum, enim neque elementum nibh, ac luctus quam urna a nisi.
+Phasellus nec ligula non dolor aliquam scelerisque ac id felis. Integer semper pellentesque hendrerit. 
+Quisque vitae felis nunc. Aliquam eu nisi lacus, scelerisque aliquet leo. Donec elementum mollis tortor id viverra. Curabitur molestie gravida fringilla. Donec pharetra metus nec velit consectetur quis placerat quam euismod.",Hot,,,,,
+Bulk Account from CSV (bulk2) - #93,Customer - Direct,,525 S. Lexington Ave,Burlington,NC,27215,USA,,,,,,(336) 222-7000,(336) 222-8000,CD656092,www.burlington.com,546732,Apparel,3.50E+08,9000,Public,BTXT,"Donec orci magna, tristique tempus faucibus id, dignissim at neque. Proin quis ipsum leo. Vivamus vitae libero ut ipsum gravida accumsan. Proin ut massa sapien, ac hendrerit nisi. Nulla commodo enim id turpis varius nec cursus leo dignissim. Mauris laoreet tempor mi, sit amet molestie nisi tincidunt eget. Nulla elit orci, dictum sed tempus id, suscipit at lacus. Sed hendrerit, nisi id pretium ultricies, arcu nibh ornare erat, et venenatis augue ligula aliquam risus.",Warm,,,,,
+Bulk Account from CSV (bulk2) - #94,Customer - Channel,,2 Place Jussieu,Paris,,75251,France,2 Place Jussieu,Paris,,75251,France,(014) 427-4427,(014) 427-4428,CC213425,www.pyramid.com,4253,Construction,9.50E+08,2680,Public,PYR,"Suspendisse potenti. Donec tortor libero, facilisis quis mattis in, faucibus sit amet orci. 
+Curabitur nec turpis vel mi lobortis tincidunt. Sed vulputate diam eu enim vestibulum in porta turpis aliquam. Integer porta mollis scelerisque. Quisque accumsan ultrices nisi, et elementum libero adipiscing et. Pellentesque sem est, bibendum nec iaculis sit amet, tempus ut nibh. In porta laoreet lorem sed rhoncus. 
+Etiam feugiat turpis non sapien rutrum aliquam. Aenean ac nisl lorem.",,,,,,
+Bulk Account from CSV (bulk2) - #95,Customer - Channel,,1301 Hoch Drive,Lawrence,KS,66045,USA,1301 Hoch Drive,Lawrence,KS,66045,USA,(785) 241-6200,(785) 241-6201,CC634267,dickenson-consulting.com,6752,Consulting,5.00E+07,120,Private,,"Nullam nisi turpis, sagittis in malesuada quis, feugiat sed lorem. Donec tortor justo, feugiat in tempor luctus, imperdiet nec sapien. Sed id dui in sapien varius aliquet eget ac mauris. Nullam tincidunt sodales risus nec semper. 
+Fusce pellentesque porta turpis non iaculis. Vivamus varius, dolor vel vulputate tristique, nunc augue elementum risus, sit amet sodales urna ligula eu risus. Suspendisse iaculis nulla non eros vulputate varius.
+Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.",,,,,,
+Bulk Account from CSV (bulk2) - #96,Customer - Direct,,"2334 N. Michigan Avenue, Suite 1500
+Chicago, IL 60601, USA",Chicago,IL,,,"2334 N. Michigan Avenue, Suite 1500
+Chicago, IL 60601, USA",,,,,(312) 596-1000,(312) 596-1500,CD439877,www.grandhotels.com,2268,Hospitality,5.00E+08,5600,Public,GHTL,"Morbi mollis pellentesque sem, vitae lobortis diam sollicitudin quis. Donec fermentum mauris vitae odio fringilla eget suscipit dolor fringilla. Nunc id lacus et purus ornare hendrerit in ut velit. Vivamus at tortor nisi. Curabitur lacinia volutpat urna, vel mollis lorem vulputate in. Aliquam erat volutpat. Integer et nibh sed sapien adipiscing sagittis non non nisi. Donec quis urna ac augue suscipit ultrices.",Warm,,,,,
+Bulk Account from CSV (bulk2) - #97,Customer - Channel,,"620 SW 5th Avenue Suite 400
+Portland, Oregon 97204
+United States",Portland,OR,,,"620 SW 5th Avenue Suite 400
+Portland, Oregon 97204
+United States",,,,,(503) 421-7800,(503) 421-7801,CC947211,www.expressl&t.net,8742,Transportation,9.50E+08,12300,Public,EXLT,"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nunc erat, molestie et interdum sit amet, lobortis laoreet ante. Cras imperdiet felis sit amet nunc tincidunt laoreet. Maecenas eu semper arcu. Suspendisse eu pretium magna. Nam tincidunt ligula dolor. Cras nec lacus odio, sed accumsan erat. Vivamus sed tellus sit amet nisi condimentum imperdiet at at nibh. Phasellus dignissim, urna sed faucibus porta, nisi felis ullamcorper est, eget sagittis sapien lacus eu dui. Praesent arcu odio, vestibulum a lacinia vitae, condimentum ac metus. Nullam pellentesque, nibh non fringilla iaculis, tortor est convallis libero, id malesuada tortor purus vitae orci",Cold,,,,,
+Bulk Account from CSV (bulk2) - #98,Customer - Direct,,"888 N Euclid 
+Hallis Center, Room 501
+Tucson, AZ 85721
+United States",Tucson,AZ,,,"888 N Euclid 
+Hallis Center, Room 501
+Tucson, AZ 85721
+United States",,,,,(520) 773-9050,(520) 773-9060,CD736025,www.universityofarizona.com,7321,Education,,39000,Other,,"Cras facilisis, leo id auctor condimentum, elit quam consectetur ligula, in cursus arcu nulla nec ipsum. Sed id orci quam. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent rutrum, augue at egestas porta, nibh felis dignissim odio, in mattis massa velit nec libero. 
+Quisque volutpat quam at turpis accumsan a accumsan diam volutpat. Praesent nec nibh a nulla tristique congue. Mauris egestas iaculis ipsum ac suscipit. Donec facilisis accumsan lacus vel porta. Mauris suscipit tempus ipsum, in ornare lacus interdum sed.",Warm,,,,,
+Bulk Account from CSV (bulk2) - #99,Customer - Direct,,"1301 Avenue of the Americas 
+New York, NY 10019
+USA",New York,NY,,,"1301 Avenue of the Americas 
+New York, NY 10019
+USA",,,,,(212) 842-5500,(212) 842-5501,CD355118,http://www.uos.com,4437,Energy,5.60E+09,145000,Public,UOS,"Curabitur fermentum, mi eu adipiscing tincidunt, justo diam interdum dolor, tempor feugiat turpis erat et justo. Nunc sed nisi et eros tempor porttitor.
+Curabitur blandit, tortor volutpat rhoncus gravida, nibh orci posuere purus, nec pellentesque lorem sapien a odio.
+Donec semper nunc quis metus fringilla semper. Aliquam dapibus euismod imperdiet.
+Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+Etiam gravida, nulla sit amet sollicitudin dictum, diam ante tempor ligula, sed imperdiet turpis urna a augue.",Hot,,,,,
+Bulk Account from CSV (bulk2) - #100,Customer - Channel,,"345 Shoreline Park
+Mountain View, CA 94043
+USA",Mountain View,CA,,,"345 Shoreline Park
+Mountain View, CA 94043
+USA",,,,,(650) 867-3450,(650) 867-9895,CC978213,www.genepoint.com,3712,Biotechnology,3.00E+07,265,Private,,"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nunc erat, molestie et interdum sit amet, lobortis laoreet ante. Cras imperdiet felis sit amet nunc tincidunt laoreet. Maecenas eu semper arcu. Suspendisse eu pretium magna. Nam tincidunt ligula dolor. Cras nec lacus odio, sed accumsan erat. Vivamus sed tellus sit amet nisi condimentum imperdiet at at nibh. Phasellus dignissim, urna sed faucibus porta, nisi felis ullamcorper est, eget sagittis sapien lacus eu dui. Praesent arcu odio, vestibulum a lacinia vitae, condimentum ac metus. Nullam pellentesque, nibh non fringilla iaculis, tortor est convallis libero, id malesuada tortor purus vitae orci",Cold,,,,,

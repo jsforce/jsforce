@@ -1,7 +1,8 @@
 import assert from 'assert';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
-import { isObject } from './util';
+import { isObject, delay } from './util';
+import { insertAccounts } from './bulk.test';
 import type { Record, SavedRecord } from 'jsforce';
 
 const connMgr = new ConnectionManager(config);
@@ -206,10 +207,17 @@ describe('upsert', () => {
  */
 describe('search', () => {
   it('should search records', async () => {
+    const id = Date.now();
+
+    await insertAccounts(id, 20);
+
+    // wait 10s before running executing sosl search
+    await delay(10000);
+
     const { searchRecords } = await conn.search(
-      'FIND {Ac*} IN ALL FIELDS RETURNING Account(Id, Name)',
+      `FIND {"${id}"} IN NAME FIELDS RETURNING Account(Id, Name)`,
     );
-    assert.ok(searchRecords.length > 0);
+    assert.ok(searchRecords.length === 20);
   });
 });
 
