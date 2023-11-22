@@ -31,20 +31,26 @@ if (isNodeJS()) {
         .topic<Account>('JSforceTestAccountUpdates')
         .subscribe(resolve);
     });
-    await delay(5000);
+    await delay(10000);
     const accountName = `My New Account #${Date.now()}`;
 
     await conn.sobject('Account').create({ Name: accountName });
 
     const msg = await msgArrived;
-    assert.ok(isObject(msg.sobject));
-    assert.ok(msg.sobject.Name === accountName);
 
-    assert.ok(isObject(msg.event));
-    assert.ok(msg.event.type === 'created');
-    assert.ok(isObject(msg.sobject));
-    assert.ok(isString(msg.sobject.Name));
-    assert.ok(isString(msg.sobject.Id));
+    try {
+      assert.ok(isObject(msg.sobject));
+      assert.ok(msg.sobject.Name === accountName);
+
+      assert.ok(isObject(msg.event));
+      assert.ok(msg.event.type === 'created');
+      assert.ok(isObject(msg.sobject));
+      assert.ok(isString(msg.sobject.Name));
+      assert.ok(isString(msg.sobject.Id));
+    } finally {
+      // cleanup
+      await conn.sobject('Account').findOne({ Name: accountName }).delete();
+    }
 
     if (subscr) {
       subscr.cancel();

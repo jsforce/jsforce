@@ -54,7 +54,7 @@
     "test:node": "jest --forceExit",
     "test:browser": "karma start",
     "test:browser-ci": "concurrently --success first --kill-others \"karma start\" \"npm:proxy-server\"",
-    "test:browser-ci:retry": "concurrently --success first --kill-others \"karma start --retry-failed\" \"npm:proxy-server\"",
+    "test:browser-ci:retry": "concurrently --success first --kill-others \"karma start --retry-failed\" \"npm:proxy-server\""
   },
   "directories": {
     "test": "test/"
