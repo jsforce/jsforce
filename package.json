@@ -35,6 +35,7 @@
   "types": "./index",
   "scripts": {
     "clean": "rimraf lib/* module/* browser/*",
+    "clean-test-failures-file": "rimraf test/karma/karma-failed-tests.txt",
     "build": "run-s build:transpile build:bundle",
     "build:transpile": "run-p build:types build:lib build:module build:browser",
     "build:types": "tsc --emitDeclarationOnly --declaration -p src --outDir lib",
@@ -47,12 +48,13 @@
     "typecheck": "tsc -p src --noEmit",
     "pretest:node": "run-s build:transpile",
     "pretest:browser": "run-s build:browser build:bundle",
-    "pretest:browser-ci": "npm run pretest:browser",
+    "pretest:browser-ci": "npm run clean-test-failures-file && npm run pretest:browser",
     "proxy-server": "node node_modules/jsforce-ajax-proxy/lib/server.js",
     "test": "run-s test:node test:browser",
     "test:node": "jest --forceExit",
     "test:browser": "karma start",
-    "test:browser-ci": "concurrently --success first --kill-others \"karma start\" \"npm:proxy-server\""
+    "test:browser-ci": "concurrently --success first --kill-others \"karma start\" \"npm:proxy-server\"",
+    "test:browser-ci:retry": "concurrently --success first --kill-others \"karma start --retry-failed\" \"npm:proxy-server\"",
   },
   "directories": {
     "test": "test/"
