@@ -1,7 +1,6 @@
 import assert from 'assert';
 import path from 'path';
 import fs from './helper/fs';
-import fsExtra from 'fs-extra';
 import { Connection, Date as SfDate, Record } from 'jsforce';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
@@ -218,6 +217,8 @@ if (isNodeJS()) {
       assert.ok(ret.success === true);
     }
 
+    // dynamic import so that browser tests work
+    const fsExtra = require('fs-extra');
     fsExtra.remove(deleteFile);
   });
 
@@ -245,6 +246,8 @@ if (isNodeJS()) {
     const lines = data.replace(/[\r\n]+$/, '').split(/[\r\n]/);
     assert.ok(lines.length === records.length + 1);
 
+    // dynamic import so that browser tests work
+    const fsExtra = require('fs-extra');
     fsExtra.remove(file);
   });
 }

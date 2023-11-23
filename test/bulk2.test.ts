@@ -1,7 +1,6 @@
 import assert from 'assert';
 import path from 'path';
 import fs from './helper/fs';
-import fsExtra from 'fs-extra';
 import { Connection, Date as SfDate, Schema, Record } from 'jsforce';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
@@ -244,6 +243,9 @@ if (isNodeJS()) {
     });
 
     ensureSuccessfulBulkResults(res, 20, 'delete');
+
+    // dynamic import so that browser tests work
+    const fsExtra = require('fs-extra');
     fsExtra.remove(deleteFile);
   });
 
