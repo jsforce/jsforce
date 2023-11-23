@@ -274,6 +274,7 @@ it('should call bulk api from invalid session conn with refresh fn, and return r
       setTimeout(() => callback(null, conn.accessToken ?? undefined), 500);
     },
   });
+  conn2.bulk.pollTimeout = 90000;
   const rets = await conn2.bulk.load('Account', 'delete', deleteRecords);
   assert.ok(refreshCalled);
   assert.ok(Array.isArray(rets));

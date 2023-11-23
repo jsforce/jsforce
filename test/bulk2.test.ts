@@ -289,6 +289,7 @@ it('should call bulk api from invalid session conn with refresh fn, and return r
     Id: r.sf__Id,
   }));
 
+  conn2.bulk2.pollTimeout = 90000;
   const bulkDelete = await conn2.bulk2.loadAndWaitForResults({
     operation: 'delete',
     object: 'Account',
