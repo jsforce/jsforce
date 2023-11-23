@@ -1,6 +1,7 @@
 import assert from 'assert';
 import path from 'path';
 import fs from './helper/fs';
+import fsExtra from 'fs-extra';
 import { Connection, Date as SfDate, Record } from 'jsforce';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
@@ -217,7 +218,7 @@ if (isNodeJS()) {
       assert.ok(ret.success === true);
     }
 
-    fs.rmdirSync(deleteFile);
+    fsExtra.remove(deleteFile);
   });
 
   it('should bulk query and get records with yielding file output', async () => {
@@ -244,7 +245,7 @@ if (isNodeJS()) {
     const lines = data.replace(/[\r\n]+$/, '').split(/[\r\n]/);
     assert.ok(lines.length === records.length + 1);
 
-    await fs.promises.rm(file);
+    fsExtra.remove(file);
   });
 }
 
