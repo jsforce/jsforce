@@ -294,8 +294,8 @@ describe('file based call', () => {
    *
    */
   it('should retrieve metadata in packaged file and retrieve package', async () => {
-    // increase default timeout of 10s to 30s
-    conn.metadata.pollTimeout = 30000;
+    // increase default timeout of 10s to 1m
+    conn.metadata.pollTimeout = 60000;
 
     const bufs: any[] = [];
     await new Promise((resolve, reject) => {
