@@ -173,6 +173,14 @@ export type CompletionsResult = {
       [name: string]: ClassDeclaration;
     };
   };
+  completions?: {
+    [component: string]: {
+      simple: boolean;
+      attribs: {
+        [attr: string]: {};
+      };
+    };
+  };
 };
 
 /**
