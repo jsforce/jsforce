@@ -89,8 +89,8 @@ jobs:
         run: |
           cd ./jsforce
           npm install
-          ## skip webpack, we are only interested in types and node build
-          npm run clean && npm run build:types && npm run build:lib
+          ## skip webpack, we are only interested in the node build
+          npm run clean && npm run build:node:cjs
           yarn link
       - name: link jsforce into plugin
         if: ${{ steps.cache-nodemodules.outputs.cache-hit != 'true' }}

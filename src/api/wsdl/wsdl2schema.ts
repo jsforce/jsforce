@@ -151,7 +151,7 @@ async function readWSDLFile(filePath: string) {
  *
  */
 function getTypeInfo(el: WSDLElement, simpleTypes: { [name: string]: string }) {
-  let type = toJsType(el.$.type, simpleTypes);
+  const type = toJsType(el.$.type, simpleTypes);
   const isArray = el.$.maxOccurs === 'unbounded';
   const nillable = (!isArray && el.$.minOccurs === 0) || el.$.nillable;
   return isArray
@@ -168,7 +168,7 @@ function getTypeInfo(el: WSDLElement, simpleTypes: { [name: string]: string }) {
  */
 function extractComplexTypes(wsdl: WSDL) {
   console.log(wsdl.definitions.types['xsd:schema']);
-  let schemas: { [name: string]: SoapSchemaDef } = {};
+  const schemas: { [name: string]: SoapSchemaDef } = {};
   const simpleTypes: { [type: string]: string } = {};
   const types = wsdl.definitions.types;
   for (const sc of types.schema ?? types['xsd:schema'] ?? []) {

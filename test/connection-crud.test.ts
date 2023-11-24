@@ -1,11 +1,24 @@
 import assert from 'assert';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
-import { isObject } from './util';
+import { isObject, delay } from './util';
+import { insertAccounts } from './bulk.test';
 import type { Record, SavedRecord } from 'jsforce';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();
+
+// copied from '../src/http-api' to avoid exporting it
+class HttpApiError extends Error {
+  errorCode: string;
+  content: any;
+  constructor(message: string, errorCode?: string | undefined, content?: any) {
+    super(message);
+    this.name = errorCode || this.name;
+    this.errorCode = this.name;
+    this.content = content;
+  }
+}
 
 /**
  *
@@ -180,7 +193,8 @@ describe('upsert', () => {
       };
       await conn.sobject(config.upsertTable).upsert(rec2, config.upsertField);
       assert.fail();
-    } catch (err) {
+    } catch (error) {
+      const err = error as HttpApiError;
       assert.ok(err.name === 'MULTIPLE_CHOICES');
       assert.ok(Array.isArray(err.content));
       assert.ok(typeof err.content[0] === 'string');
@@ -193,10 +207,17 @@ describe('upsert', () => {
  */
 describe('search', () => {
   it('should search records', async () => {
+    const id = Date.now();
+
+    await insertAccounts(id, 20);
+
+    // wait 10s before running executing sosl search
+    await delay(10000);
+
     const { searchRecords } = await conn.search(
-      'FIND {Ac*} IN ALL FIELDS RETURNING Account(Id, Name)',
+      `FIND {"${id}"} IN NAME FIELDS RETURNING Account(Id, Name)`,
     );
-    assert.ok(searchRecords.length > 0);
+    assert.ok(searchRecords.length === 20);
   });
 });
 

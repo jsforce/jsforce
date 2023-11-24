@@ -151,7 +151,11 @@ describe('CRUD based call', () => {
       conn.version = '35.0';
     }
     try {
-      let result = await conn.metadata.rename('CustomObject', oldName, newName);
+      const result = await conn.metadata.rename(
+        'CustomObject',
+        oldName,
+        newName,
+      );
       assert.ok(result.success === true);
       assert.ok(isString(result.fullName));
       assert.ok(result.fullName === oldName);
@@ -294,6 +298,9 @@ describe('file based call', () => {
    *
    */
   it('should retrieve metadata in packaged file and retrieve package', async () => {
+    // increase default timeout of 10s to 30s
+    conn.metadata.pollTimeout = 30000;
+
     const bufs: any[] = [];
     await new Promise((resolve, reject) => {
       const stream = conn.metadata

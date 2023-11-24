@@ -48,6 +48,7 @@ export default async function authorize(
   password: string,
 ) {
   const browser = await puppeteer.launch({
+    headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
   let ret;

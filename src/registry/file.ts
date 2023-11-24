@@ -26,7 +26,7 @@ export class FileRegistry extends BaseRegistry {
     super();
     this._configFilePath = configFilePath || getDefaultConfigFilePath();
     try {
-      var data = fs.readFileSync(this._configFilePath, 'utf-8');
+      const data = fs.readFileSync(this._configFilePath, 'utf-8');
       this._registryConfig = JSON.parse(data);
     } catch (e) {
       //

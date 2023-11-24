@@ -21,7 +21,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: lts/*
-
+      - uses: google/wireit@setup-github-actions-caching/v1
       - name: Install dependencies
         run: npm install
 
@@ -36,18 +36,30 @@ jobs:
         run: |
           npx zx scripts/org-setup.mjs
 
-      - name: Run browser tests
+      - name: Run browser tests with 3 attempts
+        uses: nick-fields/retry@943e742917ac94714d2f408a0e8320f2d1fcafcd
+        with:
+          max_attempts: 3
+          timeout_minutes: 30
+          retry_wait_seconds: 60
+          command: |
+            SF_USERNAME=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.username') \
+            SF_PASSWORD=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.password') \
+            SF_LOGIN_URL=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.instanceUrl') \
+            DISPLAY=:99 CHROME_BIN=$(which chrome) \
+            npm run test:browser-ci
+          new_command_on_retry: |
+            SF_USERNAME=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.username') \
+            SF_PASSWORD=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.password') \
+            SF_LOGIN_URL=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.instanceUrl') \
+            DISPLAY=:99 CHROME_BIN=$(which chrome) \
+            npm run test:browser-ci:retry
+          retry_on: error
         env:
           SF_OAUTH2_CLIENT_ID: ${{ secrets.SF_OAUTH2_CLIENT_ID }}
           SF_OAUTH2_CLIENT_SECRET: ${{ secrets.SF_OAUTH2_CLIENT_SECRET }}
           SF_OAUTH2_REDIRECT_URI: ${{ secrets.SF_OAUTH2_REDIRECT_URI }}
           SF_AJAX_PROXY_URL: ${{ vars.SF_AJAX_PROXY_URL }}
-        run: |
-          SF_USERNAME=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.username') \
-          SF_PASSWORD=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.password') \
-          SF_LOGIN_URL=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.instanceUrl') \
-          DISPLAY=:99 CHROME_BIN=$(which chrome) \
-          npm run test:browser-ci
 
   lint-and-typecheck:
     runs-on: ubuntu-latest
@@ -56,6 +68,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: lts/*
+
+      - uses: google/wireit@setup-github-actions-caching/v1
 
       - name: Lockfile lint
         run: |
@@ -69,7 +83,8 @@ jobs:
       - name: Lint and Type Check
         run: |
           npm run lint
-          npm run build:types
+          # TODO: typecheck fails if there is no build, see if tests are importing from lib
+          npm run build:node:cjs
           npm run typecheck
 
   test-node-linux:
@@ -84,6 +99,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node_version }}
+      - uses: google/wireit@setup-github-actions-caching/v1
 
       - name: Install dependencies
         run: npm install
@@ -151,6 +167,7 @@ jobs:
  #      - uses: actions/setup-node@v3
  #        with:
  #          node-version: ${{ matrix.node_version }}
+ #      - uses: google/wireit@setup-github-actions-caching/v1
  #
  #      - name: Install dependencies
  #        run: npm install

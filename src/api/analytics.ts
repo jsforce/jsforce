@@ -96,7 +96,7 @@ export class Report<S extends Schema> {
    * Describe report metadata
    */
   describe(): Promise<ReportDescribeResult> {
-    var url = [
+    const url = [
       this._conn._baseUrl(),
       'analytics',
       'reports',
@@ -405,7 +405,7 @@ export class Analytics<S extends Schema> {
    * Get recent dashboard list
    */
   dashboards() {
-    var url = [this._conn._baseUrl(), 'analytics', 'dashboards'].join('/');
+    const url = [this._conn._baseUrl(), 'analytics', 'dashboards'].join('/');
     return this._conn.request<DashboardInfo[]>(url);
   }
 }

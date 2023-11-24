@@ -3,39 +3,20 @@ module.exports = {
     [
       '@babel/preset-env',
       {
-        useBuiltIns: 'usage',
-        corejs: 3,
-        targets: { node: '8' },
+        targets: { node: 18 },
       },
     ],
     '@babel/preset-typescript',
   ],
   plugins: [
-    '@babel/plugin-proposal-optional-chaining',
-    '@babel/plugin-proposal-nullish-coalescing-operator',
-    '@babel/plugin-proposal-class-properties',
     [
       '@babel/plugin-transform-runtime',
       {
-        corejs: 3,
+        corejs: "3",
       },
     ],
   ],
   env: {
-    module: {
-      presets: [
-        [
-          '@babel/preset-env',
-          {
-            modules: false,
-            useBuiltIns: 'usage',
-            corejs: 3,
-            targets: { node: '8' },
-          },
-        ],
-        '@babel/preset-typescript',
-      ],
-    },
     browser: {
       presets: [
         [
@@ -43,19 +24,23 @@ module.exports = {
           {
             modules: false,
             useBuiltIns: 'usage',
-            corejs: 3,
-            targets: { browsers: 'last 2 versions, ie 11, not dead' },
+            corejs: "3.33",
+            targets: { browsers: 'last 2 versions, not dead, > 0.2%' },
           },
         ],
         '@babel/preset-typescript',
       ],
     },
+    // This env config is used by jest for TS:
+    // https://jestjs.io/docs/getting-started#using-babel
+    //
+    // for type-check run `tsc` before running tests.
     test: {
       presets: [
         [
           '@babel/preset-env',
           {
-            targets: { node: '8' },
+            targets: { node: 18 },
           },
         ],
         '@babel/preset-typescript',

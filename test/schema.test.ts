@@ -9,12 +9,12 @@ import type {
   IsAny,
 } from 'conditional-type-checks';
 import type {
+  Record,
   Schema,
   StandardSchema,
   SObjectRecord,
   SObjectInputRecord,
   SObjectUpdateRecord,
-  Record,
   DateString,
   Address,
 } from 'jsforce';

@@ -88,9 +88,9 @@ it('should run tests synchronously', async () => {
  *
  */
 it('should get completions and return completions', async () => {
-  const res = await conn.tooling.completions('apex');
+  const res = await conn.tooling.completions('visualforce');
   assert.ok(isObject(res));
-  assert.ok(isObject(res.publicDeclarations));
+  assert.ok(isObject(res.completions));
 });
 
 it('can create static resource using application/json content type', async () => {
@@ -168,7 +168,7 @@ it('can download a static resource binary blob and properly interpret the result
   }
 });
 
-function createStaticResourceRequest(body: String | Buffer) {
+function createStaticResourceRequest(body: string | Buffer) {
   return {
     ContentType: 'application/zip',
     CacheControl: 'Private',
@@ -242,10 +242,10 @@ describe('single record crud', () => {
     try {
       record = await conn.tooling.sobject('DebugLevel').retrieve(debugLevelId);
     } catch (error) {
-      err = error;
+      err = error as Error;
+      assert.ok(record === undefined);
+      assert.ok(err.name === 'NOT_FOUND');
     }
-    assert.ok(record === undefined);
-    assert.ok(err.name === 'NOT_FOUND');
   });
 });
 

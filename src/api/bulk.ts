@@ -589,7 +589,7 @@ export class Batch<
   /**
    * Implementation of Writable
    */
-  _write(record_: Record, enc: string, cb: () => void) {
+  _write(record_: Record, enc: BufferEncoding, cb: () => void) {
     const { Id, type, attributes, ...rrec } = record_;
     let record;
     switch (this.job.operation) {
@@ -758,7 +758,7 @@ export class Batch<
       let results: BulkIngestBatchResult | BulkQueryBatchResult;
       if (job.operation === 'query' || job.operation === 'queryAll') {
         const res = resp as BulkQueryResultResponse;
-        let resultId = res['result-list'].result;
+        const resultId = res['result-list'].result;
         results = (Array.isArray(resultId)
           ? resultId
           : [resultId]
@@ -1024,7 +1024,26 @@ export class BulkV2<S extends Schema> {
   }
 
   /**
-   * Create a new job instance
+   * Create an instance of an ingest job object.
+   *
+   * @params {NewIngestJobOptions} options object
+   * @returns {IngestJobV2} An ingest job instance
+   * @example
+   * // Upsert records to the Account object.
+   *
+   * const job = connection.bulk2.createJob({
+   *   operation: 'insert'
+   *   object: 'Account',
+   * });
+   *
+   * // create the job in the org
+   * await job.open()
+   *
+   * // upload data
+   * await job.uploadData(csvFile)
+   *
+   * // finished uploading data, mark it as ready for processing
+   * await job.close()
    */
   createJob<Opr extends IngestOperation>(
     options: NewIngestJobOptions,
@@ -1036,6 +1055,12 @@ export class BulkV2<S extends Schema> {
     });
   }
 
+  /**
+   * Get a ingest job instance specified by a given job ID
+   *
+   * @param options Options object with a job ID
+   * @returns IngestJobV2 An ingest job
+   */
   job<Opr extends IngestOperation>(
     options: ExistingIngestJobOptions,
   ): IngestJobV2<S, Opr> {
@@ -1055,6 +1080,9 @@ export class BulkV2<S extends Schema> {
         input: Record[] | Readable | string;
       },
   ): Promise<IngestJobV2Results<S>> {
+    if (!options.pollTimeout) options.pollTimeout = this.pollTimeout;
+    if (!options.pollInterval) options.pollInterval = this.pollInterval;
+
     const job = this.createJob(options);
     try {
       await job.open();
@@ -1062,7 +1090,8 @@ export class BulkV2<S extends Schema> {
       await job.close();
       await job.poll(options.pollInterval, options.pollTimeout);
       return await job.getAllResults();
-    } catch (err) {
+    } catch (error) {
+      const err = error as Error;
       if (err.name !== 'JobPollingTimeoutError') {
         // fires off one last attempt to clean up and ignores the result | error
         job.delete().catch((ignored) => ignored);
@@ -1072,7 +1101,14 @@ export class BulkV2<S extends Schema> {
   }
 
   /**
-   * Execute bulk query and get record stream
+   * Execute bulk query and get records
+   *
+   * Default timeout: 10000ms
+   *
+   * @param soql SOQL query
+   * @param BulkV2PollingOptions options object
+   *
+   * @returns Record[]
    */
   async query(
     soql: string,
@@ -1088,7 +1124,8 @@ export class BulkV2<S extends Schema> {
       await queryJob.open();
       await queryJob.poll(options?.pollInterval, options?.pollTimeout);
       return await queryJob.getResults();
-    } catch (err) {
+    } catch (error) {
+      const err = error as Error;
       if (err.name !== 'JobPollingTimeoutError') {
         // fires off one last attempt to clean up and ignores the result | error
         queryJob.delete().catch((ignored) => ignored);
@@ -1119,6 +1156,9 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     this.on('error', (error) => (this.#error = error));
   }
 
+  /**
+   * Creates a query job
+   */
   async open(): Promise<void> {
     try {
       this.jobInfo = await this.createQueryRequest<JobInfoV2>({
@@ -1160,6 +1200,20 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     }
   }
 
+  /**
+   * Poll for the state of the processing for the job.
+   *
+   * This method will only throw after a timeout. To capture a
+   * job failure while polling you must set a listener for the
+   * `failed` event before calling it:
+   *
+   * job.on('failed', (err) => console.error(err))
+   * await job.poll()
+   *
+   * @param interval Polling interval in milliseconds
+   * @param timeout Polling timeout in milliseconds
+   * @returns {Promise<Record[]>} A promise that resolves to an array of records
+   */
   async poll(
     interval: number = this.#pollingOptions.pollInterval,
     timeout: number = this.#pollingOptions.pollTimeout,
@@ -1180,7 +1234,9 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
             await delay(interval);
             break;
           case 'Failed':
-            this.emit('failed');
+            // unlike ingest jobs, the API doesn't return an error msg:
+            // https://developer.salesforce.com/docs/atlas.en-us.api_asynch.meta/api_asynch/query_get_one_job.htm
+            this.emit('failed', new Error('Query job failed to complete.'));
             return;
           case 'JobComplete':
             this.emit('jobcomplete');
@@ -1193,7 +1249,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     }
 
     const timeoutError = new JobPollingTimeoutError(
-      `Polling time out. Job Id = ${jobId}`,
+      `Polling timed out after ${timeout}ms. Job Id = ${jobId}`,
       jobId,
     );
     this.emit('error', timeoutError);
@@ -1223,7 +1279,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     options: Object = {},
   ): StreamPromise<R> {
     // if request is simple string, regard it as url in GET method
-    let request_: HttpRequest =
+    const request_: HttpRequest =
       typeof request === 'string' ? { method: 'GET', url: request } : request;
 
     const httpApi = new HttpApi(this.#connection, options);
@@ -1233,7 +1289,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     return httpApi.request<R>(request_);
   }
 
-  private getResultsUrl() {
+  private getResultsUrl(): string {
     const url = `${this.#connection.instanceUrl}/services/data/v${
       this.#connection.version
     }/jobs/query/${getJobIdOrError(this.jobInfo)}/results`;
@@ -1241,6 +1297,11 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     return this.locator ? `${url}?locator=${this.locator}` : url;
   }
 
+  /**
+   * Get the results for a query job.
+   *
+   * @returns {Promise<Record[]>} A promise that resolves to an array of records
+   */
   async getResults(): Promise<Record[]> {
     if (this.finished && this.#queryResults) {
       return this.#queryResults;
@@ -1264,6 +1325,9 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     return this.#queryResults;
   }
 
+  /**
+   * Deletes a query job.
+   */
   async delete(): Promise<void> {
     return this.createQueryRequest<void>({
       method: 'DELETE',
@@ -1324,6 +1388,9 @@ export class IngestJobV2<
     return this.jobInfo.id;
   }
 
+  /**
+   * Create a job representing a bulk operation in the org
+   */
   async open(): Promise<void> {
     try {
       this.jobInfo = await this.createIngestRequest<JobInfoV2>({
@@ -1348,6 +1415,10 @@ export class IngestJobV2<
     }
   }
 
+  /** Upload data for a job in CSV format
+   *
+   *  @param input CSV as a string, or array of records or readable stream
+   */
   async uploadData(input: string | Record[] | Readable): Promise<void> {
     await this.#jobData.execute(input);
   }
@@ -1405,6 +1476,20 @@ export class IngestJobV2<
     }
   }
 
+  /**
+   * Poll for the state of the processing for the job.
+   *
+   * This method will only throw after a timeout. To capture a
+   * job failure while polling you must set a listener for the
+   * `failed` event before calling it:
+   *
+   * job.on('failed', (err) => console.error(err))
+   * await job.poll()
+   *
+   * @param interval Polling interval in milliseconds
+   * @param timeout Polling timeout in milliseconds
+   * @returns {Promise<void>} A promise that resolves when the job finishes successfully
+   */
   async poll(
     interval: number = this.#pollingOptions.pollInterval,
     timeout: number = this.#pollingOptions.pollTimeout,
@@ -1425,7 +1510,7 @@ export class IngestJobV2<
             await delay(interval);
             break;
           case 'Failed':
-            this.emit('failed');
+            this.emit('failed', new Error('Ingest job failed to complete.'));
             return;
           case 'JobComplete':
             this.emit('jobcomplete');
@@ -1438,7 +1523,7 @@ export class IngestJobV2<
     }
 
     const timeoutError = new JobPollingTimeoutError(
-      `Polling time out. Job Id = ${jobId}`,
+      `Polling timed out after ${timeout}ms. Job Id = ${jobId}`,
       jobId,
     );
     this.emit('error', timeoutError);
@@ -1517,6 +1602,9 @@ export class IngestJobV2<
     return this.#bulkJobUnprocessedRecords;
   }
 
+  /**
+   * Deletes an ingest job.
+   */
   async delete(): Promise<void> {
     return this.createIngestRequest<void>({
       method: 'DELETE',
@@ -1604,7 +1692,7 @@ class JobDataV2<
     });
   }
 
-  _write(record_: Record, enc: string, cb: () => void) {
+  _write(record_: Record, enc: BufferEncoding, cb: () => void) {
     const { Id, type, attributes, ...rrec } = record_;
     let record;
     switch (this.#job.jobInfo.operation) {

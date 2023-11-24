@@ -470,6 +470,9 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
    * Authorize the connection using OAuth2 flow.
    * Typically, just pass the code returned from authorization server in the first argument to complete authorization.
    * If you want to authorize with grant types other than `authorization_code`, you can also pass params object with the grant type.
+   *
+   * @returns {Promise<UserInfo>} An object that contains the user ID, org ID and identity URL.
+   *
    */
   async authorize(
     codeOrParams: string | { grant_type: string; [name: string]: string },
@@ -804,7 +807,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
    * @returns {Promise.<Array.<RecordResult>>}
    */
   search(sosl: string) {
-    var url = this._baseUrl() + '/search?q=' + encodeURIComponent(sosl);
+    const url = this._baseUrl() + '/search?q=' + encodeURIComponent(sosl);
     return this.request<SearchResult>(url);
   }
 

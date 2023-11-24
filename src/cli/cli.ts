@@ -227,10 +227,10 @@ export class Cli {
   /**
    *
    */
-  disconnect(connName?: string) {
+  async disconnect(connName?: string) {
     const name = connName || this._connName;
-    if (name && registry.getConnectionConfig(name)) {
-      registry.removeConnectionConfig(name);
+    if (name && (await registry.getConnectionConfig(name))) {
+      await registry.removeConnectionConfig(name);
       this.print(`Disconnect connection '${name}'`);
     }
     this._connName = undefined;
@@ -242,7 +242,7 @@ export class Cli {
    */
   async authorize(clientName: string) {
     const name = clientName || 'default';
-    var oauth2Config = await registry.getClientConfig(name);
+    const oauth2Config = await registry.getClientConfig(name);
     if (!oauth2Config || !oauth2Config.clientId) {
       if (name === 'default' || name === 'sandbox') {
         this.print(
@@ -384,8 +384,8 @@ export class Cli {
    */
   async listConnections() {
     const names = await registry.getConnectionNames();
-    for (var i = 0; i < names.length; i++) {
-      var name = names[i];
+    for (let i = 0; i < names.length; i++) {
+      const name = names[i];
       this.print((name === this._connName ? '* ' : '  ') + name);
     }
   }
