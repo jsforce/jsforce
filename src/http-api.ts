@@ -16,6 +16,7 @@ import {
   Schema,
 } from './types';
 import { createLazyStream } from './util/stream';
+import { getBodySize } from './util/get-body-size';
 
 /** @private */
 function parseJSON(str: string) {
@@ -161,6 +162,18 @@ export class HttpApi<S extends Schema> extends EventEmitter {
         callOptions.push(`${name}=${this._conn._callOptions[name]}`);
       }
       headers['Sforce-Call-Options'] = callOptions.join(', ');
+    }
+
+    const bodySize = getBodySize(request.body, headers);
+
+    if (
+      request.method === 'POST' &&
+      !!request.body &&
+      !headers['transfer-encoding'] &&
+      !headers['content-length'] &&
+      !!bodySize
+    ) {
+      headers['content-length'] = String(bodySize);
     }
     request.headers = headers;
   }

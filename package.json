@@ -99,7 +99,9 @@
     },
     "test:node": {
       "command": "jest --forceExit",
-      "dependencies": ["build:node:cjs"],
+      "dependencies": [
+        "build:node:cjs"
+      ],
       "files": [
         "test/**/*.ts",
         "jest.setup.js",
@@ -207,6 +209,7 @@
   "dependencies": {
     "@babel/runtime": "^7.23.1",
     "@babel/runtime-corejs3": "^7.23.1",
+    "@sindresorhus/is": "^6.1.0",
     "@types/node": "^18.15.3",
     "abort-controller": "^3.0.0",
     "base64url": "^3.0.1",

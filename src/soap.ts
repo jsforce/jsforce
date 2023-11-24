@@ -12,6 +12,7 @@ import {
   SoapSchemaDef,
 } from './types';
 import { isMapObject, isObject } from './util/function';
+import { getBodySize } from './util/get-body-size';
 
 /**
  *
@@ -232,6 +233,18 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
 
   /** @override */
   beforeSend(request: HttpRequest & { _message: object }) {
+    const bodySize = getBodySize(request.body, request.headers);
+
+    if (
+      request.method === 'POST' &&
+      request.headers &&
+      !request.headers['transfer-encoding'] &&
+      !request.headers['content-length'] &&
+      !!bodySize
+    ) {
+      request.headers['content-length'] = String(bodySize);
+    }
+
     request.body = this._createEnvelope(request._message);
   }
 
