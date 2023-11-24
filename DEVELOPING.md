@@ -32,6 +32,12 @@ https://github.com/jsforce/jsforce/blob/7c8e6a130a149cc7f310e6628f786f94a98c91b9
 We run them on latest Chrome and Node (`Current`, `LTS` and `Maintenance` releases) on CI.
 
 ## Scratch org setup for testing
+
+> [!NOTE] 
+> The Salesforce CLI is required for this, install instructions:
+>
+> https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm
+
 E2E tests need an org to run tests against, if you have a dev hub and the `sf` CLI you can create a scratch org for testing with the `org-setup` script:
 
 1) Set a default dev hub globally: `sf config set target-dev-hub <hub-username> --global`.
