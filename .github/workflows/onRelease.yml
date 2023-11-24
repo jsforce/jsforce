@@ -51,8 +51,8 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Generate `jsforce-node` pkg
-        run: npm run node-pkg
+        run: npm run jsforce-node
       - name: Build
         run: npm run clean && npm run build:node:cjs
       - name: Publish
-        run: npm publish --tag beta
+        run: npm publish --tag next

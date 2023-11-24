@@ -181,8 +181,8 @@
     "proxy-server": "wireit",
     "clean": "rimraf --glob lib/* module/* browser/*",
     "clean-test-failures-file": "rimraf test/karma/karma-failed-tests.txt",
-    "node-pkg": "ts-node scripts/jsforce-node.ts",
-    "node-pkg-dev": "ts-node scripts/jsforce-node.ts --dev"
+    "jsforce-node": "ts-node scripts/jsforce-node.ts",
+    "jsforce-node:dev": "ts-node scripts/jsforce-node.ts --dev"
   },
   "files": [
     "README.md",
