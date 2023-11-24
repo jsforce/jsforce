@@ -56,5 +56,3 @@ jobs:
         run: npm run clean && npm run build:node:cjs
       - name: Publish
         run: npm publish --tag beta
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
