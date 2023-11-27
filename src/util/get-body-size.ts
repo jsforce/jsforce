@@ -1,14 +1,13 @@
 import type { Readable } from 'node:stream';
 import { HttpBody } from '../types';
+import is from '@sindresorhus/is';
 
 export async function getBodySize(
   body: HttpBody | undefined,
   headers: { [name: string]: string } | undefined,
 ): Promise<number | undefined> {
-  const { default: is } = await import('@sindresorhus/is');
-
   function isFormData(body: unknown): body is FormData {
-    return is.nodeStream(body) && is.function((body as FormData).getBoundary);
+    return is.nodeStream(body) && is.function_((body as FormData).getBoundary);
   }
 
   if (headers && 'content-length' in headers) {
