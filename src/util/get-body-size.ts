@@ -30,7 +30,7 @@ export function getBodySize(
     return body.length;
   }
   if (isFormData(body)) {
-    return body.toString().length;
+    return body.getLengthSync();
   }
 
   return undefined;
