@@ -2,10 +2,10 @@ import type { Readable } from 'node:stream';
 import { HttpBody } from '../types';
 import is from '@sindresorhus/is';
 
-export async function getBodySize(
+export function getBodySize(
   body: HttpBody | undefined,
   headers: { [name: string]: string } | undefined,
-): Promise<number | undefined> {
+): number | undefined {
   function isFormData(body: unknown): body is FormData {
     return is.nodeStream(body) && is.function_((body as FormData).getBoundary);
   }
