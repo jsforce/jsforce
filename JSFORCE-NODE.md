@@ -14,6 +14,7 @@ For reference, the `jsforce` package contains:
 ## Where does it live?
 
 This same repo!
+
 Since `jsforce-node` only removes builds and deps before, we just modify the `package.json` at release time to remove some folders/deps from the final package.
 
 ## How does it work?
@@ -24,4 +25,4 @@ We run `npm run jsforce-node` at publish time to make the following changes to t
 3. Remove `bin` field
 4. Remove browser/CLI dependencies
 
-Each `jsforce` release will be followed by a `@jsforce/jsforce-node` release, both having the same package version (e.g. jsforce@3.5.1 -> @jsforce/jsforce-node@3.5.1).
+Each `jsforce` release will be followed by a `@jsforce/jsforce-node` release, both having the same package version (e.g. `jsforce@3.5.1` -> `@jsforce/jsforce-node@3.5.1`).
