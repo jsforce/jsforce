@@ -1,14 +1,22 @@
 # Getting started
 
-Clone the project and `cd` into it:
+1. Clone the project and `cd` into it:
 ```
 git clone git@github.com:jsforce/jsforce.git
 cd jsforce
 ```
 
-then install dependencies and build:
+2. Install dependencies:
 ```
 npm install
+```
+
+3. Build
+
+If you use `jsforce`:
+<details>
+
+```
 npm run build
 ```
 
@@ -16,6 +24,26 @@ npm run build
 * Node CJS build (dir: `lib`)
 * Browser ESM build (dir: `browser`)
 * Browser bundles (dir: `dist`)
+</details>
+
+
+or if you use `@jsforce/jsforce-node`:
+<details>
+
+```
+npm install
+npm run jsforce-node:dev
+npm run build:node:cjs
+```
+
+**IMPORTANT:**
+
+`npm run jsforce-node:dev` will only change the `name` field in the `package.json` to `@jsforce/jsforce-node`.
+This helps reducing changes to the package.json (smaller diff) and allows you to `yarn | npm` link it, but you should never commit the change back to the repo.
+
+You could also run `npm run jsforce-node` instead to get the full changes we do at release time, see: [JSFORCE_NODE.md](./JSFORCE-NODE.md#how-does-it-work)
+
+</details>
 
 # Type-checking
 
