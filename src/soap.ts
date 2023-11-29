@@ -233,6 +233,8 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
 
   /** @override */
   beforeSend(request: HttpRequest & { _message: object }) {
+    request.body = this._createEnvelope(request._message);
+
     const bodySize = getBodySize(request.body, request.headers);
 
     if (
@@ -244,8 +246,6 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
     ) {
       request.headers['content-length'] = String(bodySize);
     }
-
-    request.body = this._createEnvelope(request._message);
   }
 
   /** @override **/

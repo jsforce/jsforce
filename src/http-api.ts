@@ -127,6 +127,25 @@ export class HttpApi<S extends Schema> extends EventEmitter {
         // when session refresh delegate is available
         if (this.isSessionExpired(response) && refreshDelegate) {
           await refreshDelegate.refresh(requestTime);
+          // remove the `content-length` header after token refresh
+          //
+          // SOAP requests include the access token their the body,
+          // if the first req had an invalid token and jsforce successfully
+          // refreshed it we need to remove the `content-length` header
+          // so that it get's re-calculated again with the new body.
+          //
+          // REST request aren't affected by this because the access token
+          // is sent via HTTP headers
+          //
+          //
+          // `_message` is only present in SOAP requests
+          if (
+            Object.hasOwn(request, '_message') &&
+            request.headers &&
+            request.headers['content-length']
+          ) {
+            delete request.headers['content-length'];
+          }
           return this.request(request);
         }
         if (this.isErrorResponse(response)) {
