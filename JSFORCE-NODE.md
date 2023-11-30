@@ -10,6 +10,7 @@ For reference, the `jsforce` package contains:
 2. ESM browser builds
 3. browser bundles + minified builds
 4. TS source code (src folder)
+5. CLI dependencies like `commander` and `inquirer`
 
 ## Where does it live?
 
