@@ -2,7 +2,7 @@
 
 ## What is the `@jsforce/jsforce-node` package?
 
-It's a "lite" version of `jsforce` that doesn't include the browser builds and CLI deps, making it ~30M smaller that the `jsforce` package which includes all node and browser builds.
+It's a "lite" version of `jsforce` that doesn't include the browser builds and CLI deps, making it ~30M smaller than the `jsforce` package which includes all node and browser builds.
 You can use it as a drop-in replacement of `jsforce` in your Node.js project to reduce bundle size.
 
 For reference, the `jsforce` package contains:
@@ -15,7 +15,7 @@ For reference, the `jsforce` package contains:
 
 This same repo!
 
-Since `jsforce-node` only removes builds and deps before, we just modify the `package.json` at release time to remove some folders/deps from the final package.
+Since `jsforce-node` only removes builds and deps, we just modify the `package.json` at release time to remove some folders/deps from the final package.
 
 ## How does it work?
 We run `npm run jsforce-node` at publish time to make the following changes to the `package.json`:
