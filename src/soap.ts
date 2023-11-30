@@ -244,6 +244,9 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
       !request.headers['content-length'] &&
       !!bodySize
     ) {
+      this._logger.debug(
+        `missing 'content-length' header, setting it to: ${bodySize}`,
+      );
       request.headers['content-length'] = String(bodySize);
     }
   }

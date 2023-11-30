@@ -194,6 +194,9 @@ export class HttpApi<S extends Schema> extends EventEmitter {
       !headers['content-length'] &&
       !!bodySize
     ) {
+      this._logger.debug(
+        `missing 'content-length' header, setting it to: ${bodySize}`,
+      );
       headers['content-length'] = String(bodySize);
     }
     request.headers = headers;
