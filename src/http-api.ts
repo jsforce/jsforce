@@ -185,8 +185,10 @@ export class HttpApi<S extends Schema> extends EventEmitter {
 
     const bodySize = getBodySize(request.body, headers);
 
+    const cannotHaveBody = ['GET', 'HEAD', 'OPTIONS'].includes(request.method);
+
     if (
-      request.method === 'POST' &&
+      !cannotHaveBody &&
       !!request.body &&
       !headers['transfer-encoding'] &&
       !headers['content-length'] &&
