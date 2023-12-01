@@ -34,3 +34,25 @@ jobs:
         run: npm publish --tag next
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  npm-publish-jsforce-node:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Release
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.release.tag_name || inputs.tag }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+          cache: npm
+          registry-url: https://registry.npmjs.org
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Install dependencies
+        run: npm install
+      - name: Generate `jsforce-node` pkg
+        run: npm run jsforce-node
+      - name: Build
+        run: npm run clean && npm run build:node:cjs
+      - name: Publish
+        run: npm publish --tag next
