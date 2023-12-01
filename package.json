@@ -10,7 +10,7 @@
     "database.com"
   ],
   "homepage": "http://github.com/jsforce/jsforce",
-  "version": "3.0.0-next.0",
+  "version": "3.0.0-next.1",
   "repository": {
     "type": "git",
     "url": "git://github.com/jsforce/jsforce.git"
@@ -99,7 +99,9 @@
     },
     "test:node": {
       "command": "jest --forceExit",
-      "dependencies": ["build:node:cjs"],
+      "dependencies": [
+        "build:node:cjs"
+      ],
       "files": [
         "test/**/*.ts",
         "jest.setup.js",
