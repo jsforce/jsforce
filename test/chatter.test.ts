@@ -382,12 +382,23 @@ describe('batch', () => {
     ]);
     assert.ok(result.hasErrors === false);
     assert.ok(Array.isArray(result.results) && result.results.length === 3);
-    const elem1 = result.results[0].result;
-    const elem2 = result.results[1].result;
-    const elems = result.results[2].result;
-    urls = [elem1.url, elem2.url];
-    assert.ok(elems.elements[1].id === elem1.id);
-    assert.ok(elems.elements[0].id === elem2.id);
+
+    const elemsIndex = result.results.findIndex(
+      (res) => res.statusCode === 200,
+    );
+
+    // get feed elements response and remove it from the results array
+    const elems = result.results.splice(elemsIndex, 1)[0].result;
+
+    const [el1, el2] = result.results;
+    const elemIDs = [el1.result.id, el2.result.id];
+
+    urls = [el1.result.url, el2.result.url];
+
+    // don't rely on order of elements, just find the ID in the payload
+    for (const id of elemIDs) {
+      assert.ok(elems.elements.find((el: { id: string }) => el.id === id));
+    }
   });
 
   /**

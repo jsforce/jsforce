@@ -1,0 +1,14 @@
+{
+  "orgName": "jsforce-test-org",
+  "edition": "Developer",
+  "features": ["EnableSetPasswordInApi"],
+  "hasSampleData": true,
+  "settings": {
+    "lightningExperienceSettings": {
+      "enableS1DesktopEnabled": true
+    },
+    "mobileSettings": {
+      "enableS1EncryptedStoragePref2": false
+    }
+  }
+}

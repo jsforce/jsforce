@@ -1,0 +1,38 @@
+name: publish-docs
+
+on: workflow_call
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.SVC_CLI_BOT_JSFORCE_GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.SVC_CLI_BOT_JSFORCE_GITHUB_TOKEN }}
+          ref: ${{ github.ref }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+          cache: npm
+      - name: install deps
+        run: npm i
+      - name: build
+        run: npm run clean && npm run build
+      - uses: salesforcecli/github-workflows/.github/actions/gitConfig@main
+      - name: build docs
+        run: |
+          rm -rf docs
+          git worktree prune
+          git fetch origin v2-docs:v2-docs
+          git worktree add docs v2-docs
+          npx typedoc --out docs/tmp
+          cp -r docs/tmp/* docs/tmp/..
+          rm -rf docs/tmp
+      - name: send to git
+        run: |
+          cd docs
+          git add .
+          git commit -m 'docs: publishing v2-docs [skip ci]' --no-verify
+          git push origin v2-docs --no-verify

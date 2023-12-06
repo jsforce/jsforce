@@ -9,7 +9,8 @@ import { isNodeJS } from './helper/env';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();
-conn.metadata.pollTimeout = 40 * 1000; // adjust poll timeout to test timeout.
+// increase default timeout of 10s to 1m
+conn.metadata.pollTimeout = 60000;
 
 // TODO: remove the overriding of connection version when updated the default API version.
 // At least ver 45.0 is needed to pass rename test, otherwise it fails `enableLicensing` not valid error.
@@ -294,6 +295,9 @@ describe('file based call', () => {
    *
    */
   it('should retrieve metadata in packaged file and retrieve package', async () => {
+    // increase default timeout of 10s to 1m
+    conn.metadata.pollTimeout = 60000;
+
     const bufs: any[] = [];
     await new Promise((resolve, reject) => {
       const stream = conn.metadata

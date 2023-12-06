@@ -6,6 +6,10 @@ on:
   workflow_dispatch:
 
 jobs:
+  docs:
+    needs: release
+    if: github.ref_name == '2.0'
+    uses: ./.github/workflows/publishDocs.yml
   release:
     runs-on: ubuntu-latest
     steps:
@@ -23,7 +27,7 @@ jobs:
         uses: TriPSs/conventional-changelog-action@d479ae227c5362744063d6bc7469352a0730fdcd
         # overriding some of the basic behaviors to just get the changelog
         with:
-          git-user-name: svc-cli-bot
+          git-user-name: svc-cli-bot-jsforce
           git-user-email: svc_cli_bot@salesforce.com
           github-token: ${{ secrets.SVC_CLI_BOT_JSFORCE_GITHUB_TOKEN }}
           output-file: false

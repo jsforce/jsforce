@@ -66,7 +66,7 @@ export default async function authorize(
         request.continue();
       }
     });
-    await page.goto(url, { waitUntil: 'networkidle2' });
+    await page.goto(url);
     ret = await loginAndApprove(page, username, password);
   } finally {
     if (browser) {

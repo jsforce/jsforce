@@ -88,9 +88,9 @@ it('should run tests synchronously', async () => {
  *
  */
 it('should get completions and return completions', async () => {
-  const res = await conn.tooling.completions('apex');
+  const res = await conn.tooling.completions('visualforce');
   assert.ok(isObject(res));
-  assert.ok(isObject(res.publicDeclarations));
+  assert.ok(isObject(res.completions));
 });
 
 it('can create static resource using application/json content type', async () => {
