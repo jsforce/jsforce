@@ -256,8 +256,14 @@ export class Repl {
     });
     replServer.defineCommand('disconnect', {
       help: 'Disconnect connection and erase it from registry',
-      action: (name) => {
-        cli.disconnect(name);
+      action: async (name) => {
+        try {
+          await cli.disconnect(name);
+        } catch (err) {
+          if (err instanceof Error) {
+            console.error(err.message);
+          }
+        }
         replServer.displayPrompt();
       },
     });

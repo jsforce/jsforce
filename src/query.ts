@@ -895,7 +895,7 @@ export class Query<
   }
 
   promise(): Promise<QueryResponse<R, QRT>> {
-    return Promise.resolve(this);
+    return Promise.resolve<QueryResponse<R, QRT>>(this);
   }
 
   /**
