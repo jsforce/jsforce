@@ -4,7 +4,7 @@ import is from '@sindresorhus/is';
 
 export function getBodySize(
   body: HttpBody | undefined,
-  headers: { [name: string]: string } | undefined,
+  headers: { [name: string]: string } = {},
 ): number | undefined {
   function isFormData(body: unknown): body is FormData {
     return is.nodeStream(body) && is.function_((body as FormData).getBoundary);
@@ -29,8 +29,15 @@ export function getBodySize(
   if (is.buffer(body)) {
     return body.length;
   }
-  if (isFormData(body)) {
-    return body.getLengthSync();
+
+  try {
+    // `getLengthSync` will throw if body has a stream:
+    // https://github.com/form-data/form-data#integer-getlengthsync
+    if (isFormData(body)) {
+      return body.getLengthSync();
+    }
+  } catch {
+    return undefined;
   }
 
   return undefined;
