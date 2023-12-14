@@ -235,20 +235,23 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
   beforeSend(request: HttpRequest & { _message: object }) {
     request.body = this._createEnvelope(request._message);
 
+    const headers = request.headers || {};
+
     const bodySize = getBodySize(request.body, request.headers);
 
     if (
       request.method === 'POST' &&
-      request.headers &&
-      !request.headers['transfer-encoding'] &&
-      !request.headers['content-length'] &&
+      !('transfer-encoding' in headers) &&
+      !('content-length' in headers) &&
       !!bodySize
     ) {
       this._logger.debug(
         `missing 'content-length' header, setting it to: ${bodySize}`,
       );
-      request.headers['content-length'] = String(bodySize);
+      headers['content-length'] = String(bodySize);
     }
+
+    request.headers = headers;
   }
 
   /** @override **/
