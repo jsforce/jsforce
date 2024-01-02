@@ -16,6 +16,7 @@ import {
   Schema,
 } from './types';
 import { createLazyStream } from './util/stream';
+import { getBodySize } from './util/get-body-size';
 
 /** @private */
 function parseJSON(str: string) {
@@ -126,6 +127,25 @@ export class HttpApi<S extends Schema> extends EventEmitter {
         // when session refresh delegate is available
         if (this.isSessionExpired(response) && refreshDelegate) {
           await refreshDelegate.refresh(requestTime);
+          /* remove the `content-length` header after token refresh
+           *
+           * SOAP requests include the access token their the body,
+           * if the first req had an invalid token and jsforce successfully
+           * refreshed it we need to remove the `content-length` header
+           * so that it get's re-calculated again with the new body.
+           *
+           * REST request aren't affected by this because the access token
+           * is sent via HTTP headers
+           *
+           * `_message` is only present in SOAP requests
+           */
+          if (
+            '_message' in request &&
+            request.headers &&
+            'content-length' in request.headers
+          ) {
+            delete request.headers['content-length'];
+          }
           return this.request(request);
         }
         if (this.isErrorResponse(response)) {
@@ -161,6 +181,23 @@ export class HttpApi<S extends Schema> extends EventEmitter {
         callOptions.push(`${name}=${this._conn._callOptions[name]}`);
       }
       headers['Sforce-Call-Options'] = callOptions.join(', ');
+    }
+
+    const bodySize = getBodySize(request.body, headers);
+
+    const cannotHaveBody = ['GET', 'HEAD', 'OPTIONS'].includes(request.method);
+
+    if (
+      !cannotHaveBody &&
+      !!request.body &&
+      !('transfer-encoding' in headers) &&
+      !('content-length' in headers) &&
+      !!bodySize
+    ) {
+      this._logger.debug(
+        `missing 'content-length' header, setting it to: ${bodySize}`,
+      );
+      headers['content-length'] = String(bodySize);
     }
     request.headers = headers;
   }
