@@ -3,11 +3,12 @@ import { SOAP } from '../src/soap';
 import { Connection } from '../src/connection';
 import { HttpRequest, HttpResponse } from '../src/types';
 import assert from 'assert';
+import xml2js from 'xml2js';
 import nock = require('nock');
 
-describe('HTTP API', () => {
-  const loginUrl = 'https://heaven-party-2429-dev-ed.scratch.my.salesforce.com';
+const loginUrl = 'https://heaven-party-2429-dev-ed.scratch.my.salesforce.com';
 
+describe('HTTP API', () => {
   const accessToken = '1234';
 
   const conn = new Connection({
@@ -15,43 +16,107 @@ describe('HTTP API', () => {
     loginUrl,
   });
 
-  const httpApi = new HttpApi(conn, {});
+  describe('headers', () => {
+    it('sets `Authorization` header', async () => {
+      let testPassed = false;
 
-  it('sets authorization header', async () => {
-    let testPassed = false;
+      const httpApi = new HttpApi(conn, {});
 
-    httpApi.on('request', (req: HttpRequest) => {
-      assert.ok(req?.headers?.['Authorization'] === `Bearer ${accessToken}`);
-      testPassed = true;
+      httpApi.on('request', (req: HttpRequest) => {
+        assert.ok(req?.headers?.['Authorization'] === `Bearer ${accessToken}`);
+        testPassed = true;
+      });
+
+      nock(loginUrl).get('/services/data/v59.0').reply(200, {});
+
+      await httpApi.request<HttpResponse>({
+        method: 'GET',
+        url: `${loginUrl}/services/data/v59.0`,
+      });
+      assert.ok(testPassed);
     });
 
-    nock(loginUrl).get('/services/data/v59.0').reply(200, {});
+    it('sets `Call Options` header', async () => {
+      const conn = new Connection({
+        accessToken,
+        loginUrl,
+        callOptions: {
+          client: 'caseSensitiveToken',
+          defaultNamespace: 'battle',
+        },
+      });
 
-    await httpApi.request<HttpResponse>({
-      method: 'GET',
-      url: `${loginUrl}/services/data/v59.0`,
+      const httpApi = new HttpApi(conn, {});
+
+      let testPassed = false;
+
+      httpApi.on('request', (req: HttpRequest) => {
+        assert.equal(
+          req?.headers?.['Sforce-Call-Options'],
+          'client=caseSensitiveToken, defaultNamespace=battle',
+        );
+        testPassed = true;
+      });
+
+      nock(loginUrl).get('/services/data/v59.0').reply(200, {});
+
+      await httpApi.request<HttpResponse>({
+        method: 'GET',
+        url: `${loginUrl}/services/data/v59.0`,
+      });
+      assert.ok(testPassed);
     });
-    assert.ok(testPassed);
-  });
 
-  it('sets content-length header', async () => {
-    let testPassed = false;
+    it('sets `Content-Length` header', async () => {
+      let testPassed = false;
 
-    httpApi.on('request', (req: HttpRequest) => {
-      assert.equal(req?.headers?.['content-length'], '19');
-      testPassed = true;
+      const httpApi = new HttpApi(conn, {});
+
+      httpApi.on('request', (req: HttpRequest) => {
+        assert.equal(req?.headers?.['content-length'], '19');
+        testPassed = true;
+      });
+
+      nock(loginUrl)
+        .post('/services/data/v59.0/sobjects/Account')
+        .reply(200, {});
+
+      await httpApi.request<HttpResponse>({
+        method: 'POST',
+        body: JSON.stringify({
+          Name: 'John Doe',
+        }),
+        url: `${loginUrl}/services/data/v59.0/sobjects/Account`,
+      });
+      assert.ok(testPassed);
     });
 
-    nock(loginUrl).post('/services/data/v59.0/sobjects/Account').reply(200, {});
+    it('does not set `Content-Length` when `Transfer-Encoding` header is set', async () => {
+      let testPassed = false;
 
-    await httpApi.request<HttpResponse>({
-      method: 'POST',
-      body: JSON.stringify({
-        Name: 'John Doe',
-      }),
-      url: `${loginUrl}/services/data/v59.0/sobjects/Account`,
+      const httpApi = new HttpApi(conn, {});
+
+      httpApi.on('request', (req: HttpRequest) => {
+        assert.equal(req?.headers?.['content-length'], undefined);
+        testPassed = true;
+      });
+
+      nock(loginUrl)
+        .post('/services/data/v59.0/sobjects/Account')
+        .reply(200, {});
+
+      await httpApi.request<HttpResponse>({
+        method: 'POST',
+        headers: {
+          'transfer-encoding': 'chunked',
+        },
+        body: JSON.stringify({
+          Name: 'John Doe',
+        }),
+        url: `${loginUrl}/services/data/v59.0/sobjects/Account`,
+      });
+      assert.ok(testPassed);
     });
-    assert.ok(testPassed);
   });
 
   describe('session refresh', () => {
@@ -71,11 +136,11 @@ describe('HTTP API', () => {
 
       httpApi.on('request', (req: HttpRequest) => {
         if (firstRoundTrip) {
-          // bearer token set in the connection.
+          // access token set in the connection.
           assert.equal(req?.headers?.['Authorization'], `Bearer invalid_token`);
           firstRoundTrip = false;
         } else {
-          // bearer token set in the connection's refresh function.
+          // access token set in the connection's refresh function.
           assert.equal(
             req?.headers?.['Authorization'],
             `Bearer refreshed_token`,
@@ -96,8 +161,190 @@ describe('HTTP API', () => {
       });
       assert.ok(testPassed);
     });
+  });
 
-    it('SOAP: handle `content-length` header after session refresh', async () => {
+  describe('error handling', () => {
+    it('JSON response', async () => {
+      const conn = new Connection({
+        accessToken,
+        loginUrl,
+      });
+
+      const httpApi = new HttpApi(conn, {});
+
+      const missingRequiredFieldErr = [
+        {
+          message: 'Required fields are missing: [Name]',
+          errorCode: 'REQUIRED_FIELD_MISSING',
+          fields: ['Name'],
+        },
+      ];
+
+      nock(loginUrl)
+        .post('/services/data/v59.0')
+        .reply(400, JSON.stringify(missingRequiredFieldErr), {
+          'content-type': 'application/json',
+        });
+
+      assert.rejects(
+        async () => {
+          await httpApi.request<HttpResponse>({
+            method: 'POST',
+            body: JSON.stringify({
+              Description: 'Accountant',
+            }),
+            url: `${loginUrl}/services/data/v59.0`,
+          });
+        },
+        {
+          errorCode: missingRequiredFieldErr[0].errorCode,
+          message: missingRequiredFieldErr[0].message,
+        },
+      );
+    });
+
+    it('XML response', async () => {
+      const conn = new Connection({
+        accessToken,
+        loginUrl,
+      });
+
+      const httpApi = new HttpApi(conn, {});
+
+      const xmlErr = `
+<?xml version="1.0" encoding="UTF-8"?>
+<Errors>
+	<Error>
+		<errorCode>NOT_FOUND</errorCode>
+		<message>The requested resource does not exist</message>
+	</Error>
+</Errors>`;
+
+      nock(loginUrl)
+        .get('/services/data/v59.0/sobjects/Broker__c/a008N0000032UmoQAA')
+        .reply(400, xmlErr, {
+          'content-type': 'application/xml',
+        });
+
+      assert.rejects(
+        async () => {
+          await httpApi.request<HttpResponse>({
+            method: 'GET',
+            url: `${loginUrl}/services/data/v59.0/sobjects/Broker__c/a008N0000032UmoQAA`,
+          });
+        },
+        {
+          errorCode: 'NOT_FOUND',
+          message: 'The requested resource does not exist',
+        },
+      );
+    });
+  });
+});
+
+describe('SOAP API', () => {
+  async function parseXML(str: string) {
+    return xml2js.parseStringPromise(str, { explicitArray: false });
+  }
+
+  describe('headers', () => {
+    it('sets required HTTP headers', async () => {
+      let testPassed = false;
+
+      const conn = new Connection({
+        loginUrl,
+        accessToken: 'access_token',
+      });
+
+      const soapApi = new SOAP(conn, {
+        xmlns: 'urn:partner.soap.sforce.com',
+        endpointUrl: `${loginUrl}/services/Soap/u/59`,
+      });
+
+      soapApi.on('request', async (req: HttpRequest) => {
+        assert.equal(req?.headers?.['Content-Type'], 'text/xml');
+        assert.equal(req?.headers?.['SOAPAction'], '""');
+        testPassed = true;
+      });
+
+      nock(loginUrl).post('/services/Soap/u/59').reply(200);
+
+      await soapApi.invoke('describeMetadata', {
+        asOfVersion: '59.0',
+      });
+
+      assert.ok(testPassed);
+    });
+
+    it('sets SOAP "Session" header', async () => {
+      let testPassed = false;
+
+      const conn = new Connection({
+        loginUrl,
+        accessToken: 'access_token',
+      });
+
+      const soapApi = new SOAP(conn, {
+        xmlns: 'urn:partner.soap.sforce.com',
+        endpointUrl: `${loginUrl}/services/Soap/u/59`,
+      });
+
+      soapApi.on('request', async (req: HttpRequest) => {
+        const parsedBody = await parseXML(req.body as string);
+        assert.deepEqual(
+          parsedBody['soapenv:Envelope']['soapenv:Header']['SessionHeader'],
+          { sessionId: conn.accessToken },
+        );
+        testPassed = true;
+      });
+
+      nock(loginUrl).post('/services/Soap/u/59').reply(200);
+
+      await soapApi.invoke('describeMetadata', {
+        asOfVersion: '59.0',
+      });
+
+      assert.ok(testPassed);
+    });
+
+    it('sets SOAP "Call options" header', async () => {
+      let testPassed = false;
+
+      const conn = new Connection({
+        loginUrl,
+        accessToken: 'access_token',
+        callOptions: {
+          client: 'caseSensitiveToken',
+          defaultNamespace: 'battle',
+        },
+      });
+
+      const soapApi = new SOAP(conn, {
+        xmlns: 'urn:partner.soap.sforce.com',
+        endpointUrl: `${loginUrl}/services/Soap/u/59`,
+      });
+
+      soapApi.on('request', async (req: HttpRequest) => {
+        const parsedBody = await parseXML(req.body as string);
+        assert.deepEqual(
+          parsedBody['soapenv:Envelope']['soapenv:Header']['CallOptions'],
+          conn._callOptions,
+        );
+        testPassed = true;
+      });
+
+      nock(loginUrl).post('/services/Soap/u/59').reply(200);
+
+      await soapApi.invoke('describeMetadata', {
+        asOfVersion: '59.0',
+      });
+
+      assert.ok(testPassed);
+    });
+  });
+
+  describe('session refresh', () => {
+    it('handle `Content-Length` header after session refresh', async () => {
       const conn = new Connection({
         loginUrl,
         accessToken: 'invalid_token',
@@ -114,8 +361,9 @@ describe('HTTP API', () => {
       let testPassed = false;
       let firstRoundTrip = true;
 
-      /* SOAP requests include the access token in the body,
-       * the first req will have `content-length` calculated with the invalid AT
+      /*
+       * SOAP requests include the access token in the body.
+       * The first req will have `content-length` calculated with the invalid AT,
        * the second one should have it re-calculated with the refreshed AT.
        */
       soapApi.on('request', (req: HttpRequest) => {
@@ -141,41 +389,42 @@ describe('HTTP API', () => {
     });
   });
 
-  it('handles bad responses', async () => {
+  it('parses errors in XML responses', async () => {
     const conn = new Connection({
-      accessToken,
       loginUrl,
+      accessToken: 'access_token',
     });
 
-    const httpApi = new HttpApi(conn, {});
+    const soapApi = new SOAP(conn, {
+      xmlns: 'urn:partner.soap.sforce.com',
+      endpointUrl: `${loginUrl}/services/Soap/u/59`,
+    });
 
-    const missingRequiredFieldErr = [
-      {
-        message: 'Required fields are missing: [Name]',
-        errorCode: 'REQUIRED_FIELD_MISSING',
-        fields: ['Name'],
-      },
-    ];
-
-    nock(loginUrl)
-      .post('/services/data/v59.0')
-      .reply(400, JSON.stringify(missingRequiredFieldErr), {
-        'content-type': 'application/json',
-      });
+    const xmlErr = `
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:sf="http://soap.sforce.com/2006/04/metadata">
+    <soapenv:Body>
+        <soapenv:Fault>
+            <faultcode>sf:INVALID_SESSION_ID</faultcode>
+            <faultstring>INVALID_SESSION_ID: Invalid Session ID found in SessionHeader: Illegal Session</faultstring>
+        </soapenv:Fault>
+    </soapenv:Body>
+</soapenv:Envelope>
+`;
+    nock(loginUrl).post('/services/Soap/u/59').reply(400, xmlErr, {
+      'content-type': 'application/xml',
+    });
 
     assert.rejects(
       async () => {
-        await httpApi.request<HttpResponse>({
-          method: 'POST',
-          body: JSON.stringify({
-            Description: 'Accountant',
-          }),
-          url: `${loginUrl}/services/data/v59.0`,
+        await soapApi.invoke('create', {
+          Account: 'test',
         });
       },
       {
-        errorCode: missingRequiredFieldErr[0].errorCode,
-        message: missingRequiredFieldErr[0].message,
+        errorCode: 'sf:INVALID_SESSION_ID',
+        message:
+          'INVALID_SESSION_ID: Invalid Session ID found in SessionHeader: Illegal Session',
       },
     );
   });

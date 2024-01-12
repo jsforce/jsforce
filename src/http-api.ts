@@ -288,6 +288,11 @@ export class HttpApi<S extends Schema> extends EventEmitter {
    */
   parseError(body: any) {
     const errors = body;
+
+    // XML response
+    if (errors['Errors']) {
+      return errors['Errors']['Error'];
+    }
     return Array.isArray(errors) ? errors[0] : errors;
   }
 
