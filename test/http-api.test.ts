@@ -29,7 +29,7 @@ describe('HTTP API', () => {
 
       nock(loginUrl).get('/services/data/v59.0').reply(200, {});
 
-      await httpApi.request<HttpResponse>({
+      await httpApi.request({
         method: 'GET',
         url: `${loginUrl}/services/data/v59.0`,
       });
@@ -60,7 +60,7 @@ describe('HTTP API', () => {
 
       nock(loginUrl).get('/services/data/v59.0').reply(200, {});
 
-      await httpApi.request<HttpResponse>({
+      await httpApi.request({
         method: 'GET',
         url: `${loginUrl}/services/data/v59.0`,
       });
@@ -81,7 +81,7 @@ describe('HTTP API', () => {
         .post('/services/data/v59.0/sobjects/Account')
         .reply(200, {});
 
-      await httpApi.request<HttpResponse>({
+      await httpApi.request({
         method: 'POST',
         body: JSON.stringify({
           Name: 'John Doe',
@@ -105,7 +105,7 @@ describe('HTTP API', () => {
         .post('/services/data/v59.0/sobjects/Account')
         .reply(200, {});
 
-      await httpApi.request<HttpResponse>({
+      await httpApi.request({
         method: 'POST',
         headers: {
           'transfer-encoding': 'chunked',
@@ -155,7 +155,7 @@ describe('HTTP API', () => {
         .get('/services/data/v59.0')
         .reply(200);
 
-      await httpApi.request<HttpResponse>({
+      await httpApi.request({
         method: 'GET',
         url: `${loginUrl}/services/data/v59.0`,
       });
@@ -188,7 +188,7 @@ describe('HTTP API', () => {
 
       assert.rejects(
         async () => {
-          await httpApi.request<HttpResponse>({
+          await httpApi.request({
             method: 'POST',
             body: JSON.stringify({
               Description: 'Accountant',
@@ -228,7 +228,7 @@ describe('HTTP API', () => {
 
       assert.rejects(
         async () => {
-          await httpApi.request<HttpResponse>({
+          await httpApi.request({
             method: 'GET',
             url: `${loginUrl}/services/data/v59.0/sobjects/Broker__c/a008N0000032UmoQAA`,
           });
@@ -269,7 +269,7 @@ describe('HTTP API', () => {
 
       assert.rejects(
         async () => {
-          await httpApi.request<HttpResponse>({
+          await httpApi.request({
             method: 'GET',
             url: `${loginUrl}/services/data/v59.0/sobjects/Broker__c/a008N0000032UmoQAA`,
           });
@@ -281,6 +281,34 @@ Check that the org exists and can be reached.
 See error.content for the full html response.`,
         },
       );
+    });
+
+    it('returns `noContentResponse` on 204', async () => {
+      const conn = new Connection({
+        accessToken,
+        loginUrl,
+      });
+
+      const noContentResponse = {
+        id: 'a008N0000032UmoQAA ',
+        success: true,
+        errors: [],
+      };
+
+      const httpApi = new HttpApi(conn, {
+        noContentResponse,
+      });
+
+      nock(loginUrl)
+        .delete('/services/data/v59.0/sobjects/Broker__c/a008N0000032UmoQAA')
+        .reply(204);
+
+      const body = await httpApi.request({
+        method: 'DELETE',
+        url: `${loginUrl}/services/data/v59.0/sobjects/Broker__c/a008N0000032UmoQAA`,
+      });
+
+      assert.deepEqual(body, noContentResponse);
     });
   });
 });
