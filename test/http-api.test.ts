@@ -239,6 +239,49 @@ describe('HTTP API', () => {
         },
       );
     });
+
+    it('HTML response', async () => {
+      const conn = new Connection({
+        accessToken,
+        loginUrl,
+      });
+
+      const httpApi = new HttpApi(conn, {});
+
+      const htmlErr = `
+<!DOCTYPE HTML>
+<html lang=en-US>
+<head>
+<meta charset=UTF-8>
+<title>Error Page</title>
+</head>
+<body>
+    <p>Error</p>
+</body>
+</html>
+`;
+
+      nock(loginUrl)
+        .get('/services/data/v59.0/sobjects/Broker__c/a008N0000032UmoQAA')
+        .reply(420, htmlErr, {
+          'content-type': 'text/html',
+        });
+
+      assert.rejects(
+        async () => {
+          await httpApi.request<HttpResponse>({
+            method: 'GET',
+            url: `${loginUrl}/services/data/v59.0/sobjects/Broker__c/a008N0000032UmoQAA`,
+          });
+        },
+        {
+          errorCode: 'ERROR_HTTP_420',
+          message: `HTTP response contains html content.
+Check that the org exists and can be reached.
+See error.content for the full html response.`,
+        },
+      );
+    });
   });
 });
 
