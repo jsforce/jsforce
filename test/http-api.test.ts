@@ -1,7 +1,7 @@
 import { HttpApi } from '../src/http-api';
 import { SOAP } from '../src/soap';
 import { Connection } from '../src/connection';
-import { HttpRequest, HttpResponse } from '../src/types';
+import { HttpRequest } from '../src/types';
 import assert from 'assert';
 import xml2js from 'xml2js';
 import nock = require('nock');
