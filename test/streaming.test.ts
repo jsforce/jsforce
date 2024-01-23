@@ -31,12 +31,12 @@ if (isNodeJS()) {
     await conn.sobject('PushTopic').create({
       Name: 'JSforceTestAccountUpdates',
       Query: `SELECT Id, Name FROM Account WHERE Name='${accountName}'`,
-      ApiVersion:'54.0',
-      NotifyForFields:'Referenced',
-      NotifyForOperationCreate:true,
-      NotifyForOperationUpdate:true,
-      NotifyForOperationDelete:false,
-      NotifyForOperationUndelete:false
+      ApiVersion: '54.0',
+      NotifyForFields: 'Referenced',
+      NotifyForOperationCreate: true,
+      NotifyForOperationUpdate: true,
+      NotifyForOperationDelete: false,
+      NotifyForOperationUndelete: false,
     });
 
     let subscr: Subscription | undefined;
@@ -68,7 +68,10 @@ if (isNodeJS()) {
       subscr.cancel();
     }
 
-    await conn.sobject('PushTopic').findOne({ Name: 'JSforceTestAccountUpdates'}).delete();
+    await conn
+      .sobject('PushTopic')
+      .findOne({ Name: 'JSforceTestAccountUpdates' })
+      .delete();
   });
 
   /**
