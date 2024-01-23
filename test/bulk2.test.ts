@@ -305,7 +305,7 @@ it('should call bulk api from invalid session conn without refresh fn, and raise
     proxyUrl: config.proxyUrl,
   });
 
-  conn3.bulk2.pollTimeout = 90000
+  conn3.bulk2.pollTimeout = 90000;
 
   const records = [{ Name: 'Impossible Bulk Account #1' }];
   try {
