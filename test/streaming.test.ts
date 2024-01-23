@@ -25,14 +25,26 @@ if (isNodeJS()) {
    */
   it('should subscribe to topic, create account, and receive event of account has been created', async () => {
     type Account = { Id: string; Name: string };
+
+    const accountName = `My New Account #${Date.now()}`;
+
+    await conn.sobject('PushTopic').create({
+      Name: 'JSforceTestAccountUpdates',
+      Query: `SELECT Id, Name FROM Account WHERE Name='${accountName}'`,
+      ApiVersion:'54.0',
+      NotifyForFields:'Referenced',
+      NotifyForOperationCreate:true,
+      NotifyForOperationUpdate:true,
+      NotifyForOperationDelete:false,
+      NotifyForOperationUndelete:false
+    });
+
     let subscr: Subscription | undefined;
     const msgArrived = new Promise<StreamingMessage<Account>>((resolve) => {
       subscr = conn.streaming
         .topic<Account>('JSforceTestAccountUpdates')
         .subscribe(resolve);
     });
-    await delay(10000);
-    const accountName = `My New Account #${Date.now()}`;
 
     await conn.sobject('Account').create({ Name: accountName });
 
@@ -55,6 +67,8 @@ if (isNodeJS()) {
     if (subscr) {
       subscr.cancel();
     }
+
+    await conn.sobject('PushTopic').findOne({ Name: 'JSforceTestAccountUpdates'}).delete();
   });
 
   /**

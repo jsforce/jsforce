@@ -75,11 +75,6 @@ await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --
 await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --external-id Id --target-org jsforce-test-org`;
 await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --external-id Id --target-org jsforce-test-org`;
 
-const pushTopicValues =
-  "Name='JSforceTestAccountUpdates' Query='SELECT Id, Name FROM Account' ApiVersion='54.0' NotifyForFields=Referenced NotifyForOperationCreate=true NotifyForOperationUpdate=true NotifyForOperationDelete=false NotifyForOperationUndelete=false";
-
-await $`sf data create record --sobject PushTopic --values ${pushTopicValues} --target-org jsforce-test-org`;
-
 if (!process.env.CI) {
   console.log(
     `Run tests using this scratch org by appending SF_LOGIN_URL=${orgDisplayUserRes.result.instanceUrl} SF_USERNAME=${orgDisplayUserRes.result.username} SF_PASSWORD=${orgDisplayUserRes.result.password}`,
