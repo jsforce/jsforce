@@ -9,7 +9,7 @@
     "database.com"
   ],
   "homepage": "https://github.com/salto-io/jsforce.git",
-  "version": "1.9.3",
+  "version": "1.9.4",
   "repository": {
     "type": "git",
     "url": "https://github.com/salto-io/jsforce.git"
