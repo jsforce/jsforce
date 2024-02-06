@@ -1,15 +1,15 @@
 /*global describe, it, before */
-var testUtils = require('./helper/test-utils'),
-    assert = testUtils.assert;
+var TestEnv = require('./helper/testenv'),
+    assert = TestEnv.assert;
 
-var _      = require('underscore'),
+var _      = require('lodash/core'),
     Cache  = require('../lib/cache');
 
 /**
  *
  */
 describe("cache", function() {
-  
+
   this.timeout(40000); // set timeout to 40 sec.
 
   var cache = new Cache();

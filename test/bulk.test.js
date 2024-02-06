@@ -1,12 +1,14 @@
 /*global describe, it, before, __dirname */
-var testUtils = require('./helper/test-utils'),
-    assert = testUtils.assert;
+var TestEnv = require('./helper/testenv'),
+    assert = TestEnv.assert;
 
 var async  = require('async'),
-    _      = require('underscore'),
+    _      = require('lodash/core'),
     fs     = require('fs'),
     sf     = require('../lib/jsforce'),
     config = require('./config/salesforce');
+
+var testEnv = new TestEnv(config);
 
 /**
  *
@@ -15,7 +17,7 @@ describe("bulk", function() {
 
   this.timeout(40000); // set timeout to 40 sec.
 
-  var conn = new testUtils.createConnection(config);
+  var conn = testEnv.createConnection();
 
   // adjust poll timeout to test timeout.
   conn.bulk.pollTimeout = 40*1000;
@@ -25,7 +27,7 @@ describe("bulk", function() {
    */
   before(function(done) {
     this.timeout(600000); // set timeout to 10 min.
-    testUtils.establishConnection(conn, config, done);
+    testEnv.establishConnection(conn, done);
   });
 
 
@@ -38,7 +40,7 @@ describe("bulk", function() {
       for (var i=0; i<200; i++) {
         records.push({
           Name: 'Bulk Account #'+(i+1),
-          NumberOfEmployees: 300 * (i+1) 
+          NumberOfEmployees: 300 * (i+1)
         });
       }
       records.push({ BillingState: 'CA' }); // should raise error
@@ -132,7 +134,7 @@ describe("bulk", function() {
   });
 
 /*------------------------------------------------------------------------*/
-if (testUtils.isNodeJS) {
+if (TestEnv.isNodeJS) {
 
   /**
    *
@@ -207,25 +209,29 @@ if (testUtils.isNodeJS) {
    */
   describe("bulk query and output to file", function() {
     it("should get a record stream and file output", function(done) {
-      var file = __dirname + "/data/Account_export.csv";
+      var file = __dirname + "/data/BulkQuery_export.csv";
       var fstream = fs.createWriteStream(file);
       var records = [];
+      var count = -1;
       async.waterfall([
         function(next) {
-          conn.bulk.query("SELECT Id, Name, NumberOfEmployees FROM Account")
+          conn.sobject(config.bigTable).count({}, next);
+        },
+        function(_count, next) {
+          count = _count;
+          conn.bulk.query("SELECT Id, Name FROM " + config.bigTable)
             .on('record', function(rec) { records.push(rec); })
             .on('error', function(err) { next(err); })
-            .on('end', function() { next(null, records); })
-            .stream().pipe(fstream);
+            .stream().pipe(fstream)
+            .on('finish', function() { next(null, records); });
         }
       ], function(err, records) {
         if (err) { throw err; }
-        assert.ok(_.isArray(records) && records.length > 0);
+        assert.ok(_.isArray(records) && records.length === count);
         for (var i=0; i<records.length; i++) {
           var rec = records[i];
           assert.ok(_.isString(rec.Id));
           assert.ok(_.isString(rec.Name));
-          assert.ok(_.isString(rec.NumberOfEmployees)); // no type conversion from CSV stream to record
         }
         var data = fs.readFileSync(file, "utf-8");
         assert.ok(data);
@@ -242,7 +248,7 @@ if (testUtils.isNodeJS) {
     var recs = null;
 
     before(function(done) {
-      var records = Array(101).join('_').split('').map(function(i) {
+      var records = Array(101).join('_').split('').map(function(a, i) {
         return { Name: 'Session Expiry Test #'+i };
       });
       conn.bulk.load('Account', 'insert', records, function(err, rets) {
@@ -289,6 +295,8 @@ if (testUtils.isNodeJS) {
   });
 
 /*------------------------------------------------------------------------*/
+  // The num should be more than 200 which fallback from SObject collection API
+  var bulkAccountNum = 250;
 
   /**
    *
@@ -296,7 +304,7 @@ if (testUtils.isNodeJS) {
   describe("bulk update using Query#update", function() {
     before(function(done) {
       var records = [];
-      for (var i=0; i<200; i++) {
+      for (var i=0; i<bulkAccountNum; i++) {
         records.push({
           Name: 'New Bulk Account #'+(i+1),
           BillingState: 'CA',
@@ -315,7 +323,7 @@ if (testUtils.isNodeJS) {
           }, function(err, rets) {
             if (err) { throw err; }
             assert.ok(_.isArray(rets));
-            assert.ok(rets.length === 200);
+            assert.ok(rets.length === bulkAccountNum);
             for (var i=0; i<rets.length; i++) {
               var ret = rets[i];
               assert.ok(_.isString(ret.id));
@@ -330,9 +338,9 @@ if (testUtils.isNodeJS) {
             .find({ Name : { $like : 'New Bulk Account%' }}, 'Id, Name, BillingState', function(err, records) {
               if (err) { throw err; }
               assert.ok(_.isArray(records));
-              assert.ok(records.length === 200);
+              assert.ok(records.length === bulkAccountNum);
               var record;
-              for (var i=0; i<200; i++) {
+              for (var i=0; i<records.length; i++) {
                 record = records[i];
                 assert.ok(_.isString(record.Id));
                 assert.ok(/\(Updated\)$/.test(record.Name));
@@ -368,7 +376,7 @@ if (testUtils.isNodeJS) {
           .destroy(function(err, rets) {
             if (err) { throw err; }
             assert.ok(_.isArray(rets));
-            assert.ok(rets.length === 200);
+            assert.ok(rets.length === bulkAccountNum);
             for (var i=0; i<rets.length; i++) {
               var ret = rets[i];
               assert.ok(_.isString(ret.id));
@@ -390,10 +398,88 @@ if (testUtils.isNodeJS) {
     });
   });
 
+
+/*------------------------------------------------------------------------*/
+  // This is usually small num to use Bulk API, but forcely use it by modifying bulkThreshold num
+  var smallAccountNum = 20;
+
+  /**
+   *
+   */
+  describe("bulk update using Query#update, with bulkThreshold modified", function() {
+    before(function(done) {
+      var records = [];
+      for (var i=0; i<smallAccountNum; i++) {
+        records.push({
+          Name: 'New Bulk Account #'+(i+1),
+          BillingState: 'CA',
+          NumberOfEmployees: 300 * (i+1)
+        });
+      }
+      conn.bulk.load("Account", "insert", records, done);
+    });
+
+    it("should return updated status", function(done) {
+      conn.sobject('Account')
+          .find({ Name : { $like : 'New Bulk Account%' }})
+          .update({
+            Name : '${Name} (Updated)',
+            BillingState: null
+          }, { bulkThreshold: 0 }, function(err, rets) {
+            if (err) { throw err; }
+            assert.ok(_.isArray(rets));
+            assert.ok(rets.length === smallAccountNum);
+            for (var i=0; i<rets.length; i++) {
+              var ret = rets[i];
+              assert.ok(_.isString(ret.id));
+              assert.ok(ret.success === true);
+            }
+          }.check(done));
+    });
+
+    describe("then query updated records", function() {
+      it("should return updated records", function(done) {
+        conn.sobject('Account')
+            .find({ Name : { $like : 'New Bulk Account%' }}, 'Id, Name, BillingState', function(err, records) {
+              if (err) { throw err; }
+              assert.ok(_.isArray(records));
+              assert.ok(records.length === smallAccountNum);
+              var record;
+              for (var i=0; i<records.length; i++) {
+                record = records[i];
+                assert.ok(_.isString(record.Id));
+                assert.ok(/\(Updated\)$/.test(record.Name));
+                assert.ok(record.BillingState === null);
+              }
+            }.check(done));
+      });
+    });
+  });
+
+  /**
+   *
+   */
+  describe("bulk delete using Query#destroy, with bulkThreshold modified", function() {
+    it("should return deleted status", function(done) {
+      conn.sobject('Account')
+          .find({ Name : { $like : 'New Bulk Account%' }})
+          .destroy({ bulkThreshold: 0 }, function(err, rets) {
+            if (err) { throw err; }
+            assert.ok(_.isArray(rets));
+            assert.ok(rets.length === smallAccountNum);
+            for (var i=0; i<rets.length; i++) {
+              var ret = rets[i];
+              assert.ok(_.isString(ret.id));
+              assert.ok(ret.success === true);
+            }
+          }.check(done));
+    });
+  });
+ 
   // graceful shutdown to wait remaining jobs to close...
   after(function(done) {
-    setTimeout(function() { 
-      testUtils.closeConnection(conn, done);
+    setTimeout(function() {
+      testEnv.closeConnection(conn, done);
     }, 2000);
   });
 

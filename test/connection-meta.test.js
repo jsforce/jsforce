@@ -1,11 +1,13 @@
 /*global describe, it, before, after */
-var testUtils = require('./helper/test-utils'),
-    assert = testUtils.assert;
+var TestEnv = require('./helper/testenv'),
+    assert = TestEnv.assert;
 
 var async  = require('async'),
-    _      = require('underscore'),
+    _      = require('lodash/core'),
     sf     = require('../lib/jsforce'),
     config = require('./config/salesforce');
+
+var testEnv = new TestEnv(config);
 
 /**
  *
@@ -14,20 +16,31 @@ describe("connection-meta", function() {
 
   this.timeout(40000); // set timeout to 40 sec.
 
-  var conn = new testUtils.createConnection(config);
+  var conn = testEnv.createConnection();
 
   /**
    *
    */
   before(function(done) {
     this.timeout(600000); // set timeout to 10 min.
-    testUtils.establishConnection(conn, config, done);
+    testEnv.establishConnection(conn, done);
   });
 
   /**
    *
    */
   describe("describe Account", function() {
+    it("should return undefined when not modified recently enough", function(done) {
+      var options = {
+        type: 'Account',
+        ifModifiedSince: new Date().toUTCString()
+      };
+      conn.describe(options, function(err, meta) {
+        if (err) { throw err; }
+        assert.ok(meta === undefined);
+      }.check(done));
+    });
+
     it("should return metadata information", function(done) {
       conn.sobject('Account').describe(function(err, meta) {
         if (err) { throw err; }
@@ -43,6 +56,110 @@ describe("connection-meta", function() {
           assert.ok(meta.name === "Account");
           assert.ok(_.isArray(meta.fields));
         }.check(done));
+      });
+    });
+  });
+
+  /**
+   *
+   */
+  describe("connection-batch-meta", function () {
+    this.timeout(40000); // set timeout to 40 sec.
+
+    var conn = testEnv.createConnection();
+
+    /**
+     *
+     */
+    before(function (done) {
+      this.timeout(600000); // set timeout to 10 min.
+      testEnv.establishConnection(conn, done);
+    });
+
+    /**
+     *
+     */
+    describe("batch describe", function () {
+      it("should return metadata information", function (done) {
+        conn.batchDescribe(
+          { types: ['Account', 'Contact'] },
+          function (err, meta) {
+            if (err) {
+              throw err;
+            }
+            assert.ok(_.isArray(meta));
+            assert.ok(meta[0].name === "Account");
+            assert.ok(meta[1].name === "Contact");
+          }.check(done)
+        );
+      });
+
+      it("should return first 25 results from large array of types when not autofetch", function (done) {
+        conn.describeGlobal(function(err, res) {
+          var types = res.sobjects.map(function (sobject) { return sobject.name; });
+          assert.ok(types.length > 30);
+          var typesToFetch = types.slice(0, 30);
+          conn.batchDescribe({types: typesToFetch, autofetch: false}, function(err, meta) {
+            if (err) {
+               throw err;
+            }
+            assert.ok(_.isArray(meta));
+            assert.ok(meta.length === 25);
+            meta.forEach(function (sobject, index) {
+              assert(sobject.name === typesToFetch[index]);
+            });
+          }.check(done));
+        });
+      });
+  
+      it("should return all results from large array of types when autofetch", function (done) {
+        conn.describeGlobal(function(err, res) {
+          var types = res.sobjects.map(function (sobject) { return sobject.name; });
+          assert.ok(types.length > 30);
+          var typesToFetch = types.slice(0, 30);
+          conn.batchDescribe({types: typesToFetch, autofetch: true}, function(err, meta) {
+            if (err) {
+               throw err;
+            }
+            assert.ok(_.isArray(meta));
+            assert.ok(meta.length === 30);
+            meta.forEach(function (sobject, index) {
+              assert(sobject.name === typesToFetch[index]);
+            });
+          }.check(done));
+        });
+      });
+  
+      it("should return all results from large array of types when multiple batches of requests are made", function (done) {
+        conn.describeGlobal(function(err, res) {
+          var types = res.sobjects.map(function (sobject) { return sobject.name; });
+          assert.ok(types.length > 60);
+          var typesToFetch = types.slice(0, 60);
+          conn.batchDescribe({types: typesToFetch, autofetch: true, maxConcurrentRequests: 2}, function(err, meta) {
+            if (err) {
+               throw err;
+            }
+            assert.ok(_.isArray(meta));
+            assert.ok(meta.length === 60);
+            meta.forEach(function (sobject, index) {
+              assert(sobject.name === typesToFetch[index]);
+            });
+          }.check(done));
+        });
+      });
+  
+      describe("then describe cached Contact", function () {
+        it("should return metadata information", function (done) {
+          conn.sobject("Contact").describe$(
+            function (err, meta) {
+              if (err) {
+                throw err;
+              }
+              assert.ok(meta.name === "Contact");
+              assert.ok(_.isArray(meta.fields));
+            }.check(done)
+          );
+        });
       });
     });
   });
@@ -139,7 +256,7 @@ describe("connection-meta", function() {
     describe("get updated accounts", function () {
       it("should return updated account object", function (done) {
         var end = new Date();
-        var start = new Date(end.getTime() - 2 * 24 * 60 * 60 * 1000); // 2 days before
+        var start = new Date(end.getTime() - 1 * 24 * 60 * 60 * 1000); // 1 day before
         conn.sobject('Account').updated(start, end, function (err, result) {
           if (err) { throw err; }
           assert.ok(_.isArray(result.ids));
@@ -153,7 +270,7 @@ describe("connection-meta", function() {
     describe("get updated account with string input", function () {
       it("should return updated account object", function (done) {
         var end = new Date();
-        var start = new Date(end.getTime() - 2 * 24 * 60 * 60 * 1000); // 2 days before
+        var start = new Date(end.getTime() - 1 * 24 * 60 * 60 * 1000); // 1 day before
         conn.sobject('Account').updated(start.toString(), end.toString(), function (err, result) {
           if (err) { throw err; }
           assert.ok(_.isArray(result.ids));
@@ -167,7 +284,7 @@ describe("connection-meta", function() {
     describe("get deleted account", function () {
       it("should return deleted account object", function (done) {
         var end = new Date();
-        var start = new Date(end.getTime() - 2 * 24 * 60 * 60 * 1000); // 2 days before
+        var start = new Date(end.getTime() - 1 * 24 * 60 * 60 * 1000); // 1 day before
         conn.sobject('Account').deleted(start, end, function (err, result) {
           if (err) { throw err; }
           assert.ok(_.isArray(result.deletedRecords));
@@ -181,7 +298,7 @@ describe("connection-meta", function() {
     describe("get deleted account with string input", function () {
       it("should return deleted account object", function (done) {
         var end = new Date();
-        var start = new Date(end.getTime() - 2 * 24 * 60 * 60 * 1000); // 2 days before
+        var start = new Date(end.getTime() - 1 * 24 * 60 * 60 * 1000); // 1 day before
         conn.sobject('Account').deleted(start.toString(), end.toString(), function (err, result) {
           if (err) { throw err; }
           assert.ok(_.isArray(result.deletedRecords));
@@ -196,6 +313,7 @@ describe("connection-meta", function() {
   describe("get user identity information", function() {
     it("should return user identity information", function (done) {
       conn.identity(function(err, res) {
+        if (err) { throw err; }
         assert.ok(_.isString(res.id));
         assert.ok(res.id.indexOf('https://') === 0);
         assert.ok(_.isString(res.user_id));
@@ -290,8 +408,7 @@ describe("connection-meta", function() {
    *
    */
   after(function(done) {
-    testUtils.closeConnection(conn, done);
+    testEnv.closeConnection(conn, done);
   });
 
 });
-

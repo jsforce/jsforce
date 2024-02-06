@@ -1,11 +1,13 @@
 /*global describe, it, before, after */
-var testUtils = require('./helper/test-utils'),
-    assert = testUtils.assert;
+var TestEnv = require('./helper/testenv'),
+    assert = TestEnv.assert;
 
-var _      = require('underscore'),
+var _      = require('lodash/core'),
     sf     = require('../lib/jsforce'),
     SObject = require("../lib/sobject"),
     config = require('./config/salesforce');
+
+var testEnv = new TestEnv(config);
 
 /**
  *
@@ -14,14 +16,14 @@ describe("sobject", function() {
 
   this.timeout(40000); // set timeout to 40 sec.
 
-  var conn = new testUtils.createConnection(config);
+  var conn = testEnv.createConnection();
 
   /**
    *
    */
   before(function(done) {
     this.timeout(600000); // set timeout to 10 min.
-    testUtils.establishConnection(conn, config, done);
+    testEnv.establishConnection(conn, done);
   });
 
 
@@ -38,7 +40,7 @@ describe("sobject", function() {
       assert.ok(Opportunity instanceof SObject);
     });
   });
-  
+
   var acc;
   /**
    *
@@ -189,7 +191,7 @@ describe("sobject", function() {
    */
   describe("select records with asterisk", function() {
     it("should return records", function(done) {
-      Opportunity.select("*, Account.*, Owner.*").exec(function(err, records) {
+      Opportunity.select("*, Account.*, Owner.Name").exec(function(err, records) {
         if (err) { throw err; }
         assert.ok(_.isArray(records));
         for (var i=0; i<records.length - 1; i++) {
@@ -445,7 +447,7 @@ describe("sobject", function() {
       }.check(done));
     });
   });
- 
+
   /**
    *
    */
@@ -471,13 +473,35 @@ describe("sobject", function() {
       }.check(done));
     });
   });
-   
+
+  /**
+   *
+   */
+  describe("explain query plan of list view", function() {
+    it("should get explain result", function(done) {
+      Account.listview(listviewId).explain(function(err, result) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(result.plans));
+        for (var i=0; i<result.plans.length; i++) {
+          var plan = result.plans[i];
+          assert.ok(_.isNumber(plan.cardinality));
+          assert.ok(_.isArray(plan.fields));
+          assert.ok(_.isString(plan.leadingOperationType));
+          assert.ok(_.isNumber(plan.relativeCost));
+          assert.ok(_.isNumber(plan.sobjectCardinality));
+          assert.ok(_.isString(plan.sobjectType));
+        }
+      }.check(done));
+    });
+  });
+
+
+
   /**
    *
    */
   after(function(done) {
-    testUtils.closeConnection(conn, done);
+    testEnv.closeConnection(conn, done);
   });
 
 });
-

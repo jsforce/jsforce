@@ -1,9 +1,9 @@
 /*global describe, it, before */
-var testUtils = require('./helper/test-utils'),
-    assert = testUtils.assert;
+var TestEnv = require('./helper/testenv'),
+    assert = TestEnv.assert;
 
 var async  = require('async'),
-    _      = require('underscore'),
+    _      = require('lodash/core'),
     authorize = require('./helper/webauth'),
     sf     = require('../lib/jsforce'),
     config = require('./config/salesforce');
@@ -96,7 +96,7 @@ describe("connection-session", function() {
       });
     });
 
-if (testUtils.isNodeJS) {
+if (TestEnv.isNodeJS) {
 
     describe("oauth2 session", function() {
       var sessionInfo;
@@ -145,7 +145,7 @@ if (testUtils.isNodeJS) {
 
 
 /*------------------------------------------------------------------------*/
-if (testUtils.isNodeJS) {
+if (TestEnv.isNodeJS) {
 
   /**
    *
@@ -255,4 +255,3 @@ if (testUtils.isNodeJS) {
 /*------------------------------------------------------------------------*/
 
 });
-

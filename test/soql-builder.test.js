@@ -1,6 +1,6 @@
 /*global describe, it */
-var testUtils = require('./helper/test-utils'),
-    assert = testUtils.assert;
+var TestEnv = require('./helper/testenv'),
+    assert = TestEnv.assert;
 
 var SOQLBuilder = require('../lib/soql-builder'),
     SfDate = require('../lib/date');
@@ -30,6 +30,23 @@ describe("soql-builder", function() {
     });
   });
 
+  describe("Query with multiple conditions on a single field", function() {
+    var soql = SOQLBuilder.createSOQL({
+      fields: [ "Id" ],
+      table: "Opportunity",
+      conditions: { CloseDate: { $gte: '2020-02-25', $lt: '2020-02-26' } },
+      limit : 10,
+      offset : 20
+    });
+
+    it("should include all conditions", function() {
+      assert.ok(soql ===
+        "SELECT Id FROM Opportunity " +
+        "WHERE CloseDate >= '2020-02-25' AND CloseDate < '2020-02-26' "+
+        "LIMIT 10 OFFSET 20"
+      );
+    })
+  });
   /**
    *
    */
@@ -89,7 +106,7 @@ describe("soql-builder", function() {
           { 'Account.Type' : 'Partner' },
           {
             $and : [
-              { Amount: { $gte : 1000 } }, 
+              { Amount: { $gte : 1000 } },
               { Amount: { $lt  : 2000 } }
             ]
           }
@@ -114,7 +131,7 @@ describe("soql-builder", function() {
       conditions: {
         $not : {
           $and : [
-            { Amount: { $gte : 1000 } }, 
+            { Amount: { $gte : 1000 } },
             { Amount: { $lt  : 2000 } },
             { 'Account.Type' : 'Customer' }
           ]
@@ -164,7 +181,7 @@ describe("soql-builder", function() {
           {
             $not : {
               $and : [
-                { Amount: { $gte : 1000 } }, 
+                { Amount: { $gte : 1000 } },
                 { Amount: { $lt  : 2000 } },
                 { 'Account.Type' : 'Customer' }
               ]
@@ -272,6 +289,27 @@ describe("soql-builder", function() {
   /**
    *
    */
+  describe("Query using $includes/$excludes operator", function() {
+    var soql = SOQLBuilder.createSOQL({
+      table: "Contact",
+      conditions: {
+        Languages__c: { $includes: [ 'English', 'Japanese' ] },
+        Certifications__c: { $excludes: [ 'Oracle' ] }
+      }
+    });
+
+    it("should equal to soql", function() {
+      assert.ok(soql ===
+        "SELECT Id FROM Contact " +
+        "WHERE Languages__c INCLUDES ('English', 'Japanese') "+
+        "AND Certifications__c EXCLUDES ('Oracle')"
+      );
+    });
+  });
+
+  /**
+   *
+   */
   describe("Query for matching null", function() {
     var soql = SOQLBuilder.createSOQL({
       table: "Account",
@@ -304,7 +342,7 @@ describe("soql-builder", function() {
       assert.ok(soql === "SELECT Id FROM Account");
     });
   });
-  
+
   /**
    *
    */
@@ -349,7 +387,7 @@ describe("soql-builder", function() {
       );
     });
   });
-  
+
   /**
    *
    */
@@ -375,5 +413,5 @@ describe("soql-builder", function() {
       );
     });
   });
-     
+
 });

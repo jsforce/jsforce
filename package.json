@@ -10,20 +10,29 @@
     "database.com"
   ],
   "homepage": "http://github.com/jsforce/jsforce",
-  "version": "1.4.0",
+  "version": "1.11.1",
   "repository": {
     "type": "git",
     "url": "git://github.com/jsforce/jsforce.git"
   },
+  "license": "MIT",
   "licenses": [
     {
       "type": "MIT",
       "url": "http://github.com/jsforce/jsforce/raw/master/LICENSE"
     }
   ],
-  "main": "./lib/jsforce",
+  "main": "./index",
   "scripts": {
-    "test": "./test/bin/run-test"
+    "build": "gulp build",
+    "build:test": "gulp build:test",
+    "build:all": "gulp build:all",
+    "doc": "jsdoc lib -d doc --recurse --lenient",
+    "test": "npm run test:node",
+    "test:all": "npm run test:node && npm run test:browser",
+    "test:node": "mocha --retries 2 --reporter spec --require intelli-espower-loader --exit",
+    "test:browser": "testem",
+    "prepublish": "node -e \"if(process.env.npm_package_version!==require('./lib/VERSION')){console.error('The pacakge.json version is not matching to ./lib/VERSION.js');process.exit(1)}\""
   },
   "directories": {
     "test": "test/"
@@ -31,56 +40,70 @@
   "files": [
     "README.md",
     "bower.json",
-    "Gruntfile.js",
     "LICENSE",
     "package.json",
     "bin",
     "build",
     "lib",
-    "test"
+    "core.js",
+    "index.js"
   ],
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=4.0"
   },
   "bin": {
     "jsforce": "./bin/jsforce"
   },
   "dependencies": {
+    "base64-url": "^2.2.0",
     "co-prompt": "^1.0.0",
-    "coffee-script": "^1.8.0",
-    "commander": "^2.6.0",
-    "faye": "^1.1.0",
+    "coffeescript": "^1.10.0",
+    "commander": "^2.9.0",
+    "csv-parse": "^4.10.1",
+    "csv-stringify": "^1.0.4",
+    "faye": "^1.4.0",
     "inherits": "^2.0.1",
-    "open": "0.0.5",
-    "q": "^1.1.2",
-    "readable-stream": "^1.0.33",
-    "request": "^2.51.0",
-    "underscore": "^1.7.0",
-    "xml2js": "^0.4.4"
+    "lodash": "^4.17.19",
+    "multistream": "^2.0.5",
+    "opn": "^5.3.0",
+    "promise": "^7.1.1",
+    "readable-stream": "^2.1.0",
+    "request": "^2.72.0",
+    "xml2js": "^0.5.0"
   },
   "devDependencies": {
-    "async": "^0.9.0",
-    "browserify": "^5.11.0",
-    "dotenv": "^0.4.0",
-    "envfile": "^1.0.0",
-    "espower-loader": "^0.7.1",
-    "espowerify": "^0.7.1",
-    "grunt": "^0.4.5",
-    "grunt-browserify": "^3.0.1",
-    "grunt-contrib-clean": "^0.6.0",
-    "grunt-contrib-copy": "^0.5.0",
-    "grunt-contrib-uglify": "^0.5.1",
-    "grunt-contrib-watch": "^0.6.1",
-    "grunt-extract-required": "0.0.6",
-    "grunt-jsdoc": "^0.5.6",
-    "grunt-string-replace": "^1.0.0",
-    "intelli-espower-loader": "^0.2.0",
-    "mocha": "^1.21.4",
-    "power-assert": "^0.7.2",
-    "require-swapper": "^0.1.2",
-    "webdriverio": "^2.4.3"
+    "archiver": "^1.3.0",
+    "async": "^1.5.2",
+    "babel": "^6.23.0",
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0",
+    "browserify": "^16.2.2",
+    "bufferutil": "^4.0.0",
+    "envify": "^3.4.1",
+    "espower-loader": "^1.2.2",
+    "espowerify": "^1.1.0",
+    "gulp": "^4.0.0",
+    "gulp-rename": "^1.4.0",
+    "gulp-sourcemaps": "^1.12.1",
+    "gulp-uglify": "^3.0.2",
+    "intelli-espower-loader": "^1.0.1",
+    "jsdoc": "^3.6.3",
+    "mocha": "^5.2.0",
+    "power-assert": "^1.6.0",
+    "puppeteer": "^1.18.1",
+    "require-swapper": "^0.1.7",
+    "testem": "^2.8.2",
+    "through2": "^2.0.3",
+    "utf-8-validate": "^5.0.1",
+    "vinyl-buffer": "^1.0.1",
+    "vinyl-source-stream": "^2.0.0"
   },
   "browser": {
+    "./index": "./lib/browser/jsforce",
+    "./index.js": "./lib/browser/jsforce",
+    "./core": "./lib/browser/core",
+    "./core.js": "./lib/browser/core",
     "request": "./lib/browser/request.js"
   }
 }

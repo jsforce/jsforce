@@ -1,31 +1,33 @@
 /*global describe, it, before, after */
-var testUtils = require('./helper/test-utils'),
-    assert = testUtils.assert;
+var TestEnv = require('./helper/testenv'),
+    assert = TestEnv.assert;
 
-var _      = require('underscore'),
+var _      = require('lodash/core'),
     fs     = require('fs'),
-    stream = require('stream'),
-    Stream = stream.Stream,
+    stream = require('readable-stream'),
+    through2 = require('through2'),
     querystring = require('querystring'),
     sf     = require('../lib/jsforce'),
     RecordStream = require('../lib/record-stream'),
     config = require('./config/salesforce');
 
+var testEnv = new TestEnv(config);
+
 /**
  *
  */
-describe("query", function() { 
+describe("query", function() {
 
   this.timeout(40000); // set timeout to 40 sec.
 
-  var conn = new testUtils.createConnection(config);
+  var conn = testEnv.createConnection();
 
   /**
    *
    */
   before(function(done) {
     this.timeout(600000); // set timeout to 10 min.
-    testUtils.establishConnection(conn, config, done);
+    testEnv.establishConnection(conn, done);
   });
 
 
@@ -94,7 +96,7 @@ describe("query", function() {
       var records = [];
       var query = conn.query("SELECT Id, Name FROM " + (config.bigTable || 'Account'));
       query.on('record', function(record, i, cnt){
-        records.push(record); 
+        records.push(record);
       });
       query.on('end', function() {
         callback(null, { query : query, records : records });
@@ -106,8 +108,8 @@ describe("query", function() {
       var callback = function(err, result) {
         if (err) { throw err; }
         assert.ok(result.query.totalFetched === result.records.length);
-        assert.ok(result.query.totalSize > 2000 ? 
-                  result.query.totalFetched === 2000 : 
+        assert.ok(result.query.totalSize > 2000 ?
+                  result.query.totalFetched === 2000 :
                   result.query.totalFetched === result.query.totalSize
         );
       }.check(done);
@@ -122,7 +124,7 @@ describe("query", function() {
       var records = [];
       var query = conn.query("SELECT Id, Name FROM " + (config.bigTable || 'Account'));
       query.on('record', function(record) {
-             records.push(record); 
+             records.push(record);
            })
            .on('error', function(err) {
              callback(err);
@@ -134,8 +136,8 @@ describe("query", function() {
       var callback = function(err, result) {
         if (err) { throw err; }
         assert.ok(result.query.totalFetched === result.records.length);
-        assert.ok(result.query.totalSize > 5000 ? 
-                  result.query.totalFetched === 5000 : 
+        assert.ok(result.query.totalSize > 5000 ?
+                  result.query.totalFetched === 5000 :
                   result.query.totalFetched === result.query.totalSize
         );
       }.check(done);
@@ -149,30 +151,29 @@ describe("query", function() {
     it("should scan records via stream up to maxFetch num", function(done) {
       var records = [];
       var query = conn.query("SELECT Id, Name FROM " + (config.bigTable || 'Account'));
-      var outStream = new RecordStream();
-      outStream.sendable = true;
-      outStream.send = function(record) {
-        records.push(record);
-        if (records.length % 100 === 0) {
-          outStream.sendable = false;
-          setTimeout(function() {
-            outStream.sendable = true;
-            outStream.emit('drain');
-          }, Math.floor(1000 * Math.random()));
+      var outStream = through2.obj(
+        function transform(record, enc, next) {
+          records.push(record);
+          if (records.length % 100 === 0) {
+            var waitTime = Math.floor(1000 * Math.random());
+            setTimeout(function() { next(); }, waitTime);
+          } else {
+            next();
+          }
+        },
+        function flush(done) {
+          callback(null, { query : query, records : records });
+          done();
         }
-        return outStream.sendable;
-      };
-      outStream.end = function() {
-        callback(null, { query : query, records : records });
-      };
+      );
       query.pipe(outStream);
       query.on("error", function(err) { callback(err); });
 
       var callback = function(err, result) {
         if (err) { throw err; }
         assert.ok(result.query.totalFetched === result.records.length);
-        assert.ok(result.query.totalSize > 5000 ? 
-                  result.query.totalFetched === 5000 : 
+        assert.ok(result.query.totalSize > 5000 ?
+                  result.query.totalFetched === 5000 :
                   result.query.totalFetched === result.query.totalSize
         );
       }.check(done);
@@ -185,23 +186,20 @@ describe("query", function() {
   describe("query table and convert to readable stream", function() {
     it("should get CSV text", function(done) {
       var query = conn.query("SELECT Id, Name FROM Account LIMIT 10");
-      var csvOut = new Stream();
-      csvOut.writable = true;
+      var csvOut = new stream.Writable();
       var result = '';
-      csvOut.write = function(data) {
-        result += data;
+      csvOut._write = function(data, enc, next) {
+        result += data.toString('utf8');
+        next();
       };
-      csvOut.end = function(data) {
-        result += data;
-        csvOut.writable = false;
+      query.stream().pipe(csvOut).on('finish', function() {
         callback(null, result);
-      };
-      query.stream().pipe(csvOut);
+      });
       var callback = function(err, csv) {
         if (err) { throw err; }
         assert.ok(_.isString(csv));
-        var header = csv.split("\n")[0];
-        assert.equal(header, "Id,Name");
+        var header = csv.split('\n')[0];
+        assert(header === "Id,Name");
       }.check(done);
     });
   });
@@ -228,12 +226,192 @@ describe("query", function() {
     });
   });
 
+/*------------------------------------------------------------------------*/
+  // The num should be less than 200, not to fallback to bulk API
+  var accountNum = 20;
+
+  /**
+   *
+   */
+  describe("update queried records using Query#update", function() {
+    before(function(done) {
+      var records = [];
+      for (var i=0; i<accountNum; i++) {
+        records.push({
+          Name: 'New Bulk Account #'+(i+1),
+          BillingState: 'CA',
+          NumberOfEmployees: 300 * (i+1)
+        });
+      }
+      conn.sobject("Account").create(records, done);
+    });
+
+    it("should return updated status", function(done) {
+      conn.sobject('Account')
+          .find({ Name : { $like : 'New Bulk Account%' }})
+          .update({
+            Name : '${Name} (Updated)',
+            BillingState: null
+          }, function(err, rets) {
+            if (err) { throw err; }
+            assert.ok(_.isArray(rets));
+            assert.ok(rets.length === accountNum);
+            for (var i=0; i<rets.length; i++) {
+              var ret = rets[i];
+              assert.ok(_.isString(ret.id));
+              assert.ok(ret.success === true);
+            }
+          }.check(done));
+    });
+
+    describe("then query updated records", function() {
+      it("should return updated records", function(done) {
+        conn.sobject('Account')
+            .find({ Name : { $like : 'New Bulk Account%' }}, 'Id, Name, BillingState', function(err, records) {
+              if (err) { throw err; }
+              assert.ok(_.isArray(records));
+              assert.ok(records.length === accountNum);
+              var record;
+              for (var i=0; i<records.length; i++) {
+                record = records[i];
+                assert.ok(_.isString(record.Id));
+                assert.ok(/\(Updated\)$/.test(record.Name));
+                assert.ok(record.BillingState === null);
+              }
+            }.check(done));
+      });
+    });
+  });
+
+  describe("update queried records using Query#update, for unmatching query", function() {
+    it("should return empty array records", function(done) {
+      conn.sobject('Account')
+          .find({ CreatedDate : { $lt : new sf.Date('1970-01-01T00:00:00Z') }}) // should not match any records
+          .update({
+            Name: '${Name} (Updated)',
+            BillingState: null
+          }, function(err, rets) {
+            if (err) { throw err; }
+            assert.ok(_.isArray(rets));
+            assert.ok(rets.length === 0);
+          }.check(done));
+    });
+  });
+
+  /**
+   *
+   */
+  describe("delete queried records using Query#destroy", function() {
+    it("should return deleted status", function(done) {
+      conn.sobject('Account')
+          .find({ Name : { $like : 'New Bulk Account%' }})
+          .destroy(function(err, rets) {
+            if (err) { throw err; }
+            assert.ok(_.isArray(rets));
+            assert.ok(rets.length === accountNum);
+            for (var i=0; i<rets.length; i++) {
+              var ret = rets[i];
+              assert.ok(_.isString(ret.id));
+              assert.ok(ret.success === true);
+            }
+          }.check(done));
+    });
+  });
+
+  describe("delete queried records using Query#destroy, for unmatching query", function() {
+    it("should return empty array records", function(done) {
+      conn.sobject('Account')
+          .find({ CreatedDate : { $lt : new sf.Date('1970-01-01T00:00:00Z') }})
+          .destroy(function(err, rets) {
+            if (err) { throw err; }
+            assert.ok(_.isArray(rets));
+            assert.ok(rets.length === 0);
+          }.check(done));
+    });
+  });
+
+/*------------------------------------------------------------------------*/
+  // The num is over 200, but not falling back to bulk API because `allowBulk` option is set to false.
+  var massiveAccountNum = 300;
+
+  /**
+   *
+   */
+  describe("update queried records using Query#update, with allowBulk = false", function() {
+    before(function(done) {
+      var records = [];
+      for (var i=0; i<massiveAccountNum; i++) {
+        records.push({
+          Name: 'New Bulk Account #'+(i+1),
+          BillingState: 'CA',
+          NumberOfEmployees: 300 * (i+1)
+        });
+      }
+      conn.sobject("Account").create(records, { allowRecursive: true }, done);
+    });
+
+    it("should return updated status", function(done) {
+      conn.sobject('Account')
+          .find({ Name : { $like : 'New Bulk Account%' }})
+          .update({
+            Name : '${Name} (Updated)',
+            BillingState: null
+          }, { allowBulk: false }, function(err, rets) {
+            if (err) { throw err; }
+            assert.ok(_.isArray(rets));
+            assert.ok(rets.length === massiveAccountNum);
+            for (var i=0; i<rets.length; i++) {
+              var ret = rets[i];
+              assert.ok(_.isString(ret.id));
+              assert.ok(ret.success === true);
+            }
+          }.check(done));
+    });
+
+    describe("then query updated records", function() {
+      it("should return updated records", function(done) {
+        conn.sobject('Account')
+            .find({ Name : { $like : 'New Bulk Account%' }}, 'Id, Name, BillingState', function(err, records) {
+              if (err) { throw err; }
+              assert.ok(_.isArray(records));
+              assert.ok(records.length === massiveAccountNum);
+              var record;
+              for (var i=0; i<records.length; i++) {
+                record = records[i];
+                assert.ok(_.isString(record.Id));
+                assert.ok(/\(Updated\)$/.test(record.Name));
+                assert.ok(record.BillingState === null);
+              }
+            }.check(done));
+      });
+    });
+  });
+
+  /**
+   *
+   */
+  describe("delete queried records using Query#destroy, with allowBulk = false", function() {
+    it("should return deleted status", function(done) {
+      conn.sobject('Account')
+          .find({ Name : { $like : 'New Bulk Account%' }})
+          .destroy(function(err, rets) {
+            if (err) { throw err; }
+            assert.ok(_.isArray(rets));
+            assert.ok(rets.length === massiveAccountNum);
+            for (var i=0; i<rets.length; i++) {
+              var ret = rets[i];
+              assert.ok(_.isString(ret.id));
+              assert.ok(ret.success === true);
+            }
+          }.check(done));
+    });
+  });
+
   /**
    *
    */
   after(function(done) {
-    testUtils.closeConnection(conn, done);
+    testEnv.closeConnection(conn, done);
   });
 
 });
-

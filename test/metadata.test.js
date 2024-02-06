@@ -1,11 +1,14 @@
 /*global describe, it, before, after, __dirname */
-var testUtils = require('./helper/test-utils'),
-    assert = testUtils.assert;
+var TestEnv = require('./helper/testenv'),
+    assert = TestEnv.assert;
 
-var _      = require('underscore'),
+var _      = require('lodash/core'),
     fs     = require('fs'),
     sf     = require('../lib/jsforce'),
     config = require('./config/salesforce');
+
+var testEnv = new TestEnv(config);
+
 
 /**
  *
@@ -14,17 +17,21 @@ describe("metadata", function() {
 
   this.timeout(40000); // set timeout to 40 sec.
 
-  var conn = testUtils.createConnection(config);
+  var conn = testEnv.createConnection();
 
   // adjust poll timeout to test timeout.
   conn.metadata.pollTimeout = 40*1000;
+
+  // TODO: remove the overriding of connection version when updated the default API version.
+  // At least ver 45.0 is needed to pass rename test, otherwise it fails `enableLicensing` not valid error.
+  conn.version = '45.0';
 
   /**
    *
    */
   before(function(done) {
     this.timeout(600000); // set timeout to 10 min.
-    testUtils.establishConnection(conn, config, done);
+    testEnv.establishConnection(conn, done);
   });
 
   /**
@@ -211,7 +218,7 @@ describe("metadata", function() {
   }); // end of synchronous call tests
 
 
-if (testUtils.isNodeJS) {
+if (TestEnv.isNodeJS) {
 
   /**
    *
@@ -219,7 +226,7 @@ if (testUtils.isNodeJS) {
   describe("deploy metadata in packaged file", function() {
     it("should deploy package", function(done) {
       var zipStream = fs.createReadStream(__dirname + "/data/MyPackage.zip");
-      conn.metadata.deploy(zipStream, { runTests: [ 'MyApexTriggerTest' ] }).complete(function(err, result) {
+      conn.metadata.deploy(zipStream, { testLevel: 'RunSpecifiedTests', runTests: [ 'MyApexTriggerTest' ] }).complete(function(err, result) {
         if (err) { throw err; }
         assert.ok(result.done === true);
         assert.ok(result.success === true);
@@ -283,7 +290,7 @@ if (testUtils.isNodeJS) {
    *
    */
   after(function(done) {
-    testUtils.closeConnection(conn, done);
+    testEnv.closeConnection(conn, done);
   });
 
 });

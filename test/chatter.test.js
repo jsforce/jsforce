@@ -1,10 +1,12 @@
 /*global describe, it, before, after */
-var testUtils = require('./helper/test-utils'),
-    assert = testUtils.assert;
+var TestEnv = require('./helper/testenv'),
+    assert = TestEnv.assert;
 
-var _      = require('underscore'),
+var _      = require('lodash/core'),
     sf     = require('../lib/jsforce'),
     config = require('./config/salesforce');
+
+var testEnv = new TestEnv(config);
 
 /**
  *
@@ -13,14 +15,14 @@ describe("chatter", function() {
 
   this.timeout(20000); // set timeout to 20 sec.
 
-  var conn = new testUtils.createConnection(config);
+  var conn = testEnv.createConnection();
 
   /**
    *
    */
   before(function(done) {
     this.timeout(600000); // set timeout to 10 min.
-    testUtils.establishConnection(conn, config, done);
+    testEnv.establishConnection(conn, done);
   });
 
 
@@ -206,6 +208,19 @@ describe("chatter", function() {
       }.check(done));
     });
 
+    it("should update a comment post", function(done) {
+      conn.chatter.resource(feedElementUrl).update({
+        body: {
+          messageSegments: [{
+            type: 'Text',
+            text: 'This is an updated comment #1'
+          }]
+        }
+      }, function(err, result) {
+        if (err) { throw err; }
+      }.check(done));
+    });
+
     after(function(done) {
       conn.chatter.resource(feedElementUrl).delete(function(err, result) {
         if (err) { throw err; }
@@ -297,7 +312,10 @@ describe("chatter", function() {
     before(function(done) {
       chatter.resource('/feeds').retrieve(function(err, result) {
         if (err) { throw err; }
-        feeds = result.feeds;
+        feeds = result.feeds.filter(function(feed) {
+          // Exclude PendingReview feed type, which raise 403 error in feed-elements GET request
+          return feed.feedType !== 'PendingReview';
+        });
       }.check(done));
     });
 
@@ -371,7 +389,7 @@ describe("chatter", function() {
    *
    */
   after(function(done) {
-    testUtils.closeConnection(conn, done);
+    testEnv.closeConnection(conn, done);
   });
 
 });
