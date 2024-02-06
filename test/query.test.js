@@ -47,6 +47,25 @@ describe("query", function() {
   /**
    *
    */
+  describe("query accounts without caching", function() {
+    before(function() {
+      conn.noCache = true;
+    });
+    after(function() {
+      conn.noCache = false;
+    });
+    it("should return records", function(done) {
+      var query = conn.query("SELECT Id, Name FROM Account");
+      query.run(function(err, result) {
+        if (err) { throw err; }
+        assert.ok(_.isNumber(result.totalSize));
+      }.check(done));
+    });
+  });
+
+  /**
+   *
+   */
   describe("query accounts with scanAll option", function() {
     before(function(done) {
       conn.sobject('Account').create({ Name: 'Deleting Account #1'}, function(err, ret) {
