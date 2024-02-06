@@ -13,9 +13,6 @@
         <field>TITLE</field>
     </columns>
     <columns>
-        <field>COMPANY</field>
-    </columns>
-    <columns>
         <field>LEAD_SOURCE</field>
     </columns>
     <columns>
@@ -27,7 +24,12 @@
     <columns>
         <field>EMAIL</field>
     </columns>
-    <format>Tabular</format>
+    <format>Summary</format>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>COMPANY</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
     <name>Lead List Report</name>
     <params>
         <name>co</name>
@@ -36,6 +38,8 @@
     <reportType>LeadList</reportType>
     <scope>org</scope>
     <showDetails>true</showDetails>
+    <sortColumn>OWNER</sortColumn>
+    <sortOrder>Asc</sortOrder>
     <timeFrameFilter>
         <dateColumn>CREATED_DATE</dateColumn>
         <interval>INTERVAL_CUSTOM</interval>

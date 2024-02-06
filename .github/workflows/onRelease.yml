@@ -1,0 +1,19 @@
+name: publish
+
+on:
+  release:
+    types: [released]
+  # support manual release in case something goes wrong and needs to be repeated or tested
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: tag that needs to publish
+        type: string
+        required: true
+jobs:
+  npm-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Do not run the release action on main.  Use 2.0 as the branch"
+          exit 1

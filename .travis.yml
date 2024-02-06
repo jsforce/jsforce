@@ -1,19 +1,19 @@
 language: node_js
 matrix:
   include:
-    - node_js: "0.12"
+    - node_js: "6"
       env: BROWSER_TEST=false
-    - node_js: "4.2"
+    - node_js: "8"
       env: BROWSER_TEST=false
     - node_js: "stable"
       env: BROWSER_TEST=false
     - node_js: "stable"
       env: BROWSER_TEST=true
 sudo: false
-before_install:
-  - source .travis/setup.sh
 script:
   - .travis/test.sh
 cache:
   directories:
     - node_modules
+before_install:
+  - dpkg --compare-versions `npm -v` ge 5 || npm i -g npm@^5

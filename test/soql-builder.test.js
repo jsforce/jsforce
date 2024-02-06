@@ -30,6 +30,23 @@ describe("soql-builder", function() {
     });
   });
 
+  describe("Query with multiple conditions on a single field", function() {
+    var soql = SOQLBuilder.createSOQL({
+      fields: [ "Id" ],
+      table: "Opportunity",
+      conditions: { CloseDate: { $gte: '2020-02-25', $lt: '2020-02-26' } },
+      limit : 10,
+      offset : 20
+    });
+
+    it("should include all conditions", function() {
+      assert.ok(soql ===
+        "SELECT Id FROM Opportunity " +
+        "WHERE CloseDate >= '2020-02-25' AND CloseDate < '2020-02-26' "+
+        "LIMIT 10 OFFSET 20"
+      );
+    })
+  });
   /**
    *
    */
@@ -265,6 +282,27 @@ describe("soql-builder", function() {
       assert.ok(soql ===
         "SELECT Id FROM Task " +
         "WHERE WhatId != null AND WhoId = null"
+      );
+    });
+  });
+
+  /**
+   *
+   */
+  describe("Query using $includes/$excludes operator", function() {
+    var soql = SOQLBuilder.createSOQL({
+      table: "Contact",
+      conditions: {
+        Languages__c: { $includes: [ 'English', 'Japanese' ] },
+        Certifications__c: { $excludes: [ 'Oracle' ] }
+      }
+    });
+
+    it("should equal to soql", function() {
+      assert.ok(soql ===
+        "SELECT Id FROM Contact " +
+        "WHERE Languages__c INCLUDES ('English', 'Japanese') "+
+        "AND Certifications__c EXCLUDES ('Oracle')"
       );
     });
   });

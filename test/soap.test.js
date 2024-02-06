@@ -83,9 +83,15 @@ describe("soap", function() {
     }];
 
     before(function(done) {
+      // Because ver >= 38.0 metadata API doesn't return picklist values in standard field,
+      // fix the version to 37.0
+      var conn37_0 = testEnv.createConnection();
+      conn37_0.version = '37.0';
+      conn37_0.accessToken = conn.accessToken;
+      conn37_0.instanceUrl = conn.instanceUrl;
       sf.Promise.all([
         conn.sobject('Lead').create(leads),
-        conn.metadata.read('CustomField', 'Lead.Status')
+        conn37_0.metadata.read('CustomField', 'Lead.Status')
       ]).then(function(rrets) {
         var rets = rrets[0], statusField = rrets[1];
         leadIds = rets.map(function(r){ return r.id; });
@@ -159,6 +165,87 @@ describe("soap", function() {
         .catch(done);
     });
 
+  });
+  
+  describe("create, update, upsert, delete with SOAP API", function() {
+    var deleteIds = [];
+    var updates = [];
+    
+    var sObjects = [{
+      type: 'UpsertTable__c',
+      Name : '100 Name',
+      ExtId__c: '100'
+    }, {
+      type: 'UpsertTable__c',
+      Name : '101 Name',
+      ExtId__c: '101'
+    }, {
+      type: 'UpsertTable__c',
+      Name : '102 Name',
+      ExtId__c: '102'
+    }, {
+      type: 'UpsertTable__c',
+      Name : '103 Name',
+      ExtId__c: '103'
+    }, {
+      type: 'UpsertTable__c',
+      Name : '104 Name',
+      ExtId__c: '104'
+    }];
+    it("should create sObjects", function(done) {
+      conn.soap.create(sObjects, function(err, rets) {
+        if (err) { throw err; }
+        for(var i=0; i<rets.length; i++) {
+          var ret = rets[i];
+          assert(ret.success === true);
+          assert(_.isString(ret.id));
+          updates.push({
+            type : 'UpsertTable__c',
+            Id : ret.id,
+            Name : sObjects[i] + ' Updated'
+          });
+          deleteIds.push(ret.id);
+        }
+      }.check(done));
+    });
+    
+    it("should update sObjects", function(done) {
+      conn.soap.update(updates, function(err, rets) {
+        if (err) { throw err; }
+        for(var i=0; i<rets.length; i++) {
+          var ret = rets[i];
+          assert(ret.success === true);
+          assert(_.isString(ret.id));
+          assert(ret.id === deleteIds[i]);
+        }
+      }.check(done));
+    });
+    
+    it("should upsert sObjects", function(done) {
+      conn.soap.upsert('ExtId__c', sObjects, function(err, rets) {
+        if (err) { throw err; }
+        for(var i=0; i<rets.length; i++) {
+          var ret = rets[i];
+          assert(ret.created === false);
+          assert(ret.success === true);
+          assert(_.isString(ret.id));
+          assert(ret.id === deleteIds[i]);
+        }
+      }.check(done));
+    });
+    
+    it("should delete sObjects", function(done) {
+      conn.soap.delete(deleteIds, function(err, rets) {
+        if (err) { throw err; }
+        for(var i=0; i<rets.length; i++) {
+          var ret = rets[i];
+          assert(ret.success === true);
+          assert(_.isString(ret.id));
+          assert(ret.id === deleteIds[i]);
+        }
+      }.check(done));
+    });
+  
   });
 
 /*------------------------------------------------------------------------*/

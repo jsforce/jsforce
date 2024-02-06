@@ -1,3 +1,83 @@
+## 1.9.0 (Jul 25, 2018)
+* Change API ver to 42.0
+* Catch csv parsing errors and emit (#775)
+* Use composite collection API for multiple records manipulation (#777)
+* Use SObject collection API for query update/destroy operation (#781)
+* Allow auto client registration for default client in CLI (#782)
+* Add Streaming API extensions, replay extension, & auth failure detection (#740)
+* Fix browser build error (#783)
+* Remove JSONP endpoint as it is not working in modern browsers (#785)
+
+
+## 1.8.5 (Jul 9, 2018)
+* Remove the vulnerable `node-open` library (#772)
+
+
+## 1.8.3 (Jul 9, 2018)
+* Support OAuth PKCE, OAuth2 authz code flow without client secret (#735)
+
+
+## 1.8.0 (Apr 27, 2018)
+* Change API ver to 39.0 (#630)
+* Fix to convert boolean to string when inserting record from bulk (#627)
+* Add destroy report functionality to Analytics API (#568)
+* Add dashboard functionality to Analytics API (#584, #592)
+* Check that data.records isn't undefined or null before checking the num of records (#567, #575)
+* Make external ID not mandantory in upsert (#589)
+* Remove secure information from log outputs (#598, #608, #609)
+* Add ability to specify a HTTP proxy when creating connection in Node.js (#581)
+
+
+## 1.7.1 (Oct 28, 2016)
+* Add `$includes` and `$excludes` operator in query builder (#530)
+* Added batchId and jobId information in error object (#542)
+* Fix REPL completion in node v6+ env (#554)
+* Fix runTestsAsynchronous in v37.0 API to invoke via HTTP POST (#522)
+* Add options in crud method to pass HTTP header information (#507)
+* Add `sort` config in `Query#include()` options (#513)
+
+
+## 1.7.0 (Jul 6, 2016)
+* Change default API ver to 37.0 (#502)
+* Update streaming API endpoint for durable generic streaming (changed from 37.0) (#502)
+* Change to use stream-based CSV parser in bulk query result (#500)
+* Fix identity() to use JSONP in browser env (#375)
+* Fix error in Salesforce Canvas env (#464)
+* Support for query options (#465)
+* Fix error in logout() to remove authorized OAuth token (#466)
+
+
+## 1.6.5 (May 30, 2016)
+* Remove pacakge.json reference in require() call to prevent local info leackage in browserify (#479,#485)
+
+
+## 1.6.3 (May 9, 2016)
+* Add support of webpack bundling (#381, #452, #457)
+* Fix warnings/errors in CI execution (#459, #461)
+
+
+## 1.6.1 (Apr 22, 2016)
+* Fix the npm published package in 1.6.0 (#420)
+* Add support for Run Tests Synchronous Tooling API (#424)
+
+
+## 1.6.0 (Mar 2, 2016)
+* Optimize the build result when used with browserify
+* Added support for custom headers in Apex REST (#372)
+* Change default API ver to 36.0 (#365)
+* Fix streaming api update from spring 16 (#364)
+* Change underscore to lodash (#336)
+* Remove support of Node.js ver 0.10.x (#334)
+* Change build script from Grunt to gulp (#333)
+* Setting default connection version to the latest version (#290)
+* Bulk query with large result set fails silently bug enhancement (#162)
+
+
+## 1.5.1 (Mar 2, 2016)
+* Fix problem in using IE9 (#283)
+* Fix memory leak in refreshing token when instance url has been changed (#197, #247)
+
+
 ## 1.5.0 (Aug 12, 2015)
 * Change API version to 34.0
 * Add version info in jsforce object root (#254)
