@@ -198,6 +198,31 @@ describe("metadata", function() {
       });
     });
 
+    describe("list metadata synchronously without caching", function() {
+      before(function() {
+        conn.noCache = true;
+      });
+      after(function() {
+        conn.noCache = false;
+      });
+      it("should list custom objects", function(done) {
+        conn.metadata.list({ type: 'CustomObject' }, function(err, results) {
+          if (err) { throw err; }
+          assert.ok(_.isArray(results));
+          _.forEach(results, function(result) {
+            assert.ok(result.type === 'CustomObject');
+            assert.ok(_.isString(result.id));
+            assert.ok(_.isString(result.fullName));
+          });
+          fullNames = results.filter(function(m) {
+            return m.fullName.match(/^JSforceTestObject.+__c$/);
+          }).map(function(m) {
+            return m.fullName;
+          });
+        }.check(done));
+      });
+    });
+
     /**
      *
      */

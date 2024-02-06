@@ -60,6 +60,38 @@ describe("connection-meta", function() {
     });
   });
 
+
+  describe("connection-no-cache", function() {
+    this.timeout(40000); // set timeout to 40 sec.
+    var conn = testEnv.createConnection();
+    conn.noCache = true;
+
+    before(function(done) {
+      this.timeout(600000); // set timeout to 10 min.
+      testEnv.establishConnection(conn, done);
+    });
+
+    
+    it("should return metadata information", function(done) {
+      conn.sobject('Account').describe(function(err, meta) {
+        if (err) { throw err; }
+        assert.ok(meta.name === "Account");
+        assert.ok(_.isArray(meta.fields));
+      }.check(done));
+    });
+
+    it("should return whole global sobject list", function(done) {
+      conn.describeGlobal(function(err, res) {
+        if (err) { throw err; }
+        assert.ok(_.isArray(res.sobjects));
+        assert.ok(_.isString(res.sobjects[0].name));
+        assert.ok(_.isString(res.sobjects[0].label));
+        assert.ok(_.isUndefined(res.sobjects[0].fields));
+      }.check(done));
+    });
+  });
+  
+
   /**
    *
    */
