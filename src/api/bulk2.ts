@@ -7,7 +7,7 @@ import { StreamPromise } from '../util/promise';
 import { registerModule } from '../jsforce';
 import { BulkRequest } from './bulk';
 // TODO: add more logging in bulk v2 class
-import { Logger } from '../util/logger';
+// import { Logger } from '../util/logger';
 import { concatStreamsAsDuplex } from '../util/stream';
 import { HttpResponse, Record, Schema, Optional } from '../types';
 import is from '@sindresorhus/is';
@@ -689,10 +689,9 @@ export class IngestJobV2<
             await delay(interval);
             break;
           case 'Failed':
-            const err = new Error(
+            throw new Error(
               `Ingest job failed to complete due to: ${res.errorMessage}`,
             );
-            throw err;
           case 'JobComplete':
             this.emit('jobcomplete');
             return;
