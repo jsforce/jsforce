@@ -6,7 +6,8 @@ import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject, isString } from './util';
 import { isNodeJS } from './helper/env';
-import { BulkOperation, IngestJobV2Results } from 'jsforce/lib/api/bulk';
+import { BulkOperation } from 'jsforce/lib/api/bulk';
+import { IngestJobV2Results } from 'jsforce/lib/api/bulk2';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();
@@ -248,14 +249,19 @@ if (isNodeJS()) {
 
   it('should bulk query and get records', async () => {
     const count = await conn.sobject(config.bigTable).count({});
-    const records = await conn.bulk2.query(
-      `SELECT Id, Name FROM ${config.bigTable}`,
-    );
-    assert.ok(Array.isArray(records) && records.length === count);
-    for (const rec of records) {
-      assert.ok(isString(rec.Id));
-      assert.ok(isString(rec.Name));
-    }
+
+    let records: Record[] = [];
+    (await conn.bulk2.query(`SELECT Id, Name FROM ${config.bigTable}`))
+      .on('record', (data) => {
+        records = records.concat(data);
+      })
+      .on('end', () => {
+        assert.ok(Array.isArray(records) && records.length === count);
+        for (const rec of records) {
+          assert.ok(isString(rec.Id));
+          assert.ok(isString(rec.Name));
+        }
+      });
   });
 }
 

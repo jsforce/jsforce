@@ -803,7 +803,7 @@ export class IngestJobV2<
 
     return new BulkApiV2(this.connection, { responseType }).request<T>({
       ...request,
-      url: baseUrl + path,
+      url: path ? baseUrl + path : baseUrl,
     });
   }
 }
