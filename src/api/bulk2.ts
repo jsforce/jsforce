@@ -6,8 +6,7 @@ import HttpApi from '../http-api';
 import { StreamPromise } from '../util/promise';
 import { registerModule } from '../jsforce';
 import { BulkRequest } from './bulk';
-// TODO: add more logging in bulk v2 class
-// import { Logger } from '../util/logger';
+import { getLogger, Logger } from '../util/logger';
 import { concatStreamsAsDuplex } from '../util/stream';
 import { HttpResponse, Record, Schema, Optional } from '../types';
 import is from '@sindresorhus/is';
@@ -180,7 +179,8 @@ class BulkApiV2<S extends Schema> extends HttpApi<S> {
 }
 
 export class BulkV2<S extends Schema> {
-  connection: Connection<S>;
+  private connection: Connection<S>;
+  private logger: Logger;
 
   /**
    * Polling interval in milliseconds
@@ -194,6 +194,10 @@ export class BulkV2<S extends Schema> {
 
   constructor(connection: Connection<S>) {
     this.connection = connection;
+    this.logger = connection._logger;
+    this.logger = this.connection._logLevel
+      ? getLogger('bulk2').createInstance(this.connection._logLevel)
+      : getLogger('bulk2');
   }
 
   /**
@@ -334,17 +338,20 @@ type QueryJobBody = {
   lineEnding?: QueryJobInfoV2['lineEnding'];
 };
 export class QueryJobV2<S extends Schema> extends EventEmitter {
-  readonly connection: Connection<S>;
-  readonly body: QueryJobBody;
-  readonly pollingOptions: BulkV2PollingOptions;
-  error: Error | undefined;
-  jobInfo: QueryJobInfoV2 | undefined;
-  locator: Optional<string>;
-  finished: boolean = false;
+  private readonly connection: Connection<S>;
+  private readonly logger: Logger;
+  private readonly body: QueryJobBody;
+  private readonly pollingOptions: BulkV2PollingOptions;
+  private error: Error | undefined;
+  private jobInfo: QueryJobInfoV2 | undefined;
+  private locator: Optional<string>;
 
   constructor(options: CreateQueryJobV2Options<S>) {
     super();
     this.connection = options.connection;
+    this.logger = this.connection._logLevel
+      ? getLogger('bulk2:QueryJobV2').createInstance(this.connection._logLevel)
+      : getLogger('bulk2:QueryJobV2');
     this.body = options.body;
     this.pollingOptions = options.pollingOptions;
     // default error handler to keep the latest error
@@ -367,6 +374,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
         },
         responseType: 'application/json',
       });
+      this.logger.debug(this.jobInfo);
       this.emit('open');
     } catch (err) {
       this.emit('error', err);
@@ -392,6 +400,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
         responseType: 'application/json',
       });
+      this.logger.debug(this.jobInfo);
       return this.jobInfo;
     } catch (err) {
       this.emit('error', err);
@@ -413,6 +422,11 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     const jobId = getJobId(this.jobInfo);
     const startTime = Date.now();
 
+    this.logger.debug(`Job ID: ${jobId}`);
+    this.logger.debug(
+      `Polling options: timeout:${timeout}ms | interval: ${interval}ms.`,
+    );
+
     while (startTime + timeout > Date.now()) {
       try {
         const res = await this.check();
@@ -426,6 +440,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
           case 'Failed':
             // unlike ingest jobs, the API doesn't return an error msg:
             // https://developer.salesforce.com/docs/atlas.en-us.api_asynch.meta/api_asynch/query_get_one_job.htm
+            this.logger.debug(res);
             throw new Error('Query job failed to complete');
           case 'JobComplete':
             this.emit('jobcomplete');
@@ -458,6 +473,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
         responseType: 'application/json',
       });
       this.jobInfo = jobInfo;
+      this.logger.debug(this.jobInfo);
       return jobInfo;
     } catch (err) {
       this.emit('error', err);
@@ -518,6 +534,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
 
     httpApi.on('response', (response: HttpResponse) => {
       this.locator = response.headers['sforce-locator'];
+      this.logger.debug(`sforce-locator: ${this.locator}`);
     });
 
     return httpApi.request<T>({
@@ -535,6 +552,7 @@ export class IngestJobV2<
   Opr extends IngestOperation
 > extends EventEmitter {
   readonly connection: Connection<S>;
+  readonly logger: Logger;
   readonly pollingOptions: BulkV2PollingOptions;
   readonly jobData: JobDataV2<S, Opr>;
   bulkJobSuccessfulResults: IngestJobV2SuccessfulResults<S> | undefined;
@@ -550,6 +568,9 @@ export class IngestJobV2<
     super();
 
     this.connection = options.connection;
+    this.logger = this.connection._logLevel
+      ? getLogger('bulk2:IngestJobV2').createInstance(this.connection._logLevel)
+      : getLogger('bulk2:IngestJobV2');
     this.pollingOptions = options.pollingOptions;
     this.jobInfo = options.jobInfo;
     this.jobData = new JobDataV2<S, Opr>({
@@ -585,6 +606,7 @@ export class IngestJobV2<
         },
         responseType: 'application/json',
       });
+      this.logger.debug(this.jobInfo);
       this.emit('open');
     } catch (err) {
       this.emit('error', err);
@@ -628,6 +650,7 @@ export class IngestJobV2<
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
         responseType: 'application/json',
       });
+      this.logger.debug(this.jobInfo);
       this.emit('uploadcomplete');
     } catch (err) {
       this.emit('error', err);
@@ -648,6 +671,7 @@ export class IngestJobV2<
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
         responseType: 'application/json',
       });
+      this.logger.debug(this.jobInfo);
       this.emit('aborted');
     } catch (err) {
       this.emit('error', err);
@@ -676,6 +700,11 @@ export class IngestJobV2<
     const jobId = getJobId(this.jobInfo);
     const startTime = Date.now();
 
+    this.logger.debug(`Job ID: ${jobId}`);
+    this.logger.debug(
+      `Polling options: timeout:${timeout}ms | interval: ${interval}ms.`,
+    );
+
     while (startTime + timeout > Date.now()) {
       try {
         const res = await this.check();
@@ -689,6 +718,7 @@ export class IngestJobV2<
             await delay(interval);
             break;
           case 'Failed':
+            this.logger.debug(res);
             throw new Error(
               `Ingest job failed to complete due to: ${res.errorMessage}`,
             );
@@ -721,6 +751,7 @@ export class IngestJobV2<
         responseType: 'application/json',
       });
       this.jobInfo = jobInfo;
+      this.logger.debug(this.jobInfo);
       return jobInfo;
     } catch (err) {
       this.emit('error', err);
