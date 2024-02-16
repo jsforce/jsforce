@@ -18,28 +18,13 @@ export type IngestOperation =
   | 'delete'
   | 'hardDelete';
 
-export type QueryOperation = 'query' | 'queryAll';
-
-export type JobStateV2 =
-  | 'Open'
-  | 'UploadComplete'
-  | 'InProgress'
-  | 'JobComplete'
-  | 'Aborted'
-  | 'Failed';
-
-export type QueryJobInfoV2 = {
+type BaseJobInfo = {
   id: string;
-  operation: QueryOperation;
   object: string;
   createdById: string;
   createdDate: string;
   systemModstamp: string;
-  state: 'UploadComplete' | 'InProgress' | 'Aborted' | 'JobComplete' | 'Failed';
-  concurrencyMode: 'Parallel';
-  contentType: 'CSV';
-  apiVersion: string;
-  jobType: 'V2Query';
+  apiVersion: number;
   lineEnding: 'LF' | 'CRLF';
   columnDelimiter:
     | 'BACKQUOTE'
@@ -48,46 +33,38 @@ export type QueryJobInfoV2 = {
     | 'PIPE'
     | 'SEMICOLON'
     | 'TAB';
-  numberRecordsProcessed: string;
-  retries: string;
-  totalProcessingTime: string;
-  isPkChunkingSupported?: boolean;
-};
-
-export type JobInfoV2 = {
-  apiVersion: string;
-  assignmentRuleId?: string;
-  columnDelimiter:
-    | 'BACKQUOTE'
-    | 'CARET'
-    | 'COMMA'
-    | 'PIPE'
-    | 'SEMICOLON'
-    | 'TAB';
   concurrencyMode: 'Parallel';
   contentType: 'CSV';
+  numberRecordsProcessed: number;
+  retries: number;
+  totalProcessingTime: number;
+};
+
+export type QueryJobInfoV2 = BaseJobInfo & {
+  operation: 'query' | 'queryAll';
+  state: 'UploadComplete' | 'InProgress' | 'Aborted' | 'JobComplete' | 'Failed';
+  jobType: 'V2Query';
+  isPkChunkingSupported: boolean;
+};
+
+export type JobInfoV2 = BaseJobInfo & {
+  apexProcessingTime: number;
+  apiActiveProcessingTime: number;
+  assignmentRuleId?: string;
   contentUrl: string;
-  createdById: string;
-  createdDate: string;
   errorMessage?: string;
   externalIdFieldName?: string;
-  id: string;
   jobType: 'BigObjectIngest' | 'Classic' | 'V2Ingest';
-  lineEnding: 'LF' | 'CRLF';
-  object: string;
-  operation: BulkV2Operation;
-  state: JobStateV2;
-  systemModstamp: string;
-  numberRecordsProcessed?: number;
-  numberRecordsFailed?: number;
+  operation: IngestOperation;
+  state:
+    | 'Open'
+    | 'UploadComplete'
+    | 'InProgress'
+    | 'JobComplete'
+    | 'Aborted'
+    | 'Failed';
+  numberRecordsFailed: number;
 };
-
-export type BulkV2Operation =
-  | 'insert'
-  | 'delete'
-  | 'hardDelete'
-  | 'update'
-  | 'upsert';
 
 export type IngestJobV2SuccessfulResults<S extends Schema> = Array<
   {
@@ -392,7 +369,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
    */
   async abort(): Promise<QueryJobInfoV2> {
     try {
-      const state: JobStateV2 = 'Aborted';
+      const state: QueryJobInfoV2['state'] = 'Aborted';
       this.jobInfo = await this.createQueryRequest<QueryJobInfoV2>({
         method: 'PATCH',
         path: `/${this.jobInfo?.id}`,
@@ -642,7 +619,7 @@ export class IngestJobV2<
    */
   async close(): Promise<void> {
     try {
-      const state: JobStateV2 = 'UploadComplete';
+      const state: JobInfoV2['state'] = 'UploadComplete';
       this.jobInfo = await this.createIngestRequest<JobInfoV2>({
         method: 'PATCH',
         path: `/${this.jobInfo.id}`,
@@ -663,7 +640,7 @@ export class IngestJobV2<
    */
   async abort(): Promise<void> {
     try {
-      const state: JobStateV2 = 'Aborted';
+      const state: JobInfoV2['state'] = 'Aborted';
       this.jobInfo = await this.createIngestRequest<JobInfoV2>({
         method: 'PATCH',
         path: `/${this.jobInfo.id}`,
