@@ -398,13 +398,14 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
   ): Promise<void> {
     const jobId = getJobId(this.jobInfo);
     const startTime = Date.now();
+    const endTime = startTime + timeout;
 
     this.logger.debug(`Job ID: ${jobId}`);
     this.logger.debug(
       `Polling options: timeout:${timeout}ms | interval: ${interval}ms.`,
     );
 
-    while (startTime + timeout > Date.now()) {
+    while (endTime > Date.now()) {
       try {
         const res = await this.check();
         switch (res.state) {
@@ -676,13 +677,14 @@ export class IngestJobV2<
   ): Promise<void> {
     const jobId = getJobId(this.jobInfo);
     const startTime = Date.now();
+    const endTime = startTime + timeout;
 
     this.logger.debug(`Job ID: ${jobId}`);
     this.logger.debug(
       `Polling options: timeout:${timeout}ms | interval: ${interval}ms.`,
     );
 
-    while (startTime + timeout > Date.now()) {
+    while (endTime > Date.now()) {
       try {
         const res = await this.check();
         switch (res.state) {

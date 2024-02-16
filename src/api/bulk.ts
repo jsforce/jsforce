@@ -595,9 +595,11 @@ export class Batch<
       throw new Error('Batch not started.');
     }
     const startTime = new Date().getTime();
+    const endTime = startTime + timeout;
+
     const poll = async () => {
       const now = new Date().getTime();
-      if (startTime + timeout < now) {
+      if (endTime < now) {
         const err = new PollingTimeoutError(
           'Polling time out. Job Id = ' + jobId + ' , batch Id = ' + batchId,
           jobId,
