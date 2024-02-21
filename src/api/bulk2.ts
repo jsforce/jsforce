@@ -237,11 +237,11 @@ export class BulkV2<S extends Schema> {
    */
   public job(
     type: 'query',
-    options: ExistingQueryJobV2Options<S>,
+    options: Pick<ExistingQueryJobV2Options<S>, 'id'>,
   ): QueryJobV2<S>;
   public job(
     type: 'ingest',
-    options: ExistingIngestJobOptions<S>,
+    options: Pick<ExistingIngestJobOptions<S>, 'id'>,
   ): IngestJobV2<S>;
   public job(
     type: 'ingest' | 'query' = 'ingest',
