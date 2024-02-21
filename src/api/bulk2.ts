@@ -90,28 +90,50 @@ export type IngestJobV2Results<S extends Schema> = {
 
 type NewIngestJobOptions = Required<Pick<JobInfoV2, 'object' | 'operation'>> &
   Partial<
-    Pick<JobInfoV2, 'assignmentRuleId' | 'externalIdFieldName' | 'lineEnding'>
+    Pick<
+      JobInfoV2,
+      | 'assignmentRuleId'
+      | 'columnDelimiter'
+      | 'externalIdFieldName'
+      | 'lineEnding'
+      | 'contentType'
+    >
   >;
 
-type ExistingIngestJobOptions = Pick<JobInfoV2, 'id'>;
-
-type CreateIngestJobV2Request = <T>(request: BulkRequest) => StreamPromise<T>;
+type NewQueryJobOptions = {
+  query: string;
+  operation: QueryJobInfoV2['operation'];
+} & Partial<Pick<QueryJobInfoV2, 'columnDelimiter' | 'lineEnding'>>;
 
 type CreateIngestJobV2Options<S extends Schema> = {
+  bodyParams: NewIngestJobOptions;
   connection: Connection<S>;
-  jobInfo: NewIngestJobOptions | ExistingIngestJobOptions;
   pollingOptions: BulkV2PollingOptions;
 };
 
-type CreateJobDataV2Options<S extends Schema, Opr extends IngestOperation> = {
-  job: IngestJobV2<S, Opr>;
+type ExistingIngestJobOptions<S extends Schema> = {
+  id: string;
+  connection: Connection<S>;
+  pollingOptions: BulkV2PollingOptions;
+};
+
+type CreateIngestJobV2Request = <T>(request: BulkRequest) => StreamPromise<T>;
+
+type CreateJobDataV2Options<S extends Schema> = {
+  job: IngestJobV2<S>;
   createRequest: CreateIngestJobV2Request;
 };
 
 type CreateQueryJobV2Options<S extends Schema> = {
+  bodyParams: NewQueryJobOptions;
   connection: Connection<S>;
   pollingOptions: BulkV2PollingOptions;
-  body: QueryJobBody;
+};
+
+type ExistingQueryJobV2Options<S extends Schema> = {
+  id: string;
+  connection: Connection<S>;
+  pollingOptions: BulkV2PollingOptions;
 };
 
 type BulkV2PollingOptions = {
@@ -199,30 +221,45 @@ export class BulkV2<S extends Schema> {
    * // finished uploading data, mark it as ready for processing
    * await job.close()
    */
-  public createJob<Opr extends IngestOperation>(
-    options: NewIngestJobOptions,
-  ): IngestJobV2<S, Opr> {
+  public createJob(options: NewIngestJobOptions): IngestJobV2<S> {
     return new IngestJobV2({
       connection: this.connection,
-      jobInfo: options,
+      bodyParams: options,
       pollingOptions: this,
     });
   }
 
   /**
-   * Get an ingest job instance specified by a given job ID
+   * Get an ingest or query job instance specified by a given job ID
    *
    * @param options Options object with a job ID
    * @returns IngestJobV2 An ingest job
    */
-  public job<Opr extends IngestOperation>(
-    options: ExistingIngestJobOptions,
-  ): IngestJobV2<S, Opr> {
-    return new IngestJobV2({
-      connection: this.connection,
-      jobInfo: options,
-      pollingOptions: this,
-    });
+  public job(
+    type: 'query',
+    options: ExistingQueryJobV2Options<S>,
+  ): QueryJobV2<S>;
+  public job(
+    type: 'ingest',
+    options: ExistingIngestJobOptions<S>,
+  ): IngestJobV2<S>;
+  public job(
+    type: 'ingest' | 'query' = 'ingest',
+    options: ExistingIngestJobOptions<S> | ExistingQueryJobV2Options<S>,
+  ): IngestJobV2<S> | QueryJobV2<S> {
+    if (type === 'ingest') {
+      return new IngestJobV2({
+        connection: this.connection,
+        id: options.id,
+        pollingOptions: this,
+      });
+    } else {
+      return new QueryJobV2({
+        connection: this.connection,
+        id: options.id,
+        pollingOptions: this,
+      });
+    }
   }
 
   /**
@@ -237,7 +274,10 @@ export class BulkV2<S extends Schema> {
     if (!options.pollTimeout) options.pollTimeout = this.pollTimeout;
     if (!options.pollInterval) options.pollInterval = this.pollInterval;
 
-    const job = this.createJob(options);
+    const job = this.createJob({
+      object: options.object,
+      operation: options.operation,
+    });
     try {
       await job.open();
       await job.uploadData(options.input);
@@ -274,7 +314,7 @@ export class BulkV2<S extends Schema> {
   ): Promise<Parsable<Record>> {
     const queryJob = new QueryJobV2({
       connection: this.connection,
-      body: {
+      bodyParams: {
         query: soql,
         operation: options?.scanAll ? 'queryAll' : 'query',
         columnDelimiter: options?.columnDelimiter,
@@ -308,31 +348,58 @@ export class BulkV2<S extends Schema> {
   }
 }
 
-type QueryJobBody = {
-  query: string;
-  operation: QueryJobInfoV2['operation'];
-  columnDelimiter?: QueryJobInfoV2['columnDelimiter'];
-  lineEnding?: QueryJobInfoV2['lineEnding'];
-};
 export class QueryJobV2<S extends Schema> extends EventEmitter {
   private readonly connection: Connection<S>;
   private readonly logger: Logger;
-  private readonly body: QueryJobBody;
+  private readonly id?: string;
+  private readonly bodyParams?: NewQueryJobOptions;
   private readonly pollingOptions: BulkV2PollingOptions;
   private error: Error | undefined;
-  private jobInfo: QueryJobInfoV2 | undefined;
+  private jobInfo?: QueryJobInfoV2;
   private locator: Optional<string>;
 
-  constructor(options: CreateQueryJobV2Options<S>) {
+  constructor(options: ExistingQueryJobV2Options<S>);
+  constructor(options: CreateQueryJobV2Options<S>);
+  constructor(
+    options: ExistingQueryJobV2Options<S> | CreateQueryJobV2Options<S>,
+  ) {
     super();
     this.connection = options.connection;
     this.logger = this.connection._logLevel
       ? getLogger('bulk2:QueryJobV2').createInstance(this.connection._logLevel)
       : getLogger('bulk2:QueryJobV2');
-    this.body = options.body;
+    if ('id' in options) {
+      this.id = options.id;
+    } else {
+      this.bodyParams = options.bodyParams;
+    }
     this.pollingOptions = options.pollingOptions;
     // default error handler to keep the latest error
     this.on('error', (error) => (this.error = error));
+  }
+
+  /**
+   * Get the query job ID.
+   *
+   * @returns {string} query job Id.
+   */
+  public getId(): string {
+    return this.jobInfo ? this.jobInfo.id : (this.id as string);
+  }
+
+  /**
+   * Get the query job info.
+   *
+   * @returns {Promise<QueryJobInfoV2>} query job information.
+   */
+  public getInfo(): QueryJobInfoV2 {
+    if (this.jobInfo) {
+      return this.jobInfo;
+    }
+
+    throw new Error(
+      'No interal job info. Make sure to call `await job.check`.',
+    );
   }
 
   /**
@@ -341,11 +408,14 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
    * @returns {Promise<QueryJobInfoV2>} job information.
    */
   async open(): Promise<QueryJobInfoV2> {
+    if (!this.bodyParams) {
+      throw new Error('Missing required body params to open a new query job.');
+    }
     try {
       this.jobInfo = await this.createQueryRequest<QueryJobInfoV2>({
         path: '',
         method: 'POST',
-        body: JSON.stringify(this.body),
+        body: JSON.stringify(this.bodyParams),
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
         },
@@ -372,7 +442,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
       const state: QueryJobInfoV2['state'] = 'Aborted';
       this.jobInfo = await this.createQueryRequest<QueryJobInfoV2>({
         method: 'PATCH',
-        path: `/${this.jobInfo?.id}`,
+        path: `/${this.getId()}`,
         body: JSON.stringify({ state }),
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
         responseType: 'application/json',
@@ -396,7 +466,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     interval: number = this.pollingOptions.pollInterval,
     timeout: number = this.pollingOptions.pollTimeout,
   ): Promise<void> {
-    const jobId = getJobId(this.jobInfo);
+    const jobId = this.getId();
     const startTime = Date.now();
     const endTime = startTime + timeout;
 
@@ -447,7 +517,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     try {
       const jobInfo = await this.createQueryRequest<QueryJobInfoV2>({
         method: 'GET',
-        path: `/${getJobId(this.jobInfo)}`,
+        path: `/${this.getId()}`,
         responseType: 'application/json',
       });
       this.jobInfo = jobInfo;
@@ -469,7 +539,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     const resultStream = new Parsable();
     const resultDataStream = resultStream.stream('csv');
 
-    const resultsPath = `/${getJobId(this.jobInfo)}/results`;
+    const resultsPath = `/${this.getId()}/results`;
 
     while (this.locator !== 'null') {
       const resPromise = this.createQueryRequest({
@@ -495,7 +565,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
   async delete(): Promise<void> {
     return this.createQueryRequest<void>({
       method: 'DELETE',
-      path: `/${getJobId(this.jobInfo)}`,
+      path: `/${this.getId()}`,
     });
   }
 
@@ -525,24 +595,27 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
 /**
  * Class for Bulk API V2 Ingest Job
  */
-export class IngestJobV2<
-  S extends Schema,
-  Opr extends IngestOperation
-> extends EventEmitter {
-  readonly connection: Connection<S>;
-  readonly logger: Logger;
-  readonly pollingOptions: BulkV2PollingOptions;
-  readonly jobData: JobDataV2<S, Opr>;
-  bulkJobSuccessfulResults: IngestJobV2SuccessfulResults<S> | undefined;
-  bulkJobFailedResults: IngestJobV2FailedResults<S> | undefined;
-  bulkJobUnprocessedRecords: IngestJobV2UnprocessedRecords<S> | undefined;
-  error: Error | undefined;
-  jobInfo: Partial<JobInfoV2>;
+export class IngestJobV2<S extends Schema> extends EventEmitter {
+  private readonly connection: Connection<S>;
+  private readonly logger: Logger;
+  private readonly id?: string;
+  private readonly bodyParams?: NewIngestJobOptions;
+  private readonly jobData: JobDataV2<S>;
+  private pollingOptions: BulkV2PollingOptions;
+  private bulkJobSuccessfulResults?: IngestJobV2SuccessfulResults<S>;
+  private bulkJobFailedResults?: IngestJobV2FailedResults<S>;
+  private bulkJobUnprocessedRecords?: IngestJobV2UnprocessedRecords<S>;
+  private error: Error | undefined;
+  private jobInfo?: JobInfoV2;
 
   /**
    *
    */
-  constructor(options: CreateIngestJobV2Options<S>) {
+  constructor(options: ExistingIngestJobOptions<S>);
+  constructor(options: CreateIngestJobV2Options<S>);
+  constructor(
+    options: CreateIngestJobV2Options<S> | ExistingIngestJobOptions<S>,
+  ) {
     super();
 
     this.connection = options.connection;
@@ -550,8 +623,12 @@ export class IngestJobV2<
       ? getLogger('bulk2:IngestJobV2').createInstance(this.connection._logLevel)
       : getLogger('bulk2:IngestJobV2');
     this.pollingOptions = options.pollingOptions;
-    this.jobInfo = options.jobInfo;
-    this.jobData = new JobDataV2<S, Opr>({
+    if ('id' in options) {
+      this.id = options.id;
+    } else {
+      this.bodyParams = options.bodyParams;
+    }
+    this.jobData = new JobDataV2<S>({
       createRequest: (request) => this.createIngestRequest(request),
       job: this,
     });
@@ -559,8 +636,28 @@ export class IngestJobV2<
     this.on('error', (error) => (this.error = error));
   }
 
-  get id() {
-    return this.jobInfo.id;
+  /**
+   * Get the query job ID.
+   *
+   * @returns {string} query job Id.
+   */
+  public getId(): string {
+    return this.jobInfo ? this.jobInfo.id : (this.id as string);
+  }
+
+  /**
+   * Get the query job info.
+   *
+   * @returns {Promise<QueryJobInfoV2>} ingest job information.
+   */
+  public getInfo(): JobInfoV2 {
+    if (this.jobInfo) {
+      return this.jobInfo;
+    }
+
+    throw new Error(
+      'No interal job info. Make sure to call `await job.check`.',
+    );
   }
 
   /**
@@ -569,16 +666,14 @@ export class IngestJobV2<
    * @returns {Promise<QueryJobInfoV2>} job information.
    */
   async open(): Promise<Partial<JobInfoV2>> {
+    if (!this.bodyParams) {
+      throw new Error('Missing required body params to open a new ingest job.');
+    }
+
     try {
       this.jobInfo = await this.createIngestRequest<JobInfoV2>({
         method: 'POST',
-        body: JSON.stringify({
-          assignmentRuleId: this.jobInfo?.assignmentRuleId,
-          externalIdFieldName: this.jobInfo?.externalIdFieldName,
-          object: this.jobInfo?.object,
-          operation: this.jobInfo?.operation,
-          lineEnding: this.jobInfo?.lineEnding,
-        }),
+        body: JSON.stringify(this.bodyParams),
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
         },
@@ -623,7 +718,7 @@ export class IngestJobV2<
       const state: JobInfoV2['state'] = 'UploadComplete';
       this.jobInfo = await this.createIngestRequest<JobInfoV2>({
         method: 'PATCH',
-        path: `/${this.jobInfo.id}`,
+        path: `/${this.getId()}`,
         body: JSON.stringify({ state }),
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
         responseType: 'application/json',
@@ -644,7 +739,7 @@ export class IngestJobV2<
       const state: JobInfoV2['state'] = 'Aborted';
       this.jobInfo = await this.createIngestRequest<JobInfoV2>({
         method: 'PATCH',
-        path: `/${this.jobInfo.id}`,
+        path: `/${this.getId()}`,
         body: JSON.stringify({ state }),
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
         responseType: 'application/json',
@@ -675,7 +770,7 @@ export class IngestJobV2<
     interval: number = this.pollingOptions.pollInterval,
     timeout: number = this.pollingOptions.pollTimeout,
   ): Promise<void> {
-    const jobId = getJobId(this.jobInfo);
+    const jobId = this.getId();
     const startTime = Date.now();
     const endTime = startTime + timeout;
 
@@ -726,7 +821,7 @@ export class IngestJobV2<
     try {
       const jobInfo = await this.createIngestRequest<JobInfoV2>({
         method: 'GET',
-        path: `/${getJobId(this.jobInfo)}`,
+        path: `/${this.getId()}`,
         responseType: 'application/json',
       });
       this.jobInfo = jobInfo;
@@ -747,7 +842,7 @@ export class IngestJobV2<
       IngestJobV2SuccessfulResults<S> | undefined
     >({
       method: 'GET',
-      path: `/${getJobId(this.jobInfo)}/successfulResults`,
+      path: `/${this.getId()}/successfulResults`,
       responseType: 'text/csv',
     });
 
@@ -765,7 +860,7 @@ export class IngestJobV2<
       IngestJobV2FailedResults<S> | undefined
     >({
       method: 'GET',
-      path: `/${getJobId(this.jobInfo)}/failedResults`,
+      path: `/${this.getId()}/failedResults`,
       responseType: 'text/csv',
     });
 
@@ -783,7 +878,7 @@ export class IngestJobV2<
       IngestJobV2UnprocessedRecords<S> | undefined
     >({
       method: 'GET',
-      path: `/${getJobId(this.jobInfo)}/unprocessedrecords`,
+      path: `/${this.getId()}/unprocessedrecords`,
       responseType: 'text/csv',
     });
 
@@ -798,7 +893,7 @@ export class IngestJobV2<
   async delete(): Promise<void> {
     return this.createIngestRequest<void>({
       method: 'DELETE',
-      path: `/${getJobId(this.jobInfo)}`,
+      path: `/${this.getId()}`,
     });
   }
 
@@ -818,11 +913,8 @@ export class IngestJobV2<
   }
 }
 
-class JobDataV2<
-  S extends Schema,
-  Opr extends IngestOperation
-> extends Writable {
-  readonly job: IngestJobV2<S, Opr>;
+class JobDataV2<S extends Schema> extends Writable {
+  readonly job: IngestJobV2<S>;
   readonly uploadStream: Serializable;
   readonly downloadStream: Parsable;
   readonly dataStream: Duplex;
@@ -831,7 +923,7 @@ class JobDataV2<
   /**
    *
    */
-  constructor(options: CreateJobDataV2Options<S, Opr>) {
+  constructor(options: CreateJobDataV2Options<S>) {
     super({ objectMode: true });
 
     const createRequest = options.createRequest;
@@ -859,7 +951,7 @@ class JobDataV2<
         // pipe upload data to batch API request stream
         const req = createRequest({
           method: 'PUT',
-          path: `/${this.job.jobInfo?.id}/batches`,
+          path: `/${this.job.getId()}/batches`,
           headers: {
             'Content-Type': 'text/csv',
           },
@@ -885,7 +977,7 @@ class JobDataV2<
   _write(record_: Record, enc: BufferEncoding, cb: () => void) {
     const { Id, type, attributes, ...rrec } = record_;
     let record;
-    switch (this.job.jobInfo.operation) {
+    switch (this.job.getInfo().operation) {
       case 'insert':
         record = rrec;
         break;
@@ -952,18 +1044,6 @@ class JobDataV2<
     }
     return this.result!.then(onResolved, onReject);
   }
-}
-
-function getJobId(
-  jobInfo: Partial<JobInfoV2 | QueryJobInfoV2> | undefined,
-): string {
-  const jobId = jobInfo?.id;
-  if (jobId === undefined) {
-    throw new Error(
-      'No job ID found. Ensure the job was created by calling the `await job.open()`.',
-    );
-  }
-  return jobId;
 }
 
 function delay(ms: number): Promise<void> {
