@@ -343,7 +343,7 @@ export class BulkV2<S extends Schema> {
 export class QueryJobV2<S extends Schema> extends EventEmitter {
   private readonly connection: Connection<S>;
   private readonly logger: Logger;
-  private readonly id?: string;
+  private readonly _id?: string;
   private readonly bodyParams?: NewQueryJobOptions;
   private readonly pollingOptions: BulkV2PollingOptions;
   private error: Error | undefined;
@@ -362,7 +362,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
       ? getLogger('bulk2:QueryJobV2').createInstance(this.connection._logLevel)
       : getLogger('bulk2:QueryJobV2');
     if ('id' in options) {
-      this.id = options.id;
+      this._id = options.id;
     } else {
       this.bodyParams = options.bodyParams;
     }
@@ -376,8 +376,8 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
    *
    * @returns {string} query job Id.
    */
-  public getId(): string {
-    return this.jobInfo ? this.jobInfo.id : (this.id as string);
+  public get id(): string {
+    return this.jobInfo ? this.jobInfo.id : (this._id as string);
   }
 
   /**
@@ -435,7 +435,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
       const state: QueryJobInfoV2['state'] = 'Aborted';
       this.jobInfo = await this.createQueryRequest<QueryJobInfoV2>({
         method: 'PATCH',
-        path: `/${this.getId()}`,
+        path: `/${this.id}`,
         body: JSON.stringify({ state }),
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
         responseType: 'application/json',
@@ -459,7 +459,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     interval: number = this.pollingOptions.pollInterval,
     timeout: number = this.pollingOptions.pollTimeout,
   ): Promise<void> {
-    const jobId = this.getId();
+    const jobId = this.id;
     const startTime = Date.now();
     const endTime = startTime + timeout;
 
@@ -510,7 +510,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     try {
       const jobInfo = await this.createQueryRequest<QueryJobInfoV2>({
         method: 'GET',
-        path: `/${this.getId()}`,
+        path: `/${this.id}`,
         responseType: 'application/json',
       });
       this.jobInfo = jobInfo;
@@ -532,7 +532,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     const resultStream = new Parsable();
     const resultDataStream = resultStream.stream('csv');
 
-    const resultsPath = `/${this.getId()}/results`;
+    const resultsPath = `/${this.id}/results`;
 
     while (this.locator !== 'null') {
       const resPromise = this.createQueryRequest({
@@ -558,7 +558,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
   async delete(): Promise<void> {
     return this.createQueryRequest<void>({
       method: 'DELETE',
-      path: `/${this.getId()}`,
+      path: `/${this.id}`,
     });
   }
 
@@ -592,7 +592,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
 export class IngestJobV2<S extends Schema> extends EventEmitter {
   private readonly connection: Connection<S>;
   private readonly logger: Logger;
-  private readonly id?: string;
+  private readonly _id?: string;
   private readonly bodyParams?: NewIngestJobOptions;
   private readonly jobData: JobDataV2<S>;
   private pollingOptions: BulkV2PollingOptions;
@@ -619,7 +619,7 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
       : getLogger('bulk2:IngestJobV2');
     this.pollingOptions = options.pollingOptions;
     if ('id' in options) {
-      this.id = options.id;
+      this._id = options.id;
     } else {
       this.bodyParams = options.bodyParams;
     }
@@ -636,8 +636,8 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
    *
    * @returns {string} query job Id.
    */
-  public getId(): string {
-    return this.jobInfo ? this.jobInfo.id : (this.id as string);
+  public get id(): string {
+    return this.jobInfo ? this.jobInfo.id : (this._id as string);
   }
 
   /**
@@ -689,7 +689,7 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
    *  @param input CSV as a string, or array of records or readable stream
    */
   async uploadData(input: string | Record[] | Readable): Promise<void> {
-    await this.jobData.execute(input);
+    await this.jobData.execute(input).result;
   }
 
   async getAllResults(): Promise<IngestJobV2Results<S>> {
@@ -713,7 +713,7 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
       const state: JobInfoV2['state'] = 'UploadComplete';
       this.jobInfo = await this.createIngestRequest<JobInfoV2>({
         method: 'PATCH',
-        path: `/${this.getId()}`,
+        path: `/${this.id}`,
         body: JSON.stringify({ state }),
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
         responseType: 'application/json',
@@ -734,7 +734,7 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
       const state: JobInfoV2['state'] = 'Aborted';
       this.jobInfo = await this.createIngestRequest<JobInfoV2>({
         method: 'PATCH',
-        path: `/${this.getId()}`,
+        path: `/${this.id}`,
         body: JSON.stringify({ state }),
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
         responseType: 'application/json',
@@ -765,7 +765,7 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
     interval: number = this.pollingOptions.pollInterval,
     timeout: number = this.pollingOptions.pollTimeout,
   ): Promise<void> {
-    const jobId = this.getId();
+    const jobId = this.id;
     const startTime = Date.now();
     const endTime = startTime + timeout;
 
@@ -816,7 +816,7 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
     try {
       const jobInfo = await this.createIngestRequest<JobInfoV2>({
         method: 'GET',
-        path: `/${this.getId()}`,
+        path: `/${this.id}`,
         responseType: 'application/json',
       });
       this.jobInfo = jobInfo;
@@ -837,7 +837,7 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
       IngestJobV2SuccessfulResults<S> | undefined
     >({
       method: 'GET',
-      path: `/${this.getId()}/successfulResults`,
+      path: `/${this.id}/successfulResults`,
       responseType: 'text/csv',
     });
 
@@ -855,7 +855,7 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
       IngestJobV2FailedResults<S> | undefined
     >({
       method: 'GET',
-      path: `/${this.getId()}/failedResults`,
+      path: `/${this.id}/failedResults`,
       responseType: 'text/csv',
     });
 
@@ -873,7 +873,7 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
       IngestJobV2UnprocessedRecords<S> | undefined
     >({
       method: 'GET',
-      path: `/${this.getId()}/unprocessedrecords`,
+      path: `/${this.id}/unprocessedrecords`,
       responseType: 'text/csv',
     });
 
@@ -888,7 +888,7 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
   async delete(): Promise<void> {
     return this.createIngestRequest<void>({
       method: 'DELETE',
-      path: `/${this.getId()}`,
+      path: `/${this.id}`,
     });
   }
 
@@ -946,7 +946,7 @@ class JobDataV2<S extends Schema> extends Writable {
         // pipe upload data to batch API request stream
         const req = createRequest({
           method: 'PUT',
-          path: `/${this.job.getId()}/batches`,
+          path: `/${this.job.id}/batches`,
           headers: {
             'Content-Type': 'text/csv',
           },
