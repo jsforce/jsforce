@@ -475,6 +475,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
             throw new Error('Job has been aborted');
           case 'UploadComplete':
           case 'InProgress':
+            this.emit('inProgress', res)
             await delay(interval);
             break;
           case 'Failed':
@@ -783,6 +784,7 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
             throw new Error('Job has been aborted');
           case 'UploadComplete':
           case 'InProgress':
+            this.emit('inProgress', res)
             await delay(interval);
             break;
           case 'Failed':
