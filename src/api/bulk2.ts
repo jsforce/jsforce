@@ -406,7 +406,6 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     }
     try {
       this.jobInfo = await this.createQueryRequest<QueryJobInfoV2>({
-        path: '',
         method: 'POST',
         body: JSON.stringify(this.bodyParams),
         headers: {
@@ -538,7 +537,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
       const resPromise = this.createQueryRequest({
         method: 'GET',
         path: this.locator
-          ? `${resultsPath}?locator=${this.locator}`
+          ? `/${resultsPath}?locator=${this.locator}`
           : resultsPath,
         headers: {
           Accept: 'text/csv',
@@ -565,7 +564,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
   private createQueryRequest<T>(request: BulkRequest) {
     const { path, responseType } = request;
 
-    const basePath = `services/data/v${this.connection.version}/'jobs/query`;
+    const basePath = `services/data/v${this.connection.version}/jobs/query`;
 
     const url = new URL(
       path ? basePath + path : basePath,
