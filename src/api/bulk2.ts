@@ -105,15 +105,13 @@ type NewQueryJobOptions = {
   operation: QueryJobInfoV2['operation'];
 } & Partial<Pick<QueryJobInfoV2, 'columnDelimiter' | 'lineEnding'>>;
 
-type CreateIngestJobV2Options<S extends Schema> = {
+type CreateIngestJobV2Options = {
   bodyParams: NewIngestJobOptions;
-  connection: Connection<S>;
   pollingOptions: BulkV2PollingOptions;
 };
 
-type ExistingIngestJobOptions<S extends Schema> = {
+type ExistingIngestJobOptions = {
   id: string;
-  connection: Connection<S>;
   pollingOptions: BulkV2PollingOptions;
 };
 
@@ -124,15 +122,13 @@ type CreateJobDataV2Options<S extends Schema> = {
   createRequest: CreateIngestJobV2Request;
 };
 
-type CreateQueryJobV2Options<S extends Schema> = {
+type CreateQueryJobV2Options = {
   bodyParams: NewQueryJobOptions;
-  connection: Connection<S>;
   pollingOptions: BulkV2PollingOptions;
 };
 
-type ExistingQueryJobV2Options<S extends Schema> = {
+type ExistingQueryJobV2Options = {
   id: string;
-  connection: Connection<S>;
   pollingOptions: BulkV2PollingOptions;
 };
 
@@ -222,8 +218,7 @@ export class BulkV2<S extends Schema> {
    * await job.close()
    */
   public createJob(options: NewIngestJobOptions): IngestJobV2<S> {
-    return new IngestJobV2({
-      connection: this.connection,
+    return new IngestJobV2(this.connection, {
       bodyParams: options,
       pollingOptions: this,
     });
@@ -237,25 +232,23 @@ export class BulkV2<S extends Schema> {
    */
   public job(
     type: 'query',
-    options: Pick<ExistingQueryJobV2Options<S>, 'id'>,
+    options: Pick<ExistingQueryJobV2Options, 'id'>,
   ): QueryJobV2<S>;
   public job(
     type: 'ingest',
-    options: Pick<ExistingIngestJobOptions<S>, 'id'>,
+    options: Pick<ExistingIngestJobOptions, 'id'>,
   ): IngestJobV2<S>;
   public job(
     type: 'ingest' | 'query' = 'ingest',
-    options: ExistingIngestJobOptions<S> | ExistingQueryJobV2Options<S>,
+    options: ExistingIngestJobOptions | ExistingQueryJobV2Options,
   ): IngestJobV2<S> | QueryJobV2<S> {
     if (type === 'ingest') {
-      return new IngestJobV2({
-        connection: this.connection,
+      return new IngestJobV2(this.connection, {
         id: options.id,
         pollingOptions: this,
       });
     } else {
-      return new QueryJobV2({
-        connection: this.connection,
+      return new QueryJobV2(this.connection, {
         id: options.id,
         pollingOptions: this,
       });
@@ -312,8 +305,7 @@ export class BulkV2<S extends Schema> {
       lineEnding?: QueryJobInfoV2['lineEnding'];
     },
   ): Promise<Parsable<Record>> {
-    const queryJob = new QueryJobV2({
-      connection: this.connection,
+    const queryJob = new QueryJobV2(this.connection, {
       bodyParams: {
         query: soql,
         operation: options?.scanAll ? 'queryAll' : 'query',
@@ -358,13 +350,14 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
   private jobInfo?: QueryJobInfoV2;
   private locator: Optional<string>;
 
-  constructor(options: ExistingQueryJobV2Options<S>);
-  constructor(options: CreateQueryJobV2Options<S>);
+  constructor(conn: Connection<S>, options: ExistingQueryJobV2Options);
+  constructor(conn: Connection<S>, options: CreateQueryJobV2Options);
   constructor(
-    options: ExistingQueryJobV2Options<S> | CreateQueryJobV2Options<S>,
+    conn: Connection<S>,
+    options: ExistingQueryJobV2Options | CreateQueryJobV2Options,
   ) {
     super();
-    this.connection = options.connection;
+    this.connection = conn;
     this.logger = this.connection._logLevel
       ? getLogger('bulk2:QueryJobV2').createInstance(this.connection._logLevel)
       : getLogger('bulk2:QueryJobV2');
@@ -571,12 +564,13 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
 
   private createQueryRequest<T>(request: BulkRequest) {
     const { path, responseType } = request;
-    const baseUrl = [
+
+    const basePath = `services/data/v${this.connection.version}/'jobs/query`;
+
+    const url = new URL(
+      path ? basePath + path : basePath,
       this.connection.instanceUrl,
-      'services/data',
-      `v${this.connection.version}`,
-      'jobs/query',
-    ].join('/');
+    ).toString();
 
     const httpApi = new BulkApiV2(this.connection, { responseType });
 
@@ -587,7 +581,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
 
     return httpApi.request<T>({
       ...request,
-      url: path ? baseUrl + path : baseUrl,
+      url,
     });
   }
 }
@@ -611,14 +605,15 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
   /**
    *
    */
-  constructor(options: ExistingIngestJobOptions<S>);
-  constructor(options: CreateIngestJobV2Options<S>);
+  constructor(conn: Connection<S>, options: ExistingIngestJobOptions);
+  constructor(conn: Connection<S>, options: CreateIngestJobV2Options);
   constructor(
-    options: CreateIngestJobV2Options<S> | ExistingIngestJobOptions<S>,
+    conn: Connection<S>,
+    options: CreateIngestJobV2Options | ExistingIngestJobOptions,
   ) {
     super();
 
-    this.connection = options.connection;
+    this.connection = conn;
     this.logger = this.connection._logLevel
       ? getLogger('bulk2:IngestJobV2').createInstance(this.connection._logLevel)
       : getLogger('bulk2:IngestJobV2');
@@ -899,16 +894,16 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
 
   private createIngestRequest<T>(request: BulkRequest) {
     const { path, responseType } = request;
-    const baseUrl = [
+    const basePath = `/services/data/v${this.connection.version}/jobs/ingest`;
+
+    const url = new URL(
+      path ? basePath + path : basePath,
       this.connection.instanceUrl,
-      'services/data',
-      `v${this.connection.version}`,
-      'jobs/ingest',
-    ].join('/');
+    ).toString();
 
     return new BulkApiV2(this.connection, { responseType }).request<T>({
       ...request,
-      url: path ? baseUrl + path : baseUrl,
+      url,
     });
   }
 }
@@ -1032,17 +1027,6 @@ class JobDataV2<S extends Schema> extends Writable {
     }
 
     return this;
-  }
-
-  /**
-   * Promise/A+ interface
-   * Delegate to promise, return promise instance for batch result
-   */
-  then(onResolved: () => void, onReject: (err: any) => void) {
-    if (this.result === undefined) {
-      this.execute();
-    }
-    return this.result!.then(onResolved, onReject);
   }
 }
 
