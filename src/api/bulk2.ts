@@ -421,7 +421,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
         responseType: 'application/json',
       });
       this.logger.debug(`Successfully created job ${this.id}`);
-      this.emit('open');
+      this.emit('open', this.jobInfo);
     } catch (err) {
       this.emit('error', err);
       throw err;
