@@ -626,7 +626,7 @@ export class Batch<
       } else if (res.state === 'Completed') {
         this.retrieve();
       } else {
-        this.emit('progress', res);
+        this.emit('inProgress', res);
         setTimeout(poll, interval);
       }
     };
@@ -678,11 +678,12 @@ export class Batch<
   }
 
   /**
-   * Fetch query result as a record stream
+   * Fetch query batch result as a record stream
+   *
    * @param {String} resultId - Result id
    * @returns {RecordStream} - Record stream, convertible to CSV data stream
    */
-  result(resultId: string) {
+  public result(resultId: string): Parsable<Record> {
     const jobId = this.job.id;
     const batchId = this.id;
     if (!jobId || !batchId) {
@@ -741,19 +742,22 @@ class BulkApi<S extends Schema> extends HttpApi<S> {
  * @class
  */
 export class Bulk<S extends Schema> {
-  _conn: Connection<S>;
-  _logger: Logger;
+  private readonly _conn: Connection<S>;
+  private readonly _logger: Logger;
 
   /**
    * Polling interval in milliseconds
+   *
+   * Default: 1000 (1 second)
    */
-  pollInterval = 1000;
+  public pollInterval = 1000;
 
   /**
    * Polling timeout in milliseconds
-   * @type {Number}
+   *
+   * Default: 30000 (30 seconds)
    */
-  pollTimeout = 10000;
+  public pollTimeout = 30000;
 
   /**
    *
@@ -766,7 +770,7 @@ export class Bulk<S extends Schema> {
   /**
    *
    */
-  _request<T>(request_: BulkRequest) {
+  public _request<T>(request_: BulkRequest) {
     const conn = this._conn;
     const { path, responseType, ...rreq } = request_;
     const baseUrl = [conn.instanceUrl, 'services/async', conn.version].join(
@@ -781,6 +785,32 @@ export class Bulk<S extends Schema> {
 
   /**
    * Create and start bulkload job and batch
+   *
+   * This method will return a Batch instance (writable stream)
+   * which you can write records into as a CSV string.
+   *
+   * Batch also implements the a promise interface so you can `await` this method to get the job results.
+   *
+   * @example
+   * // Insert an array of records and get the job results
+   *
+   * const res = await connection.bulk.load('Account', 'insert', accounts)
+   *
+   * @example
+   * // Insert records from a csv file using the returned batch stream
+   *
+   * const csvFile = fs.createReadStream('accounts.csv')
+   *
+   * const batch = conn.bulk.load('Account', 'insert')
+   * 
+   * // The `response` event is emitted when the job results are retrieved
+   * batch.on('response', res => {
+   *   console.log(res)
+   * })
+
+   * csvFile.pipe(batch.stream())
+   *
+   *
    */
   load<Opr extends BulkOperation>(
     type: string,
@@ -829,7 +859,7 @@ export class Bulk<S extends Schema> {
   /**
    * Execute bulk query and get record stream
    */
-  query(soql: string) {
+  public async query(soql: string): Promise<Parsable<Record>> {
     const m = soql.replace(/\([\s\S]+\)/g, '').match(/FROM\s+(\w+)/i);
     if (!m) {
       throw new Error(
@@ -839,27 +869,24 @@ export class Bulk<S extends Schema> {
     const type = m[1];
     const recordStream = new Parsable();
     const dataStream = recordStream.stream('csv');
-    (async () => {
-      try {
-        const results = await this.load(type, 'query', soql);
-        const streams = results.map((result) =>
-          this.job(result.jobId)
-            .batch(result.batchId)
-            .result(result.id)
-            .stream(),
-        );
-        joinStreams(streams).pipe(dataStream);
-      } catch (err) {
-        recordStream.emit('error', err);
-      }
-    })();
+
+    try {
+      const results = await this.load(type, 'query', soql);
+      const streams = results.map((result) =>
+        this.job(result.jobId).batch(result.batchId).result(result.id).stream(),
+      );
+      joinStreams(streams).pipe(dataStream);
+    } catch (err) {
+      recordStream.emit('error', err);
+    }
+
     return recordStream;
   }
 
   /**
    * Create a new job instance
    */
-  createJob<Opr extends BulkOperation>(
+  public createJob<Opr extends BulkOperation>(
     type: string,
     operation: Opr,
     options: BulkOptions = {},
@@ -873,7 +900,7 @@ export class Bulk<S extends Schema> {
    * @param {String} jobId - Job ID
    * @returns {Bulk~Job}
    */
-  job<Opr extends BulkOperation>(jobId: string) {
+  public job<Opr extends BulkOperation>(jobId: string) {
     return new Job<S, Opr>(this, null, null, null, jobId);
   }
 }
