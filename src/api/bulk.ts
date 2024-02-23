@@ -521,12 +521,14 @@ export class Batch<
       this.once('error', reject);
     });
 
-    if (is.nodeStream(input)) {
+    const recordData = structuredClone(input);
+
+    if (is.nodeStream(recordData)) {
       // if input has stream.Readable interface
-      input.pipe(this._dataStream);
+      recordData.pipe(this._dataStream);
     } else {
-      if (Array.isArray(input)) {
-        for (const record of input) {
+      if (Array.isArray(recordData)) {
+        for (const record of recordData) {
           for (const key of Object.keys(record)) {
             if (typeof record[key] === 'boolean') {
               record[key] = String(record[key]);
@@ -535,8 +537,8 @@ export class Batch<
           this.write(record);
         }
         this.end();
-      } else if (typeof input === 'string') {
-        this._dataStream.write(input, 'utf8');
+      } else if (typeof recordData === 'string') {
+        this._dataStream.write(recordData, 'utf8');
         this._dataStream.end();
       }
     }
