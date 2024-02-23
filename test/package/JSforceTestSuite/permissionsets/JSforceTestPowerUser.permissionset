@@ -5,40 +5,12 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>JSforceTestData</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>JSforceTestUserPool</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>JSforceTestUtil</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <fieldPermissions>
         <editable>true</editable>
         <field>UpsertTable__c.ExtId__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>UserPool__c.CheckedOutAt__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>UserPool__c.CheckedOutBy__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>UserPool__c.IsPooled__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>UserPool__c.LastCheckedOutAt__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <label>JSforce Test Power User</label>

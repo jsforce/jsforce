@@ -1,8 +1,5 @@
 export default {
   loginUrl: process.env.SF_LOGIN_URL || 'https://login.salesforce.com',
-  poolClient: process.env.SF_POOL_CLIENT || '',
-  poolUsername: process.env.SF_POOL_USERNAME || '',
-  poolPassword: process.env.SF_POOL_PASSWORD || '',
   username: process.env.SF_USERNAME || '',
   password: process.env.SF_PASSWORD || '',
   clientId: process.env.SF_OAUTH2_CLIENT_ID || '',
