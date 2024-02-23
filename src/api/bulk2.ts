@@ -179,17 +179,20 @@ export class BulkV2<S extends Schema> {
 
   /**
    * Polling interval in milliseconds
+   *
+   * Default: 1000 (1 second)
    */
-  pollInterval = 1000;
+  public pollInterval = 1000;
 
   /**
    * Polling timeout in milliseconds
+   *
+   * Default: 30000 (30 seconds)
    */
-  pollTimeout = 10000;
+  public pollTimeout = 30000;
 
   constructor(connection: Connection<S>) {
     this.connection = connection;
-    this.logger = connection._logger;
     this.logger = this.connection._logLevel
       ? getLogger('bulk2').createInstance(this.connection._logLevel)
       : getLogger('bulk2');
@@ -279,6 +282,8 @@ export class BulkV2<S extends Schema> {
       return await job.getAllResults();
     } catch (error) {
       const err = error as Error;
+      this.logger.error(`bulk load failed due to: ${err}`);
+
       if (err.name !== 'JobPollingTimeoutError') {
         // fires off one last attempt to clean up and ignores the result | error
         job.delete().catch((ignored) => ignored);
@@ -328,6 +333,8 @@ export class BulkV2<S extends Schema> {
       queryRecordsStream.pipe(dataStream);
     } catch (error) {
       const err = error as Error;
+      this.logger.error(`bulk query failed due to: ${err}`);
+
       if (err.name !== 'JobPollingTimeoutError') {
         // fires off one last attempt to clean up and ignores the result | error
         queryJob.delete().catch((ignored) => ignored);
@@ -413,7 +420,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
         },
         responseType: 'application/json',
       });
-      this.logger.debug(this.jobInfo);
+      this.logger.debug(`Successfully created job ${this.id}`);
       this.emit('open');
     } catch (err) {
       this.emit('error', err);
@@ -439,7 +446,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
         responseType: 'application/json',
       });
-      this.logger.debug(this.jobInfo);
+      this.logger.debug(`Successfully aborted job ${this.id}`);
       return this.jobInfo;
     } catch (err) {
       this.emit('error', err);
@@ -462,7 +469,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     const startTime = Date.now();
     const endTime = startTime + timeout;
 
-    this.logger.debug(`Job ID: ${jobId}`);
+    this.logger.debug(`Start polling for job status`);
     this.logger.debug(
       `Polling options: timeout:${timeout}ms | interval: ${interval}ms.`,
     );
@@ -475,7 +482,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
             throw new Error('Job has been aborted');
           case 'UploadComplete':
           case 'InProgress':
-            this.emit('inProgress', res)
+            this.emit('inProgress', res);
             await delay(interval);
             break;
           case 'Failed':
@@ -484,7 +491,8 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
             this.logger.debug(res);
             throw new Error('Query job failed to complete');
           case 'JobComplete':
-            this.emit('jobcomplete');
+            this.logger.debug(`Job ${this.id} was successfully processed.`);
+            this.emit('jobComplete');
             return;
         }
       } catch (err) {
@@ -514,7 +522,6 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
         responseType: 'application/json',
       });
       this.jobInfo = jobInfo;
-      this.logger.debug(this.jobInfo);
       return jobInfo;
     } catch (err) {
       this.emit('error', err);
@@ -674,7 +681,7 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
         },
         responseType: 'application/json',
       });
-      this.logger.debug(this.jobInfo);
+      this.logger.debug(`Successfully created job ${this.id}`);
       this.emit('open');
     } catch (err) {
       this.emit('error', err);
@@ -690,23 +697,13 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
    */
   async uploadData(input: string | Record[] | Readable): Promise<void> {
     await this.jobData.execute(input).result;
-  }
-
-  async getAllResults(): Promise<IngestJobV2Results<S>> {
-    const [
-      successfulResults,
-      failedResults,
-      unprocessedRecords,
-    ] = await Promise.all([
-      this.getSuccessfulResults(),
-      this.getFailedResults(),
-      this.getUnprocessedRecords(),
-    ]);
-    return { successfulResults, failedResults, unprocessedRecords };
+    this.logger.debug(`Successfully uploaded data to job ${this.id}`);
   }
 
   /**
    * Close opened job
+   *
+   * This method will notify the org  that the upload of job data is complete and is ready for processing.
    */
   async close(): Promise<void> {
     try {
@@ -718,8 +715,8 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
         responseType: 'application/json',
       });
-      this.logger.debug(this.jobInfo);
-      this.emit('uploadcomplete');
+      this.logger.debug(`Successfully closed job ${this.id}`);
+      this.emit('close');
     } catch (err) {
       this.emit('error', err);
       throw err;
@@ -739,7 +736,7 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
         responseType: 'application/json',
       });
-      this.logger.debug(this.jobInfo);
+      this.logger.debug(`Successfully aborted job ${this.id}`);
       this.emit('aborted');
     } catch (err) {
       this.emit('error', err);
@@ -769,7 +766,7 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
     const startTime = Date.now();
     const endTime = startTime + timeout;
 
-    this.logger.debug(`Job ID: ${jobId}`);
+    this.logger.debug(`Start polling for job status`);
     this.logger.debug(
       `Polling options: timeout:${timeout}ms | interval: ${interval}ms.`,
     );
@@ -779,12 +776,14 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
         const res = await this.check();
         switch (res.state) {
           case 'Open':
-            throw new Error('Job has not been started');
+            throw new Error(
+              'Job is still open. Make sure close the job by `close` method on the job instance before polling.',
+            );
           case 'Aborted':
             throw new Error('Job has been aborted');
           case 'UploadComplete':
           case 'InProgress':
-            this.emit('inProgress', res)
+            this.emit('inProgress', res);
             await delay(interval);
             break;
           case 'Failed':
@@ -793,7 +792,8 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
               `Ingest job failed to complete due to: ${res.errorMessage}`,
             );
           case 'JobComplete':
-            this.emit('jobcomplete');
+            this.logger.debug(`Job ${this.id} was successfully processed.`);
+            this.emit('jobComplete');
             return;
         }
       } catch (err) {
@@ -821,7 +821,6 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
         responseType: 'application/json',
       });
       this.jobInfo = jobInfo;
-      this.logger.debug(this.jobInfo);
       return jobInfo;
     } catch (err) {
       this.emit('error', err);
@@ -829,6 +828,31 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
     }
   }
 
+  /** Return all record results
+   *
+   * This method will return successful, failed and unprocessed records
+   *
+   * @returns Promise<IngestJobV2Results>
+   */
+  public async getAllResults(): Promise<IngestJobV2Results<S>> {
+    const [
+      successfulResults,
+      failedResults,
+      unprocessedRecords,
+    ] = await Promise.all([
+      this.getSuccessfulResults(),
+      this.getFailedResults(),
+      this.getUnprocessedRecords(),
+    ]);
+    return { successfulResults, failedResults, unprocessedRecords };
+  }
+
+  /** Return successful results
+   *
+   * The order of records returned is not guaranteed to match the ordering of the uploaded data.
+   *
+   * @returns Promise<IngestJobV2SuccessfulResults>
+   */
   async getSuccessfulResults(): Promise<IngestJobV2SuccessfulResults<S>> {
     if (this.bulkJobSuccessfulResults) {
       return this.bulkJobSuccessfulResults;
@@ -847,6 +871,12 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
     return this.bulkJobSuccessfulResults;
   }
 
+  /** Return failed results
+   *
+   * The order of records in the response is not guaranteed to match the ordering of records in the original job data.
+   *
+   * @returns Promise<IngestJobV2SuccessfulResults>
+   */
   async getFailedResults(): Promise<IngestJobV2FailedResults<S>> {
     if (this.bulkJobFailedResults) {
       return this.bulkJobFailedResults;
@@ -865,6 +895,12 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
     return this.bulkJobFailedResults;
   }
 
+  /** Return unprocessed results
+   *
+   * The order of records in the response is not guaranteed to match the ordering of records in the original job data.
+   *
+   * @returns Promise<IngestJobV2UnprocessedRecords>
+   */
   async getUnprocessedRecords(): Promise<IngestJobV2UnprocessedRecords<S>> {
     if (this.bulkJobUnprocessedRecords) {
       return this.bulkJobUnprocessedRecords;
