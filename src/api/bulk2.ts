@@ -8,7 +8,7 @@ import { registerModule } from '../jsforce';
 import { BulkRequest } from './bulk';
 import { getLogger, Logger } from '../util/logger';
 import { concatStreamsAsDuplex } from '../util/stream';
-import { HttpResponse, Record, Schema, Optional } from '../types';
+import { HttpResponse, Record, Schema } from '../types';
 import is from '@sindresorhus/is';
 
 export type IngestOperation =
