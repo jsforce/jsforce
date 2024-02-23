@@ -158,7 +158,10 @@
       }
     },
     "typecheck": {
-      "command": "npm run build:node:cjs && npx tsc -p test --pretty",
+      "command": "tsc -p test --pretty",
+      "dependencies": [
+        "build:node:cjs"
+      ],
       "files": [
         "src/**/*.ts",
         "test/**/*.ts",
