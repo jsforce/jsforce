@@ -342,12 +342,3 @@ describe('session refresh', () => {
     assert.ok(Array.isArray(results));
   });
 });
-
-/*------------------------------------------------------------------------*/
-
-/**
- *
- */
-afterAll(async () => {
-  await connMgr.closeConnection(conn);
-});

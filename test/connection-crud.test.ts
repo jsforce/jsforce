@@ -220,10 +220,3 @@ describe('search', () => {
     assert.ok(searchRecords.length === 20);
   });
 });
-
-/**
- *
- */
-afterAll(async () => {
-  await connMgr.closeConnection(conn);
-});

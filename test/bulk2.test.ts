@@ -493,7 +493,3 @@ it('should bulk delete using Query#destroy with bulkThreshold modified and retur
     assert.ok(ret.success === true);
   }
 });
-
-afterAll(async () => {
-  await connMgr.closeConnection(conn);
-});

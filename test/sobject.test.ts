@@ -487,10 +487,3 @@ it('should explain query plan of list view and get explain result', async () => 
     assert.ok(isString(plan.sobjectType));
   }
 });
-
-/**
- *
- */
-afterAll(async () => {
-  await connMgr.closeConnection(conn);
-});

@@ -127,5 +127,4 @@ afterAll(async () => {
       // ignore errors
     }
   }
-  await connMgr.closeConnection(conn);
 });
