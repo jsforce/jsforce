@@ -743,7 +743,7 @@ class BulkApi<S extends Schema> extends HttpApi<S> {
  */
 export class Bulk<S extends Schema> {
   private readonly _conn: Connection<S>;
-  private readonly _logger: Logger;
+  public readonly _logger: Logger;
 
   /**
    * Polling interval in milliseconds
