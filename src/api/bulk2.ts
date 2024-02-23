@@ -1043,12 +1043,12 @@ class JobDataV2<S extends Schema> extends Writable {
       this.once('error', reject);
     });
 
-    const recordData = structuredClone(input);
-
-    if (is.nodeStream(recordData)) {
+    if (is.nodeStream(input)) {
       // if input has stream.Readable interface
-      recordData.pipe(this.dataStream);
+      input.pipe(this.dataStream);
     } else {
+      const recordData = structuredClone(input);
+
       if (Array.isArray(recordData)) {
         for (const record of recordData) {
           for (const key of Object.keys(record)) {
