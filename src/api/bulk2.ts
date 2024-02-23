@@ -355,7 +355,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
   private readonly pollingOptions: BulkV2PollingOptions;
   private error: Error | undefined;
   private jobInfo?: QueryJobInfoV2;
-  private locator: Optional<string>;
+  private locator?: string;
 
   constructor(conn: Connection<S>, options: ExistingQueryJobV2Options);
   constructor(conn: Connection<S>, options: CreateQueryJobV2Options);
