@@ -340,7 +340,6 @@ export class BulkV2<S extends Schema> {
         queryJob.delete().catch((ignored) => ignored);
       }
 
-      recordStream.emit('error', err);
       throw err;
     }
     return recordStream;

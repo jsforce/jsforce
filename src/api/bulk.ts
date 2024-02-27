@@ -878,15 +878,11 @@ export class Bulk<S extends Schema> {
     const recordStream = new Parsable();
     const dataStream = recordStream.stream('csv');
 
-    try {
-      const results = await this.load(type, 'query', soql);
-      const streams = results.map((result) =>
-        this.job(result.jobId).batch(result.batchId).result(result.id).stream(),
-      );
-      joinStreams(streams).pipe(dataStream);
-    } catch (err) {
-      recordStream.emit('error', err);
-    }
+    const results = await this.load(type, 'query', soql);
+    const streams = results.map((result) =>
+      this.job(result.jobId).batch(result.batchId).result(result.id).stream(),
+    );
+    joinStreams(streams).pipe(dataStream);
 
     return recordStream;
   }
