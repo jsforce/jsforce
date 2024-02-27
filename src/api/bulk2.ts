@@ -474,6 +474,13 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
       `Polling options: timeout:${timeout}ms | interval: ${interval}ms.`,
     );
 
+    if (timeout === 0) {
+      throw new JobPollingTimeoutError(
+        `Skipping polling because of timeout = 0ms. Job Id = ${jobId}`,
+        jobId,
+      );
+    }
+
     while (endTime > Date.now()) {
       try {
         const res = await this.check();
@@ -765,6 +772,13 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
     const jobId = this.id;
     const startTime = Date.now();
     const endTime = startTime + timeout;
+
+    if (timeout === 0) {
+      throw new JobPollingTimeoutError(
+        `Skipping polling because of timeout = 0ms. Job Id = ${jobId}`,
+        jobId,
+      );
+    }
 
     this.logger.debug(`Start polling for job status`);
     this.logger.debug(

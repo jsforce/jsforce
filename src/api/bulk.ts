@@ -599,6 +599,14 @@ export class Batch<
     const startTime = new Date().getTime();
     const endTime = startTime + timeout;
 
+    if (timeout === 0) {
+      throw new PollingTimeoutError(
+        `Skipping polling because of timeout = 0ms. Job Id = ${jobId} | Batch Id = ${batchId}`,
+        jobId,
+        batchId,
+      );
+    }
+
     const poll = async () => {
       const now = new Date().getTime();
       if (endTime < now) {
