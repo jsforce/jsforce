@@ -80,7 +80,7 @@ export type IngestJobV2FailedResults<S extends Schema> = Array<
   } & S
 >;
 
-export type IngestJobV2UnprocessedRecords<S extends Schema> = Array<S>;
+export type IngestJobV2UnprocessedRecords<S extends Schema> = Array<S> | string;
 
 export type IngestJobV2Results<S extends Schema> = {
   successfulResults: IngestJobV2SuccessfulResults<S>;
