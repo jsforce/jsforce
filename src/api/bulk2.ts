@@ -848,12 +848,15 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
    * @returns Promise<IngestJobV2Results>
    */
   public async getAllResults(): Promise<IngestJobV2Results<S>> {
-    const [successfulResults, failedResults, unprocessedRecords] =
-      await Promise.all([
-        this.getSuccessfulResults(),
-        this.getFailedResults(),
-        this.getUnprocessedRecords(),
-      ]);
+    const [
+      successfulResults,
+      failedResults,
+      unprocessedRecords,
+    ] = await Promise.all([
+      this.getSuccessfulResults(),
+      this.getFailedResults(),
+      this.getUnprocessedRecords(),
+    ]);
     return { successfulResults, failedResults, unprocessedRecords };
   }
 
