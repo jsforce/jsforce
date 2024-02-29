@@ -907,6 +907,11 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
 
   /** Return unprocessed results
    *
+   * The unprocessed records endpoint returns records as a CSV.
+   * If the request helper is able to parse it, you get the records
+   * as an array of objects.
+   * If unable to parse the it (bad CSV), you get the raw response as a string.
+   *
    * The order of records in the response is not guaranteed to match the ordering of records in the original job data.
    *
    * @returns Promise<IngestJobV2UnprocessedRecords>
