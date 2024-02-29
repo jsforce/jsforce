@@ -8,7 +8,6 @@ import joinStreams from 'multistream';
 import Connection from '../connection';
 import { Serializable, Parsable } from '../record-stream';
 import HttpApi from '../http-api';
-import { StreamPromise } from '../util/promise';
 import { registerModule } from '../jsforce';
 import { Logger } from '../util/logger';
 import { concatStreamsAsDuplex } from '../util/stream';
@@ -18,9 +17,8 @@ import {
   HttpResponse,
   Record,
   Schema,
-  Optional,
 } from '../types';
-import { isFunction, isObject } from '../util/function';
+import is from '@sindresorhus/is';
 
 /*--------------------------------------------*/
 
@@ -33,10 +31,6 @@ export type BulkOperation =
   | 'query'
   | 'queryAll';
 
-export type IngestOperation = Exclude<BulkOperation, 'query' | 'queryAll'>;
-
-export type QueryOperation = Extract<BulkOperation, 'query' | 'queryAll'>;
-
 export type BulkOptions = {
   extIdField?: string;
   concurrencyMode?: 'Serial' | 'Parallel';
@@ -45,44 +39,11 @@ export type BulkOptions = {
 
 export type JobState = 'Open' | 'Closed' | 'Aborted' | 'Failed' | 'Unknown';
 
-export type JobStateV2 =
-  | Exclude<JobState, 'Closed' | 'Unknown'>
-  | 'UploadComplete'
-  | 'InProgress'
-  | 'JobComplete';
-
 export type JobInfo = {
   id: string;
   object: string;
   operation: BulkOperation;
   state: JobState;
-};
-
-export type JobInfoV2 = {
-  apiVersion: string;
-  assignmentRuleId?: string;
-  columnDelimiter:
-    | 'BACKQUOTE'
-    | 'CARET'
-    | 'COMMA'
-    | 'PIPE'
-    | 'SEMICOLON'
-    | 'TAB';
-  concurrencyMode: 'Parallel';
-  contentType: 'CSV';
-  contentUrl: string;
-  createdById: string;
-  createdDate: string;
-  externalIdFieldName?: string;
-  id: string;
-  jobType: 'BigObjectIngest' | 'Classic' | 'V2Ingest';
-  lineEnding: 'LF' | 'CRLF';
-  object: string;
-  operation: BulkOperation;
-  state: JobStateV2;
-  systemModstamp: string;
-  numberRecordsProcessed?: number;
-  numberRecordsFailed?: number;
 };
 
 type JobInfoResponse = {
@@ -146,66 +107,12 @@ type BulkQueryResultResponse = {
   };
 };
 
-type BulkRequest = {
+export type BulkRequest = {
   method: HttpMethods;
-  path: string;
+  path?: string;
   body?: string;
   headers?: { [name: string]: string };
   responseType?: string;
-};
-
-export type IngestJobV2SuccessfulResults<S extends Schema> = Array<
-  {
-    sf__Created: 'true' | 'false';
-    sf__Id: string;
-  } & S
->;
-
-export type IngestJobV2FailedResults<S extends Schema> = Array<
-  {
-    sf__Error: string;
-    sf__Id: string;
-  } & S
->;
-
-export type IngestJobV2UnprocessedRecords<S extends Schema> = Array<S>;
-
-export type IngestJobV2Results<S extends Schema> = {
-  successfulResults: IngestJobV2SuccessfulResults<S>;
-  failedResults: IngestJobV2FailedResults<S>;
-  unprocessedRecords: IngestJobV2UnprocessedRecords<S>;
-};
-
-type NewIngestJobOptions = Required<Pick<JobInfoV2, 'object' | 'operation'>> &
-  Partial<
-    Pick<JobInfoV2, 'assignmentRuleId' | 'externalIdFieldName' | 'lineEnding'>
-  >;
-
-type ExistingIngestJobOptions = Pick<JobInfoV2, 'id'>;
-
-type CreateIngestJobV2Request = <T>(request: BulkRequest) => StreamPromise<T>;
-
-type CreateIngestJobV2Options<S extends Schema> = {
-  connection: Connection<S>;
-  jobInfo: NewIngestJobOptions | ExistingIngestJobOptions;
-  pollingOptions: BulkV2PollingOptions;
-};
-
-type CreateJobDataV2Options<S extends Schema, Opr extends IngestOperation> = {
-  job: IngestJobV2<S, Opr>;
-  createRequest: CreateIngestJobV2Request;
-};
-
-type CreateQueryJobV2Options<S extends Schema> = {
-  connection: Connection<S>;
-  operation: QueryOperation;
-  query: string;
-  pollingOptions: BulkV2PollingOptions;
-};
-
-type BulkV2PollingOptions = {
-  pollInterval: number;
-  pollTimeout: number;
 };
 
 /**
@@ -487,19 +394,6 @@ class PollingTimeoutError extends Error {
   }
 }
 
-class JobPollingTimeoutError extends Error {
-  jobId: string;
-
-  /**
-   *
-   */
-  constructor(message: string, jobId: string) {
-    super(message);
-    this.name = 'JobPollingTimeout';
-    this.jobId = jobId;
-  }
-}
-
 /*--------------------------------------------*/
 /**
  * Batch (extends Writable)
@@ -627,12 +521,14 @@ export class Batch<
       this.once('error', reject);
     });
 
-    if (isObject(input) && 'pipe' in input && isFunction(input.pipe)) {
+    if (is.nodeStream(input)) {
       // if input has stream.Readable interface
       input.pipe(this._dataStream);
     } else {
-      if (Array.isArray(input)) {
-        for (const record of input) {
+      const recordData = structuredClone(input);
+
+      if (Array.isArray(recordData)) {
+        for (const record of recordData) {
           for (const key of Object.keys(record)) {
             if (typeof record[key] === 'boolean') {
               record[key] = String(record[key]);
@@ -641,8 +537,8 @@ export class Batch<
           this.write(record);
         }
         this.end();
-      } else if (typeof input === 'string') {
-        this._dataStream.write(input, 'utf8');
+      } else if (typeof recordData === 'string') {
+        this._dataStream.write(recordData, 'utf8');
         this._dataStream.end();
       }
     }
@@ -701,9 +597,19 @@ export class Batch<
       throw new Error('Batch not started.');
     }
     const startTime = new Date().getTime();
+    const endTime = startTime + timeout;
+
+    if (timeout === 0) {
+      throw new PollingTimeoutError(
+        `Skipping polling because of timeout = 0ms. Job Id = ${jobId} | Batch Id = ${batchId}`,
+        jobId,
+        batchId,
+      );
+    }
+
     const poll = async () => {
       const now = new Date().getTime();
-      if (startTime + timeout < now) {
+      if (endTime < now) {
         const err = new PollingTimeoutError(
           'Polling time out. Job Id = ' + jobId + ' , batch Id = ' + batchId,
           jobId,
@@ -728,7 +634,7 @@ export class Batch<
       } else if (res.state === 'Completed') {
         this.retrieve();
       } else {
-        this.emit('progress', res);
+        this.emit('inProgress', res);
         setTimeout(poll, interval);
       }
     };
@@ -780,11 +686,12 @@ export class Batch<
   }
 
   /**
-   * Fetch query result as a record stream
+   * Fetch query batch result as a record stream
+   *
    * @param {String} resultId - Result id
    * @returns {RecordStream} - Record stream, convertible to CSV data stream
    */
-  result(resultId: string) {
+  public result(resultId: string): Parsable<Record> {
     const jobId = this.job.id;
     const batchId = this.id;
     if (!jobId || !batchId) {
@@ -835,29 +742,6 @@ class BulkApi<S extends Schema> extends HttpApi<S> {
   }
 }
 
-class BulkApiV2<S extends Schema> extends HttpApi<S> {
-  hasErrorInResponseBody(body: any) {
-    return (
-      Array.isArray(body) &&
-      typeof body[0] === 'object' &&
-      'errorCode' in body[0]
-    );
-  }
-
-  isSessionExpired(response: HttpResponse): boolean {
-    return (
-      response.statusCode === 401 && /INVALID_SESSION_ID/.test(response.body)
-    );
-  }
-
-  parseError(body: any) {
-    return {
-      errorCode: body[0].errorCode,
-      message: body[0].message,
-    };
-  }
-}
-
 /*--------------------------------------------*/
 
 /**
@@ -866,19 +750,22 @@ class BulkApiV2<S extends Schema> extends HttpApi<S> {
  * @class
  */
 export class Bulk<S extends Schema> {
-  _conn: Connection<S>;
-  _logger: Logger;
+  private readonly _conn: Connection<S>;
+  public readonly _logger: Logger;
 
   /**
    * Polling interval in milliseconds
+   *
+   * Default: 1000 (1 second)
    */
-  pollInterval = 1000;
+  public pollInterval = 1000;
 
   /**
    * Polling timeout in milliseconds
-   * @type {Number}
+   *
+   * Default: 30000 (30 seconds)
    */
-  pollTimeout = 10000;
+  public pollTimeout = 30000;
 
   /**
    *
@@ -891,7 +778,7 @@ export class Bulk<S extends Schema> {
   /**
    *
    */
-  _request<T>(request_: BulkRequest) {
+  public _request<T>(request_: BulkRequest) {
     const conn = this._conn;
     const { path, responseType, ...rreq } = request_;
     const baseUrl = [conn.instanceUrl, 'services/async', conn.version].join(
@@ -906,6 +793,32 @@ export class Bulk<S extends Schema> {
 
   /**
    * Create and start bulkload job and batch
+   *
+   * This method will return a Batch instance (writable stream)
+   * which you can write records into as a CSV string.
+   *
+   * Batch also implements the a promise interface so you can `await` this method to get the job results.
+   *
+   * @example
+   * // Insert an array of records and get the job results
+   *
+   * const res = await connection.bulk.load('Account', 'insert', accounts)
+   *
+   * @example
+   * // Insert records from a csv file using the returned batch stream
+   *
+   * const csvFile = fs.createReadStream('accounts.csv')
+   *
+   * const batch = conn.bulk.load('Account', 'insert')
+   * 
+   * // The `response` event is emitted when the job results are retrieved
+   * batch.on('response', res => {
+   *   console.log(res)
+   * })
+
+   * csvFile.pipe(batch.stream())
+   *
+   *
    */
   load<Opr extends BulkOperation>(
     type: string,
@@ -928,9 +841,7 @@ export class Bulk<S extends Schema> {
     if (
       typeof optionsOrInput === 'string' ||
       Array.isArray(optionsOrInput) ||
-      (isObject(optionsOrInput) &&
-        'pipe' in optionsOrInput &&
-        typeof optionsOrInput.pipe === 'function')
+      is.nodeStream(optionsOrInput)
     ) {
       // when options is not plain hash object, it is omitted
       input = optionsOrInput;
@@ -956,7 +867,7 @@ export class Bulk<S extends Schema> {
   /**
    * Execute bulk query and get record stream
    */
-  query(soql: string) {
+  public async query(soql: string): Promise<Parsable<Record>> {
     const m = soql.replace(/\([\s\S]+\)/g, '').match(/FROM\s+(\w+)/i);
     if (!m) {
       throw new Error(
@@ -966,27 +877,20 @@ export class Bulk<S extends Schema> {
     const type = m[1];
     const recordStream = new Parsable();
     const dataStream = recordStream.stream('csv');
-    (async () => {
-      try {
-        const results = await this.load(type, 'query', soql);
-        const streams = results.map((result) =>
-          this.job(result.jobId)
-            .batch(result.batchId)
-            .result(result.id)
-            .stream(),
-        );
-        joinStreams(streams).pipe(dataStream);
-      } catch (err) {
-        recordStream.emit('error', err);
-      }
-    })();
+
+    const results = await this.load(type, 'query', soql);
+    const streams = results.map((result) =>
+      this.job(result.jobId).batch(result.batchId).result(result.id).stream(),
+    );
+    joinStreams(streams).pipe(dataStream);
+
     return recordStream;
   }
 
   /**
    * Create a new job instance
    */
-  createJob<Opr extends BulkOperation>(
+  public createJob<Opr extends BulkOperation>(
     type: string,
     operation: Opr,
     options: BulkOptions = {},
@@ -1000,780 +904,9 @@ export class Bulk<S extends Schema> {
    * @param {String} jobId - Job ID
    * @returns {Bulk~Job}
    */
-  job<Opr extends BulkOperation>(jobId: string) {
+  public job<Opr extends BulkOperation>(jobId: string) {
     return new Job<S, Opr>(this, null, null, null, jobId);
   }
-}
-
-export class BulkV2<S extends Schema> {
-  #connection: Connection<S>;
-
-  /**
-   * Polling interval in milliseconds
-   */
-  pollInterval = 1000;
-
-  /**
-   * Polling timeout in milliseconds
-   * @type {Number}
-   */
-  pollTimeout = 10000;
-
-  constructor(connection: Connection<S>) {
-    this.#connection = connection;
-  }
-
-  /**
-   * Create an instance of an ingest job object.
-   *
-   * @params {NewIngestJobOptions} options object
-   * @returns {IngestJobV2} An ingest job instance
-   * @example
-   * // Upsert records to the Account object.
-   *
-   * const job = connection.bulk2.createJob({
-   *   operation: 'insert'
-   *   object: 'Account',
-   * });
-   *
-   * // create the job in the org
-   * await job.open()
-   *
-   * // upload data
-   * await job.uploadData(csvFile)
-   *
-   * // finished uploading data, mark it as ready for processing
-   * await job.close()
-   */
-  createJob<Opr extends IngestOperation>(
-    options: NewIngestJobOptions,
-  ): IngestJobV2<S, Opr> {
-    return new IngestJobV2({
-      connection: this.#connection,
-      jobInfo: options,
-      pollingOptions: this,
-    });
-  }
-
-  /**
-   * Get a ingest job instance specified by a given job ID
-   *
-   * @param options Options object with a job ID
-   * @returns IngestJobV2 An ingest job
-   */
-  job<Opr extends IngestOperation>(
-    options: ExistingIngestJobOptions,
-  ): IngestJobV2<S, Opr> {
-    return new IngestJobV2({
-      connection: this.#connection,
-      jobInfo: options,
-      pollingOptions: this,
-    });
-  }
-
-  /**
-   * Create, upload, and start bulkload job
-   */
-  async loadAndWaitForResults(
-    options: NewIngestJobOptions &
-      Partial<BulkV2PollingOptions> & {
-        input: Record[] | Readable | string;
-      },
-  ): Promise<IngestJobV2Results<S>> {
-    if (!options.pollTimeout) options.pollTimeout = this.pollTimeout;
-    if (!options.pollInterval) options.pollInterval = this.pollInterval;
-
-    const job = this.createJob(options);
-    try {
-      await job.open();
-      await job.uploadData(options.input);
-      await job.close();
-      await job.poll(options.pollInterval, options.pollTimeout);
-      return await job.getAllResults();
-    } catch (error) {
-      const err = error as Error;
-      if (err.name !== 'JobPollingTimeoutError') {
-        // fires off one last attempt to clean up and ignores the result | error
-        job.delete().catch((ignored) => ignored);
-      }
-      throw err;
-    }
-  }
-
-  /**
-   * Execute bulk query and get records
-   *
-   * Default timeout: 10000ms
-   *
-   * @param soql SOQL query
-   * @param BulkV2PollingOptions options object
-   *
-   * @returns Record[]
-   */
-  async query(
-    soql: string,
-    options?: Partial<BulkV2PollingOptions> & { scanAll?: boolean },
-  ): Promise<Record[]> {
-    const queryJob = new QueryJobV2({
-      connection: this.#connection,
-      operation: options?.scanAll ? 'queryAll' : 'query',
-      query: soql,
-      pollingOptions: this,
-    });
-    try {
-      await queryJob.open();
-      await queryJob.poll(options?.pollInterval, options?.pollTimeout);
-      return await queryJob.getResults();
-    } catch (error) {
-      const err = error as Error;
-      if (err.name !== 'JobPollingTimeoutError') {
-        // fires off one last attempt to clean up and ignores the result | error
-        queryJob.delete().catch((ignored) => ignored);
-      }
-      throw err;
-    }
-  }
-}
-
-export class QueryJobV2<S extends Schema> extends EventEmitter {
-  readonly #connection: Connection<S>;
-  readonly #operation: QueryOperation;
-  readonly #query: string;
-  readonly #pollingOptions: BulkV2PollingOptions;
-  #queryResults: Record[] | undefined;
-  #error: Error | undefined;
-  jobInfo: Partial<JobInfoV2> | undefined;
-  locator: Optional<string>;
-  finished: boolean = false;
-
-  constructor(options: CreateQueryJobV2Options<S>) {
-    super();
-    this.#connection = options.connection;
-    this.#operation = options.operation;
-    this.#query = options.query;
-    this.#pollingOptions = options.pollingOptions;
-    // default error handler to keep the latest error
-    this.on('error', (error) => (this.#error = error));
-  }
-
-  /**
-   * Creates a query job
-   */
-  async open(): Promise<void> {
-    try {
-      this.jobInfo = await this.createQueryRequest<JobInfoV2>({
-        method: 'POST',
-        path: '',
-        body: JSON.stringify({
-          operation: this.#operation,
-          query: this.#query,
-        }),
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8',
-        },
-        responseType: 'application/json',
-      });
-      this.emit('open');
-    } catch (err) {
-      this.emit('error', err);
-      throw err;
-    }
-  }
-
-  /**
-   * Set the status to abort
-   */
-  async abort(): Promise<void> {
-    try {
-      const state: JobStateV2 = 'Aborted';
-      this.jobInfo = await this.createQueryRequest<JobInfoV2>({
-        method: 'PATCH',
-        path: `/${this.jobInfo?.id}`,
-        body: JSON.stringify({ state }),
-        headers: { 'Content-Type': 'application/json; charset=utf-8' },
-        responseType: 'application/json',
-      });
-      this.emit('aborted');
-    } catch (err) {
-      this.emit('error', err);
-      throw err;
-    }
-  }
-
-  /**
-   * Poll for the state of the processing for the job.
-   *
-   * This method will only throw after a timeout. To capture a
-   * job failure while polling you must set a listener for the
-   * `failed` event before calling it:
-   *
-   * job.on('failed', (err) => console.error(err))
-   * await job.poll()
-   *
-   * @param interval Polling interval in milliseconds
-   * @param timeout Polling timeout in milliseconds
-   * @returns {Promise<Record[]>} A promise that resolves to an array of records
-   */
-  async poll(
-    interval: number = this.#pollingOptions.pollInterval,
-    timeout: number = this.#pollingOptions.pollTimeout,
-  ): Promise<void> {
-    const jobId = getJobIdOrError(this.jobInfo);
-    const startTime = Date.now();
-
-    while (startTime + timeout > Date.now()) {
-      try {
-        const res = await this.check();
-        switch (res.state) {
-          case 'Open':
-            throw new Error('Job has not been started');
-          case 'Aborted':
-            throw new Error('Job has been aborted');
-          case 'UploadComplete':
-          case 'InProgress':
-            await delay(interval);
-            break;
-          case 'Failed':
-            // unlike ingest jobs, the API doesn't return an error msg:
-            // https://developer.salesforce.com/docs/atlas.en-us.api_asynch.meta/api_asynch/query_get_one_job.htm
-            this.emit('failed', new Error('Query job failed to complete.'));
-            return;
-          case 'JobComplete':
-            this.emit('jobcomplete');
-            return;
-        }
-      } catch (err) {
-        this.emit('error', err);
-        throw err;
-      }
-    }
-
-    const timeoutError = new JobPollingTimeoutError(
-      `Polling timed out after ${timeout}ms. Job Id = ${jobId}`,
-      jobId,
-    );
-    this.emit('error', timeoutError);
-    throw timeoutError;
-  }
-
-  /**
-   * Check the latest batch status in server
-   */
-  async check(): Promise<JobInfoV2> {
-    try {
-      const jobInfo = await this.createQueryRequest<JobInfoV2>({
-        method: 'GET',
-        path: `/${getJobIdOrError(this.jobInfo)}`,
-        responseType: 'application/json',
-      });
-      this.jobInfo = jobInfo;
-      return jobInfo;
-    } catch (err) {
-      this.emit('error', err);
-      throw err;
-    }
-  }
-
-  private request<R = unknown>(
-    request: string | HttpRequest,
-    options: Object = {},
-  ): StreamPromise<R> {
-    // if request is simple string, regard it as url in GET method
-    const request_: HttpRequest =
-      typeof request === 'string' ? { method: 'GET', url: request } : request;
-
-    const httpApi = new HttpApi(this.#connection, options);
-    httpApi.on('response', (response: HttpResponse) => {
-      this.locator = response.headers['sforce-locator'];
-    });
-    return httpApi.request<R>(request_);
-  }
-
-  private getResultsUrl(): string {
-    const url = `${this.#connection.instanceUrl}/services/data/v${
-      this.#connection.version
-    }/jobs/query/${getJobIdOrError(this.jobInfo)}/results`;
-
-    return this.locator ? `${url}?locator=${this.locator}` : url;
-  }
-
-  /**
-   * Get the results for a query job.
-   *
-   * @returns {Promise<Record[]>} A promise that resolves to an array of records
-   */
-  async getResults(): Promise<Record[]> {
-    if (this.finished && this.#queryResults) {
-      return this.#queryResults;
-    }
-
-    this.#queryResults = [];
-
-    while (this.locator !== 'null') {
-      const nextResults = await this.request<Record[]>({
-        method: 'GET',
-        url: this.getResultsUrl(),
-        headers: {
-          Accept: 'text/csv',
-        },
-      });
-
-      this.#queryResults = this.#queryResults.concat(nextResults);
-    }
-    this.finished = true;
-
-    return this.#queryResults;
-  }
-
-  /**
-   * Deletes a query job.
-   */
-  async delete(): Promise<void> {
-    return this.createQueryRequest<void>({
-      method: 'DELETE',
-      path: `/${getJobIdOrError(this.jobInfo)}`,
-    });
-  }
-
-  private createQueryRequest<T>(request: BulkRequest) {
-    const { path, responseType } = request;
-    const baseUrl = [
-      this.#connection.instanceUrl,
-      'services/data',
-      `v${this.#connection.version}`,
-      'jobs/query',
-    ].join('/');
-
-    return new BulkApiV2(this.#connection, { responseType }).request<T>({
-      ...request,
-      url: baseUrl + path,
-    });
-  }
-}
-
-/**
- * Class for Bulk API V2 Ingest Job
- */
-export class IngestJobV2<
-  S extends Schema,
-  Opr extends IngestOperation
-> extends EventEmitter {
-  readonly #connection: Connection<S>;
-  readonly #pollingOptions: BulkV2PollingOptions;
-  readonly #jobData: JobDataV2<S, Opr>;
-  #bulkJobSuccessfulResults: IngestJobV2SuccessfulResults<S> | undefined;
-  #bulkJobFailedResults: IngestJobV2FailedResults<S> | undefined;
-  #bulkJobUnprocessedRecords: IngestJobV2UnprocessedRecords<S> | undefined;
-  #error: Error | undefined;
-  jobInfo: Partial<JobInfoV2>;
-
-  /**
-   *
-   */
-  constructor(options: CreateIngestJobV2Options<S>) {
-    super();
-
-    this.#connection = options.connection;
-    this.#pollingOptions = options.pollingOptions;
-    this.jobInfo = options.jobInfo;
-    this.#jobData = new JobDataV2<S, Opr>({
-      createRequest: (request) => this.createIngestRequest(request),
-      job: this,
-    });
-    // default error handler to keep the latest error
-    this.on('error', (error) => (this.#error = error));
-  }
-
-  get id() {
-    return this.jobInfo.id;
-  }
-
-  /**
-   * Create a job representing a bulk operation in the org
-   */
-  async open(): Promise<void> {
-    try {
-      this.jobInfo = await this.createIngestRequest<JobInfoV2>({
-        method: 'POST',
-        path: '',
-        body: JSON.stringify({
-          assignmentRuleId: this.jobInfo?.assignmentRuleId,
-          externalIdFieldName: this.jobInfo?.externalIdFieldName,
-          object: this.jobInfo?.object,
-          operation: this.jobInfo?.operation,
-          lineEnding: this.jobInfo?.lineEnding,
-        }),
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8',
-        },
-        responseType: 'application/json',
-      });
-      this.emit('open');
-    } catch (err) {
-      this.emit('error', err);
-      throw err;
-    }
-  }
-
-  /** Upload data for a job in CSV format
-   *
-   *  @param input CSV as a string, or array of records or readable stream
-   */
-  async uploadData(input: string | Record[] | Readable): Promise<void> {
-    await this.#jobData.execute(input);
-  }
-
-  async getAllResults(): Promise<IngestJobV2Results<S>> {
-    const [
-      successfulResults,
-      failedResults,
-      unprocessedRecords,
-    ] = await Promise.all([
-      this.getSuccessfulResults(),
-      this.getFailedResults(),
-      this.getUnprocessedRecords(),
-    ]);
-    return { successfulResults, failedResults, unprocessedRecords };
-  }
-
-  /**
-   * Close opened job
-   */
-  async close(): Promise<void> {
-    try {
-      const state: JobStateV2 = 'UploadComplete';
-      this.jobInfo = await this.createIngestRequest<JobInfoV2>({
-        method: 'PATCH',
-        path: `/${this.jobInfo.id}`,
-        body: JSON.stringify({ state }),
-        headers: { 'Content-Type': 'application/json; charset=utf-8' },
-        responseType: 'application/json',
-      });
-      this.emit('uploadcomplete');
-    } catch (err) {
-      this.emit('error', err);
-      throw err;
-    }
-  }
-
-  /**
-   * Set the status to abort
-   */
-  async abort(): Promise<void> {
-    try {
-      const state: JobStateV2 = 'Aborted';
-      this.jobInfo = await this.createIngestRequest<JobInfoV2>({
-        method: 'PATCH',
-        path: `/${this.jobInfo.id}`,
-        body: JSON.stringify({ state }),
-        headers: { 'Content-Type': 'application/json; charset=utf-8' },
-        responseType: 'application/json',
-      });
-      this.emit('aborted');
-    } catch (err) {
-      this.emit('error', err);
-      throw err;
-    }
-  }
-
-  /**
-   * Poll for the state of the processing for the job.
-   *
-   * This method will only throw after a timeout. To capture a
-   * job failure while polling you must set a listener for the
-   * `failed` event before calling it:
-   *
-   * job.on('failed', (err) => console.error(err))
-   * await job.poll()
-   *
-   * @param interval Polling interval in milliseconds
-   * @param timeout Polling timeout in milliseconds
-   * @returns {Promise<void>} A promise that resolves when the job finishes successfully
-   */
-  async poll(
-    interval: number = this.#pollingOptions.pollInterval,
-    timeout: number = this.#pollingOptions.pollTimeout,
-  ): Promise<void> {
-    const jobId = getJobIdOrError(this.jobInfo);
-    const startTime = Date.now();
-
-    while (startTime + timeout > Date.now()) {
-      try {
-        const res = await this.check();
-        switch (res.state) {
-          case 'Open':
-            throw new Error('Job has not been started');
-          case 'Aborted':
-            throw new Error('Job has been aborted');
-          case 'UploadComplete':
-          case 'InProgress':
-            await delay(interval);
-            break;
-          case 'Failed':
-            this.emit('failed', new Error('Ingest job failed to complete.'));
-            return;
-          case 'JobComplete':
-            this.emit('jobcomplete');
-            return;
-        }
-      } catch (err) {
-        this.emit('error', err);
-        throw err;
-      }
-    }
-
-    const timeoutError = new JobPollingTimeoutError(
-      `Polling timed out after ${timeout}ms. Job Id = ${jobId}`,
-      jobId,
-    );
-    this.emit('error', timeoutError);
-    throw timeoutError;
-  }
-
-  /**
-   * Check the latest batch status in server
-   */
-  async check(): Promise<JobInfoV2> {
-    try {
-      const jobInfo = await this.createIngestRequest<JobInfoV2>({
-        method: 'GET',
-        path: `/${getJobIdOrError(this.jobInfo)}`,
-        responseType: 'application/json',
-      });
-      this.jobInfo = jobInfo;
-      return jobInfo;
-    } catch (err) {
-      this.emit('error', err);
-      throw err;
-    }
-  }
-
-  async getSuccessfulResults(): Promise<IngestJobV2SuccessfulResults<S>> {
-    if (this.#bulkJobSuccessfulResults) {
-      return this.#bulkJobSuccessfulResults;
-    }
-
-    const results = await this.createIngestRequest<
-      IngestJobV2SuccessfulResults<S> | undefined
-    >({
-      method: 'GET',
-      path: `/${getJobIdOrError(this.jobInfo)}/successfulResults`,
-      responseType: 'text/csv',
-    });
-
-    this.#bulkJobSuccessfulResults = results ?? [];
-
-    return this.#bulkJobSuccessfulResults;
-  }
-
-  async getFailedResults(): Promise<IngestJobV2FailedResults<S>> {
-    if (this.#bulkJobFailedResults) {
-      return this.#bulkJobFailedResults;
-    }
-
-    const results = await this.createIngestRequest<
-      IngestJobV2FailedResults<S> | undefined
-    >({
-      method: 'GET',
-      path: `/${getJobIdOrError(this.jobInfo)}/failedResults`,
-      responseType: 'text/csv',
-    });
-
-    this.#bulkJobFailedResults = results ?? [];
-
-    return this.#bulkJobFailedResults;
-  }
-
-  async getUnprocessedRecords(): Promise<IngestJobV2UnprocessedRecords<S>> {
-    if (this.#bulkJobUnprocessedRecords) {
-      return this.#bulkJobUnprocessedRecords;
-    }
-
-    const results = await this.createIngestRequest<
-      IngestJobV2UnprocessedRecords<S> | undefined
-    >({
-      method: 'GET',
-      path: `/${getJobIdOrError(this.jobInfo)}/unprocessedrecords`,
-      responseType: 'text/csv',
-    });
-
-    this.#bulkJobUnprocessedRecords = results ?? [];
-
-    return this.#bulkJobUnprocessedRecords;
-  }
-
-  /**
-   * Deletes an ingest job.
-   */
-  async delete(): Promise<void> {
-    return this.createIngestRequest<void>({
-      method: 'DELETE',
-      path: `/${getJobIdOrError(this.jobInfo)}`,
-    });
-  }
-
-  private createIngestRequest<T>(request: BulkRequest) {
-    const { path, responseType } = request;
-    const baseUrl = [
-      this.#connection.instanceUrl,
-      'services/data',
-      `v${this.#connection.version}`,
-      'jobs/ingest',
-    ].join('/');
-
-    return new BulkApiV2(this.#connection, { responseType }).request<T>({
-      ...request,
-      url: baseUrl + path,
-    });
-  }
-}
-
-class JobDataV2<
-  S extends Schema,
-  Opr extends IngestOperation
-> extends Writable {
-  readonly #job: IngestJobV2<S, Opr>;
-  readonly #uploadStream: Serializable;
-  readonly #downloadStream: Parsable;
-  readonly #dataStream: Duplex;
-  #result: any;
-
-  /**
-   *
-   */
-  constructor(options: CreateJobDataV2Options<S, Opr>) {
-    super({ objectMode: true });
-
-    const createRequest = options.createRequest;
-
-    this.#job = options.job;
-    this.#uploadStream = new Serializable();
-    this.#downloadStream = new Parsable();
-
-    const converterOptions = { nullValue: '#N/A' };
-    const uploadDataStream = this.#uploadStream.stream('csv', converterOptions);
-    const downloadDataStream = this.#downloadStream.stream(
-      'csv',
-      converterOptions,
-    );
-
-    this.#dataStream = concatStreamsAsDuplex(
-      uploadDataStream,
-      downloadDataStream,
-    );
-
-    this.on('finish', () => this.#uploadStream.end());
-
-    uploadDataStream.once('readable', () => {
-      try {
-        // pipe upload data to batch API request stream
-        const req = createRequest({
-          method: 'PUT',
-          path: `/${this.#job.jobInfo?.id}/batches`,
-          headers: {
-            'Content-Type': 'text/csv',
-          },
-          responseType: 'application/json',
-        });
-
-        (async () => {
-          try {
-            const res = await req;
-            this.emit('response', res);
-          } catch (err) {
-            this.emit('error', err);
-          }
-        })();
-
-        uploadDataStream.pipe(req.stream());
-      } catch (err) {
-        this.emit('error', err);
-      }
-    });
-  }
-
-  _write(record_: Record, enc: BufferEncoding, cb: () => void) {
-    const { Id, type, attributes, ...rrec } = record_;
-    let record;
-    switch (this.#job.jobInfo.operation) {
-      case 'insert':
-        record = rrec;
-        break;
-      case 'delete':
-      case 'hardDelete':
-        record = { Id };
-        break;
-      default:
-        record = { Id, ...rrec };
-    }
-    this.#uploadStream.write(record, enc, cb);
-  }
-
-  /**
-   * Returns duplex stream which accepts CSV data input and batch result output
-   */
-  stream() {
-    return this.#dataStream;
-  }
-
-  /**
-   * Execute batch operation
-   */
-  execute(input?: string | Record[] | Readable) {
-    if (this.#result) {
-      throw new Error('Data can only be uploaded to a job once.');
-    }
-
-    this.#result = new Promise<void>((resolve, reject) => {
-      this.once('response', () => resolve());
-      this.once('error', reject);
-    });
-
-    if (isObject(input) && 'pipe' in input && isFunction(input.pipe)) {
-      // if input has stream.Readable interface
-      input.pipe(this.#dataStream);
-    } else {
-      if (Array.isArray(input)) {
-        for (const record of input) {
-          for (const key of Object.keys(record)) {
-            if (typeof record[key] === 'boolean') {
-              record[key] = String(record[key]);
-            }
-          }
-          this.write(record);
-        }
-        this.end();
-      } else if (typeof input === 'string') {
-        this.#dataStream.write(input, 'utf8');
-        this.#dataStream.end();
-      }
-    }
-
-    return this;
-  }
-
-  /**
-   * Promise/A+ interface
-   * Delegate to promise, return promise instance for batch result
-   */
-  then(onResolved: () => void, onReject: (err: any) => void) {
-    if (this.#result === undefined) {
-      this.execute();
-    }
-    return this.#result!.then(onResolved, onReject);
-  }
-}
-
-function getJobIdOrError(jobInfo: Partial<JobInfoV2> | undefined): string {
-  const jobId = jobInfo?.id;
-  if (jobId === undefined) {
-    throw new Error('No job id, maybe you need to call `job.open()` first.');
-  }
-  return jobId;
-}
-
-function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /*--------------------------------------------*/
@@ -1781,6 +914,5 @@ function delay(ms: number): Promise<void> {
  * Register hook in connection instantiation for dynamically adding this API module features
  */
 registerModule('bulk', (conn) => new Bulk(conn));
-registerModule('bulk2', (conn) => new BulkV2(conn));
 
 export default Bulk;

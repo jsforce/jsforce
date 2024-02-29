@@ -28,7 +28,7 @@ import {
 } from './types';
 import { Readable } from 'stream';
 import SfDate from './date';
-import { IngestJobV2Results } from './api/bulk';
+import { IngestJobV2Results } from './api/bulk2';
 
 /**
  *

@@ -224,10 +224,12 @@ if (isNodeJS()) {
     const file = path.join(__dirname, '/data/BulkQuery_export.csv');
     const fstream = fs.createWriteStream(file);
     const count = await conn.sobject(config.bigTable).count({});
+    const queryStream = await conn.bulk.query(
+      `SELECT Id, Name FROM ${config.bigTable}`,
+    );
     const records = await new Promise<any[]>((resolve, reject) => {
       const recs: Record[] = [];
-      conn.bulk
-        .query(`SELECT Id, Name FROM ${config.bigTable}`)
+      queryStream
         .on('record', (rec) => recs.push(rec))
         .on('error', reject)
         .stream()
