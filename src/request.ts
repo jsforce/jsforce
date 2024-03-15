@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { Duplex, Readable, Writable } from 'stream';
-import fetch from 'node-fetch';
+import fetch, { Response, RequestInit, FetchError } from 'node-fetch';
 import AbortController from 'abort-controller';
 import createHttpsProxyAgent from 'https-proxy-agent';
 import {
@@ -38,21 +38,93 @@ async function startFetchRequest(
   const agent = httpProxy ? createHttpsProxyAgent(httpProxy) : undefined;
   const { url, body, ...rrequest } = request;
   const controller = new AbortController();
-  let res;
+
+  let retryCount = 0;
+
+  const retryOpts: Required<HttpRequestOptions['retry']> = {
+    maxRetries: options.retry?.maxRetries ?? 5,
+    errorCodes: options.retry?.errorCodes ?? [
+      'ECONNRESET',
+      'ECONNREFUSED',
+      'ENOTFOUND',
+      'ENETDOWN',
+      'ENETUNREACH',
+      'EHOSTDOWN',
+      'UND_ERR_SOCKET',
+      'ETIMEDOUT',
+      'EPIPE',
+    ],
+    methods: options.retry?.methods ?? [
+      'GET',
+      'PUT',
+      'HEAD',
+      'OPTIONS',
+      'DELETE',
+    ],
+  };
+
+  const fetchWithRetries = async (
+    maxRetry = retryOpts?.maxRetries,
+  ): Promise<Response> => {
+    const fetchOpts: RequestInit = {
+      ...rrequest,
+      ...(input && /^(post|put|patch)$/i.test(request.method)
+        ? { body: input }
+        : {}),
+      redirect: 'manual',
+      signal: controller.signal,
+      agent,
+    };
+
+    try {
+      return await fetch(url, fetchOpts);
+    } catch (err) {
+      const error = err as Error | FetchError;
+
+      // request was canceled by consumer (AbortController), skip retry and rethrow.
+      if (error.name === 'AbortError') {
+        throw error;
+      }
+
+      const shouldRetry = (): boolean => {
+        // only retry on operational errors
+        if (error.name != 'FetchError') return false;
+        if (retryCount === maxRetry) return false;
+
+        if (!retryOpts?.methods?.includes(request.method)) return false;
+
+        if (
+          'code' in error &&
+          error.code &&
+          retryOpts?.errorCodes?.includes(error.code)
+        )
+          return true;
+
+        return false;
+      };
+
+      if (shouldRetry()) {
+        // TODO: move next line to debug logs
+        console.log(`retrying for the ${retryCount + 1} times`);
+        //
+        // NOTE: this event is only used by tests and will be removed at any time.
+        emitter.emit('retry', retryCount);
+        retryCount++;
+
+        // TODO: log error of each request
+        return await fetchWithRetries(maxRetry);
+      }
+      // TODO: log when skipping retry
+
+      throw err;
+    }
+  };
+
+  let res: Response;
+
   try {
-    res = await executeWithTimeout(
-      () =>
-        fetch(url, {
-          ...rrequest,
-          ...(input && /^(post|put|patch)$/i.test(request.method)
-            ? { body: input }
-            : {}),
-          redirect: 'manual',
-          signal: controller.signal,
-          agent,
-        }),
-      options.timeout,
-      () => controller.abort(),
+    res = await executeWithTimeout(fetchWithRetries, options.timeout, () =>
+      controller.abort(),
     );
   } catch (err) {
     emitter.emit('error', err);

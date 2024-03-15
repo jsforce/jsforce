@@ -15,6 +15,11 @@ export function createHttpRequestHandlerStreams(
   const output = new PassThrough();
   const duplex = concatStreamsAsDuplex(input, output);
 
+  // TODO: handle body as readable stream.
+  // `HttpRequest` accepts a readable stream but here we just check
+  // for a FormData instance or a buffer/string.
+  //
+  // then use https://github.com/mcollina/cloneable-readable in retry logic to clone/destroy body streams.
   if (typeof reqBody !== 'undefined') {
     setTimeout(() => {
       if (reqBody instanceof FormData) {
