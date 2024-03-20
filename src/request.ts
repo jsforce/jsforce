@@ -68,7 +68,7 @@ async function startFetchRequest(
   ): Promise<Response> => {
     const fetchOpts: RequestInit = {
       ...rrequest,
-      ...(input && /^(post|put|patch)$/i.test(request.method)
+      ...(request.body && input && /^(post|put|patch)$/i.test(request.method)
         ? { body: input }
         : {}),
       redirect: 'manual',
