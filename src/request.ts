@@ -10,6 +10,7 @@ import {
   performRedirectRequest,
 } from './request-helper';
 import { HttpRequest, HttpRequestOptions } from './types';
+import { getLogger } from './util/logger';
 
 /**
  *
@@ -34,6 +35,7 @@ async function startFetchRequest(
   emitter: EventEmitter,
   counter: number = 0,
 ) {
+  const logger = getLogger('fetch');
   const { httpProxy, followRedirect } = options;
   const agent = httpProxy ? createHttpsProxyAgent(httpProxy) : undefined;
   const { url, body, ...rrequest } = request;
@@ -79,6 +81,7 @@ async function startFetchRequest(
     try {
       return await fetch(url, fetchOpts);
     } catch (err) {
+      logger.debug(`Request failed`);
       const error = err as Error | FetchError;
 
       // request was canceled by consumer (AbortController), skip retry and rethrow.
@@ -104,17 +107,18 @@ async function startFetchRequest(
       };
 
       if (shouldRetry()) {
-        // TODO: move next line to debug logs
-        console.log(`retrying for the ${retryCount + 1} times`);
-        //
+        logger.debug(`retrying for the ${retryCount + 1} time`);
+        logger.debug(`Error: ${error}`);
+
         // NOTE: this event is only used by tests and will be removed at any time.
+        // jsforce may switch to node's fetch which doesn't emit this event on retries.
         emitter.emit('retry', retryCount);
         retryCount++;
 
-        // TODO: log error of each request
         return await fetchWithRetries(maxRetry);
       }
-      // TODO: log when skipping retry
+
+      logger.debug('Skipping retry...');
 
       throw err;
     }
