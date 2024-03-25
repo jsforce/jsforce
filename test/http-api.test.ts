@@ -2,9 +2,11 @@ import { HttpApi } from '../src/http-api';
 import { SOAP } from '../src/soap';
 import { Connection } from '../src/connection';
 import { HttpRequest } from '../src/types';
+import { Transport } from '../src/transport';
 import assert from 'assert';
 import xml2js from 'xml2js';
 import nock = require('nock');
+import { HttpRequestOptions, HttpResponse } from '../src/types/common';
 
 const loginUrl = 'https://heaven-party-2429-dev-ed.scratch.my.salesforce.com';
 
@@ -14,6 +16,95 @@ describe('HTTP API', () => {
   const conn = new Connection({
     accessToken,
     loginUrl,
+  });
+
+  describe('network retry', () => {
+    async function fetch(req: HttpRequest, httpOpts?: HttpRequestOptions) {
+      let retryCounter = 0;
+      const transport = new Transport();
+
+      const requestPromise = transport.httpRequest(req, httpOpts ?? {});
+      const stream = requestPromise.stream();
+
+      stream.on('retry', () => {
+        retryCounter++;
+      });
+
+      let res: HttpResponse;
+      try {
+        res = await requestPromise;
+      } catch {
+        return { res: {}, retryCounter };
+      }
+      return { res, retryCounter };
+    }
+
+    it('retries on socket error 2 times', async () => {
+      nock(loginUrl)
+        .get('/services/data/v59.0')
+        .times(2)
+        .replyWithError({
+          message: `request to ${loginUrl} failed, reason: socket hang up`,
+          code: 'ECONNRESET',
+        })
+        .get('/services/data/v59.0')
+        .reply(200, { success: true });
+
+      const { retryCounter } = await fetch({
+        method: 'GET',
+        url: `${loginUrl}/services/data/v59.0`,
+      });
+      assert.ok(retryCounter === 2);
+    });
+
+    it('allows to retry only on specific methods', async () => {
+      nock(loginUrl)
+        .get('/services/data/v59.0/limits')
+        .times(2)
+        .replyWithError({
+          message: `request to ${loginUrl} failed, reason: socket hang up`,
+          code: 'ECONNRESET',
+        })
+        .get('/services/data/v59.0/limits')
+        .reply(200, { success: true });
+
+      const { retryCounter } = await fetch(
+        {
+          method: 'GET',
+          url: `${loginUrl}/services/data/v59.0/limits`,
+        },
+        {
+          retry: {
+            methods: ['DELETE'],
+          },
+        },
+      );
+      assert.ok(retryCounter === 0);
+    });
+
+    it('does not retry cancelled requests', async () => {
+      // setting a timeout makes the AbortController instance cancel the request.
+      nock(loginUrl)
+        .get('/services/data/v60.0')
+        .times(2)
+        .replyWithError({
+          message: `request to ${loginUrl} failed, reason: socket hang up`,
+          code: 'ECONNRESET',
+        })
+        .get('/services/data/v60.0')
+        .reply(200, { success: true });
+
+      const { retryCounter } = await fetch(
+        {
+          method: 'GET',
+          url: `${loginUrl}/services/data/v60.0`,
+        },
+        {
+          timeout: 1, // 1ms to ensure it fails before a retry happens.
+        },
+      );
+      assert.ok(retryCounter === 0);
+    });
   });
 
   describe('headers', () => {
