@@ -11,6 +11,7 @@ import {
 } from './request-helper';
 import { HttpRequest, HttpRequestOptions } from './types';
 import { getLogger } from './util/logger';
+import is from '@sindresorhus/is';
 
 /**
  *
@@ -95,6 +96,13 @@ async function startFetchRequest(
         if (retryCount === maxRetry) return false;
 
         if (!retryOpts?.methods?.includes(request.method)) return false;
+
+        if (is.nodeStream(body) && Readable.isDisturbed(body)) {
+          logger.debug(
+            'Body of type stream was read, unable to retry request.',
+          );
+          return false;
+        }
 
         if (
           'code' in error &&
