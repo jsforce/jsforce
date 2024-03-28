@@ -26,7 +26,8 @@ export type HttpMethods =
   | 'PUT'
   | 'PATCH'
   | 'DELETE'
-  | 'OPTIONS';
+  | 'OPTIONS'
+  | 'HEAD';
 
 export type HttpRequest = {
   url: string;
@@ -36,6 +37,11 @@ export type HttpRequest = {
 };
 
 export type HttpRequestOptions = {
+  retry?: {
+    maxRetries?: number;
+    errorCodes?: string[];
+    methods?: HttpMethods[];
+  };
   httpProxy?: string;
   timeout?: number;
   followRedirect?: boolean | ((redirectUrl: string) => HttpRequest | null);
