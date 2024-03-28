@@ -39,10 +39,11 @@ describe('HTTP API', () => {
       return { res, retryCounter };
     }
 
-    it('retries on socket error 2 times', async () => {
+    it('retries on socket error until it succeeds', async () => {
+      const attempts = 2;
       nock(loginUrl)
         .get('/services/data/v59.0')
-        .times(2)
+        .times(attempts)
         .replyWithError({
           message: `request to ${loginUrl} failed, reason: socket hang up`,
           code: 'ECONNRESET',
@@ -54,10 +55,33 @@ describe('HTTP API', () => {
         method: 'GET',
         url: `${loginUrl}/services/data/v59.0`,
       });
-      assert.ok(retryCounter === 2);
+      assert.ok(retryCounter === attempts);
     });
 
-    it('allows to retry only on specific methods', async () => {
+    it('stops retries after max is reached', async () => {
+      nock(loginUrl)
+        .get('/services/data/v59.0')
+        .times(6)
+        .replyWithError({
+          message: `request to ${loginUrl} failed, reason: socket hang up`,
+          code: 'ECONNRESET',
+        });
+
+      const { retryCounter } = await fetch(
+        {
+          method: 'GET',
+          url: `${loginUrl}/services/data/v59.0`,
+        },
+        {
+          retry: {
+            maxRetries: 5,
+          },
+        },
+      );
+      assert.ok(retryCounter === 5);
+    });
+
+    it('retries only on specified methods', async () => {
       nock(loginUrl)
         .get('/services/data/v59.0/limits')
         .times(2)
@@ -79,6 +103,68 @@ describe('HTTP API', () => {
           },
         },
       );
+      assert.ok(retryCounter === 0);
+    });
+
+    it('retries only on specified errors', async () => {
+      nock(loginUrl)
+        .get('/services/data/v59.0/limits')
+        .times(2)
+        .replyWithError({
+          message: `request to ${loginUrl} failed, reason: socket hang up`,
+          code: 'ECONNRESET',
+        })
+        .get('/services/data/v59.0/limits')
+        .reply(200, { success: true });
+
+      const { retryCounter } = await fetch(
+        {
+          method: 'GET',
+          url: `${loginUrl}/services/data/v59.0/limits`,
+        },
+        {
+          retry: {
+            errorCodes: ['ECONNREFUSED'],
+          },
+        },
+      );
+      assert.ok(retryCounter === 0);
+    });
+
+    it('does not retry on unsupported errors', async () => {
+      nock(loginUrl)
+        .get('/services/data/v59.0/limits')
+        .times(2)
+        .replyWithError({
+          message: `request to ${loginUrl} failed, reason: socket hang up`,
+          code: 'UNKNOWN_ERROR',
+        })
+        .get('/services/data/v59.0/limits')
+        .reply(200, { success: true });
+
+      const { retryCounter } = await fetch({
+        method: 'GET',
+        url: `${loginUrl}/services/data/v59.0/limits`,
+      });
+      assert.ok(retryCounter === 0);
+    });
+
+    it('does not retry on unsupported methods', async () => {
+      nock(loginUrl)
+        .post('/services/data/v59.0', 'body')
+        .replyWithError({
+          message: `request to ${loginUrl} failed, reason: socket hang up`,
+          code: 'ECONNRESET',
+        })
+        .post('/services/data/v59.0', 'body')
+        .reply(200, { success: true });
+
+      const { retryCounter } = await fetch({
+        method: 'POST',
+        url: `${loginUrl}/services/data/v59.0`,
+        body: 'body',
+      });
+
       assert.ok(retryCounter === 0);
     });
 
