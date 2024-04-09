@@ -32,8 +32,6 @@ jobs:
           github-token: ${{ secrets.SVC_CLI_BOT_JSFORCE_GITHUB_TOKEN }}
           output-file: false
           pre-commit: ./scripts/build.js
-          pre-release: true
-          pre-release-identifier: 'next'
           # always do the release, even if there are no semantic commits
           skip-on-empty: false
           tag-prefix: ''
