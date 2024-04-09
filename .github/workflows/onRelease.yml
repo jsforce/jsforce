@@ -55,4 +55,8 @@ jobs:
       - name: Build
         run: npm run clean && npm run build:node:cjs
       - name: Publish
-        run: npm publish --tag latest
+        env:
+          NEXT_VERSION: ${{ github.event.release.tag_name || inputs.tag }}
+        run: |
+          npm publish --tag latest
+          npm dist-tag add @jsforce/jsforce-node@$NEXT_VERSION next
