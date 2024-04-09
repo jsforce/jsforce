@@ -55,4 +55,4 @@ jobs:
       - name: Build
         run: npm run clean && npm run build:node:cjs
       - name: Publish
-        run: npm publish --tag next
+        run: npm publish --tag latest
