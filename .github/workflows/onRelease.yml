@@ -59,4 +59,5 @@ jobs:
           NEXT_VERSION: ${{ github.event.release.tag_name || inputs.tag }}
         run: |
           npm publish --tag latest
+          # TODO: remove next line after v3 GA
           npm dist-tag add @jsforce/jsforce-node@$NEXT_VERSION next
