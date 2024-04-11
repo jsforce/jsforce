@@ -45,6 +45,7 @@ async function startFetchRequest(
   let retryCount = 0;
 
   const retryOpts: Required<HttpRequestOptions['retry']> = {
+    statusCodes: options.retry?.statusCodes ?? [429, 500, 502, 503, 504],
     maxRetries: options.retry?.maxRetries ?? 5,
     errorCodes: options.retry?.errorCodes ?? [
       'ECONNRESET',
@@ -66,6 +67,37 @@ async function startFetchRequest(
     ],
   };
 
+  const shouldRetryRequest = (
+    maxRetry: number,
+    resOrErr: Response | Error | FetchError,
+  ): boolean => {
+    if (maxRetry === retryCount) return false;
+
+    if (!retryOpts.methods.includes(request.method)) return false;
+
+    if (resOrErr instanceof Response) {
+      return retryOpts.statusCodes.includes(resOrErr.status);
+    } else {
+      // only retry on operational errors
+      // https://github.com/node-fetch/node-fetch/blob/2.x/ERROR-HANDLING.md#error-handling-with-node-fetch
+      if (resOrErr.name != 'FetchError') return false;
+
+      if (is.nodeStream(body) && Readable.isDisturbed(body)) {
+        logger.debug('Body of type stream was read, unable to retry request.');
+        return false;
+      }
+
+      if (
+        'code' in resOrErr &&
+        resOrErr.code &&
+        retryOpts?.errorCodes?.includes(resOrErr.code)
+      )
+        return true;
+
+      return false;
+    }
+  };
+
   const fetchWithRetries = async (
     maxRetry = retryOpts?.maxRetries,
   ): Promise<Response> => {
@@ -80,7 +112,19 @@ async function startFetchRequest(
     };
 
     try {
-      return await fetch(url, fetchOpts);
+      const res = await fetch(url, fetchOpts);
+      if (shouldRetryRequest(retryOpts.maxRetries, res)) {
+        logger.debug(`retrying for the ${retryCount + 1} time`);
+        logger.debug(`reason: statusCode match`);
+
+        // NOTE: this event is only used by tests and will be removed at any time.
+        // jsforce may switch to node's fetch which doesn't emit this event on retries.
+        emitter.emit('retry', retryCount);
+        retryCount++;
+
+        return await fetchWithRetries(maxRetry);
+      }
+      return res;
     } catch (err) {
       logger.debug(`Request failed`);
       const error = err as Error | FetchError;
@@ -90,31 +134,7 @@ async function startFetchRequest(
         throw error;
       }
 
-      const shouldRetry = (): boolean => {
-        // only retry on operational errors
-        if (error.name != 'FetchError') return false;
-        if (retryCount === maxRetry) return false;
-
-        if (!retryOpts?.methods?.includes(request.method)) return false;
-
-        if (is.nodeStream(body) && Readable.isDisturbed(body)) {
-          logger.debug(
-            'Body of type stream was read, unable to retry request.',
-          );
-          return false;
-        }
-
-        if (
-          'code' in error &&
-          error.code &&
-          retryOpts?.errorCodes?.includes(error.code)
-        )
-          return true;
-
-        return false;
-      };
-
-      if (shouldRetry()) {
+      if (shouldRetryRequest(retryOpts.maxRetries, error)) {
         logger.debug(`retrying for the ${retryCount + 1} time`);
         logger.debug(`Error: ${error}`);
 

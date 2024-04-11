@@ -39,6 +39,38 @@ describe('HTTP API', () => {
       return { res, retryCounter };
     }
 
+    it('retries on specified status code', async () => {
+      const attempts = 2;
+      nock(loginUrl)
+        .get('/services/data/v59.0')
+        .times(attempts)
+        .reply(429)
+        .get('/services/data/v59.0')
+        .reply(200, { success: true });
+
+      const { retryCounter } = await fetch({
+        method: 'GET',
+        url: `${loginUrl}/services/data/v59.0`,
+      });
+      assert.ok(retryCounter === attempts);
+    });
+
+    it('does not retry on unsupported status codes', async () => {
+      const attempts = 2;
+      nock(loginUrl)
+        .get('/services/data/v60.0')
+        .times(attempts)
+        .reply(420)
+        .get('/services/data/v60.0')
+        .reply(200, { success: true });
+
+      const { retryCounter } = await fetch({
+        method: 'GET',
+        url: `${loginUrl}/services/data/v60.0`,
+      });
+      assert.ok(retryCounter === 0);
+    });
+
     it('retries on socket error until it succeeds', async () => {
       const attempts = 2;
       nock(loginUrl)

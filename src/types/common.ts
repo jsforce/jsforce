@@ -41,6 +41,7 @@ export type HttpRequestOptions = {
     maxRetries?: number;
     errorCodes?: string[];
     methods?: HttpMethods[];
+    statusCodes?: number[]
   };
   httpProxy?: string;
   timeout?: number;
