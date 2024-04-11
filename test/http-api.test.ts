@@ -33,8 +33,8 @@ describe('HTTP API', () => {
       let res: HttpResponse;
       try {
         res = await requestPromise;
-      } catch {
-        return { res: {}, retryCounter };
+      } catch (err) {
+        return { res: {}, retryCounter, err };
       }
       return { res, retryCounter };
     }
@@ -71,6 +71,30 @@ describe('HTTP API', () => {
       assert.ok(retryCounter === 0);
     });
 
+    it('throws if last retry returns bad status code', async () => {
+      const attempts = 4;
+      nock(loginUrl)
+        .get('/services/data/v58.0/lala')
+        .times(attempts)
+        .reply(429);
+
+      const { retryCounter, err } = await fetch(
+        {
+          method: 'GET',
+          url: `${loginUrl}/services/data/v58.0/lala`,
+        },
+        {
+          retry: {
+            maxRetries: 3,
+          },
+        },
+      );
+      assert.ok(retryCounter === 3);
+      assert.ok(err instanceof Error);
+      assert.ok(err.name === 'RequestRetryError');
+      assert.ok(err.message === 'Request failed');
+    });
+
     it('retries on socket error until it succeeds', async () => {
       const attempts = 2;
       nock(loginUrl)
@@ -99,7 +123,7 @@ describe('HTTP API', () => {
           code: 'ECONNRESET',
         });
 
-      const { retryCounter } = await fetch(
+      const { retryCounter, err } = await fetch(
         {
           method: 'GET',
           url: `${loginUrl}/services/data/v59.0`,
@@ -111,6 +135,9 @@ describe('HTTP API', () => {
         },
       );
       assert.ok(retryCounter === 5);
+      assert.ok(err instanceof Error);
+      assert.ok(err.name === 'RequestRetryError');
+      assert.ok(err.message === 'Request failed');
     });
 
     it('retries only on specified methods', async () => {

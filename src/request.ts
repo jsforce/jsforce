@@ -71,13 +71,22 @@ async function startFetchRequest(
     maxRetry: number,
     resOrErr: Response | Error | FetchError,
   ): boolean => {
-    if (maxRetry === retryCount) return false;
-
     if (!retryOpts.methods.includes(request.method)) return false;
 
     if (resOrErr instanceof Response) {
-      return retryOpts.statusCodes.includes(resOrErr.status);
+      if (retryOpts.statusCodes.includes(resOrErr.status)) {
+        if (maxRetry === retryCount) {
+          const err = new Error('Request failed');
+          err.name = 'RequestRetryError';
+          throw err;
+        } else {
+          return true;
+        }
+      }
+      return false;
     } else {
+      if (maxRetry === retryCount) return false;
+
       // only retry on operational errors
       // https://github.com/node-fetch/node-fetch/blob/2.x/ERROR-HANDLING.md#error-handling-with-node-fetch
       if (resOrErr.name != 'FetchError') return false;
@@ -124,6 +133,7 @@ async function startFetchRequest(
 
         return await fetchWithRetries(maxRetry);
       }
+      // should we throw here if the maxRetry already happened and still got the same statusCode?
       return res;
     } catch (err) {
       logger.debug(`Request failed`);
@@ -148,7 +158,13 @@ async function startFetchRequest(
 
       logger.debug('Skipping retry...');
 
-      throw err;
+      if (maxRetry === retryCount) {
+        const error = new Error('Request failed', { cause: err });
+        error.name = 'RequestRetryError';
+        throw error;
+      } else {
+        throw err;
+      }
     }
   };
 
