@@ -47,6 +47,8 @@ async function startFetchRequest(
   const retryOpts: Required<HttpRequestOptions['retry']> = {
     statusCodes: options.retry?.statusCodes ?? [429, 500, 502, 503, 504],
     maxRetries: options.retry?.maxRetries ?? 5,
+    minTimeout: options.retry?.minTimeout ?? 500,
+    timeoutFactor: options.retry?.timeoutFactor ?? 2,
     errorCodes: options.retry?.errorCodes ?? [
       'ECONNRESET',
       'ECONNREFUSED',
@@ -126,6 +128,12 @@ async function startFetchRequest(
         logger.debug(`retrying for the ${retryCount + 1} time`);
         logger.debug(`reason: statusCode match`);
 
+        await sleep(
+          retryCount === 0
+            ? retryOpts.minTimeout
+            : retryOpts.minTimeout * retryOpts.timeoutFactor ** retryCount,
+        );
+
         // NOTE: this event is only used by tests and will be removed at any time.
         // jsforce may switch to node's fetch which doesn't emit this event on retries.
         emitter.emit('retry', retryCount);
@@ -147,6 +155,12 @@ async function startFetchRequest(
       if (shouldRetryRequest(retryOpts.maxRetries, error)) {
         logger.debug(`retrying for the ${retryCount + 1} time`);
         logger.debug(`Error: ${error}`);
+
+        await sleep(
+          retryCount === 0
+            ? retryOpts.minTimeout
+            : retryOpts.minTimeout * retryOpts.timeoutFactor ** retryCount,
+        );
 
         // NOTE: this event is only used by tests and will be removed at any time.
         // jsforce may switch to node's fetch which doesn't emit this event on retries.
@@ -227,3 +241,5 @@ export default function request(
   startFetchRequest(req, options, input, output, stream);
   return stream;
 }
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));

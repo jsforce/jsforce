@@ -39,6 +39,8 @@ export type HttpRequest = {
 export type HttpRequestOptions = {
   retry?: {
     maxRetries?: number;
+    minTimeout?: number;
+    timeoutFactor?: number;
     errorCodes?: string[];
     methods?: HttpMethods[];
     statusCodes?: number[];
