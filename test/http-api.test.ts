@@ -33,11 +33,67 @@ describe('HTTP API', () => {
       let res: HttpResponse;
       try {
         res = await requestPromise;
-      } catch {
-        return { res: {}, retryCounter };
+      } catch (err) {
+        return { res: {}, retryCounter, err };
       }
       return { res, retryCounter };
     }
+
+    it('retries on specified status code', async () => {
+      const attempts = 2;
+      nock(loginUrl)
+        .get('/services/data/v59.0')
+        .times(attempts)
+        .reply(429)
+        .get('/services/data/v59.0')
+        .reply(200, { success: true });
+
+      const { retryCounter } = await fetch({
+        method: 'GET',
+        url: `${loginUrl}/services/data/v59.0`,
+      });
+      assert.ok(retryCounter === attempts);
+    });
+
+    it('does not retry on unsupported status codes', async () => {
+      const attempts = 2;
+      nock(loginUrl)
+        .get('/services/data/v60.0')
+        .times(attempts)
+        .reply(420)
+        .get('/services/data/v60.0')
+        .reply(200, { success: true });
+
+      const { retryCounter } = await fetch({
+        method: 'GET',
+        url: `${loginUrl}/services/data/v60.0`,
+      });
+      assert.ok(retryCounter === 0);
+    });
+
+    it('throws if last retry returns bad status code', async () => {
+      const attempts = 4;
+      nock(loginUrl)
+        .get('/services/data/v58.0/lala')
+        .times(attempts)
+        .reply(429);
+
+      const { retryCounter, err } = await fetch(
+        {
+          method: 'GET',
+          url: `${loginUrl}/services/data/v58.0/lala`,
+        },
+        {
+          retry: {
+            maxRetries: 3,
+          },
+        },
+      );
+      assert.ok(retryCounter === 3);
+      assert.ok(err instanceof Error);
+      assert.ok(err.name === 'RequestRetryError');
+      assert.ok(err.message === 'Request failed');
+    });
 
     it('retries on socket error until it succeeds', async () => {
       const attempts = 2;
@@ -67,7 +123,7 @@ describe('HTTP API', () => {
           code: 'ECONNRESET',
         });
 
-      const { retryCounter } = await fetch(
+      const { retryCounter, err } = await fetch(
         {
           method: 'GET',
           url: `${loginUrl}/services/data/v59.0`,
@@ -79,6 +135,9 @@ describe('HTTP API', () => {
         },
       );
       assert.ok(retryCounter === 5);
+      assert.ok(err instanceof Error);
+      assert.ok(err.name === 'RequestRetryError');
+      assert.ok(err.message === 'Request failed');
     });
 
     it('retries only on specified methods', async () => {
