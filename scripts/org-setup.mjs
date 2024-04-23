@@ -28,7 +28,7 @@ if (
 
   await writeFile(hubOpts.jwtKeyFile, formatJwtKey());
 
-  await $`sf org login jwt --username ${hubOpts.username} --jwt-key-file "${hubOpts.jwtKeyFile}" --set-default-dev-hub --client-id ${hubOpts.clientId}`;
+  await $`sf org login jwt --username ${hubOpts.username} --jwt-key-file "jwtKey.txt" --set-default-dev-hub --client-id ${hubOpts.clientId}`;
 } else {
   // ensure there's a default devhub
   const defaultHub = JSON.parse(await $`sf config get target-dev-hub --json`);
