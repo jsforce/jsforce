@@ -270,15 +270,14 @@ export class BulkV2<S extends Schema> {
     if (!options.pollTimeout) options.pollTimeout = this.pollTimeout;
     if (!options.pollInterval) options.pollInterval = this.pollInterval;
 
-    const job = this.createJob({
-      object: options.object,
-      operation: options.operation,
-    });
+    const { pollInterval, pollTimeout, input, ...createJobOpts } = options;
+
+    const job = this.createJob(createJobOpts);
     try {
       await job.open();
-      await job.uploadData(options.input);
+      await job.uploadData(input);
       await job.close();
-      await job.poll(options.pollInterval, options.pollTimeout);
+      await job.poll(pollInterval, pollTimeout);
       return await job.getAllResults();
     } catch (error) {
       const err = error as Error;
