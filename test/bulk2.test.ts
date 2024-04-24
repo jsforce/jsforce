@@ -1,5 +1,6 @@
 import assert from 'assert';
 import path from 'path';
+import os from 'os';
 import fs from './helper/fs';
 import { Connection, Date as SfDate, Schema, Record } from 'jsforce';
 import ConnectionManager from './helper/connection-manager';
@@ -197,10 +198,11 @@ if (isNodeJS()) {
   it('should bulk insert from file and return inserted results', async () => {
     // insert 100 account records from csv file
     const csvStream = fs.createReadStream(
-      path.join(__dirname, 'data/Account_bulk2_test.csv'),
+      path.join(__dirname, 'data', 'Account_bulk2_test.csv'),
     );
 
     const res = await conn.bulk2.loadAndWaitForResults({
+      lineEnding: os.platform() === 'win32' ? 'CRLF' : 'LF',
       object: 'Account',
       operation: 'insert',
       input: csvStream,
@@ -232,7 +234,7 @@ if (isNodeJS()) {
       .sobject('Account')
       .find({ Name: { $like: `Bulk Account ${id}%` } });
     const data = `Id\n${records.map((r: Record) => r.Id).join('\n')}\n`;
-    const deleteFile = path.join(__dirname, 'data/Account_delete.csv');
+    const deleteFile = path.join(__dirname, 'data', 'Account_delete.csv');
 
     await fs.promises.writeFile(deleteFile, data);
 
