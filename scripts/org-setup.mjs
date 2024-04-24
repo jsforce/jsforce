@@ -46,7 +46,6 @@ await $`sf org create scratch --definition-file ${orgDefinitionFile} --wait 20 -
 await $`sf org generate password --target-org jsforce-test-org --json`;
 
 await $`sf project deploy start --metadata-dir ${join(
-  process.cwd(),
   'test',
   'package',
   'JSforceTestSuite',
