@@ -179,6 +179,7 @@
     "test:browser": "wireit",
     "test:browser-ci": "wireit",
     "test:browser-ci:retry": "wireit",
+    "test:setup:org": "zx scripts/org-setup.mjs",
     "typecheck": "wireit",
     "proxy-server": "wireit",
     "clean": "rimraf --glob lib/* module/* browser/*",
