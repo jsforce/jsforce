@@ -1,6 +1,5 @@
 import assert from 'assert';
 import path from 'path';
-import os from 'os';
 import fs from './helper/fs';
 import { Connection, Date as SfDate, Schema, Record } from 'jsforce';
 import ConnectionManager from './helper/connection-manager';
@@ -202,7 +201,7 @@ if (isNodeJS()) {
     );
 
     const res = await conn.bulk2.loadAndWaitForResults({
-      lineEnding: os.platform() === 'win32' ? 'CRLF' : 'LF',
+      lineEnding: require('os').platform() === 'win32' ? 'CRLF' : 'LF',
       object: 'Account',
       operation: 'insert',
       input: csvStream,
