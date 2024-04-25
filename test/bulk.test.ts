@@ -153,7 +153,7 @@ if (isNodeJS()) {
   it('should bulk insert from file and return inserted results', async () => {
     // insert 100 account records from csv file
     const fstream = fs.createReadStream(
-      path.join(__dirname, 'data/Account_bulk1_test.csv'),
+      path.join(__dirname, 'data', 'Account_bulk1_test.csv'),
     );
     const batch = conn.bulk.load('Account', 'insert');
     fstream.pipe(batch.stream());
@@ -194,7 +194,7 @@ if (isNodeJS()) {
 
     const data = `Id\n${records.map((r: Record) => r.Id).join('\n')}\n`;
 
-    const deleteFile = path.join(__dirname, 'data/Account_delete.csv');
+    const deleteFile = path.join(__dirname, 'data', 'Account_delete.csv');
 
     await fs.promises.writeFile(deleteFile, data);
 
@@ -221,7 +221,7 @@ if (isNodeJS()) {
   });
 
   it('should bulk query and get records with yielding file output', async () => {
-    const file = path.join(__dirname, '/data/BulkQuery_export.csv');
+    const file = path.join(__dirname, 'data', 'BulkQuery_export.csv');
     const fstream = fs.createWriteStream(file);
     const count = await conn.sobject(config.bigTable).count({});
     const queryStream = await conn.bulk.query(
