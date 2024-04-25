@@ -84,19 +84,19 @@ jobs:
           key: ${{ runner.os }}-externalNuts-${{ env.cache-name }}-${{ inputs.externalProjectGitUrl}}-${{ inputs.branch}}-${{ github.sha }}
       - uses: salesforcecli/github-workflows/.github/actions/yarnInstallWithRetries@main
         if: ${{ steps.cache-nodemodules.outputs.cache-hit != 'true' }}
-      - name: build and create symlink to jsforce
+      - name: build and create symlink to jsforce-node
         if: ${{ steps.cache-nodemodules.outputs.cache-hit != 'true' }}
         run: |
           cd ./jsforce
           npm install
           ## skip webpack, we are only interested in the node build
-          npm run clean && npm run build:node:cjs
+          npm run clean && npm run jsforce-node && npm run build:node:cjs
           yarn link
-      - name: link jsforce into plugin
+      - name: link jsforce-node into plugin
         if: ${{ steps.cache-nodemodules.outputs.cache-hit != 'true' }}
         # this rely on plugins having just 1 version of jsforce
         # in its top-level node_modules.
-        run: yarn link "jsforce"
+        run: yarn link "@jsforce/jsforce-node"
       - name: Build the external project (where the NUTs are)
         run: yarn compile
       - uses: nick-fields/retry@943e742917ac94714d2f408a0e8320f2d1fcafcd
