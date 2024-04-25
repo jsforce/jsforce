@@ -5,13 +5,13 @@ import { EOL } from 'node:os';
 
 $.verbose = false;
 
-// node v21 deprecates the `punycode` module:
+// node >= v21 deprecates the `punycode` module:
 // https://nodejs.org/en/blog/announcements/v21-release-announce#deprecations
-// The `sf` CLI is getting it via node-fetch v2 so we disable deprecations on node v21
+// The `sf` CLI is getting it via node-fetch v2 so we disable deprecations on node >= v21
 // to be able to parse JSON output.
 //
 // Remove once `sf` no longer depends on node-fetch v2.
-if (process.version.split('.')[0] === 'v21') {
+if (parseInt(process.versions.node.split('.')[0]) > 21) {
   process.env.NODE_OPTIONS = '--no-deprecation';
 }
 
