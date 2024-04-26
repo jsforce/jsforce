@@ -30,6 +30,10 @@ See documentation in <http://jsforce.github.io/> .
 
 See [Releases](https://github.com/jsforce/jsforce/releases).
 
+## Node-specific release
+
+See [jsforce-node](./JSFORCE-NODE.md).
+
 ## License
 
 See [license](LICENSE) (MIT License).
@@ -44,6 +48,7 @@ If you have any questions first file it on [issues](https://github.com/jsforce/j
 
 ## How to build/run tests:
 See [DEVELOPING.md](./DEVELOPING.md)
+
 
 ## Contributions
 
