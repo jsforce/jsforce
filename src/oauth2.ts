@@ -3,7 +3,7 @@
  */
 import { createHash, randomBytes } from 'crypto';
 import querystring from 'querystring';
-import Transport, { XdProxyTransport, HttpProxyTransport } from './transport';
+import Transport, { HttpProxyTransport, XdProxyTransport } from './transport';
 import { Optional } from './types';
 
 const defaultOAuth2Config = {
@@ -130,10 +130,9 @@ export class OAuth2 {
     if (this.codeVerifier) {
       // code verifier must be a base 64 url encoded hash of 128 bytes of random data. Our random data is also
       // base 64 url encoded. See Connection.create();
-      const codeChallenge = base64UrlEscape(
+      params.code_challenge = base64UrlEscape(
         createHash('sha256').update(this.codeVerifier).digest('base64'),
       );
-      params.code_challenge = codeChallenge;
     }
 
     const _params = {
@@ -144,7 +143,7 @@ export class OAuth2 {
     };
     return (
       this.authzServiceUrl +
-      (this.authzServiceUrl.indexOf('?') >= 0 ? '&' : '?') +
+      (this.authzServiceUrl.includes('?') ? '&' : '?') +
       querystring.stringify(_params as { [name: string]: any })
     );
   }
@@ -239,7 +238,7 @@ export class OAuth2 {
     });
     if (response.statusCode >= 400) {
       let res: any = querystring.parse(response.body);
-      if (!res || !res.error) {
+      if (!res?.error) {
         res = {
           error: `ERROR_HTTP_${response.statusCode}`,
           error_description: response.body,

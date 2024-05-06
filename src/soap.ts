@@ -76,7 +76,7 @@ export function castTypeUsingSchema(
       const nillable =
         (Array.isArray(s) && s.length === 2 && s[0] === '?') ||
         (isMapObject(s) && '?' in s) ||
-        (typeof s === 'string' && s[0] === '?');
+        (typeof s === 'string' && s.startsWith('?'));
       if (typeof v === 'undefined' && nillable) {
         return o;
       }
@@ -86,7 +86,7 @@ export function castTypeUsingSchema(
       };
     }, obj);
   } else {
-    const nillable = typeof schema === 'string' && schema[0] === '?';
+    const nillable = typeof schema === 'string' && schema.startsWith('?');
     const type =
       typeof schema === 'string'
         ? nillable
@@ -157,9 +157,9 @@ function toXML(name: object | string | null, value?: any): string {
     if (isMapObject(value)) {
       for (const k of Object.keys(value)) {
         const v = value[k];
-        if (k[0] === '@') {
+        if (k.startsWith('@')) {
           const kk = k.substring(1);
-          attrs.push(kk + '="' + v + '"');
+          attrs.push(`${kk}="${v as string}"`);
         } else {
           elems.push(toXML(k, v));
         }

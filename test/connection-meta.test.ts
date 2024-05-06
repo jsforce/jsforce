@@ -155,7 +155,7 @@ describe('identity', () => {
   //
   it('should get user identity information and return user identity information', async () => {
     const res = await conn.identity();
-    assert.ok(isString(res.id) && res.id.indexOf('https://') === 0);
+    assert.ok(isString(res.id) && res.id.startsWith('https://'));
     assert.ok(isString(res.user_id));
     assert.ok(isString(res.organization_id));
     assert.ok(isString(res.email));

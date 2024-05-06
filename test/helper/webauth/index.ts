@@ -30,7 +30,7 @@ async function loginAndApprove(
     await page.click('[name=Login]');
     await page.waitForNavigation({ waitUntil: 'networkidle2' });
     return loginAndApprove(page, username, password);
-  } else if (url.indexOf('http://localhost') === 0) {
+  } else if (url.startsWith('http://localhost')) {
     // callback response
     return retrieveCallbackedParameters(url);
   } else if (url.indexOf('/setup/secur/RemoteAccessErrorPage.apexp') > 0) {
@@ -57,7 +57,7 @@ export default async function authorize(
     await page.setRequestInterception(true);
     page.on('request', (request) => {
       const reqUrl = request.url();
-      if (reqUrl.indexOf('http://localhost') === 0) {
+      if (reqUrl.startsWith('http://localhost')) {
         request.respond({
           status: 200,
           contentType: 'text/html',

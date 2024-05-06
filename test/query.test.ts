@@ -53,6 +53,7 @@ describe('big tables and autoFetch', () => {
   let maxFetchThatWillComplete: number;
   const bigTableQuery = `SELECT Id, Name FROM ${config.bigTable || 'Account'}`;
   beforeAll(async () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     totalRecordCount = await conn.query(bigTableQuery, {
       responseTarget: 'Count',
@@ -276,7 +277,7 @@ it('should update queried records using Query#update and return updated records'
   assert.ok(updatedRecords.length === accountNum);
   for (const record of updatedRecords) {
     assert.ok(isString(record.Id));
-    assert.ok(/\(Updated\)$/.test(record.Name));
+    assert.ok(record.Name.endsWith('(Updated)'));
     assert.ok(record.BillingState === null);
   }
 });
@@ -375,7 +376,7 @@ it('should update queried records using Query#update, with allowBulk = false, an
   assert.ok(updatedRecords.length === massiveAccountNum);
   for (const record of updatedRecords) {
     assert.ok(isString(record.Id));
-    assert.ok(/\(Updated\)$/.test(record.Name));
+    assert.ok(record.Name.endsWith('(Updated)'));
     assert.ok(record.BillingState === null);
   }
 });

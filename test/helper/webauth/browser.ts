@@ -1,4 +1,4 @@
-export default async function authorize(
+export default function authorize(
   _url: string,
   _username: string,
   _password: string,

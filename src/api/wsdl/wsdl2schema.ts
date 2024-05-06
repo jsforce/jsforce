@@ -330,7 +330,7 @@ async function dumpSchema(schemas: { [name: string]: any }, outFile: string) {
               value = value['?'];
             }
           }
-          if (typeof value === 'string' && value[0] === '?') {
+          if (typeof value === 'string' && value.startsWith('?')) {
             nillable = true;
             value = value.substring(1);
           }

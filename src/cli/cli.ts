@@ -18,14 +18,14 @@ import { ClientConfig } from '../registry/types';
 
 const registry = jsforce.registry;
 
-interface CliCommand extends Command {
+type CliCommand = {
   connection?: string;
   username?: string;
   password?: string;
   loginUrl?: string;
   sandbox?: boolean;
   evalScript?: string;
-}
+} & Command
 
 /**
  *
@@ -116,7 +116,7 @@ export class Cli {
       this._defaultLoginUrl = 'https://login.salesforce.com';
     } else if (loginServer === 'sandbox') {
       this._defaultLoginUrl = 'https://test.salesforce.com';
-    } else if (loginServer.indexOf('https://') !== 0) {
+    } else if (!loginServer.startsWith('https://')) {
       this._defaultLoginUrl = 'https://' + loginServer;
     } else {
       this._defaultLoginUrl = loginServer;
@@ -243,7 +243,7 @@ export class Cli {
   async authorize(clientName: string) {
     const name = clientName || 'default';
     const oauth2Config = await registry.getClientConfig(name);
-    if (!oauth2Config || !oauth2Config.clientId) {
+    if (!oauth2Config?.clientId) {
       if (name === 'default' || name === 'sandbox') {
         this.print(
           'No client information registered. Downloading JSforce default client information...',
@@ -309,7 +309,7 @@ export class Cli {
     serverUrl: string | undefined,
     state: string,
   ): Promise<{ code: string; state: string }> {
-    if (serverUrl && serverUrl.indexOf('http://localhost:') === 0) {
+    if (serverUrl && serverUrl.startsWith('http://localhost:')) {
       return new Promise((resolve, reject) => {
         const server = http.createServer((req, res) => {
           if (!req.url) {

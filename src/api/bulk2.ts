@@ -80,7 +80,7 @@ export type IngestJobV2FailedResults<S extends Schema> = Array<
   } & S
 >;
 
-export type IngestJobV2UnprocessedRecords<S extends Schema> = Array<S> | string;
+export type IngestJobV2UnprocessedRecords<S extends Schema> = S[] | string;
 
 export type IngestJobV2Results<S extends Schema> = {
   successfulResults: IngestJobV2SuccessfulResults<S>;
@@ -161,7 +161,8 @@ class BulkApiV2<S extends Schema> extends HttpApi<S> {
 
   isSessionExpired(response: HttpResponse): boolean {
     return (
-      response.statusCode === 401 && /INVALID_SESSION_ID/.test(response.body)
+      response.statusCode === 401 &&
+      response.body.includes('INVALID_SESSION_ID')
     );
   }
 
@@ -281,7 +282,7 @@ export class BulkV2<S extends Schema> {
       return await job.getAllResults();
     } catch (error) {
       const err = error as Error;
-      this.logger.error(`bulk load failed due to: ${err}`);
+      this.logger.error(`bulk load failed due to: ${err.name}`);
 
       if (err.name !== 'JobPollingTimeoutError') {
         // fires off one last attempt to clean up and ignores the result | error
@@ -332,7 +333,7 @@ export class BulkV2<S extends Schema> {
       queryRecordsStream.pipe(dataStream);
     } catch (error) {
       const err = error as Error;
-      this.logger.error(`bulk query failed due to: ${err}`);
+      this.logger.error(`bulk query failed due to: ${err.name}`);
 
       if (err.name !== 'JobPollingTimeoutError') {
         // fires off one last attempt to clean up and ignores the result | error
@@ -467,7 +468,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     const startTime = Date.now();
     const endTime = startTime + timeout;
 
-    this.logger.debug(`Start polling for job status`);
+    this.logger.debug('Start polling for job status');
     this.logger.debug(
       `Polling options: timeout:${timeout}ms | interval: ${interval}ms.`,
     );
@@ -778,7 +779,7 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
       );
     }
 
-    this.logger.debug(`Start polling for job status`);
+    this.logger.debug('Start polling for job status');
     this.logger.debug(
       `Polling options: timeout:${timeout}ms | interval: ${interval}ms.`,
     );

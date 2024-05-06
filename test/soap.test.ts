@@ -105,9 +105,9 @@ describe('convert and merge', () => {
     assert.ok(isString(ret.accountId));
     assert.ok(isString(ret.contactId));
     assert.ok(isString(ret.opportunityId));
-    accountIds.push(ret.accountId!); // TODO: remove "!" when assertion function is introduced
-    contactIds.push(ret.contactId!); // TODO: remove "!" when assertion function is introduced
-    oppIds.push(ret.opportunityId!); // TODO: remove "!" when assertion function is introduced
+    accountIds.push(ret.accountId);
+    contactIds.push(ret.contactId);
+    oppIds.push(ret.opportunityId);
   });
 
   /**
@@ -124,7 +124,7 @@ describe('convert and merge', () => {
     assert.ok(isString(ret.accountId));
     assert.ok(isString(ret.contactId));
     assert.ok(ret.opportunityId == null);
-    contactIds.push(ret.contactId!); // TODO: remove "!" when assertion function is introduced
+    contactIds.push(ret.contactId);
   });
 
   /**

@@ -39,7 +39,7 @@ describe('single record crud', () => {
     const ret = await conn.sobject('Account').create({ Name: 'Hello' });
     assert.ok(ret.success);
     assert.ok(typeof ret.id === 'string');
-    accountId = ret.id as string;
+    accountId = ret.id ;
   });
 
   //

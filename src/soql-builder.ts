@@ -102,7 +102,7 @@ function createFieldExpression(field: string, value: any): Optional<string> {
   } else if (typeof value === 'object' && value !== null) {
     // Otherwise, if an object was passed then process the supplied ops.
     for (const k of Object.keys(value)) {
-      if (k[0] === '$') {
+      if (k.startsWith('$')) {
         op = k;
         _value = value[k];
         break;

@@ -132,9 +132,7 @@ export class Replay {
       }
     } else if (
       message.channel === this._channel &&
-      message.data &&
-      message.data.event &&
-      message.data.event.replayId
+      message.data?.event?.replayId
     ) {
       this._replay = message.data.event.replayId;
     }

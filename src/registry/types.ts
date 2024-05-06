@@ -35,7 +35,7 @@ export type RegistryConfig = {
 /**
  *
  */
-export interface Registry {
+export type Registry = {
   getConnectionNames(): Promise<string[]>;
   getConnection<S extends Schema = Schema>(
     name?: string,

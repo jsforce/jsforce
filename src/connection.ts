@@ -129,7 +129,7 @@ function esc(str: Optional<string>): string {
  */
 function parseSignedRequest(sr: string | Object): SignedRequestObject {
   if (typeof sr === 'string') {
-    if (sr[0] === '{') {
+    if (sr.startsWith('{')) {
       // might be JSON
       return JSON.parse(sr);
     } // might be original base64-encoded signed request
@@ -501,7 +501,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
       this,
       createUsernamePasswordRefreshFn(username, password),
     );
-    if (this.oauth2 && this.oauth2.clientId && this.oauth2.clientSecret) {
+    if (this.oauth2?.clientId && this.oauth2.clientSecret) {
       return this.loginByOAuth2(username, password);
     }
     return this.loginBySoap(username, password);
@@ -778,11 +778,11 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
    * @private
    */
   _normalizeUrl(url: string) {
-    if (url[0] === '/') {
-      if (url.indexOf(this.instanceUrl + '/services/') === 0) {
+    if (url.startsWith('/')) {
+      if (url.startsWith(this.instanceUrl + '/services/')) {
         return url;
       }
-      if (url.indexOf('/services/') === 0) {
+      if (url.startsWith('/services/')) {
         return this.instanceUrl + url;
       }
       return this._baseUrl() + url;
@@ -969,14 +969,14 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   /** @private */
   async _createSingle(type: string, record: Record, options: DmlOptions) {
     const { Id, type: rtype, attributes, ...rec } = record;
-    const sobjectType = type || (attributes && attributes.type) || rtype;
+    const sobjectType = type || attributes?.type || rtype;
     if (!sobjectType) {
       throw new Error('No SObject Type defined in record');
     }
     const url = [this._baseUrl(), 'sobjects', sobjectType].join('/');
     let contentType, body;
 
-    if (options && options.multipartFileFields) {
+    if (options?.multipartFileFields) {
       // Send the record as a multipart/form-data request. Useful for fields containing large binary blobs.
       const form = new FormData();
       // Extract the fields requested to be sent separately from the JSON
@@ -1057,7 +1057,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
     }
     const _records = records.map((record) => {
       const { Id, type: rtype, attributes, ...rec } = record;
-      const sobjectType = type || (attributes && attributes.type) || rtype;
+      const sobjectType = type || attributes?.type || rtype;
       if (!sobjectType) {
         throw new Error('No SObject Type defined in record');
       }
@@ -1134,7 +1134,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
     if (!id) {
       throw new Error('Record id is not found in record.');
     }
-    const sobjectType = type || (attributes && attributes.type) || rtype;
+    const sobjectType = type || attributes?.type || rtype;
     if (!sobjectType) {
       throw new Error('No SObject Type defined in record');
     }
@@ -1202,7 +1202,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
       if (!id) {
         throw new Error('Record id is not found in record.');
       }
-      const sobjectType = type || (attributes && attributes.type) || rtype;
+      const sobjectType = type || attributes?.type || rtype;
       if (!sobjectType) {
         throw new Error('No SObject Type defined in record');
       }
@@ -1447,9 +1447,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   sobject<N extends SObjectNames<S>>(type: N): SObject<S, N>;
   sobject<N extends SObjectNames<S>>(type: string): SObject<S, N>;
   sobject<N extends SObjectNames<S>>(type: N | string): SObject<S, N> {
-    const so =
-      (this.sobjects[type as N] as SObject<S, N> | undefined) ||
-      new SObject(this, type as N);
+    const so = this.sobjects[type as N] || new SObject(this, type as N);
     this.sobjects[type as N] = so;
     return so;
   }
@@ -1458,7 +1456,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
    * Get identity information of current user
    */
   async identity(options: { headers?: { [name: string]: string } } = {}) {
-    let url = this.userInfo && this.userInfo.url;
+    let url = this.userInfo?.url;
     if (!url) {
       const res = await this.request<{ identity: string }>({
         method: 'GET',

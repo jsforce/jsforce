@@ -74,7 +74,7 @@ export class Logger {
     }
   }
 
-  log(logLevel: number, ...messages: Array<any>) {
+  log(logLevel: number, ...messages: any[]) {
     if (this._logLevel <= logLevel) {
       const msgs = [
         `${LogLevelLabels[logLevel]}\t[${this._moduleName}] `,
@@ -88,23 +88,23 @@ export class Logger {
     }
   }
 
-  debug(...messages: Array<any>) {
+  debug(...messages: any[]) {
     this.log(LogLevels.DEBUG, ...messages);
   }
 
-  info(...messages: Array<any>) {
+  info(...messages: any[]) {
     this.log(LogLevels.INFO, ...messages);
   }
 
-  warn(...messages: Array<any>) {
+  warn(...messages: any[]) {
     this.log(LogLevels.WARN, ...messages);
   }
 
-  error(...messages: Array<any>) {
+  error(...messages: any[]) {
     this.log(LogLevels.ERROR, ...messages);
   }
 
-  fatal(...messages: Array<any>) {
+  fatal(...messages: any[]) {
     this.log(LogLevels.FATAL, ...messages);
   }
 }

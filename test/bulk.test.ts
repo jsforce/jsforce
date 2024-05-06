@@ -94,7 +94,7 @@ it('should bulk update and return updated status', async () => {
 
   const updatedRecords = records.map((rec) => ({
     ...rec,
-    Name: `${rec.Name} (Updated)`,
+    Name: `${rec.Name as string} (Updated)`,
   }));
   const batchUpdateRes = await conn.bulk.load(
     'Account',
@@ -334,7 +334,7 @@ it('should bulk update using Query#update and return updated status', async () =
   assert.ok(records.length === bulkAccountNum);
   for (const record of records) {
     assert.ok(isString(record.Id));
-    assert.ok(/\(Updated\)$/.test(record.Name));
+    assert.ok(record.Name.endsWith('(Updated)'));
   }
 });
 
@@ -436,7 +436,7 @@ it('should bulk update using Query#update with bulkThreshold modified and return
   assert.ok(records.length === smallAccountNum);
   for (const record of updatedRecords) {
     assert.ok(isString(record.Id));
-    assert.ok(/\(Updated\)$/.test(record.Name));
+    assert.ok(record.Name.endsWith('(Updated)'));
     assert.ok(record.BillingState === null);
   }
 });
