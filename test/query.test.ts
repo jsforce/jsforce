@@ -36,10 +36,8 @@ it('should query accounts with scanAll option and return all records', async () 
   const ret = await conn
     .sobject('Account')
     .create({ Name: 'Deleting Account #1' });
-  await conn
-    .sobject('Account')
-    .record(ret.id!) // TODO: remove "!" when assertion funcion is introduced
-    .destroy();
+  assert(ret.id);
+  await conn.sobject('Account').record(ret.id).destroy();
   const query = conn.query(
     'SELECT Id, IsDeleted, Name FROM Account WHERE IsDeleted = true',
   );
