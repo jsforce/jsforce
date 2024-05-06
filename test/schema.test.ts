@@ -72,6 +72,7 @@ describe('standard schema', () => {
     type Account = SObjectRecord<S, 'Account', null>;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type t2 = AssertTrue<Has<Account['Id'], string>>;
+    // @ts-expect-error to get test condition
     const acc: Account = { Id: '000001', Name: 'Account #1' };
     assert.ok(acc.Id != null);
     type Contact = SObjectInputRecord<S, 'Account'>;
@@ -171,10 +172,9 @@ describe('standard schema', () => {
     type FoundRec6ActivityHistory = NonNullable<
       FoundRec6['ActivityHistories']
     >['records'][number];
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // @ts-expect-error to get test condition
     type t8 = AssertTrue<IsExact<FoundRec6ActivityHistory['Id'], string>>;
 
-    //
     const recs7 = await conn
       .sobject('Account' as string)
       .find<{ Id: string; Name: string }>({ Name: { $like: 'A%' } }, [

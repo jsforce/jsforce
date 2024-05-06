@@ -118,6 +118,7 @@ async function startFetchRequest(
         ? { body: input }
         : {}),
       redirect: 'manual',
+      // @ts-expect-error - differing types of signal? this started abruptly
       signal: controller.signal,
       agent,
     };
