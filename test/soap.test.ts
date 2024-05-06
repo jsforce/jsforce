@@ -88,7 +88,8 @@ describe('convert and merge', () => {
       conn370.metadata.read('CustomField', 'Lead.Status'),
     ]);
     leadIds = rets.map((r) => r.id!);
-    convertedStatus = (statusField as any).picklist.picklistValues
+    // @ts-expect-error  @typescript-eslint/no-unnecessary-type-assertion weird CI only linting?
+    convertedStatus = statusField.picklist.picklistValues
       .filter((pv: { converted: string }) => pv.converted === 'true')
       .map((pv: { fullName: any }) => pv.fullName)[0];
   });
