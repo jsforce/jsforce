@@ -1,10 +1,10 @@
 /**
  *
  */
-import { createHash, randomBytes } from 'crypto';
+import {createHash, randomBytes} from 'crypto';
 import querystring from 'querystring';
-import Transport, { HttpProxyTransport, XdProxyTransport } from './transport';
-import { Optional } from './types';
+import Transport, {HttpProxyTransport, XdProxyTransport} from './transport';
+import {Optional} from './types';
 
 const defaultOAuth2Config = {
   loginUrl: 'https://login.salesforce.com',
@@ -238,7 +238,7 @@ export class OAuth2 {
     });
     if (response.statusCode >= 400) {
       let res: any = querystring.parse(response.body);
-      if (!res?.error) {
+      if (!res || !res.error) {
         res = {
           error: `ERROR_HTTP_${response.statusCode}`,
           error_description: response.body,

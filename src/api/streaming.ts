@@ -149,7 +149,7 @@ export class Streaming<S extends Schema> extends EventEmitter {
       // special endpoint "/cometd/replay/xx.x" is only available in 36.0.
       // See https://releasenotes.docs.salesforce.com/en-us/summer16/release-notes/rn_api_streaming_classic_replay.htm
       'cometd' +
-        (needsReplayFix === true && this._conn.version === '36.0'
+        (needsReplayFix && this._conn.version === '36.0'
           ? '/replay'
           : ''),
       this._conn.version,
