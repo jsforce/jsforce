@@ -5,6 +5,11 @@ module.exports = {
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
     'eslint-config-prettier',
   ],
+  env: {
+    browser: true,
+    node: true,
+    es6: true,
+  },
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: [
@@ -21,39 +26,36 @@ module.exports = {
     'eslint-plugin-jsdoc',
   ],
   rules: {
+    // TODO: turn all of these that are 'off' to 'error'
     // turn the rule off everywhere.  Then, in overrides, turn it on for just src
-    'import/no-extraneous-dependencies': ['off'],
+    'import/no-extraneous-dependencies': 'off',
     // Override @typescript-eslint/recommended
     '@typescript-eslint/no-explicit-any': 'off',
-    '@typescript-eslint/no-namespace': 'off',
-    '@typescript-eslint/no-redundant-type-constituents': 'off',
     '@typescript-eslint/ban-types': 'off',
     '@typescript-eslint/no-unsafe-member-access': 'off',
-    '@typescript-eslint/restrict-template-expressions': [
-      'error',
-      {
-        allowNullish: true,
-        allowBoolean: true,
-        allowNumber: true,
-      },
-    ],
-
-    // Custom @typescript-eslint
-    '@typescript-eslint/array-type': [
-      'error',
-      {
-        default: 'array-simple',
-      },
-    ],
-    '@typescript-eslint/consistent-type-assertions': 'error',
-    '@typescript-eslint/consistent-type-definitions': ['warn', 'type'],
     '@typescript-eslint/explicit-function-return-type': 'off',
-    '@typescript-eslint/explicit-member-accessibility': [
-      'off',
-      {
-        accessibility: 'explicit',
-      },
-    ],
+    '@typescript-eslint/explicit-member-accessibility': 'off',
+    '@typescript-eslint/member-ordering': 'off',
+    '@typescript-eslint/unbound-method': 'off',
+    '@typescript-eslint/no-unsafe-call': 'off',
+    '@typescript-eslint/no-floating-promises': 'off',
+    '@typescript-eslint/no-misused-promises': 'off',
+    '@typescript-eslint/no-unsafe-return': 'off',
+    '@typescript-eslint/no-unsafe-assignment': 'off',
+    '@typescript-eslint/no-unsafe-argument': 'off',
+    '@typescript-eslint/no-unused-vars': 'off',
+    '@typescript-eslint/consistent-type-definitions': 'off',
+    '@typescript-eslint/prefer-nullish-coalescing': 'off',
+    '@typescript-eslint/no-shadow': 'off',
+    'no-shadow': 'off',
+    '@typescript-eslint/no-redundant-type-constituents': 'off',
+    '@typescript-eslint/array-type': 'off',
+    '@typescript-eslint/prefer-optional-chain': 'off',
+
+    '@typescript-eslint/no-namespace': 'error',
+    '@typescript-eslint/restrict-template-expressions': 'error',
+    // Custom @typescript-eslint
+    '@typescript-eslint/consistent-type-assertions': 'error',
     '@typescript-eslint/member-delimiter-style': [
       'error',
       {
@@ -67,26 +69,14 @@ module.exports = {
         },
       },
     ],
-    '@typescript-eslint/member-ordering': 'off',
     '@typescript-eslint/return-await': 'error',
     // turning off the base rule is recommended by ts-eslint
-    'no-return-await': 'off',
-    '@typescript-eslint/prefer-for-of': 'off',
-    '@typescript-eslint/unbound-method': 'off',
-    '@typescript-eslint/unified-signatures': 'off',
-    '@typescript-eslint/require-await': 'off',
-    '@typescript-eslint/no-unsafe-call': 'off',
-    '@typescript-eslint/no-floating-promises': 'off',
-    '@typescript-eslint/no-misused-promises': 'off',
-    '@typescript-eslint/no-unsafe-return': 'off',
-    '@typescript-eslint/no-unsafe-assignment': 'off',
-    '@typescript-eslint/no-unsafe-argument': 'off',
-    '@typescript-eslint/no-shadow': 'off',
-    '@typescript-eslint/no-unused-vars': 'off',
+    'no-return-await': 'error',
+    '@typescript-eslint/prefer-for-of': 'error',
+    '@typescript-eslint/unified-signatures': 'error',
+    '@typescript-eslint/require-await': 'error',
     '@typescript-eslint/prefer-function-type': 'error',
     '@typescript-eslint/prefer-includes': 'error',
-    '@typescript-eslint/prefer-nullish-coalescing': 'off',
-    '@typescript-eslint/prefer-optional-chain': 'off',
     '@typescript-eslint/prefer-reduce-type-parameter': 'error',
     '@typescript-eslint/prefer-string-starts-ends-with': 'error',
     '@typescript-eslint/quotes': [
@@ -98,7 +88,6 @@ module.exports = {
     ],
     '@typescript-eslint/switch-exhaustiveness-check': 'error',
     '@typescript-eslint/type-annotation-spacing': 'error',
-    'no-shadow': 'off',
   },
   ignorePatterns: ['*.js'],
   overrides: [

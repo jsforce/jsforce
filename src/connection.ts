@@ -1444,8 +1444,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   /**
    * Get SObject instance
    */
-  sobject<N extends SObjectNames<S>>(type: N): SObject<S, N>;
-  sobject<N extends SObjectNames<S>>(type: string): SObject<S, N>;
+  sobject<N extends SObjectNames<S>>(type: string|N): SObject<S, N>;
   sobject<N extends SObjectNames<S>>(type: N | string): SObject<S, N> {
     const so = this.sobjects[type as N] || new SObject(this, type as N);
     this.sobjects[type as N] = so;

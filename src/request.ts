@@ -168,7 +168,7 @@ async function startFetchRequest(
         emitter.emit('retry', retryCount);
         retryCount++;
 
-        return await fetchWithRetries(maxRetry);
+        return fetchWithRetries(maxRetry);
       }
 
       logger.debug('Skipping retry...');

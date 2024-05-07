@@ -371,10 +371,8 @@ export class Query<
   /**
    * Set query sort with direction
    */
-  sort(sort: QuerySort<S, N>): this;
-  sort(sort: string): this;
-  sort(sort: SObjectFieldNames<S, N>, dir: SortDir): this;
-  sort(sort: string, dir: SortDir): this;
+  sort(sort: QuerySort<S, N>|string): this;
+  sort(sort: SObjectFieldNames<S, N>|string, dir: SortDir): this;
   sort(
     sort: QuerySort<S, N> | SObjectFieldNames<S, N> | string,
     dir?: SortDir,
@@ -1231,9 +1229,7 @@ export class SubQuery<
    * Set query sort with direction
    */
   sort(sort: QuerySort<S, CN>): this;
-  sort(sort: string): this;
-  sort(sort: SObjectFieldNames<S, CN>, dir: SortDir): this;
-  sort(sort: string, dir: SortDir): this;
+  sort(sort: string| SObjectFieldNames<S, CN>, dir: SortDir): this;
   sort(
     sort: QuerySort<S, CN> | SObjectFieldNames<S, CN> | string,
     dir?: SortDir,

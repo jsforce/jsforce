@@ -169,11 +169,12 @@ export class SfdxRegistry implements Registry {
   async removeConnectionConfig(name: string) {
     await this._execCommand('force:org:delete', { u: name });
   }
-
+  // eslint-disable-next-line @typescript-eslint/require-await
   async getClientConfig(_name: string) {
     return null;
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async getClientNames() {
     return [];
   }

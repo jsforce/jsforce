@@ -356,8 +356,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
   private jobInfo?: QueryJobInfoV2;
   private locator?: string;
 
-  constructor(conn: Connection<S>, options: ExistingQueryJobV2Options);
-  constructor(conn: Connection<S>, options: CreateQueryJobV2Options);
+  constructor(conn: Connection<S>, options: ExistingQueryJobV2Options | CreateQueryJobV2Options);
   constructor(
     conn: Connection<S>,
     options: ExistingQueryJobV2Options | CreateQueryJobV2Options,
@@ -618,8 +617,7 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
   /**
    *
    */
-  constructor(conn: Connection<S>, options: ExistingIngestJobOptions);
-  constructor(conn: Connection<S>, options: CreateIngestJobV2Options);
+  constructor(conn: Connection<S>, options: ExistingIngestJobOptions| CreateIngestJobV2Options);
   constructor(
     conn: Connection<S>,
     options: CreateIngestJobV2Options | ExistingIngestJobOptions,

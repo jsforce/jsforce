@@ -384,8 +384,7 @@ export class Cli {
    */
   async listConnections() {
     const names = await registry.getConnectionNames();
-    for (let i = 0; i < names.length; i++) {
-      const name = names[i];
+    for (const name of names) {
       this.print((name === this._connName ? '* ' : '  ') + name);
     }
   }

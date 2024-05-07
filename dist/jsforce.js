@@ -553,6 +553,8 @@ var BaseRegistry = /*#__PURE__*/function () {
     value: function _getConnections() {
       return this._registryConfig.connections || (this._registryConfig.connections = {});
     }
+
+    // eslint-disable-next-line @typescript-eslint/require-await
   }, {
     key: "getConnectionNames",
     value: function () {
@@ -646,7 +648,7 @@ var BaseRegistry = /*#__PURE__*/function () {
         return _getConnectionConfig.apply(this, arguments);
       }
       return getConnectionConfig;
-    }()
+    }() // eslint-disable-next-line @typescript-eslint/require-await
   }, {
     key: "saveConnectionConfig",
     value: function () {
@@ -695,6 +697,8 @@ var BaseRegistry = /*#__PURE__*/function () {
       }
       return null;
     }
+
+    // eslint-disable-next-line @typescript-eslint/require-await
   }, {
     key: "setDefaultConnection",
     value: function () {
@@ -714,7 +718,7 @@ var BaseRegistry = /*#__PURE__*/function () {
         return _setDefaultConnection.apply(this, arguments);
       }
       return setDefaultConnection;
-    }()
+    }() // eslint-disable-next-line @typescript-eslint/require-await
   }, {
     key: "removeConnectionConfig",
     value: function () {
@@ -736,7 +740,7 @@ var BaseRegistry = /*#__PURE__*/function () {
         return _removeConnectionConfig.apply(this, arguments);
       }
       return removeConnectionConfig;
-    }()
+    }() // eslint-disable-next-line @typescript-eslint/require-await
   }, {
     key: "getClientConfig",
     value: function () {
@@ -758,7 +762,7 @@ var BaseRegistry = /*#__PURE__*/function () {
         return _getClientConfig.apply(this, arguments);
       }
       return getClientConfig;
-    }()
+    }() // eslint-disable-next-line @typescript-eslint/require-await
   }, {
     key: "getClientNames",
     value: function () {
@@ -777,7 +781,7 @@ var BaseRegistry = /*#__PURE__*/function () {
         return _getClientNames.apply(this, arguments);
       }
       return getClientNames;
-    }()
+    }() // eslint-disable-next-line @typescript-eslint/require-await
   }, {
     key: "registerClientConfig",
     value: function () {
@@ -6908,6 +6912,7 @@ var HttpApi = /*#__PURE__*/function (_EventEmitter) {
     /**
      * @private
      */
+    // eslint-disable-next-line @typescript-eslint/require-await
   }, {
     key: "parseResponseBody",
     value: (function () {
@@ -7379,8 +7384,7 @@ var OAuth2 = /*#__PURE__*/function () {
       if (this.codeVerifier) {
         // code verifier must be a base 64 url encoded hash of 128 bytes of random data. Our random data is also
         // base 64 url encoded. See Connection.create();
-        var codeChallenge = base64UrlEscape((0,crypto__WEBPACK_IMPORTED_MODULE_24__/* .createHash */ .n1)('sha256').update(this.codeVerifier).digest('base64'));
-        params.code_challenge = codeChallenge;
+        params.code_challenge = base64UrlEscape((0,crypto__WEBPACK_IMPORTED_MODULE_24__/* .createHash */ .n1)('sha256').update(this.codeVerifier).digest('base64'));
       }
       var _params = _objectSpread(_objectSpread({}, params), {}, {
         response_type: 'code',
