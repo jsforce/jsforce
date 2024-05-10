@@ -155,7 +155,7 @@ async function startFetchRequest(
 
       if (shouldRetryRequest(retryOpts.maxRetries, error)) {
         logger.debug(`retrying for the ${retryCount + 1} time`);
-        logger.debug(`Error: ${JSON.stringify(error)}`);
+        logger.debug(`Error: ${(err as Error).message}`);
 
         await sleep(
           retryCount === 0
