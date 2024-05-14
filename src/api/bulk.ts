@@ -726,7 +726,7 @@ class BulkApi<S extends Schema> extends HttpApi<S> {
   isSessionExpired(response: HttpResponse) {
     return (
       response.statusCode === 400 &&
-      /<exceptionCode>InvalidSessionId<\/exceptionCode>/.test(response.body)
+      response.body.includes('<exceptionCode>InvalidSessionId</exceptionCode>')
     );
   }
 

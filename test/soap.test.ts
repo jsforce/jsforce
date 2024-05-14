@@ -88,9 +88,10 @@ describe('convert and merge', () => {
       conn370.metadata.read('CustomField', 'Lead.Status'),
     ]);
     leadIds = rets.map((r) => r.id!);
-    convertedStatus = (statusField as any).picklist.picklistValues
-      .filter((pv: any) => pv.converted === 'true')
-      .map((pv: any) => pv.fullName)[0];
+    // @ts-expect-error  @typescript-eslint/no-unnecessary-type-assertion weird CI only linting?
+    convertedStatus = statusField.picklist.picklistValues
+      .filter((pv: { converted: string }) => pv.converted === 'true')
+      .map((pv: { fullName: any }) => pv.fullName)[0];
   });
 
   /**
@@ -101,13 +102,13 @@ describe('convert and merge', () => {
       leadId: leadIds[0],
       convertedStatus,
     });
-    assert.ok(ret.success === true);
+    assert.ok(ret.success);
     assert.ok(isString(ret.accountId));
     assert.ok(isString(ret.contactId));
     assert.ok(isString(ret.opportunityId));
-    accountIds.push(ret.accountId!); // TODO: remove "!" when assertion function is introduced
-    contactIds.push(ret.contactId!); // TODO: remove "!" when assertion function is introduced
-    oppIds.push(ret.opportunityId!); // TODO: remove "!" when assertion function is introduced
+    accountIds.push(ret.accountId);
+    contactIds.push(ret.contactId);
+    oppIds.push(ret.opportunityId);
   });
 
   /**
@@ -120,11 +121,11 @@ describe('convert and merge', () => {
       convertedStatus,
       doNotCreateOpportunity: true,
     });
-    assert.ok(ret.success === true);
+    assert.ok(ret.success);
     assert.ok(isString(ret.accountId));
     assert.ok(isString(ret.contactId));
     assert.ok(ret.opportunityId == null);
-    contactIds.push(ret.contactId!); // TODO: remove "!" when assertion function is introduced
+    contactIds.push(ret.contactId);
   });
 
   /**
@@ -138,7 +139,7 @@ describe('convert and merge', () => {
     );
     const recordToMergeIds = [leadIds[3], leadIds[4]];
     const ret = await conn.soap.merge({ masterRecord, recordToMergeIds });
-    assert.ok(ret.success === true);
+    assert.ok(ret.success);
     assert.ok(ret.id === leadIds[2]);
     assert.ok(ret.mergedRecordIds.length === 2);
     leadIds = leadIds.slice(0, 3); // eslint-disable-line require-atomic-updates

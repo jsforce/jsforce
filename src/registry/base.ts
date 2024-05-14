@@ -29,7 +29,8 @@ export class BaseRegistry implements Registry {
     );
   }
 
-  async getConnectionNames() {
+    // eslint-disable-next-line @typescript-eslint/require-await
+async getConnectionNames() {
     return Object.keys(this._getConnections());
   }
 
@@ -57,7 +58,8 @@ export class BaseRegistry implements Registry {
     return connConfig_;
   }
 
-  async saveConnectionConfig(name: string, connConfig: ConnectionConfig) {
+    // eslint-disable-next-line @typescript-eslint/require-await
+async saveConnectionConfig(name: string, connConfig: ConnectionConfig) {
     const connections = this._getConnections();
     const { oauth2, ...connConfig_ } = connConfig;
     let persistConnConfig: PersistConnectionConfig = connConfig_;
@@ -86,27 +88,31 @@ export class BaseRegistry implements Registry {
     return null;
   }
 
-  async setDefaultConnection(name: string) {
+    // eslint-disable-next-line @typescript-eslint/require-await
+async setDefaultConnection(name: string) {
     this._registryConfig['default'] = name;
     this._saveConfig();
   }
 
-  async removeConnectionConfig(name: string) {
+    // eslint-disable-next-line @typescript-eslint/require-await
+async removeConnectionConfig(name: string) {
     const connections = this._getConnections();
     delete connections[name];
     this._saveConfig();
   }
 
-  async getClientConfig(name: string) {
+    // eslint-disable-next-line @typescript-eslint/require-await
+async getClientConfig(name: string) {
     const clients = this._getClients();
     const clientConfig = clients[name];
     return clientConfig && { ...clientConfig };
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async getClientNames() {
     return Object.keys(this._getClients());
   }
-
+  // eslint-disable-next-line @typescript-eslint/require-await
   async registerClientConfig(name: string, clientConfig: ClientConfig) {
     const clients = this._getClients();
     clients[name] = clientConfig;

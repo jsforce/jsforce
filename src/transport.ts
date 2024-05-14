@@ -147,7 +147,7 @@ export class XdProxyTransport extends Transport {
   httpRequest(req: HttpRequest, _options: HttpRequestOptions = {}) {
     const xdProxyUrl = this._xdProxyUrl;
     const { url, body, ...rreq } = req;
-    const canonicalUrl = url.indexOf('/') === 0 ? baseUrl + url : url;
+    const canonicalUrl = url.startsWith('/') ? baseUrl + url : url;
     const xdProxyReq = createXdProxyRequest(
       { ...rreq, url: canonicalUrl, body },
       xdProxyUrl,

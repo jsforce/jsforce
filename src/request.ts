@@ -118,6 +118,7 @@ async function startFetchRequest(
         ? { body: input }
         : {}),
       redirect: 'manual',
+      // @ts-expect-error - differing types of signal? this started abruptly
       signal: controller.signal,
       agent,
     };
@@ -126,7 +127,7 @@ async function startFetchRequest(
       const res = await fetch(url, fetchOpts);
       if (shouldRetryRequest(retryOpts.maxRetries, res)) {
         logger.debug(`retrying for the ${retryCount + 1} time`);
-        logger.debug(`reason: statusCode match`);
+        logger.debug('reason: statusCode match');
 
         await sleep(
           retryCount === 0
@@ -144,7 +145,7 @@ async function startFetchRequest(
       // should we throw here if the maxRetry already happened and still got the same statusCode?
       return res;
     } catch (err) {
-      logger.debug(`Request failed`);
+      logger.debug('Request failed');
       const error = err as Error | FetchError;
 
       // request was canceled by consumer (AbortController), skip retry and rethrow.
@@ -154,7 +155,7 @@ async function startFetchRequest(
 
       if (shouldRetryRequest(retryOpts.maxRetries, error)) {
         logger.debug(`retrying for the ${retryCount + 1} time`);
-        logger.debug(`Error: ${error}`);
+        logger.debug(`Error: ${(err as Error).message}`);
 
         await sleep(
           retryCount === 0
@@ -167,7 +168,7 @@ async function startFetchRequest(
         emitter.emit('retry', retryCount);
         retryCount++;
 
-        return await fetchWithRetries(maxRetry);
+        return fetchWithRetries(maxRetry);
       }
 
       logger.debug('Skipping retry...');

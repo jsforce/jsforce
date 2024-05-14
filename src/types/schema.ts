@@ -26,14 +26,14 @@ export type SObjectFieldType =
   | string
   | Address;
 
-export interface SObjectDefinition<N extends string = string> {
+export type SObjectDefinition<N extends string = string> = {
   Name: N;
   Fields: { [name: string]: SObjectFieldType | null };
   ParentReferences: { [name: string]: SObjectDefinition | null };
   ChildRelationships: { [name: string]: SObjectDefinition };
 }
 
-export interface Schema {
+export type Schema = {
   SObjects: { [name: string]: SObjectDefinition };
 }
 

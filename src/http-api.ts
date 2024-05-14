@@ -216,6 +216,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
   /**
    * @private
    */
+  // eslint-disable-next-line @typescript-eslint/require-await
   async parseResponseBody(response: HttpResponse) {
     const contentType = this.getResponseContentType(response) || '';
     const parseBody = /^(text|application)\/xml(;|$)/.test(contentType)

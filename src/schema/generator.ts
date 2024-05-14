@@ -141,7 +141,7 @@ async function dumpSchema(
         childSObject,
         relationshipName,
       } of childRelationships) {
-        if (field && childSObject && relationshipName && !/__c$/.test(field)) {
+        if (field && childSObject && relationshipName && !field.endsWith('__c')) {
           writeLine(
             `  ${relationshipName}: SObjectDefinition$${childSObject};`,
           );
@@ -171,7 +171,7 @@ async function dumpSchema(
   });
 }
 
-interface GeneratorCommand extends Command {
+type GeneratorCommand = {
   connection?: string;
   username?: string;
   password?: string;
@@ -180,7 +180,7 @@ interface GeneratorCommand extends Command {
   outputFile: string;
   cache?: boolean;
   clearCache?: boolean;
-}
+} & Command
 
 /**
  *

@@ -143,13 +143,13 @@ export class Streaming<S extends Schema> extends EventEmitter {
   _createClient(forChannelName?: string | null, extensions?: any[]) {
     // forChannelName is advisory, for an API workaround. It does not restrict or select the channel.
     const needsReplayFix =
-      typeof forChannelName === 'string' && forChannelName.indexOf('/u/') === 0;
+      typeof forChannelName === 'string' && forChannelName.startsWith('/u/');
     const endpointUrl = [
       this._conn.instanceUrl,
       // special endpoint "/cometd/replay/xx.x" is only available in 36.0.
       // See https://releasenotes.docs.salesforce.com/en-us/summer16/release-notes/rn_api_streaming_classic_replay.htm
       'cometd' +
-        (needsReplayFix === true && this._conn.version === '36.0'
+        (needsReplayFix && this._conn.version === '36.0'
           ? '/replay'
           : ''),
       this._conn.version,
@@ -172,7 +172,7 @@ export class Streaming<S extends Schema> extends EventEmitter {
 
   /** @private **/
   _getFayeClient(channelName: string) {
-    const isGeneric = channelName.indexOf('/u/') === 0;
+    const isGeneric = channelName.startsWith('/u/');
     const clientType = isGeneric ? 'generic' : 'pushTopic';
     if (!this._fayeClients[clientType]) {
       this._fayeClients[clientType] = this._createClient(channelName);
@@ -201,7 +201,7 @@ export class Streaming<S extends Schema> extends EventEmitter {
    * Subscribe topic/channel
    */
   subscribe(name: string, listener: Function): Subscription {
-    const channelName = name.indexOf('/') === 0 ? name : '/topic/' + name;
+    const channelName = name.startsWith('/') ? name : '/topic/' + name;
     const fayeClient = this._getFayeClient(channelName);
     return fayeClient.subscribe(channelName, listener);
   }
@@ -210,7 +210,7 @@ export class Streaming<S extends Schema> extends EventEmitter {
    * Unsubscribe topic
    */
   unsubscribe(name: string, subscription: Subscription) {
-    const channelName = name.indexOf('/') === 0 ? name : '/topic/' + name;
+    const channelName = name.startsWith('/') ? name : '/topic/' + name;
     const fayeClient = this._getFayeClient(channelName);
     fayeClient.unsubscribe(channelName, subscription);
     return this;

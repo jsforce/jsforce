@@ -233,11 +233,11 @@ export class Chatter<S extends Schema> {
    * @private
    */
   _normalizeUrl(url: string) {
-    if (url.indexOf('/chatter/') === 0 || url.indexOf('/connect/') === 0) {
+    if (url.startsWith('/chatter/') || url.startsWith('/connect/')) {
       return '/services/data/v' + this._conn.version + url;
     } else if (/^\/v[\d]+\.[\d]+\//.test(url)) {
       return '/services/data' + url;
-    } else if (url.indexOf('/services/') !== 0 && url[0] === '/') {
+    } else if (!url.startsWith('/services/') && url.startsWith('/')) {
       return '/services/data/v' + this._conn.version + '/chatter' + url;
     } else {
       return url;

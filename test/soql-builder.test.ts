@@ -1,12 +1,11 @@
 import assert from 'assert';
-import { SfDate } from 'jsforce';
+import { SfDate } from '../src/date'
 import { createSOQL } from '../src/soql-builder';
 
 /**
  *
  */
 describe('soql-builder', () => {
-  //
   it('should build simple query', () => {
     const soql = createSOQL({
       fields: ['Id', 'Name'],

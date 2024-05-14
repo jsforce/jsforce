@@ -127,7 +127,7 @@ it('should bulk update and return updated status', async () => {
 
   const updatedRecords = records.map((rec) => ({
     ...rec,
-    Name: `${rec.Name} (Updated)`,
+    Name: `${rec.Name as string} (Updated)`,
   }));
 
   const res = await conn.bulk2.loadAndWaitForResults({
@@ -201,6 +201,7 @@ if (isNodeJS()) {
     );
 
     const res = await conn.bulk2.loadAndWaitForResults({
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       lineEnding: require('os').platform() === 'win32' ? 'CRLF' : 'LF',
       object: 'Account',
       operation: 'insert',
@@ -377,7 +378,7 @@ it('should bulk update using Query#update and return updated status', async () =
   assert.ok(updatedRecords.length === bulkAccountNum);
   for (const record of updatedRecords) {
     assert.ok(isString(record.Id));
-    assert.ok(/\(Updated\)$/.test(record.Name));
+    assert.ok(record.Name.endsWith('(Updated)'));
     assert.ok(record.BillingState === null);
   }
 });
@@ -475,7 +476,7 @@ it('should bulk update using Query#update with bulkThreshold modified and return
   assert.ok(records.length === smallAccountNum);
   for (const record of updatedRecords) {
     assert.ok(isString(record.Id));
-    assert.ok(/\(Updated\)$/.test(record.Name));
+    assert.ok(record.Name.endsWith('(Updated)'));
     assert.ok(record.BillingState === null);
   }
 });

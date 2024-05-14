@@ -77,7 +77,7 @@ describe('CRUD based call', () => {
     for (const result of results) {
       assert.ok(isString(result.fullName));
       assert.ok(isObject(result.nameField));
-      assert.ok(isString(result.nameField!.label)); // TODO: remove "!" when assertion function is introduced
+      assert.ok(isString(result.nameField.label)); // TODO: remove "!" when assertion function is introduced
     }
     rmetadata = results;
   });

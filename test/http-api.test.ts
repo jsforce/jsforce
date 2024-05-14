@@ -373,13 +373,13 @@ describe('HTTP API', () => {
       httpApi.on('request', (req: HttpRequest) => {
         if (firstRoundTrip) {
           // access token set in the connection.
-          assert.equal(req?.headers?.['Authorization'], `Bearer invalid_token`);
+          assert.equal(req?.headers?.['Authorization'], 'Bearer invalid_token');
           firstRoundTrip = false;
         } else {
           // access token set in the connection's refresh function.
           assert.equal(
             req?.headers?.['Authorization'],
-            `Bearer refreshed_token`,
+            'Bearer refreshed_token',
           );
           testPassed = true;
         }
@@ -422,7 +422,7 @@ describe('HTTP API', () => {
           'content-type': 'application/json',
         });
 
-      assert.rejects(
+      await assert.rejects(
         async () => {
           await httpApi.request({
             method: 'POST',
@@ -462,7 +462,7 @@ describe('HTTP API', () => {
           'content-type': 'application/xml',
         });
 
-      assert.rejects(
+      await assert.rejects(
         async () => {
           await httpApi.request({
             method: 'GET',
@@ -503,7 +503,7 @@ describe('HTTP API', () => {
           'content-type': 'text/html',
         });
 
-      assert.rejects(
+      await assert.rejects(
         async () => {
           await httpApi.request({
             method: 'GET',
@@ -568,7 +568,7 @@ describe('SOAP API', () => {
         endpointUrl: `${loginUrl}/services/Soap/u/59`,
       });
 
-      soapApi.on('request', async (req: HttpRequest) => {
+      soapApi.on('request', (req: HttpRequest) => {
         assert.equal(req?.headers?.['Content-Type'], 'text/xml');
         assert.equal(req?.headers?.['SOAPAction'], '""');
         testPassed = true;
@@ -696,7 +696,7 @@ describe('SOAP API', () => {
     });
   });
 
-  it('parses errors in XML responses', async () => {
+  it('parses errors in XML responses', () => {
     const conn = new Connection({
       loginUrl,
       accessToken: 'access_token',
@@ -722,7 +722,7 @@ describe('SOAP API', () => {
       'content-type': 'application/xml',
     });
 
-    assert.rejects(
+    void assert.rejects(
       async () => {
         await soapApi.invoke('create', {
           Account: 'test',

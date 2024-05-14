@@ -202,7 +202,7 @@ describe('single record crud', () => {
     });
     assert.ok(ret.success);
     assert.ok(typeof ret.id === 'string');
-    debugLevelId = ret.id as string;
+    debugLevelId = ret.id ;
   });
 
   //
