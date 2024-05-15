@@ -1605,7 +1605,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
    */
   process = new Process(this);
 
-  public isLightningInstance(): boolean {
+  private isLightningInstance(): boolean {
     return (
       this.instanceUrl.includes('.lightning.force.com') ||
       this.instanceUrl.includes('.lightning.crmforce.mil') ||
