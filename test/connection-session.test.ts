@@ -29,6 +29,54 @@ describe('login', () => {
     assert.ok(typeof userInfo.url === 'string');
   });
 
+  it('should not allow a lightning URL as instance URL', async () => {
+    // .lightning
+    try {
+      conn = new Connection({
+        logLevel: config.logLevel,
+        proxyUrl: config.proxyUrl,
+        loginUrl: config.loginUrl,
+        instanceUrl: 'my-cool-url.lightning.force.com',
+      });
+      assert.fail('the above should throw for a lighting url');
+    } catch (e) {
+      assert.equal(
+        (e as Error).message,
+        'lightning URLs are not valid as instance URLs',
+      );
+    }
+    // .mil
+    try {
+      conn = new Connection({
+        logLevel: config.logLevel,
+        proxyUrl: config.proxyUrl,
+        loginUrl: config.loginUrl,
+        instanceUrl: 'my-cool-url.lightning.crmforce.mil',
+      });
+      assert.fail('the above should throw for a lighting url');
+    } catch (e) {
+      assert.equal(
+        (e as Error).message,
+        'lightning URLs are not valid as instance URLs',
+      );
+    }
+    // for china
+    try {
+      conn = new Connection({
+        logLevel: config.logLevel,
+        proxyUrl: config.proxyUrl,
+        loginUrl: config.loginUrl,
+        instanceUrl: 'my-cool-url.lightning.sfcrmapps.cn',
+      });
+      assert.fail('the above should throw for a lighting url');
+    } catch (e) {
+      assert.equal(
+        (e as Error).message,
+        'lightning URLs are not valid as instance URLs',
+      );
+    }
+  });
+
   //
   it('should execute query and return some records', async () => {
     const res = await conn.query('SELECT Id FROM User');

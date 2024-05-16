@@ -321,6 +321,11 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
     } = config;
     this.loginUrl = loginUrl || defaultConnectionConfig.loginUrl;
     this.instanceUrl = instanceUrl || defaultConnectionConfig.instanceUrl;
+
+    if (this.isLightningInstance()) {
+      throw new Error('lightning URLs are not valid as instance URLs');
+    }
+
     this.version = version || defaultConnectionConfig.version;
     this.oauth2 =
       oauth2 instanceof OAuth2
@@ -1596,6 +1601,14 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
    * Module which manages process rules and approval processes
    */
   process = new Process(this);
+
+  private isLightningInstance(): boolean {
+    return (
+      this.instanceUrl.includes('.lightning.force.com') ||
+      this.instanceUrl.includes('.lightning.crmforce.mil') ||
+      this.instanceUrl.includes('.lightning.sfcrmapps.cn')
+    );
+  }
 }
 
 export default Connection;
