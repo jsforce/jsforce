@@ -85,7 +85,7 @@ describe('big tables and autoFetch', () => {
     expect(result.records.length).toBe(2000);
     expect(result.nextRecordsUrl).toBeTruthy();
     expect(result.done).toBe(false);
-    expect(requestQty).toBe(2);
+    expect(requestQty).toBe(1);
   });
 
   /**
