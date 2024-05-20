@@ -20,6 +20,10 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.js'],
     fallback: {
+      "querystring": require.resolve("querystring-es3"),
+      "crypto": require.resolve("crypto-browserify"),
+      "timers": require.resolve("timers-browserify"),
+      "util": require.resolve("util/"),
       "path": require.resolve("path-browserify"),
       "stream": require.resolve("stream-browserify"),
       "assert": require.resolve("assert/"),
