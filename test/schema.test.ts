@@ -15,9 +15,7 @@ import type {
   SObjectRecord,
   SObjectInputRecord,
   SObjectUpdateRecord,
-  DateString,
-  Address,
-} from '../src';
+} from '../src/types';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection<StandardSchema>();

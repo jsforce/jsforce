@@ -3,7 +3,7 @@ import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject, delay } from './util';
 import { insertAccounts } from './bulk.test';
-import type { Record, SavedRecord } from '../src';
+import type { Record, SavedRecord } from '../src/types/common';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();

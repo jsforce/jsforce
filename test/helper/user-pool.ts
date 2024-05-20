@@ -1,4 +1,5 @@
-import type { Connection, Schema } from '../../src';
+import type { Connection } from '../../src/connection';
+import type { Schema } from '../../src/types';
 import { delay } from '../util';
 
 export type UserPoolConfig = {
