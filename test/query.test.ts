@@ -75,6 +75,19 @@ describe('big tables and autoFetch', () => {
     assert.ok(records.length === totalRecordCount);
   });
 
+  it('should return the first batch with autoFetch and maxFetch set to 2000', async () => {
+    let requestQty = 0
+
+    const result = await conn.query(bigTableQuery, { autoFetch: true, maxFetch: 2000}).on('fetch', () => {
+      requestQty++
+    })
+
+    expect(result.records.length).toBe(2000);
+    expect(result.nextRecordsUrl).toBeTruthy();
+    expect(result.done).toBe(false);
+    expect(requestQty).toBe(1);
+  });
+
   /**
    *
    */

@@ -674,6 +674,7 @@ export class Query<
       this._finished ||
       data.done ||
       !autoFetch ||
+      this.records.length === maxFetch ||
       // this is what the response looks like when there are no results
       (data.records.length === 0 && data.done === undefined);
 
