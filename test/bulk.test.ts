@@ -1,12 +1,12 @@
 import assert from 'assert';
 import path from 'path';
 import fs from './helper/fs';
-import { Connection, Date as SfDate, Record } from 'jsforce';
+import { Connection, Date as SfDate, Record } from '../src';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject, isString } from './util';
 import { isNodeJS } from './helper/env';
-import { BulkIngestBatchResult } from 'jsforce/lib/api/bulk';
+import { BulkIngestBatchResult } from '../src/api/bulk';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();

@@ -105,7 +105,7 @@ async function dumpSchema(
     out.on('finish', resolve);
     const writeLine = (message: string) => out.write(message + '\n');
     writeLine(
-      "import { Schema, SObjectDefinition, DateString, BlobString, Address } from 'jsforce';",
+      "import { Schema, SObjectDefinition, DateString, BlobString, Address } from '../src';",
     );
     writeLine('');
     for (const sobject of sobjects) {

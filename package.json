@@ -99,9 +99,6 @@
     },
     "test:node": {
       "command": "jest --forceExit",
-      "dependencies": [
-        "build:node:cjs"
-      ],
       "files": [
         "test/**/*.ts",
         "jest.setup.js",

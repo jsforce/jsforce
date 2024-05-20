@@ -1,7 +1,7 @@
 import path from 'path';
 import assert from 'assert';
 import fs from './helper/fs';
-import { Connection } from 'jsforce';
+import { Connection } from '../src';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject, isString } from './util';

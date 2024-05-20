@@ -17,7 +17,7 @@ import type {
   SObjectUpdateRecord,
   DateString,
   Address,
-} from 'jsforce';
+} from '../src';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection<StandardSchema>();

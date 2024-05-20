@@ -1,13 +1,13 @@
 import assert from 'assert';
 import path from 'path';
 import fs from './helper/fs';
-import { Connection, Date as SfDate, Schema, Record } from 'jsforce';
+import { Connection, Date as SfDate, Schema, Record } from '../src';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject, isString } from './util';
 import { isNodeJS } from './helper/env';
-import { BulkOperation } from 'jsforce/lib/api/bulk';
-import { IngestJobV2Results } from 'jsforce/lib/api/bulk2';
+import { BulkOperation } from '../src/api/bulk';
+import { IngestJobV2Results } from '../src/api/bulk2';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();

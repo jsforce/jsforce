@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { Connection } from 'jsforce';
+import { Connection } from '../src';
 import { delay } from './util';
 import authorize from './helper/webauth';
 import config from './config';
@@ -29,7 +29,7 @@ describe('login', () => {
     assert.ok(typeof userInfo.url === 'string');
   });
 
-  it('should not allow a lightning URL as instance URL', async () => {
+  it('should not allow a lightning URL as instance URL',  () => {
     // .lightning
     try {
       conn = new Connection({
