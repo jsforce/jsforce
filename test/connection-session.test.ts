@@ -29,7 +29,7 @@ describe('login', () => {
     assert.ok(typeof userInfo.url === 'string');
   });
 
-  it('should not allow a lightning URL as instance URL', async () => {
+  it('should not allow a lightning URL as instance URL', () => {
     // .lightning
     try {
       conn = new Connection({
