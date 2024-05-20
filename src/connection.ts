@@ -1603,10 +1603,10 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   process = new Process(this);
 
   private isLightningInstance(): boolean {
-    return (
+    return (this.instanceUrl!==undefined && (
       this.instanceUrl.includes('.lightning.force.com') ||
       this.instanceUrl.includes('.lightning.crmforce.mil') ||
-      this.instanceUrl.includes('.lightning.sfcrmapps.cn')
+      this.instanceUrl.includes('.lightning.sfcrmapps.cn'))
     );
   }
 }
