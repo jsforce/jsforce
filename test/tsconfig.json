@@ -13,5 +13,5 @@
     },
     "esModuleInterop": true
   },
-  "include": ["./**/*.ts", ".eslintrc.js"]
+  "include": ["./**/*.ts", ".eslintrc.js", "../typings/**/*"]
 }
