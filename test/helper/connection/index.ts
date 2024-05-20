@@ -1,4 +1,4 @@
-import { ConnectionManagerConfig } from '../connection-manager';
+import type { ConnectionManagerConfig } from '../connection-manager';
 
 export function getConnectionConfig(config: ConnectionManagerConfig) {
   return {

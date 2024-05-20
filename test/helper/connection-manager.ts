@@ -1,8 +1,13 @@
 import { Schema } from '../../src/types/schema';
 import {Connection, ConnectionConfig} from '../../src/connection';
-
 import UserPool, { UserPoolConfig } from './user-pool';
-import { getConnectionConfig } from './connection';
+
+function getConnectionConfig(config: ConnectionManagerConfig) {
+  return {
+    loginUrl: config.loginUrl,
+    logLevel: config.logLevel,
+  };
+}
 
 export type ConnectionManagerConfig = UserPoolConfig &
   ConnectionConfig & {
