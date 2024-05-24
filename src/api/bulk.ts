@@ -86,6 +86,7 @@ export type BulkQueryBatchResult = Array<{
 export type BulkIngestBatchResult = Array<{
   id: string | null;
   success: boolean;
+  created: boolean;
   errors: string[];
 }>;
 
@@ -98,6 +99,7 @@ export type BatchResult<Opr extends BulkOperation> = Opr extends
 type BulkIngestResultResponse = Array<{
   Id: string;
   Success: string;
+  Created: string;
   Error: string;
 }>;
 
@@ -674,6 +676,7 @@ export class Batch<
         results = res.map((ret) => ({
           id: ret.Id || null,
           success: ret.Success === 'true',
+          created: ret.Created === 'true',
           errors: ret.Error ? [ret.Error] : [],
         }));
       }
