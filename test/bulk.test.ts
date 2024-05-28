@@ -36,6 +36,7 @@ export async function insertAccounts(
   for (const res of batchInsertRes) {
     assert.ok(isString(res.id));
     assert.ok(res.success === true);
+    assert.ok(res.created === true);
   }
 
   return batchInsertRes;
