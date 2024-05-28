@@ -37,7 +37,7 @@ export type BulkOptions = {
   assignmentRuleId?: string;
 };
 
-export type JobState = 'Open' | 'Closed' | 'Aborted' | 'Failed' | 'Unknown';
+export type JobState = 'Open' | 'Closed' | 'Aborted' | 'Failed' | 'Unknown' | 'NotProcessed';
 
 export type JobInfo = {
   id: string;
@@ -635,6 +635,8 @@ export class Batch<
         }
       } else if (res.state === 'Completed') {
         this.retrieve();
+      } else if (res.state === 'NotProcessed') {
+        throw new Error('Job has been aborted');
       } else {
         this.emit('inProgress', res);
         setTimeout(poll, interval);
