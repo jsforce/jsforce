@@ -185,7 +185,8 @@
     "clean": "rimraf --glob lib/* module/* browser/*",
     "clean-test-failures-file": "rimraf test/karma/karma-failed-tests.txt",
     "jsforce-node": "ts-node scripts/jsforce-node.ts",
-    "jsforce-node:dev": "ts-node scripts/jsforce-node.ts --dev"
+    "jsforce-node:dev": "ts-node scripts/jsforce-node.ts --dev",
+    "prepublish": "ts-node -e \"if(process.env.npm_package_version!==require('./src/VERSION').default){console.error('The pacakge.json version is not matching to ./src/VERSION.js');process.exit(1)}\""
   },
   "files": [
     "README.md",
