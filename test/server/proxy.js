@@ -5,8 +5,7 @@
  */
 var express = require('express'),
     http = require('http'),
-    path = require('path'),
-    request = require('request');
+    path = require('path');
 
 var app = express();
 
@@ -32,8 +31,8 @@ app.all('/proxy/?*', function(req, res) {
   if (!/^https:\/\/[a-zA-Z0-9\.\-]+\.(force|salesforce|database)\.com\//.test(sfEndpoint)) {
     return res.send(400, "Proxying endpoint is not allowed.");
   }
+  var url = sfEndpoint || "https://login.salesforce.com//services/oauth2/token";
   var params = {
-    url: sfEndpoint || "https://login.salesforce.com//services/oauth2/token",
     method: req.method,
     headers: {
       "Content-Type": req.headers["content-type"],
@@ -43,8 +42,8 @@ app.all('/proxy/?*', function(req, res) {
   };
   proxyCounter++;
   console.log("(++req++) " + new Array(proxyCounter+1).join('*'));
-  console.log("method=" + params.method + ", url=" + params.url);
-  req.pipe(request(params))
+  console.log("method=" + params.method + ", url=" + url);
+  req.pipe(fetch(url, params))
     .on('response', function() {
       proxyCounter--;
       console.log("(--res--) " + new Array(proxyCounter+1).join('*'));

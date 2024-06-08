@@ -10023,8 +10023,7 @@ var inherits = require('inherits'),
 
 /* */
 
-var request = require('request'),
-    canvas = require('./browser/canvas'),
+var canvas = require('./browser/canvas'),
     jsonp = require('./browser/jsonp');
 
 // set options if defaults setting is available in request, which is not available in xhr module.
@@ -10094,27 +10093,16 @@ var Transport = module.exports = function() {};
 Transport.prototype.httpRequest = function(params, callback) {
   var deferred = Promise.defer();
   var req;
-  var httpRequest = this._getHttpRequestModule();
+  var url = params.url;
+  delete params.url;
   var createRequest = function() {
     if (!req) {
-      req = httpRequest(params, function(err, response) {
-        if (err) {
-          deferred.reject(err);
-        } else {
-          deferred.resolve(response);
-        }
-      });
+        req = fetch(url, params);
     }
     return req;
   };
   return streamify(deferred.promise, createRequest).thenCall(callback);
 };
-
-/** @protected **/
-Transport.prototype._getHttpRequestModule = function() {
-  return request;
-};
-
 
 /**
  * Class for JSONP request transport
