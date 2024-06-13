@@ -387,7 +387,7 @@ describe('HTTP API', () => {
 
       nock(loginUrl)
         .get('/services/data/v59.0')
-        .reply(401)
+        .reply(401, '[{"message":"Session expired or invalid","errorCode":"INVALID_SESSION_ID"}]')
         .get('/services/data/v59.0')
         .reply(200);
 
@@ -397,6 +397,46 @@ describe('HTTP API', () => {
       });
       assert.ok(testPassed);
     });
+
+    it('does not refresh token on 401 and different error code', async () => {
+      const conn = new Connection({
+        loginUrl,
+        accessToken: 'invalid_token',
+        refreshFn: (_c, callback) => {
+          setTimeout(() => callback(null, 'refreshed_token' ?? undefined), 200);
+        },
+      });
+
+      const httpApi = new HttpApi(conn, {});
+
+      let testPassed = false;
+      let firstRoundTrip = true;
+
+      httpApi.on('request', (req: HttpRequest) => {
+        if (firstRoundTrip) {
+          // access token set in the connection.
+          assert.equal(req?.headers?.['Authorization'], 'Bearer invalid_token');
+          firstRoundTrip = false;
+          testPassed = true;
+        } else {
+          // there was another request after we got 401
+          testPassed = false;
+        }
+      });
+
+      nock(loginUrl)
+        .get('/services/data/v59.1')
+        .reply(401, '[{"message":"unauthorized acccess","errorCode":"UNAUTHORIZED_ACCESS"}]')
+
+      try {
+        await httpApi.request({
+          method: 'GET',
+          url: `${loginUrl}/services/data/v59.1`,
+        });
+      } catch {
+        assert.ok(testPassed);
+      }
+    })
   });
 
   describe('error handling', () => {

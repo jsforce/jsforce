@@ -264,7 +264,10 @@ export class HttpApi<S extends Schema> extends EventEmitter {
    * @protected
    */
   isSessionExpired(response: HttpResponse) {
-    return response.statusCode === 401;
+    return (
+      response.statusCode === 401 &&
+      response.body.includes('INVALID_SESSION_ID')
+    );
   }
 
   /**
