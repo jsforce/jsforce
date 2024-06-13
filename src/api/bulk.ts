@@ -636,7 +636,7 @@ export class Batch<
       } else if (res.state === 'Completed') {
         this.retrieve();
       } else if (res.state === 'NotProcessed') {
-        throw new Error('Job has been aborted');
+        this.emit('error', new Error('Job has been aborted'));
       } else {
         this.emit('inProgress', res);
         setTimeout(poll, interval);
