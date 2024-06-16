@@ -85,6 +85,7 @@
     "gulp": "^4.0.0",
     "gulp-rename": "^1.4.0",
     "gulp-sourcemaps": "^1.12.1",
+    "gulp-terser": "^2.1.0",
     "gulp-uglify": "^3.0.2",
     "intelli-espower-loader": "^1.0.1",
     "jsdoc": "^3.6.3",
