@@ -31,6 +31,7 @@ jobs:
           git-user-email: svc_cli_bot@salesforce.com
           github-token: ${{ secrets.SVC_CLI_BOT_JSFORCE_GITHUB_TOKEN }}
           output-file: false
+          pre-commit: ./scripts/bump-version-file.js
           # always do the release, even if there are no semantic commits
           skip-on-empty: false
           tag-prefix: ''
