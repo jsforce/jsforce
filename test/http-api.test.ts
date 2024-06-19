@@ -651,6 +651,40 @@ describe('SOAP API', () => {
   });
 
   describe('session refresh', () => {
+    it('fails if passwordExpired=true', () => {
+      const conn = new Connection({
+        loginUrl,
+      });
+
+      const passwordExpiredXml =
+`<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope
+	xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns="urn:partner.soap.sforce.com"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<soapenv:Body>
+		<loginResponse>
+			<result>
+				<passwordExpired>true</passwordExpired>
+			</result>
+		</loginResponse>
+	</soapenv:Body>
+</soapenv:Envelope>`
+
+      nock(loginUrl)
+        .post('/services/Soap/u/50.0')
+        .reply(200, passwordExpiredXml);
+
+
+      assert.rejects(async () => {
+        // SOAP login requests will return 200 even with an expired password:
+        // https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_calls_login_loginresult.htm?q=passwordExpired
+        await conn.login('username','password')
+      }, {
+          message: 'Unable to login because the used password has expired.'
+        })
+    })
+
     it('handle `Content-Length` header after session refresh', async () => {
       const conn = new Connection({
         loginUrl,
