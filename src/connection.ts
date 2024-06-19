@@ -568,6 +568,17 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
       const faultstring = m && m[1];
       throw new Error(faultstring || response.body);
     }
+    // the API will return 200 and a restriced token when using an expired password:
+    // https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_calls_login_loginresult.htm
+    //
+    // we need to throw here to avoid a possible infinite loop with session refresh where:
+    //  1. login happens, `this.accessToken` is set to the restricted token
+    //  2. requests happen, get back 401
+    //  3. trigger session-refresh (username/password login has a default session refresh delegate function)
+    //  4. gets stuck refreshing a restricted token
+    if (response.body.match(/<passwordExpired>true<\/passwordExpired>/g)) {
+      throw new Error('Unable to login because the used password has expired.')
+    }
     this._logger.debug(`SOAP response = ${response.body}`);
     m = response.body.match(/<serverUrl>([^<]+)<\/serverUrl>/);
     const serverUrl = m && m[1];
