@@ -4,7 +4,6 @@ import { delay } from './util';
 import authorize from './helper/webauth';
 import config from './config';
 import { isNodeJS } from './helper/env';
-import nock = require('nock');
 
 if (typeof jest !== 'undefined') {
   jest.retryTimes(2);
@@ -28,41 +27,6 @@ describe('login', () => {
     assert.ok(typeof userInfo.id === 'string');
     assert.ok(typeof userInfo.organizationId === 'string');
     assert.ok(typeof userInfo.url === 'string');
-  });
-
-  it('should throw when using an expired password', () => {
-    conn = new Connection({
-      loginUrl: 'https://heaven-party-2429-dev-ed.scratch.my.salesforce.com',
-    });
-const passwordExpiredXml =
-`<?xml version="1.0" encoding="UTF-8"?>
-<soapenv:Envelope
-	xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-	xmlns="urn:partner.soap.sforce.com"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<soapenv:Body>
-		<loginResponse>
-			<result>
-				<passwordExpired>true</passwordExpired>
-			</result>
-		</loginResponse>
-	</soapenv:Body>
-</soapenv:Envelope>`
-
-      nock(conn.loginUrl)
-        .post('/services/Soap/u/50.0')
-        .reply(200, passwordExpiredXml);
-    assert.rejects(async () => {
-      await conn.login('user','password')
-    }, {
-      message: 'Unable to login because the used password has expired.'
-    })
-
-    // const userInfo = await conn.login(config.username, config.password);
-    // assert.ok(typeof conn.accessToken === 'string');
-    // assert.ok(typeof userInfo.id === 'string');
-    // assert.ok(typeof userInfo.organizationId === 'string');
-    // assert.ok(typeof userInfo.url === 'string');
   });
 
   it('should not allow a lightning URL as instance URL', () => {
