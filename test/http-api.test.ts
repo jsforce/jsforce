@@ -651,7 +651,7 @@ describe('SOAP API', () => {
   });
 
   describe('session refresh', () => {
-    it('fails if passwordExpired=true', () => {
+    it('fails if passwordExpired=true', async () => {
       const conn = new Connection({
         loginUrl,
       });
@@ -676,7 +676,7 @@ describe('SOAP API', () => {
         .reply(200, passwordExpiredXml);
 
 
-      assert.rejects(async () => {
+      await assert.rejects(async () => {
         // SOAP login requests will return 200 even with an expired password:
         // https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_calls_login_loginresult.htm?q=passwordExpired
         await conn.login('username','password')
