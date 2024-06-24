@@ -8,7 +8,7 @@ on:
 jobs:
   docs:
     needs: release
-    if: github.ref_name === '3.0' # TODO: remove this line after v3 GA(3.0 should be the main branch)
+    if: github.ref_name == '3.0' # TODO: remove this line after v3 GA(3.0 should be the main branch)
     uses: ./.github/workflows/publishDocs.yml
   release:
     runs-on: ubuntu-latest
