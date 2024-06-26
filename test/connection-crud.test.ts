@@ -232,10 +232,3 @@ describe('search', () => {
     assert.ok(recordsFound)
   });
 });
-
-/**
- *
- */
-afterAll(async () => {
-  await connMgr.closeConnection(conn);
-});

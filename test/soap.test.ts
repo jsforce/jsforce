@@ -155,12 +155,3 @@ describe('convert and merge', () => {
     await conn.sobject('Lead').destroy(leadIds);
   });
 });
-
-/*------------------------------------------------------------------------*/
-
-/**
- *
- */
-afterAll(async () => {
-  await connMgr.closeConnection(conn);
-});
