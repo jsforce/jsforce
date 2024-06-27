@@ -210,7 +210,7 @@ export class OAuth2 {
     username: string,
     password: string,
   ): Promise<TokenResponse> {
-    if (!this.clientId || !this.clientSecret || !this.redirectUri) {
+    if (!this.clientId || !this.clientSecret) {
       throw new Error('No valid OAuth2 client configuration set');
     }
     const ret = await this._postParams({
@@ -219,7 +219,6 @@ export class OAuth2 {
       password,
       client_id: this.clientId,
       client_secret: this.clientSecret,
-      redirect_uri: this.redirectUri,
     });
     return ret as TokenResponse;
   }
