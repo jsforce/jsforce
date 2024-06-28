@@ -60,7 +60,7 @@ describe('HTTP API', () => {
       nock(loginUrl)
         .get('/services/data/v60.0')
         .times(attempts)
-        .reply(420)
+        .reply(404)
         .get('/services/data/v60.0')
         .reply(200, { success: true });
 
@@ -499,7 +499,7 @@ describe('HTTP API', () => {
 
       nock(loginUrl)
         .get('/services/data/v59.0/sobjects/Broker__c/a008N0000032UmoQAA')
-        .reply(420, htmlErr, {
+        .reply(404, htmlErr, {
           'content-type': 'text/html',
         });
 
@@ -511,7 +511,7 @@ describe('HTTP API', () => {
           });
         },
         {
-          errorCode: 'ERROR_HTTP_420',
+          errorCode: 'ERROR_HTTP_404',
           message: `HTTP response contains html content.
 Check that the org exists and can be reached.
 See error.content for the full html response.`,
