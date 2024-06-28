@@ -45,7 +45,7 @@ async function startFetchRequest(
   let retryCount = 0;
 
   const retryOpts: Required<HttpRequestOptions['retry']> = {
-    statusCodes: options.retry?.statusCodes ?? [429, 500, 502, 503, 504],
+    statusCodes: options.retry?.statusCodes ?? [420, 429, 500, 502, 503, 504],
     maxRetries: options.retry?.maxRetries ?? 5,
     minTimeout: options.retry?.minTimeout ?? 500,
     timeoutFactor: options.retry?.timeoutFactor ?? 2,
