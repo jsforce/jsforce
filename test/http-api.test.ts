@@ -435,6 +435,7 @@ describe('HTTP API', () => {
         {
           errorCode: missingRequiredFieldErr[0].errorCode,
           message: missingRequiredFieldErr[0].message,
+          content: {...missingRequiredFieldErr[0]}
         },
       );
     });
