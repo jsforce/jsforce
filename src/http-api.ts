@@ -330,7 +330,7 @@ See error.content for the full html response.`,
       );
     }
 
-    return new HttpApiError(error.message, error.errorCode);
+    return new HttpApiError(error.message, error.errorCode, error);
   }
 }
 
