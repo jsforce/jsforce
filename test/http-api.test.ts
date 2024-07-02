@@ -546,6 +546,50 @@ See error.content for the full html response.`,
 
       assert.deepEqual(body, noContentResponse);
     });
+
+    it('JSON: handle multiple errors', async () => {
+      const conn = new Connection({
+        accessToken,
+        loginUrl,
+      });
+
+      const httpApi = new HttpApi(conn, {});
+
+      const errors = [
+        {
+          message: 'no ACME accounts',
+          errorCode: 'FIELD_CUSTOM_VALIDATION_EXCEPTION',
+          fields: [],
+        },
+        {
+          message: 'no 123 phone',
+          errorCode: 'FIELD_CUSTOM_VALIDATION_EXCEPTION',
+          fields: [],
+        }
+      ];
+
+      nock(loginUrl)
+        .post('/services/data/v59.0')
+        .reply(400, JSON.stringify(errors), {
+          'content-type': 'application/json',
+        });
+
+      await assert.rejects(
+        async () => {
+          await httpApi.request({
+            method: 'POST',
+            body: JSON.stringify({
+              Description: 'Accountant',
+            }),
+            url: `${loginUrl}/services/data/v59.0`,
+          });
+        },
+        {
+          errorCode: 'MULTIPLE_API_ERRORS',
+          content: errors,
+        },
+      );
+    })
   });
 });
 

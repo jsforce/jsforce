@@ -295,7 +295,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
       return errors.Errors.Error;
     }
 
-    return Array.isArray(errors) ? errors[0] : errors;
+    return errors;
   }
 
   /**
@@ -309,6 +309,17 @@ export class HttpApi<S extends Schema> extends EventEmitter {
     } catch (e) {
       // eslint-disable no-empty
     }
+    
+    if (Array.isArray(error)) {
+      if (error.length === 1){
+        error = error[0]
+      } else {
+        return new HttpApiError(
+          `Multiple errors retuned.
+  Check \`error.content\` for the error details`, 'MULTIPLE_API_ERRORS', error)   
+      }
+    }
+
     error =
       typeof error === 'object' &&
       error !== null &&
@@ -330,7 +341,7 @@ See error.content for the full html response.`,
       );
     }
 
-    return new HttpApiError(error.message, error.errorCode, error);
+    return error instanceof HttpApiError ? error : new HttpApiError(error.message, error.errorCode, error);
   }
 }
 
