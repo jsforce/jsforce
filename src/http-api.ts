@@ -315,7 +315,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
         error = error[0]
       } else {
         return new HttpApiError(
-          `Multiple errors retuned.
+          `Multiple errors returned.
   Check \`error.content\` for the error details`, 'MULTIPLE_API_ERRORS', error)   
       }
     }
