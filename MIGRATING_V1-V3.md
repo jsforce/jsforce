@@ -18,6 +18,84 @@ If your project runs on node you can use `@jsforce/jsforce-node` to reduce your 
 All HTTP requests are now retried on network errors like `ECONNRESET`, `ECONNREFUSED`, `ETIMEDOUT`, etc.
 If you had a wrapper around jsforce to retry on these you can remove them.
 
+## Error handling
+
+### Multiple API errors
+
+When the Salesforce REST API returns multiple errors, a `MULTIPLE_API_ERRORS` error will be thrown.
+Full error details can be accessed in the `error.content` property.
+
+jsforce v1 used to pick the first error only and ignore others.
+
+Example: inserting an `Account` record fails because of two validation rules errors
+```typescript
+try {
+  await conn.sobject('Account').insert({
+    Name: 'ACME',
+    Phone: '123',
+  })
+} catch(error) {
+  if (error.errorCode === 'MULTIPLE_API_ERRORS') {
+    console.log(error.content)
+  }
+}
+```
+```
+[
+  {
+    message: "no 'ACME' accounts",
+    errorCode: 'FIELD_CUSTOM_VALIDATION_EXCEPTION',
+    fields: []
+  },
+  {
+    message: "no '123' phone",
+    errorCode: 'FIELD_CUSTOM_VALIDATION_EXCEPTION',
+    fields: []
+  }
+]
+```
+
+### Error data
+
+jsforce v1 used to merge the error data returned from the API into the `Error` object thrown, v3 will save all error details in `error.content`.
+
+Example: accessing `Duplicate Alert` error data:
+```typescript
+try {
+  // this record already exists in the org so the duplicate rule catches it
+  await conn.sobject('Contact').insert({
+    FirstName: 'Jake',
+    LastName: 'Llorrac',
+    AccountId: '0017e00001sBOuQAAW',
+    Title: 'VP',
+    Salutation: 'Mr'
+  })
+} catch(error) {
+  console.log(error.content.duplicateResult)
+}
+```
+```
+{
+  allowSave: false,
+  duplicateRule: 'Standard_Contact_Duplicate_Rule',
+  duplicateRuleEntityType: 'Contact',
+  errorMessage: 'Duplicate Alert',
+  matchResults: [
+    {
+      entityType: 'Contact',
+      errors: [],
+      matchEngine: 'FuzzyMatchEngine',
+      matchRecords: [Array],
+      rule: 'Standard_Contact_Match_Rule_v1_1',
+      size: 1,
+      success: true
+    }
+  ]
+}
+```
+
+
+
 ## Callbacks -> Promises
 
 Most of the methods on the `Connection` class will return JavaScript promises you can `await` instead of taking callback functions.
