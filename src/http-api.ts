@@ -349,13 +349,20 @@ See error.content for the full html response.`,
  *
  */
 class HttpApiError extends Error {
+  data: any
   errorCode: string;
-  content: any;
-  constructor(message: string, errorCode?: string | undefined, content?: any) {
+
+  constructor(message: string, errorCode?: string | undefined, data?: any) {
     super(message);
     this.name = errorCode || this.name;
     this.errorCode = this.name;
-    this.content = content;
+    this.data = data;
+  }
+
+  // TODO: remove in next major (v4)
+  // see: https://github.com/jsforce/jsforce/pull/1522
+  get content() {
+    return this.data;
   }
 }
 
