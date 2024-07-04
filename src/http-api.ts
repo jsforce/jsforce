@@ -316,7 +316,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
       } else {
         return new HttpApiError(
           `Multiple errors returned.
-  Check \`error.content\` for the error details`, 'MULTIPLE_API_ERRORS', error)   
+  Check \`error.data\` for the error details`, 'MULTIPLE_API_ERRORS', error)   
       }
     }
 
