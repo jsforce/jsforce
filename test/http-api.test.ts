@@ -515,7 +515,7 @@ describe('HTTP API', () => {
           errorCode: 'ERROR_HTTP_404',
           message: `HTTP response contains html content.
 Check that the org exists and can be reached.
-See error.content for the full html response.`,
+See \`error.data\` for the full html response.`,
         },
       );
     });

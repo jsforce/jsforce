@@ -22,7 +22,7 @@ If you had a wrapper around jsforce to retry on these you can remove them.
 ## Error handling
 
 When the Salesforce REST API returns multiple errors, a `MULTIPLE_API_ERRORS` error will be thrown.
-Full error details can be accessed in the `error.content` property.
+Full error details can be accessed in the `error.data` property.
 
 jsforce < v3 used to pick the first error only and ignore others.
 
@@ -35,7 +35,7 @@ try {
   })
 } catch(error) {
   if (error.errorCode === 'MULTIPLE_API_ERRORS') {
-    console.log(error.content)
+    console.log(error.data)
   }
 }
 ```

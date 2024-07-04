@@ -335,7 +335,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
       return new HttpApiError(
         `HTTP response contains html content.
 Check that the org exists and can be reached.
-See error.content for the full html response.`,
+See \`error.data\` for the full html response.`,
         error.errorCode,
         error.message,
       );
@@ -349,6 +349,9 @@ See error.content for the full html response.`,
  *
  */
 class HttpApiError extends Error {
+  /**
+   * This contains error-specific details, usually returned from the API.
+   */
   data: any
   errorCode: string;
 
@@ -359,8 +362,11 @@ class HttpApiError extends Error {
     this.data = data;
   }
 
-  // TODO: remove in next major (v4)
-  // see: https://github.com/jsforce/jsforce/pull/1522
+  /**
+   * This will be removed in the next major (v4)
+   *
+   * @deprecated use `error.data` instead
+   */
   get content() {
     return this.data;
   }
