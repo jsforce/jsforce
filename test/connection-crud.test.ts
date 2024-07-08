@@ -8,18 +8,6 @@ import type { Record, SavedRecord } from 'jsforce';
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();
 
-// copied from '../src/http-api' to avoid exporting it
-class HttpApiError extends Error {
-  errorCode: string;
-  content: any;
-  constructor(message: string, errorCode?: string | undefined, content?: any) {
-    super(message);
-    this.name = errorCode || this.name;
-    this.errorCode = this.name;
-    this.content = content;
-  }
-}
-
 /**
  *
  */
@@ -194,10 +182,12 @@ describe('upsert', () => {
       await conn.sobject(config.upsertTable).upsert(rec2, config.upsertField);
       assert.fail();
     } catch (error) {
-      const err = error as HttpApiError;
+      const err = error as Error & {
+        data: any;
+      };
       assert.ok(err.name === 'MULTIPLE_CHOICES');
-      assert.ok(Array.isArray(err.content));
-      assert.ok(typeof err.content[0] === 'string');
+      assert.ok(Array.isArray(err.data));
+      assert.ok(typeof err.data[0] === 'string');
     }
   });
 });

@@ -295,7 +295,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
       return errors.Errors.Error;
     }
 
-    return Array.isArray(errors) ? errors[0] : errors;
+    return errors;
   }
 
   /**
@@ -309,6 +309,17 @@ export class HttpApi<S extends Schema> extends EventEmitter {
     } catch (e) {
       // eslint-disable no-empty
     }
+    
+    if (Array.isArray(error)) {
+      if (error.length === 1){
+        error = error[0]
+      } else {
+        return new HttpApiError(
+          `Multiple errors returned.
+  Check \`error.data\` for the error details`, 'MULTIPLE_API_ERRORS', error)   
+      }
+    }
+
     error =
       typeof error === 'object' &&
       error !== null &&
@@ -324,13 +335,13 @@ export class HttpApi<S extends Schema> extends EventEmitter {
       return new HttpApiError(
         `HTTP response contains html content.
 Check that the org exists and can be reached.
-See error.content for the full html response.`,
+See \`error.data\` for the full html response.`,
         error.errorCode,
         error.message,
       );
     }
 
-    return new HttpApiError(error.message, error.errorCode);
+    return error instanceof HttpApiError ? error : new HttpApiError(error.message, error.errorCode, error);
   }
 }
 
@@ -338,13 +349,26 @@ See error.content for the full html response.`,
  *
  */
 class HttpApiError extends Error {
+  /**
+   * This contains error-specific details, usually returned from the API.
+   */
+  data: any
   errorCode: string;
-  content: any;
-  constructor(message: string, errorCode?: string | undefined, content?: any) {
+
+  constructor(message: string, errorCode?: string | undefined, data?: any) {
     super(message);
     this.name = errorCode || this.name;
     this.errorCode = this.name;
-    this.content = content;
+    this.data = data;
+  }
+
+  /**
+   * This will be removed in the next major (v4)
+   *
+   * @deprecated use `error.data` instead
+   */
+  get content() {
+    return this.data;
   }
 }
 

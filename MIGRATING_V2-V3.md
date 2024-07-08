@@ -19,6 +19,41 @@ https://github.com/jsforce/jsforce/pull/1332
 All HTTP requests are now retried on network errors like `ECONNRESET`, `ECONNREFUSED`, `ETIMEDOUT`, etc.
 If you had a wrapper around jsforce to retry on these you can remove them.
 
+## Error handling
+
+When the Salesforce REST API returns multiple errors, a `MULTIPLE_API_ERRORS` error will be thrown.
+Full error details can be accessed in the `error.data` property.
+
+jsforce < v3 used to pick the first error only and ignore others.
+
+Example: inserting an `Account` record fails because of two validation rules errors
+```typescript
+try {
+  await conn.sobject('Account').insert({
+    Name: 'ACME',
+    Phone: '123',
+  })
+} catch(error) {
+  if (error.errorCode === 'MULTIPLE_API_ERRORS') {
+    console.log(error.data)
+  }
+}
+```
+```
+[
+  {
+    message: "no 'ACME' accounts",
+    errorCode: 'FIELD_CUSTOM_VALIDATION_EXCEPTION',
+    fields: []
+  },
+  {
+    message: "no '123' phone",
+    errorCode: 'FIELD_CUSTOM_VALIDATION_EXCEPTION',
+    fields: []
+  }
+]
+```
+
 ## Bulk API
 
 `Bulk.query` returns a promise that resolves to a record stream instead (instead of just returning the stream).
