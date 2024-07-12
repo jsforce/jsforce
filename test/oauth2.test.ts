@@ -70,7 +70,7 @@ describe('endpoints', () => {
     assert.equal(oauth2.revokeServiceUrl, `${instanceUrl}/services/oauth2/revoke`);
     assert.equal(
       oauth2.getAuthorizationUrl(),
-      `${config.loginUrl}/services/oauth2/authorize?response_type=code&client_id=${oauth2.clientId}&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Foauthredirect`
+      `${instanceUrl}/services/oauth2/authorize?response_type=code&client_id=${oauth2.clientId}&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Foauthredirect`
     );
   })
 });
