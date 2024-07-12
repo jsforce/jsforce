@@ -57,18 +57,20 @@ describe('username password flow', () => {
 
 describe('endpoints', () => {
   it('sets valid oauth endpoints', () => {
+    const instanceUrl = 'https://innovation-momentum-8840-dev-ed.scratch.my.salesforce.com';
+
     const oauth2 = new OAuth2({
-      loginUrl: config.loginUrl,
+      loginUrl: instanceUrl,
       clientId: '1234test',
       redirectUri: 'http://localhost:8080/oauthredirect'
     })
 
-    assert.equal(oauth2.authzServiceUrl, `${config.loginUrl}/services/oauth2/authorize`);
-    assert.equal(oauth2.tokenServiceUrl, `${config.loginUrl}/services/oauth2/token`);
-    assert.equal(oauth2.revokeServiceUrl, `${config.loginUrl}/services/oauth2/revoke`);
+    assert.equal(oauth2.authzServiceUrl, `${instanceUrl}/services/oauth2/authorize`);
+    assert.equal(oauth2.tokenServiceUrl, `${instanceUrl}/services/oauth2/token`);
+    assert.equal(oauth2.revokeServiceUrl, `${instanceUrl}/services/oauth2/revoke`);
     assert.equal(
       oauth2.getAuthorizationUrl(),
-      `${config.loginUrl}/services/oauth2/authorize?response_type=code&client_id=${oauth2.clientId}&redirect_uri=${oauth2.redirectUri}`
+      `${config.loginUrl}/services/oauth2/authorize?response_type=code&client_id=${oauth2.clientId}&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Foauthredirect`
     );
   })
 });
