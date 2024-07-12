@@ -54,3 +54,21 @@ describe('username password flow', () => {
     assert.ok(isString(res.access_token));
   });
 });
+
+describe('endpoints', () => {
+  it('sets valid oauth endpoints', () => {
+    const oauth2 = new OAuth2({
+      loginUrl: config.loginUrl,
+      clientId: '1234test',
+      redirectUri: 'http://localhost:8080/oauthredirect'
+    })
+
+    assert.equal(oauth2.authzServiceUrl, `${config.loginUrl}/services/oauth2/authorize`);
+    assert.equal(oauth2.tokenServiceUrl, `${config.loginUrl}/services/oauth2/token`);
+    assert.equal(oauth2.revokeServiceUrl, `${config.loginUrl}/services/oauth2/revoke`);
+    assert.equal(
+      oauth2.getAuthorizationUrl(),
+      `${config.loginUrl}/services/oauth2/authorize?response_type=code&client_id=${oauth2.clientId}&redirect_uri=${oauth2.redirectUri}`
+    );
+  })
+});
