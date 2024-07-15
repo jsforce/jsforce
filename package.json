@@ -19,7 +19,7 @@
   "licenses": [
     {
       "type": "MIT",
-      "url": "http://github.com/jsforce/jsforce/raw/master/LICENSE"
+      "url": "http://github.com/jsforce/jsforce/raw/main/LICENSE"
     }
   ],
   "main": "./index",
