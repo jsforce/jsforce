@@ -1,14 +1,18 @@
-name: manual release
+name: create-github-release
 permissions:
   contents: write
 
 on:
+  push:
+    branches:
+      - main
+    tags-ignore:
+      - '*'
   workflow_dispatch:
 
 jobs:
   docs:
     needs: release
-    if: github.ref_name == '3.0' # TODO: remove this line after v3 GA(3.0 should be the main branch)
     uses: ./.github/workflows/publishDocs.yml
   release:
     runs-on: ubuntu-latest
@@ -30,7 +34,7 @@ jobs:
           git-user-name: svc-cli-bot-jsforce
           git-user-email: svc_cli_bot@salesforce.com
           github-token: ${{ secrets.SVC_CLI_BOT_JSFORCE_GITHUB_TOKEN }}
-          output-file: false
+          output-file: 'CHANGELOG.md'
           pre-commit: ./scripts/bump-version-file.js
           # always do the release, even if there are no semantic commits
           skip-on-empty: false
@@ -47,4 +51,3 @@ jobs:
         with:
           tag_name: ${{ steps.packageVersion.outputs.prop }}
           release_name: ${{ steps.packageVersion.outputs.prop }}
-          prerelease: true
