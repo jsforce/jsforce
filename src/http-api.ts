@@ -229,6 +229,8 @@ export class HttpApi<S extends Schema> extends EventEmitter {
     try {
       return parseBody(response.body);
     } catch (e) {
+      // TODO(next major): we could throw a new "invalid response body" error instead.
+      this._logger.debug(`Failed to parse body of content-type: ${contentType}. Error: ${(e as Error).message}`)
       return response.body;
     }
   }
