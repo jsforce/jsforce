@@ -272,7 +272,7 @@ if (isNodeJS()) {
         assert.fail();
       } catch (err) {
         assert.ok(err instanceof Error);
-        assert.ok(err.name === 'invalid_grant');
+        assert.ok(err.message === 'Unable to refresh session due to: expired access/refresh token');
       }
     });
   });

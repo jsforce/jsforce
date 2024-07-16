@@ -60,7 +60,7 @@ describe('HTTP API', () => {
       nock(loginUrl)
         .get('/services/data/v60.0')
         .times(attempts)
-        .reply(420)
+        .reply(404)
         .get('/services/data/v60.0')
         .reply(200, { success: true });
 
@@ -435,6 +435,7 @@ describe('HTTP API', () => {
         {
           errorCode: missingRequiredFieldErr[0].errorCode,
           message: missingRequiredFieldErr[0].message,
+          content: {...missingRequiredFieldErr[0]}
         },
       );
     });
@@ -499,7 +500,7 @@ describe('HTTP API', () => {
 
       nock(loginUrl)
         .get('/services/data/v59.0/sobjects/Broker__c/a008N0000032UmoQAA')
-        .reply(420, htmlErr, {
+        .reply(404, htmlErr, {
           'content-type': 'text/html',
         });
 
@@ -511,10 +512,10 @@ describe('HTTP API', () => {
           });
         },
         {
-          errorCode: 'ERROR_HTTP_420',
+          errorCode: 'ERROR_HTTP_404',
           message: `HTTP response contains html content.
 Check that the org exists and can be reached.
-See error.content for the full html response.`,
+See \`error.data\` for the full html response.`,
         },
       );
     });
@@ -546,6 +547,50 @@ See error.content for the full html response.`,
 
       assert.deepEqual(body, noContentResponse);
     });
+
+    it('JSON: handle multiple errors', async () => {
+      const conn = new Connection({
+        accessToken,
+        loginUrl,
+      });
+
+      const httpApi = new HttpApi(conn, {});
+
+      const errors = [
+        {
+          message: 'no ACME accounts',
+          errorCode: 'FIELD_CUSTOM_VALIDATION_EXCEPTION',
+          fields: [],
+        },
+        {
+          message: 'no 123 phone',
+          errorCode: 'FIELD_CUSTOM_VALIDATION_EXCEPTION',
+          fields: [],
+        }
+      ];
+
+      nock(loginUrl)
+        .post('/services/data/v59.0')
+        .reply(400, JSON.stringify(errors), {
+          'content-type': 'application/json',
+        });
+
+      await assert.rejects(
+        async () => {
+          await httpApi.request({
+            method: 'POST',
+            body: JSON.stringify({
+              Description: 'Accountant',
+            }),
+            url: `${loginUrl}/services/data/v59.0`,
+          });
+        },
+        {
+          errorCode: 'MULTIPLE_API_ERRORS',
+          content: errors,
+        },
+      );
+    })
   });
 });
 

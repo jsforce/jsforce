@@ -10,7 +10,7 @@
     "database.com"
   ],
   "homepage": "http://github.com/jsforce/jsforce",
-  "version": "3.2.1",
+  "version": "3.2.3",
   "repository": {
     "type": "git",
     "url": "git://github.com/jsforce/jsforce.git"
@@ -19,7 +19,7 @@
   "licenses": [
     {
       "type": "MIT",
-      "url": "http://github.com/jsforce/jsforce/raw/master/LICENSE"
+      "url": "http://github.com/jsforce/jsforce/raw/main/LICENSE"
     }
   ],
   "main": "./index",

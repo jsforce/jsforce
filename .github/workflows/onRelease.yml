@@ -2,8 +2,7 @@ name: publish
 
 on:
   release:
-    # TODO: when this goes to main branch, change it to released
-    types: [prereleased]
+    types: [released]
   # support manual release in case something goes wrong and needs to be repeated or tested
   workflow_dispatch:
     inputs:
@@ -31,7 +30,7 @@ jobs:
       - name: Build
         run: npm run clean && npm run build
       - name: Publish
-        run: npm publish --tag next
+        run: npm publish --tag latest
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
   npm-publish-jsforce-node:
@@ -55,9 +54,5 @@ jobs:
       - name: Build
         run: npm run clean && npm run build:node:cjs
       - name: Publish
-        env:
-          NEXT_VERSION: ${{ github.event.release.tag_name || inputs.tag }}
         run: |
           npm publish --tag latest
-          # TODO: remove next line after v3 GA
-          npm dist-tag add @jsforce/jsforce-node@$NEXT_VERSION next

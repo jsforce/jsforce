@@ -100,10 +100,11 @@ export class OAuth2 {
       this.revokeServiceUrl =
         revokeServiceUrl || `${this.loginUrl}/services/oauth2/revoke`;
     } else {
-      this.loginUrl = loginUrl || defaultOAuth2Config.loginUrl;
-      this.authzServiceUrl = `${this.loginUrl}/services/oauth2/authorize`;
-      this.tokenServiceUrl = `${this.loginUrl}/services/oauth2/token`;
-      this.revokeServiceUrl = `${this.loginUrl}/services/oauth2/revoke`;
+      const loginUrlObject = new URL(loginUrl || defaultOAuth2Config.loginUrl);
+      this.loginUrl = loginUrlObject.href
+      this.authzServiceUrl = `${loginUrlObject.origin}/services/oauth2/authorize`;
+      this.tokenServiceUrl = `${loginUrlObject.origin}/services/oauth2/token`;
+      this.revokeServiceUrl = `${loginUrlObject.origin}/services/oauth2/revoke`;
     }
     this.clientId = clientId;
     this.clientSecret = clientSecret;
@@ -210,7 +211,7 @@ export class OAuth2 {
     username: string,
     password: string,
   ): Promise<TokenResponse> {
-    if (!this.clientId || !this.clientSecret || !this.redirectUri) {
+    if (!this.clientId || !this.clientSecret) {
       throw new Error('No valid OAuth2 client configuration set');
     }
     const ret = await this._postParams({
@@ -219,7 +220,6 @@ export class OAuth2 {
       password,
       client_id: this.clientId,
       client_secret: this.clientSecret,
-      redirect_uri: this.redirectUri,
     });
     return ret as TokenResponse;
   }
