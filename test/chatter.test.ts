@@ -412,10 +412,3 @@ describe('batch', () => {
     }
   });
 });
-
-/**
- *
- */
-afterAll(async () => {
-  await connMgr.closeConnection(conn);
-});

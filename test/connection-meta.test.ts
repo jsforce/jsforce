@@ -239,10 +239,3 @@ describe('misc metadata', () => {
     });
   });
 });
-
-/**
- *
- */
-afterAll(async () => {
-  await connMgr.closeConnection(conn);
-});

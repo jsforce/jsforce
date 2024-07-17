@@ -35,9 +35,6 @@ module.exports = {
     }),
     new webpack.EnvironmentPlugin({
       'SF_LOGIN_URL': '',
-      'SF_POOL_CLIENT': '',
-      'SF_POOL_USERNAME': '',
-      'SF_POOL_PASSWORD': '',
       'SF_USERNAME': '',
       'SF_PASSWORD': '',
       'SF_OAUTH2_CLIENT_ID': '',

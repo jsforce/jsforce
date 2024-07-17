@@ -201,19 +201,24 @@ describe('search', () => {
 
     await insertAccounts(id, 20);
 
-    // wait 10s before running executing sosl search
-    await delay(10000);
+    const testRetryLimit = 5;
+    let retryCounter = 0
 
-    const { searchRecords } = await conn.search(
-      `FIND {"${id}"} IN NAME FIELDS RETURNING Account(Id, Name)`,
-    );
-    assert.ok(searchRecords.length === 20);
+    let recordsFound = false;
+
+    while (!recordsFound && retryCounter <= testRetryLimit) {
+      // wait 10s before running sosl search
+      await delay(10000);
+
+      const { searchRecords } = await conn.search(
+        `FIND {"${id}"} IN NAME FIELDS RETURNING Account(Id, Name)`,
+      );
+      if (searchRecords.length === 20) {
+        recordsFound = true
+      } else {
+        retryCounter++
+      }
+    }
+    assert.ok(recordsFound)
   });
-});
-
-/**
- *
- */
-afterAll(async () => {
-  await connMgr.closeConnection(conn);
 });
