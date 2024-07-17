@@ -36,8 +36,6 @@ jobs:
           github-token: ${{ secrets.SVC_CLI_BOT_JSFORCE_GITHUB_TOKEN }}
           output-file: 'CHANGELOG.md'
           pre-commit: ./scripts/bump-version-file.js
-          # always do the release, even if there are no semantic commits
-          skip-on-empty: false
           tag-prefix: ''
       - uses: notiz-dev/github-action-json-property@2192e246737701f108a4571462b76c75e7376216
         id: packageVersion
@@ -50,4 +48,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.SVC_CLI_BOT_JSFORCE_GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.packageVersion.outputs.prop }}
+          body: ${{ steps.changelog.outputs.clean_changelog }}
           release_name: ${{ steps.packageVersion.outputs.prop }}
