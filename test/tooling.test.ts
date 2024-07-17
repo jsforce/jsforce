@@ -248,10 +248,3 @@ describe('single record crud', () => {
     }
   });
 });
-
-/**
- *
- */
-afterAll(async () => {
-  await connMgr.closeConnection(conn);
-});

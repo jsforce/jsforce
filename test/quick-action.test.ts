@@ -117,10 +117,3 @@ it('should execute action for record', async () => {
     await conn.sobject('Account').destroy(accId);
   }
 });
-
-/**
- *
- */
-afterAll(async () => {
-  await connMgr.closeConnection(conn);
-});

@@ -107,10 +107,3 @@ if (isNodeJS()) {
     }
   });
 }
-
-/**
- *
- */
-afterAll(async () => {
-  await connMgr.closeConnection(conn);
-});
