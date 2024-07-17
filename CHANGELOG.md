@@ -1,3 +1,7 @@
+## [3.2.4](https://github.com/jsforce/jsforce/compare/3.2.3...3.2.4) (2024-07-17)
+
+
+
 ## [3.2.3](https://github.com/jsforce/jsforce/compare/3.2.2...3.2.3) (2024-07-15)
 
 
@@ -51,15 +55,6 @@
 ### Features
 
 * retry on statusCodes ([4010b8c](https://github.com/jsforce/jsforce/commit/4010b8ceb1d651fe482d44d291da148ec70a6917))
-
-
-
-# [3.1.0](https://github.com/jsforce/jsforce/compare/3.0.0-next.3...3.1.0) (2024-04-09)
-
-
-### Features
-
-* remove deprecated jwt class ([#1406](https://github.com/jsforce/jsforce/issues/1406)) ([a4fd725](https://github.com/jsforce/jsforce/commit/a4fd7259e52af2f9ec35968f8793349a042eed6b))
 
 
 
