@@ -13,6 +13,7 @@ import {
   MergeRequest,
   MergeResult,
   EmptyRecycleBinResult,
+  UndeleteResult,
   DescribeTabSetResult,
   GetServerTimestampResult,
   GetUserInfoResult,
@@ -116,6 +117,15 @@ export class SoapApi<S extends Schema> {
   async emptyRecycleBin(ids: string[]): Promise<EmptyRecycleBinResult> {
     return this._invoke('emptyRecycleBin', { ids }, [
       ApiSchemas.EmptyRecycleBinResult,
+    ]);
+  }
+
+  /**
+   * Undelete records from the recycle bin immediately
+   */
+  async undelete(ids: string[]): Promise<UndeleteResult> {
+    return this._invoke('undelete', { ids }, [
+      ApiSchemas.UndeleteResult,
     ]);
   }
 
