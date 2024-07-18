@@ -1,7 +1,7 @@
 import assert from 'assert';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
-import { isString, isBoolean } from './util';
+import { isString, isBoolean, isUndefined } from './util';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();
@@ -153,5 +153,80 @@ describe('convert and merge', () => {
     await conn.sobject('Contact').destroy(contactIds);
     await conn.sobject('Account').destroy(accountIds);
     await conn.sobject('Lead').destroy(leadIds);
+  });
+});
+
+/*------------------------------------------------------------------------*/
+
+/**
+ *
+ */
+describe('undelete', () => {
+  const contacts = [
+    {
+      Name: 'Undelete Test #1',
+    },
+    {
+      Name: 'Undelete Test #2',
+    },
+    {
+      Name: 'Undelete Test #3',
+    },
+  ];
+
+  let contactIds: string[];
+
+  beforeAll(async () => {
+    // Arrange
+    const insertedContacts = await conn.sobject('Lead').create(contacts);
+    contactIds = insertedContacts.map((contact) => contact.id!);
+
+    await Promise.all(
+      contactIds.map((id) => conn.sobject('Contact').destroy(id)),
+    );
+  });
+
+  /**
+   *
+   */
+  it('should undelete deleted contacts', async () => {
+    // Act
+    const ret = await conn.soap.undelete(contactIds);
+
+    // Assert
+
+    assert.ok(isUndefined(ret.errors));
+    assert.ok(isString(ret.id));
+    assert.ok(isBoolean(ret.success));
+    assert.ok(ret.success === true);
+  });
+
+  it('should fail to undelete string', async () => {
+    // Act
+    const rets = await conn.soap.undelete(['not an id']);
+
+    // Assert
+    assert.ok(rets.errors.length > 0);
+    assert.ok(isBoolean(rets.success));
+    assert.ok(rets.success === false);
+  });
+
+  it('should fail to undelete not deleted ids', async () => {
+    // Arrange
+    const contact = await conn.sobject('Lead').create({
+      Name: 'Undelete Test #4',
+    });
+
+    // Act
+    const rets = await conn.soap.undelete([contact.id!]);
+
+    // Assert
+    assert.ok(rets.errors.length > 0);
+    assert.ok(isBoolean(rets.success));
+    assert.ok(rets.success === false);
+  });
+
+  afterAll(async () => {
+    await conn.sobject('Contact').destroy(contactIds);
   });
 });
