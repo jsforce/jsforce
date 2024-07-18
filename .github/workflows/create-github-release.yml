@@ -44,6 +44,7 @@ jobs:
           prop_path: 'version'
       - name: Create Github Release
         uses: actions/create-release@v1
+        if: ${{ steps.changelog.outputs.skipped == 'false' }}
         env:
           GITHUB_TOKEN: ${{ secrets.SVC_CLI_BOT_JSFORCE_GITHUB_TOKEN }}
         with:
