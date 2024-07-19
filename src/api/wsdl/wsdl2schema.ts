@@ -1,4 +1,4 @@
-import fs from 'fs-extra';
+import fs from 'node:fs';
 import xml2js from 'xml2js';
 import { castTypeUsingSchema } from '../../soap';
 import { SoapSchemaElementType, SoapSchemaDef } from '../../types';
@@ -140,7 +140,7 @@ function toJsType(xsdType: string, simpleTypes: { [type: string]: string }) {
  *
  */
 async function readWSDLFile(filePath: string) {
-  const xmlData = await fs.readFile(filePath, 'utf8');
+  const xmlData = await fs.promises.readFile(filePath, 'utf8');
   const json = await xml2js.parseStringPromise(xmlData, {
     explicitArray: false,
   });
