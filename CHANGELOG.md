@@ -1,3 +1,12 @@
+# [3.3.0](https://github.com/jsforce/jsforce/compare/3.2.4...3.3.0) (2024-07-22)
+
+
+### Features
+
+* **http-proxy:** support lowercase env vars ([97acbac](https://github.com/jsforce/jsforce/commit/97acbacacdfc2dc1ea7f9cf3be291caa5fefbc44))
+
+
+
 ## [3.2.4](https://github.com/jsforce/jsforce/compare/3.2.3...3.2.4) (2024-07-17)
 
 
@@ -40,21 +49,6 @@
 * **login:** throw if password expired ([#1517](https://github.com/jsforce/jsforce/issues/1517)) ([c7a35a5](https://github.com/jsforce/jsforce/commit/c7a35a55bf82fa6c7a5ee027f57a15eed8ad1dd2))
 * re-enable linux/nuts tests ([8c3d6aa](https://github.com/jsforce/jsforce/commit/8c3d6aa7430bd96bb78bc8933e02e06ed0c0b5e1))
 * remove dist dirs, pre-commit build step ([#1421](https://github.com/jsforce/jsforce/issues/1421)) ([52aeb9a](https://github.com/jsforce/jsforce/commit/52aeb9a935b8495edbf432efb2b0c1df3b365f30))
-
-
-
-# [3.2.0](https://github.com/jsforce/jsforce/compare/3.1.0...3.2.0) (2024-04-23)
-
-
-### Bug Fixes
-
-* ensure it throws on bad status code ([50d1e8a](https://github.com/jsforce/jsforce/commit/50d1e8a147f9993077564ce531f8df4a4fe9f511))
-* implement minTimeout ([33a2e58](https://github.com/jsforce/jsforce/commit/33a2e582cedf2720f0cfc114752280b838275a44))
-
-
-### Features
-
-* retry on statusCodes ([4010b8c](https://github.com/jsforce/jsforce/commit/4010b8ceb1d651fe482d44d291da148ec70a6917))
 
 
 
