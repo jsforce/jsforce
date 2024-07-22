@@ -181,9 +181,7 @@ describe('undelete', () => {
     const insertedContacts = await conn.sobject('Lead').create(contacts);
     contactIds = insertedContacts.map((contact) => contact.id!);
 
-    await Promise.all(
-      contactIds.map((id) => conn.sobject('Contact').destroy(id)),
-    );
+    await conn.sobject('Contact').destroy(contactIds);
   });
 
   /**
