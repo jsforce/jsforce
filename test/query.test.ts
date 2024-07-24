@@ -412,10 +412,3 @@ it('should delete queried records using Query#destroy, with allowBulk = false, a
     assert.ok(ret.success === true);
   }
 });
-
-/**
- *
- */
-afterAll(async () => {
-  await connMgr.closeConnection(conn);
-});

@@ -60,6 +60,6 @@ See [DEVELOPING.md](./DEVELOPING.md)
 
 Your contributions are welcome: both by reporting issues on [GitHub issues](https://github.com/jsforce/jsforce/issues) or pull-requesting patches.
 
-If you want to implement any additional features, to be added to JSforce to our master branch, which may or may not be merged please first check current [opening issues](https://github.com/jsforce/jsforce/issues?q=is%3Aopen) with milestones and confirm whether the feature is on road map or not.
+If you want to implement any additional features, to be added to JSforce to our main branch, which may or may not be merged please first check current [opening issues](https://github.com/jsforce/jsforce/issues?q=is%3Aopen) with milestones and confirm whether the feature is on road map or not.
 
 If your feature implementation is brand-new or fixing unsupposed bugs in the library's test cases, please include additional test codes in the `test/` directory.

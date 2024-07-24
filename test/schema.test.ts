@@ -195,10 +195,3 @@ describe('standard schema', () => {
     assert.ok(true);
   });
 });
-
-/**
- *
- */
-afterAll(async () => {
-  await connMgr.closeConnection(conn);
-});

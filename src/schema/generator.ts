@@ -1,10 +1,11 @@
 import os from 'os';
-import fs from 'fs-extra';
+import fs from 'node:fs';
 import path from 'path';
 import { DescribeSObjectResult } from '../types';
 import { Cli } from '../cli/cli';
 import { Connection, VERSION } from '..';
 import { Command } from 'commander';
+import { mkdir } from 'fs';
 
 type UnwrapPromise<T> = T extends Promise<infer U> ? U : never;
 
@@ -21,7 +22,7 @@ async function readDescribedCache(
 ): Promise<UnwrapPromise<ReturnType<typeof loadDescribeResult>> | null> {
   try {
     const cacheFile = getCacheFilePath(orgId);
-    const data = await fs.readFile(cacheFile, 'utf8');
+    const data = await fs.promises.readFile(cacheFile, 'utf8');
     return JSON.parse(data);
   } catch (e) {
     return null;
@@ -43,7 +44,12 @@ async function loadDescribeResult(
   }
   if (cache) {
     const cacheFile = getCacheFilePath(orgId);
-    await fs.outputFile(cacheFile, JSON.stringify(sobjects, null, 2), 'utf8');
+    await fs.promises.mkdir(path.dirname(cacheFile), { recursive: true });
+    await fs.promises.writeFile(
+      cacheFile,
+      JSON.stringify(sobjects, null, 2),
+      'utf8',
+    );
   }
   return sobjects;
 }
@@ -98,7 +104,10 @@ async function dumpSchema(
   const sobjects =
     (cache ? await readDescribedCache(orgId) : null) ||
     (await loadDescribeResult(conn, orgId, cache));
-  await fs.ensureFile(outputFile);
+  if (!fs.existsSync(outputFile)) {
+    await fs.promises.mkdir(path.dirname(outputFile), { recursive: true });
+    await fs.promises.writeFile(outputFile, '', 'utf8');
+  }
   const out = fs.createWriteStream(outputFile, 'utf8');
   return new Promise((resolve, reject) => {
     out.on('error', (err) => reject(err));
@@ -141,7 +150,12 @@ async function dumpSchema(
         childSObject,
         relationshipName,
       } of childRelationships) {
-        if (field && childSObject && relationshipName && !field.endsWith('__c')) {
+        if (
+          field &&
+          childSObject &&
+          relationshipName &&
+          !field.endsWith('__c')
+        ) {
           writeLine(
             `  ${relationshipName}: SObjectDefinition$${childSObject};`,
           );
@@ -180,7 +194,7 @@ type GeneratorCommand = {
   outputFile: string;
   cache?: boolean;
   clearCache?: boolean;
-} & Command
+} & Command;
 
 /**
  *
@@ -234,7 +248,7 @@ export default async function main() {
   );
   if (program.clearCache) {
     console.log('removing cache files');
-    await fs.remove(getCacheFileDir());
+    await fs.promises.rm(getCacheFileDir(), { recursive: true });
   }
   console.log(`Dumped to: ${program.outputFile}`);
 }
