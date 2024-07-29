@@ -1,3 +1,12 @@
+## [3.3.3](https://github.com/jsforce/jsforce/compare/3.3.2...3.3.3) (2024-07-29)
+
+
+### Bug Fixes
+
+* use logger instead of `console.error` ([#1540](https://github.com/jsforce/jsforce/issues/1540)) ([fc3b936](https://github.com/jsforce/jsforce/commit/fc3b936f56801da5869cd225cc758ed5a89060e3))
+
+
+
 ## [3.3.2](https://github.com/jsforce/jsforce/compare/3.3.1...3.3.2) (2024-07-26)
 
 
@@ -26,18 +35,6 @@
 
 
 ## [3.2.4](https://github.com/jsforce/jsforce/compare/3.2.3...3.2.4) (2024-07-17)
-
-
-
-## [3.2.3](https://github.com/jsforce/jsforce/compare/3.2.2...3.2.3) (2024-07-15)
-
-
-### Bug Fixes
-
-* add missing data to errors ([8dc3ac9](https://github.com/jsforce/jsforce/commit/8dc3ac955921f3d96496abd6385abdac59553f15))
-* handle multiple errors ([84e80ad](https://github.com/jsforce/jsforce/commit/84e80adbc3533500495e18b193e42ce087d8358c))
-* **oauth2:** ensure endpoints are valid ([#1525](https://github.com/jsforce/jsforce/issues/1525)) ([61e3623](https://github.com/jsforce/jsforce/commit/61e3623d0693b2911bca6d639585bad2a8f99338))
-* use error.data ([d87ad8c](https://github.com/jsforce/jsforce/commit/d87ad8cde4fb3fe138ddff99bfdb285ce6034da9))
 
 
 
