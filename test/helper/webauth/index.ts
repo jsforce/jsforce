@@ -20,11 +20,10 @@ async function loginAndApprove(
     // authorization page
     await page.click('#oaapprove');
     await page.waitForNavigation({ waitUntil: 'networkidle2' });
-    await page.waitForTimeout(1000);
+    await delay(1000);
     return loginAndApprove(page, username, password);
   } else if (url.indexOf('/?ec=302') > 0) {
     // login page
-    await page.waitForTimeout(0);
     await page.type('#username', username);
     await page.type('#password', password);
     await page.click('[name=Login]');
@@ -37,7 +36,7 @@ async function loginAndApprove(
     // authorization error
     throw new Error('invalid authorization error');
   } else {
-    await page.waitForTimeout(1000);
+    await delay(1000);
     return loginAndApprove(page, username, password);
   }
 }
@@ -48,7 +47,7 @@ export default async function authorize(
   password: string,
 ) {
   const browser = await puppeteer.launch({
-    headless: 'new',
+    headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
   let ret;
@@ -75,4 +74,8 @@ export default async function authorize(
     }
   }
   return ret;
+}
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
