@@ -549,7 +549,8 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
       const resPromise = this.createQueryRequest({
         method: 'GET',
         path: this.locator
-          ? `/${resultsPath}?locator=${this.locator}`
+          // resultsPath starts with '/'
+          ? `${resultsPath}?locator=${this.locator}`
           : resultsPath,
         headers: {
           Accept: 'text/csv',
