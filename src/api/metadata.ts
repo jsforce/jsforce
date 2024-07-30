@@ -24,7 +24,7 @@ import {
   RetrieveResult,
   DeployResult,
   AsyncResult,
-  ApiSchemaTypes,
+  ApiSchemaTypes, CancelDeployResult,
 } from './metadata/schema';
 export * from './metadata/schema';
 
@@ -467,6 +467,10 @@ export class MetadataApi<S extends Schema> {
       },
       ApiSchemas.DeployResult,
     );
+  }
+
+ async cancelDeploy(id: string): Promise<CancelDeployResult>{
+    return this._invoke('cancelDeploy', { id })
   }
 }
 
