@@ -10,7 +10,7 @@
     "database.com"
   ],
   "homepage": "http://github.com/jsforce/jsforce",
-  "version": "3.3.3",
+  "version": "3.3.4",
   "repository": {
     "type": "git",
     "url": "git://github.com/jsforce/jsforce.git"
@@ -159,7 +159,9 @@
     },
     "typecheck": {
       "command": "npx tsc -p test --pretty",
-      "dependencies": ["build:node:cjs"],
+      "dependencies": [
+        "build:node:cjs"
+      ],
       "files": [
         "src/**/*.ts",
         "test/**/*.ts",

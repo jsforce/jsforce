@@ -1,3 +1,12 @@
+## [3.3.4](https://github.com/jsforce/jsforce/compare/3.3.3...3.3.4) (2024-07-31)
+
+
+### Bug Fixes
+
+* **deps:** bump ws, engine.io, socket.io-adapter and puppeteer ([#1549](https://github.com/jsforce/jsforce/issues/1549)) ([ffea541](https://github.com/jsforce/jsforce/commit/ffea54109b4a0e4546489519a4de13554389522f))
+
+
+
 ## [3.3.3](https://github.com/jsforce/jsforce/compare/3.3.2...3.3.3) (2024-07-29)
 
 
@@ -31,10 +40,6 @@
 ### Features
 
 * **http-proxy:** support lowercase env vars ([97acbac](https://github.com/jsforce/jsforce/commit/97acbacacdfc2dc1ea7f9cf3be291caa5fefbc44))
-
-
-
-## [3.2.4](https://github.com/jsforce/jsforce/compare/3.2.3...3.2.4) (2024-07-17)
 
 
 
