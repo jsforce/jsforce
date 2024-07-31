@@ -1,3 +1,12 @@
+# [3.4.0](https://github.com/jsforce/jsforce/compare/3.3.4...3.4.0) (2024-07-31)
+
+
+### Features
+
+* **metadata:** add `cancelDeploy` method ([#1551](https://github.com/jsforce/jsforce/issues/1551)) ([ecdcbaa](https://github.com/jsforce/jsforce/commit/ecdcbaa23ee205c3c97f25b0be957932350b3935))
+
+
+
 ## [3.3.4](https://github.com/jsforce/jsforce/compare/3.3.3...3.3.4) (2024-07-31)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * use native fs (remove fs-extra) ([#1538](https://github.com/jsforce/jsforce/issues/1538)) ([59f57c1](https://github.com/jsforce/jsforce/commit/59f57c14cd566b1b35c5a1ca865fc067374a1746))
-
-
-
-# [3.3.0](https://github.com/jsforce/jsforce/compare/3.2.4...3.3.0) (2024-07-22)
-
-
-### Features
-
-* **http-proxy:** support lowercase env vars ([97acbac](https://github.com/jsforce/jsforce/commit/97acbacacdfc2dc1ea7f9cf3be291caa5fefbc44))
 
 
 
