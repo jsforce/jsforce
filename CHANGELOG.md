@@ -1,3 +1,12 @@
+## [3.4.1](https://github.com/jsforce/jsforce/compare/3.4.0...3.4.1) (2024-08-02)
+
+
+### Bug Fixes
+
+* try removing // from URl ([#1550](https://github.com/jsforce/jsforce/issues/1550)) ([8f833a0](https://github.com/jsforce/jsforce/commit/8f833a04370deb5d9c81a0c436526737a7d31d0f))
+
+
+
 # [3.4.0](https://github.com/jsforce/jsforce/compare/3.3.4...3.4.0) (2024-07-31)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * override `whatwg-url` ([#1542](https://github.com/jsforce/jsforce/issues/1542)) ([4f0fc3e](https://github.com/jsforce/jsforce/commit/4f0fc3e4baabe878ab29913ae4ac9f44fc886a2f))
-
-
-
-## [3.3.1](https://github.com/jsforce/jsforce/compare/3.3.0...3.3.1) (2024-07-22)
-
-
-### Bug Fixes
-
-* use native fs (remove fs-extra) ([#1538](https://github.com/jsforce/jsforce/issues/1538)) ([59f57c1](https://github.com/jsforce/jsforce/commit/59f57c14cd566b1b35c5a1ca865fc067374a1746))
 
 
 
