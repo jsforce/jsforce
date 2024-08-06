@@ -489,7 +489,7 @@ export const ApiSchemas = {
   UndeleteResult: {
     type: 'UndeleteResult',
     props: {
-      errors: ['Error'],
+      errors: ['?', 'Error'],
       id: '?string',
       success: 'boolean',
     },
