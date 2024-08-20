@@ -587,7 +587,8 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     const httpApi = new BulkApiV2(this.connection, { responseType });
 
     httpApi.on('response', (response: HttpResponse) => {
-      this.locator = response.headers['sforce-locator'];
+      const locator = response.headers['sforce-locator']
+      this.locator = locator;
       this.logger.debug(`sforce-locator: ${this.locator}`);
     });
 
