@@ -2,7 +2,7 @@
  * @file Represents stream that handles Salesforce record as stream data
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
-import { Readable, Writable, Duplex, Transform, PassThrough } from 'stream';
+import { Readable, Writable, Duplex, Transform, PassThrough, pipeline } from 'stream';
 import { Record, Optional } from './types';
 import { serializeCSVStream, parseCSVStream } from './csv';
 import { concatStreamsAsDuplex } from './util/stream';
@@ -242,10 +242,13 @@ export class Parsable<R extends Record = Record> extends RecordStream<R> {
     }
     const dataStream = new PassThrough();
     const parserStream = converter.parse(options);
-    parserStream.on('error', (err) => this.emit('error', err));
-    parserStream
-      .pipe(this)
-      .pipe(new PassThrough({ objectMode: true, highWaterMark: 500 * 1000 }));
+
+    pipeline(
+      parserStream,
+      this,
+      (_err) => {} // don't re-emit the error here or you'll get duplicates, `pipeline` will forward them properly.
+    )
+
     if (this._execParse) {
       dataStream.pipe(parserStream);
     } else {
