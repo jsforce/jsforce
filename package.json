@@ -23,7 +23,7 @@
     }
   ],
   "main": "./index",
-  "module": "./module/index",
+  "module": "./index",
   "browser": {
     ".": "./browser/index.js",
     "./index.js": "./browser/index.js",
