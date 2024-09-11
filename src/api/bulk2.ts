@@ -1,6 +1,7 @@
 import { EventEmitter } from 'events';
-import { Duplex, Readable, Writable } from 'stream';
+import { Duplex, Readable, Writable,pipeline } from 'stream';
 import Connection from '../connection';
+import MultiStream from 'multistream';
 import { Serializable, Parsable } from '../record-stream';
 import HttpApi from '../http-api';
 import { StreamPromise } from '../util/promise';
@@ -330,7 +331,12 @@ export class BulkV2<S extends Schema> {
       const queryRecordsStream = await queryJob
         .result()
         .then((s) => s.stream());
-      queryRecordsStream.pipe(dataStream);
+      pipeline(queryRecordsStream, dataStream, (err) => {
+        if (err) {
+          throw err
+        }
+        this.logger.debug('bulk query pipeline finished successfully.')
+      })
     } catch (error) {
       const err = error as Error;
       this.logger.error(`bulk query failed due to: ${err.message}`);
@@ -543,9 +549,16 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     const resultStream = new Parsable();
     const resultDataStream = resultStream.stream('csv');
 
+    // A bulk query job can have multiple batches, we create 1 readable stream
+    // for each and save them here to be merged into 1 big readable stream later.
+    const csvStreams = []
+
     const resultsPath = `/${this.id}/results`;
 
     while (this.locator !== 'null') {
+      const csvBatchStream = new Parsable();
+      const csvBatchDataStream = csvBatchStream.stream('csv')
+
       const resPromise = this.createQueryRequest({
         method: 'GET',
         path: this.locator
@@ -557,9 +570,25 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
         },
       });
 
-      resPromise.stream().pipe(resultDataStream);
+      pipeline(resPromise.stream(), csvBatchDataStream, (err) => {
+        if (err) {
+          this.emit('error', err)
+        }
+        this.logger.debug(`result: finished parsing: ${this.locator}`)
+      })
       await resPromise;
+
+      csvStreams.push(csvBatchDataStream)
     }
+
+    this.logger.debug('result: starting pipeline')
+
+    pipeline(new MultiStream(csvStreams), resultDataStream, (err) => {
+      if (err) {
+        this.emit('error', err)
+      }
+      this.logger.debug(`result: merged ${csvStreams.length}streams and finished pipeline`)
+    })
 
     return resultStream;
   }

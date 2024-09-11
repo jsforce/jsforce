@@ -68,7 +68,9 @@ function convertRecordForSerialization(
  * @private
  */
 function createPipelineStream(s1: Duplex, s2: Duplex) {
-  s1.pipe(s2);
+  pipeline(s1, s2, (err) => {
+    console.error(err)
+  })
   return concatStreamsAsDuplex(s1, s2, { writableObjectMode: true });
 }
 
@@ -250,7 +252,9 @@ export class Parsable<R extends Record = Record> extends RecordStream<R> {
     )
 
     if (this._execParse) {
-      dataStream.pipe(parserStream);
+      pipeline(dataStream,parserStream, (err) => {
+        this.emit('error', err)
+      });
     } else {
       this._incomings.push([dataStream, parserStream]);
     }
@@ -264,7 +268,9 @@ export class Parsable<R extends Record = Record> extends RecordStream<R> {
       if (!this._execParse) {
         this._execParse = true;
         for (const [dataStream, parserStream] of this._incomings) {
-          dataStream.pipe(parserStream);
+          pipeline(dataStream,parserStream, (err) => {
+            this.emit('error', err)
+          });
         }
       }
     }
