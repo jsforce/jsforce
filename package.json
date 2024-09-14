@@ -9,11 +9,11 @@
     "force.com",
     "database.com"
   ],
-  "homepage": "http://github.com/jsforce/jsforce",
+  "homepage": "https://github.com/PocusHQ/jsforce",
   "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": "git://github.com/jsforce/jsforce.git"
+    "url": "git://github.com/PocusHQ/jsforce.git"
   },
   "license": "MIT",
   "licenses": [
