@@ -1,3 +1,4 @@
+
 /**
  * @file Manages query for records in Salesforce
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
@@ -65,8 +66,8 @@ type CondOp<T> =
 
 type CondValueObj<T, Op = CondOp<T>[0]> = Op extends CondOp<T>[0]
   ? Op extends string
-    ? { [K in Op]: Extract<CondOp<T>, [Op, any]>[1] }
-    : never
+  ? { [K in Op]: Extract<CondOp<T>, [Op, any]>[1] }
+  : never
   : never;
 
 type CondValue<T> = CValue<T> | Array<CValue<T>> | null | CondValueObj<T>;
@@ -77,11 +78,11 @@ type ConditionSet<R extends Record> = {
 
 export type QueryCondition<S extends Schema, N extends SObjectNames<S>> =
   | {
-      $or: Array<QueryCondition<S, N>>;
-    }
+    $or: Array<QueryCondition<S, N>>;
+  }
   | {
-      $and: Array<QueryCondition<S, N>>;
-    }
+    $and: Array<QueryCondition<S, N>>;
+  }
   | ConditionSet<SObjectRecord<S, N>>;
 
 export type QuerySort<
@@ -90,8 +91,8 @@ export type QuerySort<
   R extends SObjectRecord<S, N> = SObjectRecord<S, N>
 > =
   | {
-      [K in keyof R]?: SortDir;
-    }
+    [K in keyof R]?: SortDir;
+  }
   | Array<[keyof R, SortDir]>;
 
 /**
@@ -122,6 +123,7 @@ export type QueryOptions = {
   autoFetch: boolean;
   scanAll: boolean;
   responseTarget: QueryResponseTarget;
+  storeRecords: boolean;
 };
 
 export type QueryResult<R extends Record> = {
@@ -222,7 +224,7 @@ export class Query<
 
   totalSize = 0;
   totalFetched = 0;
-  records: R[] = [];
+  records: R[] | null = null;
 
   /**
    *
@@ -267,8 +269,14 @@ export class Query<
       autoFetch: false,
       scanAll: false,
       responseTarget: 'QueryResult',
+      storeRecords: true,
       ...(options || {}),
     } as QueryOptions;
+
+    if (this._options.storeRecords) {
+      this.records = [];
+    }
+
     // promise instance
     this._promise = new Promise((resolve, reject) => {
       this.on('response', resolve);
@@ -304,10 +312,10 @@ export class Query<
       return typeof fields === 'string'
         ? fields.split(/\s*,\s*/)
         : Array.isArray(fields)
-        ? (fields as Array<string | FP>)
+          ? (fields as Array<string | FP>)
             .map(toFieldArray)
             .reduce<string[]>((fs, f) => [...fs, ...f], [])
-        : Object.entries(fields as { [name: string]: QueryField<S, N, FP> })
+          : Object.entries(fields as { [name: string]: QueryField<S, N, FP> })
             .map(([f, v]) => {
               if (typeof v === 'number' || typeof v === 'boolean') {
                 return v ? [f] : [];
@@ -371,8 +379,8 @@ export class Query<
   /**
    * Set query sort with direction
    */
-  sort(sort: QuerySort<S, N>|string): this;
-  sort(sort: SObjectFieldNames<S, N>|string, dir: SortDir): this;
+  sort(sort: QuerySort<S, N> | string): this;
+  sort(sort: SObjectFieldNames<S, N> | string, dir: SortDir): this;
   sort(
     sort: QuerySort<S, N> | SObjectFieldNames<S, N> | string,
     dir?: SortDir,
@@ -540,6 +548,7 @@ export class Query<
       autoFetch: options_.autoFetch || this._options.autoFetch,
       maxFetch: options_.maxFetch || this._options.maxFetch,
       scanAll: options_.scanAll || this._options.scanAll,
+      storeRecords: options_.storeRecords || this._options.storeRecords,
     };
 
     // collect fetched records in array
@@ -619,19 +628,19 @@ export class Query<
   private constructResponse(
     rawDone: boolean,
     responseTarget: QueryResponseTarget,
-  ): QueryResult<R> | R[] | number | R {
+  ): QueryResult<R> | R[] | number | R | null {
     switch (responseTarget) {
       case 'Count':
         return this.totalSize;
       case 'SingleRecord':
         return this.records?.[0] ?? null;
       case 'Records':
-        return this.records;
+        return this.records ?? [];
       // QueryResult is default response target
       default:
         return {
           ...{
-            records: this.records,
+            records: this.records ?? [],
             totalSize: this.totalSize,
             done: rawDone ?? true, // when no records, done is omitted
           },
@@ -643,7 +652,7 @@ export class Query<
    * @private
    */
   async _execute(options: QueryOptions): Promise<QueryResponse<R>> {
-    const { headers, responseTarget, autoFetch, maxFetch, scanAll } = options;
+    const { headers, responseTarget, autoFetch, maxFetch, scanAll, storeRecords } = options;
     this._logger.debug('execute with options', options);
     let url;
     if (this._locator) {
@@ -662,11 +671,13 @@ export class Query<
     const data = await this._conn.request<R>({ method: 'GET', url, headers });
     this.emit('fetch');
     this.totalSize = data.totalSize;
-    this.records = this.records?.concat(
-      maxFetch - this.records.length > data.records.length
-        ? data.records
-        : data.records.slice(0, maxFetch - this.records.length),
-    );
+    if (storeRecords) {
+      this.records = (this.records ?? []).concat(
+        maxFetch - (this.records?.length ?? 0) > data.records.length
+          ? data.records
+          : data.records.slice(0, maxFetch - (this.records?.length ?? 0))
+      );
+    }
     this._locator = data.nextRecordsUrl
       ? this.urlToLocator(data.nextRecordsUrl)
       : undefined;
@@ -674,7 +685,7 @@ export class Query<
       this._finished ||
       data.done ||
       !autoFetch ||
-      this.records.length === maxFetch ||
+      this.totalFetched >= maxFetch ||
       // this is what the response looks like when there are no results
       (data.records.length === 0 && data.done === undefined);
 
@@ -920,11 +931,11 @@ export class Query<
       options.allowBulk === false
         ? -1
         : typeof options.bulkThreshold === 'number'
-        ? options.bulkThreshold
-        : // determine threshold if the connection version supports SObject collection API or not
-        this._conn._ensureVersion(42)
-        ? DEFAULT_BULK_THRESHOLD
-        : this._conn._maxRequest / 2;
+          ? options.bulkThreshold
+          : // determine threshold if the connection version supports SObject collection API or not
+          this._conn._ensureVersion(42)
+            ? DEFAULT_BULK_THRESHOLD
+            : this._conn._maxRequest / 2;
 
     const bulkApiVersion = options.bulkApiVersion ?? DEFAULT_BULK_API_VERSION;
 
@@ -1044,11 +1055,11 @@ export class Query<
       options.allowBulk === false
         ? -1
         : typeof options.bulkThreshold === 'number'
-        ? options.bulkThreshold
-        : // determine threshold if the connection version supports SObject collection API or not
-        this._conn._ensureVersion(42)
-        ? DEFAULT_BULK_THRESHOLD
-        : this._conn._maxRequest / 2;
+          ? options.bulkThreshold
+          : // determine threshold if the connection version supports SObject collection API or not
+          this._conn._ensureVersion(42)
+            ? DEFAULT_BULK_THRESHOLD
+            : this._conn._maxRequest / 2;
     const bulkApiVersion = options.bulkApiVersion ?? DEFAULT_BULK_API_VERSION;
     return new Promise((resolve, reject) => {
       const createBatch = () =>
@@ -1230,7 +1241,7 @@ export class SubQuery<
    * Set query sort with direction
    */
   sort(sort: QuerySort<S, CN>): this;
-  sort(sort: string| SObjectFieldNames<S, CN>, dir: SortDir): this;
+  sort(sort: string | SObjectFieldNames<S, CN>, dir: SortDir): this;
   sort(
     sort: QuerySort<S, CN> | SObjectFieldNames<S, CN> | string,
     dir?: SortDir,
