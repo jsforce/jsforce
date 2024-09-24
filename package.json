@@ -214,7 +214,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.23.1",
-    "@babel/runtime-corejs3": "^7.23.1",
+    "@babel/runtime-corejs3": "^7.25.6",
     "@sindresorhus/is": "^4",
     "abort-controller": "^3.0.0",
     "base64url": "^3.0.1",
