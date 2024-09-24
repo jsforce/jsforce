@@ -1,3 +1,12 @@
+## [3.4.2](https://github.com/jsforce/jsforce/compare/3.4.1...3.4.2) (2024-09-24)
+
+
+### Bug Fixes
+
+* `Connection.queryMore` takes generic type([#1568](https://github.com/jsforce/jsforce/issues/1568)) ([60a6364](https://github.com/jsforce/jsforce/commit/60a63648f59366535c71c119909ae90bae853b77))
+
+
+
 ## [3.4.1](https://github.com/jsforce/jsforce/compare/3.4.0...3.4.1) (2024-08-02)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * use logger instead of `console.error` ([#1540](https://github.com/jsforce/jsforce/issues/1540)) ([fc3b936](https://github.com/jsforce/jsforce/commit/fc3b936f56801da5869cd225cc758ed5a89060e3))
-
-
-
-## [3.3.2](https://github.com/jsforce/jsforce/compare/3.3.1...3.3.2) (2024-07-26)
-
-
-### Bug Fixes
-
-* override `whatwg-url` ([#1542](https://github.com/jsforce/jsforce/issues/1542)) ([4f0fc3e](https://github.com/jsforce/jsforce/commit/4f0fc3e4baabe878ab29913ae4ac9f44fc886a2f))
 
 
 
