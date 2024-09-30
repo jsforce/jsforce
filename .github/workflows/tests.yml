@@ -92,7 +92,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node_version: [lts/-1, lts/*, 22.4]
+        node_version: [lts/-1, lts/*, latest]
       fail-fast: false
     steps:
       - uses: actions/checkout@v3

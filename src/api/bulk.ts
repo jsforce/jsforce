@@ -4,7 +4,7 @@
  */
 import { EventEmitter } from 'events';
 import { Duplex, Readable, Writable } from 'stream';
-import joinStreams from 'multistream';
+import MultiStream from 'multistream';
 import Connection from '../connection';
 import { Serializable, Parsable } from '../record-stream';
 import HttpApi from '../http-api';
@@ -887,7 +887,7 @@ export class Bulk<S extends Schema> {
     const streams = results.map((result) =>
       this.job(result.jobId).batch(result.batchId).result(result.id).stream(),
     );
-    joinStreams(streams).pipe(dataStream);
+    new MultiStream(streams).pipe(dataStream);
 
     return recordStream;
   }
