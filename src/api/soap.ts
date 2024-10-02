@@ -13,6 +13,7 @@ import {
   MergeRequest,
   MergeResult,
   EmptyRecycleBinResult,
+  UndeleteResult,
   DescribeTabSetResult,
   GetServerTimestampResult,
   GetUserInfoResult,
@@ -103,7 +104,9 @@ export class SoapApi<S extends Schema> {
   merge(
     mergeRequest: Partial<MergeRequest> | Array<Partial<MergeRequest>>,
   ): Promise<MergeResult | MergeResult[]>;
-  async merge(mergeRequests: Partial<MergeRequest> | Array<Partial<MergeRequest>>) {
+  async merge(
+    mergeRequests: Partial<MergeRequest> | Array<Partial<MergeRequest>>,
+  ) {
     const schema = Array.isArray(mergeRequests)
       ? [ApiSchemas.MergeResult]
       : ApiSchemas.MergeResult;
@@ -239,6 +242,19 @@ export class SoapApi<S extends Schema> {
       'ns1:ids': ids,
     };
     return this._invoke('delete', args, schema);
+  }
+
+  /**
+   * Undelete records from the recycle bin immediately
+   */
+  undelete(ids: string[]): Promise<UndeleteResult[]> {
+    const schema = [ApiSchemas.UndeleteResult];
+    const args = {
+      '@xmlns': 'urn:partner.soap.sforce.com',
+      '@xmlns:ns1': 'sobject.partner.soap.sforce.com',
+      'ns1:ids': ids,
+    };
+    return this._invoke('undelete', args, schema);
   }
 }
 
