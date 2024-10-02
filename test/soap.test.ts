@@ -155,3 +155,81 @@ describe('convert and merge', () => {
     await conn.sobject('Lead').destroy(leadIds);
   });
 });
+
+/*------------------------------------------------------------------------*/
+
+/**
+ *
+ */
+describe('undelete', () => {
+  const contacts = [
+    {
+      LastName: 'Undelete Test #1',
+    },
+    {
+      LastName: 'Undelete Test #2',
+    },
+    {
+      LastName: 'Undelete Test #3',
+    },
+  ];
+
+  let contactIds: string[];
+
+  beforeAll(async () => {
+    // Arrange
+    const insertedContacts = await conn.sobject('Contact').create(contacts);
+    contactIds = insertedContacts.map((contact) => contact.id!);
+
+    await conn.sobject('Contact').destroy(contactIds);
+  });
+
+  /**
+   *
+   */
+  it('should undelete deleted contacts', async () => {
+    // Act
+    const res = await conn.soap.undelete(contactIds);
+
+    // Assert
+    for (const ret of res) {
+      assert.ok(ret.errors.length === 0);
+      assert.ok(isString(ret.id));
+      assert.ok(isBoolean(ret.success));
+      assert.ok(ret.success === true);
+    }
+  });
+
+  it('should fail to undelete string', async () => {
+    // Act
+    const res = await conn.soap.undelete(['not an id']);
+
+    // Assert
+    for (const ret of res) {
+      assert.ok(ret.errors.length > 0);
+      assert.ok(isBoolean(ret.success));
+      assert.ok(ret.success === false);
+    }
+  });
+
+  it('should fail to undelete not deleted ids', async () => {
+    // Arrange
+    const contact = await conn.sobject('Contact').create({
+      LastName: 'Undelete Test #4',
+    });
+
+    // Act
+    const res = await conn.soap.undelete([contact.id!]);
+
+    // Assert
+    for (const ret of res) {
+      assert.ok(ret.errors.length > 0);
+      assert.ok(isBoolean(ret.success));
+      assert.ok(ret.success === false);
+    }
+  });
+
+  afterAll(async () => {
+    await conn.sobject('Contact').destroy(contactIds);
+  });
+});
