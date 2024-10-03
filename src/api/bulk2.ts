@@ -496,7 +496,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
             throw new Error('Query job failed to complete');
           case 'JobComplete':
             this.logger.debug(`Job ${this.id} was successfully processed.`);
-            this.emit('jobComplete');
+            this.emit('jobComplete', res);
             return;
         }
       } catch (err) {
@@ -803,7 +803,7 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
             );
           case 'JobComplete':
             this.logger.debug(`Job ${this.id} was successfully processed.`);
-            this.emit('jobComplete');
+            this.emit('jobComplete', res);
             return;
         }
       } catch (err) {
