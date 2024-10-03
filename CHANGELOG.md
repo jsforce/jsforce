@@ -1,3 +1,12 @@
+## [3.5.1](https://github.com/jsforce/jsforce/compare/3.5.0...3.5.1) (2024-10-03)
+
+
+### Bug Fixes
+
+* **bulk2:** `jobComplete` event includes job info ([#1588](https://github.com/jsforce/jsforce/issues/1588)) ([2f4388b](https://github.com/jsforce/jsforce/commit/2f4388b86bf86c33aba64fdd65ac4e318b3a3f31))
+
+
+
 # [3.5.0](https://github.com/jsforce/jsforce/compare/3.4.2...3.5.0) (2024-10-02)
 
 
@@ -32,15 +41,6 @@
 ### Features
 
 * **metadata:** add `cancelDeploy` method ([#1551](https://github.com/jsforce/jsforce/issues/1551)) ([ecdcbaa](https://github.com/jsforce/jsforce/commit/ecdcbaa23ee205c3c97f25b0be957932350b3935))
-
-
-
-## [3.3.4](https://github.com/jsforce/jsforce/compare/3.3.3...3.3.4) (2024-07-31)
-
-
-### Bug Fixes
-
-* **deps:** bump ws, engine.io, socket.io-adapter and puppeteer ([#1549](https://github.com/jsforce/jsforce/issues/1549)) ([ffea541](https://github.com/jsforce/jsforce/commit/ffea54109b4a0e4546489519a4de13554389522f))
 
 
 
