@@ -71,7 +71,7 @@ export function castTypeUsingSchema(
     }
     const obj = isMapObject(value) ? value : {};
     return Object.keys(schema_).reduce((o, k) => {
-      const s = schema_[k];
+      const s = schema_[k as keyof typeof schema_];
       const v = obj[k];
       const nillable =
         (Array.isArray(s) && s.length === 2 && s[0] === '?') ||
