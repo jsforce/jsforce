@@ -1,3 +1,12 @@
+## [3.5.2](https://github.com/jsforce/jsforce/compare/3.5.1...3.5.2) (2024-10-08)
+
+
+### Bug Fixes
+
+* remove ESM entry point in pjson ([#1574](https://github.com/jsforce/jsforce/issues/1574)) ([791c082](https://github.com/jsforce/jsforce/commit/791c082dd7e5ea235a65250774dcf5bdd31b14a0))
+
+
+
 ## [3.5.1](https://github.com/jsforce/jsforce/compare/3.5.0...3.5.1) (2024-10-03)
 
 
@@ -32,15 +41,6 @@
 ### Bug Fixes
 
 * try removing // from URl ([#1550](https://github.com/jsforce/jsforce/issues/1550)) ([8f833a0](https://github.com/jsforce/jsforce/commit/8f833a04370deb5d9c81a0c436526737a7d31d0f))
-
-
-
-# [3.4.0](https://github.com/jsforce/jsforce/compare/3.3.4...3.4.0) (2024-07-31)
-
-
-### Features
-
-* **metadata:** add `cancelDeploy` method ([#1551](https://github.com/jsforce/jsforce/issues/1551)) ([ecdcbaa](https://github.com/jsforce/jsforce/commit/ecdcbaa23ee205c3c97f25b0be957932350b3935))
 
 
 
