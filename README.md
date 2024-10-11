@@ -32,6 +32,10 @@ https://jsforce.github.io/jsforce/
 v1 API reference:
 https://jsforce.github.io/jsforce/doc/
 
+## Migration
+- Migrating from v1 → v3? Find the [migration guide here](./MIGRATING_V1-V3.md)
+- Migrating from v2 → v3? Find the [migration guide here](./MIGRATING_V2-V3.md)
+
 ## Releases
 
 See [Releases](https://github.com/jsforce/jsforce/releases).
