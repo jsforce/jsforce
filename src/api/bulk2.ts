@@ -863,7 +863,21 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
    *
    * @returns Promise<IngestJobV2SuccessfulResults>
    */
-  async getSuccessfulResults(): Promise<IngestJobV2SuccessfulResults<S>> {
+  async getSuccessfulResults(raw?: false): Promise<IngestJobV2SuccessfulResults<S>>
+  async getSuccessfulResults(raw: true): Promise<string>
+  async getSuccessfulResults(raw?: boolean): Promise<IngestJobV2SuccessfulResults<S> | string> {
+    const reqOpts: BulkRequest = {
+      method: 'GET',
+      path: `/${this.id}/successfulResults`,
+    }
+
+    if (raw) {
+      return this.createIngestRequest<string>({
+        ...reqOpts,
+        responseType: 'text/plain',
+      })
+    }
+
     if (this.bulkJobSuccessfulResults) {
       return this.bulkJobSuccessfulResults;
     }
@@ -873,7 +887,7 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
     >({
       method: 'GET',
       path: `/${this.id}/successfulResults`,
-      responseType: 'text/csv',
+      responseType: raw ? 'text/plain' : 'text/csv',
     });
 
     this.bulkJobSuccessfulResults = results ?? [];
@@ -887,7 +901,21 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
    *
    * @returns Promise<IngestJobV2SuccessfulResults>
    */
-  async getFailedResults(): Promise<IngestJobV2FailedResults<S>> {
+  async getFailedResults(raw?: false): Promise<IngestJobV2FailedResults<S>>
+  async getFailedResults(raw: true): Promise<string>
+  async getFailedResults(raw?: boolean): Promise<IngestJobV2FailedResults<S> | string> {
+    const reqOpts: BulkRequest = {
+      method: 'GET',
+      path: `/${this.id}/failedResults`,
+    }
+
+    if (raw) {
+      return this.createIngestRequest<string>({
+        ...reqOpts,
+        responseType: 'text/plain',
+      })
+    }
+
     if (this.bulkJobFailedResults) {
       return this.bulkJobFailedResults;
     }
@@ -895,8 +923,7 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
     const results = await this.createIngestRequest<
       IngestJobV2FailedResults<S> | undefined
     >({
-      method: 'GET',
-      path: `/${this.id}/failedResults`,
+      ...reqOpts,
       responseType: 'text/csv',
     });
 
@@ -916,7 +943,21 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
    *
    * @returns Promise<IngestJobV2UnprocessedRecords>
    */
-  async getUnprocessedRecords(): Promise<IngestJobV2UnprocessedRecords<S>> {
+  async getUnprocessedRecords(raw?: false): Promise<IngestJobV2UnprocessedRecords<S>>
+  async getUnprocessedRecords(raw: true): Promise<string>
+  async getUnprocessedRecords(raw?: boolean): Promise<IngestJobV2UnprocessedRecords<S>> {
+    const reqOpts: BulkRequest = {
+      method: 'GET',
+      path: `/${this.id}/unprocessedrecords`,
+    }
+
+    if (raw) {
+      return this.createIngestRequest<string>({
+        ...reqOpts,
+        responseType: 'text/plain',
+      })
+    }
+
     if (this.bulkJobUnprocessedRecords) {
       return this.bulkJobUnprocessedRecords;
     }
@@ -924,8 +965,7 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
     const results = await this.createIngestRequest<
       IngestJobV2UnprocessedRecords<S> | undefined
     >({
-      method: 'GET',
-      path: `/${this.id}/unprocessedrecords`,
+      ...reqOpts,
       responseType: 'text/csv',
     });
 
