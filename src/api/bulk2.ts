@@ -887,7 +887,7 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
     >({
       method: 'GET',
       path: `/${this.id}/successfulResults`,
-      responseType: raw ? 'text/plain' : 'text/csv',
+      responseType: 'text/csv',
     });
 
     this.bulkJobSuccessfulResults = results ?? [];
