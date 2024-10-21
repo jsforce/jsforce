@@ -861,9 +861,17 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
    *
    * The order of records returned is not guaranteed to match the ordering of the uploaded data.
    *
+   * @param {boolean} raw Get results as a CSV string
    * @returns Promise<IngestJobV2SuccessfulResults>
    */
   async getSuccessfulResults(raw?: false): Promise<IngestJobV2SuccessfulResults<S>>
+  /** Return successful results
+   *
+   * The order of records returned is not guaranteed to match the ordering of the uploaded data.
+   *
+   * @param {boolean} raw Get results as a CSV string
+   * @returns Promise<string>
+   */
   async getSuccessfulResults(raw: true): Promise<string>
   async getSuccessfulResults(raw?: boolean): Promise<IngestJobV2SuccessfulResults<S> | string> {
     const reqOpts: BulkRequest = {
@@ -899,9 +907,17 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
    *
    * The order of records in the response is not guaranteed to match the ordering of records in the original job data.
    *
+   * @param {boolean} raw Get results as a CSV string
    * @returns Promise<IngestJobV2SuccessfulResults>
    */
   async getFailedResults(raw?: false): Promise<IngestJobV2FailedResults<S>>
+  /** Return failed results
+   *
+   * The order of records in the response is not guaranteed to match the ordering of records in the original job data.
+   *
+   * @param {boolean} raw Get results as a CSV string
+   * @returns Promise<string>
+   */
   async getFailedResults(raw: true): Promise<string>
   async getFailedResults(raw?: boolean): Promise<IngestJobV2FailedResults<S> | string> {
     const reqOpts: BulkRequest = {
@@ -937,13 +953,26 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
    * The unprocessed records endpoint returns records as a CSV.
    * If the request helper is able to parse it, you get the records
    * as an array of objects.
-   * If unable to parse the it (bad CSV), you get the raw response as a string.
+   * If unable to parse it (bad CSV), you get the raw response as a string.
    *
    * The order of records in the response is not guaranteed to match the ordering of records in the original job data.
    *
+   * @param {boolean} raw Get results as a CSV string
    * @returns Promise<IngestJobV2UnprocessedRecords>
    */
   async getUnprocessedRecords(raw?: false): Promise<IngestJobV2UnprocessedRecords<S>>
+    /** Return unprocessed results
+   *
+   * The unprocessed records endpoint returns records as a CSV.
+   * If the request helper is able to parse it, you get the records
+   * as an array of objects.
+   * If unable to parse it (bad CSV), you get the raw response as a string.
+   *
+   * The order of records in the response is not guaranteed to match the ordering of records in the original job data.
+   *
+   * @param {boolean} raw Get results as a CSV string
+   * @returns Promise<string>
+   */
   async getUnprocessedRecords(raw: true): Promise<string>
   async getUnprocessedRecords(raw?: boolean): Promise<IngestJobV2UnprocessedRecords<S>> {
     const reqOpts: BulkRequest = {
