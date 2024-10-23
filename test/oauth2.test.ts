@@ -55,7 +55,7 @@ describe('username password flow', () => {
   });
 });
 
-describe.only('endpoints', () => {
+describe('endpoints', () => {
   it('sets valid oauth endpoints', () => {
     const instanceUrl =
       'https://innovation-momentum-8840-dev-ed.scratch.my.salesforce.com';
