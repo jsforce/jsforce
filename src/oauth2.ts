@@ -100,11 +100,13 @@ export class OAuth2 {
       this.revokeServiceUrl =
         revokeServiceUrl || `${this.loginUrl}/services/oauth2/revoke`;
     } else {
-      const loginUrlObject = new URL(loginUrl || defaultOAuth2Config.loginUrl);
-      this.loginUrl = loginUrlObject.href
-      this.authzServiceUrl = `${loginUrlObject.origin}/services/oauth2/authorize`;
-      this.tokenServiceUrl = `${loginUrlObject.origin}/services/oauth2/token`;
-      this.revokeServiceUrl = `${loginUrlObject.origin}/services/oauth2/revoke`;
+      this.loginUrl = loginUrl ?? defaultOAuth2Config.loginUrl
+
+      const maybeSlash = this.loginUrl.endsWith('/') ? '' : '/'
+
+      this.authzServiceUrl = `${this.loginUrl}${maybeSlash}services/oauth2/authorize`
+      this.tokenServiceUrl = `${this.loginUrl}${maybeSlash}services/oauth2/token`
+      this.revokeServiceUrl = `${this.loginUrl}${maybeSlash}services/oauth2/revoke`
     }
     this.clientId = clientId;
     this.clientSecret = clientSecret;
