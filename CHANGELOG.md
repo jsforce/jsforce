@@ -1,3 +1,13 @@
+## [3.6.1](https://github.com/jsforce/jsforce/compare/3.6.0...3.6.1) (2024-10-24)
+
+
+### Bug Fixes
+
+* codereview ([b8cb90c](https://github.com/jsforce/jsforce/commit/b8cb90c9f2edb2f998fd4e2dbecfd0b9c1cfa449))
+* **oauth2:** don't strip URL path ([85d7d00](https://github.com/jsforce/jsforce/commit/85d7d00e704d330b77260a687c8a4dc5e2be0173))
+
+
+
 # [3.6.0](https://github.com/jsforce/jsforce/compare/3.5.2...3.6.0) (2024-10-24)
 
 
@@ -32,15 +42,6 @@
 
 * add SOAP undelete ([#1533](https://github.com/jsforce/jsforce/issues/1533)) ([ce075ee](https://github.com/jsforce/jsforce/commit/ce075ee96289304b0016a5518a5ed9ecc9f89b4e))
 * use native abortController ([#1587](https://github.com/jsforce/jsforce/issues/1587)) ([f584563](https://github.com/jsforce/jsforce/commit/f584563b526a24260d62dc27f2acd61230f52939))
-
-
-
-## [3.4.2](https://github.com/jsforce/jsforce/compare/3.4.1...3.4.2) (2024-09-24)
-
-
-### Bug Fixes
-
-* `Connection.queryMore` takes generic type([#1568](https://github.com/jsforce/jsforce/issues/1568)) ([60a6364](https://github.com/jsforce/jsforce/commit/60a63648f59366535c71c119909ae90bae853b77))
 
 
 
