@@ -1,3 +1,12 @@
+# [3.6.0](https://github.com/jsforce/jsforce/compare/3.5.2...3.6.0) (2024-10-24)
+
+
+### Features
+
+* **bulk2:** allow to get raw job results ([#1603](https://github.com/jsforce/jsforce/issues/1603)) ([2cc5761](https://github.com/jsforce/jsforce/commit/2cc5761b0a0556c8a4e47c645c5c9fd906297034))
+
+
+
 ## [3.5.2](https://github.com/jsforce/jsforce/compare/3.5.1...3.5.2) (2024-10-08)
 
 
@@ -32,15 +41,6 @@
 ### Bug Fixes
 
 * `Connection.queryMore` takes generic type([#1568](https://github.com/jsforce/jsforce/issues/1568)) ([60a6364](https://github.com/jsforce/jsforce/commit/60a63648f59366535c71c119909ae90bae853b77))
-
-
-
-## [3.4.1](https://github.com/jsforce/jsforce/compare/3.4.0...3.4.1) (2024-08-02)
-
-
-### Bug Fixes
-
-* try removing // from URl ([#1550](https://github.com/jsforce/jsforce/issues/1550)) ([8f833a0](https://github.com/jsforce/jsforce/commit/8f833a04370deb5d9c81a0c436526737a7d31d0f))
 
 
 
