@@ -1,3 +1,12 @@
+## [3.6.2](https://github.com/jsforce/jsforce/compare/3.6.1...3.6.2) (2024-10-28)
+
+
+### Bug Fixes
+
+* proper serialization of `null` value in soap request ([#1615](https://github.com/jsforce/jsforce/issues/1615)) ([caaf888](https://github.com/jsforce/jsforce/commit/caaf888abee693cd48ab5f975426d4ad5be733a1))
+
+
+
 ## [3.6.1](https://github.com/jsforce/jsforce/compare/3.6.0...3.6.1) (2024-10-24)
 
 
@@ -32,16 +41,6 @@
 ### Bug Fixes
 
 * **bulk2:** `jobComplete` event includes job info ([#1588](https://github.com/jsforce/jsforce/issues/1588)) ([2f4388b](https://github.com/jsforce/jsforce/commit/2f4388b86bf86c33aba64fdd65ac4e318b3a3f31))
-
-
-
-# [3.5.0](https://github.com/jsforce/jsforce/compare/3.4.2...3.5.0) (2024-10-02)
-
-
-### Features
-
-* add SOAP undelete ([#1533](https://github.com/jsforce/jsforce/issues/1533)) ([ce075ee](https://github.com/jsforce/jsforce/commit/ce075ee96289304b0016a5518a5ed9ecc9f89b4e))
-* use native abortController ([#1587](https://github.com/jsforce/jsforce/issues/1587)) ([f584563](https://github.com/jsforce/jsforce/commit/f584563b526a24260d62dc27f2acd61230f52939))
 
 
 
