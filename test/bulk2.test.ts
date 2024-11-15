@@ -263,6 +263,7 @@ if (isNodeJS()) {
       operation: 'upsert',
       columnDelimiter: 'BACKQUOTE',
       externalIdFieldName: 'Id',
+      lineEnding: require('os').platform() === 'win32' ? 'CRLF' : 'LF',
       input: fstream,
     });
 
