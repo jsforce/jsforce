@@ -212,7 +212,7 @@ function createUsernamePasswordRefreshFn<S extends Schema>(
 function toSaveResult(err: SaveError): SaveResult {
   return {
     success: false,
-    errors: [err],
+    errors: [{ ...err, errorCode: err.statusCode }],
   };
 }
 

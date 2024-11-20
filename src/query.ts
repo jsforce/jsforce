@@ -1131,6 +1131,7 @@ export class Query<
         errors: [
           {
             errorCode: r.sf__Error,
+            statusCode: r.sf__Error,
             message: r.sf__Error,
           },
         ],
