@@ -8,7 +8,6 @@ import { isObject, isString } from './util';
 import { isNodeJS } from './helper/env';
 import { BulkOperation } from 'jsforce/lib/api/bulk';
 import { IngestJobV2Results } from 'jsforce/lib/api/bulk2';
-import { platform } from 'node:os';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();
@@ -264,7 +263,8 @@ if (isNodeJS()) {
       operation: 'upsert',
       columnDelimiter: 'BACKQUOTE',
       externalIdFieldName: 'Id',
-      lineEnding: platform() === 'win32' ? 'CRLF' : 'LF',
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      lineEnding: require('node:os').platform() === 'win32' ? 'CRLF' : 'LF',
       input: fstream,
     });
 
