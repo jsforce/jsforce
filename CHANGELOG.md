@@ -1,3 +1,12 @@
+## [3.6.3](https://github.com/jsforce/jsforce/compare/3.6.2...3.6.3) (2024-11-26)
+
+
+### Bug Fixes
+
+* **http:** handle more CSV delimiters on parse ([#1622](https://github.com/jsforce/jsforce/issues/1622)) ([c96e9c7](https://github.com/jsforce/jsforce/commit/c96e9c7d1c822b45b17e3adb8bcb3b0050b197c4))
+
+
+
 ## [3.6.2](https://github.com/jsforce/jsforce/compare/3.6.1...3.6.2) (2024-10-28)
 
 
@@ -32,15 +41,6 @@
 ### Bug Fixes
 
 * remove ESM entry point in pjson ([#1574](https://github.com/jsforce/jsforce/issues/1574)) ([791c082](https://github.com/jsforce/jsforce/commit/791c082dd7e5ea235a65250774dcf5bdd31b14a0))
-
-
-
-## [3.5.1](https://github.com/jsforce/jsforce/compare/3.5.0...3.5.1) (2024-10-03)
-
-
-### Bug Fixes
-
-* **bulk2:** `jobComplete` event includes job info ([#1588](https://github.com/jsforce/jsforce/issues/1588)) ([2f4388b](https://github.com/jsforce/jsforce/commit/2f4388b86bf86c33aba64fdd65ac4e318b3a3f31))
 
 
 
