@@ -48,7 +48,7 @@ function ensureSuccessfulBulkResults(
   assert.ok(Array.isArray(successfulResults));
   assert.ok(successfulResults.length === qty);
 
-  const recordCreated = operation === 'insert' ? 'true' : 'false';
+  const recordCreated = ['insert', 'upsert'].includes(operation) ? 'true' : 'false';
 
   for (const successfulResult of successfulResults) {
     assert.ok(isString(successfulResult.sf__Id));
@@ -225,28 +225,50 @@ if (isNodeJS()) {
     }
   });
 
-  it('should bulk delete from file and return deleted results', async () => {
-    const id = Date.now();
+  it('should bulk insert from file and return inserted results', async () => {
+    // insert 100 account records from csv file
+    const csvStream = fs.createReadStream(
+      path.join(__dirname, 'data', 'Account_bulk2_test.csv'),
+    );
 
-    await insertAccounts(id);
+    const res = await conn.bulk2.loadAndWaitForResults({
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      lineEnding: require('os').platform() === 'win32' ? 'CRLF' : 'LF',
+      object: 'Account',
+      operation: 'insert',
+      input: csvStream,
+    });
 
-    const records = await conn
-      .sobject('Account')
-      .find({ Name: { $like: `Bulk Account ${id}%` } });
-    const data = `Id\n${records.map((r: Record) => r.Id).join('\n')}\n`;
-    const deleteFile = path.join(__dirname, 'data', 'Account_delete.csv');
+    try {
+      ensureSuccessfulBulkResults(res, 100, 'insert');
+    } finally {
+      // cleanup:
+      // always delete successfully inserted records.
+      const deleteRecords = res.successfulResults.map((r) => ({
+        Id: r.sf__Id,
+      }));
 
-    await fs.promises.writeFile(deleteFile, data);
+      await conn.bulk2.loadAndWaitForResults({
+        object: 'Account',
+        operation: 'delete',
+        input: deleteRecords,
+      });
+    }
+  })
 
-    const fstream = fs.createReadStream(deleteFile);
+  it('should bulk upsert from CSV file using backquote as a delimiter', async () => {
+    const fstream = fs.createReadStream(path.join(__dirname, 'data', 'Account_bulk2_test_backquote.csv'));
     const res = await conn.bulk2.loadAndWaitForResults({
       object: 'Account',
-      operation: 'delete',
+      operation: 'upsert',
+      columnDelimiter: 'BACKQUOTE',
+      externalIdFieldName: 'Id',
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      lineEnding: require('node:os').platform() === 'win32' ? 'CRLF' : 'LF',
       input: fstream,
     });
 
-    ensureSuccessfulBulkResults(res, 20, 'delete');
-    await fs.promises.rm(deleteFile);
+    ensureSuccessfulBulkResults(res, 10, 'upsert');
   });
 
   it('should bulk query and get records', async () => {

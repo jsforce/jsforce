@@ -10,11 +10,17 @@ import {
 } from 'csv-stringify';
 import { stringify as csvStringifySync } from 'csv-stringify/sync';
 
+// The following column delimiters are supported by the Bulk V2 API:
+// https://developer.salesforce.com/docs/atlas.en-us.api_asynch.meta/api_asynch/create_job.htm
+//
+// BACKQUOTE, CARET, COMMA, PIPE, SEMICOLON, TAB
+const csvDelimiters = ['`','^',',','|',';','	']
+
 /**
  * @private
  */
 export function parseCSV(str: string, options?: ParseOpts): Object[] {
-  return csvParseSync(str, { ...options, columns: true });
+  return csvParseSync(str, { ...options, columns: true, delimiter: csvDelimiters });
 }
 
 /**
