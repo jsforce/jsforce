@@ -66,7 +66,9 @@ export type Record = {
 export type SavedRecord = Record & { Id: string };
 
 export type SaveError = {
+  /** @deprecated use {@link SaveError.statusCode} instead */
   errorCode: string;
+  statusCode: string;
   message: string;
   fields?: string[];
 };
