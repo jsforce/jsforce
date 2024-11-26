@@ -219,7 +219,7 @@
     "commander": "^4.0.1",
     "core-js": "^3.33.0",
     "csv-parse": "^5.5.2",
-    "csv-stringify": "^6.4.4",
+    "csv-stringify": "^6.5.2",
     "faye": "^1.4.0",
     "form-data": "^4.0.0",
     "https-proxy-agent": "^5.0.0",
