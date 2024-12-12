@@ -54,6 +54,9 @@
   "bin": {
     "jsforce": "./bin/jsforce"
   },
+  "overrides": {
+    "json-schema": "^0.4.0"
+  },
   "dependencies": {
     "co-prompt": "^1.0.0",
     "coffeescript": "^1.10.0",
@@ -67,7 +70,7 @@
     "open": "^7.0.0",
     "promise": "^7.1.1",
     "readable-stream": "^2.1.0",
-    "request": "^2.72.0",
+    "request": "^2.88.2",
     "xml2js": "^0.4.16"
   },
   "devDependencies": {
