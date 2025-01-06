@@ -110,6 +110,14 @@ If you need any of the `RecordStream` methods you can call the `Query.stream` me
 
 For backwards compatibility, `Query` implements a `pipe` method so that you can still pipe records to a writable stream.
 
+## `Connection.queryAll` method no longer exist
+This method was used to query existing + deleted records, you can replace it by passing the `scanAll` option to `Connection.query`:
+```ts
+const res = await conn.query('select id,name from account', {
+  scanAll: true
+})
+```
+
 ## Bulk API
 
 `Bulk.query` returns a promise that resolves to a record stream instead (instead of just returning the stream).

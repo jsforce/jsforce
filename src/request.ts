@@ -1,7 +1,6 @@
 import { EventEmitter } from 'events';
 import { Duplex, Readable, Writable } from 'stream';
 import fetch, { Response, RequestInit, FetchError } from 'node-fetch';
-import AbortController from 'abort-controller';
 import createHttpsProxyAgent from 'https-proxy-agent';
 import {
   createHttpRequestHandlerStreams,
@@ -118,7 +117,6 @@ async function startFetchRequest(
         ? { body: input }
         : {}),
       redirect: 'manual',
-      // @ts-expect-error - differing types of signal? this started abruptly
       signal: controller.signal,
       agent,
     };

@@ -35,6 +35,7 @@ describe('CRUD based call', () => {
         type: 'Text',
         label: 'Test Object Name',
       },
+      description: 'This is a test #1 object for JSforce test',
       deploymentStatus: 'Deployed',
       sharingModel: 'ReadWrite',
     },
@@ -46,6 +47,7 @@ describe('CRUD based call', () => {
         type: 'AutoNumber',
         label: 'Test Object #',
       },
+      description: 'This is a test #2 object for JSforce test',
       deploymentStatus: 'InDevelopment',
       sharingModel: 'Private',
     },
@@ -87,6 +89,7 @@ describe('CRUD based call', () => {
    */
   it('should update metadata synchronously return updated custom object metadata', async () => {
     rmetadata[0].label = 'Updated Test Object Sync 2';
+    rmetadata[0].description = null;
     rmetadata[1].deploymentStatus = 'Deployed';
     const results = await conn.metadata.update('CustomObject', rmetadata);
     assert.ok(Array.isArray(results));
@@ -95,6 +98,10 @@ describe('CRUD based call', () => {
       assert.ok(result.success === true);
       assert.ok(isString(result.fullName));
     }
+    const objMeta = await conn.metadata.read('CustomObject', fullNames);
+    assert.ok(objMeta[0].label === 'Updated Test Object Sync 2');
+    assert.ok(objMeta[0].description == null);
+    assert.ok(objMeta[1].deploymentStatus === 'Deployed');
     rmetadata = results; // eslint-disable-line require-atomic-updates
   });
 

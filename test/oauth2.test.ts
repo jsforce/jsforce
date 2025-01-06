@@ -84,9 +84,9 @@ describe('endpoints', () => {
     );
   });
 
-  it('handles trailing slash in instanceUrl', () => {
+  it('does not strip URL path', () => {
     const instanceUrl =
-      'https://innovation-momentum-8840-dev-ed.scratch.my.salesforce.com/';
+      'https://innovation-momentum-8840-dev-ed.scratch.my.salesforce.com/AppCentral';
 
     const oauth2 = new OAuth2({
       loginUrl: instanceUrl,
@@ -96,16 +96,42 @@ describe('endpoints', () => {
 
     assert.equal(
       oauth2.authzServiceUrl,
-      `${instanceUrl}services/oauth2/authorize`,
+      `${instanceUrl}/services/oauth2/authorize`,
     );
-    assert.equal(oauth2.tokenServiceUrl, `${instanceUrl}services/oauth2/token`);
+    assert.equal(oauth2.tokenServiceUrl, `${instanceUrl}/services/oauth2/token`);
     assert.equal(
       oauth2.revokeServiceUrl,
-      `${instanceUrl}services/oauth2/revoke`,
+      `${instanceUrl}/services/oauth2/revoke`,
     );
     assert.equal(
       oauth2.getAuthorizationUrl(),
-      `${instanceUrl}services/oauth2/authorize?response_type=code&client_id=${oauth2.clientId}&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Foauthredirect`,
+      `${instanceUrl}/services/oauth2/authorize?response_type=code&client_id=${oauth2.clientId}&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Foauthredirect`,
+    );
+
+  })
+
+  it('handles trailing slash in instanceUrl', () => {
+    const instanceUrl =
+      'https://innovation-momentum-8840-dev-ed.scratch.my.salesforce.com';
+
+    const oauth2 = new OAuth2({
+      loginUrl: instanceUrl + '/',
+      clientId: '1234test',
+      redirectUri: 'http://localhost:8080/oauthredirect',
+    });
+
+    assert.equal(
+      oauth2.authzServiceUrl,
+      `${instanceUrl}/services/oauth2/authorize`,
+    );
+    assert.equal(oauth2.tokenServiceUrl, `${instanceUrl}/services/oauth2/token`);
+    assert.equal(
+      oauth2.revokeServiceUrl,
+      `${instanceUrl}/services/oauth2/revoke`,
+    );
+    assert.equal(
+      oauth2.getAuthorizationUrl(),
+      `${instanceUrl}/services/oauth2/authorize?response_type=code&client_id=${oauth2.clientId}&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Foauthredirect`,
     );
   });
 });

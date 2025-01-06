@@ -153,8 +153,11 @@ function toXML(name: object | string | null, value?: any): string {
     return value.map((v) => toXML(name, v)).join('');
   } else {
     const attrs = [];
-    const elems = [];
-    if (isMapObject(value)) {
+    if (value === null) {
+      attrs.push('xsi:nil="true"');
+      value = '';
+    } else if (isMapObject(value)) {
+      const elems = [];
       for (const k of Object.keys(value)) {
         const v = value[k];
         if (k.startsWith('@')) {

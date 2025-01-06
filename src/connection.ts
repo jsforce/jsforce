@@ -831,8 +831,8 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   /**
    *
    */
-  queryMore(locator: string, options?: QueryOptions) {
-    return new Query<S, SObjectNames<S>, Record, 'QueryResult'>(
+  queryMore<T extends Record>(locator: string, options?: QueryOptions) {
+    return new Query<S, SObjectNames<S>, T, 'QueryResult'>(
       this,
       { locator },
       options,

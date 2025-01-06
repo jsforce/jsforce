@@ -496,7 +496,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
             throw new Error('Query job failed to complete');
           case 'JobComplete':
             this.logger.debug(`Job ${this.id} was successfully processed.`);
-            this.emit('jobComplete');
+            this.emit('jobComplete', res);
             return;
         }
       } catch (err) {
@@ -803,7 +803,7 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
             );
           case 'JobComplete':
             this.logger.debug(`Job ${this.id} was successfully processed.`);
-            this.emit('jobComplete');
+            this.emit('jobComplete', res);
             return;
         }
       } catch (err) {
@@ -861,9 +861,31 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
    *
    * The order of records returned is not guaranteed to match the ordering of the uploaded data.
    *
+   * @param {boolean} raw Get results as a CSV string
    * @returns Promise<IngestJobV2SuccessfulResults>
    */
-  async getSuccessfulResults(): Promise<IngestJobV2SuccessfulResults<S>> {
+  async getSuccessfulResults(raw?: false): Promise<IngestJobV2SuccessfulResults<S>>
+  /** Return successful results
+   *
+   * The order of records returned is not guaranteed to match the ordering of the uploaded data.
+   *
+   * @param {boolean} raw Get results as a CSV string
+   * @returns Promise<string>
+   */
+  async getSuccessfulResults(raw: true): Promise<string>
+  async getSuccessfulResults(raw?: boolean): Promise<IngestJobV2SuccessfulResults<S> | string> {
+    const reqOpts: BulkRequest = {
+      method: 'GET',
+      path: `/${this.id}/successfulResults`,
+    }
+
+    if (raw) {
+      return this.createIngestRequest<string>({
+        ...reqOpts,
+        responseType: 'text/plain',
+      })
+    }
+
     if (this.bulkJobSuccessfulResults) {
       return this.bulkJobSuccessfulResults;
     }
@@ -885,9 +907,31 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
    *
    * The order of records in the response is not guaranteed to match the ordering of records in the original job data.
    *
+   * @param {boolean} raw Get results as a CSV string
    * @returns Promise<IngestJobV2SuccessfulResults>
    */
-  async getFailedResults(): Promise<IngestJobV2FailedResults<S>> {
+  async getFailedResults(raw?: false): Promise<IngestJobV2FailedResults<S>>
+  /** Return failed results
+   *
+   * The order of records in the response is not guaranteed to match the ordering of records in the original job data.
+   *
+   * @param {boolean} raw Get results as a CSV string
+   * @returns Promise<string>
+   */
+  async getFailedResults(raw: true): Promise<string>
+  async getFailedResults(raw?: boolean): Promise<IngestJobV2FailedResults<S> | string> {
+    const reqOpts: BulkRequest = {
+      method: 'GET',
+      path: `/${this.id}/failedResults`,
+    }
+
+    if (raw) {
+      return this.createIngestRequest<string>({
+        ...reqOpts,
+        responseType: 'text/plain',
+      })
+    }
+
     if (this.bulkJobFailedResults) {
       return this.bulkJobFailedResults;
     }
@@ -895,8 +939,7 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
     const results = await this.createIngestRequest<
       IngestJobV2FailedResults<S> | undefined
     >({
-      method: 'GET',
-      path: `/${this.id}/failedResults`,
+      ...reqOpts,
       responseType: 'text/csv',
     });
 
@@ -910,13 +953,40 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
    * The unprocessed records endpoint returns records as a CSV.
    * If the request helper is able to parse it, you get the records
    * as an array of objects.
-   * If unable to parse the it (bad CSV), you get the raw response as a string.
+   * If unable to parse it (bad CSV), you get the raw response as a string.
    *
    * The order of records in the response is not guaranteed to match the ordering of records in the original job data.
    *
+   * @param {boolean} raw Get results as a CSV string
    * @returns Promise<IngestJobV2UnprocessedRecords>
    */
-  async getUnprocessedRecords(): Promise<IngestJobV2UnprocessedRecords<S>> {
+  async getUnprocessedRecords(raw?: false): Promise<IngestJobV2UnprocessedRecords<S>>
+    /** Return unprocessed results
+   *
+   * The unprocessed records endpoint returns records as a CSV.
+   * If the request helper is able to parse it, you get the records
+   * as an array of objects.
+   * If unable to parse it (bad CSV), you get the raw response as a string.
+   *
+   * The order of records in the response is not guaranteed to match the ordering of records in the original job data.
+   *
+   * @param {boolean} raw Get results as a CSV string
+   * @returns Promise<string>
+   */
+  async getUnprocessedRecords(raw: true): Promise<string>
+  async getUnprocessedRecords(raw?: boolean): Promise<IngestJobV2UnprocessedRecords<S>> {
+    const reqOpts: BulkRequest = {
+      method: 'GET',
+      path: `/${this.id}/unprocessedrecords`,
+    }
+
+    if (raw) {
+      return this.createIngestRequest<string>({
+        ...reqOpts,
+        responseType: 'text/plain',
+      })
+    }
+
     if (this.bulkJobUnprocessedRecords) {
       return this.bulkJobUnprocessedRecords;
     }
@@ -924,8 +994,7 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
     const results = await this.createIngestRequest<
       IngestJobV2UnprocessedRecords<S> | undefined
     >({
-      method: 'GET',
-      path: `/${this.id}/unprocessedrecords`,
+      ...reqOpts,
       responseType: 'text/csv',
     });
 

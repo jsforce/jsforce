@@ -1,45 +1,46 @@
-## [3.4.1](https://github.com/jsforce/jsforce/compare/3.4.0...3.4.1) (2024-08-02)
+## [3.6.3](https://github.com/jsforce/jsforce/compare/3.6.2...3.6.3) (2024-11-26)
 
 
 ### Bug Fixes
 
-* try removing // from URl ([#1550](https://github.com/jsforce/jsforce/issues/1550)) ([8f833a0](https://github.com/jsforce/jsforce/commit/8f833a04370deb5d9c81a0c436526737a7d31d0f))
+* **http:** handle more CSV delimiters on parse ([#1622](https://github.com/jsforce/jsforce/issues/1622)) ([c96e9c7](https://github.com/jsforce/jsforce/commit/c96e9c7d1c822b45b17e3adb8bcb3b0050b197c4))
 
 
 
-# [3.4.0](https://github.com/jsforce/jsforce/compare/3.3.4...3.4.0) (2024-07-31)
+## [3.6.2](https://github.com/jsforce/jsforce/compare/3.6.1...3.6.2) (2024-10-28)
+
+
+### Bug Fixes
+
+* proper serialization of `null` value in soap request ([#1615](https://github.com/jsforce/jsforce/issues/1615)) ([caaf888](https://github.com/jsforce/jsforce/commit/caaf888abee693cd48ab5f975426d4ad5be733a1))
+
+
+
+## [3.6.1](https://github.com/jsforce/jsforce/compare/3.6.0...3.6.1) (2024-10-24)
+
+
+### Bug Fixes
+
+* codereview ([b8cb90c](https://github.com/jsforce/jsforce/commit/b8cb90c9f2edb2f998fd4e2dbecfd0b9c1cfa449))
+* **oauth2:** don't strip URL path ([85d7d00](https://github.com/jsforce/jsforce/commit/85d7d00e704d330b77260a687c8a4dc5e2be0173))
+
+
+
+# [3.6.0](https://github.com/jsforce/jsforce/compare/3.5.2...3.6.0) (2024-10-24)
 
 
 ### Features
 
-* **metadata:** add `cancelDeploy` method ([#1551](https://github.com/jsforce/jsforce/issues/1551)) ([ecdcbaa](https://github.com/jsforce/jsforce/commit/ecdcbaa23ee205c3c97f25b0be957932350b3935))
+* **bulk2:** allow to get raw job results ([#1603](https://github.com/jsforce/jsforce/issues/1603)) ([2cc5761](https://github.com/jsforce/jsforce/commit/2cc5761b0a0556c8a4e47c645c5c9fd906297034))
 
 
 
-## [3.3.4](https://github.com/jsforce/jsforce/compare/3.3.3...3.3.4) (2024-07-31)
-
-
-### Bug Fixes
-
-* **deps:** bump ws, engine.io, socket.io-adapter and puppeteer ([#1549](https://github.com/jsforce/jsforce/issues/1549)) ([ffea541](https://github.com/jsforce/jsforce/commit/ffea54109b4a0e4546489519a4de13554389522f))
-
-
-
-## [3.3.3](https://github.com/jsforce/jsforce/compare/3.3.2...3.3.3) (2024-07-29)
+## [3.5.2](https://github.com/jsforce/jsforce/compare/3.5.1...3.5.2) (2024-10-08)
 
 
 ### Bug Fixes
 
-* use logger instead of `console.error` ([#1540](https://github.com/jsforce/jsforce/issues/1540)) ([fc3b936](https://github.com/jsforce/jsforce/commit/fc3b936f56801da5869cd225cc758ed5a89060e3))
-
-
-
-## [3.3.2](https://github.com/jsforce/jsforce/compare/3.3.1...3.3.2) (2024-07-26)
-
-
-### Bug Fixes
-
-* override `whatwg-url` ([#1542](https://github.com/jsforce/jsforce/issues/1542)) ([4f0fc3e](https://github.com/jsforce/jsforce/commit/4f0fc3e4baabe878ab29913ae4ac9f44fc886a2f))
+* remove ESM entry point in pjson ([#1574](https://github.com/jsforce/jsforce/issues/1574)) ([791c082](https://github.com/jsforce/jsforce/commit/791c082dd7e5ea235a65250774dcf5bdd31b14a0))
 
 
 
