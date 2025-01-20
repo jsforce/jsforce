@@ -39,11 +39,33 @@ export type BulkOptions = {
 
 export type JobState = 'Open' | 'Closed' | 'Aborted' | 'Failed' | 'Unknown' | 'NotProcessed';
 
+// In `HttpApi.parseResponseBody` we use xml2js to parse the XML response,
+// all these props are of type `string` due to how we convert XML -> JSON:
+// https://github.com/Leonidas-from-XIV/node-xml2js/issues/108
+//
+// TODO: xml2js allows to define value processing functions, maybe do it for the next major release?
 export type JobInfo = {
   id: string;
   object: string;
   operation: BulkOperation;
   state: JobState;
+  createdById: string;
+  createdDate: string;
+  systemModstamp: string;
+  concurrencyMode: string;
+  contentType: string;
+  numberBatchesQueued: string;
+  numberBatchesInProgress: string;
+  numberBatchesCompleted: string;
+  numberBatchesFailed: string;
+  numberBatchesTotal: string;
+  numberRecordsProcessed: string;
+  numberRetries: string;
+  apiVersion: string;
+  numberRecordsFailed: string;
+  totalProcessingTime: string;
+  apiActiveProcessingTime: string;
+  apexProcessingTime: string;
 };
 
 type JobInfoResponse = {
