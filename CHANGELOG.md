@@ -1,3 +1,12 @@
+## [3.6.4](https://github.com/jsforce/jsforce/compare/3.6.3...3.6.4) (2025-01-20)
+
+
+### Bug Fixes
+
+* **bulk:** update JobInfo type ([#1636](https://github.com/jsforce/jsforce/issues/1636)) ([4755f00](https://github.com/jsforce/jsforce/commit/4755f0065d90c1d2437d7d3831e5c0cee7a57d2c))
+
+
+
 ## [3.6.3](https://github.com/jsforce/jsforce/compare/3.6.2...3.6.3) (2024-11-26)
 
 
@@ -32,15 +41,6 @@
 ### Features
 
 * **bulk2:** allow to get raw job results ([#1603](https://github.com/jsforce/jsforce/issues/1603)) ([2cc5761](https://github.com/jsforce/jsforce/commit/2cc5761b0a0556c8a4e47c645c5c9fd906297034))
-
-
-
-## [3.5.2](https://github.com/jsforce/jsforce/compare/3.5.1...3.5.2) (2024-10-08)
-
-
-### Bug Fixes
-
-* remove ESM entry point in pjson ([#1574](https://github.com/jsforce/jsforce/issues/1574)) ([791c082](https://github.com/jsforce/jsforce/commit/791c082dd7e5ea235a65250774dcf5bdd31b14a0))
 
 
 
