@@ -1,3 +1,12 @@
+## [3.6.5](https://github.com/jsforce/jsforce/compare/3.6.4...3.6.5) (2025-02-20)
+
+
+### Bug Fixes
+
+* skip session refresh on bad Agent API reqs ([870dcc6](https://github.com/jsforce/jsforce/commit/870dcc665e1cf49ddad38fb6cc9723c5c199be4e))
+
+
+
 ## [3.6.4](https://github.com/jsforce/jsforce/compare/3.6.3...3.6.4) (2025-01-20)
 
 
@@ -32,15 +41,6 @@
 
 * codereview ([b8cb90c](https://github.com/jsforce/jsforce/commit/b8cb90c9f2edb2f998fd4e2dbecfd0b9c1cfa449))
 * **oauth2:** don't strip URL path ([85d7d00](https://github.com/jsforce/jsforce/commit/85d7d00e704d330b77260a687c8a4dc5e2be0173))
-
-
-
-# [3.6.0](https://github.com/jsforce/jsforce/compare/3.5.2...3.6.0) (2024-10-24)
-
-
-### Features
-
-* **bulk2:** allow to get raw job results ([#1603](https://github.com/jsforce/jsforce/issues/1603)) ([2cc5761](https://github.com/jsforce/jsforce/commit/2cc5761b0a0556c8a4e47c645c5c9fd906297034))
 
 
 
