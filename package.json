@@ -237,7 +237,7 @@
     "@babel/preset-typescript": "^7.23.0",
     "@babel/register": "^7.22.15",
     "@types/inquirer": "^6.5.0",
-    "@types/jest": "^29.5.5",
+    "@types/jest": "^29.5.14",
     "@types/multistream": "^2.1.1",
     "@types/node": "^18.15.3",
     "@types/node-fetch": "^2.5.7",
