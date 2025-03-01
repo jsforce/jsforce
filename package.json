@@ -217,7 +217,7 @@
     "@sindresorhus/is": "^4",
     "base64url": "^3.0.1",
     "commander": "^4.0.1",
-    "core-js": "^3.33.0",
+    "core-js": "^3.40.0",
     "csv-parse": "^5.5.2",
     "csv-stringify": "^6.4.4",
     "faye": "^1.4.0",
