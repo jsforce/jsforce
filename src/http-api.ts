@@ -266,7 +266,9 @@ export class HttpApi<S extends Schema> extends EventEmitter {
    * @protected
    */
   isSessionExpired(response: HttpResponse) {
-    return response.statusCode === 401;
+    // TODO:
+    // The connected app msg only applies to Agent API requests, we should move this to a separate SFAP/Agent API class later.
+    return response.statusCode === 401 && !response.body.includes('Connected app is not attached to Agent')
   }
 
   /**

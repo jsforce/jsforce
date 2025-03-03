@@ -77,9 +77,7 @@ async function startFetchRequest(
     if (resOrErr instanceof Response) {
       if (retryOpts.statusCodes.includes(resOrErr.status)) {
         if (maxRetry === retryCount) {
-          const err = new Error('Request failed');
-          err.name = 'RequestRetryError';
-          throw err;
+          return false
         } else {
           return true;
         }
@@ -172,9 +170,7 @@ async function startFetchRequest(
       logger.debug('Skipping retry...');
 
       if (maxRetry === retryCount) {
-        const error = new Error('Request failed', { cause: err });
-        error.name = 'RequestRetryError';
-        throw error;
+        throw err;
       } else {
         throw err;
       }

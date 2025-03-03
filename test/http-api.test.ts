@@ -39,6 +39,28 @@ describe('HTTP API', () => {
       return { res, retryCounter };
     }
 
+    it('returns response after retry limit is reached', async () => {
+      nock(loginUrl)
+        .get('/services/data/v59.0')
+        .times(4)
+        .reply(429, JSON.stringify({
+          errorCode: 'INTERNAL_SERVER_ERROR',
+          message: 'Invalid AiEvaluation identifier'
+        }))
+
+      const { retryCounter,res } = await fetch({
+        method: 'GET',
+        url: `${loginUrl}/services/data/v59.0`,
+      }, {
+          retry: {
+            maxRetries: 3
+          }
+        });
+      assert.ok('body' in res)
+      assert.equal(res.body, '{"errorCode":"INTERNAL_SERVER_ERROR","message":"Invalid AiEvaluation identifier"}')
+      assert.ok(retryCounter === 3);
+    })
+
     it('retries on specified status code', async () => {
       const attempts = 2;
       nock(loginUrl)
@@ -69,30 +91,6 @@ describe('HTTP API', () => {
         url: `${loginUrl}/services/data/v60.0`,
       });
       assert.ok(retryCounter === 0);
-    });
-
-    it('throws if last retry returns bad status code', async () => {
-      const attempts = 4;
-      nock(loginUrl)
-        .get('/services/data/v58.0/lala')
-        .times(attempts)
-        .reply(429);
-
-      const { retryCounter, err } = await fetch(
-        {
-          method: 'GET',
-          url: `${loginUrl}/services/data/v58.0/lala`,
-        },
-        {
-          retry: {
-            maxRetries: 3,
-          },
-        },
-      );
-      assert.ok(retryCounter === 3);
-      assert.ok(err instanceof Error);
-      assert.ok(err.name === 'RequestRetryError');
-      assert.ok(err.message === 'Request failed');
     });
 
     it('retries on socket error until it succeeds', async () => {
@@ -136,8 +134,7 @@ describe('HTTP API', () => {
       );
       assert.ok(retryCounter === 5);
       assert.ok(err instanceof Error);
-      assert.ok(err.name === 'RequestRetryError');
-      assert.ok(err.message === 'Request failed');
+      assert.ok(err.name === 'FetchError');
     });
 
     it('retries only on specified methods', async () => {
