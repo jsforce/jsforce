@@ -454,7 +454,7 @@ export class MetadataApi<S extends Schema> {
 
   /**
    * Checks the status of declarative metadata call deploy(), using either
-   * SOAP or REST APIs.  SOAP is the default.
+   * SOAP or REST APIs. SOAP is the default.
    */
   async checkDeployStatus(
     asyncProcessId: string,
