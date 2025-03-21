@@ -453,20 +453,33 @@ export class MetadataApi<S extends Schema> {
   }
 
   /**
-   * Checks the status of declarative metadata call deploy()
+   * Checks the status of declarative metadata call deploy(), using either
+   * SOAP or REST APIs.  SOAP is the default.
    */
-  checkDeployStatus(
+  async checkDeployStatus(
     asyncProcessId: string,
     includeDetails: boolean = false,
+    rest: boolean = false,
   ): Promise<DeployResult> {
-    return this._invoke(
-      'checkDeployStatus',
-      {
-        asyncProcessId,
-        includeDetails,
-      },
-      ApiSchemas.DeployResult,
-    );
+    if (rest) {
+      const url = `/metadata/deployRequest/${asyncProcessId}${includeDetails ? '?includeDetails=true' : ''}`;
+      type CheckDeployStatusRest = {
+        id: string;
+        validatedDeployRequestId: string | null;
+        deployResult: DeployResult;
+        deployOptions: DeployOptions | null;
+      }
+      return (await this._conn.requestGet<CheckDeployStatusRest>(url)).deployResult;
+    } else {
+      return this._invoke(
+        'checkDeployStatus',
+        {
+          asyncProcessId,
+          includeDetails,
+        },
+        ApiSchemas.DeployResult,
+      );
+    }
   }
 
  async cancelDeploy(id: string): Promise<CancelDeployResult>{

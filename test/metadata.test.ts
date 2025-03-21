@@ -230,6 +230,26 @@ if (isNodeJS()) {
       );
       assert.ok(result.numberTestsCompleted === 1);
     });
+
+    it('should check deploy status', async () => {
+      const zipBuffer = await fs.promises.readFile(
+        path.join(__dirname, '/data/MyPackage.zip'),
+      );
+      const result = await conn.metadata
+        .deployRest(zipBuffer, {
+          testLevel: 'RunSpecifiedTests',
+          runTests: ['MyApexTriggerTest'],
+        });
+      assert.ok(result.id);
+      const deployResult = await conn.metadata.checkDeployStatus(result.id, true, true);
+      assert.ok(deployResult.done === true);
+      assert.ok(deployResult.success === true);
+      assert.ok(deployResult.status === 'Succeeded');
+      assert.ok(deployResult.numberComponentErrors === 0);
+      assert.ok(
+        deployResult.numberComponentsDeployed === deployResult.numberComponentsTotal,
+      );
+    });
   });
 }
 
