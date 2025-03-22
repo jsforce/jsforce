@@ -6,6 +6,7 @@ import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject, isString } from './util';
 import { isNodeJS } from './helper/env';
+import { DeployResult } from 'jsforce/lib/api/metadata';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();
@@ -235,13 +236,20 @@ if (isNodeJS()) {
       const zipBuffer = await fs.promises.readFile(
         path.join(__dirname, '/data/MyPackage.zip'),
       );
-      const result = await conn.metadata
-        .deployRest(zipBuffer, {
-          testLevel: 'RunSpecifiedTests',
-          runTests: ['MyApexTriggerTest'],
-        });
+      const result = await conn.metadata.deployRest(zipBuffer);
       assert.ok(result.id);
-      const deployResult = await conn.metadata.checkDeployStatus(result.id, true, true);
+
+      let count = 0;
+      let deployResult!: DeployResult;
+      while(count < 50) {
+        count++;
+        deployResult = await conn.metadata.checkDeployStatus(result.id, true, true);
+        if (deployResult.done === true) {
+          break;
+        }
+      }
+
+      assert.ok(deployResult);
       assert.ok(deployResult.done === true);
       assert.ok(deployResult.success === true);
       assert.ok(deployResult.status === 'Succeeded');
