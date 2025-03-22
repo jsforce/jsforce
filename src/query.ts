@@ -894,8 +894,7 @@ export class Query<
   }
 
   promise(): Promise<QueryResponse<R, QRT>> {
-    // TODO(cristian): verify this is correct
-    return Promise.resolve((this as unknown) as QueryResponse<R, QRT>);
+    return Promise.resolve<QueryResponse<R, QRT>>(this);
   }
 
   /**
