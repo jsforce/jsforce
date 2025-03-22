@@ -239,6 +239,10 @@ if (isNodeJS()) {
       const result = await conn.metadata.deployRest(zipBuffer);
       assert.ok(result.id);
 
+      const sleep500ms = async () => {
+        return new Promise(resolve => setTimeout(resolve, 500));
+      }
+
       let count = 0;
       let deployResult!: DeployResult;
       while(count < 50) {
@@ -247,6 +251,7 @@ if (isNodeJS()) {
         if (deployResult.done === true) {
           break;
         }
+        await sleep500ms();
       }
 
       assert.ok(deployResult);
