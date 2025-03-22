@@ -117,7 +117,7 @@ export class Cache {
    */
   clear(key?: string) {
     for (const k of Object.keys(this._entries)) {
-      if (!key || k.indexOf(key) === 0) {
+      if (!key || k.startsWith(key)) {
         this._entries[k].clear();
       }
     }

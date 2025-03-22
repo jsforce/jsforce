@@ -1,11 +1,16 @@
 browser
 lib
 module
+dist
 
 .npmignore
 .vscode
 .env
 .env*
+
+.wireit
+*.tsbuildinfo
+.eslintcache
 
 
 # Dependency directories

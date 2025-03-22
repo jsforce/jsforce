@@ -168,7 +168,7 @@ it('can download a static resource binary blob and properly interpret the result
   }
 });
 
-function createStaticResourceRequest(body: String | Buffer) {
+function createStaticResourceRequest(body: string | Buffer) {
   return {
     ContentType: 'application/zip',
     CacheControl: 'Private',
@@ -202,7 +202,7 @@ describe('single record crud', () => {
     });
     assert.ok(ret.success);
     assert.ok(typeof ret.id === 'string');
-    debugLevelId = ret.id as string;
+    debugLevelId = ret.id ;
   });
 
   //
@@ -242,16 +242,9 @@ describe('single record crud', () => {
     try {
       record = await conn.tooling.sobject('DebugLevel').retrieve(debugLevelId);
     } catch (error) {
-      err = error;
+      err = error as Error;
+      assert.ok(record === undefined);
+      assert.ok(err.name === 'NOT_FOUND');
     }
-    assert.ok(record === undefined);
-    assert.ok(err.name === 'NOT_FOUND');
   });
-});
-
-/**
- *
- */
-afterAll(async () => {
-  await connMgr.closeConnection(conn);
 });

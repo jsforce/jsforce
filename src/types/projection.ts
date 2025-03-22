@@ -6,7 +6,7 @@ import { StringKeys } from './util';
  */
 type FieldPath_3<SO extends SObjectDefinition> =
   | '*'
-  | StringKeys<SO['Fields']>[];
+  | Array<StringKeys<SO['Fields']>>;
 
 type FieldPath_2<
   SO extends SObjectDefinition,
@@ -17,7 +17,7 @@ type FieldPath_2<
   | {
       [K in StringKeys<PSOR>]?:
         | '*'
-        | FieldPath_3<Extract<PSOR[K], SObjectDefinition>>[];
+        | Array<FieldPath_3<Extract<PSOR[K], SObjectDefinition>>>;
     };
 
 type FieldPath_1<
@@ -29,7 +29,7 @@ type FieldPath_1<
   | {
       [K in StringKeys<PSOR>]?:
         | '*'
-        | FieldPath_2<Extract<PSOR[K], SObjectDefinition>>[];
+        | Array<FieldPath_2<Extract<PSOR[K], SObjectDefinition>>>;
     };
 
 type FieldPathSpecifier_<
@@ -43,7 +43,7 @@ type FieldPathSpecifier_<
   | {
       [K in StringKeys<PSOR>]?:
         | '*'
-        | FieldPath_1<Extract<PSOR[K], SObjectDefinition>>[];
+        | Array<FieldPath_1<Extract<PSOR[K], SObjectDefinition>>>;
     };
 
 export type FieldPathSpecifier<

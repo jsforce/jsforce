@@ -36,6 +36,7 @@ describe('CRUD based call', () => {
         type: 'Text',
         label: 'Test Object Name',
       },
+      description: 'This is a test #1 object for JSforce test',
       deploymentStatus: 'Deployed',
       sharingModel: 'ReadWrite',
     },
@@ -47,6 +48,7 @@ describe('CRUD based call', () => {
         type: 'AutoNumber',
         label: 'Test Object #',
       },
+      description: 'This is a test #2 object for JSforce test',
       deploymentStatus: 'InDevelopment',
       sharingModel: 'Private',
     },
@@ -78,7 +80,7 @@ describe('CRUD based call', () => {
     for (const result of results) {
       assert.ok(isString(result.fullName));
       assert.ok(isObject(result.nameField));
-      assert.ok(isString(result.nameField!.label)); // TODO: remove "!" when assertion function is introduced
+      assert.ok(isString(result.nameField.label)); // TODO: remove "!" when assertion function is introduced
     }
     rmetadata = results;
   });
@@ -88,6 +90,7 @@ describe('CRUD based call', () => {
    */
   it('should update metadata synchronously return updated custom object metadata', async () => {
     rmetadata[0].label = 'Updated Test Object Sync 2';
+    rmetadata[0].description = null;
     rmetadata[1].deploymentStatus = 'Deployed';
     const results = await conn.metadata.update('CustomObject', rmetadata);
     assert.ok(Array.isArray(results));
@@ -96,6 +99,10 @@ describe('CRUD based call', () => {
       assert.ok(result.success === true);
       assert.ok(isString(result.fullName));
     }
+    const objMeta = await conn.metadata.read('CustomObject', fullNames);
+    assert.ok(objMeta[0].label === 'Updated Test Object Sync 2');
+    assert.ok(objMeta[0].description == null);
+    assert.ok(objMeta[1].deploymentStatus === 'Deployed');
     rmetadata = results; // eslint-disable-line require-atomic-updates
   });
 
@@ -152,7 +159,11 @@ describe('CRUD based call', () => {
       conn.version = '35.0';
     }
     try {
-      let result = await conn.metadata.rename('CustomObject', oldName, newName);
+      const result = await conn.metadata.rename(
+        'CustomObject',
+        oldName,
+        newName,
+      );
       assert.ok(result.success === true);
       assert.ok(isString(result.fullName));
       assert.ok(result.fullName === oldName);
@@ -295,8 +306,8 @@ describe('file based call', () => {
    *
    */
   it('should retrieve metadata in packaged file and retrieve package', async () => {
-    // increase default timeout of 10s to 1m
-    conn.metadata.pollTimeout = 60000;
+    // increase default timeout of 10s to 30s
+    conn.metadata.pollTimeout = 30000;
 
     const bufs: any[] = [];
     await new Promise((resolve, reject) => {
@@ -338,13 +349,4 @@ describe('session refresh', () => {
     assert.ok(refreshCalled);
     assert.ok(Array.isArray(results));
   });
-});
-
-/*------------------------------------------------------------------------*/
-
-/**
- *
- */
-afterAll(async () => {
-  await connMgr.closeConnection(conn);
 });

@@ -29,6 +29,54 @@ describe('login', () => {
     assert.ok(typeof userInfo.url === 'string');
   });
 
+  it('should not allow a lightning URL as instance URL', () => {
+    // .lightning
+    try {
+      conn = new Connection({
+        logLevel: config.logLevel,
+        proxyUrl: config.proxyUrl,
+        loginUrl: config.loginUrl,
+        instanceUrl: 'my-cool-url.lightning.force.com',
+      });
+      assert.fail('the above should throw for a lighting url');
+    } catch (e) {
+      assert.equal(
+        (e as Error).message,
+        'lightning URLs are not valid as instance URLs',
+      );
+    }
+    // .mil
+    try {
+      conn = new Connection({
+        logLevel: config.logLevel,
+        proxyUrl: config.proxyUrl,
+        loginUrl: config.loginUrl,
+        instanceUrl: 'my-cool-url.lightning.crmforce.mil',
+      });
+      assert.fail('the above should throw for a lighting url');
+    } catch (e) {
+      assert.equal(
+        (e as Error).message,
+        'lightning URLs are not valid as instance URLs',
+      );
+    }
+    // for china
+    try {
+      conn = new Connection({
+        logLevel: config.logLevel,
+        proxyUrl: config.proxyUrl,
+        loginUrl: config.loginUrl,
+        instanceUrl: 'my-cool-url.lightning.sfcrmapps.cn',
+      });
+      assert.fail('the above should throw for a lighting url');
+    } catch (e) {
+      assert.equal(
+        (e as Error).message,
+        'lightning URLs are not valid as instance URLs',
+      );
+    }
+  });
+
   //
   it('should execute query and return some records', async () => {
     const res = await conn.query('SELECT Id FROM User');
@@ -87,7 +135,8 @@ describe('logout', () => {
     try {
       await conn2.query('SELECT Id FROM User');
       assert.fail();
-    } catch (err) {
+    } catch (error) {
+      const err = error as Error;
       assert.ok(err && typeof err.message === 'string');
     }
   });
@@ -133,7 +182,8 @@ describe('logout', () => {
     try {
       await conn.query('SELECT Id FROM User');
       assert.fail();
-    } catch (err) {
+    } catch (error) {
+      const err = error as Error;
       assert.ok(err && typeof err.message === 'string');
     }
   });
@@ -222,7 +272,7 @@ if (isNodeJS()) {
         assert.fail();
       } catch (err) {
         assert.ok(err instanceof Error);
-        assert.ok(err.name === 'invalid_grant');
+        assert.ok(err.message === 'Unable to refresh session due to: expired access/refresh token');
       }
     });
   });

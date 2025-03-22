@@ -5,13 +5,13 @@ import { EOL } from 'node:os';
 
 $.verbose = false;
 
-// node v21 deprecates the `punycode` module:
+// node >= v21 deprecates the `punycode` module:
 // https://nodejs.org/en/blog/announcements/v21-release-announce#deprecations
-// The `sf` CLI is getting it via node-fetch v2 so we disable deprecations on node v21
+// The `sf` CLI is getting it via node-fetch v2 so we disable deprecations on node >= v21
 // to be able to parse JSON output.
 //
 // Remove once `sf` no longer depends on node-fetch v2.
-if (process.version.split('.')[0] === 'v21') {
+if (parseInt(process.versions.node.split('.')[0]) > 21) {
   process.env.NODE_OPTIONS = '--no-deprecation';
 }
 
@@ -28,7 +28,7 @@ if (
 
   await writeFile(hubOpts.jwtKeyFile, formatJwtKey());
 
-  await $`sf org login jwt --username ${hubOpts.username} --jwt-key-file "${hubOpts.jwtKeyFile}" --set-default-dev-hub --client-id ${hubOpts.clientId}`;
+  await $`sf org login jwt --username ${hubOpts.username} --jwt-key-file "jwtKey.txt" --set-default-dev-hub --client-id ${hubOpts.clientId}`;
 } else {
   // ensure there's a default devhub
   const defaultHub = JSON.parse(await $`sf config get target-dev-hub --json`);
@@ -46,7 +46,6 @@ await $`sf org create scratch --definition-file ${orgDefinitionFile} --wait 20 -
 await $`sf org generate password --target-org jsforce-test-org --json`;
 
 await $`sf project deploy start --metadata-dir ${join(
-  process.cwd(),
   'test',
   'package',
   'JSforceTestSuite',
@@ -74,11 +73,6 @@ await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --
 await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --external-id Id --target-org jsforce-test-org`;
 await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --external-id Id --target-org jsforce-test-org`;
 await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --external-id Id --target-org jsforce-test-org`;
-
-const pushTopicValues =
-  "Name='JSforceTestAccountUpdates' Query='SELECT Id, Name FROM Account' ApiVersion='54.0' NotifyForFields=Referenced NotifyForOperationCreate=true NotifyForOperationUpdate=true NotifyForOperationDelete=false NotifyForOperationUndelete=false";
-
-await $`sf data create record --sobject PushTopic --values ${pushTopicValues} --target-org jsforce-test-org`;
 
 if (!process.env.CI) {
   console.log(

@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "skipLibCheck": true,
+    "noEmit": true,
+    "lib": ["es2022", "dom"],
+    "module": "commonjs",
+    "strict": true,
+    "moduleResolution": "nodenext",
+    "paths": {
+      "jsforce": ["../"],
+      "jsforce/*": ["../*"]
+    },
+    "esModuleInterop": true
+  },
+  "include": ["./**/*.ts", ".eslintrc.js"]
+}

@@ -12,35 +12,6 @@ const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();
 conn.bulk.pollTimeout = 90 * 1000; // adjust poll timeout to test timeout.
 
-export async function insertAccounts(
-  id: string | number,
-  qty: number = 20,
-): Promise<BulkIngestBatchResult> {
-  if (typeof id === 'number') {
-    id = id.toString();
-  }
-
-  const insertRecords = [
-    ...Array.from(Array(qty), (a, i) => ({
-      Name: `Bulk Account ${id} #${i + 1}`,
-    })),
-  ];
-  const batchInsertRes = await conn.bulk.load(
-    'Account',
-    'insert',
-    insertRecords,
-  );
-
-  assert.ok(Array.isArray(batchInsertRes));
-  assert.ok(batchInsertRes.length === qty);
-  for (const res of batchInsertRes) {
-    assert.ok(isString(res.id));
-    assert.ok(res.success === true);
-  }
-
-  return batchInsertRes;
-}
-
 /**
  *
  */
@@ -91,19 +62,10 @@ it('should bulk update and return updated status', async () => {
     .sobject('Account')
     .find({ Name: { $like: `Bulk Account ${id}%` } }, ['Id', 'Name'])
     .execute();
-
-  const updatedRecords = records.map((rec) => ({
-    ...rec,
-    Name: `${rec.Name} (Updated)`,
-  }));
-  const batchUpdateRes = await conn.bulk.load(
-    'Account',
-    'update',
-    updatedRecords,
-  );
-
-  assert.ok(Array.isArray(batchUpdateRes));
-  for (const ret of batchUpdateRes) {
+  records = records.map((rec) => ({ ...rec, Name: `${rec.Name} (Updated)` }));
+  const rets = await conn.bulk.load('Account', 'update', records);
+  assert.ok(Array.isArray(rets));
+  for (const ret of rets) {
     assert.ok(isString(ret.id));
     assert.ok(ret.success === true);
   }
@@ -153,7 +115,7 @@ if (isNodeJS()) {
   it('should bulk insert from file and return inserted results', async () => {
     // insert 100 account records from csv file
     const fstream = fs.createReadStream(
-      path.join(__dirname, 'data/Account_bulk1_test.csv'),
+      path.join(__dirname, 'data/Account.csv'),
     );
     const batch = conn.bulk.load('Account', 'insert');
     fstream.pipe(batch.stream());
@@ -187,18 +149,15 @@ if (isNodeJS()) {
 
     const records = await conn
       .sobject('Account')
-      .find({ Name: { $like: `Bulk Account ${id}%` } });
-
-    assert.ok(Array.isArray(records));
-    assert.ok(records.length === 20);
-
-    const data = `Id\n${records.map((r: Record) => r.Id).join('\n')}\n`;
-
-    const deleteFile = path.join(__dirname, 'data/Account_delete.csv');
-
-    await fs.promises.writeFile(deleteFile, data);
-
-    const fstream = fs.createReadStream(deleteFile);
+      .find({ Name: { $like: 'Bulk Account%' } });
+    const data = `Id\n${records.map((r: any) => r.Id).join('\n')}\n`;
+    const deleteFileName = path.join(__dirname, 'data/Account_delete.csv');
+    await new Promise<void>((resolve, reject) => {
+      fs.writeFile(deleteFileName, data, (err) =>
+        err ? reject(err) : resolve(),
+      );
+    });
+    const fstream = fs.createReadStream(deleteFileName);
     const batch = conn.bulk.load('Account', 'delete');
     fstream.pipe(batch.stream());
     const [rets] = await Promise.all([
@@ -216,20 +175,18 @@ if (isNodeJS()) {
       assert.ok(isString(ret.id));
       assert.ok(ret.success === true);
     }
-
-    // dynamic import so that browser tests work
-    const fsExtra = require('fs-extra');
-    fsExtra.remove(deleteFile);
   });
 
   it('should bulk query and get records with yielding file output', async () => {
-    const file = path.join(__dirname, '/data/BulkQuery_export.csv');
+    const file = path.join(__dirname, 'data', 'BulkQuery_export.csv');
     const fstream = fs.createWriteStream(file);
     const count = await conn.sobject(config.bigTable).count({});
+    const queryStream = await conn.bulk.query(
+      `SELECT Id, Name FROM ${config.bigTable}`,
+    );
     const records = await new Promise<any[]>((resolve, reject) => {
       const recs: Record[] = [];
-      conn.bulk
-        .query(`SELECT Id, Name FROM ${config.bigTable}`)
+      queryStream
         .on('record', (rec) => recs.push(rec))
         .on('error', reject)
         .stream()
@@ -245,10 +202,6 @@ if (isNodeJS()) {
     assert.ok(isString(data) && data !== '');
     const lines = data.replace(/[\r\n]+$/, '').split(/[\r\n]/);
     assert.ok(lines.length === records.length + 1);
-
-    // dynamic import so that browser tests work
-    const fsExtra = require('fs-extra');
-    fsExtra.remove(file);
   });
 }
 
@@ -338,6 +291,7 @@ it('should bulk update using Query#update and return updated status', async () =
   for (const record of records) {
     assert.ok(isString(record.Id));
     assert.ok(/\(Updated\)$/.test(record.Name));
+    assert.ok(record.BillingState === null);
   }
 });
 
@@ -439,7 +393,7 @@ it('should bulk update using Query#update with bulkThreshold modified and return
   assert.ok(records.length === smallAccountNum);
   for (const record of updatedRecords) {
     assert.ok(isString(record.Id));
-    assert.ok(/\(Updated\)$/.test(record.Name));
+    assert.ok(record.Name.endsWith('(Updated)'));
     assert.ok(record.BillingState === null);
   }
 });
@@ -485,11 +439,4 @@ it('should bulk delete using Query#destroy with bulkThreshold modified and retur
     assert.ok(isString(res.id));
     assert.ok(res.success === true);
   }
-});
-
-/**
- *
- */
-afterAll(async () => {
-  await connMgr.closeConnection(conn);
 });

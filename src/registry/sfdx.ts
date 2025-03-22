@@ -1,5 +1,5 @@
 import { exec } from 'child_process';
-import stripAnsi from 'strip-ansi';
+import { stripVTControlCharacters } from 'util';
 import Connection from '../connection';
 import { Registry, ConnectionConfig, ClientConfig } from './types';
 import { Schema } from '../types';
@@ -78,7 +78,7 @@ export class SfdxRegistry implements Registry {
         }
       });
     });
-    const body = stripAnsi(buf.toString());
+    const body = stripVTControlCharacters(buf.toString());
     let ret: SfdxCommandOutput;
     try {
       ret = JSON.parse(body) as SfdxCommandOutput;
@@ -169,11 +169,12 @@ export class SfdxRegistry implements Registry {
   async removeConnectionConfig(name: string) {
     await this._execCommand('force:org:delete', { u: name });
   }
-
+  // eslint-disable-next-line @typescript-eslint/require-await
   async getClientConfig(_name: string) {
     return null;
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async getClientNames() {
     return [];
   }

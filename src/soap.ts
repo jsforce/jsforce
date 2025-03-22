@@ -12,6 +12,7 @@ import {
   SoapSchemaDef,
 } from './types';
 import { isMapObject, isObject } from './util/function';
+import { getBodySize } from './util/get-body-size';
 
 /**
  *
@@ -75,7 +76,7 @@ export function castTypeUsingSchema(
       const nillable =
         (Array.isArray(s) && s.length === 2 && s[0] === '?') ||
         (isMapObject(s) && '?' in s) ||
-        (typeof s === 'string' && s[0] === '?');
+        (typeof s === 'string' && s.startsWith('?'));
       if (typeof v === 'undefined' && nillable) {
         return o;
       }
@@ -85,7 +86,7 @@ export function castTypeUsingSchema(
       };
     }, obj);
   } else {
-    const nillable = typeof schema === 'string' && schema[0] === '?';
+    const nillable = typeof schema === 'string' && schema.startsWith('?');
     const type =
       typeof schema === 'string'
         ? nillable
@@ -152,13 +153,16 @@ function toXML(name: object | string | null, value?: any): string {
     return value.map((v) => toXML(name, v)).join('');
   } else {
     const attrs = [];
-    const elems = [];
-    if (isMapObject(value)) {
+    if (value === null) {
+      attrs.push('xsi:nil="true"');
+      value = '';
+    } else if (isMapObject(value)) {
+      const elems = [];
       for (const k of Object.keys(value)) {
         const v = value[k];
-        if (k[0] === '@') {
+        if (k.startsWith('@')) {
           const kk = k.substring(1);
-          attrs.push(kk + '="' + v + '"');
+          attrs.push(`${kk}="${v as string}"`);
         } else {
           elems.push(toXML(k, v));
         }
@@ -233,6 +237,24 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
   /** @override */
   beforeSend(request: HttpRequest & { _message: object }) {
     request.body = this._createEnvelope(request._message);
+
+    const headers = request.headers || {};
+
+    const bodySize = getBodySize(request.body, request.headers);
+
+    if (
+      request.method === 'POST' &&
+      !('transfer-encoding' in headers) &&
+      !('content-length' in headers) &&
+      !!bodySize
+    ) {
+      this._logger.debug(
+        `missing 'content-length' header, setting it to: ${bodySize}`,
+      );
+      headers['content-length'] = String(bodySize);
+    }
+
+    request.headers = headers;
   }
 
   /** @override **/

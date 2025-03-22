@@ -1,7 +1,7 @@
 name: tests
 on:
   push:
-    branches-ignore: [2.0]
+    branches-ignore: [main]
   workflow_dispatch:
 
 jobs:
@@ -18,10 +18,16 @@ jobs:
       - run: |
           chromedriver --url-base=/wd/hub &
           sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
+
+      - name: Fix Chrome sandbox permissions
+        run: |
+          sudo chown root:root /opt/hostedtoolcache/setup-chrome/chromium/stable/x64/chrome-sandbox
+          sudo chmod 4755 /opt/hostedtoolcache/setup-chrome/chromium/stable/x64/chrome-sandbox
+
       - uses: actions/setup-node@v3
         with:
           node-version: lts/*
-
+      - uses: google/wireit@setup-github-actions-caching/v1
       - name: Install dependencies
         run: npm install
 
@@ -34,7 +40,7 @@ jobs:
           SF_OAUTH2_CLIENT_ID: ${{ secrets.SF_OAUTH2_CLIENT_ID }}
           SF_OAUTH2_JWT_KEY: ${{ secrets.SF_OAUTH2_JWT_KEY }}
         run: |
-          npx zx scripts/org-setup.mjs
+          npm run test:setup:org
 
       - name: Run browser tests with 3 attempts
         uses: nick-fields/retry@943e742917ac94714d2f408a0e8320f2d1fcafcd
@@ -69,6 +75,8 @@ jobs:
         with:
           node-version: lts/*
 
+      - uses: google/wireit@setup-github-actions-caching/v1
+
       - name: Lockfile lint
         run: |
           npm install -g lockfile-lint
@@ -81,7 +89,8 @@ jobs:
       - name: Lint and Type Check
         run: |
           npm run lint
-          npm run build:types
+          # TODO: typecheck fails if there is no build, see if tests are importing from lib
+          npm run build:node:cjs
           npm run typecheck
 
   test-node-linux:
@@ -96,6 +105,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node_version }}
+      - uses: google/wireit@setup-github-actions-caching/v1
 
       - name: Install dependencies
         run: npm install
@@ -109,7 +119,7 @@ jobs:
           SF_OAUTH2_CLIENT_ID: ${{ secrets.SF_OAUTH2_CLIENT_ID }}
           SF_OAUTH2_JWT_KEY: ${{ secrets.SF_OAUTH2_JWT_KEY }}
         run: |
-          npx zx scripts/org-setup.mjs
+          npm run test:setup:org
 
       - name: Run Node tests
         env:
@@ -151,45 +161,45 @@ jobs:
       TESTKIT_JWT_KEY: ${{ secrets.SF_OAUTH2_JWT_KEY }}
       TESTKIT_HUB_INSTANCE: ${{ secrets.SF_HUB_INSTANCE }}
 
- #  test-node-windows:
- #    needs: lint-and-typecheck
- #    runs-on: windows-latest
- #    strategy:
- #      matrix:
- #        node_version: [lts/*]
- #      fail-fast: false
- #    steps:
- #      - uses: actions/checkout@v3
- #      - uses: actions/setup-node@v3
- #        with:
- #          node-version: ${{ matrix.node_version }}
- #
- #      - name: Install dependencies
- #        run: npm install
- #
- #      - name: Install sf CLI
- #        run: npm install --global @salesforce/cli
- #
- #      - name: Setup scratch org
- #        env:
- #          SF_HUB_USERNAME: ${{ secrets.SF_HUB_USERNAME }}
- #          SF_OAUTH2_CLIENT_ID: ${{ secrets.SF_OAUTH2_CLIENT_ID }}
- #          SF_OAUTH2_JWT_KEY: ${{ secrets.SF_OAUTH2_JWT_KEY }}
- #        run: |
- #          npx zx scripts/org-setup.mjs
- #
- #      - name: Run Node tests
- #        env:
- #          SF_OAUTH2_CLIENT_ID: ${{ secrets.SF_OAUTH2_CLIENT_ID }}
- #          SF_OAUTH2_CLIENT_SECRET: ${{ secrets.SF_OAUTH2_CLIENT_SECRET }}
- #          SF_OAUTH2_REDIRECT_URI: ${{ secrets.SF_OAUTH2_REDIRECT_URI }}
- #        run: |
- #          $env:SF_USERNAME=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.username') `
- #          $env:SF_PASSWORD=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.password') `
- #          $env:SF_LOGIN_URL=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.instanceUrl') `
- #          npm run test:node
- #
- #      - name: Delete scratch org
- #        if: always()
- #        run: sf org delete scratch --target-org jsforce-test-org --no-prompt
- # 
+  test-node-windows:
+    needs: lint-and-typecheck
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        node_version: [lts/*]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node_version }}
+      - uses: google/wireit@setup-github-actions-caching/v1
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install sf CLI
+        run: npm install --global @salesforce/cli@nightly
+
+      - name: Setup scratch org
+        env:
+          SF_HUB_USERNAME: ${{ secrets.SF_HUB_USERNAME }}
+          SF_OAUTH2_CLIENT_ID: ${{ secrets.SF_OAUTH2_CLIENT_ID }}
+          SF_OAUTH2_JWT_KEY: ${{ secrets.SF_OAUTH2_JWT_KEY }}
+        run: |
+          npm run test:setup:org
+
+      - name: Run Node tests
+        env:
+          SF_OAUTH2_CLIENT_ID: ${{ secrets.SF_OAUTH2_CLIENT_ID }}
+          SF_OAUTH2_CLIENT_SECRET: ${{ secrets.SF_OAUTH2_CLIENT_SECRET }}
+          SF_OAUTH2_REDIRECT_URI: ${{ secrets.SF_OAUTH2_REDIRECT_URI }}
+        run: |
+          $env:SF_USERNAME=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.username')
+          $env:SF_PASSWORD=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.password')
+          $env:SF_LOGIN_URL=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.instanceUrl')
+          npm run test:node
+
+      - name: Delete scratch org
+        if: always()
+        run: sf org delete scratch --target-org jsforce-test-org --no-prompt

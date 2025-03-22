@@ -1,10 +1,10 @@
 /**
  *
  */
-import { createHash, randomBytes } from 'crypto';
+import {createHash, randomBytes} from 'crypto';
 import querystring from 'querystring';
-import Transport, { XdProxyTransport, HttpProxyTransport } from './transport';
-import { Optional } from './types';
+import Transport, {HttpProxyTransport, XdProxyTransport} from './transport';
+import {Optional} from './types';
 
 const defaultOAuth2Config = {
   loginUrl: 'https://login.salesforce.com',
@@ -100,10 +100,13 @@ export class OAuth2 {
       this.revokeServiceUrl =
         revokeServiceUrl || `${this.loginUrl}/services/oauth2/revoke`;
     } else {
-      this.loginUrl = loginUrl || defaultOAuth2Config.loginUrl;
-      this.authzServiceUrl = `${this.loginUrl}/services/oauth2/authorize`;
-      this.tokenServiceUrl = `${this.loginUrl}/services/oauth2/token`;
-      this.revokeServiceUrl = `${this.loginUrl}/services/oauth2/revoke`;
+      this.loginUrl = loginUrl ?? defaultOAuth2Config.loginUrl
+
+      const maybeSlash = this.loginUrl.endsWith('/') ? '' : '/'
+
+      this.authzServiceUrl = `${this.loginUrl}${maybeSlash}services/oauth2/authorize`
+      this.tokenServiceUrl = `${this.loginUrl}${maybeSlash}services/oauth2/token`
+      this.revokeServiceUrl = `${this.loginUrl}${maybeSlash}services/oauth2/revoke`
     }
     this.clientId = clientId;
     this.clientSecret = clientSecret;
@@ -130,10 +133,9 @@ export class OAuth2 {
     if (this.codeVerifier) {
       // code verifier must be a base 64 url encoded hash of 128 bytes of random data. Our random data is also
       // base 64 url encoded. See Connection.create();
-      const codeChallenge = base64UrlEscape(
+      params.code_challenge = base64UrlEscape(
         createHash('sha256').update(this.codeVerifier).digest('base64'),
       );
-      params.code_challenge = codeChallenge;
     }
 
     const _params = {
@@ -144,7 +146,7 @@ export class OAuth2 {
     };
     return (
       this.authzServiceUrl +
-      (this.authzServiceUrl.indexOf('?') >= 0 ? '&' : '?') +
+      (this.authzServiceUrl.includes('?') ? '&' : '?') +
       querystring.stringify(_params as { [name: string]: any })
     );
   }
@@ -211,7 +213,7 @@ export class OAuth2 {
     username: string,
     password: string,
   ): Promise<TokenResponse> {
-    if (!this.clientId || !this.clientSecret || !this.redirectUri) {
+    if (!this.clientId || !this.clientSecret) {
       throw new Error('No valid OAuth2 client configuration set');
     }
     const ret = await this._postParams({
@@ -220,7 +222,6 @@ export class OAuth2 {
       password,
       client_id: this.clientId,
       client_secret: this.clientSecret,
-      redirect_uri: this.redirectUri,
     });
     return ret as TokenResponse;
   }

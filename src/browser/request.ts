@@ -106,6 +106,7 @@ async function startFetchRequest(
     () => controller?.abort(),
   );
   const headers: { [key: string]: any } = {};
+  // @ts-expect-error no .keys()?
   for (const headerName of res.headers.keys()) {
     headers[headerName.toLowerCase()] = res.headers.get(headerName);
   }
@@ -195,12 +196,12 @@ async function startXmlHttpRequest(
     () => xhr.abort(),
   );
   const headerNames = getResponseHeaderNames(xhr);
-  const headers = headerNames.reduce(
+  const headers = headerNames.reduce<{ [name: string]: string }>(
     (headers, headerName) => ({
       ...headers,
       [headerName]: xhr.getResponseHeader(headerName) || '',
     }),
-    {} as { [name: string]: string },
+    {},
   );
   const response = {
     statusCode: xhr.status,

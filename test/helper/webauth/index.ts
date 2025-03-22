@@ -20,24 +20,23 @@ async function loginAndApprove(
     // authorization page
     await page.click('#oaapprove');
     await page.waitForNavigation({ waitUntil: 'networkidle2' });
-    await page.waitForTimeout(1000);
+    await delay(1000);
     return loginAndApprove(page, username, password);
   } else if (url.indexOf('/?ec=302') > 0) {
     // login page
-    await page.waitForTimeout(0);
     await page.type('#username', username);
     await page.type('#password', password);
     await page.click('[name=Login]');
     await page.waitForNavigation({ waitUntil: 'networkidle2' });
     return loginAndApprove(page, username, password);
-  } else if (url.indexOf('http://localhost') === 0) {
+  } else if (url.startsWith('http://localhost')) {
     // callback response
     return retrieveCallbackedParameters(url);
   } else if (url.indexOf('/setup/secur/RemoteAccessErrorPage.apexp') > 0) {
     // authorization error
     throw new Error('invalid authorization error');
   } else {
-    await page.waitForTimeout(1000);
+    await delay(1000);
     return loginAndApprove(page, username, password);
   }
 }
@@ -48,6 +47,7 @@ export default async function authorize(
   password: string,
 ) {
   const browser = await puppeteer.launch({
+    headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
   let ret;
@@ -56,7 +56,7 @@ export default async function authorize(
     await page.setRequestInterception(true);
     page.on('request', (request) => {
       const reqUrl = request.url();
-      if (reqUrl.indexOf('http://localhost') === 0) {
+      if (reqUrl.startsWith('http://localhost')) {
         request.respond({
           status: 200,
           contentType: 'text/html',
@@ -74,4 +74,8 @@ export default async function authorize(
     }
   }
   return ret;
+}
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }

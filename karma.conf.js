@@ -37,10 +37,10 @@ module.exports = function (config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['jasmine'],
+    frameworks: ['jasmine', 'webpack'],
 
     // list of files / patterns to load in the browser
-    files: ['dist/jsforce.js', 'test/**/*.test.ts'],
+    files: ['dist/jsforce.js', 'test/**/!(*http-api).test.ts'],
 
     // list of files / patterns to exclude
     exclude: [],

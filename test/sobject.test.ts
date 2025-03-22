@@ -184,8 +184,7 @@ it('should select records including child objects and return records with child 
       assert.ok(Array.isArray(crecords));
       assert.ok(crecords.length > 0);
       assert.ok(crecords.length < 3);
-      for (let j = 0; j < crecords.length; j++) {
-        const crecord = crecords[j];
+      for (const crecord of crecords) {
         assert.ok(isString(crecord.Id));
         assert.ok(isString(crecord.FirstName));
         assert.ok(isString(crecord.LastName));
@@ -486,11 +485,4 @@ it('should explain query plan of list view and get explain result', async () => 
     assert.ok(isNumber(plan.sobjectCardinality));
     assert.ok(isString(plan.sobjectType));
   }
-});
-
-/**
- *
- */
-afterAll(async () => {
-  await connMgr.closeConnection(conn);
 });

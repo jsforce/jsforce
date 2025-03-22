@@ -27,7 +27,7 @@ describe('single record crud', () => {
     const ret = await conn.sobject('Account').create({ Name: 'Hello' });
     assert.ok(ret.success);
     assert.ok(typeof ret.id === 'string');
-    accountId = ret.id as string;
+    accountId = ret.id ;
   });
 
   //
@@ -181,10 +181,13 @@ describe('upsert', () => {
       };
       await conn.sobject(config.upsertTable).upsert(rec2, config.upsertField);
       assert.fail();
-    } catch (err) {
+    } catch (error) {
+      const err = error as Error & {
+        data: any;
+      };
       assert.ok(err.name === 'MULTIPLE_CHOICES');
-      assert.ok(Array.isArray(err.content));
-      assert.ok(typeof err.content[0] === 'string');
+      assert.ok(Array.isArray(err.data));
+      assert.ok(typeof err.data[0] === 'string');
     }
   });
 });
@@ -198,19 +201,24 @@ describe('search', () => {
 
     await insertAccounts(id, 20);
 
-    // wait 10s before running executing sosl search
-    await delay(10000);
+    const testRetryLimit = 5;
+    let retryCounter = 0
 
-    const { searchRecords } = await conn.search(
-      `FIND {"${id}"} IN NAME FIELDS RETURNING Account(Id, Name)`,
-    );
-    assert.ok(searchRecords.length === 20);
+    let recordsFound = false;
+
+    while (!recordsFound && retryCounter <= testRetryLimit) {
+      // wait 10s before running sosl search
+      await delay(10000);
+
+      const { searchRecords } = await conn.search(
+        `FIND {"${id}"} IN NAME FIELDS RETURNING Account(Id, Name)`,
+      );
+      if (searchRecords.length === 20) {
+        recordsFound = true
+      } else {
+        retryCounter++
+      }
+    }
+    assert.ok(recordsFound)
   });
-});
-
-/**
- *
- */
-afterAll(async () => {
-  await connMgr.closeConnection(conn);
 });

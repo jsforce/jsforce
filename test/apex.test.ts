@@ -82,10 +82,3 @@ it('should delete account info and get no account for delete account id', async 
   const records = await conn.sobject('Account').find({ Id: accountId });
   assert.ok(records.length === 0);
 });
-
-/**
- *
- */
-afterAll(async () => {
-  await connMgr.closeConnection(conn);
-});

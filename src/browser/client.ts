@@ -3,7 +3,6 @@
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
 import { EventEmitter } from 'events';
-import qs from 'querystring';
 import Connection, { ConnectionConfig } from '../connection';
 import OAuth2, { TokenResponse } from '../oauth2';
 
@@ -26,12 +25,12 @@ function popupWin(url: string, w: number, h: number) {
 function handleCallbackResponse() {
   const res = checkCallbackResponse();
   const state = localStorage.getItem('jsforce_state');
-  if (res && state && res.body.state === state) {
+  if (res && state && res.body.get('state') === state) {
     localStorage.removeItem('jsforce_state');
     const [prefix, promptType] = state.split('.');
     const cli = new BrowserClient(prefix);
     if (res.success) {
-      cli._storeTokens(res.body as TokenResponse);
+      cli._storeTokens(Object.fromEntries(res.body) as TokenResponse);
       location.hash = '';
     } else {
       cli._storeError(res.body);
@@ -49,13 +48,13 @@ function handleCallbackResponse() {
 function checkCallbackResponse() {
   let params;
   if (window.location.hash) {
-    params = qs.parse(window.location.hash.substring(1));
-    if (params.access_token) {
+    params = new URLSearchParams(window.location.hash.substring(1));
+    if (params.get('access_token')) {
       return { success: true, body: params };
     }
   } else if (window.location.search) {
-    params = qs.parse(window.location.search.substring(1));
-    if (params.error) {
+    params = new URLSearchParams(window.location.search.substring(1));
+    if (params.get('error')) {
       return { success: false, body: params };
     }
   }

@@ -16,6 +16,7 @@ import {
   Schema,
 } from './types';
 import { createLazyStream } from './util/stream';
+import { getBodySize } from './util/get-body-size';
 
 /** @private */
 function parseJSON(str: string) {
@@ -126,6 +127,25 @@ export class HttpApi<S extends Schema> extends EventEmitter {
         // when session refresh delegate is available
         if (this.isSessionExpired(response) && refreshDelegate) {
           await refreshDelegate.refresh(requestTime);
+          /* remove the `content-length` header after token refresh
+           *
+           * SOAP requests include the access token their the body,
+           * if the first req had an invalid token and jsforce successfully
+           * refreshed it we need to remove the `content-length` header
+           * so that it get's re-calculated again with the new body.
+           *
+           * REST request aren't affected by this because the access token
+           * is sent via HTTP headers
+           *
+           * `_message` is only present in SOAP requests
+           */
+          if (
+            '_message' in request &&
+            request.headers &&
+            'content-length' in request.headers
+          ) {
+            delete request.headers['content-length'];
+          }
           return this.request(request);
         }
         if (this.isErrorResponse(response)) {
@@ -162,6 +182,23 @@ export class HttpApi<S extends Schema> extends EventEmitter {
       }
       headers['Sforce-Call-Options'] = callOptions.join(', ');
     }
+
+    const bodySize = getBodySize(request.body, headers);
+
+    const cannotHaveBody = ['GET', 'HEAD', 'OPTIONS'].includes(request.method);
+
+    if (
+      !cannotHaveBody &&
+      !!request.body &&
+      !('transfer-encoding' in headers) &&
+      !('content-length' in headers) &&
+      !!bodySize
+    ) {
+      this._logger.debug(
+        `missing 'content-length' header, setting it to: ${bodySize}`,
+      );
+      headers['content-length'] = String(bodySize);
+    }
     request.headers = headers;
   }
 
@@ -179,6 +216,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
   /**
    * @private
    */
+  // eslint-disable-next-line @typescript-eslint/require-await
   async parseResponseBody(response: HttpResponse) {
     const contentType = this.getResponseContentType(response) || '';
     const parseBody = /^(text|application)\/xml(;|$)/.test(contentType)
@@ -191,6 +229,8 @@ export class HttpApi<S extends Schema> extends EventEmitter {
     try {
       return parseBody(response.body);
     } catch (e) {
+      // TODO(next major): we could throw a new "invalid response body" error instead.
+      this._logger.debug(`Failed to parse body of content-type: ${contentType}. Error: ${(e as Error).message}`)
       return response.body;
     }
   }
@@ -226,7 +266,9 @@ export class HttpApi<S extends Schema> extends EventEmitter {
    * @protected
    */
   isSessionExpired(response: HttpResponse) {
-    return response.statusCode === 401;
+    // TODO:
+    // The connected app msg only applies to Agent API requests, we should move this to a separate SFAP/Agent API class later.
+    return response.statusCode === 401 && !response.body.includes('Connected app is not attached to Agent')
   }
 
   /**
@@ -251,7 +293,13 @@ export class HttpApi<S extends Schema> extends EventEmitter {
    */
   parseError(body: any) {
     const errors = body;
-    return Array.isArray(errors) ? errors[0] : errors;
+
+    // XML response
+    if (errors.Errors) {
+      return errors.Errors.Error;
+    }
+
+    return errors;
   }
 
   /**
@@ -265,6 +313,17 @@ export class HttpApi<S extends Schema> extends EventEmitter {
     } catch (e) {
       // eslint-disable no-empty
     }
+
+    if (Array.isArray(error)) {
+      if (error.length === 1){
+        error = error[0]
+      } else {
+        return new HttpApiError(
+          `Multiple errors returned.
+  Check \`error.data\` for the error details`, 'MULTIPLE_API_ERRORS', error)
+      }
+    }
+
     error =
       typeof error === 'object' &&
       error !== null &&
@@ -280,12 +339,13 @@ export class HttpApi<S extends Schema> extends EventEmitter {
       return new HttpApiError(
         `HTTP response contains html content.
 Check that the org exists and can be reached.
-See error.content for the full html response.`,
+See \`error.data\` for the full html response.`,
         error.errorCode,
         error.message,
       );
     }
-    return new HttpApiError(error.message, error.errorCode);
+
+    return error instanceof HttpApiError ? error : new HttpApiError(error.message, error.errorCode, error);
   }
 }
 
@@ -293,13 +353,26 @@ See error.content for the full html response.`,
  *
  */
 class HttpApiError extends Error {
+  /**
+   * This contains error-specific details, usually returned from the API.
+   */
+  data: any
   errorCode: string;
-  content: any;
-  constructor(message: string, errorCode?: string | undefined, content?: any) {
+
+  constructor(message: string, errorCode?: string | undefined, data?: any) {
     super(message);
     this.name = errorCode || this.name;
     this.errorCode = this.name;
-    this.content = content;
+    this.data = data;
+  }
+
+  /**
+   * This will be removed in the next major (v4)
+   *
+   * @deprecated use `error.data` instead
+   */
+  get content() {
+    return this.data;
   }
 }
 

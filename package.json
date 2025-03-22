@@ -10,7 +10,7 @@
     "database.com"
   ],
   "homepage": "http://github.com/jsforce/jsforce",
-  "version": "2.0.0-beta.29",
+  "version": "3.6.6",
   "repository": {
     "type": "git",
     "url": "git://github.com/jsforce/jsforce.git"
@@ -19,11 +19,10 @@
   "licenses": [
     {
       "type": "MIT",
-      "url": "http://github.com/jsforce/jsforce/raw/master/LICENSE"
+      "url": "http://github.com/jsforce/jsforce/raw/main/LICENSE"
     }
   ],
   "main": "./index",
-  "module": "./module/index",
   "browser": {
     ".": "./browser/index.js",
     "./index.js": "./browser/index.js",
@@ -33,31 +32,162 @@
     "./browser/request.js": "./browser/browser/request.js"
   },
   "types": "./index",
-  "scripts": {
-    "clean": "rimraf lib/* module/* browser/*",
-    "clean-test-failures-file": "rimraf test/karma/karma-failed-tests.txt",
-    "build": "run-s build:transpile build:bundle",
-    "build:transpile": "run-p build:types build:lib build:module build:browser",
-    "build:types": "tsc --emitDeclarationOnly --declaration -p src --outDir lib",
-    "build:lib": "cross-env BABEL_ENV=production npm run build:src -- -d lib",
-    "build:module": "cross-env BABEL_ENV=module npm run build:src -- -d module",
-    "build:browser": "cross-env BABEL_ENV=browser npm run build:src -- -d browser",
-    "build:src": "babel src --extensions \".ts\" --source-maps inline",
-    "build:bundle": "webpack",
-    "lint": "eslint --ext .ts,.js src test",
-    "typecheck": "tsc -p src --noEmit",
-    "pretest:node": "run-s build:transpile",
-    "pretest:browser": "run-s build:browser build:bundle",
-    "pretest:browser-ci": "npm run clean-test-failures-file && npm run pretest:browser",
-    "proxy-server": "node node_modules/jsforce-ajax-proxy/lib/server.js",
-    "test": "run-s test:node test:browser",
-    "test:node": "jest --forceExit",
-    "test:browser": "karma start",
-    "test:browser-ci": "concurrently --success first --kill-others \"karma start\" \"npm:proxy-server\"",
-    "test:browser-ci:retry": "concurrently --success first --kill-others \"karma start --retry-failed\" \"npm:proxy-server\""
+  "wireit": {
+    "build": {
+      "dependencies": [
+        "build:transpile",
+        "build:bundle"
+      ]
+    },
+    "build:transpile": {
+      "dependencies": [
+        "build:node:cjs",
+        "build:browser"
+      ]
+    },
+    "build:node:cjs": {
+      "command": "tsc -p . --pretty --incremental",
+      "files": [
+        "src/**/*.ts",
+        "**/tsconfig.json"
+      ],
+      "output": [
+        "lib/**",
+        "*.tsbuildinfo"
+      ],
+      "clean": "if-file-deleted"
+    },
+    "build:browser": {
+      "command": "babel src --extensions .ts --source-maps inline --env-name browser --out-dir browser",
+      "files": [
+        "src/**/*.ts",
+        "babel.config.js"
+      ],
+      "output": [
+        "browser/**"
+      ]
+    },
+    "build:bundle": {
+      "command": "webpack",
+      "dependencies": [
+        "build:browser"
+      ],
+      "files": [
+        "browser/**/*.js",
+        "webpack.config.js"
+      ],
+      "output": [
+        "dist"
+      ]
+    },
+    "lint": {
+      "command": "eslint --ext .ts src test --color --cache --cache-location .eslintcache",
+      "files": [
+        "src/**/*.ts",
+        "test/**/*.ts",
+        "**/.eslint*"
+      ],
+      "output": []
+    },
+    "test": {
+      "dependencies": [
+        "test:node",
+        "test:browser",
+        "lint"
+      ]
+    },
+    "test:node": {
+      "command": "jest --forceExit",
+      "dependencies": [
+        "build:node:cjs"
+      ],
+      "files": [
+        "test/**/*.ts",
+        "jest.setup.js",
+        "jest.config.js"
+      ],
+      "output": []
+    },
+    "test:browser": {
+      "command": "karma start",
+      "dependencies": [
+        "clean-test-failures-file",
+        "build:bundle"
+      ],
+      "files": [
+        "test/**/*.ts",
+        "karma.conf.js",
+        "webpack.config.test.js"
+      ],
+      "output": []
+    },
+    "test:browser-ci": {
+      "command": "karma start",
+      "dependencies": [
+        "clean-test-failures-file",
+        "build:bundle",
+        "proxy-server"
+      ],
+      "files": [
+        "test/**/*.ts",
+        "karma.conf.js",
+        "webpack.config.test.js"
+      ],
+      "output": []
+    },
+    "test:browser-ci:retry": {
+      "command": "karma start --retry-failed",
+      "dependencies": [
+        "build:bundle",
+        "proxy-server"
+      ],
+      "files": [
+        "test/**/*.ts",
+        "karma.conf.js",
+        "webpack.config.test.js"
+      ],
+      "output": []
+    },
+    "proxy-server": {
+      "command": "node node_modules/jsforce-ajax-proxy/lib/server.js",
+      "service": {
+        "readyWhen": {
+          "lineMatches": "Express server listening on port \\d+"
+        }
+      }
+    },
+    "typecheck": {
+      "command": "npx tsc -p test --pretty",
+      "dependencies": [
+        "build:node:cjs"
+      ],
+      "files": [
+        "src/**/*.ts",
+        "test/**/*.ts",
+        "**/tsconfig.json"
+      ],
+      "output": []
+    }
   },
-  "directories": {
-    "test": "test/"
+  "scripts": {
+    "build": "wireit",
+    "build:node:cjs": "wireit",
+    "build:transpile": "wireit",
+    "build:browser": "wireit",
+    "build:bundle": "wireit",
+    "lint": "wireit",
+    "test": "wireit",
+    "test:node": "wireit",
+    "test:browser": "wireit",
+    "test:browser-ci": "wireit",
+    "test:browser-ci:retry": "wireit",
+    "test:setup:org": "zx scripts/org-setup.mjs",
+    "typecheck": "wireit",
+    "proxy-server": "wireit",
+    "clean": "rimraf --glob lib/* module/* browser/*",
+    "clean-test-failures-file": "rimraf test/karma/karma-failed-tests.txt",
+    "jsforce-node": "ts-node scripts/jsforce-node.ts",
+    "jsforce-node:dev": "ts-node scripts/jsforce-node.ts --dev"
   },
   "files": [
     "README.md",
@@ -69,70 +199,63 @@
     "core",
     "dist",
     "lib",
-    "module",
     "src",
     "typings",
     "index.js",
     "index.d.ts"
   ],
   "engines": {
-    "node": ">=8.0"
+    "node": ">=18"
   },
   "bin": {
     "jsforce": "./bin/jsforce",
     "jsforce-gen-schema": "./bin/jsforce-gen-schema"
   },
   "dependencies": {
-    "@babel/runtime": "^7.12.5",
-    "@babel/runtime-corejs3": "^7.12.5",
+    "@babel/runtime": "^7.23.1",
+    "@babel/runtime-corejs3": "^7.23.1",
     "@inquirer/prompts": "^3.3.0",
-    "@types/node": "^12.19.9",
-    "abort-controller": "^3.0.0",
+    "@sindresorhus/is": "^4",
     "base64url": "^3.0.1",
     "commander": "^4.0.1",
-    "core-js": "^3.6.4",
-    "csv-parse": "^4.8.2",
-    "csv-stringify": "^5.3.4",
+    "core-js": "^3.33.0",
+    "csv-parse": "^5.5.2",
+    "csv-stringify": "^6.4.4",
     "faye": "^1.4.0",
     "form-data": "^4.0.0",
-    "fs-extra": "^8.1.0",
     "https-proxy-agent": "^5.0.0",
     "multistream": "^3.1.0",
     "node-fetch": "^2.6.1",
     "open": "^7.0.0",
-    "regenerator-runtime": "^0.13.3",
-    "strip-ansi": "^6.0.0",
-    "xml2js": "^0.5.0"
+    "xml2js": "^0.6.2"
   },
   "devDependencies": {
-    "@babel/cli": "^7.12.8",
-    "@babel/core": "^7.12.9",
-    "@babel/plugin-proposal-class-properties": "^7.12.1",
-    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.12.1",
-    "@babel/plugin-proposal-optional-chaining": "^7.12.7",
-    "@babel/plugin-transform-runtime": "^7.12.1",
-    "@babel/preset-env": "^7.12.7",
-    "@babel/preset-typescript": "^7.12.7",
-    "@babel/register": "^7.12.1",
-    "@types/fs-extra": "^8.0.1",
-    "@types/jest": "^28",
+    "@babel/cli": "^7.24.8",
+    "@babel/core": "^7.23.0",
+    "@babel/plugin-transform-runtime": "^7.24.7",
+    "@babel/preset-env": "^7.22.20",
+    "@babel/preset-typescript": "^7.23.0",
+    "@babel/register": "^7.22.15",
+    "@types/jest": "^29.5.5",
     "@types/multistream": "^2.1.1",
+    "@types/node": "^18.15.3",
     "@types/node-fetch": "^2.5.7",
+    "@types/shelljs": "^0.8.15",
     "@types/through2": "^2.0.34",
     "@types/xml2js": "^0.4.5",
-    "@typescript-eslint/eslint-plugin": "^4.9.0",
-    "@typescript-eslint/parser": "^4.9.0",
+    "@typescript-eslint/eslint-plugin": "^6.7.5",
+    "@typescript-eslint/parser": "^6.7.5",
     "archiver": "^5.1.0",
     "assert": "^2.0.0",
-    "babel-loader": "^8.2.2",
+    "babel-loader": "^9.1.3",
     "babel-preset-power-assert": "^3.0.0",
     "buffer": "^6.0.3",
-    "concurrently": "^8.2.0",
     "conditional-type-checks": "^1.0.5",
-    "cross-env": "^7.0.3",
     "crypto-browserify": "^3.12.0",
-    "eslint": "^7.14.0",
+    "eslint": "^8.51.0",
     "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jsdoc": "^48.2.3",
     "eslint-plugin-prettier": "^3.1.4",
     "jest": "^29.5.0",
     "jsforce-ajax-proxy": "^2.0.0",
@@ -142,25 +265,32 @@
     "karma-jasmine-html-reporter": "^2.0.0",
     "karma-sourcemap-loader": "^0.4.0",
     "karma-webpack": "^5.0.0",
-    "npm-run-all": "^4.1.5",
+    "nock": "^13.4.0",
     "path-browserify": "^1.0.1",
     "power-assert": "^1.6.1",
     "prettier": "^2.2.1",
     "process": "^0.11.10",
-    "puppeteer": "^21.0.1",
+    "puppeteer": "^22.14.0",
     "querystring-es3": "^0.2.1",
-    "rimraf": "^3.0.0",
+    "rimraf": "^5.0.5",
+    "shelljs": "^0.8.5",
     "source-map-loader": "^1.1.3",
     "stream-browserify": "^3.0.0",
     "terser-webpack-plugin": "^5.3.7",
     "through2": "^3.0.1",
     "timers-browserify": "^2.0.12",
-    "ts-node": "^9.0.0",
-    "typedoc": "^0.25.4",
+    "ts-node": "^10.9.1",
+    "typedoc": "^0.25.1",
     "typescript": "^4.9.5",
     "util": "^0.12.5",
-    "webpack": "^5.82.0",
+    "webpack": "^5.97.1",
     "webpack-cli": "^5.0.2",
+    "wireit": "^0.14.7",
     "zx": "^7.2.3"
+  },
+  "overrides": {
+    "node-fetch": {
+      "whatwg-url": "^14.0.0"
+    }
   }
 }

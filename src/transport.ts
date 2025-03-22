@@ -21,7 +21,7 @@ function normalizeApiHost(apiHost: string) {
 }
 
 setDefaults({
-  httpProxy: process.env.HTTPS_PROXY ?? process.env.HTTP_PROXY ?? undefined,
+  httpProxy: process.env.https_proxy ?? process.env.http_proxy ?? process.env.HTTPS_PROXY ?? process.env.HTTP_PROXY ?? undefined,
   timeout: process.env.HTTP_TIMEOUT
     ? parseInt(process.env.HTTP_TIMEOUT, 10)
     : undefined,
@@ -147,7 +147,7 @@ export class XdProxyTransport extends Transport {
   httpRequest(req: HttpRequest, _options: HttpRequestOptions = {}) {
     const xdProxyUrl = this._xdProxyUrl;
     const { url, body, ...rreq } = req;
-    const canonicalUrl = url.indexOf('/') === 0 ? baseUrl + url : url;
+    const canonicalUrl = url.startsWith('/') ? baseUrl + url : url;
     const xdProxyReq = createXdProxyRequest(
       { ...rreq, url: canonicalUrl, body },
       xdProxyUrl,

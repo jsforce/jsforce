@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 /*
  * Credits:
  * This karma reporter was written by Pascal Birchler:

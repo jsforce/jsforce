@@ -4,7 +4,7 @@
 import { Transform } from 'stream';
 import { HttpRequest, SignedRequestObject } from '../types';
 
-declare var Sfdc: any;
+declare let Sfdc: any;
 
 type CanvasResponse = {
   status: string;

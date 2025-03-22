@@ -8,7 +8,6 @@ import joinStreams from 'multistream';
 import Connection from '../connection';
 import { Serializable, Parsable } from '../record-stream';
 import HttpApi from '../http-api';
-import { StreamPromise } from '../util/promise';
 import { registerModule } from '../jsforce';
 import { Logger } from '../util/logger';
 import { concatStreamsAsDuplex } from '../util/stream';
@@ -18,9 +17,8 @@ import {
   HttpResponse,
   Record,
   Schema,
-  Optional,
 } from '../types';
-import { isFunction, isObject } from '../util/function';
+import is from '@sindresorhus/is';
 
 /*--------------------------------------------*/
 
@@ -33,56 +31,41 @@ export type BulkOperation =
   | 'query'
   | 'queryAll';
 
-export type IngestOperation = Exclude<BulkOperation, 'query' | 'queryAll'>;
-
-export type QueryOperation = Extract<BulkOperation, 'query' | 'queryAll'>;
-
 export type BulkOptions = {
   extIdField?: string;
   concurrencyMode?: 'Serial' | 'Parallel';
   assignmentRuleId?: string;
 };
 
-export type JobState = 'Open' | 'Closed' | 'Aborted' | 'Failed' | 'Unknown';
+export type JobState = 'Open' | 'Closed' | 'Aborted' | 'Failed' | 'Unknown' | 'NotProcessed';
 
-export type JobStateV2 =
-  | Exclude<JobState, 'Closed' | 'Unknown'>
-  | 'UploadComplete'
-  | 'InProgress'
-  | 'JobComplete';
-
+// In `HttpApi.parseResponseBody` we use xml2js to parse the XML response,
+// all these props are of type `string` due to how we convert XML -> JSON:
+// https://github.com/Leonidas-from-XIV/node-xml2js/issues/108
+//
+// TODO: xml2js allows to define value processing functions, maybe do it for the next major release?
 export type JobInfo = {
   id: string;
   object: string;
   operation: BulkOperation;
   state: JobState;
-};
-
-export type JobInfoV2 = {
-  apiVersion: string;
-  assignmentRuleId?: string;
-  columnDelimiter:
-    | 'BACKQUOTE'
-    | 'CARET'
-    | 'COMMA'
-    | 'PIPE'
-    | 'SEMICOLON'
-    | 'TAB';
-  concurrencyMode: 'Parallel';
-  contentType: 'CSV';
-  contentUrl: string;
   createdById: string;
   createdDate: string;
-  externalIdFieldName?: string;
-  id: string;
-  jobType: 'BigObjectIngest' | 'Classic' | 'V2Ingest';
-  lineEnding: 'LF' | 'CRLF';
-  object: string;
-  operation: BulkOperation;
-  state: JobStateV2;
   systemModstamp: string;
-  numberRecordsProcessed?: number;
-  numberRecordsFailed?: number;
+  concurrencyMode: string;
+  contentType: string;
+  numberBatchesQueued: string;
+  numberBatchesInProgress: string;
+  numberBatchesCompleted: string;
+  numberBatchesFailed: string;
+  numberBatchesTotal: string;
+  numberRecordsProcessed: string;
+  numberRetries: string;
+  apiVersion: string;
+  numberRecordsFailed: string;
+  totalProcessingTime: string;
+  apiActiveProcessingTime: string;
+  apexProcessingTime: string;
 };
 
 type JobInfoResponse = {
@@ -125,6 +108,7 @@ export type BulkQueryBatchResult = Array<{
 export type BulkIngestBatchResult = Array<{
   id: string | null;
   success: boolean;
+  created: boolean;
   errors: string[];
 }>;
 
@@ -137,6 +121,7 @@ export type BatchResult<Opr extends BulkOperation> = Opr extends
 type BulkIngestResultResponse = Array<{
   Id: string;
   Success: string;
+  Created: string;
   Error: string;
 }>;
 
@@ -146,66 +131,12 @@ type BulkQueryResultResponse = {
   };
 };
 
-type BulkRequest = {
+export type BulkRequest = {
   method: HttpMethods;
-  path: string;
+  path?: string;
   body?: string;
   headers?: { [name: string]: string };
   responseType?: string;
-};
-
-export type IngestJobV2SuccessfulResults<S extends Schema> = Array<
-  {
-    sf__Created: 'true' | 'false';
-    sf__Id: string;
-  } & S
->;
-
-export type IngestJobV2FailedResults<S extends Schema> = Array<
-  {
-    sf__Error: string;
-    sf__Id: string;
-  } & S
->;
-
-export type IngestJobV2UnprocessedRecords<S extends Schema> = Array<S>;
-
-export type IngestJobV2Results<S extends Schema> = {
-  successfulResults: IngestJobV2SuccessfulResults<S>;
-  failedResults: IngestJobV2FailedResults<S>;
-  unprocessedRecords: IngestJobV2UnprocessedRecords<S>;
-};
-
-type NewIngestJobOptions = Required<Pick<JobInfoV2, 'object' | 'operation'>> &
-  Partial<
-    Pick<JobInfoV2, 'assignmentRuleId' | 'externalIdFieldName' | 'lineEnding'>
-  >;
-
-type ExistingIngestJobOptions = Pick<JobInfoV2, 'id'>;
-
-type CreateIngestJobV2Request = <T>(request: BulkRequest) => StreamPromise<T>;
-
-type CreateIngestJobV2Options<S extends Schema> = {
-  connection: Connection<S>;
-  jobInfo: NewIngestJobOptions | ExistingIngestJobOptions;
-  pollingOptions: BulkV2PollingOptions;
-};
-
-type CreateJobDataV2Options<S extends Schema, Opr extends IngestOperation> = {
-  job: IngestJobV2<S, Opr>;
-  createRequest: CreateIngestJobV2Request;
-};
-
-type CreateQueryJobV2Options<S extends Schema> = {
-  connection: Connection<S>;
-  operation: QueryOperation;
-  query: string;
-  pollingOptions: BulkV2PollingOptions;
-};
-
-type BulkV2PollingOptions = {
-  pollInterval: number;
-  pollTimeout: number;
 };
 
 /**
@@ -487,19 +418,6 @@ class PollingTimeoutError extends Error {
   }
 }
 
-class JobPollingTimeoutError extends Error {
-  jobId: string;
-
-  /**
-   *
-   */
-  constructor(message: string, jobId: string) {
-    super(message);
-    this.name = 'JobPollingTimeout';
-    this.jobId = jobId;
-  }
-}
-
 /*--------------------------------------------*/
 /**
  * Batch (extends Writable)
@@ -589,7 +507,7 @@ export class Batch<
   /**
    * Implementation of Writable
    */
-  _write(record_: Record, enc: string, cb: () => void) {
+  _write(record_: Record, enc: BufferEncoding, cb: () => void) {
     const { Id, type, attributes, ...rrec } = record_;
     let record;
     switch (this.job.operation) {
@@ -627,12 +545,14 @@ export class Batch<
       this.once('error', reject);
     });
 
-    if (isObject(input) && 'pipe' in input && isFunction(input.pipe)) {
+    if (is.nodeStream(input)) {
       // if input has stream.Readable interface
       input.pipe(this._dataStream);
     } else {
-      if (Array.isArray(input)) {
-        for (const record of input) {
+      const recordData = structuredClone(input);
+
+      if (Array.isArray(recordData)) {
+        for (const record of recordData) {
           for (const key of Object.keys(record)) {
             if (typeof record[key] === 'boolean') {
               record[key] = String(record[key]);
@@ -641,8 +561,8 @@ export class Batch<
           this.write(record);
         }
         this.end();
-      } else if (typeof input === 'string') {
-        this._dataStream.write(input, 'utf8');
+      } else if (typeof recordData === 'string') {
+        this._dataStream.write(recordData, 'utf8');
         this._dataStream.end();
       }
     }
@@ -701,9 +621,19 @@ export class Batch<
       throw new Error('Batch not started.');
     }
     const startTime = new Date().getTime();
+    const endTime = startTime + timeout;
+
+    if (timeout === 0) {
+      throw new PollingTimeoutError(
+        `Skipping polling because of timeout = 0ms. Job Id = ${jobId} | Batch Id = ${batchId}`,
+        jobId,
+        batchId,
+      );
+    }
+
     const poll = async () => {
       const now = new Date().getTime();
-      if (startTime + timeout < now) {
+      if (endTime < now) {
         const err = new PollingTimeoutError(
           'Polling time out. Job Id = ' + jobId + ' , batch Id = ' + batchId,
           jobId,
@@ -727,8 +657,10 @@ export class Batch<
         }
       } else if (res.state === 'Completed') {
         this.retrieve();
+      } else if (res.state === 'NotProcessed') {
+        this.emit('error', new Error('Job has been aborted'));
       } else {
-        this.emit('progress', res);
+        this.emit('inProgress', res);
         setTimeout(poll, interval);
       }
     };
@@ -758,7 +690,7 @@ export class Batch<
       let results: BulkIngestBatchResult | BulkQueryBatchResult;
       if (job.operation === 'query' || job.operation === 'queryAll') {
         const res = resp as BulkQueryResultResponse;
-        let resultId = res['result-list'].result;
+        const resultId = res['result-list'].result;
         results = (Array.isArray(resultId)
           ? resultId
           : [resultId]
@@ -768,6 +700,7 @@ export class Batch<
         results = res.map((ret) => ({
           id: ret.Id || null,
           success: ret.Success === 'true',
+          created: ret.Created === 'true',
           errors: ret.Error ? [ret.Error] : [],
         }));
       }
@@ -780,11 +713,12 @@ export class Batch<
   }
 
   /**
-   * Fetch query result as a record stream
+   * Fetch query batch result as a record stream
+   *
    * @param {String} resultId - Result id
    * @returns {RecordStream} - Record stream, convertible to CSV data stream
    */
-  result(resultId: string) {
+  public result(resultId: string): Parsable<Record> {
     const jobId = this.job.id;
     const batchId = this.id;
     if (!jobId || !batchId) {
@@ -819,7 +753,7 @@ class BulkApi<S extends Schema> extends HttpApi<S> {
   isSessionExpired(response: HttpResponse) {
     return (
       response.statusCode === 400 &&
-      /<exceptionCode>InvalidSessionId<\/exceptionCode>/.test(response.body)
+      response.body.includes('<exceptionCode>InvalidSessionId</exceptionCode>')
     );
   }
 
@@ -835,29 +769,6 @@ class BulkApi<S extends Schema> extends HttpApi<S> {
   }
 }
 
-class BulkApiV2<S extends Schema> extends HttpApi<S> {
-  hasErrorInResponseBody(body: any) {
-    return (
-      Array.isArray(body) &&
-      typeof body[0] === 'object' &&
-      'errorCode' in body[0]
-    );
-  }
-
-  isSessionExpired(response: HttpResponse): boolean {
-    return (
-      response.statusCode === 401 && /INVALID_SESSION_ID/.test(response.body)
-    );
-  }
-
-  parseError(body: any) {
-    return {
-      errorCode: body[0].errorCode,
-      message: body[0].message,
-    };
-  }
-}
-
 /*--------------------------------------------*/
 
 /**
@@ -866,19 +777,22 @@ class BulkApiV2<S extends Schema> extends HttpApi<S> {
  * @class
  */
 export class Bulk<S extends Schema> {
-  _conn: Connection<S>;
-  _logger: Logger;
+  private readonly _conn: Connection<S>;
+  public readonly _logger: Logger;
 
   /**
    * Polling interval in milliseconds
+   *
+   * Default: 1000 (1 second)
    */
-  pollInterval = 1000;
+  public pollInterval = 1000;
 
   /**
    * Polling timeout in milliseconds
-   * @type {Number}
+   *
+   * Default: 30000 (30 seconds)
    */
-  pollTimeout = 10000;
+  public pollTimeout = 30000;
 
   /**
    *
@@ -891,7 +805,7 @@ export class Bulk<S extends Schema> {
   /**
    *
    */
-  _request<T>(request_: BulkRequest) {
+  public _request<T>(request_: BulkRequest) {
     const conn = this._conn;
     const { path, responseType, ...rreq } = request_;
     const baseUrl = [conn.instanceUrl, 'services/async', conn.version].join(
@@ -906,6 +820,32 @@ export class Bulk<S extends Schema> {
 
   /**
    * Create and start bulkload job and batch
+   *
+   * This method will return a Batch instance (writable stream)
+   * which you can write records into as a CSV string.
+   *
+   * Batch also implements the a promise interface so you can `await` this method to get the job results.
+   *
+   * @example
+   * // Insert an array of records and get the job results
+   *
+   * const res = await connection.bulk.load('Account', 'insert', accounts)
+   *
+   * @example
+   * // Insert records from a csv file using the returned batch stream
+   *
+   * const csvFile = fs.createReadStream('accounts.csv')
+   *
+   * const batch = conn.bulk.load('Account', 'insert')
+   *
+   * // The `response` event is emitted when the job results are retrieved
+   * batch.on('response', res => {
+   *   console.log(res)
+   * })
+
+   * csvFile.pipe(batch.stream())
+   *
+   *
    */
   load<Opr extends BulkOperation>(
     type: string,
@@ -928,9 +868,7 @@ export class Bulk<S extends Schema> {
     if (
       typeof optionsOrInput === 'string' ||
       Array.isArray(optionsOrInput) ||
-      (isObject(optionsOrInput) &&
-        'pipe' in optionsOrInput &&
-        typeof optionsOrInput.pipe === 'function')
+      is.nodeStream(optionsOrInput)
     ) {
       // when options is not plain hash object, it is omitted
       input = optionsOrInput;
@@ -956,7 +894,7 @@ export class Bulk<S extends Schema> {
   /**
    * Execute bulk query and get record stream
    */
-  query(soql: string) {
+  public async query(soql: string): Promise<Parsable<Record>> {
     const m = soql.replace(/\([\s\S]+\)/g, '').match(/FROM\s+(\w+)/i);
     if (!m) {
       throw new Error(
@@ -966,27 +904,20 @@ export class Bulk<S extends Schema> {
     const type = m[1];
     const recordStream = new Parsable();
     const dataStream = recordStream.stream('csv');
-    (async () => {
-      try {
-        const results = await this.load(type, 'query', soql);
-        const streams = results.map((result) =>
-          this.job(result.jobId)
-            .batch(result.batchId)
-            .result(result.id)
-            .stream(),
-        );
-        joinStreams(streams).pipe(dataStream);
-      } catch (err) {
-        recordStream.emit('error', err);
-      }
-    })();
+
+    const results = await this.load(type, 'query', soql);
+    const streams = results.map((result) =>
+      this.job(result.jobId).batch(result.batchId).result(result.id).stream(),
+    );
+    joinStreams(streams).pipe(dataStream);
+
     return recordStream;
   }
 
   /**
    * Create a new job instance
    */
-  createJob<Opr extends BulkOperation>(
+  public createJob<Opr extends BulkOperation>(
     type: string,
     operation: Opr,
     options: BulkOptions = {},
@@ -1000,7 +931,7 @@ export class Bulk<S extends Schema> {
    * @param {String} jobId - Job ID
    * @returns {Bulk~Job}
    */
-  job<Opr extends BulkOperation>(jobId: string) {
+  public job<Opr extends BulkOperation>(jobId: string) {
     return new Job<S, Opr>(this, null, null, null, jobId);
   }
 }
@@ -1024,26 +955,7 @@ export class BulkV2<S extends Schema> {
   }
 
   /**
-   * Create an instance of an ingest job object.
-   *
-   * @params {NewIngestJobOptions} options object
-   * @returns {IngestJobV2} An ingest job instance
-   * @example
-   * // Upsert records to the Account object.
-   *
-   * const job = connection.bulk2.createJob({
-   *   operation: 'insert'
-   *   object: 'Account',
-   * });
-   *
-   * // create the job in the org
-   * await job.open()
-   *
-   * // upload data
-   * await job.uploadData(csvFile)
-   *
-   * // finished uploading data, mark it as ready for processing
-   * await job.close()
+   * Create a new job instance
    */
   createJob<Opr extends IngestOperation>(
     options: NewIngestJobOptions,
@@ -1055,12 +967,6 @@ export class BulkV2<S extends Schema> {
     });
   }
 
-  /**
-   * Get a ingest job instance specified by a given job ID
-   *
-   * @param options Options object with a job ID
-   * @returns IngestJobV2 An ingest job
-   */
   job<Opr extends IngestOperation>(
     options: ExistingIngestJobOptions,
   ): IngestJobV2<S, Opr> {
@@ -1080,9 +986,6 @@ export class BulkV2<S extends Schema> {
         input: Record[] | Readable | string;
       },
   ): Promise<IngestJobV2Results<S>> {
-    if (!options.pollTimeout) options.pollTimeout = this.pollTimeout;
-    if (!options.pollInterval) options.pollInterval = this.pollInterval;
-
     const job = this.createJob(options);
     try {
       await job.open();
@@ -1091,7 +994,7 @@ export class BulkV2<S extends Schema> {
       await job.poll(options.pollInterval, options.pollTimeout);
       return await job.getAllResults();
     } catch (err) {
-      if (err instanceof Error && err.name !== 'JobPollingTimeoutError') {
+        if (err instanceof Error && err.name !== 'JobPollingTimeoutError') {
         // fires off one last attempt to clean up and ignores the result | error
         job.delete().catch((ignored) => ignored);
       }
@@ -1100,14 +1003,7 @@ export class BulkV2<S extends Schema> {
   }
 
   /**
-   * Execute bulk query and get records
-   *
-   * Default timeout: 10000ms
-   *
-   * @param soql SOQL query
-   * @param BulkV2PollingOptions options object
-   *
-   * @returns Record[]
+   * Execute bulk query and get record stream
    */
   async query(
     soql: string,
@@ -1124,7 +1020,7 @@ export class BulkV2<S extends Schema> {
       await queryJob.poll(options?.pollInterval, options?.pollTimeout);
       return await queryJob.getResults();
     } catch (err) {
-      if (err instanceof Error && err.name !== 'JobPollingTimeoutError') {
+      if (err.name !== 'JobPollingTimeoutError') {
         // fires off one last attempt to clean up and ignores the result | error
         queryJob.delete().catch((ignored) => ignored);
       }
@@ -1154,9 +1050,6 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     this.on('error', (error) => (this.#error = error));
   }
 
-  /**
-   * Creates a query job
-   */
   async open(): Promise<void> {
     try {
       this.jobInfo = await this.createQueryRequest<JobInfoV2>({
@@ -1198,20 +1091,6 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     }
   }
 
-  /**
-   * Poll for the state of the processing for the job.
-   *
-   * This method will only throw after a timeout. To capture a
-   * job failure while polling you must set a listener for the
-   * `failed` event before calling it:
-   *
-   * job.on('failed', (err) => console.error(err))
-   * await job.poll()
-   *
-   * @param interval Polling interval in milliseconds
-   * @param timeout Polling timeout in milliseconds
-   * @returns {Promise<Record[]>} A promise that resolves to an array of records
-   */
   async poll(
     interval: number = this.#pollingOptions.pollInterval,
     timeout: number = this.#pollingOptions.pollTimeout,
@@ -1232,9 +1111,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
             await delay(interval);
             break;
           case 'Failed':
-            // unlike ingest jobs, the API doesn't return an error msg:
-            // https://developer.salesforce.com/docs/atlas.en-us.api_asynch.meta/api_asynch/query_get_one_job.htm
-            this.emit('failed', new Error('Query job failed to complete.'));
+            this.emit('failed');
             return;
           case 'JobComplete':
             this.emit('jobcomplete');
@@ -1247,7 +1124,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     }
 
     const timeoutError = new JobPollingTimeoutError(
-      `Polling timed out after ${timeout}ms. Job Id = ${jobId}`,
+      `Polling time out. Job Id = ${jobId}`,
       jobId,
     );
     this.emit('error', timeoutError);
@@ -1287,7 +1164,7 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     return httpApi.request<R>(request_);
   }
 
-  private getResultsUrl(): string {
+  private getResultsUrl() {
     const url = `${this.#connection.instanceUrl}/services/data/v${
       this.#connection.version
     }/jobs/query/${getJobIdOrError(this.jobInfo)}/results`;
@@ -1295,11 +1172,6 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     return this.locator ? `${url}?locator=${this.locator}` : url;
   }
 
-  /**
-   * Get the results for a query job.
-   *
-   * @returns {Promise<Record[]>} A promise that resolves to an array of records
-   */
   async getResults(): Promise<Record[]> {
     if (this.finished && this.#queryResults) {
       return this.#queryResults;
@@ -1323,9 +1195,6 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
     return this.#queryResults;
   }
 
-  /**
-   * Deletes a query job.
-   */
   async delete(): Promise<void> {
     return this.createQueryRequest<void>({
       method: 'DELETE',
@@ -1386,9 +1255,6 @@ export class IngestJobV2<
     return this.jobInfo.id;
   }
 
-  /**
-   * Create a job representing a bulk operation in the org
-   */
   async open(): Promise<void> {
     try {
       this.jobInfo = await this.createIngestRequest<JobInfoV2>({
@@ -1413,10 +1279,6 @@ export class IngestJobV2<
     }
   }
 
-  /** Upload data for a job in CSV format
-   *
-   *  @param input CSV as a string, or array of records or readable stream
-   */
   async uploadData(input: string | Record[] | Readable): Promise<void> {
     await this.#jobData.execute(input);
   }
@@ -1474,20 +1336,6 @@ export class IngestJobV2<
     }
   }
 
-  /**
-   * Poll for the state of the processing for the job.
-   *
-   * This method will only throw after a timeout. To capture a
-   * job failure while polling you must set a listener for the
-   * `failed` event before calling it:
-   *
-   * job.on('failed', (err) => console.error(err))
-   * await job.poll()
-   *
-   * @param interval Polling interval in milliseconds
-   * @param timeout Polling timeout in milliseconds
-   * @returns {Promise<void>} A promise that resolves when the job finishes successfully
-   */
   async poll(
     interval: number = this.#pollingOptions.pollInterval,
     timeout: number = this.#pollingOptions.pollTimeout,
@@ -1508,7 +1356,7 @@ export class IngestJobV2<
             await delay(interval);
             break;
           case 'Failed':
-            this.emit('failed', new Error('Ingest job failed to complete.'));
+            this.emit('failed');
             return;
           case 'JobComplete':
             this.emit('jobcomplete');
@@ -1521,7 +1369,7 @@ export class IngestJobV2<
     }
 
     const timeoutError = new JobPollingTimeoutError(
-      `Polling timed out after ${timeout}ms. Job Id = ${jobId}`,
+      `Polling time out. Job Id = ${jobId}`,
       jobId,
     );
     this.emit('error', timeoutError);
@@ -1600,9 +1448,6 @@ export class IngestJobV2<
     return this.#bulkJobUnprocessedRecords;
   }
 
-  /**
-   * Deletes an ingest job.
-   */
   async delete(): Promise<void> {
     return this.createIngestRequest<void>({
       method: 'DELETE',
@@ -1779,6 +1624,5 @@ function delay(ms: number): Promise<void> {
  * Register hook in connection instantiation for dynamically adding this API module features
  */
 registerModule('bulk', (conn) => new Bulk(conn));
-registerModule('bulk2', (conn) => new BulkV2(conn));
 
 export default Bulk;

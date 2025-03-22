@@ -6,7 +6,8 @@ import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject, isString } from './util';
 import { isNodeJS } from './helper/env';
-import { BulkOperation, IngestJobV2Results } from 'jsforce/lib/api/bulk';
+import { BulkOperation } from 'jsforce/lib/api/bulk';
+import { IngestJobV2Results } from 'jsforce/lib/api/bulk2';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();
@@ -47,7 +48,7 @@ function ensureSuccessfulBulkResults(
   assert.ok(Array.isArray(successfulResults));
   assert.ok(successfulResults.length === qty);
 
-  const recordCreated = operation === 'insert' ? 'true' : 'false';
+  const recordCreated = ['insert', 'upsert'].includes(operation) ? 'true' : 'false';
 
   for (const successfulResult of successfulResults) {
     assert.ok(isString(successfulResult.sf__Id));
@@ -126,7 +127,7 @@ it('should bulk update and return updated status', async () => {
 
   const updatedRecords = records.map((rec) => ({
     ...rec,
-    Name: `${rec.Name} (Updated)`,
+    Name: `${rec.Name as string} (Updated)`,
   }));
 
   const res = await conn.bulk2.loadAndWaitForResults({
@@ -196,10 +197,12 @@ if (isNodeJS()) {
   it('should bulk insert from file and return inserted results', async () => {
     // insert 100 account records from csv file
     const csvStream = fs.createReadStream(
-      path.join(__dirname, 'data/Account_bulk2_test.csv'),
+      path.join(__dirname, 'data', 'Account_bulk2_test.csv'),
     );
 
     const res = await conn.bulk2.loadAndWaitForResults({
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      lineEnding: require('os').platform() === 'win32' ? 'CRLF' : 'LF',
       object: 'Account',
       operation: 'insert',
       input: csvStream,
@@ -222,43 +225,67 @@ if (isNodeJS()) {
     }
   });
 
-  it('should bulk delete from file and return deleted results', async () => {
-    const id = Date.now();
+  it('should bulk insert from file and return inserted results', async () => {
+    // insert 100 account records from csv file
+    const csvStream = fs.createReadStream(
+      path.join(__dirname, 'data', 'Account_bulk2_test.csv'),
+    );
 
-    await insertAccounts(id);
+    const res = await conn.bulk2.loadAndWaitForResults({
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      lineEnding: require('os').platform() === 'win32' ? 'CRLF' : 'LF',
+      object: 'Account',
+      operation: 'insert',
+      input: csvStream,
+    });
 
-    const records = await conn
-      .sobject('Account')
-      .find({ Name: { $like: `Bulk Account ${id}%` } });
-    const data = `Id\n${records.map((r: Record) => r.Id).join('\n')}\n`;
-    const deleteFile = path.join(__dirname, 'data/Account_delete.csv');
+    try {
+      ensureSuccessfulBulkResults(res, 100, 'insert');
+    } finally {
+      // cleanup:
+      // always delete successfully inserted records.
+      const deleteRecords = res.successfulResults.map((r) => ({
+        Id: r.sf__Id,
+      }));
 
-    await fs.promises.writeFile(deleteFile, data);
+      await conn.bulk2.loadAndWaitForResults({
+        object: 'Account',
+        operation: 'delete',
+        input: deleteRecords,
+      });
+    }
+  })
 
-    const fstream = fs.createReadStream(deleteFile);
+  it('should bulk upsert from CSV file using backquote as a delimiter', async () => {
+    const fstream = fs.createReadStream(path.join(__dirname, 'data', 'Account_bulk2_test_backquote.csv'));
     const res = await conn.bulk2.loadAndWaitForResults({
       object: 'Account',
-      operation: 'delete',
+      operation: 'upsert',
+      columnDelimiter: 'BACKQUOTE',
+      externalIdFieldName: 'Id',
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      lineEnding: require('node:os').platform() === 'win32' ? 'CRLF' : 'LF',
       input: fstream,
     });
 
-    ensureSuccessfulBulkResults(res, 20, 'delete');
-
-    // dynamic import so that browser tests work
-    const fsExtra = require('fs-extra');
-    fsExtra.remove(deleteFile);
+    ensureSuccessfulBulkResults(res, 10, 'upsert');
   });
 
   it('should bulk query and get records', async () => {
     const count = await conn.sobject(config.bigTable).count({});
-    const records = await conn.bulk2.query(
-      `SELECT Id, Name FROM ${config.bigTable}`,
-    );
-    assert.ok(Array.isArray(records) && records.length === count);
-    for (const rec of records) {
-      assert.ok(isString(rec.Id));
-      assert.ok(isString(rec.Name));
-    }
+
+    let records: Record[] = [];
+    (await conn.bulk2.query(`SELECT Id, Name FROM ${config.bigTable}`))
+      .on('record', (data) => {
+        records = records.concat(data);
+      })
+      .on('end', () => {
+        assert.ok(Array.isArray(records) && records.length === count);
+        for (const rec of records) {
+          assert.ok(isString(rec.Id));
+          assert.ok(isString(rec.Name));
+        }
+      });
   });
 }
 
@@ -285,11 +312,12 @@ it('should call bulk api from invalid session conn with refresh fn, and return r
     },
   });
 
+  conn2.bulk2.pollTimeout = 90000;
+
   const deleteRecords = bulkInsert.successfulResults.map((r) => ({
     Id: r.sf__Id,
   }));
 
-  conn2.bulk2.pollTimeout = 90000;
   const bulkDelete = await conn2.bulk2.loadAndWaitForResults({
     operation: 'delete',
     object: 'Account',
@@ -306,6 +334,9 @@ it('should call bulk api from invalid session conn without refresh fn, and raise
     logLevel: config.logLevel,
     proxyUrl: config.proxyUrl,
   });
+
+  conn3.bulk2.pollTimeout = 90000;
+
   const records = [{ Name: 'Impossible Bulk Account #1' }];
   try {
     await conn3.bulk2.loadAndWaitForResults({
@@ -369,7 +400,7 @@ it('should bulk update using Query#update and return updated status', async () =
   assert.ok(updatedRecords.length === bulkAccountNum);
   for (const record of updatedRecords) {
     assert.ok(isString(record.Id));
-    assert.ok(/\(Updated\)$/.test(record.Name));
+    assert.ok(record.Name.endsWith('(Updated)'));
     assert.ok(record.BillingState === null);
   }
 });
@@ -467,7 +498,7 @@ it('should bulk update using Query#update with bulkThreshold modified and return
   assert.ok(records.length === smallAccountNum);
   for (const record of updatedRecords) {
     assert.ok(isString(record.Id));
-    assert.ok(/\(Updated\)$/.test(record.Name));
+    assert.ok(record.Name.endsWith('(Updated)'));
     assert.ok(record.BillingState === null);
   }
 });
@@ -491,8 +522,4 @@ it('should bulk delete using Query#destroy with bulkThreshold modified and retur
     assert.ok(isString(ret.id));
     assert.ok(ret.success === true);
   }
-});
-
-afterAll(async () => {
-  await connMgr.closeConnection(conn);
 });

@@ -63,6 +63,8 @@ export class SessionRefreshDelegate<S extends Schema> {
       });
       await this._refreshPromise;
       this._logger.info('<refresh complete>');
+    } catch(err) {
+      throw new Error(`Unable to refresh session due to: ${(err as Error).message}`)
     } finally {
       this._refreshPromise = undefined;
       this._lastRefreshedAt = Date.now();

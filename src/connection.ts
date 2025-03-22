@@ -56,7 +56,8 @@ import Process from './process';
 import { formatDate } from './util/formatter';
 import Analytics from './api/analytics';
 import Apex from './api/apex';
-import { Bulk, BulkV2 } from './api/bulk';
+import { Bulk } from './api/bulk';
+import { BulkV2 } from './api/bulk2';
 import Chatter from './api/chatter';
 import Metadata from './api/metadata';
 import SoapApi from './api/soap';
@@ -128,7 +129,7 @@ function esc(str: Optional<string>): string {
  */
 function parseSignedRequest(sr: string | Object): SignedRequestObject {
   if (typeof sr === 'string') {
-    if (sr[0] === '{') {
+    if (sr.startsWith('{')) {
       // might be JSON
       return JSON.parse(sr);
     } // might be original base64-encoded signed request
@@ -320,6 +321,11 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
     } = config;
     this.loginUrl = loginUrl || defaultConnectionConfig.loginUrl;
     this.instanceUrl = instanceUrl || defaultConnectionConfig.instanceUrl;
+
+    if (this.isLightningInstance()) {
+      throw new Error('lightning URLs are not valid as instance URLs');
+    }
+
     this.version = version || defaultConnectionConfig.version;
     this.oauth2 =
       oauth2 instanceof OAuth2
@@ -500,7 +506,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
       this,
       createUsernamePasswordRefreshFn(username, password),
     );
-    if (this.oauth2 && this.oauth2.clientId && this.oauth2.clientSecret) {
+    if (this.oauth2?.clientId && this.oauth2.clientSecret) {
       return this.loginByOAuth2(username, password);
     }
     return this.loginBySoap(username, password);
@@ -561,6 +567,17 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
       m = response.body.match(/<faultstring>([^<]+)<\/faultstring>/);
       const faultstring = m && m[1];
       throw new Error(faultstring || response.body);
+    }
+    // the API will return 200 and a restriced token when using an expired password:
+    // https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_calls_login_loginresult.htm
+    //
+    // we need to throw here to avoid a possible infinite loop with session refresh where:
+    //  1. login happens, `this.accessToken` is set to the restricted token
+    //  2. requests happen, get back 401
+    //  3. trigger session-refresh (username/password login has a default session refresh delegate function)
+    //  4. gets stuck refreshing a restricted token
+    if (response.body.match(/<passwordExpired>true<\/passwordExpired>/g)) {
+      throw new Error('Unable to login because the used password has expired.')
     }
     this._logger.debug(`SOAP response = ${response.body}`);
     m = response.body.match(/<serverUrl>([^<]+)<\/serverUrl>/);
@@ -777,11 +794,11 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
    * @private
    */
   _normalizeUrl(url: string) {
-    if (url[0] === '/') {
-      if (url.indexOf(this.instanceUrl + '/services/') === 0) {
+    if (url.startsWith('/')) {
+      if (url.startsWith(this.instanceUrl + '/services/')) {
         return url;
       }
-      if (url.indexOf('/services/') === 0) {
+      if (url.startsWith('/services/')) {
         return this.instanceUrl + url;
       }
       return this._baseUrl() + url;
@@ -807,15 +824,15 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
    * @returns {Promise.<Array.<RecordResult>>}
    */
   search(sosl: string) {
-    var url = this._baseUrl() + '/search?q=' + encodeURIComponent(sosl);
+    const url = this._baseUrl() + '/search?q=' + encodeURIComponent(sosl);
     return this.request<SearchResult>(url);
   }
 
   /**
    *
    */
-  queryMore(locator: string, options?: QueryOptions) {
-    return new Query<S, SObjectNames<S>, Record, 'QueryResult'>(
+  queryMore<T extends Record>(locator: string, options?: QueryOptions) {
+    return new Query<S, SObjectNames<S>, T, 'QueryResult'>(
       this,
       { locator },
       options,
@@ -968,14 +985,14 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   /** @private */
   async _createSingle(type: string, record: Record, options: DmlOptions) {
     const { Id, type: rtype, attributes, ...rec } = record;
-    const sobjectType = type || (attributes && attributes.type) || rtype;
+    const sobjectType = type || attributes?.type || rtype;
     if (!sobjectType) {
       throw new Error('No SObject Type defined in record');
     }
     const url = [this._baseUrl(), 'sobjects', sobjectType].join('/');
     let contentType, body;
 
-    if (options && options.multipartFileFields) {
+    if (options?.multipartFileFields) {
       // Send the record as a multipart/form-data request. Useful for fields containing large binary blobs.
       const form = new FormData();
       // Extract the fields requested to be sent separately from the JSON
@@ -1056,7 +1073,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
     }
     const _records = records.map((record) => {
       const { Id, type: rtype, attributes, ...rec } = record;
-      const sobjectType = type || (attributes && attributes.type) || rtype;
+      const sobjectType = type || attributes?.type || rtype;
       if (!sobjectType) {
         throw new Error('No SObject Type defined in record');
       }
@@ -1133,7 +1150,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
     if (!id) {
       throw new Error('Record id is not found in record.');
     }
-    const sobjectType = type || (attributes && attributes.type) || rtype;
+    const sobjectType = type || attributes?.type || rtype;
     if (!sobjectType) {
       throw new Error('No SObject Type defined in record');
     }
@@ -1201,7 +1218,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
       if (!id) {
         throw new Error('Record id is not found in record.');
       }
-      const sobjectType = type || (attributes && attributes.type) || rtype;
+      const sobjectType = type || attributes?.type || rtype;
       if (!sobjectType) {
         throw new Error('No SObject Type defined in record');
       }
@@ -1443,12 +1460,9 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   /**
    * Get SObject instance
    */
-  sobject<N extends SObjectNames<S>>(type: N): SObject<S, N>;
-  sobject<N extends SObjectNames<S>>(type: string): SObject<S, N>;
+  sobject<N extends SObjectNames<S>>(type: string|N): SObject<S, N>;
   sobject<N extends SObjectNames<S>>(type: N | string): SObject<S, N> {
-    const so =
-      (this.sobjects[type as N] as SObject<S, N> | undefined) ||
-      new SObject(this, type as N);
+    const so = this.sobjects[type as N] || new SObject(this, type as N);
     this.sobjects[type as N] = so;
     return so;
   }
@@ -1457,7 +1471,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
    * Get identity information of current user
    */
   async identity(options: { headers?: { [name: string]: string } } = {}) {
-    let url = this.userInfo && this.userInfo.url;
+    let url = this.userInfo?.url;
     if (!url) {
       const res = await this.request<{ identity: string }>({
         method: 'GET',
@@ -1598,6 +1612,14 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
    * Module which manages process rules and approval processes
    */
   process = new Process(this);
+
+  private isLightningInstance(): boolean {
+    return (
+      this.instanceUrl.includes('.lightning.force.com') ||
+      this.instanceUrl.includes('.lightning.crmforce.mil') ||
+      this.instanceUrl.includes('.lightning.sfcrmapps.cn')
+    );
+  }
 }
 
 export default Connection;

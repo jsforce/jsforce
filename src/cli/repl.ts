@@ -27,9 +27,8 @@ function injectBefore(
   const _orig: Function = (replServer as any)[method];
   (replServer as any)[method] = (...args: any[]) => {
     const callback = args.pop();
-    beforeFn.apply(
-      null,
-      args.concat((err: any, res: any) => {
+    beforeFn(
+      ...args.concat((err: any, res: any) => {
         if (err || res) {
           callback(err, res);
         } else {
@@ -56,7 +55,7 @@ function injectAfter(
       replServer,
       args.concat((...args: any[]) => {
         try {
-          afterFn.apply(null, args.concat(callback));
+          afterFn(...args.concat(callback));
         } catch (e) {
           callback(e);
         }
@@ -344,7 +343,7 @@ export class Repl {
   async complete(line: string) {
     const tokens = line.replace(/^\s+/, '').split(/\s+/);
     const [command, keyword = ''] = tokens;
-    if (command[0] === '.' && tokens.length === 2) {
+    if (command.startsWith('.') && tokens.length === 2) {
       let candidates: string[] = [];
       if (command === '.connect' || command === '.disconnect') {
         candidates = await this._cli.getConnectionNames();
@@ -353,7 +352,7 @@ export class Repl {
       } else if (command === '.use') {
         candidates = ['production', 'sandbox'];
       }
-      candidates = candidates.filter((name) => name.indexOf(keyword) === 0);
+      candidates = candidates.filter((name) => name.startsWith(keyword));
       return [candidates, keyword];
     }
   }
@@ -408,7 +407,7 @@ export class Repl {
         // avoid global override
         continue;
       }
-      if (prop.indexOf('_') === 0) {
+      if (prop.startsWith('_')) {
         // ignore private
         continue;
       }

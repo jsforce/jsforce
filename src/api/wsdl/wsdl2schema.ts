@@ -1,4 +1,4 @@
-import fs from 'fs-extra';
+import fs from 'node:fs';
 import xml2js from 'xml2js';
 import { castTypeUsingSchema } from '../../soap';
 import { SoapSchemaElementType, SoapSchemaDef } from '../../types';
@@ -140,7 +140,7 @@ function toJsType(xsdType: string, simpleTypes: { [type: string]: string }) {
  *
  */
 async function readWSDLFile(filePath: string) {
-  const xmlData = await fs.readFile(filePath, 'utf8');
+  const xmlData = await fs.promises.readFile(filePath, 'utf8');
   const json = await xml2js.parseStringPromise(xmlData, {
     explicitArray: false,
   });
@@ -151,7 +151,7 @@ async function readWSDLFile(filePath: string) {
  *
  */
 function getTypeInfo(el: WSDLElement, simpleTypes: { [name: string]: string }) {
-  let type = toJsType(el.$.type, simpleTypes);
+  const type = toJsType(el.$.type, simpleTypes);
   const isArray = el.$.maxOccurs === 'unbounded';
   const nillable = (!isArray && el.$.minOccurs === 0) || el.$.nillable;
   return isArray
@@ -168,7 +168,7 @@ function getTypeInfo(el: WSDLElement, simpleTypes: { [name: string]: string }) {
  */
 function extractComplexTypes(wsdl: WSDL) {
   console.log(wsdl.definitions.types['xsd:schema']);
-  let schemas: { [name: string]: SoapSchemaDef } = {};
+  const schemas: { [name: string]: SoapSchemaDef } = {};
   const simpleTypes: { [type: string]: string } = {};
   const types = wsdl.definitions.types;
   for (const sc of types.schema ?? types['xsd:schema'] ?? []) {
@@ -330,7 +330,7 @@ async function dumpSchema(schemas: { [name: string]: any }, outFile: string) {
               value = value['?'];
             }
           }
-          if (typeof value === 'string' && value[0] === '?') {
+          if (typeof value === 'string' && value.startsWith('?')) {
             nillable = true;
             value = value.substring(1);
           }

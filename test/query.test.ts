@@ -36,10 +36,8 @@ it('should query accounts with scanAll option and return all records', async () 
   const ret = await conn
     .sobject('Account')
     .create({ Name: 'Deleting Account #1' });
-  await conn
-    .sobject('Account')
-    .record(ret.id!) // TODO: remove "!" when assertion funcion is introduced
-    .destroy();
+  assert(ret.id);
+  await conn.sobject('Account').record(ret.id).destroy();
   const query = conn.query(
     'SELECT Id, IsDeleted, Name FROM Account WHERE IsDeleted = true',
   );
@@ -53,6 +51,7 @@ describe('big tables and autoFetch', () => {
   let maxFetchThatWillComplete: number;
   const bigTableQuery = `SELECT Id, Name FROM ${config.bigTable || 'Account'}`;
   beforeAll(async () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     totalRecordCount = await conn.query(bigTableQuery, {
       responseTarget: 'Count',
@@ -74,6 +73,19 @@ describe('big tables and autoFetch', () => {
       records = [...records, ...result.records];
     }
     assert.ok(records.length === totalRecordCount);
+  });
+
+  it('should return the first batch with autoFetch and maxFetch set to 2000', async () => {
+    let requestQty = 0
+
+    const result = await conn.query(bigTableQuery, { autoFetch: true, maxFetch: 2000}).on('fetch', () => {
+      requestQty++
+    })
+
+    expect(result.records.length).toBe(2000);
+    expect(result.nextRecordsUrl).toBeTruthy();
+    expect(result.done).toBe(false);
+    expect(requestQty).toBe(1);
   });
 
   /**
@@ -276,7 +288,7 @@ it('should update queried records using Query#update and return updated records'
   assert.ok(updatedRecords.length === accountNum);
   for (const record of updatedRecords) {
     assert.ok(isString(record.Id));
-    assert.ok(/\(Updated\)$/.test(record.Name));
+    assert.ok(record.Name.endsWith('(Updated)'));
     assert.ok(record.BillingState === null);
   }
 });
@@ -375,7 +387,7 @@ it('should update queried records using Query#update, with allowBulk = false, an
   assert.ok(updatedRecords.length === massiveAccountNum);
   for (const record of updatedRecords) {
     assert.ok(isString(record.Id));
-    assert.ok(/\(Updated\)$/.test(record.Name));
+    assert.ok(record.Name.endsWith('(Updated)'));
     assert.ok(record.BillingState === null);
   }
 });
@@ -399,11 +411,4 @@ it('should delete queried records using Query#destroy, with allowBulk = false, a
     assert.ok(isString(ret.id));
     assert.ok(ret.success === true);
   }
-});
-
-/**
- *
- */
-afterAll(async () => {
-  await connMgr.closeConnection(conn);
 });

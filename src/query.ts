@@ -28,7 +28,7 @@ import {
 } from './types';
 import { Readable } from 'stream';
 import SfDate from './date';
-import { IngestJobV2Results } from './api/bulk';
+import { IngestJobV2Results } from './api/bulk2';
 
 /**
  *
@@ -77,10 +77,10 @@ type ConditionSet<R extends Record> = {
 
 export type QueryCondition<S extends Schema, N extends SObjectNames<S>> =
   | {
-      $or: QueryCondition<S, N>[];
+      $or: Array<QueryCondition<S, N>>;
     }
   | {
-      $and: QueryCondition<S, N>[];
+      $and: Array<QueryCondition<S, N>>;
     }
   | ConditionSet<SObjectRecord<S, N>>;
 
@@ -212,7 +212,7 @@ export class Query<
   _soql: Optional<string>;
   _locator: Optional<string>;
   _config: SOQLQueryConfig = {};
-  _children: SubQuery<S, N, R, QRT, any, any, any>[] = [];
+  _children: Array<SubQuery<S, N, R, QRT, any, any, any>> = [];
   _options: QueryOptions;
   _executed: boolean = false;
   _finished: boolean = false;
@@ -247,7 +247,7 @@ export class Query<
         ? this.urlToLocator(locator)
         : locator;
     } else {
-      this._logger.debug(`config is QueryConfig: ${config}`);
+      this._logger.debug(`config is QueryConfig: ${JSON.stringify(config)}`);
       const { fields, includes, sort, ..._config } = config as QueryConfig<
         S,
         N
@@ -306,7 +306,7 @@ export class Query<
         : Array.isArray(fields)
         ? (fields as Array<string | FP>)
             .map(toFieldArray)
-            .reduce((fs, f) => [...fs, ...f], [] as string[])
+            .reduce<string[]>((fs, f) => [...fs, ...f], [])
         : Object.entries(fields as { [name: string]: QueryField<S, N, FP> })
             .map(([f, v]) => {
               if (typeof v === 'number' || typeof v === 'boolean') {
@@ -315,7 +315,7 @@ export class Query<
                 return toFieldArray(v).map((p) => `${f}.${p}`);
               }
             })
-            .reduce((fs, f) => [...fs, ...f], [] as string[]);
+            .reduce<string[]>((fs, f) => [...fs, ...f], []);
     }
     if (fields) {
       this._config.fields = toFieldArray(fields);
@@ -371,10 +371,8 @@ export class Query<
   /**
    * Set query sort with direction
    */
-  sort(sort: QuerySort<S, N>): this;
-  sort(sort: string): this;
-  sort(sort: SObjectFieldNames<S, N>, dir: SortDir): this;
-  sort(sort: string, dir: SortDir): this;
+  sort(sort: QuerySort<S, N>|string): this;
+  sort(sort: SObjectFieldNames<S, N>|string, dir: SortDir): this;
   sort(
     sort: QuerySort<S, N> | SObjectFieldNames<S, N> | string,
     dir?: SortDir,
@@ -676,6 +674,7 @@ export class Query<
       this._finished ||
       data.done ||
       !autoFetch ||
+      this.records.length === maxFetch ||
       // this is what the response looks like when there are no results
       (data.records.length === 0 && data.done === undefined);
 
@@ -754,12 +753,12 @@ export class Query<
         const cconfig = cquery._query._config;
         return [cconfig.table, cconfig] as [string, SOQLQueryConfig];
       })
-      .reduce(
+      .reduce<{ [name: string]: SOQLQueryConfig }>(
         (includes, [ctable, cconfig]) => ({
           ...includes,
           [ctable]: cconfig,
         }),
-        {} as { [name: string]: SOQLQueryConfig },
+        {},
       );
   }
 
@@ -1057,7 +1056,7 @@ export class Query<
           .updateBulk()
           .on('response', resolve)
           .on('error', reject);
-      let records: SObjectUpdateRecord<S, N>[] = [];
+      let records: Array<SObjectUpdateRecord<S, N>> = [];
       let batch: ReturnType<typeof createBatch> | null = null;
       const handleRecord = (record: Record) => {
         if (batch) {
@@ -1230,9 +1229,7 @@ export class SubQuery<
    * Set query sort with direction
    */
   sort(sort: QuerySort<S, CN>): this;
-  sort(sort: string): this;
-  sort(sort: SObjectFieldNames<S, CN>, dir: SortDir): this;
-  sort(sort: string, dir: SortDir): this;
+  sort(sort: string| SObjectFieldNames<S, CN>, dir: SortDir): this;
   sort(
     sort: QuerySort<S, CN> | SObjectFieldNames<S, CN> | string,
     dir?: SortDir,

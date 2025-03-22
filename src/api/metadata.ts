@@ -24,7 +24,7 @@ import {
   RetrieveResult,
   DeployResult,
   AsyncResult,
-  ApiSchemaTypes,
+  ApiSchemaTypes, CancelDeployResult,
 } from './metadata/schema';
 export * from './metadata/schema';
 
@@ -53,7 +53,7 @@ export type MetadataDefinition<
   : M;
 
 type DeepPartial<T> = T extends any[]
-  ? DeepPartial<T[number]>[]
+  ? Array<DeepPartial<T[number]>>
   : T extends object
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : T;
@@ -192,7 +192,7 @@ export class MetadataApi<S extends Schema> {
     M extends Metadata = Metadata,
     T extends string = string,
     MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>
-  >(type: T, metadata: Partial<MD>[]): Promise<SaveResult[]>;
+  >(type: T, metadata: Array<Partial<MD>>): Promise<SaveResult[]>;
   update<
     M extends Metadata = Metadata,
     T extends string = string,
@@ -204,7 +204,7 @@ export class MetadataApi<S extends Schema> {
     MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>
   >(
     type: T,
-    metadata: Partial<MD> | Partial<MD>[],
+    metadata: Partial<MD> | Array<Partial<MD>>,
   ): Promise<SaveResult | SaveResult[]>;
   update(type: string, metadata: Metadata | Metadata[]) {
     const isArray = Array.isArray(metadata);
@@ -468,6 +468,10 @@ export class MetadataApi<S extends Schema> {
       ApiSchemas.DeployResult,
     );
   }
+
+ async cancelDeploy(id: string): Promise<CancelDeployResult>{
+    return this._invoke('cancelDeploy', { id })
+  }
 }
 
 /*--------------------------------------------*/
@@ -511,7 +515,7 @@ export class AsyncResultLocator<
   async check() {
     const result = await this._promise;
     this._id = result.id;
-    return await this._meta.checkStatus(result.id);
+    return this._meta.checkStatus(result.id);
   }
 
   /**

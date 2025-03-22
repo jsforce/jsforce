@@ -1,0 +1,53 @@
+name: create-github-release
+permissions:
+  contents: write
+
+on:
+  push:
+    branches:
+      - main
+    tags-ignore:
+      - '*'
+  workflow_dispatch:
+
+jobs:
+  docs:
+    needs: release
+    uses: ./.github/workflows/publishDocs.yml
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.SVC_CLI_BOT_JSFORCE_GITHUB_TOKEN }}
+          ref: ${{ github.ref }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+          cache: npm
+      - run: npm install
+      - name: Conventional Changelog Action
+        id: changelog
+        uses: TriPSs/conventional-changelog-action@d479ae227c5362744063d6bc7469352a0730fdcd
+        # overriding some of the basic behaviors to just get the changelog
+        with:
+          git-user-name: svc-cli-bot-jsforce
+          git-user-email: svc_cli_bot@salesforce.com
+          github-token: ${{ secrets.SVC_CLI_BOT_JSFORCE_GITHUB_TOKEN }}
+          output-file: 'CHANGELOG.md'
+          pre-commit: ./scripts/bump-version-file.js
+          tag-prefix: ''
+      - uses: notiz-dev/github-action-json-property@2192e246737701f108a4571462b76c75e7376216
+        id: packageVersion
+        with:
+          path: 'package.json'
+          prop_path: 'version'
+      - name: Create Github Release
+        uses: actions/create-release@v1
+        if: ${{ steps.changelog.outputs.skipped == 'false' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.SVC_CLI_BOT_JSFORCE_GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.packageVersion.outputs.prop }}
+          body: ${{ steps.changelog.outputs.clean_changelog }}
+          release_name: ${{ steps.packageVersion.outputs.prop }}
