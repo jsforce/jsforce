@@ -7,7 +7,7 @@ import url from 'url';
 import crypto from 'crypto';
 import openUrl from 'open';
 import { Command } from 'commander';
-import inquirer from 'inquirer';
+import { input, confirm, password } from '@inquirer/prompts';
 import request from '../request';
 import base64url from 'base64url';
 import Repl from './repl';
@@ -25,7 +25,7 @@ type CliCommand = {
   loginUrl?: string;
   sandbox?: boolean;
   evalScript?: string;
-} & Command
+} & Command;
 
 /**
  *
@@ -406,35 +406,19 @@ export class Cli {
   /**
    *
    */
-  async prompt(type: string, message: string) {
-    this._repl.pause();
-    const answer: { value: string } = await inquirer.prompt([
-      {
-        type,
-        name: 'value',
-        message,
-      },
-    ]);
-    this._repl.resume();
-    return answer.value;
-  }
-
-  /**
-   *
-   */
   async promptMessage(message: string) {
-    return this.prompt('input', message);
+    return input({ message: message });
   }
 
   async promptPassword(message: string) {
-    return this.prompt('password', message);
+    return password({ message: message });
   }
 
   /**
    *
    */
   async promptConfirm(message: string) {
-    return this.prompt('confirm', message);
+    return confirm({ message: message });
   }
 
   /**
