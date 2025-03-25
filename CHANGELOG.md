@@ -1,3 +1,12 @@
+# [3.7.0](https://github.com/jsforce/jsforce/compare/3.6.6...3.7.0) (2025-03-25)
+
+
+### Features
+
+* add checkDeployStatus for REST W-18012955 ([#1670](https://github.com/jsforce/jsforce/issues/1670)) ([b36e429](https://github.com/jsforce/jsforce/commit/b36e429d894d6deec4766523aa4809b702bac7c8))
+
+
+
 ## [3.6.6](https://github.com/jsforce/jsforce/compare/3.6.5...3.6.6) (2025-02-27)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * **http:** handle more CSV delimiters on parse ([#1622](https://github.com/jsforce/jsforce/issues/1622)) ([c96e9c7](https://github.com/jsforce/jsforce/commit/c96e9c7d1c822b45b17e3adb8bcb3b0050b197c4))
-
-
-
-## [3.6.2](https://github.com/jsforce/jsforce/compare/3.6.1...3.6.2) (2024-10-28)
-
-
-### Bug Fixes
-
-* proper serialization of `null` value in soap request ([#1615](https://github.com/jsforce/jsforce/issues/1615)) ([caaf888](https://github.com/jsforce/jsforce/commit/caaf888abee693cd48ab5f975426d4ad5be733a1))
 
 
 
