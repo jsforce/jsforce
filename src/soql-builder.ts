@@ -39,7 +39,7 @@ function createFieldsClause(
 ): string {
   const cqueries: QueryConfig[] = Object.values(
     childQueries,
-  ) as any as QueryConfig[];
+  ) as unknown as QueryConfig[];
   // eslint-disable-next-line no-use-before-define
   return [
     ...(fields || ['Id']),
@@ -221,7 +221,7 @@ function createConditionClause(
           return createFieldExpression(cond.key, cond.value);
       }
     })
-    .filter((expr) => expr) as any as string[];
+    .filter((expr) => expr) as unknown as string[];
 
   let hasParen: boolean;
   if (operator === 'NOT') {
