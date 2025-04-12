@@ -121,24 +121,24 @@ export class RecordStream<R extends Record = Record> extends PassThrough {
   /**
    * Get record stream of queried records applying the given mapping function
    */
-  map<RR extends Record>(fn: (rec: R) => Optional<RR>) {
+  override map<RR extends Record>(fn: (rec: R) => Optional<RR>) {
     return this.pipe(RecordStream.map<R, RR>(fn));
   }
 
   /**
    * Get record stream of queried records, applying the given filter function
    */
-  filter(fn: (rec: R) => boolean): Duplex {
+  override filter(fn: (rec: R) => boolean): Duplex {
     return this.pipe(RecordStream.filter<R>(fn));
   }
 
   /* @override */
-  on(ev: string, fn: (...args: any[]) => void) {
+  override on(ev: string, fn: (...args: any[]) => void) {
     return super.on(ev === 'record' ? 'data' : ev, fn);
   }
 
   /* @override */
-  addListener = this.on;
+  override addListener = this.on;
 
   /* --------------------------------------------------- */
 
@@ -164,7 +164,7 @@ export class RecordStream<R extends Record = Record> extends PassThrough {
    */
   static recordMapStream<
     R1 extends Record = Record,
-    R2 extends Record = Record
+    R2 extends Record = Record,
   >(record: R2, noeval?: boolean) {
     return RecordStream.map<R1, R2>((rec) => {
       const mapped: Record = { Id: rec.Id };
@@ -256,7 +256,7 @@ export class Parsable<R extends Record = Record> extends RecordStream<R> {
   }
 
   /* @override */
-  on(ev: string, fn: (...args: any[]) => void) {
+  override on(ev: string, fn: (...args: any[]) => void) {
     if (ev === 'readable' || ev === 'record') {
       if (!this._execParse) {
         this._execParse = true;
@@ -269,7 +269,7 @@ export class Parsable<R extends Record = Record> extends RecordStream<R> {
   }
 
   /* @override */
-  addListener = this.on;
+  override addListener = this.on;
 }
 
 export default RecordStream;
