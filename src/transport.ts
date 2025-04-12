@@ -21,7 +21,12 @@ function normalizeApiHost(apiHost: string) {
 }
 
 setDefaults({
-  httpProxy: process.env.https_proxy ?? process.env.http_proxy ?? process.env.HTTPS_PROXY ?? process.env.HTTP_PROXY ?? undefined,
+  httpProxy:
+    process.env.https_proxy ??
+    process.env.http_proxy ??
+    process.env.HTTPS_PROXY ??
+    process.env.HTTP_PROXY ??
+    undefined,
   timeout: process.env.HTTP_TIMEOUT
     ? parseInt(process.env.HTTP_TIMEOUT, 10)
     : undefined,
@@ -81,7 +86,7 @@ export class JsonpTransport extends Transport {
     this._jsonpParam = jsonpParam;
   }
 
-  getRequestStreamCreator(): (
+  override getRequestStreamCreator(): (
     req: HttpRequest,
     options: HttpRequestOptions,
   ) => Duplex {
@@ -102,7 +107,7 @@ export class CanvasTransport extends Transport {
     this._signedRequest = signedRequest;
   }
 
-  getRequestStreamCreator(): (
+  override getRequestStreamCreator(): (
     req: HttpRequest,
     options: HttpRequestOptions,
   ) => Duplex {
@@ -144,7 +149,7 @@ export class XdProxyTransport extends Transport {
   /**
    * Make HTTP request via AJAX proxy
    */
-  httpRequest(req: HttpRequest, _options: HttpRequestOptions = {}) {
+  override httpRequest(req: HttpRequest, _options: HttpRequestOptions = {}) {
     const xdProxyUrl = this._xdProxyUrl;
     const { url, body, ...rreq } = req;
     const canonicalUrl = url.startsWith('/') ? baseUrl + url : url;
@@ -176,7 +181,7 @@ export class HttpProxyTransport extends Transport {
   /**
    * Make HTTP request via proxy server
    */
-  httpRequest(req: HttpRequest, options_: HttpRequestOptions = {}) {
+  override httpRequest(req: HttpRequest, options_: HttpRequestOptions = {}) {
     const options = { ...options_, httpProxy: this._httpProxy };
     return super.httpRequest(req, options);
   }

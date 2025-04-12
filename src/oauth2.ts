@@ -1,10 +1,10 @@
 /**
  *
  */
-import {createHash, randomBytes} from 'crypto';
+import { createHash, randomBytes } from 'crypto';
 import querystring from 'querystring';
-import Transport, {HttpProxyTransport, XdProxyTransport} from './transport';
-import {Optional} from './types';
+import Transport, { HttpProxyTransport, XdProxyTransport } from './transport';
+import { HttpError, Optional } from './types';
 
 const defaultOAuth2Config = {
   loginUrl: 'https://login.salesforce.com',
@@ -100,13 +100,13 @@ export class OAuth2 {
       this.revokeServiceUrl =
         revokeServiceUrl || `${this.loginUrl}/services/oauth2/revoke`;
     } else {
-      this.loginUrl = loginUrl ?? defaultOAuth2Config.loginUrl
+      this.loginUrl = loginUrl ?? defaultOAuth2Config.loginUrl;
 
-      const maybeSlash = this.loginUrl.endsWith('/') ? '' : '/'
+      const maybeSlash = this.loginUrl.endsWith('/') ? '' : '/';
 
-      this.authzServiceUrl = `${this.loginUrl}${maybeSlash}services/oauth2/authorize`
-      this.tokenServiceUrl = `${this.loginUrl}${maybeSlash}services/oauth2/token`
-      this.revokeServiceUrl = `${this.loginUrl}${maybeSlash}services/oauth2/revoke`
+      this.authzServiceUrl = `${this.loginUrl}${maybeSlash}services/oauth2/authorize`;
+      this.tokenServiceUrl = `${this.loginUrl}${maybeSlash}services/oauth2/token`;
+      this.revokeServiceUrl = `${this.loginUrl}${maybeSlash}services/oauth2/revoke`;
     }
     this.clientId = clientId;
     this.clientSecret = clientSecret;
@@ -247,13 +247,7 @@ export class OAuth2 {
         };
       }
       throw new (class extends Error {
-        constructor({
-          error,
-          error_description,
-        }: {
-          error: string;
-          error_description: string;
-        }) {
+        constructor({ error, error_description }: HttpError) {
           super(error_description);
           this.name = error;
         }
@@ -287,17 +281,11 @@ export class OAuth2 {
         error_description: response.body,
       };
       throw new (class extends Error {
-        constructor({
-          error,
-          error_description,
-        }: {
-          error: string;
-          error_description: string;
-        }) {
+        constructor({ error, error_description }: HttpError) {
           super(error_description);
           this.name = error;
         }
-      })(res);
+      })(res as HttpError);
     }
     return res;
   }

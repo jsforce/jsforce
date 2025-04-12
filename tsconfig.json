@@ -7,7 +7,7 @@
     "declaration": true,
     "skipLibCheck": true,
     "lib": ["es2022", "dom"],
-    "module": "commonjs",
+    "module": "NodeNext",
     "strict": true,
     "moduleResolution": "nodenext",
     "paths": {
@@ -18,7 +18,8 @@
       "typings",
       "node_modules/@types"
     ],
-    "esModuleInterop": true 
+    "esModuleInterop": true,
+    "noImplicitOverride": true,
   },
   "include": ["./src/**/*.ts"]
 }

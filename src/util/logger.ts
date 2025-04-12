@@ -12,7 +12,7 @@ export const LogLevels: { [level: string]: number } = {
 
 const LogLevelLabels = ['', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL', 'NONE'];
 
-const globalLogLevelConfig = (() => {
+const globalLogLevelConfig: LogLevelConfig = (() => {
   const globalLogLevelStr =
     process.env.JSFORCE_LOG_LEVEL ||
     (global as any).__JSFORCE_LOG_LEVEL__ ||
@@ -21,7 +21,7 @@ const globalLogLevelConfig = (() => {
     return { '*': globalLogLevelStr };
   }
   try {
-    return JSON.parse(globalLogLevelStr);
+    return JSON.parse(globalLogLevelStr) as LogLevelConfig;
   } catch (e) {
     return { '*': 'NONE' };
   }

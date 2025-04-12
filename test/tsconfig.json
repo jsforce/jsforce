@@ -4,7 +4,7 @@
     "skipLibCheck": true,
     "noEmit": true,
     "lib": ["es2022", "dom"],
-    "module": "commonjs",
+    "module": "NodeNext",
     "strict": true,
     "moduleResolution": "nodenext",
     "paths": {

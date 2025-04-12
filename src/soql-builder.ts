@@ -37,9 +37,9 @@ function createFieldsClause(
   fields?: string[],
   childQueries: { [name: string]: QueryConfig } = {},
 ): string {
-  const cqueries: QueryConfig[] = (Object.values(
+  const cqueries: QueryConfig[] = Object.values(
     childQueries,
-  ) as any) as QueryConfig[];
+  ) as any as QueryConfig[];
   // eslint-disable-next-line no-use-before-define
   return [
     ...(fields || ['Id']),
@@ -194,14 +194,17 @@ function createConditionClause(
       value: conditionsMap[key],
     }));
   } else {
-    conditionList = conditions.map((cond) => {
-      const conds = Object.keys(cond).map((key) => ({ key, value: cond[key] }));
+    conditionList = conditions.map((cond: object) => {
+      const conds = Object.entries(cond).map(([key, value]) => ({
+        key,
+        value,
+      }));
       return conds.length > 1
         ? { key: '$and', value: conds.map((c) => ({ [c.key]: c.value })) }
         : conds[0];
     });
   }
-  const conditionClauses = (conditionList
+  const conditionClauses = conditionList
     .map((cond) => {
       let d = depth + 1;
       let op: Optional<LogicalOperator>;
@@ -218,7 +221,7 @@ function createConditionClause(
           return createFieldExpression(cond.key, cond.value);
       }
     })
-    .filter((expr) => expr) as any) as string[];
+    .filter((expr) => expr) as any as string[];
 
   let hasParen: boolean;
   if (operator === 'NOT') {
