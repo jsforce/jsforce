@@ -486,3 +486,44 @@ it('should explain query plan of list view and get explain result', async () => 
     assert.ok(isString(plan.sobjectType));
   }
 });
+
+/**
+ *
+ */
+it('should update records with and without expression evaluation', async () => {
+  // Create a test account
+  const ret = await Account.create({ Name: 'Test Account' });
+  assert.ok(ret.success);
+  assert.ok(typeof ret.id === 'string');
+  const accountId = ret.id;
+
+  // Test with expression evaluation (default behavior)
+  const updateWithEval = await Account.find({ Id: accountId }).update({
+    Name: '${Name} (Updated)', // eslint-disable-line no-template-curly-in-string
+  });
+  assert.ok(Array.isArray(updateWithEval));
+  assert.ok(updateWithEval.length === 1);
+  assert.ok(updateWithEval[0].success === true);
+
+  // Verify the expression was evaluated
+  const recordWithEval = await Account.retrieve(accountId);
+  assert.ok(recordWithEval.Name === 'Test Account (Updated)');
+
+  // Test without expression evaluation
+  const updateWithoutEval = await Account.find({ Id: accountId }).update(
+    {
+      Name: '${Name} (No Eval)', // eslint-disable-line no-template-curly-in-string
+    },
+    { skipRecordTemplateEval: true },
+  );
+  assert.ok(Array.isArray(updateWithoutEval));
+  assert.ok(updateWithoutEval.length === 1);
+  assert.ok(updateWithoutEval[0].success === true);
+
+  // Verify the expression was not evaluated
+  const recordWithoutEval = await Account.retrieve(accountId);
+  assert.ok(recordWithoutEval.Name === '${Name} (No Eval)');
+
+  // Clean up
+  await Account.destroy(accountId);
+});
