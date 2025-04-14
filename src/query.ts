@@ -188,6 +188,10 @@ export type QueryUpdateOptions = {
   allowBulk?: boolean;
   bulkThreshold?: number;
   bulkApiVersion?: BulkApiVersion;
+  /**
+   * Skip record template evaluation.
+   */
+  skipRecordTemplateEval?: boolean;
 };
 
 /**
@@ -1038,7 +1042,7 @@ export class Query<
     const updateStream =
       typeof mapping === 'function'
         ? RecordStream.map(mapping)
-        : RecordStream.recordMapStream(mapping);
+        : RecordStream.recordMapStream(mapping, options.skipRecordTemplateEval);
     // Set the threshold number to pass to bulk API
     const thresholdNum =
       options.allowBulk === false
