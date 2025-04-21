@@ -648,7 +648,3 @@ export type ProcessRules = {
   [index: string]: ProcessRule;
 };
 
-export interface HttpError {
-  error: string;
-  error_description: string;
-}

@@ -4,8 +4,7 @@
  */
 import { EventEmitter } from 'events';
 import Connection, { ConnectionConfig } from '../connection';
-import OAuth2, { TokenResponse } from '../oauth2';
-import { HttpError } from 'jsforce/src';
+import OAuth2, { OAuthHttpError, TokenResponse } from '../oauth2';
 
 /**
  * @private
@@ -245,7 +244,7 @@ export class BrowserClient extends EventEmitter {
   /**
    * @private
    */
-  _getError(): HttpError | undefined {
+  _getError(): OAuthHttpError | undefined {
     try {
       const err = JSON.parse(
         localStorage.getItem(this._prefix + '_error') ?? '',

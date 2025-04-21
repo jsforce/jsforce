@@ -4,7 +4,7 @@
 import { createHash, randomBytes } from 'crypto';
 import querystring from 'querystring';
 import Transport, { HttpProxyTransport, XdProxyTransport } from './transport';
-import { HttpError, Optional } from './types';
+import { Optional } from './types';
 
 const defaultOAuth2Config = {
   loginUrl: 'https://login.salesforce.com',
@@ -61,6 +61,11 @@ export type TokenResponse = {
   sfdc_community_url?: string;
   sfdc_community_id?: string;
 };
+
+export interface OAuthHttpError {
+  error: string;
+  error_description: string;
+}
 
 /**
  * OAuth2 class
@@ -247,7 +252,7 @@ export class OAuth2 {
         };
       }
       throw new (class extends Error {
-        constructor({ error, error_description }: HttpError) {
+        constructor({ error, error_description }: OAuthHttpError) {
           super(error_description);
           this.name = error;
         }
@@ -281,11 +286,11 @@ export class OAuth2 {
         error_description: response.body,
       };
       throw new (class extends Error {
-        constructor({ error, error_description }: HttpError) {
+        constructor({ error, error_description }: OAuthHttpError) {
           super(error_description);
           this.name = error;
         }
-      })(res as HttpError);
+      })(res as OAuthHttpError);
     }
     return res;
   }
