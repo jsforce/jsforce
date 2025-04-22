@@ -213,7 +213,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.23.1",
-    "@babel/runtime-corejs3": "^7.23.1",
+    "@babel/runtime-corejs3": "^7.26.10",
     "@sindresorhus/is": "^4",
     "base64url": "^3.0.1",
     "commander": "^4.0.1",
