@@ -212,7 +212,7 @@
     "jsforce-gen-schema": "./bin/jsforce-gen-schema"
   },
   "dependencies": {
-    "@babel/runtime": "^7.23.1",
+    "@babel/runtime": "^7.27.0",
     "@babel/runtime-corejs3": "^7.23.1",
     "@sindresorhus/is": "^4",
     "base64url": "^3.0.1",
