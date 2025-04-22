@@ -1,3 +1,12 @@
+# [3.8.0](https://github.com/jsforce/jsforce/compare/3.7.0...3.8.0) (2025-04-22)
+
+
+### Features
+
+* allow skipping template eval on query update ([b26270c](https://github.com/jsforce/jsforce/commit/b26270c491ee227d91a643ec4bd723cb4855d666))
+
+
+
 # [3.7.0](https://github.com/jsforce/jsforce/compare/3.6.6...3.7.0) (2025-03-25)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * **bulk:** update JobInfo type ([#1636](https://github.com/jsforce/jsforce/issues/1636)) ([4755f00](https://github.com/jsforce/jsforce/commit/4755f0065d90c1d2437d7d3831e5c0cee7a57d2c))
-
-
-
-## [3.6.3](https://github.com/jsforce/jsforce/compare/3.6.2...3.6.3) (2024-11-26)
-
-
-### Bug Fixes
-
-* **http:** handle more CSV delimiters on parse ([#1622](https://github.com/jsforce/jsforce/issues/1622)) ([c96e9c7](https://github.com/jsforce/jsforce/commit/c96e9c7d1c822b45b17e3adb8bcb3b0050b197c4))
 
 
 
