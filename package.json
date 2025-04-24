@@ -286,7 +286,7 @@
     "util": "^0.12.5",
     "webpack": "^5.97.1",
     "webpack-cli": "^5.0.2",
-    "wireit": "^0.14.7",
+    "wireit": "^0.14.12",
     "zx": "^7.2.3"
   },
   "overrides": {
