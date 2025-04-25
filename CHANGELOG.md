@@ -1,3 +1,12 @@
+## [3.8.1](https://github.com/jsforce/jsforce/compare/3.8.0...3.8.1) (2025-04-25)
+
+
+### Bug Fixes
+
+* bump babel deps ([#1683](https://github.com/jsforce/jsforce/issues/1683)) ([57e23f0](https://github.com/jsforce/jsforce/commit/57e23f08aa7476a20c11b32146d10e30dd528a92))
+
+
+
 # [3.8.0](https://github.com/jsforce/jsforce/compare/3.7.0...3.8.0) (2025-04-22)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * skip session refresh on bad Agent API reqs ([870dcc6](https://github.com/jsforce/jsforce/commit/870dcc665e1cf49ddad38fb6cc9723c5c199be4e))
-
-
-
-## [3.6.4](https://github.com/jsforce/jsforce/compare/3.6.3...3.6.4) (2025-01-20)
-
-
-### Bug Fixes
-
-* **bulk:** update JobInfo type ([#1636](https://github.com/jsforce/jsforce/issues/1636)) ([4755f00](https://github.com/jsforce/jsforce/commit/4755f0065d90c1d2437d7d3831e5c0cee7a57d2c))
 
 
 
