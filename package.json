@@ -239,7 +239,7 @@
     "@types/inquirer": "^6.5.0",
     "@types/jest": "^29.5.5",
     "@types/multistream": "^2.1.1",
-    "@types/node": "^18.15.3",
+    "@types/node": "^18.19.87",
     "@types/node-fetch": "^2.5.7",
     "@types/shelljs": "^0.8.15",
     "@types/through2": "^2.0.34",
