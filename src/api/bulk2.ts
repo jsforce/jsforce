@@ -151,22 +151,23 @@ class JobPollingTimeoutError extends Error {
 }
 
 class BulkApiV2<S extends Schema> extends HttpApi<S> {
-  hasErrorInResponseBody(body: any) {
+  override hasErrorInResponseBody(body: any) {
     return (
       Array.isArray(body) &&
       typeof body[0] === 'object' &&
+      body[0] &&
       'errorCode' in body[0]
     );
   }
 
-  isSessionExpired(response: HttpResponse): boolean {
+  override isSessionExpired(response: HttpResponse): boolean {
     return (
       response.statusCode === 401 &&
       response.body.includes('INVALID_SESSION_ID')
     );
   }
 
-  parseError(body: any) {
+  override parseError(body: any) {
     return {
       errorCode: body[0].errorCode,
       message: body[0].message,
@@ -549,8 +550,8 @@ export class QueryJobV2<S extends Schema> extends EventEmitter {
       const resPromise = this.createQueryRequest({
         method: 'GET',
         path: this.locator
-          // resultsPath starts with '/'
-          ? `${resultsPath}?locator=${this.locator}`
+          ? // resultsPath starts with '/'
+            `${resultsPath}?locator=${this.locator}`
           : resultsPath,
         headers: {
           Accept: 'text/csv',
@@ -845,15 +846,12 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
    * @returns Promise<IngestJobV2Results>
    */
   public async getAllResults(): Promise<IngestJobV2Results<S>> {
-    const [
-      successfulResults,
-      failedResults,
-      unprocessedRecords,
-    ] = await Promise.all([
-      this.getSuccessfulResults(),
-      this.getFailedResults(),
-      this.getUnprocessedRecords(),
-    ]);
+    const [successfulResults, failedResults, unprocessedRecords] =
+      await Promise.all([
+        this.getSuccessfulResults(),
+        this.getFailedResults(),
+        this.getUnprocessedRecords(),
+      ]);
     return { successfulResults, failedResults, unprocessedRecords };
   }
 
@@ -864,7 +862,9 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
    * @param {boolean} raw Get results as a CSV string
    * @returns Promise<IngestJobV2SuccessfulResults>
    */
-  async getSuccessfulResults(raw?: false): Promise<IngestJobV2SuccessfulResults<S>>
+  async getSuccessfulResults(
+    raw?: false,
+  ): Promise<IngestJobV2SuccessfulResults<S>>;
   /** Return successful results
    *
    * The order of records returned is not guaranteed to match the ordering of the uploaded data.
@@ -872,18 +872,20 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
    * @param {boolean} raw Get results as a CSV string
    * @returns Promise<string>
    */
-  async getSuccessfulResults(raw: true): Promise<string>
-  async getSuccessfulResults(raw?: boolean): Promise<IngestJobV2SuccessfulResults<S> | string> {
+  async getSuccessfulResults(raw: true): Promise<string>;
+  async getSuccessfulResults(
+    raw?: boolean,
+  ): Promise<IngestJobV2SuccessfulResults<S> | string> {
     const reqOpts: BulkRequest = {
       method: 'GET',
       path: `/${this.id}/successfulResults`,
-    }
+    };
 
     if (raw) {
       return this.createIngestRequest<string>({
         ...reqOpts,
         responseType: 'text/plain',
-      })
+      });
     }
 
     if (this.bulkJobSuccessfulResults) {
@@ -910,7 +912,7 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
    * @param {boolean} raw Get results as a CSV string
    * @returns Promise<IngestJobV2SuccessfulResults>
    */
-  async getFailedResults(raw?: false): Promise<IngestJobV2FailedResults<S>>
+  async getFailedResults(raw?: false): Promise<IngestJobV2FailedResults<S>>;
   /** Return failed results
    *
    * The order of records in the response is not guaranteed to match the ordering of records in the original job data.
@@ -918,18 +920,20 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
    * @param {boolean} raw Get results as a CSV string
    * @returns Promise<string>
    */
-  async getFailedResults(raw: true): Promise<string>
-  async getFailedResults(raw?: boolean): Promise<IngestJobV2FailedResults<S> | string> {
+  async getFailedResults(raw: true): Promise<string>;
+  async getFailedResults(
+    raw?: boolean,
+  ): Promise<IngestJobV2FailedResults<S> | string> {
     const reqOpts: BulkRequest = {
       method: 'GET',
       path: `/${this.id}/failedResults`,
-    }
+    };
 
     if (raw) {
       return this.createIngestRequest<string>({
         ...reqOpts,
         responseType: 'text/plain',
-      })
+      });
     }
 
     if (this.bulkJobFailedResults) {
@@ -960,8 +964,10 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
    * @param {boolean} raw Get results as a CSV string
    * @returns Promise<IngestJobV2UnprocessedRecords>
    */
-  async getUnprocessedRecords(raw?: false): Promise<IngestJobV2UnprocessedRecords<S>>
-    /** Return unprocessed results
+  async getUnprocessedRecords(
+    raw?: false,
+  ): Promise<IngestJobV2UnprocessedRecords<S>>;
+  /** Return unprocessed results
    *
    * The unprocessed records endpoint returns records as a CSV.
    * If the request helper is able to parse it, you get the records
@@ -973,18 +979,20 @@ export class IngestJobV2<S extends Schema> extends EventEmitter {
    * @param {boolean} raw Get results as a CSV string
    * @returns Promise<string>
    */
-  async getUnprocessedRecords(raw: true): Promise<string>
-  async getUnprocessedRecords(raw?: boolean): Promise<IngestJobV2UnprocessedRecords<S>> {
+  async getUnprocessedRecords(raw: true): Promise<string>;
+  async getUnprocessedRecords(
+    raw?: boolean,
+  ): Promise<IngestJobV2UnprocessedRecords<S>> {
     const reqOpts: BulkRequest = {
       method: 'GET',
       path: `/${this.id}/unprocessedrecords`,
-    }
+    };
 
     if (raw) {
       return this.createIngestRequest<string>({
         ...reqOpts,
         responseType: 'text/plain',
-      })
+      });
     }
 
     if (this.bulkJobUnprocessedRecords) {
@@ -1090,7 +1098,7 @@ class JobDataV2<S extends Schema> extends Writable {
     });
   }
 
-  _write(record_: Record, enc: BufferEncoding, cb: () => void) {
+  override _write(record_: Record, enc: BufferEncoding, cb: () => void) {
     const { Id, type, attributes, ...rrec } = record_;
     let record;
     switch (this.job.getInfo().operation) {
