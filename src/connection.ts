@@ -1314,6 +1314,17 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
         ...((await this._upsertMany(type, records.slice(MAX_DML_COUNT), extIdField, options)) as SaveResult[]),
       ];
     }
+    const _records = records.map((recordItem: Record) => {
+      const { [extIdField]: extId, type: recordType, attributes, ...rec } = recordItem;
+      const sobjectType = recordType || attributes?.type || type;
+      if (!extId) {
+        throw new Error('External ID is not found in record.');
+      } 
+      if (!sobjectType) {
+        throw new Error('No SObject Type defined in record');
+      }
+      return { [extIdField]: extId, attributes: { type: sobjectType }, ...rec };
+    });
     let url =
       [this._baseUrl(), 'composite', 'sobjects', type, extIdField].join('/');
     if (options.allOrNone) {
@@ -1322,7 +1333,14 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
     return this.request({
       method: 'PATCH',
       url,
-      headers: options.headers || {},
+      body: JSON.stringify({
+        allOrNone: options.allOrNone || false,
+        records: _records,
+      }),
+      headers: {
+        ...(options.headers || {}),
+        'content-type': 'application/json',
+      }
     });
   }
 
