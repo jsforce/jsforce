@@ -36,7 +36,7 @@ if (isNodeJS()) {
   /**
    *
    */
-  it.skip('should receive a PushTopic event when an Account is created', async () => {
+  it('should receive a PushTopic event when an Account is created', async () => {
     type Account = { Id: string; Name: string };
 
     const id = Date.now();
@@ -85,7 +85,7 @@ if (isNodeJS()) {
     await conn.sobject('PushTopic').findOne({ Name: pushTopicName }).delete();
   });
 
-  it.skip('should receive only events published after a specific replayId on a generic channel (specific replayId)', async () => {
+  it('should receive only events published after a specific replayId on a generic channel (specific replayId)', async () => {
     // Publish two events before subscribing
     const payloadMessage1 = randomUUID();
     const payloadMessage2 = randomUUID();
@@ -142,7 +142,7 @@ if (isNodeJS()) {
   // tests using the replay id -1 and -2
   // see: https://developer.salesforce.com/docs/atlas.en-us.api_streaming.meta/api_streaming/using_streaming_api_durability.htm
 
-  it.skip('should receive a custom streaming event on a generic channel with replayId -1 (new events only)', async () => {
+  it('should receive a custom streaming event on a generic channel with replayId -1 (new events only)', async () => {
     let subscr: Subscription | undefined;
     const msgArrived = new Promise<GenericStreamingMessage>((resolve) => {
       const streamingChannel = conn.streaming.channel(testChannelName);
@@ -164,7 +164,7 @@ if (isNodeJS()) {
     }
   });
 
-  it.skip('should receive only new events published after subscribing (replayId -1)', async () => {
+  it('should receive only new events published after subscribing (replayId -1)', async () => {
     let subscr: Subscription | undefined;
     // Publish an event BEFORE subscribing
     const payloadMessageBefore = randomUUID();
@@ -205,7 +205,7 @@ if (isNodeJS()) {
   // Events are only retained for replay if published while a subscriber is active, and even then, replayId = -2 may not return them as expected.
   // This is a Salesforce platform limitation, not a bug in jsforce.
 
-  it.skip('should receive Account CDC events with replayId -1 (new events only)', async () => {
+  it('should receive Account CDC events with replayId -1 (new events only)', async () => {
     const cdcChannel = '/data/AccountChangeEvent';
     const createdAccountNames: string[] = [];
     let subscr: Subscription | undefined;
@@ -244,6 +244,4 @@ if (isNodeJS()) {
     }
     await conn.sobject('Account').destroy(accounts.map(a => a.Id));
   });
-
-  
 }
