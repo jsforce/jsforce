@@ -28,11 +28,13 @@ if (
 
   await writeFile(hubOpts.jwtKeyFile, formatJwtKey());
 
+  console.log('Logging into devhub using JWT...');
   await $`sf org login jwt --username ${hubOpts.username} --jwt-key-file "jwtKey.txt" --set-default-dev-hub --client-id ${hubOpts.clientId}`;
 } else {
   // ensure there's a default devhub
   const defaultHub = JSON.parse(await $`sf config get target-dev-hub --json`);
 
+  console.log('Logging into devhub using username and password...');
   if (defaultHub.result.find((res) => res.sucesss && res.value) !== undefined) {
     throw new Error(
       'Set SF_HUB_USERNAME, SF_OAUTH2_JWT_KEY and SF_OAUTH2_CLIENT_ID env vars.',
@@ -41,16 +43,20 @@ if (
 }
 
 const orgDefinitionFile = join('test', 'test-org-setup', 'config', 'project-scratch-def.json');
+console.log(`Creating scratch org using the definition ${orgDefinitionFile} file...`);
 await $`sf org create scratch --definition-file ${orgDefinitionFile} --wait 20 --duration-days 1 --alias jsforce-test-org --json`;
 
+console.log(`Generating password for the scratch org...`);
 await $`sf org generate password --target-org jsforce-test-org --json`;
 
+console.log(`Assigning the scratch org to the default devhub...`);
 await $`sf project deploy start --metadata-dir ${join(
   'test',
   'package',
   'JSforceTestSuite',
 )} --wait 20 --target-org jsforce-test-org`;
 
+console.log(`Assigning the permission set JSForceTestPowerUser to the test user...`);
 await $`sf org assign permset --name JSForceTestPowerUser --target-org jsforce-test-org`;
 
 const orgDisplayUserRes = JSON.parse(
@@ -68,6 +74,7 @@ for (let i = 0; i <= 5000; i++) {
 const bigTableCsv = join('test', 'data', 'BigTable.csv');
 await fs.writeFile(bigTableCsv, csv);
 
+console.log(`Inserting 5000 rows into BigTable__c...`);
 await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --external-id Id --target-org jsforce-test-org`;
 await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --external-id Id --target-org jsforce-test-org`;
 await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --external-id Id --target-org jsforce-test-org`;
