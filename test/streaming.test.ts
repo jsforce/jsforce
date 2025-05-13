@@ -38,7 +38,7 @@ if (isNodeJS()) {
   /**
    *
    */
-  it.skip('should subscribe to topic, create account, and receive event of account has been created', async () => {
+  it('should receive a PushTopic event when an Account is created', async () => {
     type Account = { Id: string; Name: string };
 
     const id = Date.now();
@@ -87,7 +87,7 @@ if (isNodeJS()) {
     await conn.sobject('PushTopic').findOne({ Name: pushTopicName }).delete();
   });
 
-  it('should subscribe to generic streaming channel and recieve custom streaming event (replay id defaults to -1 internally)', async () => {
+  it('should receive a custom streaming event on a generic channel (default replayId -1)', async () => {
     let subscr: Subscription | undefined;
     const msgArrived = new Promise<GenericStreamingMessage>((resolve) => {
       const streamingChannel = conn.streaming.channel(testChannelName);
@@ -110,7 +110,7 @@ if (isNodeJS()) {
     }
   });
 
-  it('should subscribe to generic streaming channel and recieve custom streaming event (specific replay id)', async () => {
+  it('should receive a custom streaming event on a generic channel with a specific replayId', async () => {
     let subscr: Subscription | undefined;
     const msgArrived = new Promise<GenericStreamingMessage>((resolve) => {
       const streamingChannel = conn.streaming.channel(testChannelName);
@@ -136,7 +136,7 @@ if (isNodeJS()) {
   // tests using the replay id -1 and -2
   // see: https://developer.salesforce.com/docs/atlas.en-us.api_streaming.meta/api_streaming/using_streaming_api_durability.htm
 
-  it('should subscribe to generic streaming channel and recieve custom streaming event (with replay id -1)', async () => {
+  it('should receive a custom streaming event on a generic channel with replayId -1 (new events only)', async () => {
     let subscr: Subscription | undefined;
     const msgArrived = new Promise<GenericStreamingMessage>((resolve) => {
       const streamingChannel = conn.streaming.channel(testChannelName);
@@ -158,7 +158,7 @@ if (isNodeJS()) {
     }
   });
 
-  it('should subscribe to generic streaming channel and receive only new events after subscribing (replayId -1)', async () => {
+  it('should receive only new events published after subscribing (replayId -1)', async () => {
     let subscr: Subscription | undefined;
     // Publish an event BEFORE subscribing
     const payloadMessageBefore = randomUUID();
