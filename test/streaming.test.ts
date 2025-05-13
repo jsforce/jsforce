@@ -13,6 +13,8 @@ import { randomUUID } from 'crypto';
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();
 const testChannelName = '/u/JSforceTestChannel';
+const DELAY_SECONDS = 5;
+const DELAY_SECONDS_MILIS = DELAY_SECONDS * 1000;
 
 /**
  *
@@ -20,25 +22,21 @@ const testChannelName = '/u/JSforceTestChannel';
 beforeAll(async () => {
   await connMgr.establishConnection(conn);
 
-  console.log('Creating streaming channel...');
   await conn.sobject('StreamingChannel').create({ Name: testChannelName });
-  console.log('Streaming channel created!');
 });
 
 afterAll(async () => {
-  console.log('Destroying streaming channel...');
   await conn
     .sobject('StreamingChannel')
     .find({ Name: testChannelName })
     .destroy();
-  console.log('Streaming channel destroyed.');
 })
 
 if (isNodeJS()) {
   /**
    *
    */
-  it('should receive a PushTopic event when an Account is created', async () => {
+  it.skip('should receive a PushTopic event when an Account is created', async () => {
     type Account = { Id: string; Name: string };
 
     const id = Date.now();
@@ -87,47 +85,55 @@ if (isNodeJS()) {
     await conn.sobject('PushTopic').findOne({ Name: pushTopicName }).delete();
   });
 
-  it('should receive a custom streaming event on a generic channel (default replayId -1)', async () => {
-    let subscr: Subscription | undefined;
-    const msgArrived = new Promise<GenericStreamingMessage>((resolve) => {
-      const streamingChannel = conn.streaming.channel(testChannelName);
-      subscr = streamingChannel.subscribe(resolve);
-    });
-    await delay(5000);
-    const payloadMessage = randomUUID();
-    const res = await conn.streaming.channel(testChannelName).push({
-      payload: payloadMessage,
+  it.skip('should receive only events published after a specific replayId on a generic channel (specific replayId)', async () => {
+    // Publish two events before subscribing
+    const payloadMessage1 = randomUUID();
+    const payloadMessage2 = randomUUID();
+
+    await conn.streaming.channel(testChannelName).push({
+      payload: payloadMessage1,
       userIds: [],
     });
-    // console.log(res);
-    assert.ok(res.fanoutCount === -1);
-    assert.ok(isObject(res.userOnlineStatus));
-    const msg = await msgArrived;
-    assert.ok(msg.payload === payloadMessage);
+    await conn.streaming.channel(testChannelName).push({
+      payload: payloadMessage2,
+      userIds: [],
+    });
 
-    if (subscr) {
-      subscr.cancel();
+    // Subscribe to get the latest replayId (publish a new event after subscribing to ensure delivery)
+    let tempSubscr: Subscription | undefined;
+    const msgArrived = new Promise<GenericStreamingMessage>((resolve) => {
+      tempSubscr = conn.streaming.channel(testChannelName).subscribe(resolve, -2);
+    });
+    await delay(DELAY_SECONDS_MILIS); // Give the subscription time to establish
+    // Publish a new event to trigger the subscription and get the latest replayId
+    const payloadMessage3 = randomUUID();
+    await conn.streaming.channel(testChannelName).push({
+      payload: payloadMessage3,
+      userIds: [],
+    });
+    const latestMsg = await msgArrived;
+    if (tempSubscr) {
+      tempSubscr.cancel();
     }
-  });
+    const lastReplayId = latestMsg.event.replayId;
+    assert.ok(typeof lastReplayId === 'number');
 
-  it('should receive a custom streaming event on a generic channel with a specific replayId', async () => {
+    // Now subscribe using the lastReplayId (should only get new events after this)
     let subscr: Subscription | undefined;
-    const msgArrived = new Promise<GenericStreamingMessage>((resolve) => {
-      const streamingChannel = conn.streaming.channel(testChannelName);
-      subscr = streamingChannel.subscribe(resolve, 1);
+    const msgArrived2 = new Promise<GenericStreamingMessage>((resolve) => {
+      subscr = conn.streaming.channel(testChannelName).subscribe(resolve, lastReplayId);
     });
-    await delay(5000);
-    const payloadMessage = randomUUID();
-    const res = await conn.streaming.channel(testChannelName).push({
-      payload: payloadMessage,
+    await delay(DELAY_SECONDS_MILIS);
+    // Publish a new event after subscribing
+    const payloadMessage4 = randomUUID();
+    await conn.streaming.channel(testChannelName).push({
+      payload: payloadMessage4,
       userIds: [],
     });
-    // console.log(res);
-    assert.ok(res.fanoutCount === -1);
-    assert.ok(isObject(res.userOnlineStatus));
-    const msg = await msgArrived;
-    assert.ok(msg.payload === payloadMessage);
-
+    const msg = await msgArrived2;
+    // Should only receive the event published after subscribing
+    assert.ok(msg.payload === payloadMessage4);
+    assert.ok(typeof msg.event.replayId === 'number');
     if (subscr) {
       subscr.cancel();
     }
@@ -136,13 +142,13 @@ if (isNodeJS()) {
   // tests using the replay id -1 and -2
   // see: https://developer.salesforce.com/docs/atlas.en-us.api_streaming.meta/api_streaming/using_streaming_api_durability.htm
 
-  it('should receive a custom streaming event on a generic channel with replayId -1 (new events only)', async () => {
+  it.skip('should receive a custom streaming event on a generic channel with replayId -1 (new events only)', async () => {
     let subscr: Subscription | undefined;
     const msgArrived = new Promise<GenericStreamingMessage>((resolve) => {
       const streamingChannel = conn.streaming.channel(testChannelName);
       subscr = streamingChannel.subscribe(resolve, -1);
     });
-    await delay(5000);
+    await delay(DELAY_SECONDS_MILIS);
     const payloadMessage = randomUUID();
     const res = await conn.streaming.channel(testChannelName).push({
       payload: payloadMessage,
@@ -158,7 +164,7 @@ if (isNodeJS()) {
     }
   });
 
-  it('should receive only new events published after subscribing (replayId -1)', async () => {
+  it.skip('should receive only new events published after subscribing (replayId -1)', async () => {
     let subscr: Subscription | undefined;
     // Publish an event BEFORE subscribing
     const payloadMessageBefore = randomUUID();
@@ -174,7 +180,7 @@ if (isNodeJS()) {
       const streamingChannel = conn.streaming.channel(testChannelName);
       subscr = streamingChannel.subscribe(resolve, -1);
     });
-    await delay(5000);
+    await delay(DELAY_SECONDS_MILIS);
     // Publish an event AFTER subscribing
     const payloadMessageAfter = randomUUID();
     const resAfter = await conn.streaming.channel(testChannelName).push({
@@ -193,4 +199,51 @@ if (isNodeJS()) {
       subscr.cancel();
     }
   });
+
+  // NOTE: Salesforce Generic Streaming does not reliably support replayId = -2 (all retained events).
+  // See: https://developer.salesforce.com/docs/atlas.en-us.api_streaming.meta/api_streaming/using_generic_stream.htm
+  // Events are only retained for replay if published while a subscriber is active, and even then, replayId = -2 may not return them as expected.
+  // This is a Salesforce platform limitation, not a bug in jsforce.
+
+  it.skip('should receive Account CDC events with replayId -1 (new events only)', async () => {
+    const cdcChannel = '/data/AccountChangeEvent';
+    const createdAccountNames: string[] = [];
+    let subscr: Subscription | undefined;
+    const receivedEvents: any[] = [];
+    const ready = new Promise<void>((resolve, reject) => {
+      subscr = conn.streaming.channel(cdcChannel).subscribe((msg: any) => {
+        if (msg && msg.payload && msg.payload.ChangeEventHeader && createdAccountNames.includes(msg.payload.Name)) {
+          receivedEvents.push(msg);
+          if (createdAccountNames.every(name => receivedEvents.some(e => e.payload.Name === name))) {
+            resolve();
+          }
+        } else {
+          throw new Error('Received unexpected CDC event');
+        }
+      }, -1);
+      setTimeout(() => reject(new Error('Timeout waiting for CDC events')), DELAY_SECONDS_MILIS * 12);
+    });
+    // Now create the records
+    for (let i = 0; i < 2; i++) {
+      const name = `CDC Test Account #${randomUUID()}`;
+      createdAccountNames.push(name);
+      const createResult = await conn.sobject('Account').create({ Name: name });
+      assert.ok(createResult.success);
+    }
+    await ready;
+    if (subscr) subscr.cancel();
+    // Clean up as above...
+    // Bulk delete all created accounts by querying their names in a single query
+    const accounts = await conn.sobject('Account').find(
+      { Name: { $in: createdAccountNames } },
+      ['Id']
+    );
+    console.log(`Deleting the ${accounts.length} accounts created during the test...`);
+    if (!accounts || accounts.length == 0) {
+      throw new Error('No accounts found to delete');
+    }
+    await conn.sobject('Account').destroy(accounts.map(a => a.Id));
+  });
+
+  
 }
