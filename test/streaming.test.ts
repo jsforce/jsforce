@@ -13,6 +13,7 @@ import { randomUUID } from 'crypto';
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();
 const testChannelName = '/u/JSforceTestChannel';
+const cdcChannel = '/data/AccountChangeEvent'
 const DELAY_SECONDS = 5;
 const DELAY_SECONDS_MILIS = DELAY_SECONDS * 1000;
 
@@ -243,5 +244,79 @@ if (isNodeJS()) {
       throw new Error('No accounts found to delete');
     }
     await conn.sobject('Account').destroy(accounts.map(a => a.Id));
+  });
+
+  it('should receive just the new Account CDC events with replayId defined', async () => {
+    let createdAccountNames: string[] = [];
+    let lastReplayId: number | undefined;
+    let subscr: Subscription | undefined;
+    const subscription1 = new Promise<void>((resolve, reject) => {
+      subscr = conn.streaming.channel(cdcChannel).subscribe((msg: any) => {
+        // Log all received events for debugging
+        lastReplayId = msg.event.replayId;
+        // Only consider events for accounts created in this test
+      }, -1);
+      // wait some time because CDCs are not guaranteed to be delivered immediately at all.
+      // on high loads or if the org is busy, it may take a while to get the events.
+      const anEntireMinute = DELAY_SECONDS_MILIS * 12;
+      setTimeout(() => reject(new Error('Timeout waiting for CDC replayed events')), anEntireMinute);
+    });
+
+    // Step 1: Publish two Account changes
+    for (let i = 0; i < 2; i++) {
+      const name = `CDC Test Account #${randomUUID()}`;
+      createdAccountNames.push(name);
+      const createResult = await conn.sobject('Account').create({ Name: name })
+      assert.ok(createResult.success);
+    }
+    await delay(DELAY_SECONDS_MILIS);
+    // Step 2: Subscribe with replayId = -2
+    try {
+      const receivedEvents: any[] = [];
+      const ready = new Promise<void>((resolve, reject) => {
+        subscr = conn.streaming.channel(cdcChannel).subscribe((msg: any) => {
+          // Log all received events for debugging
+          // Only consider events for accounts created in this test
+          if (msg && msg.payload && msg.payload.ChangeEventHeader && createdAccountNames.includes(msg.payload.Name)) {
+            receivedEvents.push(msg);
+            if (createdAccountNames.every(name => receivedEvents.some(e => e.payload.Name === name))) {
+              resolve();
+            }
+          }
+        }, lastReplayId);
+        // wait some time because CDCs are not guaranteed to be delivered immediately at all.
+        // on high loads or if the org is busy, it may take a while to get the events.
+        const anEntireMinute = DELAY_SECONDS_MILIS * 12;
+        setTimeout(() => reject(new Error('Timeout waiting for CDC replayed events')), anEntireMinute);
+      });
+      createdAccountNames = [];
+      for (let i = 0; i < 2; i++) {
+        const name = `CDC Test Account #${randomUUID()}`;
+        createdAccountNames.push(name);
+        const createResult = await conn.sobject('Account').create({ Name: name })
+        assert.ok(createResult.success);
+      }
+      await ready;
+      // Assert that both created accounts were received in CDC events
+      assert.ok(receivedEvents.length === createdAccountNames.length && receivedEvents.length === 2);
+      for (const name of createdAccountNames) {
+        assert.ok(receivedEvents.some(e => e.payload.Name === name));
+      }
+    } finally {
+      if (subscr) {
+        subscr.unsubscribe();
+        subscr.cancel();
+      };
+      // Step 3: Clean up created accounts (all of them)
+      // Bulk delete all created accounts by querying their names in a single query
+      const accounts = await conn.sobject('Account').find(
+        { Name: { $in: createdAccountNames } },
+        ['Id']
+      );
+      if (!accounts || accounts.length == 0) {
+        throw new Error('No accounts found to delete');
+      }
+      await conn.sobject('Account').destroy(accounts.map(a => a.Id));
+    }
   });
 }
