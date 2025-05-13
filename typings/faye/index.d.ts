@@ -8,7 +8,7 @@ declare module 'faye' {
     constructor(url: string, options?: {});
     setHeader(name: string, value: string): void;
     addExtension(ext: any): void;
-    subscribe(channelName: string, listener?: Function): Subscription;
+    subscribe(channelName: string, listener?: Function, replayId?: number): Subscription;
     unsubscribe(channelName: string, subscr: Subscription): void;
   }
   const Faye: { Client: typeof Client };
