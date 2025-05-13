@@ -40,7 +40,7 @@ if (
   }
 }
 
-const orgDefinitionFile = join('test', 'org-setup', 'project-scratch-def.json');
+const orgDefinitionFile = join('test', 'test-org-setup', 'config', 'project-scratch-def.json');
 await $`sf org create scratch --definition-file ${orgDefinitionFile} --wait 20 --duration-days 1 --alias jsforce-test-org --json`;
 
 await $`sf org generate password --target-org jsforce-test-org --json`;
