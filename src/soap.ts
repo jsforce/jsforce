@@ -213,7 +213,7 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
     if (this._conn.accessToken && isJWTToken(this._conn.accessToken)) {
       // We need to block SOAP requests with JWT tokens because the response is:
       // statusCode=500 | body="INVALID_SESSION_ID" (xml), which triggers session refresh and enters in an infinite loop
-      throw new Error('SOAP API does not support JWT-based access tokens.')
+      throw new Error('SOAP API does not support JWT-based access tokens. You must disable the "Issue JSON Web Token (JWT)-based access tokens" setting in your Connected App or External Client App')
     }
     this._endpointUrl = options.endpointUrl;
     this._xmlns = options.xmlns || 'urn:partner.soap.sforce.com';
