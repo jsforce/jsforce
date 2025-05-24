@@ -1,3 +1,12 @@
+## [3.8.2](https://github.com/jsforce/jsforce/compare/3.8.1...3.8.2) (2025-05-22)
+
+
+### Bug Fixes
+
+* **SOAP:** block connections using JWT tokens ([e601069](https://github.com/jsforce/jsforce/commit/e601069efc00801d78394fbad17773d6998324d3))
+
+
+
 ## [3.8.1](https://github.com/jsforce/jsforce/compare/3.8.0...3.8.1) (2025-04-25)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * **http:** return res/err after after retry is done ([be37b13](https://github.com/jsforce/jsforce/commit/be37b1379877a45e944194145f0d728c83ce4027))
-
-
-
-## [3.6.5](https://github.com/jsforce/jsforce/compare/3.6.4...3.6.5) (2025-02-20)
-
-
-### Bug Fixes
-
-* skip session refresh on bad Agent API reqs ([870dcc6](https://github.com/jsforce/jsforce/commit/870dcc665e1cf49ddad38fb6cc9723c5c199be4e))
 
 
 
