@@ -560,6 +560,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
       headers: {
         'Content-Type': 'text/xml',
         SOAPAction: '""',
+        'Content-Length': Buffer.byteLength(body),
       },
     });
     let m;
