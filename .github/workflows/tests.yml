@@ -27,7 +27,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: lts/*
-      - uses: google/wireit@setup-github-actions-caching/v1
+      - uses: google/wireit@setup-github-actions-caching/v2
+        continue-on-error: true
       - name: Install dependencies
         run: npm install
 
