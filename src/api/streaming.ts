@@ -50,17 +50,19 @@ export { Client, Subscription };
 class Topic<S extends Schema, R extends Record> {
   _streaming: Streaming<S>;
   name: string;
+  replayId?: number;
 
-  constructor(streaming: Streaming<S>, name: string) {
+  constructor(streaming: Streaming<S>, name: string, replayId?: number) {
     this._streaming = streaming;
     this.name = name;
+    this.replayId = replayId;
   }
 
   /**
    * Subscribe listener to topic
    */
   subscribe(listener: (message: StreamingMessage<R>) => void): Subscription {
-    return this._streaming.subscribe(this.name, listener);
+    return this._streaming.subscribe(this.name, listener, this.replayId);
   }
 
   /**
@@ -75,22 +77,27 @@ class Topic<S extends Schema, R extends Record> {
 /*--------------------------------------------*/
 /**
  * Streaming API Generic Streaming Channel
+ * see https://developer.salesforce.com/docs/atlas.en-us.api_streaming.meta/api_streaming/using_streaming_api_durability.htm
+ * for information on replay ids
  */
 class Channel<S extends Schema> {
   _streaming: Streaming<S>;
   _id: Promise<string | undefined> | undefined;
   name: string;
+  replayId: number;
 
-  constructor(streaming: Streaming<S>, name: string) {
+  constructor(streaming: Streaming<S>, name: string, replayId?: number) {
     this._streaming = streaming;
     this.name = name;
+    this.replayId = replayId || -1;
   }
 
   /**
    * Subscribe to channel
    */
   subscribe(listener: Function): Subscription {
-    return this._streaming.subscribe(this.name, listener);
+    // Pass the replayId stored in the Channel instance
+    return this._streaming.subscribe(this.name, listener, this.replayId);
   }
 
   unsubscribe(subscr: Subscription) {
@@ -149,9 +156,9 @@ export class Streaming<S extends Schema> extends EventEmitter {
       // special endpoint "/cometd/replay/xx.x" is only available in 36.0.
       // See https://releasenotes.docs.salesforce.com/en-us/summer16/release-notes/rn_api_streaming_classic_replay.htm
       'cometd' +
-        (needsReplayFix && this._conn.version === '36.0'
-          ? '/replay'
-          : ''),
+      (needsReplayFix && this._conn.version === '36.0'
+        ? '/replay'
+        : ''),
       this._conn.version,
     ].join('/');
     const fayeClient = new Client(endpointUrl, {});
@@ -200,9 +207,20 @@ export class Streaming<S extends Schema> extends EventEmitter {
   /**
    * Subscribe topic/channel
    */
-  subscribe(name: string, listener: Function): Subscription {
+  subscribe(name: string, listener: Function, replayId?: number): Subscription {
     const channelName = name.startsWith('/') ? name : '/topic/' + name;
     const fayeClient = this._getFayeClient(channelName);
+    // Add Replay extension if replayId is provided
+    if (replayId) {
+      // Check if extension already exists for this channel
+      const hasReplayExt = (fayeClient as any)._extensions && (fayeClient as any)._extensions.some(
+        (ext: any) => ext && ext.constructor && ext.constructor.name === 'Replay' && ext._channel === channelName
+      );
+      if (!hasReplayExt) {
+        fayeClient.addExtension(new StreamingExtension.Replay(channelName, replayId));
+      }
+    }
+    console.log(`subscribing with replay id ${replayId} to ${channelName}`);
     return fayeClient.subscribe(channelName, listener);
   }
 
