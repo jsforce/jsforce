@@ -1,3 +1,12 @@
+# [3.9.0](https://github.com/jsforce/jsforce/compare/3.8.2...3.9.0) (2025-06-17)
+
+
+### Features
+
+* **conn:** multiple upserts use sobject collection  ([#1692](https://github.com/jsforce/jsforce/issues/1692)) ([#1713](https://github.com/jsforce/jsforce/issues/1713)) ([8c51295](https://github.com/jsforce/jsforce/commit/8c512956e9eeb64125f09521e1e56e5dbc60a119))
+
+
+
 ## [3.8.2](https://github.com/jsforce/jsforce/compare/3.8.1...3.8.2) (2025-05-22)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * add checkDeployStatus for REST W-18012955 ([#1670](https://github.com/jsforce/jsforce/issues/1670)) ([b36e429](https://github.com/jsforce/jsforce/commit/b36e429d894d6deec4766523aa4809b702bac7c8))
-
-
-
-## [3.6.6](https://github.com/jsforce/jsforce/compare/3.6.5...3.6.6) (2025-02-27)
-
-
-### Bug Fixes
-
-* **http:** return res/err after after retry is done ([be37b13](https://github.com/jsforce/jsforce/commit/be37b1379877a45e944194145f0d728c83ce4027))
 
 
 
