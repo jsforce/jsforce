@@ -226,7 +226,7 @@ describe('search', () => {
 /**
  *
  */
-describe.only('upsert multiple records', () => {
+describe('upsert multiple records', () => {
   const extIdField = config.upsertField;
   const sobjectType = config.upsertTable;
   const makeRecords = (prefix: string, count: number) =>
