@@ -222,3 +222,76 @@ describe('search', () => {
     assert.ok(recordsFound)
   });
 });
+
+/**
+ *
+ */
+describe('upsert multiple records', () => {
+  const extIdField = config.upsertField;
+  const sobjectType = config.upsertTable;
+  const makeRecords = (prefix: string, count: number) =>
+    Array.from({ length: count }, (_, i) => ({
+      Name: `${prefix} #${i + 1}`,
+      [extIdField]: `${prefix}_${Date.now()}_${i}`,
+    }));
+
+  it('should upsert 5 records on API < 46 (single-record requests)', async () => {
+    const origVersion = conn.version;
+    conn.version = '45.0';
+    const records = makeRecords('Pre46', 5);
+    const results = await conn.sobject(sobjectType).upsert(records, extIdField);
+    assert.ok(Array.isArray(results));
+    results.forEach((ret) => {
+      assert.ok(ret.success);
+      assert.ok(typeof ret.id === 'string');
+    });
+    // Clean up
+    await conn.sobject(sobjectType).destroy(results.map(r => r.id!).filter((id): id is string => typeof id === 'string'));
+    conn.version = origVersion;
+  });
+
+  it('should upsert 5 records on API >= 46 (sObject collection API)', async () => {
+    const origVersion = conn.version;
+    conn.version = '50.0';
+    const records = makeRecords('Post46', 5);
+    const results = await conn.sobject(sobjectType).upsert(records, extIdField);
+    assert.ok(Array.isArray(results));
+    results.forEach((ret) => {
+      assert.ok(ret.success);
+      assert.ok(typeof ret.id === 'string');
+    });
+    // Clean up
+    await conn.sobject(sobjectType).destroy(results.map(r => r.id!).filter((id): id is string => typeof id === 'string'));
+    conn.version = origVersion;
+  });
+
+  it('should upsert 5 records on API >= 46 with allOrNone=true and one invalid record, expect rollback', async () => {
+    const origVersion = conn.version;
+    conn.version = '50.0';
+    const records = makeRecords('AllOrNone', 5);
+    // Set OwnerId to an invalid value for one record to force failure
+    records[2].OwnerId = 'INVALID_OWNER';
+    const results = await conn.sobject(sobjectType).upsert(records, extIdField, { allOrNone: true });
+    assert.ok(Array.isArray(results));
+    // All should be failed
+    results.forEach((res, i) => {
+      const errors = res.errors;
+      assert.strictEqual(res.success, false);
+      assert.ok(Array.isArray(errors));
+      assert.strictEqual(res.created, true);
+      if (i === 2) {
+        // The invalid record should have MALFORMED_ID error
+        assert.ok(errors.some((e: any) => e.statusCode === 'MALFORMED_ID'));
+      } else {
+        // The rest should have ALL_OR_NONE_OPERATION_ROLLED_BACK error
+        assert.ok(errors.some((e: any) => e.statusCode === 'ALL_OR_NONE_OPERATION_ROLLED_BACK'));
+      }
+    });
+    // None of the records should exist
+    const extIds = records.map(r => r[extIdField]);
+    const found = await conn.sobject(sobjectType).find({ [extIdField]: { $in: extIds } });
+    assert.ok(Array.isArray(found));
+    assert.strictEqual(found.length, 0);
+    conn.version = origVersion;
+  });
+});
