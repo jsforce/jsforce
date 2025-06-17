@@ -1327,9 +1327,6 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
     });
     let url =
       [this._baseUrl(), 'composite', 'sobjects', type, extIdField].join('/');
-    if (options.allOrNone) {
-      url += '&allOrNone=true';
-    }
     return this.request({
       method: 'PATCH',
       url,
