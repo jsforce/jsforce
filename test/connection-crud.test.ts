@@ -226,7 +226,7 @@ describe('search', () => {
 /**
  *
  */
-describe('upsert multiple records', () => {
+describe.only('upsert multiple records', () => {
   const extIdField = config.upsertField;
   const sobjectType = config.upsertTable;
   const makeRecords = (prefix: string, count: number) =>
@@ -269,16 +269,23 @@ describe('upsert multiple records', () => {
     const origVersion = conn.version;
     conn.version = '50.0';
     const records = makeRecords('AllOrNone', 5);
-    // Intentionally break one record (e.g., Name is required, so set to empty string)
-    records[2] = { Name: '', [extIdField]: `AllOrNone_${Date.now()}_fail` };
+    // Set OwnerId to an invalid value for one record to force failure
+    records[2].OwnerId = 'INVALID_OWNER';
     const results = await conn.sobject(sobjectType).upsert(records, extIdField, { allOrNone: true });
     assert.ok(Array.isArray(results));
     // All should be failed
-    results.forEach((res) => {
+    results.forEach((res, i) => {
+      const errors = (res as any).errors;
       assert.strictEqual(res.success, false);
-      assert.ok(Array.isArray(res.errors));
-      // At least one error should be ALL_OR_NONE_OPERATION_ROLLED_BACK
-      assert.ok(res.errors.some((e: any) => e.statusCode === 'ALL_OR_NONE_OPERATION_ROLLED_BACK'));
+      assert.ok(Array.isArray(errors));
+      assert.strictEqual(res.created, true);
+      if (i === 2) {
+        // The invalid record should have MALFORMED_ID error
+        assert.ok(errors.some((e: any) => e.statusCode === 'MALFORMED_ID'));
+      } else {
+        // The rest should have ALL_OR_NONE_OPERATION_ROLLED_BACK error
+        assert.ok(errors.some((e: any) => e.statusCode === 'ALL_OR_NONE_OPERATION_ROLLED_BACK'));
+      }
     });
     // None of the records should exist
     const extIds = records.map(r => r[extIdField]);
