@@ -275,7 +275,7 @@ describe('upsert multiple records', () => {
     assert.ok(Array.isArray(results));
     // All should be failed
     results.forEach((res, i) => {
-      const errors = (res as any).errors;
+      const errors = res.errors;
       assert.strictEqual(res.success, false);
       assert.ok(Array.isArray(errors));
       assert.strictEqual(res.created, true);
