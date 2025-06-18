@@ -1,3 +1,12 @@
+## [3.9.1](https://github.com/jsforce/jsforce/compare/3.9.0...3.9.1) (2025-06-18)
+
+
+### Bug Fixes
+
+* **deps:** bump @babel/runtime-corejs3 from 7.27.0 to 7.27.6 ([#1710](https://github.com/jsforce/jsforce/issues/1710)) ([9f263b3](https://github.com/jsforce/jsforce/commit/9f263b374a93cf1e941a96907c3ff1ec51a57f35))
+
+
+
 # [3.9.0](https://github.com/jsforce/jsforce/compare/3.8.2...3.9.0) (2025-06-17)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * allow skipping template eval on query update ([b26270c](https://github.com/jsforce/jsforce/commit/b26270c491ee227d91a643ec4bd723cb4855d666))
-
-
-
-# [3.7.0](https://github.com/jsforce/jsforce/compare/3.6.6...3.7.0) (2025-03-25)
-
-
-### Features
-
-* add checkDeployStatus for REST W-18012955 ([#1670](https://github.com/jsforce/jsforce/issues/1670)) ([b36e429](https://github.com/jsforce/jsforce/commit/b36e429d894d6deec4766523aa4809b702bac7c8))
 
 
 
