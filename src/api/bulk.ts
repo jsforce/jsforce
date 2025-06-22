@@ -37,7 +37,13 @@ export type BulkOptions = {
   assignmentRuleId?: string;
 };
 
-export type JobState = 'Open' | 'Closed' | 'Aborted' | 'Failed' | 'Unknown' | 'NotProcessed';
+export type JobState =
+  | 'Open'
+  | 'Closed'
+  | 'Aborted'
+  | 'Failed'
+  | 'Unknown'
+  | 'NotProcessed';
 
 // In `HttpApi.parseResponseBody` we use xml2js to parse the XML response,
 // all these props are of type `string` due to how we convert XML -> JSON:
@@ -144,7 +150,7 @@ export type BulkRequest = {
  */
 export class Job<
   S extends Schema,
-  Opr extends BulkOperation
+  Opr extends BulkOperation,
 > extends EventEmitter {
   type: string | null;
   operation: Opr | null;
@@ -424,7 +430,7 @@ class PollingTimeoutError extends Error {
  */
 export class Batch<
   S extends Schema,
-  Opr extends BulkOperation
+  Opr extends BulkOperation,
 > extends Writable {
   job: Job<S, Opr>;
   id: string | undefined;
@@ -507,7 +513,7 @@ export class Batch<
   /**
    * Implementation of Writable
    */
-  _write(record_: Record, enc: BufferEncoding, cb: () => void) {
+  override _write(record_: Record, enc: BufferEncoding, cb: () => void) {
     const { Id, type, attributes, ...rrec } = record_;
     let record;
     switch (this.job.operation) {
@@ -691,10 +697,9 @@ export class Batch<
       if (job.operation === 'query' || job.operation === 'queryAll') {
         const res = resp as BulkQueryResultResponse;
         const resultId = res['result-list'].result;
-        results = (Array.isArray(resultId)
-          ? resultId
-          : [resultId]
-        ).map((id) => ({ id, batchId, jobId }));
+        results = (Array.isArray(resultId) ? resultId : [resultId]).map(
+          (id) => ({ id, batchId, jobId }),
+        );
       } else {
         const res = resp as BulkIngestResultResponse;
         results = res.map((ret) => ({
@@ -743,25 +748,25 @@ export class Batch<
  *
  */
 class BulkApi<S extends Schema> extends HttpApi<S> {
-  beforeSend(request: HttpRequest) {
+  override beforeSend(request: HttpRequest) {
     request.headers = {
       ...request.headers,
       'X-SFDC-SESSION': this._conn.accessToken ?? '',
     };
   }
 
-  isSessionExpired(response: HttpResponse) {
+  override isSessionExpired(response: HttpResponse) {
     return (
       response.statusCode === 400 &&
       response.body.includes('<exceptionCode>InvalidSessionId</exceptionCode>')
     );
   }
 
-  hasErrorInResponseBody(body: any) {
+  override hasErrorInResponseBody(body: any) {
     return !!body.error;
   }
 
-  parseError(body: any) {
+  override parseError(body: any) {
     return {
       errorCode: body.error.exceptionCode,
       message: body.error.exceptionMessage,
