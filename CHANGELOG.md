@@ -1,3 +1,12 @@
+## [3.9.2](https://github.com/jsforce/jsforce/compare/3.9.1...3.9.2) (2025-07-22)
+
+
+### Bug Fixes
+
+* **deps:** bump form-data from 4.0.0 to 4.0.4 ([#1729](https://github.com/jsforce/jsforce/issues/1729)) ([1b03c76](https://github.com/jsforce/jsforce/commit/1b03c76b7a27f973428ab42da532a4574f9c11d1))
+
+
+
 ## [3.9.1](https://github.com/jsforce/jsforce/compare/3.9.0...3.9.1) (2025-06-18)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * bump babel deps ([#1683](https://github.com/jsforce/jsforce/issues/1683)) ([57e23f0](https://github.com/jsforce/jsforce/commit/57e23f08aa7476a20c11b32146d10e30dd528a92))
-
-
-
-# [3.8.0](https://github.com/jsforce/jsforce/compare/3.7.0...3.8.0) (2025-04-22)
-
-
-### Features
-
-* allow skipping template eval on query update ([b26270c](https://github.com/jsforce/jsforce/commit/b26270c491ee227d91a643ec4bd723cb4855d666))
 
 
 
