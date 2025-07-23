@@ -1,3 +1,12 @@
+## [3.9.4](https://github.com/jsforce/jsforce/compare/3.9.3...3.9.4) (2025-07-23)
+
+
+### Bug Fixes
+
+* cause release ([#1733](https://github.com/jsforce/jsforce/issues/1733)) ([1653327](https://github.com/jsforce/jsforce/commit/16533272718be313e913208736436e346faa380a))
+
+
+
 ## [3.9.3](https://github.com/jsforce/jsforce/compare/3.9.2...3.9.3) (2025-07-23)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * **conn:** multiple upserts use sobject collection  ([#1692](https://github.com/jsforce/jsforce/issues/1692)) ([#1713](https://github.com/jsforce/jsforce/issues/1713)) ([8c51295](https://github.com/jsforce/jsforce/commit/8c512956e9eeb64125f09521e1e56e5dbc60a119))
-
-
-
-## [3.8.2](https://github.com/jsforce/jsforce/compare/3.8.1...3.8.2) (2025-05-22)
-
-
-### Bug Fixes
-
-* **SOAP:** block connections using JWT tokens ([e601069](https://github.com/jsforce/jsforce/commit/e601069efc00801d78394fbad17773d6998324d3))
 
 
 
