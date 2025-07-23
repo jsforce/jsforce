@@ -1,3 +1,12 @@
+## [3.9.3](https://github.com/jsforce/jsforce/compare/3.9.2...3.9.3) (2025-07-23)
+
+
+### Bug Fixes
+
+* no setting content-length in browser ([#1730](https://github.com/jsforce/jsforce/issues/1730)) ([5ca9dd2](https://github.com/jsforce/jsforce/commit/5ca9dd2a936959da4336d901e6683c5b29e4f80a))
+
+
+
 ## [3.9.2](https://github.com/jsforce/jsforce/compare/3.9.1...3.9.2) (2025-07-22)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * **SOAP:** block connections using JWT tokens ([e601069](https://github.com/jsforce/jsforce/commit/e601069efc00801d78394fbad17773d6998324d3))
-
-
-
-## [3.8.1](https://github.com/jsforce/jsforce/compare/3.8.0...3.8.1) (2025-04-25)
-
-
-### Bug Fixes
-
-* bump babel deps ([#1683](https://github.com/jsforce/jsforce/issues/1683)) ([57e23f0](https://github.com/jsforce/jsforce/commit/57e23f08aa7476a20c11b32146d10e30dd528a92))
 
 
 
