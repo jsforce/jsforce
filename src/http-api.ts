@@ -187,11 +187,8 @@ export class HttpApi<S extends Schema> extends EventEmitter {
 
     const cannotHaveBody = ['GET', 'HEAD', 'OPTIONS'].includes(request.method);
 
-    // Don't set content-length in browsers as it's not allowed
-    const isBrowser = 'window' in globalThis || 'self' in globalThis;
-
     if (
-      !isBrowser &&
+      !isBrowser && // Don't set content-length in browsers as it's not allowed
       !cannotHaveBody &&
       !!request.body &&
       !('transfer-encoding' in headers) &&
@@ -393,3 +390,4 @@ class HttpApiError extends Error {
 }
 
 export default HttpApi;
+export const isBrowser = 'window' in globalThis || 'self' in globalThis;
