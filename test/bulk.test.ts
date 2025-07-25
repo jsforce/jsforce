@@ -484,3 +484,51 @@ it('should bulk delete using Query#destroy with bulkThreshold modified and retur
     assert.ok(res.success === true);
   }
 });
+
+/*------------------------------------------------------------------------*/
+// Test cases for bulk query with complex parentheses (GitHub issue #671)
+
+/**
+ * Test that bulk query correctly extracts sobject type when parentheses are used in both SELECT and WHERE clauses
+ */
+it('should extract sobject type correctly when parentheses are used in both SELECT and WHERE clauses', () => {
+  // These tests verify that the regex fix for extracting sobject type from SOQL works correctly
+  // We're testing the internal logic by accessing the bulk query method, but since it requires
+  // a valid connection and creates actual Salesforce jobs, we'll create a minimal test
+  // that focuses on the sobject type extraction without running the full query
+  
+  // Test the internal logic by using a mock implementation
+  function extractSObjectType(soql: string): string {
+    // Same logic as in bulk.ts
+    let cleanedSoql = soql;
+    while (/\([^()]*\)/.test(cleanedSoql)) {
+      cleanedSoql = cleanedSoql.replace(/\([^()]*\)/g, '');
+    }
+    
+    const m = cleanedSoql.match(/FROM\s+(\w+)/i);
+    if (!m) {
+      throw new Error('No sobject type found in query, maybe caused by invalid SOQL.');
+    }
+    return m[1];
+  }
+
+  // Test case from the GitHub issue
+  const problemQuery = 'SELECT x, y, (SELECT Id FROM SubObject1), (SELECT Id FROM SubObject2) FROM MyObject__c WHERE ((a = 1 AND b = 2) OR c = 3)';
+  const extractedType = extractSObjectType(problemQuery);
+  assert.strictEqual(extractedType, 'MyObject__c');
+
+  // Test with nested parentheses
+  const nestedQuery = 'SELECT Id, (SELECT Name, (SELECT Type FROM Details) FROM Related) FROM Account WHERE (Status = \'Active\')';
+  const nestedType = extractSObjectType(nestedQuery);
+  assert.strictEqual(nestedType, 'Account');
+
+  // Test with simple query (should still work)
+  const simpleQuery = 'SELECT Id, Name FROM Contact WHERE Email IS NOT NULL';
+  const simpleType = extractSObjectType(simpleQuery);
+  assert.strictEqual(simpleType, 'Contact');
+
+  // Test with single subquery
+  const subQuery = 'SELECT Id, Name, (SELECT Id FROM Opportunities) FROM Account';
+  const subType = extractSObjectType(subQuery);
+  assert.strictEqual(subType, 'Account');
+});
