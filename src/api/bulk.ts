@@ -895,7 +895,13 @@ export class Bulk<S extends Schema> {
    * Execute bulk query and get record stream
    */
   public async query(soql: string): Promise<Parsable<Record>> {
-    const m = soql.replace(/\([\s\S]+\)/g, '').match(/FROM\s+(\w+)/i);
+    // Remove parenthesized content iteratively to handle nested parentheses correctly
+    let cleanedSoql = soql;
+    while (/\([^()]*\)/.test(cleanedSoql)) {
+      cleanedSoql = cleanedSoql.replace(/\([^()]*\)/g, '');
+    }
+    
+    const m = cleanedSoql.match(/FROM\s+(\w+)/i);
     if (!m) {
       throw new Error(
         'No sobject type found in query, maybe caused by invalid SOQL.',
