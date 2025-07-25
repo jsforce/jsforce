@@ -2,6 +2,7 @@
  *
  */
 import { EventEmitter } from 'events';
+import { URL } from 'url';
 import jsforce from './jsforce';
 import {
   HttpRequest,
@@ -824,8 +825,11 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
    * @returns {Promise.<Array.<RecordResult>>}
    */
   search(sosl: string) {
-    const url = this._baseUrl() + '/search?q=' + encodeURIComponent(sosl);
-    return this.request<SearchResult>(url);
+    // Use URLSearchParams to properly handle query parameter encoding
+    // This ensures spaces are encoded as + instead of %20, and preserves escape sequences
+    const searchUrl = new URL(this._baseUrl() + '/search');
+    searchUrl.searchParams.set('q', sosl);
+    return this.request<SearchResult>(searchUrl.toString());
   }
 
   /**
