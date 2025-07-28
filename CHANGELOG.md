@@ -1,45 +1,45 @@
-# [3.7.0](https://github.com/jsforce/jsforce/compare/3.6.6...3.7.0) (2025-03-25)
+## [3.9.4](https://github.com/jsforce/jsforce/compare/3.9.3...3.9.4) (2025-07-23)
+
+
+### Bug Fixes
+
+* cause release ([#1733](https://github.com/jsforce/jsforce/issues/1733)) ([1653327](https://github.com/jsforce/jsforce/commit/16533272718be313e913208736436e346faa380a))
+
+
+
+## [3.9.3](https://github.com/jsforce/jsforce/compare/3.9.2...3.9.3) (2025-07-23)
+
+
+### Bug Fixes
+
+* no setting content-length in browser ([#1730](https://github.com/jsforce/jsforce/issues/1730)) ([5ca9dd2](https://github.com/jsforce/jsforce/commit/5ca9dd2a936959da4336d901e6683c5b29e4f80a))
+
+
+
+## [3.9.2](https://github.com/jsforce/jsforce/compare/3.9.1...3.9.2) (2025-07-22)
+
+
+### Bug Fixes
+
+* **deps:** bump form-data from 4.0.0 to 4.0.4 ([#1729](https://github.com/jsforce/jsforce/issues/1729)) ([1b03c76](https://github.com/jsforce/jsforce/commit/1b03c76b7a27f973428ab42da532a4574f9c11d1))
+
+
+
+## [3.9.1](https://github.com/jsforce/jsforce/compare/3.9.0...3.9.1) (2025-06-18)
+
+
+### Bug Fixes
+
+* **deps:** bump @babel/runtime-corejs3 from 7.27.0 to 7.27.6 ([#1710](https://github.com/jsforce/jsforce/issues/1710)) ([9f263b3](https://github.com/jsforce/jsforce/commit/9f263b374a93cf1e941a96907c3ff1ec51a57f35))
+
+
+
+# [3.9.0](https://github.com/jsforce/jsforce/compare/3.8.2...3.9.0) (2025-06-17)
 
 
 ### Features
 
-* add checkDeployStatus for REST W-18012955 ([#1670](https://github.com/jsforce/jsforce/issues/1670)) ([b36e429](https://github.com/jsforce/jsforce/commit/b36e429d894d6deec4766523aa4809b702bac7c8))
-
-
-
-## [3.6.6](https://github.com/jsforce/jsforce/compare/3.6.5...3.6.6) (2025-02-27)
-
-
-### Bug Fixes
-
-* **http:** return res/err after after retry is done ([be37b13](https://github.com/jsforce/jsforce/commit/be37b1379877a45e944194145f0d728c83ce4027))
-
-
-
-## [3.6.5](https://github.com/jsforce/jsforce/compare/3.6.4...3.6.5) (2025-02-20)
-
-
-### Bug Fixes
-
-* skip session refresh on bad Agent API reqs ([870dcc6](https://github.com/jsforce/jsforce/commit/870dcc665e1cf49ddad38fb6cc9723c5c199be4e))
-
-
-
-## [3.6.4](https://github.com/jsforce/jsforce/compare/3.6.3...3.6.4) (2025-01-20)
-
-
-### Bug Fixes
-
-* **bulk:** update JobInfo type ([#1636](https://github.com/jsforce/jsforce/issues/1636)) ([4755f00](https://github.com/jsforce/jsforce/commit/4755f0065d90c1d2437d7d3831e5c0cee7a57d2c))
-
-
-
-## [3.6.3](https://github.com/jsforce/jsforce/compare/3.6.2...3.6.3) (2024-11-26)
-
-
-### Bug Fixes
-
-* **http:** handle more CSV delimiters on parse ([#1622](https://github.com/jsforce/jsforce/issues/1622)) ([c96e9c7](https://github.com/jsforce/jsforce/commit/c96e9c7d1c822b45b17e3adb8bcb3b0050b197c4))
+* **conn:** multiple upserts use sobject collection  ([#1692](https://github.com/jsforce/jsforce/issues/1692)) ([#1713](https://github.com/jsforce/jsforce/issues/1713)) ([8c51295](https://github.com/jsforce/jsforce/commit/8c512956e9eeb64125f09521e1e56e5dbc60a119))
 
 
 

@@ -2,7 +2,7 @@
  * @file Manages method call to SOAP endpoint
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
-import HttpApi from './http-api';
+import HttpApi, { isBrowser } from './http-api';
 import Connection from './connection';
 import {
   Schema,
@@ -13,6 +13,7 @@ import {
 } from './types';
 import { isMapObject, isObject } from './util/function';
 import { getBodySize } from './util/get-body-size';
+import { isJWTToken } from './util/jwt';
 
 /**
  *
@@ -214,6 +215,13 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
 
   constructor(conn: Connection<S>, options: SOAPOptions) {
     super(conn, options);
+    if (this._conn.accessToken && isJWTToken(this._conn.accessToken)) {
+      // We need to block SOAP requests with JWT tokens because the response is:
+      // statusCode=500 | body="INVALID_SESSION_ID" (xml), which triggers session refresh and enters in an infinite loop
+      throw new Error(
+        'SOAP API does not support JWT-based access tokens. You must disable the "Issue JSON Web Token (JWT)-based access tokens" setting in your Connected App or External Client App',
+      );
+    }
     this._endpointUrl = options.endpointUrl;
     this._xmlns = options.xmlns || 'urn:partner.soap.sforce.com';
   }
@@ -248,6 +256,7 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
     const bodySize = getBodySize(request.body, request.headers);
 
     if (
+      !isBrowser && // Don't set content-length in browsers as it's not allowed
       request.method === 'POST' &&
       !('transfer-encoding' in headers) &&
       !('content-length' in headers) &&

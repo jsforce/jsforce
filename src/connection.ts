@@ -1280,6 +1280,69 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
     extIdField: string,
     options: DmlOptions = {},
   ): Promise<SaveResult | SaveResult[]> {
+    return Array.isArray(records)
+    ? // check the version whether SObject collection API is supported (46.0)
+      this._ensureVersion(46)
+      ? this._upsertMany(type, records, extIdField, options)
+      : this._upsertParallel(type, records, extIdField, options)
+    : this._upsertParallel(type, records, extIdField, options);
+}
+
+/** @private */
+  async _upsertMany(
+    type: string,
+    records: Record | Record[],
+    extIdField: string,
+    options: DmlOptions = {},
+  ): Promise<SaveResult | SaveResult[]> {
+    if (records.length === 0) {
+      return [];
+    }
+    if (records.length > MAX_DML_COUNT && options.allowRecursive) {
+      return [
+        ...((await this._upsertMany(
+          type,
+          records.slice(0, MAX_DML_COUNT),
+          extIdField,
+          options,
+        )) as SaveResult[]),
+        ...((await this._upsertMany(type, records.slice(MAX_DML_COUNT), extIdField, options)) as SaveResult[]),
+      ];
+    }
+    const _records = records.map((recordItem: Record) => {
+      const { [extIdField]: extId, type: recordType, attributes, ...rec } = recordItem;
+      const sobjectType = recordType || attributes?.type || type;
+      if (!extId) {
+        throw new Error('External ID is not found in record.');
+      } 
+      if (!sobjectType) {
+        throw new Error('No SObject Type defined in record');
+      }
+      return { [extIdField]: extId, attributes: { type: sobjectType }, ...rec };
+    });
+    const url =
+      [this._baseUrl(), 'composite', 'sobjects', type, extIdField].join('/');
+    return this.request({
+      method: 'PATCH',
+      url,
+      body: JSON.stringify({
+        allOrNone: options.allOrNone || false,
+        records: _records,
+      }),
+      headers: {
+        ...(options.headers || {}),
+        'content-type': 'application/json',
+      }
+    });
+  }
+
+/** @private */
+  async _upsertParallel(
+    type: string,
+    records: Record | Record[],
+    extIdField: string,
+    options: DmlOptions = {},
+  ): Promise<SaveResult | SaveResult[]> {
     const isArray = Array.isArray(records);
     const _records = Array.isArray(records) ? records : [records];
     if (_records.length > this._maxRequest) {
