@@ -251,7 +251,7 @@ describe('HTTP API', () => {
     it('throws after 5 seconds timeout', async () => {
       nock(loginUrl)
         .get('/services/data/v59.0')
-        .delay(7000) // Delay response by 21 seconds to exceed timeout
+        .delay(7000) // Delay response by 7 seconds to exceed timeout
         .reply(200, { success: true });
 
       const { err } = await fetch(
