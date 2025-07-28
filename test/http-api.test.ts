@@ -247,6 +247,26 @@ describe('HTTP API', () => {
       );
       assert.ok(retryCounter === 0);
     });
+
+    it('throws after 5 seconds timeout', async () => {
+      nock(loginUrl)
+        .get('/services/data/v59.0')
+        .delay(7000) // Delay response by 21 seconds to exceed timeout
+        .reply(200, { success: true });
+
+      const { err } = await fetch(
+        {
+          method: 'GET',
+          url: `${loginUrl}/services/data/v59.0`,
+        },
+        {
+          timeout: 5000, // 5 second timeout
+        },
+      );
+
+      assert.ok(err instanceof Error);
+      assert.ok(err.name === 'AbortError' || err.message.includes('aborted'));
+    });
   });
 
   describe('headers', () => {
@@ -588,6 +608,8 @@ See \`error.data\` for the full html response.`,
         },
       );
     })
+
+
   });
 });
 
