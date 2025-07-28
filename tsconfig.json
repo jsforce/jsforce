@@ -6,13 +6,20 @@
     "outDir": "lib",
     "declaration": true,
     "skipLibCheck": true,
-    "lib": ["es2022", "dom"],
-    "module": "NodeNext",
+    "lib": [
+      "es2022",
+      "dom"
+    ],
+    "module": "commonjs",
     "strict": true,
     "moduleResolution": "nodenext",
     "paths": {
-      "jsforce": ["."],
-      "jsforce/*": ["./*"],
+      "jsforce": [
+        "."
+      ],
+      "jsforce/*": [
+        "./*"
+      ],
     },
     "typeRoots": [
       "typings",
@@ -21,5 +28,7 @@
     "esModuleInterop": true,
     "noImplicitOverride": true,
   },
-  "include": ["./src/**/*.ts"]
+  "include": [
+    "./src/**/*.ts"
+  ]
 }
