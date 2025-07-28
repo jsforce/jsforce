@@ -1,3 +1,12 @@
+## [3.9.5](https://github.com/jsforce/jsforce/compare/3.9.4...3.9.5) (2025-07-28)
+
+
+### Bug Fixes
+
+* set default request timeout W-18649787 ([#1738](https://github.com/jsforce/jsforce/issues/1738)) ([4a722cd](https://github.com/jsforce/jsforce/commit/4a722cdd455f0dee68c30e893c146ee3ceefb15e))
+
+
+
 ## [3.9.4](https://github.com/jsforce/jsforce/compare/3.9.3...3.9.4) (2025-07-23)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * **deps:** bump @babel/runtime-corejs3 from 7.27.0 to 7.27.6 ([#1710](https://github.com/jsforce/jsforce/issues/1710)) ([9f263b3](https://github.com/jsforce/jsforce/commit/9f263b374a93cf1e941a96907c3ff1ec51a57f35))
-
-
-
-# [3.9.0](https://github.com/jsforce/jsforce/compare/3.8.2...3.9.0) (2025-06-17)
-
-
-### Features
-
-* **conn:** multiple upserts use sobject collection  ([#1692](https://github.com/jsforce/jsforce/issues/1692)) ([#1713](https://github.com/jsforce/jsforce/issues/1713)) ([8c51295](https://github.com/jsforce/jsforce/commit/8c512956e9eeb64125f09521e1e56e5dbc60a119))
 
 
 
