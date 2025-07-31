@@ -6,6 +6,8 @@
 import { EventEmitter } from 'events';
 import { REPLServer, start as startRepl } from 'repl';
 import { Transform } from 'stream';
+import * as vm from 'vm';
+import * as fs from 'fs';
 import jsforce from '..';
 import {
   isPromiseLike,
@@ -109,7 +111,9 @@ function outputToStdout(prettyPrint?: string | number) {
       console.error(err);
     } else {
       const str = JSON.stringify(value, null, prettyPrint);
-      console.log(str);
+      // Use process.stdout.write directly to avoid any buffering issues
+      // when output is piped to other commands
+      process.stdout.write(str + '\n');
     }
     callback(err, value);
   };
@@ -138,8 +142,9 @@ export class Repl {
 
   constructor(cli: Cli) {
     this._cli = cli;
-    this._in = new Transform();
-    this._out = new Transform();
+    // Use larger buffer sizes to handle large JSON outputs
+    this._in = new Transform({ highWaterMark: 1024 * 1024 }); // 1MB buffer
+    this._out = new Transform({ highWaterMark: 1024 * 1024 }); // 1MB buffer
     this._in._transform = (chunk, encoding, callback) => {
       if (!this._paused) {
         this._in.push(chunk);
@@ -165,6 +170,12 @@ export class Repl {
     } = {},
   ) {
     this._interactive = options.interactive !== false;
+
+    // For non-interactive mode with evalScript, bypass REPL entirely to avoid buffering issues
+    if (options.interactive === false && options.evalScript) {
+      this._handleNonInteractiveEval(options.evalScript, options.prettyPrint);
+      return this;
+    }
 
     process.stdin.resume();
     if (process.stdin.setRawMode) {
@@ -218,6 +229,41 @@ export class Repl {
     }
 
     return this;
+  }
+
+  /**
+   * Handle non-interactive evaluation by bypassing REPL entirely
+   * @private
+   */
+  async _handleNonInteractiveEval(evalScript: string, prettyPrint?: string | number) {
+    try {
+      // Create a context similar to what the REPL would have
+      const context = Object.create(global);
+      this._defineBuiltinVars(context);
+      
+      // Use VM to evaluate the script in the context
+      let result = vm.runInNewContext(evalScript, context);
+      
+      // Handle promises
+      if (isPromiseLike(result)) {
+        result = await (result as Promise<any>);
+      }
+      
+      // Output the result directly to stdout
+      if (prettyPrint && !isNumber(prettyPrint)) {
+        prettyPrint = 4;
+      }
+      const str = JSON.stringify(result, null, prettyPrint);
+      
+      // Use fs writeSync to file descriptor 1 (stdout) to avoid buffering issues
+      const buffer = Buffer.from(str + '\n', 'utf8');
+      fs.writeSync(1, buffer);
+      
+    } catch (err) {
+      console.error(err);
+      process.exit(1);
+    }
+    process.exit(0);
   }
 
   /**
