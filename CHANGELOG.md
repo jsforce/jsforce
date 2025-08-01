@@ -1,3 +1,12 @@
+# [3.10.0](https://github.com/jsforce/jsforce/compare/3.9.5...3.10.0) (2025-08-01)
+
+
+### Features
+
+* **cli:** allow schema generator to filter objects. ([#1386](https://github.com/jsforce/jsforce/issues/1386)) ([b997db2](https://github.com/jsforce/jsforce/commit/b997db2da879e61f13ac41e904af37d67e6fa20a))
+
+
+
 ## [3.9.5](https://github.com/jsforce/jsforce/compare/3.9.4...3.9.5) (2025-07-28)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * **deps:** bump form-data from 4.0.0 to 4.0.4 ([#1729](https://github.com/jsforce/jsforce/issues/1729)) ([1b03c76](https://github.com/jsforce/jsforce/commit/1b03c76b7a27f973428ab42da532a4574f9c11d1))
-
-
-
-## [3.9.1](https://github.com/jsforce/jsforce/compare/3.9.0...3.9.1) (2025-06-18)
-
-
-### Bug Fixes
-
-* **deps:** bump @babel/runtime-corejs3 from 7.27.0 to 7.27.6 ([#1710](https://github.com/jsforce/jsforce/issues/1710)) ([9f263b3](https://github.com/jsforce/jsforce/commit/9f263b374a93cf1e941a96907c3ff1ec51a57f35))
 
 
 
