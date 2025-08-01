@@ -5,6 +5,7 @@ import OAuth2 from './oauth2';
 import SfDate from './date';
 import registry, { Registry } from './registry';
 import client, { BrowserClient } from './browser/client';
+import { RecordStream } from './record-stream';
 
 /**
  *
@@ -16,6 +17,7 @@ class JSforce extends EventEmitter {
   SfDate: typeof SfDate = SfDate;
   Date: typeof SfDate = SfDate;
   BrowserClient: typeof BrowserClient = BrowserClient;
+  RecordStream: typeof RecordStream = RecordStream;
   registry: Registry = registry;
   browser: BrowserClient = client;
 }
