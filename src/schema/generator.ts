@@ -100,6 +100,7 @@ async function dumpSchema(
   outputFile: string,
   schemaName: string,
   cache?: boolean,
+  filterObjects?: Set<string>,
 ) {
   const sobjects =
     (cache ? await readDescribedCache(orgId) : null) ||
@@ -118,6 +119,9 @@ async function dumpSchema(
     );
     writeLine('');
     for (const sobject of sobjects) {
+      if (filterObjects && !filterObjects.has(sobject.name)) {
+        continue;
+      }
       const { name, fields, childRelationships } = sobject;
       writeLine(`type Fields$${name} = {`);
       writeLine('  //');
@@ -136,6 +140,9 @@ async function dumpSchema(
         parentSObject,
         relationshipName,
       } of parentReferences) {
+        if (filterObjects && !filterObjects.has(parentSObject)) {
+          continue;
+        }
         const orNull = nillable ? ' | null' : '';
         writeLine(
           `  ${relationshipName}: SObjectDefinition$${parentSObject}${orNull};`,
@@ -150,6 +157,9 @@ async function dumpSchema(
         childSObject,
         relationshipName,
       } of childRelationships) {
+        if (filterObjects && !filterObjects.has(childSObject)) {
+          continue;
+        }
         if (
           field &&
           childSObject &&
@@ -177,6 +187,9 @@ async function dumpSchema(
     writeLine(`export interface ${schemaName} extends Schema {`);
     writeLine('  SObjects: {');
     for (const { name } of sobjects) {
+      if (filterObjects && !filterObjects.has(name)) {
+        continue;
+      }
       writeLine(`    ${name}: SObjectDefinition$${name};`);
     }
     writeLine('  };');
@@ -194,7 +207,12 @@ type GeneratorCommand = {
   outputFile: string;
   cache?: boolean;
   clearCache?: boolean;
+  filterObjects?: Set<string>;
 } & Command;
+
+function commaSeparatedList(value: string, _dummyPrevious: unknown) {
+  return new Set(value.split(','));
+}
 
 /**
  *
@@ -223,6 +241,11 @@ function readCommand(): GeneratorCommand {
       'Do not generate cache file for described result in tmp directory',
     )
     .option('--clearCache', 'Clear all existing described cache files')
+    .option(
+      '--filterObjects <filterObjects>',
+      'Only output schema for specified objects',
+      commaSeparatedList,
+    )
     .version(VERSION)
     .parse(process.argv) as GeneratorCommand;
 }
@@ -245,6 +268,7 @@ export default async function main() {
     program.outputFile,
     program.schemaName,
     program.cache,
+    program.filterObjects,
   );
   if (program.clearCache) {
     console.log('removing cache files');
