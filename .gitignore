@@ -46,3 +46,8 @@ lib-cov
 
 # tarball generated for publishing
 *.tgz
+
+# Ignores the Salesforce org project files
+test/test-org-setup/.sfdx
+test/test-org-setup/.sf
+test/test-org-setup/.husky
