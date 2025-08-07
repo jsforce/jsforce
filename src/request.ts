@@ -179,10 +179,10 @@ async function startFetchRequest(
 
   let res: Response;
 
-  // Timeout after 60s without a response
+  // Timeout after 5 minutes without a response
   //
   // node-fetch's default timeout is 0 and jsforce consumers can't set this when calling `Connection` methods so we set a long default at the fetch wrapper level.
-  const fetchTimeout = options.timeout ?? 60_000
+  const fetchTimeout = options.timeout ?? 300_000
 
   try {
     res = await executeWithTimeout(fetchWithRetries, fetchTimeout, () =>
