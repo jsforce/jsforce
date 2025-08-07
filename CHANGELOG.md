@@ -1,3 +1,12 @@
+## [3.10.1](https://github.com/jsforce/jsforce/compare/3.10.0...3.10.1) (2025-08-07)
+
+
+### Bug Fixes
+
+* increase request timeout to 5 minutes ([#1745](https://github.com/jsforce/jsforce/issues/1745)) ([6ca7894](https://github.com/jsforce/jsforce/commit/6ca78941670a6b36d2c9d26758e8fd8fe9f90cc6))
+
+
+
 # [3.10.0](https://github.com/jsforce/jsforce/compare/3.9.5...3.10.0) (2025-08-01)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * no setting content-length in browser ([#1730](https://github.com/jsforce/jsforce/issues/1730)) ([5ca9dd2](https://github.com/jsforce/jsforce/commit/5ca9dd2a936959da4336d901e6683c5b29e4f80a))
-
-
-
-## [3.9.2](https://github.com/jsforce/jsforce/compare/3.9.1...3.9.2) (2025-07-22)
-
-
-### Bug Fixes
-
-* **deps:** bump form-data from 4.0.0 to 4.0.4 ([#1729](https://github.com/jsforce/jsforce/issues/1729)) ([1b03c76](https://github.com/jsforce/jsforce/commit/1b03c76b7a27f973428ab42da532a4574f9c11d1))
 
 
 
