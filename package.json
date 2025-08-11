@@ -223,7 +223,7 @@
     "faye": "^1.4.0",
     "form-data": "^4.0.4",
     "https-proxy-agent": "^5.0.0",
-    "inquirer": "^8.2.6",
+    "inquirer": "^8.2.7",
     "multistream": "^3.1.0",
     "node-fetch": "^2.6.1",
     "open": "^7.0.0",
