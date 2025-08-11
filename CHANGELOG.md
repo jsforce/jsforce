@@ -1,3 +1,12 @@
+## [3.10.2](https://github.com/jsforce/jsforce/compare/3.10.1...3.10.2) (2025-08-11)
+
+
+### Bug Fixes
+
+* **deps:** bump core-js from 3.37.0 to 3.45.0 ([#1746](https://github.com/jsforce/jsforce/issues/1746)) ([c958986](https://github.com/jsforce/jsforce/commit/c9589866ee6fffd3fc634afa04ad3f43c3386ac3))
+
+
+
 ## [3.10.1](https://github.com/jsforce/jsforce/compare/3.10.0...3.10.1) (2025-08-07)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * cause release ([#1733](https://github.com/jsforce/jsforce/issues/1733)) ([1653327](https://github.com/jsforce/jsforce/commit/16533272718be313e913208736436e346faa380a))
-
-
-
-## [3.9.3](https://github.com/jsforce/jsforce/compare/3.9.2...3.9.3) (2025-07-23)
-
-
-### Bug Fixes
-
-* no setting content-length in browser ([#1730](https://github.com/jsforce/jsforce/issues/1730)) ([5ca9dd2](https://github.com/jsforce/jsforce/commit/5ca9dd2a936959da4336d901e6683c5b29e4f80a))
 
 
 
