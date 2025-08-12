@@ -1,3 +1,12 @@
+## [3.10.3](https://github.com/jsforce/jsforce/compare/3.10.2...3.10.3) (2025-08-12)
+
+
+### Bug Fixes
+
+* **deps:** bump tmp and inquirer ([#1747](https://github.com/jsforce/jsforce/issues/1747)) ([6a55815](https://github.com/jsforce/jsforce/commit/6a5581515cc6cdfe68d02fba9d7915dd6496f4c2))
+
+
+
 ## [3.10.2](https://github.com/jsforce/jsforce/compare/3.10.1...3.10.2) (2025-08-11)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * set default request timeout W-18649787 ([#1738](https://github.com/jsforce/jsforce/issues/1738)) ([4a722cd](https://github.com/jsforce/jsforce/commit/4a722cdd455f0dee68c30e893c146ee3ceefb15e))
-
-
-
-## [3.9.4](https://github.com/jsforce/jsforce/compare/3.9.3...3.9.4) (2025-07-23)
-
-
-### Bug Fixes
-
-* cause release ([#1733](https://github.com/jsforce/jsforce/issues/1733)) ([1653327](https://github.com/jsforce/jsforce/commit/16533272718be313e913208736436e346faa380a))
 
 
 
