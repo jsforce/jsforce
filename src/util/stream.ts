@@ -23,12 +23,12 @@ class MemoryWriteStream extends Writable {
     this._buf = Buffer.alloc(0);
   }
 
-  _write(chunk: Buffer, encoding: string, callback: Function) {
+  override _write(chunk: Buffer, encoding: string, callback: Function) {
     this._buf = Buffer.concat([this._buf, chunk]);
     callback();
   }
 
-  _writev(
+  override _writev(
     data: Array<{ chunk: Buffer; encoding: string }>,
     callback: Function,
   ) {
@@ -36,7 +36,7 @@ class MemoryWriteStream extends Writable {
     callback();
   }
 
-  toString(encoding: BufferEncoding = 'utf-8') {
+  override toString(encoding: BufferEncoding = 'utf-8') {
     return this._buf.toString(encoding);
   }
 }
@@ -84,11 +84,11 @@ class DuplexifiedStream extends Duplex {
     rs.on('error', (err) => this.emit('error', err));
   }
 
-  _write(chunk: any, encoding: any, callback: any) {
+  override _write(chunk: any, encoding: any, callback: any) {
     this._writable.write(chunk, encoding, callback);
   }
 
-  _read(n: number) {
+  override _read(n: number) {
     this._readStream(n);
   }
 
