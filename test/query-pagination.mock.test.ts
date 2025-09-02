@@ -1,7 +1,5 @@
-import { Query } from '../lib/query';
-import { Connection } from '../lib/connection';
-import type { Record } from '../lib/types';
-import type { StreamPromise } from '../src/util/promise';
+import { Connection, Query, type Record } from 'jsforce';
+import { StreamPromise } from '../lib/util/promise';
 
 interface QueryResult<T> {
     done: boolean;

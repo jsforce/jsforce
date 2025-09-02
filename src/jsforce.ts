@@ -5,6 +5,9 @@ import OAuth2 from './oauth2';
 import SfDate from './date';
 import registry, { Registry } from './registry';
 import client, { BrowserClient } from './browser/client';
+import { StreamPromise } from './util/promise';
+
+export { StreamPromise };
 
 /**
  *
