@@ -92,12 +92,12 @@ describe('Query with mocked pagination', () => {
       .execute();
 
     // Verify main query results
-    expect(result.records).toHaveLength(1);
+      expect(result.records.length).toBe(1);
     const account = result.records[0];
     expect(account.Name).toBe('Test Account');
 
     // Verify subquery results
-      expect(account.Contacts?.records).toHaveLength(250);
+      expect(account.Contacts?.records.length).toBe(250);
       expect(account.Contacts?.done).toBe(true);
       expect(account.Contacts?.nextRecordsUrl).toBeUndefined();
 
@@ -169,17 +169,17 @@ describe('Query with mocked pagination', () => {
       .execute();
 
     // Verify main query results
-    expect(result.records).toHaveLength(1);
+      expect(result.records.length).toBe(1);
     const account = result.records[0];
     expect(account.Name).toBe('Test Account');
 
     // Verify Contacts subquery results
-      expect(account.Contacts?.records).toHaveLength(250);
+      expect(account.Contacts?.records.length).toBe(250);
       expect(account.Contacts?.done).toBe(true);
       expect(account.Contacts?.nextRecordsUrl).toBeUndefined();
 
     // Verify Tasks subquery results
-      expect(account.Tasks?.records).toHaveLength(250);
+      expect(account.Tasks?.records.length).toBe(250);
       expect(account.Tasks?.done).toBe(true);
       expect(account.Tasks?.nextRecordsUrl).toBeUndefined();
 
@@ -222,12 +222,12 @@ describe('Query with mocked pagination', () => {
       .execute();
 
     // Verify main query results
-    expect(result.records).toHaveLength(1);
+      expect(result.records.length).toBe(1);
     const account = result.records[0];
     expect(account.Name).toBe('Test Account');
 
     // Verify subquery results show pagination is available but not fetched
-      expect(account.Contacts?.records).toHaveLength(200);
+      expect(account.Contacts?.records.length).toBe(200);
       expect(account.Contacts?.done).toBe(false);
       expect(account.Contacts?.nextRecordsUrl).toBe('/services/data/v53.0/query/01gxx000000NEXT001');
   });
