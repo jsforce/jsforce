@@ -530,9 +530,17 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   }
 
   /**
-   *
+   * Login by SOAP protocol
+   * @deprecated The SOAP login() API will be retired in Summer '27 (API version 65.0). 
+   * Please use OAuth 2.0 Username-Password Flow instead. 
+   * For more information, see https://help.salesforce.com/s/articleView?id=release-notes.rn_api_upcoming_retirement_258rn.htm&release=258&type=5
    */
   async loginBySoap(username: string, password: string): Promise<UserInfo> {
+    this._logger.warn(
+      'DEPRECATION WARNING: The SOAP login() API will be retired in Summer \'27 (API version 65.0). ' +
+      'Please use OAuth 2.0 Username-Password Flow instead. ' +
+      'For more information, see https://help.salesforce.com/s/articleView?id=release-notes.rn_api_upcoming_retirement_258rn.htm&release=258&type=5'
+    );
     if (!username || !password) {
       return Promise.reject(new Error('no username password given'));
     }
