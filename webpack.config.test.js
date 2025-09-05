@@ -23,6 +23,7 @@ module.exports = {
       "path": require.resolve("path-browserify"),
       "stream": require.resolve("stream-browserify"),
       "assert": require.resolve("assert/"),
+      "os": require.resolve("os-browserify/browser"),
     }
   },
   externals: {
