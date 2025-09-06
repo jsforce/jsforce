@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { BaseRegistry } from './base';
+import { RegistryConfig } from './types';
 
 /**
  *
@@ -27,13 +28,13 @@ export class FileRegistry extends BaseRegistry {
     this._configFilePath = configFilePath || getDefaultConfigFilePath();
     try {
       const data = fs.readFileSync(this._configFilePath, 'utf-8');
-      this._registryConfig = JSON.parse(data);
+      this._registryConfig = JSON.parse(data) as RegistryConfig;
     } catch (e) {
       //
     }
   }
 
-  _saveConfig() {
+  override _saveConfig() {
     const data = JSON.stringify(this._registryConfig, null, 4);
     try {
       fs.writeFileSync(this._configFilePath, data);
