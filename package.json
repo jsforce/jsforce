@@ -10,7 +10,7 @@
     "database.com"
   ],
   "homepage": "http://github.com/jsforce/jsforce",
-  "version": "3.10.5",
+  "version": "3.10.7",
   "repository": {
     "type": "git",
     "url": "git://github.com/jsforce/jsforce.git"
@@ -219,7 +219,7 @@
     "commander": "^4.0.1",
     "core-js": "^3.45.0",
     "csv-parse": "^5.5.2",
-    "csv-stringify": "^6.4.4",
+    "csv-stringify": "^6.6.0",
     "faye": "^1.4.0",
     "form-data": "^4.0.4",
     "https-proxy-agent": "^5.0.0",
@@ -267,6 +267,7 @@
     "karma-sourcemap-loader": "^0.4.0",
     "karma-webpack": "^5.0.0",
     "nock": "^13.4.0",
+    "os-browserify": "^0.3.0",
     "path-browserify": "^1.0.1",
     "power-assert": "^1.6.1",
     "prettier": "^2.2.1",
