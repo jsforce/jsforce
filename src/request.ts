@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import { Duplex, Readable, Writable } from 'stream';
 import fetch, { Response, RequestInit, FetchError } from 'node-fetch';
-import createHttpsProxyAgent from 'https-proxy-agent';
+import * as HttpsProxyAgentNS from 'https-proxy-agent';
 import {
   createHttpRequestHandlerStreams,
   executeWithTimeout,
@@ -37,7 +37,10 @@ async function startFetchRequest(
 ) {
   const logger = getLogger('fetch');
   const { httpProxy, followRedirect } = options;
-  const agent = httpProxy ? createHttpsProxyAgent(httpProxy) : undefined;
+  const HttpsProxyAgentCtor: any =
+  (HttpsProxyAgentNS as any).HttpsProxyAgent ??
+  (HttpsProxyAgentNS as any).default;
+  const agent = httpProxy ? new HttpsProxyAgentCtor(httpProxy) : undefined;
   const { url, body, ...rrequest } = request;
   const controller = new AbortController();
 
