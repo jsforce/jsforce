@@ -1,3 +1,12 @@
+## [3.10.7](https://github.com/jsforce/jsforce/compare/3.10.6...3.10.7) (2025-09-08)
+
+
+### Bug Fixes
+
+* bump csv-stringify ([#1756](https://github.com/jsforce/jsforce/issues/1756)) ([5776a77](https://github.com/jsforce/jsforce/commit/5776a776cf0868afd4da8154974e1b1140b66a43))
+
+
+
 ## [3.10.6](https://github.com/jsforce/jsforce/compare/3.10.5...3.10.6) (2025-09-08)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * **deps:** bump tmp and inquirer ([#1747](https://github.com/jsforce/jsforce/issues/1747)) ([6a55815](https://github.com/jsforce/jsforce/commit/6a5581515cc6cdfe68d02fba9d7915dd6496f4c2))
-
-
-
-## [3.10.2](https://github.com/jsforce/jsforce/compare/3.10.1...3.10.2) (2025-08-11)
-
-
-### Bug Fixes
-
-* **deps:** bump core-js from 3.37.0 to 3.45.0 ([#1746](https://github.com/jsforce/jsforce/issues/1746)) ([c958986](https://github.com/jsforce/jsforce/commit/c9589866ee6fffd3fc634afa04ad3f43c3386ac3))
 
 
 
