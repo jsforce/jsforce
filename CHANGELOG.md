@@ -1,3 +1,21 @@
+## [3.10.6](https://github.com/jsforce/jsforce/compare/3.10.5...3.10.6) (2025-09-08)
+
+
+### Bug Fixes
+
+* use nextRecordsUrl for subqueries ([654fb3f](https://github.com/jsforce/jsforce/commit/654fb3f5aae6bdcd165d9a320b93e843775b4eaa))
+
+
+
+## [3.10.5](https://github.com/jsforce/jsforce/compare/3.10.4...3.10.5) (2025-09-05)
+
+
+### Bug Fixes
+
+* add soap login warning ([bc75011](https://github.com/jsforce/jsforce/commit/bc75011cfd30fead4067654482903f48aa7a52f8))
+
+
+
 ## [3.10.4](https://github.com/jsforce/jsforce/compare/3.10.3...3.10.4) (2025-08-18)
 
 
@@ -22,24 +40,6 @@
 ### Bug Fixes
 
 * **deps:** bump core-js from 3.37.0 to 3.45.0 ([#1746](https://github.com/jsforce/jsforce/issues/1746)) ([c958986](https://github.com/jsforce/jsforce/commit/c9589866ee6fffd3fc634afa04ad3f43c3386ac3))
-
-
-
-## [3.10.1](https://github.com/jsforce/jsforce/compare/3.10.0...3.10.1) (2025-08-07)
-
-
-### Bug Fixes
-
-* increase request timeout to 5 minutes ([#1745](https://github.com/jsforce/jsforce/issues/1745)) ([6ca7894](https://github.com/jsforce/jsforce/commit/6ca78941670a6b36d2c9d26758e8fd8fe9f90cc6))
-
-
-
-# [3.10.0](https://github.com/jsforce/jsforce/compare/3.9.5...3.10.0) (2025-08-01)
-
-
-### Features
-
-* **cli:** allow schema generator to filter objects. ([#1386](https://github.com/jsforce/jsforce/issues/1386)) ([b997db2](https://github.com/jsforce/jsforce/commit/b997db2da879e61f13ac41e904af37d67e6fa20a))
 
 
 
