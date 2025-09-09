@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { Duplex, Readable, Writable } from 'stream';
-import fetch, { Response, RequestInit, FetchError } from 'node-fetch';
+import fetch, { Response, RequestInit, FetchError, AbortError } from 'node-fetch';
 import createHttpsProxyAgent from 'https-proxy-agent';
 import {
   createHttpRequestHandlerStreams,
@@ -189,6 +189,11 @@ async function startFetchRequest(
       controller.abort(),
     );
   } catch (err) {
+    if (err instanceof AbortError) {
+      emitter.emit('error', {
+        message: 'Request was aborted due to timeout of 10 minutes.',
+      })
+    }
     emitter.emit('error', err);
     return;
   }
