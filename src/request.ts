@@ -190,9 +190,7 @@ async function startFetchRequest(
     );
   } catch (err) {
     if (err instanceof AbortError) {
-      emitter.emit('error', {
-        message: 'Request was aborted due to timeout of 10 minutes.',
-      })
+      (err as Error).message += ' Request was aborted due to timeout of 10 minutes.';
     }
     emitter.emit('error', err);
     return;
