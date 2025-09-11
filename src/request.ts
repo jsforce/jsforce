@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { Duplex, Readable, Writable } from 'stream';
-import fetch, { Response, RequestInit, FetchError } from 'node-fetch';
+import fetch, { Response, RequestInit, FetchError, AbortError } from 'node-fetch';
 import createHttpsProxyAgent from 'https-proxy-agent';
 import {
   createHttpRequestHandlerStreams,
@@ -179,16 +179,19 @@ async function startFetchRequest(
 
   let res: Response;
 
-  // Timeout after 5 minutes without a response
+  // Timeout after 30 minutes without a response
   //
   // node-fetch's default timeout is 0 and jsforce consumers can't set this when calling `Connection` methods so we set a long default at the fetch wrapper level.
-  const fetchTimeout = options.timeout ?? 300_000
+  const fetchTimeout = options.timeout ?? 1_800_000;
 
   try {
     res = await executeWithTimeout(fetchWithRetries, fetchTimeout, () =>
       controller.abort(),
     );
   } catch (err) {
+    if (err instanceof AbortError) {
+      (err as Error).message += ' Request was aborted due to timeout of 10 minutes.';
+    }
     emitter.emit('error', err);
     return;
   }
