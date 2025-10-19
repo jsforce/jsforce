@@ -13,6 +13,7 @@ import {
   Schema,
   SObjectNames,
 } from '../types';
+import { buildQueryString } from '../util/url';
 
 /**
  *
@@ -181,6 +182,58 @@ export type CompletionsResult = {
       };
     };
   };
+};
+
+/**
+ * Request parameters for retrieving unit tests via Test Discovery API
+ */
+export type TestsRequest = {
+  /** Specifies whether to retrieve all methods (true) or only visible methods (false) in a test class */
+  showAllMethods?: boolean;
+  /** Specifies the namespace to retrieve tests from. Use "FlowTesting" for flow tests only */
+  namespacePrefix?: string;
+  /** A cursor that specifies the first test class to retrieve in the next page of results */
+  nextRecord?: string;
+  /** Specifies the number of test classes to retrieve per page (default: 1000, max: 10000) */
+  pageSize?: number;
+};
+
+/**
+ * Test method object within a test class
+ */
+export type TestMethod = {
+  /** The name of the test method */
+  name: string;
+};
+
+/**
+ * Apex test class object returned by Test Discovery API
+ */
+export type ApexTestClass = {
+  /** The Salesforce ID of the test class (empty string for flow tests without ID) */
+  id: string;
+  /** The name of the test class (for flow tests, this is the API name of the flow) */
+  name: string;
+  /** The namespace of the test class (empty string for default namespace) */
+  namespacePrefix: string;
+  /** An array of test methods in the test class */
+  testMethods: TestMethod[];
+};
+
+/**
+ * Response from Test Discovery API
+ */
+export type TestsResult = {
+  /** An array of Apex test class objects */
+  apexTestClasses: ApexTestClass[];
+  /** The total number of test classes in the result set across all pages */
+  size: number;
+  /** The URL of the next page in the result set (null if this is the last page) */
+  nextRecordsUrl: string | null;
+  /** An MD5 hash representing the test classes and methods in the result set */
+  testSetSignature: string;
+  /** An informational message about the request, or null if there is no applicable message */
+  message: string | null;
 };
 
 /**
@@ -415,6 +468,41 @@ export class Tooling<S extends Schema> {
     const url =
       this._baseUrl() + '/completions?type=' + encodeURIComponent(type);
     return this.request<CompletionsResult>({
+      method: 'GET',
+      url,
+      headers: { Accept: 'application/json' },
+    });
+  }
+
+  /**
+   * Retrieves details about Apex and automated flow tests via Test Discovery API
+   * This resource is available in Tooling API version 65.0 and later.
+   * 
+   * @param options - Optional query parameters for filtering and pagination
+   * @returns Promise resolving to test discovery results including test classes and methods
+   * 
+   * @example
+   * // Retrieve all tests
+   * const result = await conn.tooling.retrieveTests();
+   * 
+   * @example
+   * // Retrieve tests with pagination and filters
+   * const result = await conn.tooling.retrieveTests({
+   *   pageSize: 10,
+   *   showAllMethods: true,
+   *   namespacePrefix: 'my_namespace'
+   * });
+   */
+  retrieveTests(options: TestsRequest = {}) {
+    const queryString = buildQueryString({
+      showAllMethods: options.showAllMethods,
+      namespacePrefix: options.namespacePrefix,
+      nextRecord: options.nextRecord,
+      pageSize: options.pageSize,
+    });
+
+    const url = this._baseUrl() + '/tests' + queryString;
+    return this.request<TestsResult>({
       method: 'GET',
       url,
       headers: { Accept: 'application/json' },
