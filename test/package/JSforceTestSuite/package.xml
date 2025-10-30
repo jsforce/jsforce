@@ -54,10 +54,6 @@
         <name>Workflow</name>
     </types>
     <types>
-        <members>Admin</members>
-        <name>Profile</name>
-    </types>
-    <types>
         <members>OauthOidc</members>
         <name>Settings</name>
     </types>
