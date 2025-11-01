@@ -13,7 +13,6 @@ import {
   Schema,
   SObjectNames,
 } from '../types';
-import { buildQueryString } from '../util/url';
 
 /**
  *
@@ -494,17 +493,24 @@ export class Tooling<S extends Schema> {
    * });
    */
   retrieveTests(options: TestsRequest = {}) {
-    const queryString = buildQueryString({
-      showAllMethods: options.showAllMethods,
+    const url = new URL(this._baseUrl() + '/tests');
+  
+    const params = {
+      showAllMethods: options.showAllMethods ?? true,
       namespacePrefix: options.namespacePrefix,
       nextRecord: options.nextRecord,
       pageSize: options.pageSize,
-    });
-
-    const url = this._baseUrl() + '/tests' + queryString;
+    };
+  
+    for (const [key, value] of Object.entries(params)) {
+      if (value != null && value !== '') {
+        url.searchParams.set(key, String(value));
+      }
+    }
+  
     return this.request<TestsResult>({
       method: 'GET',
-      url,
+      url: url.toString(),
       headers: { Accept: 'application/json' },
     });
   }
