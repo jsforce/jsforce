@@ -135,6 +135,7 @@ jobs:
           SF_USERNAME=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.username') \
           SF_PASSWORD=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.password') \
           SF_LOGIN_URL=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.instanceUrl') \
+          SF_ACCESS_TOKEN=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.accessToken') \
           npm run test:node
 
       - name: Delete scratch org
