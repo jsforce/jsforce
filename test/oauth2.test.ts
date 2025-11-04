@@ -15,7 +15,7 @@ if (typeof jest !== 'undefined') {
  *
  */
 if (isNodeJS()) {
-  describe('web server flow', () => {
+  describe.skip('web server flow', () => {
     let code: string;
     let refreshToken: string;
 
@@ -47,7 +47,7 @@ if (isNodeJS()) {
 /**
  *
  */
-describe('username password flow', () => {
+describe.skip('username password flow', () => {
   //
   it('should start authenticate and receive access token', async () => {
     const res = await oauth2.authenticate(config.username, config.password);

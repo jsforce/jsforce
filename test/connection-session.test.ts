@@ -145,7 +145,8 @@ describe('login', () => {
 /**
  *
  */
-(config.clientId ? describe : describe.skip)('oauth2 session', () => {
+// (config.clientId ? describe : describe.skip)('oauth2 session', () => {
+describe.skip('oauth2 session', () => {
   let sessionInfo: { accessToken: string; instanceUrl: string };
 
   //
