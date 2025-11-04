@@ -20,7 +20,7 @@ export default class ConnectionManager {
     return new Connection<S>(getConnectionConfig(this._config));
   }
 
-  async establishConnection<S extends Schema>(conn: Connection<S>) {
+  establishConnection<S extends Schema>(conn: Connection<S>) {
     const config = this._config;
 
     // Establish a connection using the access token from the env var (retrieved from sf CLI).
