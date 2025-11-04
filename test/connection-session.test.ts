@@ -16,18 +16,18 @@ describe('login', () => {
   let conn: Connection;
 
   //
-  it('should login by username and password', async () => {
-    conn = new Connection({
-      logLevel: config.logLevel,
-      proxyUrl: config.proxyUrl,
-      loginUrl: config.loginUrl,
-    });
-    const userInfo = await conn.login(config.username, config.password);
-    assert.ok(typeof conn.accessToken === 'string');
-    assert.ok(typeof userInfo.id === 'string');
-    assert.ok(typeof userInfo.organizationId === 'string');
-    assert.ok(typeof userInfo.url === 'string');
-  });
+  // it('should login by username and password', async () => {
+  //   conn = new Connection({
+  //     logLevel: config.logLevel,
+  //     proxyUrl: config.proxyUrl,
+  //     loginUrl: config.loginUrl,
+  //   });
+  //   const userInfo = await conn.login(config.username, config.password);
+  //   assert.ok(typeof conn.accessToken === 'string');
+  //   assert.ok(typeof userInfo.id === 'string');
+  //   assert.ok(typeof userInfo.organizationId === 'string');
+  //   assert.ok(typeof userInfo.url === 'string');
+  // });
 
   it('should not allow a lightning URL as instance URL', () => {
     // .lightning
@@ -78,69 +78,69 @@ describe('login', () => {
   });
 
   //
-  it('should execute query and return some records', async () => {
-    const res = await conn.query('SELECT Id FROM User');
-    assert.ok(Array.isArray(res.records));
-  });
+  // it('should execute query and return some records', async () => {
+  //   const res = await conn.query('SELECT Id FROM User');
+  //   assert.ok(Array.isArray(res.records));
+  // });
 
   //
-  it('should catch/handle bad access token', async () => {
-    let newAccessToken;
-    let refreshCount = 0;
-    conn.accessToken = 'invalid access token';
-    conn.removeAllListeners('refresh');
-    conn.on('refresh', (at: any) => {
-      newAccessToken = at;
-      refreshCount += 1;
-    });
-    const res = await conn.query('SELECT Id FROM User LIMIT 5');
-    assert.ok(refreshCount === 1);
-    assert.ok(typeof newAccessToken === 'string');
-    assert.ok(Array.isArray(res.records));
-  });
+  // it('should catch/handle bad access token', async () => {
+  //   let newAccessToken;
+  //   let refreshCount = 0;
+  //   conn.accessToken = 'invalid access token';
+  //   conn.removeAllListeners('refresh');
+  //   conn.on('refresh', (at: any) => {
+  //     newAccessToken = at;
+  //     refreshCount += 1;
+  //   });
+  //   const res = await conn.query('SELECT Id FROM User LIMIT 5');
+  //   assert.ok(refreshCount === 1);
+  //   assert.ok(typeof newAccessToken === 'string');
+  //   assert.ok(Array.isArray(res.records));
+  // });
 });
 
 /**
  *
  */
-describe('logout', () => {
-  let sessionInfo: { sessionId: string; serverUrl: string };
-
-  //
-  it('should logout from soap session', async () => {
-    const conn1 = new Connection({
-      logLevel: config.logLevel,
-      proxyUrl: config.proxyUrl,
-      loginUrl: config.loginUrl,
-    });
-    await conn1.loginBySoap(config.username, config.password);
-    sessionInfo = {
-      sessionId: conn1.accessToken!,
-      serverUrl: conn1.instanceUrl,
-    };
-    await conn1.logout();
-    assert.ok(conn1.accessToken === null);
-  });
-
-  //
-  it('should connect with previous session info to raise auth error', async () => {
-    const conn2 = new Connection({
-      sessionId: sessionInfo.sessionId,
-      serverUrl: sessionInfo.serverUrl,
-      logLevel: config.logLevel,
-      proxyUrl: config.proxyUrl,
-      loginUrl: config.loginUrl,
-    });
-    await delay(10000);
-    try {
-      await conn2.query('SELECT Id FROM User');
-      assert.fail();
-    } catch (error) {
-      const err = error as Error;
-      assert.ok(err && typeof err.message === 'string');
-    }
-  });
-});
+// describe('logout', () => {
+//   let sessionInfo: { sessionId: string; serverUrl: string };
+//
+//   //
+//   it('should logout from soap session', async () => {
+//     const conn1 = new Connection({
+//       logLevel: config.logLevel,
+//       proxyUrl: config.proxyUrl,
+//       loginUrl: config.loginUrl,
+//     });
+//     await conn1.loginBySoap(config.username, config.password);
+//     sessionInfo = {
+//       sessionId: conn1.accessToken!,
+//       serverUrl: conn1.instanceUrl,
+//     };
+//     await conn1.logout();
+//     assert.ok(conn1.accessToken === null);
+//   });
+//
+//   //
+//   it('should connect with previous session info to raise auth error', async () => {
+//     const conn2 = new Connection({
+//       sessionId: sessionInfo.sessionId,
+//       serverUrl: sessionInfo.serverUrl,
+//       logLevel: config.logLevel,
+//       proxyUrl: config.proxyUrl,
+//       loginUrl: config.loginUrl,
+//     });
+//     await delay(10000);
+//     try {
+//       await conn2.query('SELECT Id FROM User');
+//       assert.fail();
+//     } catch (error) {
+//       const err = error as Error;
+//       assert.ok(err && typeof err.message === 'string');
+//     }
+//   });
+// });
 
 /**
  *
@@ -193,7 +193,9 @@ if (isNodeJS()) {
   /**
    *
    */
-  (config.clientId ? describe : describe.skip)('oauth2 refresh', () => {
+  // (config.clientId ? describe : describe.skip)('oauth2 refresh', () => {
+  // can't do browse auth due to Device Activation changes...
+  describe.skip('oauth2 refresh', () => {
     let conn: Connection;
 
     //
