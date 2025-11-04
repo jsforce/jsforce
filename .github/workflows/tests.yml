@@ -53,12 +53,14 @@ jobs:
             SF_USERNAME=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.username') \
             SF_PASSWORD=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.password') \
             SF_LOGIN_URL=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.instanceUrl') \
+            SF_ACCESS_TOKEN=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.accessToken') \
             DISPLAY=:99 CHROME_BIN=$(which chrome) \
             npm run test:browser-ci
           new_command_on_retry: |
             SF_USERNAME=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.username') \
             SF_PASSWORD=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.password') \
             SF_LOGIN_URL=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.instanceUrl') \
+            SF_ACCESS_TOKEN=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.accessToken') \
             DISPLAY=:99 CHROME_BIN=$(which chrome) \
             npm run test:browser-ci:retry
           retry_on: error
@@ -201,6 +203,7 @@ jobs:
           $env:SF_USERNAME=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.username')
           $env:SF_PASSWORD=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.password')
           $env:SF_LOGIN_URL=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.instanceUrl')
+          $env:SF_ACCESS_TOKEN=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.accessToken')
           npm run test:node
 
       - name: Delete scratch org
