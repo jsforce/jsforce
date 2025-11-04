@@ -19,8 +19,8 @@ conn.version = '45.0';
 /**
  *
  */
-beforeAll(async () => {
-  await connMgr.establishConnection(conn);
+beforeAll(() => {
+  connMgr.establishConnection(conn);
 });
 
 /**
