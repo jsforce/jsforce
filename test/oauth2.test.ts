@@ -50,14 +50,21 @@ if (isNodeJS()) {
   });
 }
 
-// ditto about Device Activation/GHA IPs, can't run these oauth tests
-describe.skip('username password flow', () => {
-  //
-  it('should start authenticate and receive access token', async () => {
-    const res = await oauth2.authenticate(config.username, config.password);
-    assert.ok(isString(res.access_token));
+// NOTE:
+// This test started to fail due to IP range restrictions with the device activation changes:
+// https://help.salesforce.com/s/articleView?id=005220394&type=1
+//
+// We could re-enable this test by creating a connected app in our hub that relax IP restrictions:
+// https://help.salesforce.com/s/articleView?id=xcloud.connected_app_continuous_ip.htm&type=5
+if (isNodeJS()) {
+  describe.skip('username password flow', () => {
+    //
+    it('should start authenticate and receive access token', async () => {
+      const res = await oauth2.authenticate(config.username, config.password);
+      assert.ok(isString(res.access_token));
+    });
   });
-});
+}
 
 describe('endpoints', () => {
   it('sets valid oauth endpoints', () => {
