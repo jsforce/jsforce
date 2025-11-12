@@ -76,7 +76,7 @@ await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --
 
 if (!process.env.CI) {
   console.log(
-    `Run tests using this scratch org by appending SF_LOGIN_URL=${orgDisplayUserRes.result.instanceUrl} SF_USERNAME=${orgDisplayUserRes.result.username} SF_PASSWORD=${orgDisplayUserRes.result.password}`,
+    `Run tests using this scratch org by setting these env vars: SF_ACCESS_TOKEN=${orgDisplayUserRes.result.accessToken}, SF_LOGIN_URL=${orgDisplayUserRes.result.instanceUrl}, SF_USERNAME=${orgDisplayUserRes.result.username} and SF_PASSWORD=${orgDisplayUserRes.result.password}`,
   );
 }
 

@@ -38,6 +38,7 @@ module.exports = {
       'SF_LOGIN_URL': '',
       'SF_USERNAME': '',
       'SF_PASSWORD': '',
+      'SF_ACCESS_TOKEN': '',
       'SF_OAUTH2_CLIENT_ID': '',
       'SF_OAUTH2_CLIENT_SECRET': '',
       'SF_OAUTH2_REDIRECT_URI': '',
