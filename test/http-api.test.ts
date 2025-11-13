@@ -414,6 +414,52 @@ describe('HTTP API', () => {
       });
       assert.ok(testPassed);
     });
+
+    it('does not refresh session when response contains "This session is not valid for use with the REST API"', async () => {
+      let refreshCalled = false;
+      const conn = new Connection({
+        loginUrl,
+        accessToken: 'invalid_token',
+        refreshFn: (_c, callback) => {
+          refreshCalled = true;
+          setTimeout(() => callback(null, 'refreshed_token' ?? undefined), 200);
+        },
+      });
+
+      const httpApi = new HttpApi(conn, {});
+
+      let requestCount = 0;
+      httpApi.on('request', (req: HttpRequest) => {
+        requestCount++;
+        assert.equal(req?.headers?.['Authorization'], 'Bearer invalid_token');
+      });
+
+      const errorBody = JSON.stringify({
+        errorCode: 'INVALID_SESSION_ID',
+        message: 'This session is not valid for use with the REST API',
+      });
+
+      nock(loginUrl)
+        .get('/services/data/v59.0')
+        .reply(401, errorBody, {
+          'content-type': 'application/json',
+        });
+
+      await assert.rejects(
+        async () => {
+          await httpApi.request({
+            method: 'GET',
+            url: `${loginUrl}/services/data/v59.0`,
+          });
+        },
+        {
+          errorCode: 'INVALID_SESSION_ID',
+        },
+      );
+
+      assert.ok(!refreshCalled, 'Refresh function should not be called');
+      assert.equal(requestCount, 1, 'Should only make one request');
+    });
   });
 
   describe('error handling', () => {
