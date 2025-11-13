@@ -10,8 +10,8 @@ const conn = connMgr.createConnection();
 /**
  *
  */
-beforeAll(async () => {
-  await connMgr.establishConnection(conn);
+beforeAll(() => {
+  connMgr.establishConnection(conn);
 });
 
 /**
