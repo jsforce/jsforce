@@ -276,7 +276,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
   isSessionExpired(response: HttpResponse) {
     // REST API status codes: https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/errorcodes.htm
     //
-    // "410 - The session ID or OAuth token used has expired or is invalid. The response body contains the message and errorCode."
+    // "401 - The session ID or OAuth token used has expired or is invalid. The response body contains the message and errorCode."
     if (response.statusCode === 401) {
       // Known list of 401 responses that shouldn't be considered as "session expired".
       //
