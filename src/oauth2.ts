@@ -48,6 +48,14 @@ export type AuthzRequestParams = {
 export type TokenResponse = {
   token_type: 'Bearer';
   /**
+   * Space-separated list of OAuth scopes associated with the access token
+   *
+   * For the OAuth 2.0 Web Server Flow, this can be a subset of the registered scopes if specified when requesting the auth code.
+   *
+   * See: https://help.salesforce.com/s/articleView?id=xcloud.remoteaccess_oauth_tokens_scopes.htm&type=5
+   */
+  scope: string;
+  /**
    * Identity URL
    *
    * The format of the URL is https://login.salesforce.com/id/orgID/userID.
