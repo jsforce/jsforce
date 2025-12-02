@@ -1,3 +1,12 @@
+## [3.10.10](https://github.com/jsforce/jsforce/compare/3.10.9...3.10.10) (2025-12-02)
+
+
+### Bug Fixes
+
+* update `TokenResponse` type ([#1777](https://github.com/jsforce/jsforce/issues/1777)) ([1535cac](https://github.com/jsforce/jsforce/commit/1535cac7123e44b07950bf64995104e92d15a2b7))
+
+
+
 ## [3.10.9](https://github.com/jsforce/jsforce/compare/3.10.8...3.10.9) (2025-12-01)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * use nextRecordsUrl for subqueries ([654fb3f](https://github.com/jsforce/jsforce/commit/654fb3f5aae6bdcd165d9a320b93e843775b4eaa))
-
-
-
-## [3.10.5](https://github.com/jsforce/jsforce/compare/3.10.4...3.10.5) (2025-09-05)
-
-
-### Bug Fixes
-
-* add soap login warning ([bc75011](https://github.com/jsforce/jsforce/commit/bc75011cfd30fead4067654482903f48aa7a52f8))
 
 
 
