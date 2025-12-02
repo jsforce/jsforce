@@ -205,6 +205,22 @@ describe('HTTP API', () => {
       assert.ok(retryCounter === 0);
     });
 
+    it('should retry only 2 times on 420 & html response', async () => {
+      const htmlBody = '<html><body>If it takes too long, please contact support or visit our support page</body></html>';
+      nock(loginUrl)
+        .get('/services/data/v59.0')
+        .times(3)
+        .reply(420, htmlBody, {
+          'content-type': 'text/html',
+        });
+
+      const { retryCounter } = await fetch({
+        method: 'GET',
+        url: `${loginUrl}/services/data/v59.0`,
+      });
+      assert.ok(retryCounter === 2);
+    });
+
     it('does not retry on unsupported methods', async () => {
       nock(loginUrl)
         .post('/services/data/v59.0', 'body')
