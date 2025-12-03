@@ -274,12 +274,23 @@ export class HttpApi<S extends Schema> extends EventEmitter {
    * @protected
    */
   isSessionExpired(response: HttpResponse) {
-    // TODO:
-    // The connected app msg only applies to Agent API requests, we should move this to a separate SFAP/Agent API class later.
-    return (
-      response.statusCode === 401 &&
-      !response.body.includes('Connected app is not attached to Agent')
-    );
+    // REST API status codes: https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/errorcodes.htm
+    //
+    // "401 - The session ID or OAuth token used has expired or is invalid. The response body contains the message and errorCode."
+    if (response.statusCode === 401) {
+      // Known list of 401 responses that shouldn't be considered as "session expired".
+      //
+      // These usualy come from an CA/ECA, OAuth, IP restriction change in the org that block connections, we need to skip these
+      // org jsforce will enter into an infinite loop trying to get a valid token.
+      const responsesToSkip = ['Connected app is not attached to Agent', 'This session is not valid for use with the REST API'];
+      for (const p of responsesToSkip) {
+        if (response.body.includes(p)) return false
+      }
+
+      return true
+    }
+
+    return false
   }
 
   /**
