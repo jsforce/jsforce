@@ -51,7 +51,10 @@ export function castTypeUsingSchema(
 ): any {
   if (Array.isArray(schema)) {
     const nillable = schema.length === 2 && schema[0] === '?';
-    const schema_ = nillable ? schema[1] : schema[0];
+    const schema_ = (nillable ? schema[1] : schema[0]) as
+      | SoapSchema
+      | SoapSchemaDef
+      | undefined;
     if (value == null) {
       return nillable ? null : [];
     }
@@ -66,7 +69,9 @@ export function castTypeUsingSchema(
     }
     const nillable = '?' in schema;
     const schema_ =
-      '?' in schema ? (schema['?'] as { [key: string]: any }) : schema;
+      '?' in schema
+        ? (schema['?'] as { [key: string]: any })
+        : (schema as { [key: string]: SoapSchema });
     if (nillable && isNillValue(value)) {
       return null;
     }
@@ -243,7 +248,7 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
   }
 
   /** @override */
-  beforeSend(request: HttpRequest & { _message: object }) {
+  override beforeSend(request: HttpRequest & { _message: object }) {
     request.body = this._createEnvelope(request._message);
 
     const headers = request.headers || {};
@@ -267,7 +272,7 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
   }
 
   /** @override **/
-  isSessionExpired(response: HttpResponse) {
+  override isSessionExpired(response: HttpResponse) {
     return (
       response.statusCode === 500 &&
       /<faultcode>[a-zA-Z]+:INVALID_SESSION_ID<\/faultcode>/.test(response.body)
@@ -275,7 +280,7 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
   }
 
   /** @override **/
-  parseError(body: string) {
+  override parseError(body: string) {
     const error = lookupValue(body, [/:Envelope$/, /:Body$/, /:Fault$/]) as {
       [name: string]: string | undefined;
     };
@@ -286,9 +291,11 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
   }
 
   /** @override **/
-  async getResponseBody(response: HttpResponse) {
+  override async getResponseBody(response: HttpResponse) {
     const body = await super.getResponseBody(response);
-    return lookupValue(body, [/:Envelope$/, /:Body$/, /.+/]);
+    // FIXME: `lookupValue` can return `null` but `getResponse` signature
+    // is typed as `Promise<string>`
+    return lookupValue(body, [/:Envelope$/, /:Body$/, /.+/]) as string;
   }
 
   /**

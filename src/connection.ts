@@ -44,7 +44,7 @@ import { LogLevelConfig } from './util/logger';
 import OAuth2, { TokenResponse } from './oauth2';
 import { OAuth2Config } from './oauth2';
 import Cache, { CachedFunction } from './cache';
-import HttpApi from './http-api';
+import HttpApi, { HttpApiError } from './http-api';
 import SessionRefreshDelegate, {
   SessionRefreshFunc,
 } from './session-refresh-delegate';
@@ -131,14 +131,14 @@ function parseSignedRequest(sr: string | Object): SignedRequestObject {
   if (typeof sr === 'string') {
     if (sr.startsWith('{')) {
       // might be JSON
-      return JSON.parse(sr);
+      return JSON.parse(sr) as SignedRequestObject;
     } // might be original base64-encoded signed request
     const msg = sr.split('.').pop(); // retrieve latter part
     if (!msg) {
       throw new Error('Invalid signed request');
     }
     const json = Buffer.from(msg, 'base64').toString('utf-8');
-    return JSON.parse(json);
+    return JSON.parse(json) as SignedRequestObject;
   }
   return sr as SignedRequestObject;
 }
@@ -389,13 +389,8 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
       this,
       { key: 'describeGlobal', strategy: 'IMMEDIATE' },
     ) as any;
-    const {
-      accessToken,
-      refreshToken,
-      sessionId,
-      serverUrl,
-      signedRequest,
-    } = config;
+    const { accessToken, refreshToken, sessionId, serverUrl, signedRequest } =
+      config;
     this._establish({
       accessToken,
       refreshToken,
@@ -585,7 +580,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
     //  3. trigger session-refresh (username/password login has a default session refresh delegate function)
     //  4. gets stuck refreshing a restricted token
     if (response.body.match(/<passwordExpired>true<\/passwordExpired>/g)) {
-      throw new Error('Unable to login because the used password has expired.')
+      throw new Error('Unable to login because the used password has expired.');
     }
     this._logger.debug(`SOAP response = ${response.body}`);
     m = response.body.match(/<serverUrl>([^<]+)<\/serverUrl>/);
@@ -918,7 +913,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
     }
     return Promise.all(
       ids.map((id) =>
-        this._retrieveSingle(type, id, options).catch((err) => {
+        this._retrieveSingle(type, id, options).catch((err: HttpApiError) => {
           if (options.allOrNone || err.errorCode !== 'NOT_FOUND') {
             throw err;
           }
@@ -953,7 +948,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
    */
   create<
     N extends SObjectNames<S>,
-    InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>
+    InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>,
   >(
     type: N,
     records: InputRecord[],
@@ -961,11 +956,11 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   ): Promise<SaveResult[]>;
   create<
     N extends SObjectNames<S>,
-    InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>
+    InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>,
   >(type: N, record: InputRecord, options?: DmlOptions): Promise<SaveResult>;
   create<
     N extends SObjectNames<S>,
-    InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>
+    InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>,
   >(
     type: N,
     records: InputRecord | InputRecord[],
@@ -1044,7 +1039,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
     }
     return Promise.all(
       records.map((record) =>
-        this._createSingle(type, record, options).catch((err) => {
+        this._createSingle(type, record, options).catch((err: HttpApiError) => {
           // be aware that allOrNone in parallel mode will not revert the other successful requests
           // it only raises error when met at least one failed request.
           if (options.allOrNone || !err.errorCode) {
@@ -1112,7 +1107,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
    */
   update<
     N extends SObjectNames<S>,
-    UpdateRecord extends SObjectUpdateRecord<S, N> = SObjectUpdateRecord<S, N>
+    UpdateRecord extends SObjectUpdateRecord<S, N> = SObjectUpdateRecord<S, N>,
   >(
     type: N,
     records: UpdateRecord[],
@@ -1120,11 +1115,11 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   ): Promise<SaveResult[]>;
   update<
     N extends SObjectNames<S>,
-    UpdateRecord extends SObjectUpdateRecord<S, N> = SObjectUpdateRecord<S, N>
+    UpdateRecord extends SObjectUpdateRecord<S, N> = SObjectUpdateRecord<S, N>,
   >(type: N, record: UpdateRecord, options?: DmlOptions): Promise<SaveResult>;
   update<
     N extends SObjectNames<S>,
-    UpdateRecord extends SObjectUpdateRecord<S, N> = SObjectUpdateRecord<S, N>
+    UpdateRecord extends SObjectUpdateRecord<S, N> = SObjectUpdateRecord<S, N>,
   >(
     type: N,
     records: UpdateRecord | UpdateRecord[],
@@ -1186,7 +1181,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
     }
     return Promise.all(
       records.map((record) =>
-        this._updateSingle(type, record, options).catch((err) => {
+        this._updateSingle(type, record, options).catch((err: HttpApiError) => {
           // be aware that allOrNone in parallel mode will not revert the other successful requests
           // it only raises error when met at least one failed request.
           if (options.allOrNone || !err.errorCode) {
@@ -1253,7 +1248,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   upsert<
     N extends SObjectNames<S>,
     InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>,
-    FieldNames extends SObjectFieldNames<S, N> = SObjectFieldNames<S, N>
+    FieldNames extends SObjectFieldNames<S, N> = SObjectFieldNames<S, N>,
   >(
     type: N,
     records: InputRecord[],
@@ -1263,7 +1258,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   upsert<
     N extends SObjectNames<S>,
     InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>,
-    FieldNames extends SObjectFieldNames<S, N> = SObjectFieldNames<S, N>
+    FieldNames extends SObjectFieldNames<S, N> = SObjectFieldNames<S, N>,
   >(
     type: N,
     record: InputRecord,
@@ -1273,7 +1268,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   upsert<
     N extends SObjectNames<S>,
     InputRecord extends SObjectInputRecord<S, N> = SObjectInputRecord<S, N>,
-    FieldNames extends SObjectFieldNames<S, N> = SObjectFieldNames<S, N>
+    FieldNames extends SObjectFieldNames<S, N> = SObjectFieldNames<S, N>,
   >(
     type: N,
     records: InputRecord | InputRecord[],
@@ -1380,7 +1375,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
           {
             noContentResponse: { success: true, errors: [] },
           },
-        ).catch((err) => {
+        ).catch((err: HttpApiError) => {
           // Be aware that `allOrNone` option in upsert method
           // will not revert the other successful requests.
           // It only raises error when met at least one failed request.
@@ -1456,7 +1451,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
     }
     return Promise.all(
       ids.map((id) =>
-        this._destroySingle(type, id, options).catch((err) => {
+        this._destroySingle(type, id, options).catch((err: HttpApiError) => {
           // Be aware that `allOrNone` option in parallel mode
           // will not revert the other successful requests.
           // It only raises error when met at least one failed request.
@@ -1531,7 +1526,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   /**
    * Get SObject instance
    */
-  sobject<N extends SObjectNames<S>>(type: string|N): SObject<S, N>;
+  sobject<N extends SObjectNames<S>>(type: string | N): SObject<S, N>;
   sobject<N extends SObjectNames<S>>(type: N | string): SObject<S, N> {
     const so = this.sobjects[type as N] || new SObject(this, type as N);
     this.sobjects[type as N] = so;

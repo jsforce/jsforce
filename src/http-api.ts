@@ -17,6 +17,7 @@ import {
 } from './types';
 import { createLazyStream } from './util/stream';
 import { getBodySize } from './util/get-body-size';
+import { Duplex } from 'stream';
 
 /** @private */
 function parseJSON(str: string) {
@@ -62,12 +63,13 @@ export class HttpApi<S extends Schema> extends EventEmitter {
    * Callout to API endpoint using http
    */
   request<R = unknown>(request: HttpRequest): StreamPromise<R> {
-    return StreamPromise.create<R>(() => {
-      const { stream, setStream } = createLazyStream();
-      const promise = (async () => {
-        const refreshDelegate = this.getRefreshDelegate();
-        /* TODO decide remove or not this section */
-        /*
+    return StreamPromise.create<R>(
+      (): { stream: Duplex; promise: Promise<R> } => {
+        const { stream, setStream } = createLazyStream();
+        const promise = (async () => {
+          const refreshDelegate = this.getRefreshDelegate();
+          /* TODO decide remove or not this section */
+          /*
         // remember previous instance url in case it changes after a refresh
         const lastInstanceUrl = conn.instanceUrl;
 
@@ -79,84 +81,85 @@ export class HttpApi<S extends Schema> extends EventEmitter {
           request.url = request.url.replace(lastInstanceUrl,conn.instanceUrl);
         }
         */
-        if (refreshDelegate && refreshDelegate.isRefreshing()) {
-          await refreshDelegate.waitRefresh();
-          const bodyPromise = this.request(request);
-          setStream(bodyPromise.stream());
-          const body = await bodyPromise;
-          return body;
-        }
-
-        // hook before sending
-        this.beforeSend(request);
-
-        this.emit('request', request);
-        this._logger.debug(
-          `<request> method=${request.method}, url=${request.url}`,
-        );
-        const requestTime = Date.now();
-        const requestPromise = this._transport.httpRequest(
-          request,
-          this._options,
-        );
-
-        setStream(requestPromise.stream());
-
-        let response: HttpResponse | void;
-        try {
-          response = await requestPromise;
-        } catch (err) {
-          this._logger.error(err);
-          throw err;
-        } finally {
-          const responseTime = Date.now();
-          this._logger.debug(
-            `elapsed time: ${responseTime - requestTime} msec`,
-          );
-        }
-        if (!response) {
-          return;
-        }
-        this._logger.debug(
-          `<response> status=${String(response.statusCode)}, url=${
-            request.url
-          }`,
-        );
-        this.emit('response', response);
-        // Refresh token if session has been expired and requires authentication
-        // when session refresh delegate is available
-        if (this.isSessionExpired(response) && refreshDelegate) {
-          await refreshDelegate.refresh(requestTime);
-          /* remove the `content-length` header after token refresh
-           *
-           * SOAP requests include the access token their the body,
-           * if the first req had an invalid token and jsforce successfully
-           * refreshed it we need to remove the `content-length` header
-           * so that it get's re-calculated again with the new body.
-           *
-           * REST request aren't affected by this because the access token
-           * is sent via HTTP headers
-           *
-           * `_message` is only present in SOAP requests
-           */
-          if (
-            '_message' in request &&
-            request.headers &&
-            'content-length' in request.headers
-          ) {
-            delete request.headers['content-length'];
+          if (refreshDelegate?.isRefreshing()) {
+            await refreshDelegate.waitRefresh();
+            const bodyPromise = this.request(request);
+            setStream(bodyPromise.stream());
+            const body = await bodyPromise;
+            return body;
           }
-          return this.request(request);
-        }
-        if (this.isErrorResponse(response)) {
-          const err = await this.getError(response);
-          throw err;
-        }
-        const body = await this.getResponseBody(response);
-        return body;
-      })();
-      return { stream, promise };
-    });
+
+          // hook before sending
+          this.beforeSend(request);
+
+          this.emit('request', request);
+          this._logger.debug(
+            `<request> method=${request.method}, url=${request.url}`,
+          );
+          const requestTime = Date.now();
+          const requestPromise = this._transport.httpRequest(
+            request,
+            this._options,
+          );
+
+          setStream(requestPromise.stream());
+
+          let response: HttpResponse | void;
+          try {
+            response = await requestPromise;
+          } catch (err) {
+            this._logger.error(err);
+            throw err;
+          } finally {
+            const responseTime = Date.now();
+            this._logger.debug(
+              `elapsed time: ${responseTime - requestTime} msec`,
+            );
+          }
+          if (!response) {
+            return;
+          }
+          this._logger.debug(
+            `<response> status=${String(response.statusCode)}, url=${
+              request.url
+            }`,
+          );
+          this.emit('response', response);
+          // Refresh token if session has been expired and requires authentication
+          // when session refresh delegate is available
+          if (this.isSessionExpired(response) && refreshDelegate) {
+            await refreshDelegate.refresh(requestTime);
+            /* remove the `content-length` header after token refresh
+             *
+             * SOAP requests include the access token their the body,
+             * if the first req had an invalid token and jsforce successfully
+             * refreshed it we need to remove the `content-length` header
+             * so that it get's re-calculated again with the new body.
+             *
+             * REST request aren't affected by this because the access token
+             * is sent via HTTP headers
+             *
+             * `_message` is only present in SOAP requests
+             */
+            if (
+              '_message' in request &&
+              request.headers &&
+              'content-length' in request.headers
+            ) {
+              delete request.headers['content-length'];
+            }
+            return this.request(request);
+          }
+          if (this.isErrorResponse(response)) {
+            const err = await this.getError(response);
+            throw err;
+          }
+          const body = await this.getResponseBody(response);
+          return body;
+        })();
+        return { stream, promise } as { stream: Duplex; promise: Promise<R> };
+      },
+    );
   }
 
   /**
@@ -252,7 +255,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
       // No Content
       return this._noContentResponse;
     }
-    const body = await this.parseResponseBody(response);
+    const body = (await this.parseResponseBody(response)) as string | undefined;
     let err;
     if (this.hasErrorInResponseBody(body)) {
       err = await this.getError(response, body);
@@ -379,7 +382,7 @@ See \`error.data\` for the full html response.`,
 /**
  *
  */
-class HttpApiError extends Error {
+export class HttpApiError extends Error {
   /**
    * This contains error-specific details, usually returned from the API.
    */

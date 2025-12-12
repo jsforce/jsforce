@@ -24,26 +24,26 @@ import {
   RetrieveResult,
   DeployResult,
   AsyncResult,
-  ApiSchemaTypes, CancelDeployResult,
+  ApiSchemaTypes,
+  CancelDeployResult,
 } from './metadata/schema';
 export * from './metadata/schema';
 
 /**
  *
  */
-type MetadataType_<
-  K extends keyof ApiSchemaTypes = keyof ApiSchemaTypes
-> = K extends keyof ApiSchemaTypes
-  ? ApiSchemaTypes[K] extends Metadata
-    ? K
-    : never
-  : never;
+type MetadataType_<K extends keyof ApiSchemaTypes = keyof ApiSchemaTypes> =
+  K extends keyof ApiSchemaTypes
+    ? ApiSchemaTypes[K] extends Metadata
+      ? K
+      : never
+    : never;
 
 export type MetadataType = MetadataType_;
 
 export type MetadataDefinition<
   T extends string,
-  M extends Metadata = Metadata
+  M extends Metadata = Metadata,
 > = Metadata extends M
   ? T extends keyof ApiSchemaTypes & MetadataType
     ? ApiSchemaTypes[T] extends Metadata
@@ -60,7 +60,7 @@ type DeepPartial<T> = T extends any[]
 
 export type InputMetadataDefinition<
   T extends string,
-  M extends Metadata = Metadata
+  M extends Metadata = Metadata,
 > = DeepPartial<MetadataDefinition<T, M>>;
 
 /**
@@ -128,17 +128,17 @@ export class MetadataApi<S extends Schema> {
   create<
     M extends Metadata = Metadata,
     T extends MetadataType = MetadataType,
-    MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>
+    MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>,
   >(type: T, metadata: MD[]): Promise<SaveResult[]>;
   create<
     M extends Metadata = Metadata,
     T extends MetadataType = MetadataType,
-    MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>
+    MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>,
   >(type: T, metadata: MD): Promise<SaveResult>;
   create<
     M extends Metadata = Metadata,
     T extends MetadataType = MetadataType,
-    MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>
+    MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>,
   >(type: T, metadata: MD | MD[]): Promise<SaveResult | SaveResult[]>;
   create(type: string, metadata: Metadata | Metadata[]) {
     const isArray = Array.isArray(metadata);
@@ -153,17 +153,17 @@ export class MetadataApi<S extends Schema> {
   read<
     M extends Metadata = Metadata,
     T extends MetadataType = MetadataType,
-    MD extends MetadataDefinition<T, M> = MetadataDefinition<T, M>
+    MD extends MetadataDefinition<T, M> = MetadataDefinition<T, M>,
   >(type: T, fullNames: string[]): Promise<MD[]>;
   read<
     M extends Metadata = Metadata,
     T extends MetadataType = MetadataType,
-    MD extends MetadataDefinition<T, M> = MetadataDefinition<T, M>
+    MD extends MetadataDefinition<T, M> = MetadataDefinition<T, M>,
   >(type: T, fullNames: string): Promise<MD>;
   read<
     M extends Metadata = Metadata,
     T extends MetadataType = MetadataType,
-    MD extends MetadataDefinition<T, M> = MetadataDefinition<T, M>
+    MD extends MetadataDefinition<T, M> = MetadataDefinition<T, M>,
   >(type: T, fullNames: string | string[]): Promise<MD | MD[]>;
   async read(type: string, fullNames: string | string[]) {
     const ReadResultSchema =
@@ -191,17 +191,17 @@ export class MetadataApi<S extends Schema> {
   update<
     M extends Metadata = Metadata,
     T extends string = string,
-    MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>
+    MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>,
   >(type: T, metadata: Array<Partial<MD>>): Promise<SaveResult[]>;
   update<
     M extends Metadata = Metadata,
     T extends string = string,
-    MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>
+    MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>,
   >(type: T, metadata: Partial<MD>): Promise<SaveResult>;
   update<
     M extends Metadata = Metadata,
     T extends string = string,
-    MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>
+    MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>,
   >(
     type: T,
     metadata: Partial<MD> | Array<Partial<MD>>,
@@ -219,17 +219,17 @@ export class MetadataApi<S extends Schema> {
   upsert<
     M extends Metadata = Metadata,
     T extends string = string,
-    MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>
+    MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>,
   >(type: T, metadata: MD[]): Promise<UpsertResult[]>;
   upsert<
     M extends Metadata = Metadata,
     T extends string = string,
-    MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>
+    MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>,
   >(type: T, metadata: MD): Promise<UpsertResult>;
   upsert<
     M extends Metadata = Metadata,
     T extends string = string,
-    MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>
+    MD extends InputMetadataDefinition<T, M> = InputMetadataDefinition<T, M>,
   >(type: T, metadata: MD | MD[]): Promise<UpsertResult | UpsertResult[]>;
   upsert(type: string, metadata: Metadata | Metadata[]) {
     const isArray = Array.isArray(metadata);
@@ -462,14 +462,17 @@ export class MetadataApi<S extends Schema> {
     rest: boolean = false,
   ): Promise<DeployResult> {
     if (rest) {
-      const url = `/metadata/deployRequest/${asyncProcessId}${includeDetails ? '?includeDetails=true' : ''}`;
+      const url = `/metadata/deployRequest/${asyncProcessId}${
+        includeDetails ? '?includeDetails=true' : ''
+      }`;
       type CheckDeployStatusRest = {
         id: string;
         validatedDeployRequestId: string | null;
         deployResult: DeployResult;
         deployOptions: DeployOptions | null;
-      }
-      return (await this._conn.requestGet<CheckDeployStatusRest>(url)).deployResult;
+      };
+      return (await this._conn.requestGet<CheckDeployStatusRest>(url))
+        .deployResult;
     } else {
       return this._invoke(
         'checkDeployStatus',
@@ -482,8 +485,8 @@ export class MetadataApi<S extends Schema> {
     }
   }
 
- async cancelDeploy(id: string): Promise<CancelDeployResult>{
-    return this._invoke('cancelDeploy', { id })
+  async cancelDeploy(id: string): Promise<CancelDeployResult> {
+    return this._invoke('cancelDeploy', { id });
   }
 }
 
@@ -494,7 +497,7 @@ export class MetadataApi<S extends Schema> {
  */
 export class AsyncResultLocator<
   S extends Schema,
-  R extends {} = AsyncResult
+  R extends {} = AsyncResult,
 > extends EventEmitter {
   _meta: MetadataApi<S>;
   _promise: Promise<AsyncResult>;
@@ -585,7 +588,7 @@ export class RetrieveResultLocator<S extends Schema> extends AsyncResultLocator<
    * Check and wait until the async request becomes in completed status,
    * and retrieve the result data.
    */
-  async complete() {
+  override async complete() {
     const result = await super.complete();
     return this._meta.checkRetrieveStatus(result.id);
   }
@@ -631,7 +634,7 @@ export class DeployResultLocator<S extends Schema> extends AsyncResultLocator<
    * Check and wait until the async request becomes in completed status,
    * and retrieve the result data.
    */
-  async complete(includeDetails?: boolean) {
+  override async complete(includeDetails?: boolean) {
     const result = await super.complete();
     return this._meta.checkDeployStatus(result.id, includeDetails);
   }
