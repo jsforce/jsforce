@@ -258,6 +258,21 @@ describe('soql-builder', () => {
     assert.ok(soql === 'SELECT Id FROM Account');
   });
 
+  it('should build query with group by & having clauses', () => {
+    const soql = createSOQL({
+      table: 'Account',
+      fields: ['Type', 'COUNT(Id)'],
+      groupBy: ['Type'],
+      having: { 'COUNT(Id)': { $gt: 0 } },
+    });
+    assert.equal(
+      soql,
+      'SELECT Type, COUNT(Id) FROM Account ' +
+        'GROUP BY Type ' +
+        'HAVING COUNT(Id) > 0',
+    );
+  });
+
   //
   it('should build query with sort option', () => {
     const soql = createSOQL({
