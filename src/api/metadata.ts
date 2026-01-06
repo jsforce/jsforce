@@ -586,8 +586,24 @@ export class RetrieveResultLocator<S extends Schema> extends AsyncResultLocator<
    * and retrieve the result data.
    */
   async complete() {
-    const result = await super.complete();
-    return this._meta.checkRetrieveStatus(result.id);
+    let result: RetrieveResult;
+    if (!this._id) {
+      const asyncResult = await this._promise;
+      this._id = asyncResult.id;
+    }
+    const startTime = new Date().getTime();
+
+    while (true) {
+      const now = new Date().getTime();
+      if (startTime + this._meta.pollTimeout < now) {
+        throw new Error('Polling time out. Retrieve operation is not completed.');
+      }
+      result = await this._meta.checkRetrieveStatus(this._id);
+      if (result.done) {
+        return result;
+      } 
+      await new Promise(resolve => setTimeout(resolve, this._meta.pollInterval));
+    }
   }
 
   /**
