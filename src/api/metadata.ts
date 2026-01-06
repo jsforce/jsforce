@@ -528,7 +528,7 @@ export class AsyncResultLocator<
   async check() {
     const result = await this._promise;
     this._id = result.id;
-    return this._meta.checkRetrieveStatus(result.id);
+    return this._meta.checkStatus(result.id);
   }
 
   /**
