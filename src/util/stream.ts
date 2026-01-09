@@ -16,15 +16,15 @@ export function createLazyStream() {
 }
 
 class MemoryWriteStream extends Writable {
-  _buf: Buffer;
+  _chunks: Buffer[];
 
   constructor() {
     super();
-    this._buf = Buffer.alloc(0);
+    this._chunks = [];
   }
 
   _write(chunk: Buffer, encoding: string, callback: Function) {
-    this._buf = Buffer.concat([this._buf, chunk]);
+    this._chunks.push(chunk);
     callback();
   }
 
@@ -32,12 +32,14 @@ class MemoryWriteStream extends Writable {
     data: Array<{ chunk: Buffer; encoding: string }>,
     callback: Function,
   ) {
-    this._buf = Buffer.concat([this._buf, ...data.map(({ chunk }) => chunk)]);
+    for (const { chunk } of data) {
+      this._chunks.push(chunk);
+    }
     callback();
   }
 
   toString(encoding: BufferEncoding = 'utf-8') {
-    return this._buf.toString(encoding);
+    return Buffer.concat(this._chunks).toString(encoding);
   }
 }
 
