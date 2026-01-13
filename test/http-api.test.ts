@@ -205,14 +205,11 @@ describe('HTTP API', () => {
       assert.ok(retryCounter === 0);
     });
 
-    it('should retry only 2 times on 420 & html response', async () => {
-      const htmlBody = '<html><body>If it takes too long, please contact support or visit our support page</body></html>';
+    it('should retry only 2 times on 420 response', async () => {
       nock(loginUrl)
         .get('/services/data/v59.0')
         .times(3)
-        .reply(420, htmlBody, {
-          'content-type': 'text/html',
-        });
+        .reply(420, { error: 'We\'ve hit a snag' });
 
       const { retryCounter } = await fetch({
         method: 'GET',
