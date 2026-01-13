@@ -366,7 +366,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
 Check that the org exists and can be reached.
 
 HTTP status code: ${response.statusCode}.
-REST API Status Codes and Error Responses: 
+REST API Status Codes and Error Responses:
 https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/errorcodes.htm
 
 See \`error.data\` for the full html response.`,
