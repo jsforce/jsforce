@@ -1,3 +1,21 @@
+## [3.10.10](https://github.com/jsforce/jsforce/compare/3.10.9...3.10.10) (2025-12-02)
+
+
+### Bug Fixes
+
+* update `TokenResponse` type ([#1777](https://github.com/jsforce/jsforce/issues/1777)) ([1535cac](https://github.com/jsforce/jsforce/commit/1535cac7123e44b07950bf64995104e92d15a2b7))
+
+
+
+## [3.10.9](https://github.com/jsforce/jsforce/compare/3.10.8...3.10.9) (2025-12-01)
+
+
+### Bug Fixes
+
+* skip session refresh if connection is blocked W-19992404 ([#1774](https://github.com/jsforce/jsforce/issues/1774)) ([c5c1d58](https://github.com/jsforce/jsforce/commit/c5c1d582c66aad2ac85bf57a7f71d55565c9569c))
+
+
+
 ## [3.10.8](https://github.com/jsforce/jsforce/compare/3.10.7...3.10.8) (2025-10-03)
 
 
@@ -22,24 +40,6 @@
 ### Bug Fixes
 
 * use nextRecordsUrl for subqueries ([654fb3f](https://github.com/jsforce/jsforce/commit/654fb3f5aae6bdcd165d9a320b93e843775b4eaa))
-
-
-
-## [3.10.5](https://github.com/jsforce/jsforce/compare/3.10.4...3.10.5) (2025-09-05)
-
-
-### Bug Fixes
-
-* add soap login warning ([bc75011](https://github.com/jsforce/jsforce/commit/bc75011cfd30fead4067654482903f48aa7a52f8))
-
-
-
-## [3.10.4](https://github.com/jsforce/jsforce/compare/3.10.3...3.10.4) (2025-08-18)
-
-
-### Bug Fixes
-
-* **deps:** bump @babel/runtime-corejs3 from 7.27.6 to 7.28.3 ([#1748](https://github.com/jsforce/jsforce/issues/1748)) ([78adff2](https://github.com/jsforce/jsforce/commit/78adff2a2fa4c72d3fba9b0e536472472b29254e))
 
 
 
