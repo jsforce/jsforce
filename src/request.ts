@@ -69,10 +69,10 @@ async function startFetchRequest(
     ],
   };
 
-  const shouldRetryRequest = async (
+  const shouldRetryRequest = (
     maxRetry: number,
     resOrErr: Response | Error | FetchError,
-  ): Promise<boolean> => {
+  ): boolean => {
     if (!retryOpts.methods.includes(request.method)) return false;
 
     if (resOrErr instanceof Response) {
@@ -128,7 +128,7 @@ async function startFetchRequest(
 
     try {
       const res = await fetch(url, fetchOpts);
-      if (await shouldRetryRequest(retryOpts.maxRetries, res)) {
+      if (shouldRetryRequest(retryOpts.maxRetries, res)) {
         logger.debug(`retrying for the ${retryCount + 1} time`);
         logger.debug('reason: statusCode match');
 
@@ -159,7 +159,7 @@ async function startFetchRequest(
         throw error;
       }
 
-      if (await shouldRetryRequest(retryOpts.maxRetries, error)) {
+      if (shouldRetryRequest(retryOpts.maxRetries, error)) {
         logger.debug(`retrying for the ${retryCount + 1} time`);
         logger.debug(`Error: ${(err as Error).message}`);
 
