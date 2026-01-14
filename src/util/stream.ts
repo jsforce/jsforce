@@ -1,4 +1,7 @@
 import { Duplex, PassThrough, Readable, Writable } from 'stream';
+import { getLogger } from './logger';
+
+const logger = getLogger('stream');
 
 export function createLazyStream() {
   const ins = new PassThrough();
@@ -17,14 +20,25 @@ export function createLazyStream() {
 
 class MemoryWriteStream extends Writable {
   _chunks: Buffer[];
+  _totalBytes: number;
 
   constructor() {
     super();
     this._chunks = [];
+    this._totalBytes = 0;
   }
 
   _write(chunk: Buffer, encoding: string, callback: Function) {
     this._chunks.push(chunk);
+    this._totalBytes += chunk.length;
+
+    // Log progress every 10MB
+    if (this._totalBytes % (10 * 1024 * 1024) < chunk.length) {
+      logger.debug(
+        `MemoryWriteStream: received ${this._chunks.length} chunks, ` +
+          `${(this._totalBytes / 1024 / 1024).toFixed(1)}MB total`,
+      );
+    }
     callback();
   }
 
@@ -34,12 +48,25 @@ class MemoryWriteStream extends Writable {
   ) {
     for (const { chunk } of data) {
       this._chunks.push(chunk);
+      this._totalBytes += chunk.length;
     }
+    logger.debug(
+      `MemoryWriteStream._writev: received ${data.length} chunks in batch`,
+    );
     callback();
   }
 
   toString(encoding: BufferEncoding = 'utf-8') {
-    return Buffer.concat(this._chunks).toString(encoding);
+    logger.debug(
+      `MemoryWriteStream.toString: concatenating ${this._chunks.length} chunks, ` +
+        `${(this._totalBytes / 1024 / 1024).toFixed(1)}MB`,
+    );
+    const start = Date.now();
+    const result = Buffer.concat(this._chunks).toString(encoding);
+    logger.debug(
+      `MemoryWriteStream.toString: completed in ${Date.now() - start}ms`,
+    );
+    return result;
   }
 }
 
@@ -47,11 +74,20 @@ export async function readAll(
   rs: Readable,
   encoding: BufferEncoding = 'utf-8',
 ) {
+  logger.debug('readAll: starting to read stream');
+  const start = Date.now();
+
   return new Promise<string>((resolve, reject) => {
     const ws = new MemoryWriteStream();
-    rs.on('error', reject)
+    rs.on('error', (err) => {
+      logger.error(`readAll: stream error: ${(err as Error).message}`);
+      reject(err);
+    })
       .pipe(ws)
-      .on('finish', () => resolve(ws.toString(encoding)));
+      .on('finish', () => {
+        logger.debug(`readAll: stream finished in ${Date.now() - start}ms`);
+        resolve(ws.toString(encoding));
+      });
   });
 }
 

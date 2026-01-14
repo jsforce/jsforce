@@ -2,6 +2,9 @@ import { PassThrough } from 'stream';
 import { concatStreamsAsDuplex, readAll } from './util/stream';
 import { HttpRequest, HttpRequestOptions, HttpResponse } from './types';
 import FormData from 'form-data';
+import { getLogger } from './util/logger';
+
+const logger = getLogger('request-helper');
 
 /**
  *
@@ -26,7 +29,16 @@ export function createHttpRequestHandlerStreams(
   }
   duplex.on('response', async (res) => {
     if (duplex.listenerCount('complete') > 0) {
+      logger.debug(`Processing response, status=${res.statusCode}`);
+      const start = Date.now();
+
       const resBody = await readAll(duplex, options.encoding);
+
+      logger.debug(
+        `Response body read: ${(resBody.length / 1024 / 1024).toFixed(1)}MB ` +
+          `in ${Date.now() - start}ms`,
+      );
+
       duplex.emit('complete', {
         ...res,
         body: resBody,
