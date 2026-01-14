@@ -80,7 +80,7 @@ export async function readAll(
   return new Promise<string>((resolve, reject) => {
     const ws = new MemoryWriteStream();
     rs.on('error', (err) => {
-      logger.error(`readAll: stream error: ${(err as Error).message}`);
+      logger.error(`readAll: stream error: ${(err).message}`);
       reject(err);
     })
       .pipe(ws)
