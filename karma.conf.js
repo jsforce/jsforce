@@ -43,7 +43,7 @@ module.exports = function (config) {
     files: ['dist/jsforce.js', 'test/**/!(*http-api).test.ts'],
 
     // list of files / patterns to exclude
-    exclude: [],
+    exclude: ['test/perf/**/*.ts'],
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
