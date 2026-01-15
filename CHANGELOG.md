@@ -1,3 +1,12 @@
+## [3.10.11](https://github.com/jsforce/jsforce/compare/3.10.10...3.10.11) (2026-01-15)
+
+
+### Bug Fixes
+
+* **http:** reduce buffer allocations when reading responses W-18649787 ([#1784](https://github.com/jsforce/jsforce/issues/1784)) ([f43fc77](https://github.com/jsforce/jsforce/commit/f43fc7773ce8aa15ddfb3a105dbf3ea9ac704885))
+
+
+
 ## [3.10.10](https://github.com/jsforce/jsforce/compare/3.10.9...3.10.10) (2025-12-02)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * bump csv-stringify ([#1756](https://github.com/jsforce/jsforce/issues/1756)) ([5776a77](https://github.com/jsforce/jsforce/commit/5776a776cf0868afd4da8154974e1b1140b66a43))
-
-
-
-## [3.10.6](https://github.com/jsforce/jsforce/compare/3.10.5...3.10.6) (2025-09-08)
-
-
-### Bug Fixes
-
-* use nextRecordsUrl for subqueries ([654fb3f](https://github.com/jsforce/jsforce/commit/654fb3f5aae6bdcd165d9a320b93e843775b4eaa))
 
 
 
