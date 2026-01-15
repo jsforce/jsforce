@@ -1,6 +1,6 @@
 {
   "author": "Shinichi Tomita <shinichi.tomita@gmail.com>",
-  "name": "@jsforce/jsforce-node",
+  "name": "jsforce",
   "description": "Salesforce API Library for JavaScript",
   "keywords": [
     "salesforce",
