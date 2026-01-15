@@ -482,7 +482,7 @@ export class MetadataApi<S extends Schema> {
     }
   }
 
- async cancelDeploy(id: string): Promise<CancelDeployResult>{
+  async cancelDeploy(id: string): Promise<CancelDeployResult>{
     return this._invoke('cancelDeploy', { id })
   }
 }
@@ -582,14 +582,15 @@ export class RetrieveResultLocator<S extends Schema> extends AsyncResultLocator<
   RetrieveResult
 > {
   /**
-   * Check and wait until the async request becomes in completed status,
-   * and retrieve the result data.
+   * Poll checkRetrieveStatus() until the retrieve operation completes,
+   * then return the RetrieveResult.
    */
   async complete() {
     if (!this._id) {
       const asyncResult = await this._promise;
       this._id = asyncResult.id;
     }
+    const id = this._id;
 
     return new Promise<RetrieveResult>((resolve, reject) => {
       const startTime = new Date().getTime();
@@ -598,16 +599,21 @@ export class RetrieveResultLocator<S extends Schema> extends AsyncResultLocator<
         try {
           const now = new Date().getTime();
           if (startTime + this._meta.pollTimeout < now) {
-            reject(new Error('Polling time out. Retrieve operation is not completed.'));
+            const err = new Error('Polling time out. Retrieve operation is not completed.');
+            this.emit('error', err);
+            reject(err);
             return;
           }
-          const result = await this._meta.checkRetrieveStatus(this._id!);
+          const result = await this._meta.checkRetrieveStatus(id);
           if (result.done) {
+            this.emit('complete', result);
             resolve(result);
           } else {
+            this.emit('progress', result);
             setTimeout(poll, this._meta.pollInterval);
           }
         } catch (err) {
+          this.emit('error', err);
           reject(err);
         }
       };
@@ -654,12 +660,44 @@ export class DeployResultLocator<S extends Schema> extends AsyncResultLocator<
   DeployResult
 > {
   /**
-   * Check and wait until the async request becomes in completed status,
-   * and retrieve the result data.
+   * Poll checkDeployStatus() until the deploy operation completes,
+   * then return the DeployResult.
    */
   async complete(includeDetails?: boolean) {
-    const result = await super.complete();
-    return this._meta.checkDeployStatus(result.id, includeDetails);
+    if (!this._id) {
+      const asyncResult = await this._promise;
+      this._id = asyncResult.id;
+    }
+    const id = this._id;
+
+    return new Promise<DeployResult>((resolve, reject) => {
+      const startTime = new Date().getTime();
+
+      const poll = async () => {
+        try {
+          const now = new Date().getTime();
+          if (startTime + this._meta.pollTimeout < now) {
+            const err = new Error('Polling time out. Deploy operation is not completed.');
+            this.emit('error', err);
+            reject(err);
+            return;
+          }
+          const result = await this._meta.checkDeployStatus(id, includeDetails);
+          if (result.done) {
+            this.emit('complete', result);
+            resolve(result);
+          } else {
+            this.emit('progress', result);
+            setTimeout(poll, this._meta.pollInterval);
+          }
+        } catch (err) {
+          this.emit('error', err);
+          reject(err);
+        }
+      };
+
+      setTimeout(poll, this._meta.pollInterval);
+    });
   }
 }
 
