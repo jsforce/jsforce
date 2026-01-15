@@ -108,6 +108,16 @@
       ],
       "output": []
     },
+    "test:node:perf": {
+      "command": "jest test/perf --config {}",
+      "dependencies": [
+        "build:node:cjs"
+      ],
+      "files": [
+        "test/perf/**/*.test.ts"
+      ],
+      "output": []
+    },
     "test:browser": {
       "command": "karma start",
       "dependencies": [
@@ -178,6 +188,7 @@
     "lint": "wireit",
     "test": "wireit",
     "test:node": "wireit",
+    "test:node:perf": "wireit",
     "test:browser": "wireit",
     "test:browser-ci": "wireit",
     "test:browser-ci:retry": "wireit",

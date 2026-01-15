@@ -1,4 +1,7 @@
 import { Duplex, PassThrough, Readable, Writable } from 'stream';
+import { getLogger } from './logger';
+
+const logger = getLogger('stream');
 
 export function createLazyStream() {
   const ins = new PassThrough();
@@ -16,15 +19,18 @@ export function createLazyStream() {
 }
 
 class MemoryWriteStream extends Writable {
-  _buf: Buffer;
+  _chunks: Buffer[];
+  _totalBytes: number;
 
   constructor() {
     super();
-    this._buf = Buffer.alloc(0);
+    this._chunks = [];
+    this._totalBytes = 0;
   }
 
   _write(chunk: Buffer, encoding: string, callback: Function) {
-    this._buf = Buffer.concat([this._buf, chunk]);
+    this._chunks.push(chunk);
+    this._totalBytes += chunk.length;
     callback();
   }
 
@@ -32,12 +38,15 @@ class MemoryWriteStream extends Writable {
     data: Array<{ chunk: Buffer; encoding: string }>,
     callback: Function,
   ) {
-    this._buf = Buffer.concat([this._buf, ...data.map(({ chunk }) => chunk)]);
+    for (const { chunk } of data) {
+      this._chunks.push(chunk);
+      this._totalBytes += chunk.length;
+    }
     callback();
   }
 
   toString(encoding: BufferEncoding = 'utf-8') {
-    return this._buf.toString(encoding);
+    return Buffer.concat(this._chunks).toString(encoding);
   }
 }
 
@@ -45,11 +54,20 @@ export async function readAll(
   rs: Readable,
   encoding: BufferEncoding = 'utf-8',
 ) {
+  logger.debug('readAll: starting to read stream');
+  const start = Date.now();
+
   return new Promise<string>((resolve, reject) => {
     const ws = new MemoryWriteStream();
-    rs.on('error', reject)
+    rs.on('error', (err) => {
+      logger.error(`readAll: stream error: ${(err).message}`);
+      reject(err);
+    })
       .pipe(ws)
-      .on('finish', () => resolve(ws.toString(encoding)));
+      .on('finish', () => {
+        logger.debug(`readAll: stream finished in ${Date.now() - start}ms`);
+        resolve(ws.toString(encoding));
+      });
   });
 }
 
