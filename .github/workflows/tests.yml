@@ -114,9 +114,13 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+      
+      - name: Run Perf tests
+        run: npm run test:node:perf
 
       - name: Install sf CLI
-        run: npm install --global @salesforce/cli
+        id: install-sf-cli
+        run: npm install --global @salesforce/cli@nightly
 
       - name: Setup scratch org
         env:
@@ -139,7 +143,7 @@ jobs:
           npm run test:node
 
       - name: Delete scratch org
-        if: always()
+        if: always() && steps.install-sf-cli.outcome == 'success'
         run: sf org delete scratch --target-org jsforce-test-org --no-prompt
 
   salesforce-cli-external-nuts:
@@ -184,7 +188,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Run Perf tests
+        run: npm run test:node:perf
+
       - name: Install sf CLI
+        id: install-sf-cli
         run: npm install --global @salesforce/cli@nightly
 
       - name: Setup scratch org
@@ -208,5 +216,5 @@ jobs:
           npm run test:node
 
       - name: Delete scratch org
-        if: always()
+        if: always() && steps.install-sf-cli.outcome == 'success'
         run: sf org delete scratch --target-org jsforce-test-org --no-prompt
