@@ -42,6 +42,7 @@ async function startFetchRequest(
   const controller = new AbortController();
 
   let retryCount = 0;
+  let retry420Count = 0;
 
   const retryOpts: Required<HttpRequestOptions['retry']> = {
     statusCodes: options.retry?.statusCodes ?? [420, 429, 500, 502, 503, 504],
@@ -75,7 +76,13 @@ async function startFetchRequest(
     if (!retryOpts.methods.includes(request.method)) return false;
 
     if (resOrErr instanceof Response) {
-      if (retryOpts.statusCodes.includes(resOrErr.status)) {
+      // REST API status codes: https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/errorcodes.htm
+      //
+      // Deleted/expired scratch orgs return 420 and causes a long delay on all requests due to the retry with exponential backoff.
+      // We still want to retry on 420 (Metadata API requests sometimes return it) so here we'll limit to a maximum of 2 retries.
+      if (resOrErr.status === 420) {
+        return retry420Count < 2;
+      } else if (retryOpts.statusCodes.includes(resOrErr.status)) {
         if (maxRetry === retryCount) {
           return false
         } else {
@@ -135,6 +142,9 @@ async function startFetchRequest(
         // jsforce may switch to node's fetch which doesn't emit this event on retries.
         emitter.emit('retry', retryCount);
         retryCount++;
+        if (res.status === 420) {
+          retry420Count++;
+        }
 
         return await fetchWithRetries(maxRetry);
       }
@@ -168,12 +178,7 @@ async function startFetchRequest(
       }
 
       logger.debug('Skipping retry...');
-
-      if (maxRetry === retryCount) {
-        throw err;
-      } else {
-        throw err;
-      }
+      throw err;
     }
   };
 

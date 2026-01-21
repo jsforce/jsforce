@@ -205,6 +205,19 @@ describe('HTTP API', () => {
       assert.ok(retryCounter === 0);
     });
 
+    it('should retry only 2 times on 420 response', async () => {
+      nock(loginUrl)
+        .get('/services/data/v59.0')
+        .times(3)
+        .reply(420, { error: 'We\'ve hit a snag' });
+
+      const { retryCounter } = await fetch({
+        method: 'GET',
+        url: `${loginUrl}/services/data/v59.0`,
+      });
+      assert.ok(retryCounter === 2);
+    });
+
     it('does not retry on unsupported methods', async () => {
       nock(loginUrl)
         .post('/services/data/v59.0', 'body')
@@ -578,6 +591,11 @@ describe('HTTP API', () => {
           errorCode: 'ERROR_HTTP_404',
           message: `HTTP response contains html content.
 Check that the org exists and can be reached.
+
+HTTP status code: 404.
+REST API Status Codes and Error Responses:
+https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/errorcodes.htm
+
 See \`error.data\` for the full html response.`,
         },
       );
