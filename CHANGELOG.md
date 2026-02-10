@@ -1,3 +1,12 @@
+## [3.10.14](https://github.com/jsforce/jsforce/compare/3.10.13...3.10.14) (2026-02-10)
+
+
+### Bug Fixes
+
+* **http:** limit retries on 420 responses W-19971144 ([#1772](https://github.com/jsforce/jsforce/issues/1772)) ([0b210c6](https://github.com/jsforce/jsforce/commit/0b210c61ff7ec29dc8d4916fdc87bd79aa7eed25))
+
+
+
 ## [3.10.13](https://github.com/jsforce/jsforce/compare/3.10.11...3.10.13) (2026-01-15)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * skip session refresh if connection is blocked W-19992404 ([#1774](https://github.com/jsforce/jsforce/issues/1774)) ([c5c1d58](https://github.com/jsforce/jsforce/commit/c5c1d582c66aad2ac85bf57a7f71d55565c9569c))
-
-
-
-## [3.10.8](https://github.com/jsforce/jsforce/compare/3.10.7...3.10.8) (2025-10-03)
-
-
-### Bug Fixes
-
-* increase timeout- W-19332431 ([#1760](https://github.com/jsforce/jsforce/issues/1760)) ([d918534](https://github.com/jsforce/jsforce/commit/d9185343790b1951c25d4f20d4671dc2b7fe6a73))
 
 
 
