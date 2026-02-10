@@ -101,9 +101,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        # TODO(cristian): temporally disable latest (node v25), sf CLI fails with it
-        # node_version: [lts/-1, lts/*, latest]
-        node_version: [lts/-1, lts/*]
+        node_version: [lts/-1, lts/*, latest]
       fail-fast: false
     steps:
       - uses: actions/checkout@v3
