@@ -1,6 +1,11 @@
 import { EventEmitter } from 'events';
 import { Duplex, Readable, Writable } from 'stream';
-import fetch, { Response, RequestInit, FetchError, AbortError } from 'node-fetch';
+import fetch, {
+  Response,
+  RequestInit,
+  FetchError,
+  AbortError,
+} from 'node-fetch';
 import createHttpsProxyAgent from 'https-proxy-agent';
 import {
   createHttpRequestHandlerStreams,
@@ -44,30 +49,43 @@ async function startFetchRequest(
   let retryCount = 0;
   let retry420Count = 0;
 
-  const retryOpts: Required<HttpRequestOptions['retry']> = {
-    statusCodes: options.retry?.statusCodes ?? [420, 429, 500, 502, 503, 504],
-    maxRetries: options.retry?.maxRetries ?? 5,
-    minTimeout: options.retry?.minTimeout ?? 500,
-    timeoutFactor: options.retry?.timeoutFactor ?? 2,
-    errorCodes: options.retry?.errorCodes ?? [
-      'ECONNRESET',
-      'ECONNREFUSED',
-      'ENOTFOUND',
-      'ENETDOWN',
-      'ENETUNREACH',
-      'EHOSTDOWN',
-      'UND_ERR_SOCKET',
-      'ETIMEDOUT',
-      'EPIPE',
-    ],
-    methods: options.retry?.methods ?? [
-      'GET',
-      'PUT',
-      'HEAD',
-      'OPTIONS',
-      'DELETE',
-    ],
-  };
+  const retryOpts: Required<HttpRequestOptions['retry']> =
+    typeof process !== 'undefined' &&
+    process.env?.JSFORCE_DISABLE_HTTP_RETRY_BACKOFF
+      ? {
+          statusCodes: [],
+          maxRetries: 0,
+          minTimeout: 500,
+          timeoutFactor: 2,
+          errorCodes: [],
+          methods: [],
+        }
+      : {
+          statusCodes: options.retry?.statusCodes ?? [
+            420, 429, 500, 502, 503, 504,
+          ],
+          maxRetries: options.retry?.maxRetries ?? 5,
+          minTimeout: options.retry?.minTimeout ?? 500,
+          timeoutFactor: options.retry?.timeoutFactor ?? 2,
+          errorCodes: options.retry?.errorCodes ?? [
+            'ECONNRESET',
+            'ECONNREFUSED',
+            'ENOTFOUND',
+            'ENETDOWN',
+            'ENETUNREACH',
+            'EHOSTDOWN',
+            'UND_ERR_SOCKET',
+            'ETIMEDOUT',
+            'EPIPE',
+          ],
+          methods: options.retry?.methods ?? [
+            'GET',
+            'PUT',
+            'HEAD',
+            'OPTIONS',
+            'DELETE',
+          ],
+        };
 
   const shouldRetryRequest = (
     maxRetry: number,
@@ -84,7 +102,7 @@ async function startFetchRequest(
         return retry420Count < 2;
       } else if (retryOpts.statusCodes.includes(resOrErr.status)) {
         if (maxRetry === retryCount) {
-          return false
+          return false;
         } else {
           return true;
         }
@@ -195,7 +213,8 @@ async function startFetchRequest(
     );
   } catch (err) {
     if (err instanceof AbortError) {
-      (err as Error).message += ' Request was aborted due to timeout of 10 minutes.';
+      (err as Error).message +=
+        ' Request was aborted after 30 minutes (timeout)';
     }
     emitter.emit('error', err);
     return;

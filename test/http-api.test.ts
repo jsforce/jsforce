@@ -43,23 +43,32 @@ describe('HTTP API', () => {
       nock(loginUrl)
         .get('/services/data/v59.0')
         .times(4)
-        .reply(429, JSON.stringify({
-          errorCode: 'INTERNAL_SERVER_ERROR',
-          message: 'Invalid AiEvaluation identifier'
-        }))
+        .reply(
+          429,
+          JSON.stringify({
+            errorCode: 'INTERNAL_SERVER_ERROR',
+            message: 'Invalid AiEvaluation identifier',
+          }),
+        );
 
-      const { retryCounter,res } = await fetch({
-        method: 'GET',
-        url: `${loginUrl}/services/data/v59.0`,
-      }, {
+      const { retryCounter, res } = await fetch(
+        {
+          method: 'GET',
+          url: `${loginUrl}/services/data/v59.0`,
+        },
+        {
           retry: {
-            maxRetries: 3
-          }
-        });
-      assert.ok('body' in res)
-      assert.equal(res.body, '{"errorCode":"INTERNAL_SERVER_ERROR","message":"Invalid AiEvaluation identifier"}')
+            maxRetries: 3,
+          },
+        },
+      );
+      assert.ok('body' in res);
+      assert.equal(
+        res.body,
+        '{"errorCode":"INTERNAL_SERVER_ERROR","message":"Invalid AiEvaluation identifier"}',
+      );
       assert.ok(retryCounter === 3);
-    })
+    });
 
     it('retries on specified status code', async () => {
       const attempts = 2;
@@ -279,6 +288,44 @@ describe('HTTP API', () => {
 
       assert.ok(err instanceof Error);
       assert.ok(err.name === 'AbortError' || err.message.includes('aborted'));
+    });
+
+    it('disables retries when JSFORCE_DISABLE_HTTP_RETRY_BACKOFF is set', async () => {
+      const originalEnv = process.env.JSFORCE_DISABLE_HTTP_RETRY_BACKOFF;
+      process.env.JSFORCE_DISABLE_HTTP_RETRY_BACKOFF = 'true';
+
+      try {
+        nock(loginUrl)
+          .get('/services/data/v59.0')
+          .times(3)
+          .reply(
+            429,
+            JSON.stringify({
+              errorCode: 'INTERNAL_SERVER_ERROR',
+              message: 'Invalid AiEvaluation identifier',
+            }),
+          );
+
+        const { retryCounter, res } = await fetch({
+          method: 'GET',
+          url: `${loginUrl}/services/data/v59.0`,
+        });
+
+        // Should not retry when environment variable is set
+        assert.ok(retryCounter === 0);
+        assert.ok('body' in res);
+        assert.equal(
+          res.body,
+          '{"errorCode":"INTERNAL_SERVER_ERROR","message":"Invalid AiEvaluation identifier"}',
+        );
+      } finally {
+        // Restore original environment variable
+        if (originalEnv === undefined) {
+          delete process.env.JSFORCE_DISABLE_HTTP_RETRY_BACKOFF;
+        } else {
+          process.env.JSFORCE_DISABLE_HTTP_RETRY_BACKOFF = originalEnv;
+        }
+      }
     });
   });
 
@@ -511,7 +558,7 @@ describe('HTTP API', () => {
         {
           errorCode: missingRequiredFieldErr[0].errorCode,
           message: missingRequiredFieldErr[0].message,
-          content: {...missingRequiredFieldErr[0]}
+          content: { ...missingRequiredFieldErr[0] },
         },
       );
     });
@@ -647,7 +694,7 @@ See \`error.data\` for the full html response.`,
           message: 'no 123 phone',
           errorCode: 'FIELD_CUSTOM_VALIDATION_EXCEPTION',
           fields: [],
-        }
+        },
       ];
 
       nock(loginUrl)
@@ -671,9 +718,7 @@ See \`error.data\` for the full html response.`,
           content: errors,
         },
       );
-    })
-
-
+    });
   });
 });
 
@@ -784,8 +829,7 @@ describe('SOAP API', () => {
         loginUrl,
       });
 
-      const passwordExpiredXml =
-`<?xml version="1.0" encoding="UTF-8"?>
+      const passwordExpiredXml = `<?xml version="1.0" encoding="UTF-8"?>
 <soapenv:Envelope
 	xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
 	xmlns="urn:partner.soap.sforce.com"
@@ -797,21 +841,23 @@ describe('SOAP API', () => {
 			</result>
 		</loginResponse>
 	</soapenv:Body>
-</soapenv:Envelope>`
+</soapenv:Envelope>`;
 
       nock(loginUrl)
         .post('/services/Soap/u/50.0')
         .reply(200, passwordExpiredXml);
 
-
-      await assert.rejects(async () => {
-        // SOAP login requests will return 200 even with an expired password:
-        // https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_calls_login_loginresult.htm?q=passwordExpired
-        await conn.login('username','password')
-      }, {
-          message: 'Unable to login because the used password has expired.'
-        })
-    })
+      await assert.rejects(
+        async () => {
+          // SOAP login requests will return 200 even with an expired password:
+          // https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_calls_login_loginresult.htm?q=passwordExpired
+          await conn.login('username', 'password');
+        },
+        {
+          message: 'Unable to login because the used password has expired.',
+        },
+      );
+    });
 
     it('handle `Content-Length` header after session refresh', async () => {
       const conn = new Connection({
