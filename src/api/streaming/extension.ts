@@ -140,7 +140,7 @@ export class Replay {
   }
 
   outgoing(message: any, callback: Function) {
-    if (message.channel === '/meta/subscribe') {
+    if (message.channel === '/meta/subscribe' && message.subscription === this._channel) {
       if (this._extensionEnabled) {
         if (!message.ext) {
           message.ext = {};
