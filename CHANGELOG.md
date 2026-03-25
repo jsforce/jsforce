@@ -1,45 +1,45 @@
-# [3.10.0](https://github.com/jsforce/jsforce/compare/3.9.5...3.10.0) (2025-08-01)
-
-
-### Features
-
-* **cli:** allow schema generator to filter objects. ([#1386](https://github.com/jsforce/jsforce/issues/1386)) ([b997db2](https://github.com/jsforce/jsforce/commit/b997db2da879e61f13ac41e904af37d67e6fa20a))
-
-
-
-## [3.9.5](https://github.com/jsforce/jsforce/compare/3.9.4...3.9.5) (2025-07-28)
+## [3.10.14](https://github.com/jsforce/jsforce/compare/3.10.13...3.10.14) (2026-02-10)
 
 
 ### Bug Fixes
 
-* set default request timeout W-18649787 ([#1738](https://github.com/jsforce/jsforce/issues/1738)) ([4a722cd](https://github.com/jsforce/jsforce/commit/4a722cdd455f0dee68c30e893c146ee3ceefb15e))
+* **http:** limit retries on 420 responses W-19971144 ([#1772](https://github.com/jsforce/jsforce/issues/1772)) ([0b210c6](https://github.com/jsforce/jsforce/commit/0b210c61ff7ec29dc8d4916fdc87bd79aa7eed25))
 
 
 
-## [3.9.4](https://github.com/jsforce/jsforce/compare/3.9.3...3.9.4) (2025-07-23)
-
-
-### Bug Fixes
-
-* cause release ([#1733](https://github.com/jsforce/jsforce/issues/1733)) ([1653327](https://github.com/jsforce/jsforce/commit/16533272718be313e913208736436e346faa380a))
-
-
-
-## [3.9.3](https://github.com/jsforce/jsforce/compare/3.9.2...3.9.3) (2025-07-23)
+## [3.10.13](https://github.com/jsforce/jsforce/compare/3.10.11...3.10.13) (2026-01-15)
 
 
 ### Bug Fixes
 
-* no setting content-length in browser ([#1730](https://github.com/jsforce/jsforce/issues/1730)) ([5ca9dd2](https://github.com/jsforce/jsforce/commit/5ca9dd2a936959da4336d901e6683c5b29e4f80a))
+* bump minor ([f65d617](https://github.com/jsforce/jsforce/commit/f65d6179bf804ccd417dcc9beaa8d049abfaf50e))
 
 
 
-## [3.9.2](https://github.com/jsforce/jsforce/compare/3.9.1...3.9.2) (2025-07-22)
+## [3.10.11](https://github.com/jsforce/jsforce/compare/3.10.10...3.10.11) (2026-01-15)
 
 
 ### Bug Fixes
 
-* **deps:** bump form-data from 4.0.0 to 4.0.4 ([#1729](https://github.com/jsforce/jsforce/issues/1729)) ([1b03c76](https://github.com/jsforce/jsforce/commit/1b03c76b7a27f973428ab42da532a4574f9c11d1))
+* **http:** reduce buffer allocations when reading responses W-18649787 ([#1784](https://github.com/jsforce/jsforce/issues/1784)) ([f43fc77](https://github.com/jsforce/jsforce/commit/f43fc7773ce8aa15ddfb3a105dbf3ea9ac704885))
+
+
+
+## [3.10.10](https://github.com/jsforce/jsforce/compare/3.10.9...3.10.10) (2025-12-02)
+
+
+### Bug Fixes
+
+* update `TokenResponse` type ([#1777](https://github.com/jsforce/jsforce/issues/1777)) ([1535cac](https://github.com/jsforce/jsforce/commit/1535cac7123e44b07950bf64995104e92d15a2b7))
+
+
+
+## [3.10.9](https://github.com/jsforce/jsforce/compare/3.10.8...3.10.9) (2025-12-01)
+
+
+### Bug Fixes
+
+* skip session refresh if connection is blocked W-19992404 ([#1774](https://github.com/jsforce/jsforce/issues/1774)) ([c5c1d58](https://github.com/jsforce/jsforce/commit/c5c1d582c66aad2ac85bf57a7f71d55565c9569c))
 
 
 

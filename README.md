@@ -55,6 +55,9 @@ See [license](LICENSE) (MIT License).
 
 ## Notes
 
+### SOAP Login API Deprecation Notice
+The SOAP login() API will be retired in Summer '27 (API version 65.0). If you are using the `loginBySoap` method, please migrate to OAuth 2.0 Username-Password Flow instead. For more information, see [Salesforce Release Notes](https://help.salesforce.com/s/articleView?id=release-notes.rn_api_upcoming_retirement_258rn.htm&release=258&type=5).
+
 If you have any questions first file it on [issues](https://github.com/jsforce/jsforce/issues) before contacting authors via e-mail.
 
 ## How to build/run tests:

@@ -10,4 +10,5 @@ import './api/streaming';
 import './api/tooling';
 export * from './types';
 export * from './core';
+export * from './util/promise';
 export default jsforce;

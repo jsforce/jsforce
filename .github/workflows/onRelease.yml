@@ -7,17 +7,26 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: tag that needs to publish
+        description: tag to publish (ignored if branch is set)
+        type: string
+        required: false
+      branch:
+        description: branch to publish from (for prereleases from unmerged branches)
+        type: string
+        required: false
+      dist-tag:
+        description: npm dist-tag to publish under (e.g., latest, next, beta)
         type: string
         required: true
+        default: latest
 jobs:
   npm-publish:
     runs-on: ubuntu-latest
     steps:
-      - name: Release
+      - name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.release.tag_name || inputs.tag }}
+          ref: ${{ inputs.branch || github.event.release.tag_name || inputs.tag }}
       - uses: actions/setup-node@v3
         with:
           node-version: lts/*
@@ -30,16 +39,16 @@ jobs:
       - name: Build
         run: npm run clean && npm run build
       - name: Publish
-        run: npm publish --tag latest
+        run: npm publish --tag ${{ inputs.dist-tag || 'latest' }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
   npm-publish-jsforce-node:
     runs-on: ubuntu-latest
     steps:
-      - name: Release
+      - name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.release.tag_name || inputs.tag }}
+          ref: ${{ inputs.branch || github.event.release.tag_name || inputs.tag }}
       - uses: actions/setup-node@v3
         with:
           node-version: lts/*
@@ -55,4 +64,4 @@ jobs:
         run: npm run clean && npm run build:node:cjs
       - name: Publish
         run: |
-          npm publish --tag latest
+          npm publish --tag ${{ inputs.dist-tag || 'latest' }}

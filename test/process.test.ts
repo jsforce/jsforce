@@ -12,7 +12,7 @@ const conn: any = connMgr.createConnection();
 let accountId: string;
 
 beforeAll(async () => {
-  await connMgr.establishConnection(conn);
+  connMgr.establishConnection(conn);
   const ret = await conn
     .sobject('Account')
     .create({ Name: 'JSforce ProcessRule/ApprovalProcess Test' });

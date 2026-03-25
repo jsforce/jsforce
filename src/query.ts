@@ -666,6 +666,25 @@ export class Query<
     const data = await this._conn.request<R>({ method: 'GET', url, headers });
     this.emit('fetch');
     this.totalSize = data.totalSize;
+
+    // If autoFetch is true, fetch all records for any subqueries
+    if (autoFetch && data.records.length > 0) {
+      const recordKeys = Object.keys(data.records[0]);
+      for (const record of data.records) {
+        for (const key of recordKeys) {
+          const field = record[key];
+          if (field && typeof field === 'object' && 'records' in field && 'nextRecordsUrl' in field) {
+            record[key] = {
+              ...field,
+              records: await this._fetchAllSubqueryRecords(record, key, headers),
+              done: true,
+              nextRecordsUrl: undefined
+            };
+          }
+        }
+      }
+    }
+
     this.records = this.records?.concat(
       maxFetch - this.records.length > data.records.length
         ? data.records
@@ -1143,6 +1162,39 @@ export class Query<
     });
 
     return [...successSaveResults, ...failedSaveResults];
+  }
+
+  /**
+   * Fetches all records for a subquery field by following nextRecordsUrl
+   * @private
+   */
+  private async _fetchAllSubqueryRecords(
+    record: Record,
+    fieldName: string,
+    headers: { [name: string]: string },
+  ): Promise<Record[]> {
+    const subqueryField = record[fieldName] as QueryResult<Record>;
+    if (!subqueryField || !subqueryField.records) {
+      return [];
+    }
+
+    let allRecords = [...subqueryField.records];
+    let nextRecordsUrl = subqueryField.nextRecordsUrl;
+
+    while (nextRecordsUrl) {
+      // When following nextRecordsUrl for a subquery, we need to preserve the relationship context
+      // by using the full URL as-is rather than trying to reconstruct it
+      const data = await this._conn.request<QueryResult<Record>>({
+        method: 'GET',
+        url: nextRecordsUrl, // Use the full URL as provided by Salesforce
+        headers
+      });
+
+      allRecords = allRecords.concat(data.records);
+      nextRecordsUrl = data.nextRecordsUrl;
+    }
+
+    return allRecords;
   }
 }
 

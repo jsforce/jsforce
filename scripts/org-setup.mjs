@@ -41,7 +41,7 @@ if (
 }
 
 const orgDefinitionFile = join('test', 'org-setup', 'project-scratch-def.json');
-await $`sf org create scratch --definition-file ${orgDefinitionFile} --wait 20 --duration-days 1 --alias jsforce-test-org --json`;
+await $`sf org create scratch --definition-file ${orgDefinitionFile} --wait 20 --duration-days 1 --alias jsforce-test-org --no-track-source --json`;
 
 await $`sf org generate password --target-org jsforce-test-org --json`;
 
@@ -76,7 +76,7 @@ await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --
 
 if (!process.env.CI) {
   console.log(
-    `Run tests using this scratch org by appending SF_LOGIN_URL=${orgDisplayUserRes.result.instanceUrl} SF_USERNAME=${orgDisplayUserRes.result.username} SF_PASSWORD=${orgDisplayUserRes.result.password}`,
+    `Run tests using this scratch org by setting these env vars: SF_ACCESS_TOKEN=${orgDisplayUserRes.result.accessToken}, SF_LOGIN_URL=${orgDisplayUserRes.result.instanceUrl}, SF_USERNAME=${orgDisplayUserRes.result.username} and SF_PASSWORD=${orgDisplayUserRes.result.password}`,
   );
 }
 

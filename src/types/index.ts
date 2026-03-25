@@ -5,3 +5,4 @@ export * from './record';
 export * from './util';
 export * from './soap';
 export * from './standard-schema';
+export * from '../util/promise';

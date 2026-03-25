@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { Duplex, Readable, Writable } from 'stream';
-import fetch, { Response, RequestInit, FetchError } from 'node-fetch';
+import fetch, { Response, RequestInit, FetchError, AbortError } from 'node-fetch';
 import createHttpsProxyAgent from 'https-proxy-agent';
 import {
   createHttpRequestHandlerStreams,
@@ -42,6 +42,7 @@ async function startFetchRequest(
   const controller = new AbortController();
 
   let retryCount = 0;
+  let retry420Count = 0;
 
   const retryOpts: Required<HttpRequestOptions['retry']> = {
     statusCodes: options.retry?.statusCodes ?? [420, 429, 500, 502, 503, 504],
@@ -75,7 +76,13 @@ async function startFetchRequest(
     if (!retryOpts.methods.includes(request.method)) return false;
 
     if (resOrErr instanceof Response) {
-      if (retryOpts.statusCodes.includes(resOrErr.status)) {
+      // REST API status codes: https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/errorcodes.htm
+      //
+      // Deleted/expired scratch orgs return 420 and causes a long delay on all requests due to the retry with exponential backoff.
+      // We still want to retry on 420 (Metadata API requests sometimes return it) so here we'll limit to a maximum of 2 retries.
+      if (resOrErr.status === 420) {
+        return retry420Count < 2;
+      } else if (retryOpts.statusCodes.includes(resOrErr.status)) {
         if (maxRetry === retryCount) {
           return false
         } else {
@@ -135,6 +142,9 @@ async function startFetchRequest(
         // jsforce may switch to node's fetch which doesn't emit this event on retries.
         emitter.emit('retry', retryCount);
         retryCount++;
+        if (res.status === 420) {
+          retry420Count++;
+        }
 
         return await fetchWithRetries(maxRetry);
       }
@@ -168,27 +178,25 @@ async function startFetchRequest(
       }
 
       logger.debug('Skipping retry...');
-
-      if (maxRetry === retryCount) {
-        throw err;
-      } else {
-        throw err;
-      }
+      throw err;
     }
   };
 
   let res: Response;
 
-  // Timeout after 60s without a response
+  // Timeout after 30 minutes without a response
   //
   // node-fetch's default timeout is 0 and jsforce consumers can't set this when calling `Connection` methods so we set a long default at the fetch wrapper level.
-  const fetchTimeout = options.timeout ?? 60_000
+  const fetchTimeout = options.timeout ?? 1_800_000;
 
   try {
     res = await executeWithTimeout(fetchWithRetries, fetchTimeout, () =>
       controller.abort(),
     );
   } catch (err) {
+    if (err instanceof AbortError) {
+      (err as Error).message += ' Request was aborted due to timeout of 10 minutes.';
+    }
     emitter.emit('error', err);
     return;
   }

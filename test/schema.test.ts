@@ -25,8 +25,8 @@ const conn = connMgr.createConnection<StandardSchema>();
 /**
  *
  */
-beforeAll(async () => {
-  await connMgr.establishConnection(conn);
+beforeAll(() => {
+  connMgr.establishConnection(conn);
 });
 
 /**
