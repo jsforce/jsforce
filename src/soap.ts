@@ -210,11 +210,12 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
 
   constructor(conn: Connection<S>, options: SOAPOptions) {
     super(conn, options);
-    if (this._conn.accessToken && isJWTToken(this._conn.accessToken)) {
-      // We need to block SOAP requests with JWT tokens because the response is:
-      // statusCode=500 | body="INVALID_SESSION_ID" (xml), which triggers session refresh and enters in an infinite loop
+    if (this._conn.accessToken && isJWTToken(this._conn.accessToken) && !this._conn._ensureVersion(67)) {
+      // JWT-based access tokens are only supported by the SOAP API starting in API version 67.0.
+      // On older versions the response is statusCode=500 | body="INVALID_SESSION_ID" (xml),
+      // which triggers session refresh and enters an infinite loop.
       throw new Error(
-        'SOAP API does not support JWT-based access tokens. You must disable the "Issue JSON Web Token (JWT)-based access tokens" setting in your Connected App or External Client App',
+        'SOAP API does not support JWT-based access tokens prior to API version 67.0. Either upgrade the API version to 67.0 or later, or disable the "Issue JSON Web Token (JWT)-based access tokens" setting in your Connected App or External Client App',
       );
     }
     this._endpointUrl = options.endpointUrl;

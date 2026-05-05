@@ -858,6 +858,76 @@ describe('SOAP API', () => {
     });
   });
 
+  describe('JWT access token', () => {
+    const jwtToken =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+
+    it('throws when API version is below 67.0', () => {
+      const conn = new Connection({
+        loginUrl,
+        accessToken: jwtToken,
+        version: '66.0',
+      });
+
+      assert.throws(
+        () =>
+          new SOAP(conn, {
+            xmlns: 'urn:partner.soap.sforce.com',
+            endpointUrl: `${loginUrl}/services/Soap/u/66.0`,
+          }),
+        /SOAP API does not support JWT-based access tokens/,
+      );
+    });
+
+    it('does not throw when API version is 67.0', () => {
+      const conn = new Connection({
+        loginUrl,
+        accessToken: jwtToken,
+        version: '67.0',
+      });
+
+      assert.doesNotThrow(
+        () =>
+          new SOAP(conn, {
+            xmlns: 'urn:partner.soap.sforce.com',
+            endpointUrl: `${loginUrl}/services/Soap/u/67.0`,
+          }),
+      );
+    });
+
+    it('does not throw when API version is above 67.0', () => {
+      const conn = new Connection({
+        loginUrl,
+        accessToken: jwtToken,
+        version: '68.0',
+      });
+
+      assert.doesNotThrow(
+        () =>
+          new SOAP(conn, {
+            xmlns: 'urn:partner.soap.sforce.com',
+            endpointUrl: `${loginUrl}/services/Soap/u/68.0`,
+          }),
+      );
+    });
+
+    it('does not throw for non-JWT tokens regardless of version', () => {
+      const conn = new Connection({
+        loginUrl,
+        accessToken: 'access_token',
+        version: '50.0',
+      });
+
+      assert.doesNotThrow(
+        () =>
+          new SOAP(conn, {
+            xmlns: 'urn:partner.soap.sforce.com',
+            endpointUrl: `${loginUrl}/services/Soap/u/50.0`,
+          }),
+      );
+    });
+  });
+
   it('parses errors in XML responses', () => {
     const conn = new Connection({
       loginUrl,
