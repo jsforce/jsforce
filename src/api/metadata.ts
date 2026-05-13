@@ -594,11 +594,12 @@ export class RetrieveResultLocator<S extends Schema> extends AsyncResultLocator<
 
     return new Promise<RetrieveResult>((resolve, reject) => {
       const startTime = new Date().getTime();
+      const timeoutTime = startTime + this._meta.pollTimeout;
 
       const poll = async () => {
         try {
           const now = new Date().getTime();
-          if (startTime + this._meta.pollTimeout < now) {
+          if (timeoutTime < now) {
             const err = new Error('Polling time out. Retrieve operation is not completed.');
             this.emit('error', err);
             reject(err);
@@ -672,11 +673,12 @@ export class DeployResultLocator<S extends Schema> extends AsyncResultLocator<
 
     return new Promise<DeployResult>((resolve, reject) => {
       const startTime = new Date().getTime();
+      const timeoutTime = startTime + this._meta.pollTimeout;
 
       const poll = async () => {
         try {
           const now = new Date().getTime();
-          if (startTime + this._meta.pollTimeout < now) {
+          if (timeoutTime < now) {
             const err = new Error('Polling time out. Deploy operation is not completed.');
             this.emit('error', err);
             reject(err);
