@@ -1,3 +1,12 @@
+## [3.10.15](https://github.com/jsforce/jsforce/compare/3.10.14...3.10.15) (2026-05-13)
+
+
+### Bug Fixes
+
+* timeouts calculate once instead of repeatedly ([#1792](https://github.com/jsforce/jsforce/issues/1792)) ([22705e7](https://github.com/jsforce/jsforce/commit/22705e79380c1414e3d71abb1d79e77657afdb76))
+
+
+
 ## [3.10.14](https://github.com/jsforce/jsforce/compare/3.10.13...3.10.14) (2026-02-10)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * update `TokenResponse` type ([#1777](https://github.com/jsforce/jsforce/issues/1777)) ([1535cac](https://github.com/jsforce/jsforce/commit/1535cac7123e44b07950bf64995104e92d15a2b7))
-
-
-
-## [3.10.9](https://github.com/jsforce/jsforce/compare/3.10.8...3.10.9) (2025-12-01)
-
-
-### Bug Fixes
-
-* skip session refresh if connection is blocked W-19992404 ([#1774](https://github.com/jsforce/jsforce/issues/1774)) ([c5c1d58](https://github.com/jsforce/jsforce/commit/c5c1d582c66aad2ac85bf57a7f71d55565c9569c))
 
 
 
