@@ -190,6 +190,7 @@ async function dumpSchema(
   schemaName: string,
   cache?: boolean,
   filterObjects?: Set<string>,
+  picklistEnums?: boolean,
 ) {
   const sobjects =
     (cache ? await readDescribedCache(orgId) : null) ||
@@ -212,12 +213,29 @@ async function dumpSchema(
         continue;
       }
       const { name, fields, childRelationships } = sobject;
+      if (picklistEnums) {
+        for (const field of fields) {
+          const union = buildPicklistUnion(name, field);
+          if (union) {
+            writeLine(union);
+            writeLine('');
+          }
+        }
+      }
       writeLine(`type Fields$${name} = {`);
       writeLine('  //');
-      for (const { name, type, nillable } of fields) {
-        const tsType = getTSTypeString(type);
-        const orNull = nillable ? ' | null' : '';
-        writeLine(`  ${name}: ${tsType}${orNull};`);
+      for (const field of fields) {
+        const jsDoc = buildMultipicklistFieldJSDoc(
+          name,
+          field,
+          Boolean(picklistEnums),
+        );
+        if (jsDoc) {
+          writeLine(jsDoc);
+        }
+        const tsType = getFieldTSType(name, field, Boolean(picklistEnums));
+        const orNull = field.nillable ? ' | null' : '';
+        writeLine(`  ${field.name}: ${tsType}${orNull};`);
       }
       writeLine('};');
       writeLine('');
