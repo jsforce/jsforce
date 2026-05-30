@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { toStringLiteral, getActivePicklistValues, buildPicklistUnion, getFieldTSType } from '../src/schema/generator';
+import { toStringLiteral, getActivePicklistValues, buildPicklistUnion, getFieldTSType, buildMultipicklistFieldJSDoc } from '../src/schema/generator';
 
 describe('toStringLiteral', () => {
   it('wraps a plain value in single quotes', () => {
@@ -242,6 +242,61 @@ describe('getFieldTSType', () => {
         true,
       ),
       'PicklistValues$Opportunity$StageName | (string & {})',
+    );
+  });
+});
+
+describe('buildMultipicklistFieldJSDoc', () => {
+  const multi = {
+    name: 'Domains__c',
+    type: 'multipicklist',
+    picklistValues: [{ active: true, value: 'A' }],
+  };
+
+  it('returns null when flag is off', () => {
+    assert.strictEqual(buildMultipicklistFieldJSDoc('Account', multi, false), null);
+  });
+
+  it('returns null for non-multipicklist fields', () => {
+    assert.strictEqual(
+      buildMultipicklistFieldJSDoc(
+        'Account',
+        { name: 'X', type: 'picklist', picklistValues: [{ active: true, value: 'A' }] },
+        true,
+      ),
+      null,
+    );
+  });
+
+  it('returns null for a multipicklist with no active values', () => {
+    assert.strictEqual(
+      buildMultipicklistFieldJSDoc(
+        'Account',
+        { name: 'Domains__c', type: 'multipicklist', picklistValues: [] },
+        true,
+      ),
+      null,
+    );
+  });
+
+  it('builds a JSDoc block linking the value union for multipicklist', () => {
+    assert.strictEqual(
+      buildMultipicklistFieldJSDoc('Account', multi, true),
+      '  /**\n' +
+        '   * Multi-select picklist — semicolon-delimited combination of\n' +
+        '   * {@link PicklistValues$Account$Domains__c} values (e.g. `"A;C"`).\n' +
+        '   */',
+    );
+  });
+
+  it('returns null for a multipicklist with null picklistValues', () => {
+    assert.strictEqual(
+      buildMultipicklistFieldJSDoc(
+        'Account',
+        { name: 'Domains__c', type: 'multipicklist', picklistValues: null },
+        true,
+      ),
+      null,
     );
   });
 });

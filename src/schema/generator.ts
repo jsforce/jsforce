@@ -164,6 +164,25 @@ export function getFieldTSType(
   return getTSTypeString(field.type);
 }
 
+export function buildMultipicklistFieldJSDoc(
+  objectName: string,
+  field: FieldTypeInput,
+  picklistEnums: boolean,
+): string | null {
+  if (!picklistEnums || field.type !== 'multipicklist') {
+    return null;
+  }
+  if (getActivePicklistValues(field.picklistValues).length === 0) {
+    return null;
+  }
+  return (
+    '  /**\n' +
+    '   * Multi-select picklist — semicolon-delimited combination of\n' +
+    `   * {@link PicklistValues$${objectName}$${field.name}} values (e.g. \`"A;C"\`).\n` +
+    '   */'
+  );
+}
+
 async function dumpSchema(
   conn: Connection,
   orgId: string,
