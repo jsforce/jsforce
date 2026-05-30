@@ -128,6 +128,21 @@ export function getActivePicklistValues(
   return values;
 }
 
+export function buildPicklistUnion(
+  objectName: string,
+  field: FieldTypeInput,
+): string | null {
+  if (field.type !== 'picklist' && field.type !== 'multipicklist') {
+    return null;
+  }
+  const values = getActivePicklistValues(field.picklistValues);
+  if (values.length === 0) {
+    return null;
+  }
+  const members = values.map((v) => `  | ${toStringLiteral(v)}`).join('\n');
+  return `export type PicklistValues$${objectName}$${field.name} =\n${members};`;
+}
+
 async function dumpSchema(
   conn: Connection,
   orgId: string,

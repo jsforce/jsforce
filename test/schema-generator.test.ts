@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { toStringLiteral, getActivePicklistValues } from '../src/schema/generator';
+import { toStringLiteral, getActivePicklistValues, buildPicklistUnion } from '../src/schema/generator';
 
 describe('toStringLiteral', () => {
   it('wraps a plain value in single quotes', () => {
@@ -67,6 +67,82 @@ describe('getActivePicklistValues', () => {
         { active: true, value: 'A' },
       ]),
       ['A'],
+    );
+  });
+});
+
+describe('buildPicklistUnion', () => {
+  it('returns null for non-picklist fields', () => {
+    assert.strictEqual(
+      buildPicklistUnion('Opportunity', { name: 'Amount', type: 'currency' }),
+      null,
+    );
+  });
+
+  it('returns null when there are no active values', () => {
+    assert.strictEqual(
+      buildPicklistUnion('Opportunity', {
+        name: 'StageName',
+        type: 'picklist',
+        picklistValues: [{ active: false, value: 'Old' }],
+      }),
+      null,
+    );
+  });
+
+  it('builds an exported union from active values for a picklist', () => {
+    const decl = buildPicklistUnion('Opportunity', {
+      name: 'StageName',
+      type: 'picklist',
+      picklistValues: [
+        { active: true, value: 'Qualification' },
+        { active: true, value: 'Closed Won' },
+      ],
+    });
+    assert.strictEqual(
+      decl,
+      "export type PicklistValues$Opportunity$StageName =\n" +
+        "  | 'Qualification'\n" +
+        "  | 'Closed Won';",
+    );
+  });
+
+  it('builds a union for multipicklist fields too', () => {
+    const decl = buildPicklistUnion('Account', {
+      name: 'Domains__c',
+      type: 'multipicklist',
+      picklistValues: [{ active: true, value: 'A' }],
+    });
+    assert.strictEqual(
+      decl,
+      "export type PicklistValues$Account$Domains__c =\n  | 'A';",
+    );
+  });
+
+  it('escapes special characters in values', () => {
+    const decl = buildPicklistUnion('Account', {
+      name: 'Owner__c',
+      type: 'picklist',
+      picklistValues: [{ active: true, value: "O'Brien" }],
+    });
+    assert.strictEqual(
+      decl,
+      "export type PicklistValues$Account$Owner__c =\n  | 'O\\'Brien';",
+    );
+  });
+
+  it('returns null for a picklist with null/absent picklistValues', () => {
+    assert.strictEqual(
+      buildPicklistUnion('Opportunity', { name: 'StageName', type: 'picklist' }),
+      null,
+    );
+    assert.strictEqual(
+      buildPicklistUnion('Opportunity', {
+        name: 'StageName',
+        type: 'picklist',
+        picklistValues: null,
+      }),
+      null,
     );
   });
 });
