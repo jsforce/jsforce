@@ -94,6 +94,10 @@ function getTSTypeString(type: string): string {
     : 'string';
 }
 
+export function toStringLiteral(value: string): string {
+  return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
+}
+
 async function dumpSchema(
   conn: Connection,
   orgId: string,
