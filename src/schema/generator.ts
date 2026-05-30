@@ -315,6 +315,7 @@ type GeneratorCommand = {
   cache?: boolean;
   clearCache?: boolean;
   filterObjects?: Set<string>;
+  picklistEnums?: boolean;
 } & Command;
 
 function commaSeparatedList(value: string, _dummyPrevious: unknown) {
@@ -353,6 +354,10 @@ function readCommand(): GeneratorCommand {
       'Only output schema for specified objects',
       commaSeparatedList,
     )
+    .option(
+      '--picklistEnums',
+      'Generate literal union types (PicklistValues$<Object>$<Field>) from picklist values instead of plain string',
+    )
     .version(VERSION)
     .parse(process.argv) as GeneratorCommand;
 }
@@ -376,6 +381,7 @@ export default async function main() {
     program.schemaName,
     program.cache,
     program.filterObjects,
+    program.picklistEnums,
   );
   if (program.clearCache) {
     console.log('removing cache files');

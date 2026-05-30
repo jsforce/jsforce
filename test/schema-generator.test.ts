@@ -101,7 +101,7 @@ describe('buildPicklistUnion', () => {
     });
     assert.strictEqual(
       decl,
-      "export type PicklistValues$Opportunity$StageName =\n" +
+      'export type PicklistValues$Opportunity$StageName =\n' +
         "  | 'Qualification'\n" +
         "  | 'Closed Won';",
     );
