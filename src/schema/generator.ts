@@ -143,6 +143,27 @@ export function buildPicklistUnion(
   return `export type PicklistValues$${objectName}$${field.name} =\n${members};`;
 }
 
+export function getFieldTSType(
+  objectName: string,
+  field: FieldTypeInput,
+  picklistEnums: boolean,
+): string {
+  if (!picklistEnums) {
+    return getTSTypeString(field.type);
+  }
+  if (field.type === 'picklist') {
+    const values = getActivePicklistValues(field.picklistValues);
+    if (values.length === 0) {
+      return 'string';
+    }
+    const unionName = `PicklistValues$${objectName}$${field.name}`;
+    return field.restrictedPicklist ? unionName : `${unionName} | (string & {})`;
+  }
+  // multipicklist stays `string` (its value union is still emitted separately,
+  // and documented via JSDoc); all other types delegate unchanged.
+  return getTSTypeString(field.type);
+}
+
 async function dumpSchema(
   conn: Connection,
   orgId: string,

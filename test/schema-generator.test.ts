@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { toStringLiteral, getActivePicklistValues, buildPicklistUnion } from '../src/schema/generator';
+import { toStringLiteral, getActivePicklistValues, buildPicklistUnion, getFieldTSType } from '../src/schema/generator';
 
 describe('toStringLiteral', () => {
   it('wraps a plain value in single quotes', () => {
@@ -143,6 +143,105 @@ describe('buildPicklistUnion', () => {
         picklistValues: null,
       }),
       null,
+    );
+  });
+});
+
+describe('getFieldTSType', () => {
+  const restrictedPicklist = {
+    name: 'StageName',
+    type: 'picklist',
+    restrictedPicklist: true,
+    picklistValues: [{ active: true, value: 'Qualification' }],
+  };
+  const unrestrictedPicklist = {
+    name: 'StageName',
+    type: 'picklist',
+    restrictedPicklist: false,
+    picklistValues: [{ active: true, value: 'Qualification' }],
+  };
+
+  it('falls back to getTSTypeString behavior when flag is off', () => {
+    assert.strictEqual(
+      getFieldTSType('Opportunity', restrictedPicklist, false),
+      'string',
+    );
+  });
+
+  it('uses the named union for a restricted picklist', () => {
+    assert.strictEqual(
+      getFieldTSType('Opportunity', restrictedPicklist, true),
+      'PicklistValues$Opportunity$StageName',
+    );
+  });
+
+  it('adds open string for an unrestricted picklist', () => {
+    assert.strictEqual(
+      getFieldTSType('Opportunity', unrestrictedPicklist, true),
+      'PicklistValues$Opportunity$StageName | (string & {})',
+    );
+  });
+
+  it('keeps multipicklist as string even with flag on', () => {
+    assert.strictEqual(
+      getFieldTSType(
+        'Account',
+        {
+          name: 'Domains__c',
+          type: 'multipicklist',
+          picklistValues: [{ active: true, value: 'A' }],
+        },
+        true,
+      ),
+      'string',
+    );
+  });
+
+  it('falls back to string for a picklist with no active values', () => {
+    assert.strictEqual(
+      getFieldTSType(
+        'Opportunity',
+        { name: 'StageName', type: 'picklist', picklistValues: [] },
+        true,
+      ),
+      'string',
+    );
+  });
+
+  it('delegates non-picklist types to getTSTypeString (flag on)', () => {
+    assert.strictEqual(
+      getFieldTSType('Opportunity', { name: 'Amount', type: 'currency' }, true),
+      'number',
+    );
+    assert.strictEqual(
+      getFieldTSType('Opportunity', { name: 'CloseDate', type: 'date' }, true),
+      'DateString',
+    );
+  });
+
+  it('falls back to string for a picklist with null picklistValues (flag on)', () => {
+    assert.strictEqual(
+      getFieldTSType(
+        'Opportunity',
+        { name: 'StageName', type: 'picklist', picklistValues: null },
+        true,
+      ),
+      'string',
+    );
+  });
+
+  it('treats a picklist with absent restrictedPicklist as unrestricted (open union)', () => {
+    assert.strictEqual(
+      getFieldTSType(
+        'Opportunity',
+        {
+          name: 'StageName',
+          type: 'picklist',
+          picklistValues: [{ active: true, value: 'Qualification' }],
+        },
+        true,
+      ),
+      'PicklistValues$Opportunity$StageName | (string & {})',
     );
   });
 });
