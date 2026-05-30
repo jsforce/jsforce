@@ -9,6 +9,19 @@ import { mkdir } from 'fs';
 
 type UnwrapPromise<T> = T extends Promise<infer U> ? U : never;
 
+export type PicklistEntryInput = {
+  active: boolean;
+  value: string;
+  label?: string | null;
+};
+
+export type FieldTypeInput = {
+  name: string;
+  type: string;
+  restrictedPicklist?: boolean;
+  picklistValues?: PicklistEntryInput[] | null;
+};
+
 function getCacheFileDir() {
   return path.join(os.tmpdir(), 'jsforce-gen-schema-cache');
 }
@@ -96,6 +109,23 @@ function getTSTypeString(type: string): string {
 
 export function toStringLiteral(value: string): string {
   return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
+}
+
+export function getActivePicklistValues(
+  picklistValues?: PicklistEntryInput[] | null,
+): PicklistEntryInput['value'][] {
+  if (!picklistValues) {
+    return [];
+  }
+  const seen = new Set<PicklistEntryInput['value']>();
+  const values: PicklistEntryInput['value'][] = [];
+  for (const entry of picklistValues) {
+    if (entry.active && !seen.has(entry.value)) {
+      seen.add(entry.value);
+      values.push(entry.value);
+    }
+  }
+  return values;
 }
 
 async function dumpSchema(
