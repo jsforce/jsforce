@@ -133,9 +133,12 @@ async function dumpSchema(
     out.on('error', (err) => reject(err));
     out.on('finish', resolve);
     const writeLine = (message: string) => out.write(message + '\n');
-    writeLine(
-      "import { Schema, SObjectDefinition, DateString, BlobString, Address } from 'jsforce';",
+    const usedConditionalTypes = collectUsedJsforceTypes(sobjects, filterObjects);
+    const orderedConditionalTypes = ['DateString', 'BlobString', 'Address'].filter(
+      (t) => usedConditionalTypes.has(t),
     );
+    const importNames = ['Schema', 'SObjectDefinition', ...orderedConditionalTypes].join(', ');
+    writeLine(`import type { ${importNames} } from 'jsforce';`);
     writeLine('');
     for (const sobject of sobjects) {
       if (filterObjects && !filterObjects.has(sobject.name)) {
