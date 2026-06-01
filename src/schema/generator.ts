@@ -133,11 +133,17 @@ async function dumpSchema(
     out.on('error', (err) => reject(err));
     out.on('finish', resolve);
     const writeLine = (message: string) => out.write(message + '\n');
+    const includedSobjects = filterObjects
+      ? sobjects.filter((s) => filterObjects.has(s.name))
+      : sobjects;
     const usedConditionalTypes = collectUsedJsforceTypes(sobjects, filterObjects);
     const orderedConditionalTypes = ['DateString', 'BlobString', 'Address'].filter(
       (t) => usedConditionalTypes.has(t),
     );
-    const importNames = ['Schema', 'SObjectDefinition', ...orderedConditionalTypes].join(', ');
+    const baseImports = includedSobjects.length > 0
+      ? ['Schema', 'SObjectDefinition']
+      : ['Schema'];
+    const importNames = [...baseImports, ...orderedConditionalTypes].join(', ');
     writeLine(`import type { ${importNames} } from 'jsforce';`);
     writeLine('');
     for (const sobject of sobjects) {
