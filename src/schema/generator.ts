@@ -94,6 +94,25 @@ function getTSTypeString(type: string): string {
     : 'string';
 }
 
+const CONDITIONAL_JSFORCE_TYPES = new Set(['DateString', 'BlobString', 'Address']);
+
+export function collectUsedJsforceTypes(
+  sobjects: DescribeSObjectResult[],
+  filterObjects?: Set<string>,
+): Set<string> {
+  const used = new Set<string>();
+  for (const sobject of sobjects) {
+    if (filterObjects && !filterObjects.has(sobject.name)) continue;
+    for (const { type } of sobject.fields) {
+      const tsType = getTSTypeString(type);
+      if (CONDITIONAL_JSFORCE_TYPES.has(tsType)) {
+        used.add(tsType);
+      }
+    }
+  }
+  return used;
+}
+
 async function dumpSchema(
   conn: Connection,
   orgId: string,
