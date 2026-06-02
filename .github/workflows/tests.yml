@@ -51,16 +51,16 @@ jobs:
           retry_wait_seconds: 60
           command: |
             SF_USERNAME=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.username') \
-            SF_PASSWORD=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.password') \
+            SF_PASSWORD=$(sf org auth show-user-password --target-org jsforce-test-org --json | jq -r '.result.password') \
             SF_LOGIN_URL=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.instanceUrl') \
-            SF_ACCESS_TOKEN=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.accessToken') \
+            SF_ACCESS_TOKEN=$(sf org auth show-access-token --target-org jsforce-test-org --json | jq -r '.result.accessToken') \
             DISPLAY=:99 CHROME_BIN=$(which chrome) \
             npm run test:browser-ci
           new_command_on_retry: |
             SF_USERNAME=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.username') \
-            SF_PASSWORD=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.password') \
+            SF_PASSWORD=$(sf org auth show-user-password --target-org jsforce-test-org --json | jq -r '.result.password') \
             SF_LOGIN_URL=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.instanceUrl') \
-            SF_ACCESS_TOKEN=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.accessToken') \
+            SF_ACCESS_TOKEN=$(sf org auth show-access-token --target-org jsforce-test-org --json | jq -r '.result.accessToken') \
             DISPLAY=:99 CHROME_BIN=$(which chrome) \
             npm run test:browser-ci:retry
           retry_on: error
@@ -84,7 +84,6 @@ jobs:
         run: |
           npm install -g lockfile-lint
           lockfile-lint --path package-lock.json --allowed-hosts npm yarn --validate-https
-
 
       - name: Install dependencies
         run: npm install
@@ -112,7 +111,7 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-      
+
       - name: Run Perf tests
         run: npm run test:node:perf
 
@@ -135,9 +134,9 @@ jobs:
           SF_OAUTH2_REDIRECT_URI: ${{ secrets.SF_OAUTH2_REDIRECT_URI }}
         run: |
           SF_USERNAME=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.username') \
-          SF_PASSWORD=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.password') \
+          SF_PASSWORD=$(sf org auth show-user-password --target-org jsforce-test-org --json | jq -r '.result.password') \
           SF_LOGIN_URL=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.instanceUrl') \
-          SF_ACCESS_TOKEN=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.accessToken') \
+          SF_ACCESS_TOKEN=$(sf org auth show-access-token --target-org jsforce-test-org --json | jq -r '.result.accessToken') \
           npm run test:node
 
       - name: Delete scratch org
@@ -150,7 +149,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu-latest', 'windows-latest']
+        os: ["ubuntu-latest", "windows-latest"]
         externalProjectGitUrl:
           - https://github.com/salesforcecli/plugin-org
           - https://github.com/salesforcecli/plugin-auth
@@ -159,7 +158,7 @@ jobs:
           - https://github.com/salesforcecli/plugin-custom-metadata
     with:
       externalProjectGitUrl: ${{ matrix.externalProjectGitUrl }}
-      command: 'yarn test:nuts'
+      command: "yarn test:nuts"
       os: ${{ matrix.os }}
       useCache: false
     secrets:
@@ -208,9 +207,9 @@ jobs:
           SF_OAUTH2_REDIRECT_URI: ${{ secrets.SF_OAUTH2_REDIRECT_URI }}
         run: |
           $env:SF_USERNAME=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.username')
-          $env:SF_PASSWORD=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.password')
+          $env:SF_PASSWORD=$(sf org auth show-user-password --target-org jsforce-test-org --json | jq -r '.result.password')
           $env:SF_LOGIN_URL=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.instanceUrl')
-          $env:SF_ACCESS_TOKEN=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.accessToken')
+          $env:SF_ACCESS_TOKEN=$(sf org auth show-access-token --target-org jsforce-test-org --json | jq -r '.result.accessToken')
           npm run test:node
 
       - name: Delete scratch org
