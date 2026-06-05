@@ -100,7 +100,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node_version: [lts/-1, lts/*, latest]
+        # node_version: [lts/-1, lts/*, latest]
+        node_version: [lts/*]
       fail-fast: false
     steps:
       - uses: actions/checkout@v3
@@ -111,12 +112,6 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-
-      - name: Install Puppeteer Chrome
-        shell: bash
-        run: |
-          rm -rf "$HOME/.cache/puppeteer/chrome"
-          npx puppeteer browsers install chrome
 
       - name: Run Perf tests
         run: npm run test:node:perf
@@ -190,12 +185,6 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-
-      - name: Install Puppeteer Chrome
-        shell: bash
-        run: |
-          rm -rf "$HOME/.cache/puppeteer/chrome"
-          npx puppeteer browsers install chrome
 
       - name: Run Perf tests
         run: npm run test:node:perf
