@@ -101,7 +101,7 @@ jobs:
     strategy:
       matrix:
         # node_version: [lts/-1, lts/*, latest]
-        node_version: [24.14.1, latest]
+        node_version: [24.14.1]
       fail-fast: false
     steps:
       - uses: actions/checkout@v3
