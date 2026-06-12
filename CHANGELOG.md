@@ -1,3 +1,12 @@
+## [3.10.16](https://github.com/jsforce/jsforce/compare/3.10.15...3.10.16) (2026-06-12)
+
+
+### Bug Fixes
+
+* release ([8ce0df6](https://github.com/jsforce/jsforce/commit/8ce0df66c0e5274a466ef4c07a20c30eb3a76f55))
+
+
+
 ## [3.10.15](https://github.com/jsforce/jsforce/compare/3.10.14...3.10.15) (2026-05-13)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * **http:** reduce buffer allocations when reading responses W-18649787 ([#1784](https://github.com/jsforce/jsforce/issues/1784)) ([f43fc77](https://github.com/jsforce/jsforce/commit/f43fc7773ce8aa15ddfb3a105dbf3ea9ac704885))
-
-
-
-## [3.10.10](https://github.com/jsforce/jsforce/compare/3.10.9...3.10.10) (2025-12-02)
-
-
-### Bug Fixes
-
-* update `TokenResponse` type ([#1777](https://github.com/jsforce/jsforce/issues/1777)) ([1535cac](https://github.com/jsforce/jsforce/commit/1535cac7123e44b07950bf64995104e92d15a2b7))
 
 
 
