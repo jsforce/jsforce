@@ -94,6 +94,25 @@ function getTSTypeString(type: string): string {
     : 'string';
 }
 
+const CONDITIONAL_JSFORCE_TYPES = new Set(['DateString', 'BlobString', 'Address']);
+
+export function collectUsedJsforceTypes(
+  sobjects: DescribeSObjectResult[],
+  filterObjects?: Set<string>,
+): Set<string> {
+  const used = new Set<string>();
+  for (const sobject of sobjects) {
+    if (filterObjects && !filterObjects.has(sobject.name)) continue;
+    for (const { type } of sobject.fields) {
+      const tsType = getTSTypeString(type);
+      if (CONDITIONAL_JSFORCE_TYPES.has(tsType)) {
+        used.add(tsType);
+      }
+    }
+  }
+  return used;
+}
+
 async function dumpSchema(
   conn: Connection,
   orgId: string,
@@ -114,9 +133,18 @@ async function dumpSchema(
     out.on('error', (err) => reject(err));
     out.on('finish', resolve);
     const writeLine = (message: string) => out.write(message + '\n');
-    writeLine(
-      "import { Schema, SObjectDefinition, DateString, BlobString, Address } from 'jsforce';",
+    const includedSobjects = filterObjects
+      ? sobjects.filter((s) => filterObjects.has(s.name))
+      : sobjects;
+    const usedConditionalTypes = collectUsedJsforceTypes(sobjects, filterObjects);
+    const orderedConditionalTypes = ['DateString', 'BlobString', 'Address'].filter(
+      (t) => usedConditionalTypes.has(t),
     );
+    const baseImports = includedSobjects.length > 0
+      ? ['Schema', 'SObjectDefinition']
+      : ['Schema'];
+    const importNames = [...baseImports, ...orderedConditionalTypes].join(', ');
+    writeLine(`import type { ${importNames} } from 'jsforce';`);
     writeLine('');
     for (const sobject of sobjects) {
       if (filterObjects && !filterObjects.has(sobject.name)) {
