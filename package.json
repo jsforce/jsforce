@@ -236,8 +236,8 @@
     "https-proxy-agent": "^5.0.0",
     "inquirer": "^8.2.7",
     "multistream": "^3.1.0",
-    "node-fetch": "^2.6.1",
     "open": "^7.0.0",
+    "undici": "^8.5.0",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
@@ -251,7 +251,6 @@
     "@types/jest": "^29.5.5",
     "@types/multistream": "^2.1.1",
     "@types/node": "^18.15.3",
-    "@types/node-fetch": "^2.5.7",
     "@types/shelljs": "^0.8.15",
     "@types/through2": "^2.0.34",
     "@types/xml2js": "^0.4.5",
