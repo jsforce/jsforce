@@ -5,7 +5,7 @@ import { HttpRequest } from '../src/types';
 import { Transport } from '../src/transport';
 import assert from 'assert';
 import xml2js from 'xml2js';
-import { MockAgent, setGlobalDispatcher, getGlobalDispatcher, Dispatcher } from 'undici';
+import {MockAgent, setGlobalDispatcher, getGlobalDispatcher, Dispatcher, errors} from 'undici';
 import { HttpRequestOptions, HttpResponse } from '../src/types/common';
 
 const loginUrl = 'https://heaven-party-2429-dev-ed.scratch.my.salesforce.com';
@@ -101,7 +101,7 @@ describe('HTTP API', () => {
     it('retries on socket error until it succeeds', async () => {
       const attempts = 2;
       const pool = mockAgent.get(loginUrl);
-      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).replyWithError(new Error('ECONNRESET')).times(attempts);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).replyWithError(Object.assign(new Error('ECONNRESET'), {code: 'ECONNRESET'})).times(attempts);
       pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({ success: true }));
 
       const { retryCounter } = await fetch({
@@ -231,7 +231,7 @@ describe('HTTP API', () => {
         },
       );
 
-      assert.ok(err instanceof Error);
+      assert.ok(err instanceof DOMException);
       assert.ok(err.name === 'AbortError' || err.message.includes('aborted'));
     });
   });
