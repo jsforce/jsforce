@@ -229,7 +229,11 @@ async function startFetchRequest(
     return;
   }
   emitter.emit('response', response);
-  Readable.fromWeb(res.body!).pipe(output);
+  if (res.body) {
+    Readable.fromWeb(res.body).pipe(output);
+  } else {
+    output.end();
+  }
 }
 
 /**
