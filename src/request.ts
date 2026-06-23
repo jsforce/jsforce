@@ -118,6 +118,7 @@ async function startFetchRequest(
       ...(input && /^(post|put|patch)$/i.test(request.method)
         ? { body: input }
         : {}),
+      duplex: 'half',
       redirect: 'manual',
       signal: controller.signal,
       dispatcher: agent,
