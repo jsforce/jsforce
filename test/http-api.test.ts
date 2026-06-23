@@ -113,7 +113,7 @@ describe('HTTP API', () => {
 
     it('stops retries after max is reached', async () => {
       const pool = mockAgent.get(loginUrl);
-      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).replyWithError(new Error('ECONNRESET')).times(6);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).replyWithError(Object.assign(new Error('ECONNRESET'), {code: 'ECONNRESET'})).times(6);
 
       const { retryCounter, err } = await fetch(
         {
