@@ -106,7 +106,7 @@ async function startFetchRequest(
 
       const err: TypeError = resOrErr;
       const causativeError: CodedError = (err.cause instanceof errors.SocketError ? err.cause.cause : err.cause) as CodedError;
-      return !!('code' in causativeError && causativeError.code && retryOpts?.errorCodes.includes(causativeError.code));
+      return !!(causativeError && 'code' in causativeError && causativeError.code && retryOpts?.errorCodes.includes(causativeError.code));
     }
   };
 
