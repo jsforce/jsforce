@@ -247,6 +247,7 @@ if (isNodeJS()) {
     it('should make access token invalid and call in parallel and return responses', async () => {
       let accessToken: string | undefined = undefined;
       let refreshCount = 0;
+      console.log(`JAMIE BEFORE TEST: InstanceURL is ${conn.instanceUrl}`)
       conn.accessToken = 'invalid access token';
       conn.removeAllListeners('refresh');
       conn.on('refresh', (at: string) => {
@@ -258,6 +259,7 @@ if (isNodeJS()) {
         conn.describeGlobal(),
         conn.sobject('User').describe(),
       ]);
+      console.log(`JAMIE AFTER TEST: InstanceURL is ${conn.instanceUrl}`)
       assert.ok(refreshCount === 1);
       assert.ok(typeof accessToken === 'string');
       assert.ok(Array.isArray(results));
