@@ -25,6 +25,8 @@ async function loginAndApprove(
   } else if (url.indexOf('/?ec=302') > 0) {
     // login page
     await page.type('#username', username);
+    console.log('JAMIE JAMIE JAMIE loginAndApprove URL:', url);
+    console.log('JAMIE JAMIE JAMIE loginAndApprove HTML:', await page.content());
     await page.type('#password', password);
     await page.click('[name=Login]');
     await page.waitForNavigation({ waitUntil: 'networkidle2' });
