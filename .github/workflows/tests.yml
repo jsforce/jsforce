@@ -33,7 +33,7 @@ jobs:
         run: npm install
 
       - name: Install sf CLI
-        run: npm install --global @salesforce/cli
+        run: npm install --global @salesforce/cli@dev
 
       - name: Setup scratch org
         env:
@@ -201,7 +201,7 @@ jobs:
 
       - name: Install sf CLI
         id: install-sf-cli
-        run: npm install --global @salesforce/cli@nightly
+        run: npm install --global @salesforce/cli@dev
 
       - name: Setup scratch org
         env:
