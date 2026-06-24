@@ -269,6 +269,7 @@ if (isNodeJS()) {
     it('should expire both access token and refresh token and return error', async () => {
       conn.accessToken = 'invalid access token';
       conn.refreshToken = 'invalid refresh token';
+      console.log(`JAMIE, LOOK HERE!!!!!!!!! conn.instanceurl is  ${conn.instanceUrl}`)
       try {
         await conn.query('SELECT Id FROM User');
         assert.fail();
