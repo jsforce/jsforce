@@ -219,12 +219,14 @@ if (isNodeJS()) {
         config.password,
       );
       const userInfo = await conn.authorize(params.code);
+      console.log(`JAMIE 222 InstanceURL ${conn.instanceUrl}`)
       assert.ok(typeof userInfo.id === 'string');
       assert.ok(typeof userInfo.organizationId === 'string');
       assert.ok(typeof userInfo.url === 'string');
       assert.ok(typeof conn.accessToken === 'string');
       assert.ok(typeof conn.refreshToken === 'string');
       const res = await conn.query('SELECT Id FROM User');
+      console.log(`JAMIE 229 InstanceURL ${conn.instanceUrl}`)
       assert.ok(Array.isArray(res.records));
     });
 
@@ -232,6 +234,7 @@ if (isNodeJS()) {
     it('should make access token invalid and return responses', async () => {
       let accessToken: string | undefined = undefined;
       let refreshCount = 0;
+      console.log(`JAMIE 235 InstanceURL ${conn.instanceUrl}`)
       conn.accessToken = 'invalid access token';
       conn.removeAllListeners('refresh');
       conn.on('refresh', (at: string) => {
@@ -239,6 +242,7 @@ if (isNodeJS()) {
         refreshCount += 1;
       });
       const res = await conn.query('SELECT Id FROM User');
+      console.log(`JAMIE 243 InstanceURL ${conn.instanceUrl}`)
       assert.ok(refreshCount === 1);
       assert.ok(typeof accessToken === 'string');
       assert.ok(Array.isArray(res.records));
@@ -259,7 +263,7 @@ if (isNodeJS()) {
         conn.describeGlobal(),
         conn.sobject('User').describe(),
       ]);
-      console.log(`JAMIE AFTER TEST: InstanceURL is ${conn.instanceUrl}`)
+      console.log(`AFTER TEST: InstanceURL is ${conn.instanceUrl}`)
       assert.ok(refreshCount === 1);
       assert.ok(typeof accessToken === 'string');
       assert.ok(Array.isArray(results));
