@@ -58,6 +58,7 @@ export default async function authorize(
   const browser = await puppeteer.launch({
     headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    ...(process.env.CHROME_BIN ? { executablePath: process.env.CHROME_BIN } : {}),
   });
   let ret;
   try {
