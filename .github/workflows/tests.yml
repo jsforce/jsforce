@@ -114,7 +114,9 @@ jobs:
         run: npm install
 
       - name: Install Puppeteer browser
-        run: npx puppeteer browsers install chrome
+        run: |
+          rm -rf ~/.cache/puppeteer
+          npx puppeteer browsers install chrome
 
       - name: Run Perf tests
         run: npm run test:node:perf
@@ -191,7 +193,9 @@ jobs:
         run: npm install
 
       - name: Install Puppeteer browser
-        run: npx puppeteer browsers install chrome
+        run: |
+          if (Test-Path "$env:LOCALAPPDATA\puppeteer") { Remove-Item -Recurse -Force "$env:LOCALAPPDATA\puppeteer" }
+          npx puppeteer browsers install chrome
 
       - name: Run Perf tests
         run: npm run test:node:perf
