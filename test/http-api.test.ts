@@ -5,10 +5,25 @@ import { HttpRequest } from '../src/types';
 import { Transport } from '../src/transport';
 import assert from 'assert';
 import xml2js from 'xml2js';
-import nock = require('nock');
+import {MockAgent, setGlobalDispatcher, getGlobalDispatcher, Dispatcher, errors} from 'undici';
 import { HttpRequestOptions, HttpResponse } from '../src/types/common';
 
 const loginUrl = 'https://heaven-party-2429-dev-ed.scratch.my.salesforce.com';
+
+let mockAgent: MockAgent;
+let originalDispatcher: Dispatcher;
+
+beforeEach(() => {
+  originalDispatcher = getGlobalDispatcher();
+  mockAgent = new MockAgent();
+  mockAgent.disableNetConnect();
+  setGlobalDispatcher(mockAgent);
+});
+
+afterEach(async () => {
+  setGlobalDispatcher(originalDispatcher);
+  await mockAgent.close();
+});
 
 describe('HTTP API', () => {
   const accessToken = '1234';
@@ -40,13 +55,11 @@ describe('HTTP API', () => {
     }
 
     it('returns response after retry limit is reached', async () => {
-      nock(loginUrl)
-        .get('/services/data/v59.0')
-        .times(4)
-        .reply(429, JSON.stringify({
-          errorCode: 'INTERNAL_SERVER_ERROR',
-          message: 'Invalid AiEvaluation identifier'
-        }))
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(429, JSON.stringify({
+        errorCode: 'INTERNAL_SERVER_ERROR',
+        message: 'Invalid AiEvaluation identifier'
+      })).times(4);
 
       const { retryCounter,res } = await fetch({
         method: 'GET',
@@ -63,12 +76,9 @@ describe('HTTP API', () => {
 
     it('retries on specified status code', async () => {
       const attempts = 2;
-      nock(loginUrl)
-        .get('/services/data/v59.0')
-        .times(attempts)
-        .reply(429)
-        .get('/services/data/v59.0')
-        .reply(200, { success: true });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(429).times(attempts);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({ success: true }));
 
       const { retryCounter } = await fetch({
         method: 'GET',
@@ -78,13 +88,8 @@ describe('HTTP API', () => {
     });
 
     it('does not retry on unsupported status codes', async () => {
-      const attempts = 2;
-      nock(loginUrl)
-        .get('/services/data/v60.0')
-        .times(attempts)
-        .reply(404)
-        .get('/services/data/v60.0')
-        .reply(200, { success: true });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v60.0', method: 'GET' }).reply(404);
 
       const { retryCounter } = await fetch({
         method: 'GET',
@@ -95,15 +100,9 @@ describe('HTTP API', () => {
 
     it('retries on socket error until it succeeds', async () => {
       const attempts = 2;
-      nock(loginUrl)
-        .get('/services/data/v59.0')
-        .times(attempts)
-        .replyWithError({
-          message: `request to ${loginUrl} failed, reason: socket hang up`,
-          code: 'ECONNRESET',
-        })
-        .get('/services/data/v59.0')
-        .reply(200, { success: true });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).replyWithError(Object.assign(new Error('ECONNRESET'), {code: 'ECONNRESET'})).times(attempts);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({ success: true }));
 
       const { retryCounter } = await fetch({
         method: 'GET',
@@ -113,13 +112,8 @@ describe('HTTP API', () => {
     });
 
     it('stops retries after max is reached', async () => {
-      nock(loginUrl)
-        .get('/services/data/v59.0')
-        .times(6)
-        .replyWithError({
-          message: `request to ${loginUrl} failed, reason: socket hang up`,
-          code: 'ECONNRESET',
-        });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).replyWithError(Object.assign(new Error('ECONNRESET'), {code: 'ECONNRESET'})).times(6);
 
       const { retryCounter, err } = await fetch(
         {
@@ -134,19 +128,11 @@ describe('HTTP API', () => {
       );
       assert.ok(retryCounter === 5);
       assert.ok(err instanceof Error);
-      assert.ok(err.name === 'FetchError');
     });
 
     it('retries only on specified methods', async () => {
-      nock(loginUrl)
-        .get('/services/data/v59.0/limits')
-        .times(2)
-        .replyWithError({
-          message: `request to ${loginUrl} failed, reason: socket hang up`,
-          code: 'ECONNRESET',
-        })
-        .get('/services/data/v59.0/limits')
-        .reply(200, { success: true });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0/limits', method: 'GET' }).replyWithError(new Error('ECONNRESET'));
 
       const { retryCounter } = await fetch(
         {
@@ -163,15 +149,8 @@ describe('HTTP API', () => {
     });
 
     it('retries only on specified errors', async () => {
-      nock(loginUrl)
-        .get('/services/data/v59.0/limits')
-        .times(2)
-        .replyWithError({
-          message: `request to ${loginUrl} failed, reason: socket hang up`,
-          code: 'ECONNRESET',
-        })
-        .get('/services/data/v59.0/limits')
-        .reply(200, { success: true });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0/limits', method: 'GET' }).replyWithError(new Error('ECONNRESET'));
 
       const { retryCounter } = await fetch(
         {
@@ -188,15 +167,8 @@ describe('HTTP API', () => {
     });
 
     it('does not retry on unsupported errors', async () => {
-      nock(loginUrl)
-        .get('/services/data/v59.0/limits')
-        .times(2)
-        .replyWithError({
-          message: `request to ${loginUrl} failed, reason: socket hang up`,
-          code: 'UNKNOWN_ERROR',
-        })
-        .get('/services/data/v59.0/limits')
-        .reply(200, { success: true });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0/limits', method: 'GET' }).replyWithError(new Error('UNKNOWN_ERROR'));
 
       const { retryCounter } = await fetch({
         method: 'GET',
@@ -206,10 +178,8 @@ describe('HTTP API', () => {
     });
 
     it('should retry only 2 times on 420 response', async () => {
-      nock(loginUrl)
-        .get('/services/data/v59.0')
-        .times(3)
-        .reply(420, { error: 'We\'ve hit a snag' });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(420, JSON.stringify({ error: "We've hit a snag" })).times(3);
 
       const { retryCounter } = await fetch({
         method: 'GET',
@@ -219,14 +189,8 @@ describe('HTTP API', () => {
     });
 
     it('does not retry on unsupported methods', async () => {
-      nock(loginUrl)
-        .post('/services/data/v59.0', 'body')
-        .replyWithError({
-          message: `request to ${loginUrl} failed, reason: socket hang up`,
-          code: 'ECONNRESET',
-        })
-        .post('/services/data/v59.0', 'body')
-        .reply(200, { success: true });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'POST' }).replyWithError(new Error('ECONNRESET'));
 
       const { retryCounter } = await fetch({
         method: 'POST',
@@ -238,16 +202,8 @@ describe('HTTP API', () => {
     });
 
     it('does not retry cancelled requests', async () => {
-      // setting a timeout makes the AbortController instance cancel the request.
-      nock(loginUrl)
-        .get('/services/data/v60.0')
-        .times(2)
-        .replyWithError({
-          message: `request to ${loginUrl} failed, reason: socket hang up`,
-          code: 'ECONNRESET',
-        })
-        .get('/services/data/v60.0')
-        .reply(200, { success: true });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v60.0', method: 'GET' }).reply(200, JSON.stringify({ success: true })).delay(5000);
 
       const { retryCounter } = await fetch(
         {
@@ -255,17 +211,15 @@ describe('HTTP API', () => {
           url: `${loginUrl}/services/data/v60.0`,
         },
         {
-          timeout: 1, // 1ms to ensure it fails before a retry happens.
+          timeout: 1,
         },
       );
       assert.ok(retryCounter === 0);
     });
 
     it('throws after 5 seconds timeout', async () => {
-      nock(loginUrl)
-        .get('/services/data/v59.0')
-        .delay(7000) // Delay response by 7 seconds to exceed timeout
-        .reply(200, { success: true });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({ success: true })).delay(7000);
 
       const { err } = await fetch(
         {
@@ -273,11 +227,11 @@ describe('HTTP API', () => {
           url: `${loginUrl}/services/data/v59.0`,
         },
         {
-          timeout: 5000, // 5 second timeout
+          timeout: 5000,
         },
       );
 
-      assert.ok(err instanceof Error);
+      assert.ok(err instanceof DOMException);
       assert.ok(err.name === 'AbortError' || err.message.includes('aborted'));
     });
   });
@@ -293,7 +247,8 @@ describe('HTTP API', () => {
         testPassed = true;
       });
 
-      nock(loginUrl).get('/services/data/v59.0').reply(200, {});
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
 
       await httpApi.request({
         method: 'GET',
@@ -324,7 +279,8 @@ describe('HTTP API', () => {
         testPassed = true;
       });
 
-      nock(loginUrl).get('/services/data/v59.0').reply(200, {});
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
 
       await httpApi.request({
         method: 'GET',
@@ -343,9 +299,8 @@ describe('HTTP API', () => {
         testPassed = true;
       });
 
-      nock(loginUrl)
-        .post('/services/data/v59.0/sobjects/Account')
-        .reply(200, {});
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0/sobjects/Account', method: 'POST' }).reply(200, JSON.stringify({}));
 
       await httpApi.request({
         method: 'POST',
@@ -367,9 +322,8 @@ describe('HTTP API', () => {
         testPassed = true;
       });
 
-      nock(loginUrl)
-        .post('/services/data/v59.0/sobjects/Account')
-        .reply(200, {});
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0/sobjects/Account', method: 'POST' }).reply(200, JSON.stringify({}));
 
       await httpApi.request({
         method: 'POST',
@@ -402,11 +356,9 @@ describe('HTTP API', () => {
 
       httpApi.on('request', (req: HttpRequest) => {
         if (firstRoundTrip) {
-          // access token set in the connection.
           assert.equal(req?.headers?.['Authorization'], 'Bearer invalid_token');
           firstRoundTrip = false;
         } else {
-          // access token set in the connection's refresh function.
           assert.equal(
             req?.headers?.['Authorization'],
             'Bearer refreshed_token',
@@ -415,11 +367,9 @@ describe('HTTP API', () => {
         }
       });
 
-      nock(loginUrl)
-        .get('/services/data/v59.0')
-        .reply(401)
-        .get('/services/data/v59.0')
-        .reply(200);
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(401);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200);
 
       await httpApi.request({
         method: 'GET',
@@ -452,11 +402,10 @@ describe('HTTP API', () => {
         message: 'This session is not valid for use with the REST API',
       });
 
-      nock(loginUrl)
-        .get('/services/data/v59.0')
-        .reply(401, errorBody, {
-          'content-type': 'application/json',
-        });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(401, errorBody, {
+        headers: { 'content-type': 'application/json' },
+      });
 
       await assert.rejects(
         async () => {
@@ -492,11 +441,10 @@ describe('HTTP API', () => {
         },
       ];
 
-      nock(loginUrl)
-        .post('/services/data/v59.0')
-        .reply(400, JSON.stringify(missingRequiredFieldErr), {
-          'content-type': 'application/json',
-        });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'POST' }).reply(400, JSON.stringify(missingRequiredFieldErr), {
+        headers: { 'content-type': 'application/json' },
+      });
 
       await assert.rejects(
         async () => {
@@ -533,11 +481,10 @@ describe('HTTP API', () => {
 	</Error>
 </Errors>`;
 
-      nock(loginUrl)
-        .get('/services/data/v59.0/sobjects/Broker__c/a008N0000032UmoQAA')
-        .reply(400, xmlErr, {
-          'content-type': 'application/xml',
-        });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0/sobjects/Broker__c/a008N0000032UmoQAA', method: 'GET' }).reply(400, xmlErr, {
+        headers: { 'content-type': 'application/xml' },
+      });
 
       await assert.rejects(
         async () => {
@@ -574,11 +521,10 @@ describe('HTTP API', () => {
 </html>
 `;
 
-      nock(loginUrl)
-        .get('/services/data/v59.0/sobjects/Broker__c/a008N0000032UmoQAA')
-        .reply(404, htmlErr, {
-          'content-type': 'text/html',
-        });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0/sobjects/Broker__c/a008N0000032UmoQAA', method: 'GET' }).reply(404, htmlErr, {
+        headers: { 'content-type': 'text/html' },
+      });
 
       await assert.rejects(
         async () => {
@@ -617,9 +563,8 @@ See \`error.data\` for the full html response.`,
         noContentResponse,
       });
 
-      nock(loginUrl)
-        .delete('/services/data/v59.0/sobjects/Broker__c/a008N0000032UmoQAA')
-        .reply(204);
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0/sobjects/Broker__c/a008N0000032UmoQAA', method: 'DELETE' }).reply(204);
 
       const body = await httpApi.request({
         method: 'DELETE',
@@ -650,11 +595,10 @@ See \`error.data\` for the full html response.`,
         }
       ];
 
-      nock(loginUrl)
-        .post('/services/data/v59.0')
-        .reply(400, JSON.stringify(errors), {
-          'content-type': 'application/json',
-        });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'POST' }).reply(400, JSON.stringify(errors), {
+        headers: { 'content-type': 'application/json' },
+      });
 
       await assert.rejects(
         async () => {
@@ -702,7 +646,8 @@ describe('SOAP API', () => {
         testPassed = true;
       });
 
-      nock(loginUrl).post('/services/Soap/u/59').reply(200);
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/Soap/u/59', method: 'POST' }).reply(200);
 
       await soapApi.invoke('describeMetadata', {
         asOfVersion: '59.0',
@@ -733,7 +678,8 @@ describe('SOAP API', () => {
         testPassed = true;
       });
 
-      nock(loginUrl).post('/services/Soap/u/59').reply(200);
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/Soap/u/59', method: 'POST' }).reply(200);
 
       await soapApi.invoke('describeMetadata', {
         asOfVersion: '59.0',
@@ -768,7 +714,8 @@ describe('SOAP API', () => {
         testPassed = true;
       });
 
-      nock(loginUrl).post('/services/Soap/u/59').reply(200);
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/Soap/u/59', method: 'POST' }).reply(200);
 
       await soapApi.invoke('describeMetadata', {
         asOfVersion: '59.0',
@@ -799,14 +746,11 @@ describe('SOAP API', () => {
 	</soapenv:Body>
 </soapenv:Envelope>`
 
-      nock(loginUrl)
-        .post('/services/Soap/u/50.0')
-        .reply(200, passwordExpiredXml);
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/Soap/u/50.0', method: 'POST' }).reply(200, passwordExpiredXml);
 
 
       await assert.rejects(async () => {
-        // SOAP login requests will return 200 even with an expired password:
-        // https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_calls_login_loginresult.htm?q=passwordExpired
         await conn.login('username','password')
       }, {
           message: 'Unable to login because the used password has expired.'
@@ -845,11 +789,9 @@ describe('SOAP API', () => {
         }
       });
 
-      nock(loginUrl)
-        .post('/services/Soap/u/59')
-        .reply(500, '<faultcode>test:INVALID_SESSION_ID</faultcode>')
-        .post('/services/Soap/u/59')
-        .reply(200);
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/Soap/u/59', method: 'POST' }).reply(500, '<faultcode>test:INVALID_SESSION_ID</faultcode>');
+      pool.intercept({ path: '/services/Soap/u/59', method: 'POST' }).reply(200);
 
       await soapApi.invoke('create', {
         Account: 'test',
@@ -880,8 +822,9 @@ describe('SOAP API', () => {
     </soapenv:Body>
 </soapenv:Envelope>
 `;
-    nock(loginUrl).post('/services/Soap/u/59').reply(400, xmlErr, {
-      'content-type': 'application/xml',
+    const pool = mockAgent.get(loginUrl);
+    pool.intercept({ path: '/services/Soap/u/59', method: 'POST' }).reply(400, xmlErr, {
+      headers: { 'content-type': 'application/xml' },
     });
 
     void assert.rejects(

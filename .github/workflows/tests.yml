@@ -33,7 +33,7 @@ jobs:
         run: npm install
 
       - name: Install sf CLI
-        run: npm install --global @salesforce/cli
+        run: npm install --global @salesforce/cli@nightly
 
       - name: Setup scratch org
         env:
@@ -101,10 +101,14 @@ jobs:
     strategy:
       matrix:
         # node_version: [lts/-1, lts/*, latest]
-        node_version: [24.14.1]
+        node_version: [24.14.1, 24.17.0]
       fail-fast: false
     steps:
       - uses: actions/checkout@v3
+      - uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+        id: setup-chrome
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node_version }}
@@ -133,6 +137,7 @@ jobs:
           SF_OAUTH2_CLIENT_ID: ${{ secrets.SF_OAUTH2_CLIENT_ID }}
           SF_OAUTH2_CLIENT_SECRET: ${{ secrets.SF_OAUTH2_CLIENT_SECRET }}
           SF_OAUTH2_REDIRECT_URI: ${{ secrets.SF_OAUTH2_REDIRECT_URI }}
+          CHROME_BIN: ${{ steps.setup-chrome.outputs.chrome-path }}
         run: |
           SF_USERNAME=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.username') \
           SF_PASSWORD=$(sf org auth show-user-password --target-org jsforce-test-org --json | jq -r '.result.password') \
@@ -175,10 +180,14 @@ jobs:
     strategy:
       matrix:
         # node_version: [lts/*]
-        node_version: [24.14.1]
+        node_version: [24.14.1, 24.17.0]
       fail-fast: false
     steps:
       - uses: actions/checkout@v3
+      - uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+        id: setup-chrome
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node_version }}
@@ -207,6 +216,7 @@ jobs:
           SF_OAUTH2_CLIENT_ID: ${{ secrets.SF_OAUTH2_CLIENT_ID }}
           SF_OAUTH2_CLIENT_SECRET: ${{ secrets.SF_OAUTH2_CLIENT_SECRET }}
           SF_OAUTH2_REDIRECT_URI: ${{ secrets.SF_OAUTH2_REDIRECT_URI }}
+          CHROME_BIN: ${{ steps.setup-chrome.outputs.chrome-path }}
         run: |
           $env:SF_USERNAME=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.username')
           $env:SF_PASSWORD=$(sf org auth show-user-password --target-org jsforce-test-org --json | jq -r '.result.password')

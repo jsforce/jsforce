@@ -216,7 +216,7 @@
     "index.d.ts"
   ],
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "bin": {
     "jsforce": "./bin/jsforce",
@@ -233,11 +233,10 @@
     "csv-stringify": "^6.6.0",
     "faye": "^1.4.0",
     "form-data": "^4.0.4",
-    "https-proxy-agent": "^5.0.0",
     "inquirer": "^8.2.7",
     "multistream": "^3.1.0",
-    "node-fetch": "^2.6.1",
     "open": "^7.0.0",
+    "undici": "^8.5.0",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
@@ -250,8 +249,7 @@
     "@types/inquirer": "^6.5.0",
     "@types/jest": "^29.5.5",
     "@types/multistream": "^2.1.1",
-    "@types/node": "^18.15.3",
-    "@types/node-fetch": "^2.5.7",
+    "@types/node": "^22.20.0",
     "@types/shelljs": "^0.8.15",
     "@types/through2": "^2.0.34",
     "@types/xml2js": "^0.4.5",
@@ -277,7 +275,6 @@
     "karma-jasmine-html-reporter": "^2.0.0",
     "karma-sourcemap-loader": "^0.4.0",
     "karma-webpack": "^5.0.0",
-    "nock": "^13.4.0",
     "os-browserify": "^0.3.0",
     "path-browserify": "^1.0.1",
     "power-assert": "^1.6.1",
@@ -300,10 +297,5 @@
     "webpack-cli": "^5.0.2",
     "wireit": "^0.14.12",
     "zx": "^7.2.3"
-  },
-  "overrides": {
-    "node-fetch": {
-      "whatwg-url": "^14.0.0"
-    }
   }
 }
