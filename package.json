@@ -249,7 +249,7 @@
     "@types/inquirer": "^6.5.0",
     "@types/jest": "^29.5.5",
     "@types/multistream": "^2.1.1",
-    "@types/node": "^18.15.3",
+    "@types/node": "^22.20.0",
     "@types/shelljs": "^0.8.15",
     "@types/through2": "^2.0.34",
     "@types/xml2js": "^0.4.5",
@@ -297,10 +297,5 @@
     "webpack-cli": "^5.0.2",
     "wireit": "^0.14.12",
     "zx": "^7.2.3"
-  },
-  "overrides": {
-    "node-fetch": {
-      "whatwg-url": "^14.0.0"
-    }
   }
 }
