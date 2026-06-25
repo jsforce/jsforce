@@ -112,7 +112,7 @@ async function dumpSchema(
   const out = fs.createWriteStream(outputFile, 'utf8');
   return new Promise((resolve, reject) => {
     out.on('error', (err) => reject(err));
-    out.on('finish', resolve);
+    out.on('finish', () => resolve(undefined));
     const writeLine = (message: string) => out.write(message + '\n');
     writeLine(
       "import { Schema, SObjectDefinition, DateString, BlobString, Address } from 'jsforce';",
