@@ -1,3 +1,12 @@
+## [3.10.17](https://github.com/jsforce/jsforce/compare/3.10.16...3.10.17) (2026-06-25)
+
+
+### Bug Fixes
+
+* switched from node-fetch to native fetch API @W-23121570@ ([#1807](https://github.com/jsforce/jsforce/issues/1807)) ([ccddfee](https://github.com/jsforce/jsforce/commit/ccddfee319fc08ecca25e967c22fc69727e5a4a9))
+
+
+
 ## [3.10.16](https://github.com/jsforce/jsforce/compare/3.10.15...3.10.16) (2026-06-12)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * bump minor ([f65d617](https://github.com/jsforce/jsforce/commit/f65d6179bf804ccd417dcc9beaa8d049abfaf50e))
-
-
-
-## [3.10.11](https://github.com/jsforce/jsforce/compare/3.10.10...3.10.11) (2026-01-15)
-
-
-### Bug Fixes
-
-* **http:** reduce buffer allocations when reading responses W-18649787 ([#1784](https://github.com/jsforce/jsforce/issues/1784)) ([f43fc77](https://github.com/jsforce/jsforce/commit/f43fc7773ce8aa15ddfb3a105dbf3ea9ac704885))
 
 
 
