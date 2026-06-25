@@ -58,7 +58,7 @@ jobs:
         name: cli install
         with:
           max_attempts: ${{ inputs.attempts }}
-          command: npm install -g @salesforce/cli@dev --omit=dev
+          command: npm install -g @salesforce/cli@nightly --omit=dev
           timeout_minutes: 20
       - uses: nick-fields/retry@943e742917ac94714d2f408a0e8320f2d1fcafcd
         name: git clone project

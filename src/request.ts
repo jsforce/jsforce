@@ -194,7 +194,7 @@ async function startFetchRequest(
   } catch (err) {
     let throwableError: Error;
     if (err instanceof DOMException && err.name === 'AbortError') {
-      throwableError = new DOMException((err as Error).message + ' Request was aborted due to timeout of 10 minutes.', (err as Error).name);
+      throwableError = new DOMException((err as Error).message + ' Request was aborted due to timeout of 30 minutes.', (err as Error).name);
     } else {
       throwableError = err as Error;
     }
