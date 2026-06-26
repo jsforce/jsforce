@@ -1,3 +1,5 @@
+Symbol.dispose ??= Symbol.for('nodejs.dispose');
+
 /* global jest */
 jest.setTimeout(120000);
 
