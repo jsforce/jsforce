@@ -7,7 +7,7 @@ import { Logger, getLogger } from './util/logger';
 import RecordStream, { Serializable } from './record-stream';
 import Connection from './connection';
 import { createSOQL } from './soql-builder';
-import { QueryConfig as SOQLQueryConfig, SortDir } from './soql-builder';
+import { QueryConfig as SOQLQueryConfig, SortDir, SortNulls } from './soql-builder';
 import {
   Record,
   Optional,
@@ -92,7 +92,7 @@ export type QuerySort<
   | {
       [K in keyof R]?: SortDir;
     }
-  | Array<[keyof R, SortDir]>;
+  | Array<[keyof R, SortDir, SortNulls?]>;
 
 /**
  *
@@ -376,10 +376,11 @@ export class Query<
    * Set query sort with direction
    */
   sort(sort: QuerySort<S, N>|string): this;
-  sort(sort: SObjectFieldNames<S, N>|string, dir: SortDir): this;
+  sort(sort: SObjectFieldNames<S, N>|string, dir: SortDir, nulls?: SortNulls): this;
   sort(
     sort: QuerySort<S, N> | SObjectFieldNames<S, N> | string,
     dir?: SortDir,
+    nulls?: SortNulls,
   ) {
     if (this._soql) {
       throw Error(
@@ -387,7 +388,7 @@ export class Query<
       );
     }
     if (typeof sort === 'string' && typeof dir !== 'undefined') {
-      this._config.sort = [[sort, dir]];
+      this._config.sort = nulls != null ? [[sort, dir, nulls]] : [[sort, dir]];
     } else {
       this._config.sort = sort as string | { [field: string]: SortDir };
     }
@@ -1286,12 +1287,13 @@ export class SubQuery<
    * Set query sort with direction
    */
   sort(sort: QuerySort<S, CN>): this;
-  sort(sort: string| SObjectFieldNames<S, CN>, dir: SortDir): this;
+  sort(sort: string| SObjectFieldNames<S, CN>, dir: SortDir, nulls?: SortNulls): this;
   sort(
     sort: QuerySort<S, CN> | SObjectFieldNames<S, CN> | string,
     dir?: SortDir,
+    nulls?: SortNulls,
   ) {
-    this._query = this._query.sort(sort as any, dir as SortDir);
+    this._query = this._query.sort(sort as any, dir as SortDir, nulls as SortNulls);
     return this;
   }
 
