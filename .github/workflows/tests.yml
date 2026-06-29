@@ -100,8 +100,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        # node_version: [lts/-1, lts/*, latest]
-        node_version: [24.14.1, 24.17.0]
+        node_version: [lts/-1, lts/*, latest]
       fail-fast: false
     steps:
       - uses: actions/checkout@v3
@@ -179,8 +178,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        # node_version: [lts/*]
-        node_version: [24.14.1, 24.17.0]
+        node_version: [lts/*]
       fail-fast: false
     steps:
       - uses: actions/checkout@v3
