@@ -1,3 +1,12 @@
+## [3.10.18](https://github.com/jsforce/jsforce/compare/3.10.17...3.10.18) (2026-06-29)
+
+
+### Bug Fixes
+
+* reenabling proper node tests @W-22477115@ ([#1808](https://github.com/jsforce/jsforce/issues/1808)) ([8babac6](https://github.com/jsforce/jsforce/commit/8babac66213646f1d2110050eeb92caaa0909431))
+
+
+
 ## [3.10.17](https://github.com/jsforce/jsforce/compare/3.10.16...3.10.17) (2026-06-25)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * **http:** limit retries on 420 responses W-19971144 ([#1772](https://github.com/jsforce/jsforce/issues/1772)) ([0b210c6](https://github.com/jsforce/jsforce/commit/0b210c61ff7ec29dc8d4916fdc87bd79aa7eed25))
-
-
-
-## [3.10.13](https://github.com/jsforce/jsforce/compare/3.10.11...3.10.13) (2026-01-15)
-
-
-### Bug Fixes
-
-* bump minor ([f65d617](https://github.com/jsforce/jsforce/commit/f65d6179bf804ccd417dcc9beaa8d049abfaf50e))
 
 
 
