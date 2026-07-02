@@ -1,3 +1,12 @@
+## [3.10.19](https://github.com/jsforce/jsforce/compare/3.10.18...3.10.19) (2026-07-02)
+
+
+### Bug Fixes
+
+* docs creation action should work again @W-23176525@ ([#1810](https://github.com/jsforce/jsforce/issues/1810)) ([4eec8e4](https://github.com/jsforce/jsforce/commit/4eec8e45a1ac1b13cb0a75baab65b48009f0822f))
+
+
+
 ## [3.10.18](https://github.com/jsforce/jsforce/compare/3.10.17...3.10.18) (2026-06-29)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * timeouts calculate once instead of repeatedly ([#1792](https://github.com/jsforce/jsforce/issues/1792)) ([22705e7](https://github.com/jsforce/jsforce/commit/22705e79380c1414e3d71abb1d79e77657afdb76))
-
-
-
-## [3.10.14](https://github.com/jsforce/jsforce/compare/3.10.13...3.10.14) (2026-02-10)
-
-
-### Bug Fixes
-
-* **http:** limit retries on 420 responses W-19971144 ([#1772](https://github.com/jsforce/jsforce/issues/1772)) ([0b210c6](https://github.com/jsforce/jsforce/commit/0b210c61ff7ec29dc8d4916fdc87bd79aa7eed25))
 
 
 
