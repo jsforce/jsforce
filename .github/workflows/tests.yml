@@ -5,6 +5,8 @@ on:
   workflow_dispatch:
 
 jobs:
+  jamie-docs-experiment:
+    uses: ./.github/workflows/publishDocs.yml
   test-browser:
     needs: lint-and-typecheck
     runs-on: ubuntu-latest

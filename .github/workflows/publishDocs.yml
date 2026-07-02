@@ -5,12 +5,10 @@ on: workflow_call
 jobs:
   publish:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.SVC_CLI_BOT_JSFORCE_GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v3
         with:
-          token: ${{ secrets.SVC_CLI_BOT_JSFORCE_GITHUB_TOKEN }}
+          token: ${{ github.token }}
           ref: ${{ github.ref }}
       - uses: actions/setup-node@v3
         with:
@@ -30,9 +28,10 @@ jobs:
           npx typedoc --out docs/tmp
           cp -r docs/tmp/* docs/tmp/..
           rm -rf docs/tmp
-      - name: send to git
-        run: |
-          cd docs
-          git add .
-          git commit -m 'docs: publishing gh-pages [skip ci]' --no-verify
-          git push origin gh-pages --no-verify
+#      - name: send to git
+#        run: |
+#          cd docs
+#          git add .
+#          git commit -m 'docs: publishing gh-pages [skip ci]' --no-verify
+#          git push origin gh-pages --no-verify
+#
