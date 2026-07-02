@@ -2,6 +2,9 @@ name: publish-docs
 
 on: workflow_call
 
+permissions:
+  contents: write
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -35,6 +38,8 @@ jobs:
           git checkout -b jf/test-gh-pages
           cd docs
           git add .
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m 'docs: publishing gh-pages [skip ci]' --no-verify
           git push --set-upstream origin jf/test-gh-pages --no-verify
 
