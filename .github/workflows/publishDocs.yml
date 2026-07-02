@@ -6,7 +6,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           token: ${{ github.token }}
           ref: ${{ github.ref }}
@@ -28,6 +28,8 @@ jobs:
           npx typedoc --out docs/tmp
           cp -r docs/tmp/* docs/tmp/..
           rm -rf docs/tmp
+          echo BRANCHES
+          git branch
 #      - name: send to git
 #        run: |
 #          cd docs
