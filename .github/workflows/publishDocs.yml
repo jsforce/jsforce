@@ -30,10 +30,11 @@ jobs:
           rm -rf docs/tmp
           echo BRANCHES
           git branch
-#      - name: send to git
-#        run: |
-#          cd docs
-#          git add .
-#          git commit -m 'docs: publishing gh-pages [skip ci]' --no-verify
-#          git push origin gh-pages --no-verify
-#
+      - name: send to git
+        run: |
+          git checkout -b jf/test-gh-pages
+          cd docs
+          git add .
+          git commit -m 'docs: publishing gh-pages [skip ci]' --no-verify
+          git push --set-upstream origin jf/test-gh-pages --no-verify
+
