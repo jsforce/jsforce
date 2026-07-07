@@ -1,15 +1,22 @@
 import { EventEmitter } from 'events';
 import { Duplex, Readable, Writable } from 'stream';
 import Connection from '../connection';
-import { Serializable, Parsable } from '../record-stream';
+import {
+  convertRecordForSerialization,
+  Serializable,
+  Parsable,
+} from '../record-stream';
 import HttpApi from '../http-api';
 import { StreamPromise } from '../util/promise';
 import { registerModule } from '../jsforce';
 import { BulkRequest } from './bulk';
 import { getLogger, Logger } from '../util/logger';
 import { concatStreamsAsDuplex } from '../util/stream';
+import { getCSVColumns, serializeCSVStream } from '../csv';
 import { HttpResponse, Record, Schema } from '../types';
 import is from '@sindresorhus/is';
+
+const CSV_CONVERTER_OPTIONS = { nullValue: '#N/A' };
 
 export type IngestOperation =
   | 'insert'
@@ -1048,11 +1055,13 @@ class JobDataV2<S extends Schema> extends Writable {
     this.uploadStream = new Serializable();
     this.downloadStream = new Parsable();
 
-    const converterOptions = { nullValue: '#N/A' };
-    const uploadDataStream = this.uploadStream.stream('csv', converterOptions);
+    const uploadDataStream = this.uploadStream.stream(
+      'csv',
+      CSV_CONVERTER_OPTIONS,
+    );
     const downloadDataStream = this.downloadStream.stream(
       'csv',
-      converterOptions,
+      CSV_CONVERTER_OPTIONS,
     );
 
     this.dataStream = concatStreamsAsDuplex(
@@ -1090,21 +1099,41 @@ class JobDataV2<S extends Schema> extends Writable {
     });
   }
 
-  _write(record_: Record, enc: BufferEncoding, cb: () => void) {
+  _createRecordForOperation(record_: Record) {
     const { Id, type, attributes, ...rrec } = record_;
-    let record;
     switch (this.job.getInfo().operation) {
       case 'insert':
-        record = rrec;
-        break;
+        return rrec;
       case 'delete':
       case 'hardDelete':
-        record = { Id };
-        break;
+        return { Id };
       default:
-        record = { Id, ...rrec };
+        return { Id, ...rrec };
     }
+  }
+
+  _write(record_: Record, enc: BufferEncoding, cb: () => void) {
+    const record = this._createRecordForOperation(record_);
     this.uploadStream.write(record, enc, cb);
+  }
+
+  _writeRecords(recordData: Record[]) {
+    const records = recordData.map((record) => {
+      for (const key of Object.keys(record)) {
+        if (typeof record[key] === 'boolean') {
+          record[key] = String(record[key]);
+        }
+      }
+      return convertRecordForSerialization(
+        this._createRecordForOperation(record),
+        CSV_CONVERTER_OPTIONS,
+      );
+    });
+    const csvStream = Readable.from(records).pipe(
+      serializeCSVStream({ columns: getCSVColumns(records) }),
+    );
+    csvStream.on('error', (err) => this.emit('error', err));
+    csvStream.pipe(this.dataStream);
   }
 
   /**
@@ -1134,15 +1163,11 @@ class JobDataV2<S extends Schema> extends Writable {
       const recordData = structuredClone(input);
 
       if (Array.isArray(recordData)) {
-        for (const record of recordData) {
-          for (const key of Object.keys(record)) {
-            if (typeof record[key] === 'boolean') {
-              record[key] = String(record[key]);
-            }
-          }
-          this.write(record);
+        if (recordData.length === 0) {
+          this.end();
+        } else {
+          this._writeRecords(recordData);
         }
-        this.end();
       } else if (typeof recordData === 'string') {
         this.dataStream.write(recordData, 'utf8');
         this.dataStream.end();
