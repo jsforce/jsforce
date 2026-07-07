@@ -6,11 +6,16 @@ import { EventEmitter } from 'events';
 import { Duplex, Readable, Writable } from 'stream';
 import joinStreams from 'multistream';
 import Connection from '../connection';
-import { Serializable, Parsable } from '../record-stream';
+import {
+  convertRecordForSerialization,
+  Serializable,
+  Parsable,
+} from '../record-stream';
 import HttpApi from '../http-api';
 import { registerModule } from '../jsforce';
 import { Logger } from '../util/logger';
 import { concatStreamsAsDuplex } from '../util/stream';
+import { getCSVColumns, serializeCSVStream } from '../csv';
 import {
   HttpMethods,
   HttpRequest,
@@ -19,6 +24,8 @@ import {
   Schema,
 } from '../types';
 import is from '@sindresorhus/is';
+
+const CSV_CONVERTER_OPTIONS = { nullValue: '#N/A' };
 
 /*--------------------------------------------*/
 
@@ -450,11 +457,13 @@ export class Batch<
     //
     // setup data streams
     //
-    const converterOptions = { nullValue: '#N/A' };
     const uploadStream = (this._uploadStream = new Serializable());
-    const uploadDataStream = uploadStream.stream('csv', converterOptions);
+    const uploadDataStream = uploadStream.stream('csv', CSV_CONVERTER_OPTIONS);
     const downloadStream = (this._downloadStream = new Parsable());
-    const downloadDataStream = downloadStream.stream('csv', converterOptions);
+    const downloadDataStream = downloadStream.stream(
+      'csv',
+      CSV_CONVERTER_OPTIONS,
+    );
 
     this.on('finish', () => uploadStream.end());
     uploadDataStream.once('readable', async () => {
@@ -507,21 +516,44 @@ export class Batch<
   /**
    * Implementation of Writable
    */
-  _write(record_: Record, enc: BufferEncoding, cb: () => void) {
+  _createRecordForOperation(record_: Record) {
     const { Id, type, attributes, ...rrec } = record_;
-    let record;
     switch (this.job.operation) {
       case 'insert':
-        record = rrec;
-        break;
+        return rrec;
       case 'delete':
       case 'hardDelete':
-        record = { Id };
-        break;
+        return { Id };
       default:
-        record = { Id, ...rrec };
+        return { Id, ...rrec };
     }
+  }
+
+  /**
+   * Implementation of Writable
+   */
+  _write(record_: Record, enc: BufferEncoding, cb: () => void) {
+    const record = this._createRecordForOperation(record_);
     this._uploadStream.write(record, enc, cb);
+  }
+
+  _writeRecords(recordData: Record[]) {
+    const records = recordData.map((record) => {
+      for (const key of Object.keys(record)) {
+        if (typeof record[key] === 'boolean') {
+          record[key] = String(record[key]);
+        }
+      }
+      return convertRecordForSerialization(
+        this._createRecordForOperation(record),
+        CSV_CONVERTER_OPTIONS,
+      );
+    });
+    const csvStream = Readable.from(records).pipe(
+      serializeCSVStream({ columns: getCSVColumns(records) }),
+    );
+    csvStream.on('error', (err) => this.emit('error', err));
+    csvStream.pipe(this._dataStream);
   }
 
   /**
@@ -552,15 +584,11 @@ export class Batch<
       const recordData = structuredClone(input);
 
       if (Array.isArray(recordData)) {
-        for (const record of recordData) {
-          for (const key of Object.keys(record)) {
-            if (typeof record[key] === 'boolean') {
-              record[key] = String(record[key]);
-            }
-          }
-          this.write(record);
+        if (recordData.length === 0) {
+          this.end();
+        } else {
+          this._writeRecords(recordData);
         }
-        this.end();
       } else if (typeof recordData === 'string') {
         this._dataStream.write(recordData, 'utf8');
         this._dataStream.end();

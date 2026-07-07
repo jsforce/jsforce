@@ -3,6 +3,7 @@
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
 import { Readable, Writable, Duplex, Transform, PassThrough } from 'stream';
+import type { Options as StringifyOpts } from 'csv-stringify';
 import { Record, Optional } from './types';
 import { serializeCSVStream, parseCSVStream } from './csv';
 import { concatStreamsAsDuplex } from './util/stream';
@@ -10,7 +11,7 @@ import { concatStreamsAsDuplex } from './util/stream';
 /**
  * type defs
  */
-export type RecordStreamSerializeOption = {
+export type RecordStreamSerializeOption = StringifyOpts & {
   nullValue?: any;
 };
 
@@ -36,9 +37,9 @@ function evalMapping(value: any, mapping: { [prop: string]: string }) {
 /**
  * @private
  */
-function convertRecordForSerialization(
+export function convertRecordForSerialization(
   record: Record,
-  options: { nullValue?: boolean } = {},
+  options: { nullValue?: any } = {},
 ): Record {
   return Object.keys(record).reduce((rec: Record, key: string) => {
     const value = (rec as any)[key];

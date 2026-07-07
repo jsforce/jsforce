@@ -26,8 +26,30 @@ export function parseCSV(str: string, options?: ParseOpts): Object[] {
 /**
  * @private
  */
+export function getCSVColumns(records: Object[]): string[] {
+  const columnSet = new Set<string>();
+  const columns: string[] = [];
+  for (const record of records) {
+    for (const column of Object.keys(record)) {
+      if (!columnSet.has(column)) {
+        columnSet.add(column);
+        columns.push(column);
+      }
+    }
+  }
+  return columns;
+}
+
+/**
+ * @private
+ */
 export function toCSV(records: Object[], options?: StringifyOpts): string {
-  return csvStringifySync(records, { ...options, header: true });
+  const columns = getCSVColumns(records);
+  return csvStringifySync(records, {
+    ...(columns.length > 0 ? { columns } : {}),
+    ...options,
+    header: true,
+  });
 }
 
 /**
