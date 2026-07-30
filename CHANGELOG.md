@@ -1,45 +1,45 @@
-# [3.9.0](https://github.com/jsforce/jsforce/compare/3.8.2...3.9.0) (2025-06-17)
-
-
-### Features
-
-* **conn:** multiple upserts use sobject collection  ([#1692](https://github.com/jsforce/jsforce/issues/1692)) ([#1713](https://github.com/jsforce/jsforce/issues/1713)) ([8c51295](https://github.com/jsforce/jsforce/commit/8c512956e9eeb64125f09521e1e56e5dbc60a119))
-
-
-
-## [3.8.2](https://github.com/jsforce/jsforce/compare/3.8.1...3.8.2) (2025-05-22)
+## [3.10.19](https://github.com/jsforce/jsforce/compare/3.10.18...3.10.19) (2026-07-02)
 
 
 ### Bug Fixes
 
-* **SOAP:** block connections using JWT tokens ([e601069](https://github.com/jsforce/jsforce/commit/e601069efc00801d78394fbad17773d6998324d3))
+* docs creation action should work again @W-23176525@ ([#1810](https://github.com/jsforce/jsforce/issues/1810)) ([4eec8e4](https://github.com/jsforce/jsforce/commit/4eec8e45a1ac1b13cb0a75baab65b48009f0822f))
 
 
 
-## [3.8.1](https://github.com/jsforce/jsforce/compare/3.8.0...3.8.1) (2025-04-25)
+## [3.10.18](https://github.com/jsforce/jsforce/compare/3.10.17...3.10.18) (2026-06-29)
 
 
 ### Bug Fixes
 
-* bump babel deps ([#1683](https://github.com/jsforce/jsforce/issues/1683)) ([57e23f0](https://github.com/jsforce/jsforce/commit/57e23f08aa7476a20c11b32146d10e30dd528a92))
+* reenabling proper node tests @W-22477115@ ([#1808](https://github.com/jsforce/jsforce/issues/1808)) ([8babac6](https://github.com/jsforce/jsforce/commit/8babac66213646f1d2110050eeb92caaa0909431))
 
 
 
-# [3.8.0](https://github.com/jsforce/jsforce/compare/3.7.0...3.8.0) (2025-04-22)
+## [3.10.17](https://github.com/jsforce/jsforce/compare/3.10.16...3.10.17) (2026-06-25)
 
 
-### Features
+### Bug Fixes
 
-* allow skipping template eval on query update ([b26270c](https://github.com/jsforce/jsforce/commit/b26270c491ee227d91a643ec4bd723cb4855d666))
-
-
-
-# [3.7.0](https://github.com/jsforce/jsforce/compare/3.6.6...3.7.0) (2025-03-25)
+* switched from node-fetch to native fetch API @W-23121570@ ([#1807](https://github.com/jsforce/jsforce/issues/1807)) ([ccddfee](https://github.com/jsforce/jsforce/commit/ccddfee319fc08ecca25e967c22fc69727e5a4a9))
 
 
-### Features
 
-* add checkDeployStatus for REST W-18012955 ([#1670](https://github.com/jsforce/jsforce/issues/1670)) ([b36e429](https://github.com/jsforce/jsforce/commit/b36e429d894d6deec4766523aa4809b702bac7c8))
+## [3.10.16](https://github.com/jsforce/jsforce/compare/3.10.15...3.10.16) (2026-06-12)
+
+
+### Bug Fixes
+
+* release ([8ce0df6](https://github.com/jsforce/jsforce/commit/8ce0df66c0e5274a466ef4c07a20c30eb3a76f55))
+
+
+
+## [3.10.15](https://github.com/jsforce/jsforce/compare/3.10.14...3.10.15) (2026-05-13)
+
+
+### Bug Fixes
+
+* timeouts calculate once instead of repeatedly ([#1792](https://github.com/jsforce/jsforce/issues/1792)) ([22705e7](https://github.com/jsforce/jsforce/commit/22705e79380c1414e3d71abb1d79e77657afdb76))
 
 
 

@@ -15,8 +15,8 @@ conn.bulk.pollTimeout = 90000; // adjust poll timeout to test timeout.
 /**
  *
  */
-beforeAll(async () => {
-  await connMgr.establishConnection(conn);
+beforeAll(() => {
+  connMgr.establishConnection(conn);
 });
 
 /**

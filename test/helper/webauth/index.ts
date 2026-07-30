@@ -23,10 +23,19 @@ async function loginAndApprove(
     await delay(1000);
     return loginAndApprove(page, username, password);
   } else if (url.indexOf('/?ec=302') > 0) {
-    // login page
+    // login page - may be multi-step (username first, then password)
+    await page.waitForSelector('#username', { timeout: 10000 });
     await page.type('#username', username);
-    await page.type('#password', password);
-    await page.click('[name=Login]');
+    const passwordField = await page.$('#password');
+    if (passwordField) {
+      await page.type('#password', password);
+      await page.click('[name=Login]');
+    } else {
+      await page.click('[name=Login]');
+      await page.waitForSelector('#password', { timeout: 10000 });
+      await page.type('#password', password);
+      await page.click('[name=Login]');
+    }
     await page.waitForNavigation({ waitUntil: 'networkidle2' });
     return loginAndApprove(page, username, password);
   } else if (url.startsWith('http://localhost')) {
@@ -49,6 +58,7 @@ export default async function authorize(
   const browser = await puppeteer.launch({
     headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    ...(process.env.CHROME_BIN ? { executablePath: process.env.CHROME_BIN } : {}),
   });
   let ret;
   try {

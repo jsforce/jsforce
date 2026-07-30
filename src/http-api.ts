@@ -187,7 +187,11 @@ export class HttpApi<S extends Schema> extends EventEmitter {
 
     const cannotHaveBody = ['GET', 'HEAD', 'OPTIONS'].includes(request.method);
 
+    // Don't set content-length in browsers as it's not allowed
+    const isBrowser = 'window' in globalThis || 'self' in globalThis;
+
     if (
+      !isBrowser && // Don't set content-length in browsers as it's not allowed
       !cannotHaveBody &&
       !!request.body &&
       !('transfer-encoding' in headers) &&
@@ -230,7 +234,11 @@ export class HttpApi<S extends Schema> extends EventEmitter {
       return parseBody(response.body);
     } catch (e) {
       // TODO(next major): we could throw a new "invalid response body" error instead.
-      this._logger.debug(`Failed to parse body of content-type: ${contentType}. Error: ${(e as Error).message}`)
+      this._logger.debug(
+        `Failed to parse body of content-type: ${contentType}. Error: ${
+          (e as Error).message
+        }`,
+      );
       return response.body;
     }
   }
@@ -266,9 +274,23 @@ export class HttpApi<S extends Schema> extends EventEmitter {
    * @protected
    */
   isSessionExpired(response: HttpResponse) {
-    // TODO:
-    // The connected app msg only applies to Agent API requests, we should move this to a separate SFAP/Agent API class later.
-    return response.statusCode === 401 && !response.body.includes('Connected app is not attached to Agent')
+    // REST API status codes: https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/errorcodes.htm
+    //
+    // "401 - The session ID or OAuth token used has expired or is invalid. The response body contains the message and errorCode."
+    if (response.statusCode === 401) {
+      // Known list of 401 responses that shouldn't be considered as "session expired".
+      //
+      // These usualy come from an CA/ECA, OAuth, IP restriction change in the org that block connections, we need to skip these
+      // org jsforce will enter into an infinite loop trying to get a valid token.
+      const responsesToSkip = ['Connected app is not attached to Agent', 'This session is not valid for use with the REST API'];
+      for (const p of responsesToSkip) {
+        if (response.body.includes(p)) return false
+      }
+
+      return true
+    }
+
+    return false
   }
 
   /**
@@ -313,14 +335,17 @@ export class HttpApi<S extends Schema> extends EventEmitter {
     } catch (e) {
       // eslint-disable no-empty
     }
-    
+
     if (Array.isArray(error)) {
-      if (error.length === 1){
-        error = error[0]
+      if (error.length === 1) {
+        error = error[0];
       } else {
         return new HttpApiError(
           `Multiple errors returned.
-  Check \`error.data\` for the error details`, 'MULTIPLE_API_ERRORS', error)   
+  Check \`error.data\` for the error details`,
+          'MULTIPLE_API_ERRORS',
+          error,
+        );
       }
     }
 
@@ -339,13 +364,20 @@ export class HttpApi<S extends Schema> extends EventEmitter {
       return new HttpApiError(
         `HTTP response contains html content.
 Check that the org exists and can be reached.
+
+HTTP status code: ${response.statusCode}.
+REST API Status Codes and Error Responses:
+https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/errorcodes.htm
+
 See \`error.data\` for the full html response.`,
         error.errorCode,
         error.message,
       );
     }
 
-    return error instanceof HttpApiError ? error : new HttpApiError(error.message, error.errorCode, error);
+    return error instanceof HttpApiError
+      ? error
+      : new HttpApiError(error.message, error.errorCode, error);
   }
 }
 
@@ -356,7 +388,7 @@ class HttpApiError extends Error {
   /**
    * This contains error-specific details, usually returned from the API.
    */
-  data: any
+  data: any;
   errorCode: string;
 
   constructor(message: string, errorCode?: string | undefined, data?: any) {
@@ -377,3 +409,4 @@ class HttpApiError extends Error {
 }
 
 export default HttpApi;
+export const isBrowser = 'window' in globalThis || 'self' in globalThis;
