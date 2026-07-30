@@ -422,6 +422,53 @@ describe('HTTP API', () => {
       assert.ok(!refreshCalled, 'Refresh function should not be called');
       assert.equal(requestCount, 1, 'Should only make one request');
     });
+
+    it('gives up after a bounded number of refresh attempts when session stays expired', async () => {
+      let refreshCount = 0;
+      const conn = new Connection({
+        loginUrl,
+        accessToken: 'invalid_token',
+        refreshFn: (_c, callback) => {
+          refreshCount++;
+          // Refresh always "succeeds", but the server keeps rejecting the new token.
+          callback(null, `refreshed_token_${refreshCount}`);
+        },
+      });
+
+      const httpApi = new HttpApi(conn, {});
+
+      let requestCount = 0;
+      httpApi.on('request', () => {
+        requestCount++;
+      });
+
+      const pool = mockAgent.get(loginUrl);
+      pool
+        .intercept({ path: '/services/data/v59.0', method: 'GET' })
+        .reply(401)
+        .persist();
+
+      await assert.rejects(
+        async () => {
+          await httpApi.request({
+            method: 'GET',
+            url: `${loginUrl}/services/data/v59.0`,
+          });
+        },
+        {
+          errorCode: 'ERROR_HTTP_401',
+        },
+      );
+
+      assert.ok(
+        requestCount < 10,
+        `Should stop retrying instead of looping forever, got ${requestCount} requests`,
+      );
+      assert.ok(
+        refreshCount < 10,
+        `Should stop refreshing instead of looping forever, got ${refreshCount} refreshes`,
+      );
+    });
   });
 
   describe('error handling', () => {

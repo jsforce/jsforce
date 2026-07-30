@@ -34,6 +34,15 @@ function parseText(str: string) {
 }
 
 /**
+ * Maximum number of times a single request will be retried after a session-expired
+ * response, even when the refresh delegate reports success. Without this cap, a
+ * refresh that keeps returning a token the server still rejects (e.g. a persistently
+ * broken connected app) would recurse via `HttpApi#request` forever.
+ * @private
+ */
+const MAX_SESSION_REFRESH_RETRIES = 3;
+
+/**
  * HTTP based API class with authorization hook
  */
 export class HttpApi<S extends Schema> extends EventEmitter {
@@ -61,7 +70,10 @@ export class HttpApi<S extends Schema> extends EventEmitter {
   /**
    * Callout to API endpoint using http
    */
-  request<R = unknown>(request: HttpRequest): StreamPromise<R> {
+  request<R = unknown>(
+    request: HttpRequest,
+    sessionRefreshCount = 0,
+  ): StreamPromise<R> {
     return StreamPromise.create<R>(() => {
       const { stream, setStream } = createLazyStream();
       const promise = (async () => {
@@ -81,7 +93,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
         */
         if (refreshDelegate && refreshDelegate.isRefreshing()) {
           await refreshDelegate.waitRefresh();
-          const bodyPromise = this.request(request);
+          const bodyPromise = this.request(request, sessionRefreshCount);
           setStream(bodyPromise.stream());
           const body = await bodyPromise;
           return body;
@@ -126,6 +138,13 @@ export class HttpApi<S extends Schema> extends EventEmitter {
         // Refresh token if session has been expired and requires authentication
         // when session refresh delegate is available
         if (this.isSessionExpired(response) && refreshDelegate) {
+          if (sessionRefreshCount >= MAX_SESSION_REFRESH_RETRIES) {
+            this._logger.error(
+              `Session still expired after ${sessionRefreshCount} refresh attempts, giving up.`,
+            );
+            const err = await this.getError(response);
+            throw err;
+          }
           await refreshDelegate.refresh(requestTime);
           /* remove the `content-length` header after token refresh
            *
@@ -146,7 +165,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
           ) {
             delete request.headers['content-length'];
           }
-          return this.request(request);
+          return this.request(request, sessionRefreshCount + 1);
         }
         if (this.isErrorResponse(response)) {
           const err = await this.getError(response);
