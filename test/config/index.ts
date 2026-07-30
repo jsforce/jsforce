@@ -2,6 +2,7 @@ export default {
   loginUrl: process.env.SF_LOGIN_URL ?? 'https://login.salesforce.com',
   username: process.env.SF_USERNAME ?? '',
   password: process.env.SF_PASSWORD ?? '',
+  accessToken: process.env.SF_ACCESS_TOKEN ?? '',
   clientId: process.env.SF_OAUTH2_CLIENT_ID ?? '',
   clientSecret: process.env.SF_OAUTH2_CLIENT_SECRET ?? '',
   redirectUri:

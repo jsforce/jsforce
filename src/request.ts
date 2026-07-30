@@ -1,7 +1,6 @@
 import { EventEmitter } from 'events';
 import { Duplex, Readable, Writable } from 'stream';
-import fetch, { Response, RequestInit, FetchError } from 'node-fetch';
-import createHttpsProxyAgent from 'https-proxy-agent';
+import {fetch, errors, Response, RequestInit, ProxyAgent} from 'undici';
 import {
   createHttpRequestHandlerStreams,
   executeWithTimeout,
@@ -11,6 +10,10 @@ import {
 import { HttpRequest, HttpRequestOptions } from './types';
 import { getLogger } from './util/logger';
 import is from '@sindresorhus/is';
+
+type CodedError = {
+  code?: string;
+}
 
 /**
  *
@@ -37,11 +40,12 @@ async function startFetchRequest(
 ) {
   const logger = getLogger('fetch');
   const { httpProxy, followRedirect } = options;
-  const agent = httpProxy ? createHttpsProxyAgent(httpProxy) : undefined;
+  const agent = httpProxy ? new ProxyAgent(httpProxy) : undefined;
   const { url, body, ...rrequest } = request;
   const controller = new AbortController();
 
   let retryCount = 0;
+  let retry420Count = 0;
 
   const retryOpts: Required<HttpRequestOptions['retry']> = {
     statusCodes: options.retry?.statusCodes ?? [420, 429, 500, 502, 503, 504],
@@ -70,12 +74,18 @@ async function startFetchRequest(
 
   const shouldRetryRequest = (
     maxRetry: number,
-    resOrErr: Response | Error | FetchError,
+    resOrErr: Response | Error,
   ): boolean => {
     if (!retryOpts.methods.includes(request.method)) return false;
 
     if (resOrErr instanceof Response) {
-      if (retryOpts.statusCodes.includes(resOrErr.status)) {
+      // REST API status codes: https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/errorcodes.htm
+      //
+      // Deleted/expired scratch orgs return 420 and causes a long delay on all requests due to the retry with exponential backoff.
+      // We still want to retry on 420 (Metadata API requests sometimes return it) so here we'll limit to a maximum of 2 retries.
+      if (resOrErr.status === 420) {
+        return retry420Count < 2;
+      } else if (retryOpts.statusCodes.includes(resOrErr.status)) {
         if (maxRetry === retryCount) {
           return false
         } else {
@@ -86,23 +96,17 @@ async function startFetchRequest(
     } else {
       if (maxRetry === retryCount) return false;
 
-      // only retry on operational errors
-      // https://github.com/node-fetch/node-fetch/blob/2.x/ERROR-HANDLING.md#error-handling-with-node-fetch
-      if (resOrErr.name != 'FetchError') return false;
+      // If the error is not a TypeError, then it's not an operational error and thus we cannot retry.
+      if (!(resOrErr instanceof TypeError)) return false;
 
       if (is.nodeStream(body) && Readable.isDisturbed(body)) {
         logger.debug('Body of type stream was read, unable to retry request.');
         return false;
       }
 
-      if (
-        'code' in resOrErr &&
-        resOrErr.code &&
-        retryOpts?.errorCodes?.includes(resOrErr.code)
-      )
-        return true;
-
-      return false;
+      const err: TypeError = resOrErr;
+      const causativeError: CodedError = (err.cause instanceof errors.SocketError ? err.cause.cause : err.cause) as CodedError;
+      return !!(causativeError && 'code' in causativeError && causativeError.code && retryOpts?.errorCodes.includes(causativeError.code));
     }
   };
 
@@ -114,9 +118,10 @@ async function startFetchRequest(
       ...(input && /^(post|put|patch)$/i.test(request.method)
         ? { body: input }
         : {}),
+      duplex: 'half',
       redirect: 'manual',
       signal: controller.signal,
-      agent,
+      dispatcher: agent,
     };
 
     try {
@@ -135,6 +140,9 @@ async function startFetchRequest(
         // jsforce may switch to node's fetch which doesn't emit this event on retries.
         emitter.emit('retry', retryCount);
         retryCount++;
+        if (res.status === 420) {
+          retry420Count++;
+        }
 
         return await fetchWithRetries(maxRetry);
       }
@@ -142,7 +150,7 @@ async function startFetchRequest(
       return res;
     } catch (err) {
       logger.debug('Request failed');
-      const error = err as Error | FetchError;
+      const error = err as Error | TypeError;
 
       // request was canceled by consumer (AbortController), skip retry and rethrow.
       if (error.name === 'AbortError') {
@@ -168,23 +176,29 @@ async function startFetchRequest(
       }
 
       logger.debug('Skipping retry...');
-
-      if (maxRetry === retryCount) {
-        throw err;
-      } else {
-        throw err;
-      }
+      throw err;
     }
   };
 
   let res: Response;
 
+  // Timeout after 30 minutes without a response
+  //
+  // default timeout is 0 and jsforce consumers can't set this when calling `Connection` methods so we set a long default at the fetch wrapper level.
+  const fetchTimeout = options.timeout ?? 1_800_000;
+
   try {
-    res = await executeWithTimeout(fetchWithRetries, options.timeout, () =>
+    res = await executeWithTimeout(fetchWithRetries, fetchTimeout, () =>
       controller.abort(),
     );
   } catch (err) {
-    emitter.emit('error', err);
+    let throwableError: Error;
+    if (err instanceof DOMException && err.name === 'AbortError') {
+      throwableError = new DOMException((err as Error).message + ' Request was aborted due to timeout of 30 minutes.', (err as Error).name);
+    } else {
+      throwableError = err as Error;
+    }
+    emitter.emit('error', throwableError);
     return;
   }
   const headers: { [key: string]: any } = {};
@@ -218,7 +232,11 @@ async function startFetchRequest(
     return;
   }
   emitter.emit('response', response);
-  res.body.pipe(output);
+  if (res.body) {
+    Readable.fromWeb(res.body).pipe(output);
+  } else {
+    output.end();
+  }
 }
 
 /**

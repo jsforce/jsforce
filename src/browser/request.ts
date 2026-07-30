@@ -147,103 +147,6 @@ async function startFetchRequest(
 /**
  *
  */
-function getResponseHeaderNames(xhr: XMLHttpRequest) {
-  const headerLines = (xhr.getAllResponseHeaders() || '')
-    .split(/[\r\n]+/)
-    .filter((l) => l.trim() !== '');
-  return headerLines.map((headerLine) =>
-    headerLine.split(/\s*:/)[0].toLowerCase(),
-  );
-}
-
-/**
- *
- */
-async function startXmlHttpRequest(
-  request: HttpRequest,
-  options: HttpRequestOptions,
-  input: Readable | undefined,
-  output: Writable,
-  emitter: EventEmitter,
-  counter: number = 0,
-) {
-  const { method, url, headers: reqHeaders } = request;
-  const { followRedirect } = options;
-  const reqBody =
-    input && /^(post|put|patch)$/i.test(method) ? await readAll(input) : null;
-  const xhr = new XMLHttpRequest();
-  await executeWithTimeout(
-    () => {
-      xhr.open(method, url);
-      if (reqHeaders) {
-        for (const header in reqHeaders) {
-          xhr.setRequestHeader(header, reqHeaders[header]);
-        }
-      }
-      if (options.timeout) {
-        xhr.timeout = options.timeout;
-      }
-      xhr.responseType = 'arraybuffer';
-      xhr.send(reqBody);
-      return new Promise<void>((resolve, reject) => {
-        xhr.onload = () => resolve();
-        xhr.onerror = reject;
-        xhr.ontimeout = reject;
-        xhr.onabort = reject;
-      });
-    },
-    options.timeout,
-    () => xhr.abort(),
-  );
-  const headerNames = getResponseHeaderNames(xhr);
-  const headers = headerNames.reduce<{ [name: string]: string }>(
-    (headers, headerName) => ({
-      ...headers,
-      [headerName]: xhr.getResponseHeader(headerName) || '',
-    }),
-    {},
-  );
-  const response = {
-    statusCode: xhr.status,
-    headers: headers,
-  };
-  if (followRedirect && isRedirect(response.statusCode)) {
-    try {
-      performRedirectRequest(
-        request,
-        response,
-        followRedirect,
-        counter,
-        (req) =>
-          startXmlHttpRequest(
-            req,
-            options,
-            undefined,
-            output,
-            emitter,
-            counter + 1,
-          ),
-      );
-    } catch (err) {
-      emitter.emit('error', err);
-    }
-    return;
-  }
-  let body: Buffer;
-  if (!response.statusCode) {
-    response.statusCode = 400;
-    body = Buffer.from('Access Declined');
-  } else {
-    body = Buffer.from(xhr.response);
-  }
-  emitter.emit('response', response);
-  output.write(body);
-  output.end();
-}
-
-/**
- *
- */
 let defaults: HttpRequestOptions = {};
 
 /**
@@ -265,10 +168,6 @@ export default function request(
     req,
     options,
   );
-  if (typeof window !== 'undefined' && typeof window.fetch === 'function') {
-    startFetchRequest(req, options, input, output, stream);
-  } else {
-    startXmlHttpRequest(req, options, input, output, stream);
-  }
+  startFetchRequest(req, options, input, output, stream);
   return stream;
 }

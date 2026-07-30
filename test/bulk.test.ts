@@ -45,8 +45,8 @@ export async function insertAccounts(
 /**
  *
  */
-beforeAll(async () => {
-  await connMgr.establishConnection(conn);
+beforeAll(() => {
+  connMgr.establishConnection(conn);
 });
 
 /**

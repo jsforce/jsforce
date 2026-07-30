@@ -46,6 +46,9 @@ module.exports = {
         '@babel/preset-typescript',
         'power-assert',
       ],
+      plugins: [
+        ['@babel/plugin-transform-runtime', { corejs: false }],
+      ],
     },
   },
 };

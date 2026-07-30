@@ -2,15 +2,16 @@ name: publish-docs
 
 on: workflow_call
 
+permissions:
+  contents: write
+
 jobs:
   publish:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.SVC_CLI_BOT_JSFORCE_GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.SVC_CLI_BOT_JSFORCE_GITHUB_TOKEN }}
+          token: ${{ github.token }}
           ref: ${{ github.ref }}
       - uses: actions/setup-node@v3
         with:
@@ -34,5 +35,7 @@ jobs:
         run: |
           cd docs
           git add .
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m 'docs: publishing gh-pages [skip ci]' --no-verify
           git push origin gh-pages --no-verify
