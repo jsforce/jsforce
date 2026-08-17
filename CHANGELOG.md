@@ -1,3 +1,12 @@
+## [3.10.20](https://github.com/jsforce/jsforce/compare/3.10.19...3.10.20) (2026-08-17)
+
+
+### Bug Fixes
+
+* Use URL API for OAuth2 endpoint construction @W-23807280@ ([#1820](https://github.com/jsforce/jsforce/issues/1820)) ([2946d08](https://github.com/jsforce/jsforce/commit/2946d087a036be29343192474cc7773a52c370d5))
+
+
+
 ## [3.10.19](https://github.com/jsforce/jsforce/compare/3.10.18...3.10.19) (2026-07-02)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * release ([8ce0df6](https://github.com/jsforce/jsforce/commit/8ce0df66c0e5274a466ef4c07a20c30eb3a76f55))
-
-
-
-## [3.10.15](https://github.com/jsforce/jsforce/compare/3.10.14...3.10.15) (2026-05-13)
-
-
-### Bug Fixes
-
-* timeouts calculate once instead of repeatedly ([#1792](https://github.com/jsforce/jsforce/issues/1792)) ([22705e7](https://github.com/jsforce/jsforce/commit/22705e79380c1414e3d71abb1d79e77657afdb76))
 
 
 
