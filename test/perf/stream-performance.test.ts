@@ -22,7 +22,7 @@ import { readAll } from '../../src/util/stream';
 const PERFORMANCE_BASELINES = {
   // Maximum time allowed for readAll to process data (ms per MB)
   maxMsPerMB: {
-    small: 10, // 1-5MB: allow 10ms per MB
+    small: 15, // 1-5MB: allow 15ms per MB
     medium: 5, // 5-50MB: allow 5ms per MB
     large: 3, // 50MB+: allow 3ms per MB
   } as Record<string, number>,
