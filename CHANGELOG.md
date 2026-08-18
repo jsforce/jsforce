@@ -1,3 +1,12 @@
+## [3.10.21](https://github.com/jsforce/jsforce/compare/3.10.20...3.10.21) (2026-08-18)
+
+
+### Reverts
+
+* Revert "Use URL API for OAuth2 endpoint construction @W-23807280@ (#1819)" (#1821) ([10c8e30](https://github.com/jsforce/jsforce/commit/10c8e30cf618fe2d9207d39d9c30fc5e7e69f715)), closes [#1819](https://github.com/jsforce/jsforce/issues/1819) [#1821](https://github.com/jsforce/jsforce/issues/1821)
+
+
+
 ## [3.10.20](https://github.com/jsforce/jsforce/compare/3.10.19...3.10.20) (2026-08-17)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * switched from node-fetch to native fetch API @W-23121570@ ([#1807](https://github.com/jsforce/jsforce/issues/1807)) ([ccddfee](https://github.com/jsforce/jsforce/commit/ccddfee319fc08ecca25e967c22fc69727e5a4a9))
-
-
-
-## [3.10.16](https://github.com/jsforce/jsforce/compare/3.10.15...3.10.16) (2026-06-12)
-
-
-### Bug Fixes
-
-* release ([8ce0df6](https://github.com/jsforce/jsforce/commit/8ce0df66c0e5274a466ef4c07a20c30eb3a76f55))
 
 
 
