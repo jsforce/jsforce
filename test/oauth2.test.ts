@@ -145,4 +145,99 @@ describe('endpoints', () => {
       `${instanceUrl}/services/oauth2/authorize?response_type=code&client_id=${oauth2.clientId}&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Foauthredirect`,
     );
   });
+
+  it('percent-encodes injection characters in loginUrl path', () => {
+    const loginUrl = 'https://login.salesforce.com/";calc;"';
+    const encodedBase = 'https://login.salesforce.com/%22;calc;%22';
+
+    const oauth2 = new OAuth2({
+      loginUrl,
+      clientId: '1234test',
+      redirectUri: 'http://localhost:8080/oauthredirect',
+    });
+
+    assert.equal(oauth2.loginUrl, loginUrl);
+    assert.equal(
+      oauth2.authzServiceUrl,
+      `${encodedBase}/services/oauth2/authorize`,
+    );
+    assert.equal(
+      oauth2.tokenServiceUrl,
+      `${encodedBase}/services/oauth2/token`,
+    );
+    assert.equal(
+      oauth2.revokeServiceUrl,
+      `${encodedBase}/services/oauth2/revoke`,
+    );
+    assert.equal(
+      oauth2.getAuthorizationUrl(),
+      `${encodedBase}/services/oauth2/authorize?response_type=code&client_id=${oauth2.clientId}&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Foauthredirect`,
+    );
+  });
+
+  it('does not double-encode already-encoded loginUrl paths', () => {
+    const instanceUrl = 'https://login.salesforce.com/a%20b';
+
+    const oauth2 = new OAuth2({
+      loginUrl: instanceUrl,
+      clientId: '1234test',
+      redirectUri: 'http://localhost:8080/oauthredirect',
+    });
+
+    assert.equal(
+      oauth2.authzServiceUrl,
+      `${instanceUrl}/services/oauth2/authorize`,
+    );
+    assert.equal(oauth2.tokenServiceUrl, `${instanceUrl}/services/oauth2/token`);
+    assert.equal(
+      oauth2.revokeServiceUrl,
+      `${instanceUrl}/services/oauth2/revoke`,
+    );
+  });
+
+  it('derives loginUrl origin and revoke URL from authz/token service URLs', () => {
+    const origin = 'https://login.salesforce.com';
+    const oauth2 = new OAuth2({
+      authzServiceUrl: `${origin}/services/oauth2/authorize`,
+      tokenServiceUrl: `${origin}/services/oauth2/token`,
+      clientId: '1234test',
+      redirectUri: 'http://localhost:8080/oauthredirect',
+    });
+
+    assert.equal(oauth2.loginUrl, origin);
+    assert.equal(
+      oauth2.authzServiceUrl,
+      `${origin}/services/oauth2/authorize`,
+    );
+    assert.equal(oauth2.tokenServiceUrl, `${origin}/services/oauth2/token`);
+    assert.equal(
+      oauth2.revokeServiceUrl,
+      `${origin}/services/oauth2/revoke`,
+    );
+  });
+
+  it('uses default loginUrl when omitted', () => {
+    const oauth2 = new OAuth2({
+      clientId: '1234test',
+      redirectUri: 'http://localhost:8080/oauthredirect',
+    });
+
+    assert.equal(oauth2.loginUrl, 'https://login.salesforce.com');
+    assert.equal(
+      oauth2.authzServiceUrl,
+      'https://login.salesforce.com/services/oauth2/authorize',
+    );
+  });
+
+  it('throws Invalid URL for scheme-less loginUrl', () => {
+    assert.throws(
+      () =>
+        new OAuth2({
+          loginUrl: 'test.salesforce.com',
+          clientId: '1234test',
+          redirectUri: 'http://localhost:8080/oauthredirect',
+        }),
+      { name: 'TypeError', message: /Invalid URL/ },
+    );
+  });
 });
