@@ -1,3 +1,12 @@
+## [3.10.22](https://github.com/jsforce/jsforce/compare/3.10.21...3.10.22) (2026-08-18)
+
+
+### Bug Fixes
+
+* Use URL API for OAuth2 endpoint construction @W-23807280@ ([#1823](https://github.com/jsforce/jsforce/issues/1823)) ([2b721bc](https://github.com/jsforce/jsforce/commit/2b721bc4da115dbba8c140393d026744e934e71d))
+
+
+
 ## [3.10.21](https://github.com/jsforce/jsforce/compare/3.10.20...3.10.21) (2026-08-18)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * reenabling proper node tests @W-22477115@ ([#1808](https://github.com/jsforce/jsforce/issues/1808)) ([8babac6](https://github.com/jsforce/jsforce/commit/8babac66213646f1d2110050eeb92caaa0909431))
-
-
-
-## [3.10.17](https://github.com/jsforce/jsforce/compare/3.10.16...3.10.17) (2026-06-25)
-
-
-### Bug Fixes
-
-* switched from node-fetch to native fetch API @W-23121570@ ([#1807](https://github.com/jsforce/jsforce/issues/1807)) ([ccddfee](https://github.com/jsforce/jsforce/commit/ccddfee319fc08ecca25e967c22fc69727e5a4a9))
 
 
 
