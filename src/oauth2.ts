@@ -10,13 +10,6 @@ const defaultOAuth2Config = {
   loginUrl: 'https://login.salesforce.com',
 };
 
-const appendPath = (base: string, segment: string): string => {
-  const url = new URL(base);
-  const basePath = url.pathname.endsWith('/') ? url.pathname.slice(0, -1) : url.pathname;
-  url.pathname = `${basePath}/${segment}`;
-  return url.href;
-};
-
 // Makes a nodejs base64 encoded string compatible with rfc4648 alternative encoding for urls.
 // @param base64Encoded a nodejs base64 encoded string
 function base64UrlEscape(base64Encoded: string): string {
@@ -109,16 +102,19 @@ export class OAuth2 {
       useVerifier,
     } = config;
     if (authzServiceUrl && tokenServiceUrl) {
-      this.loginUrl = new URL(authzServiceUrl).origin;
+      this.loginUrl = authzServiceUrl.split('/').slice(0, 3).join('/');
       this.authzServiceUrl = authzServiceUrl;
       this.tokenServiceUrl = tokenServiceUrl;
       this.revokeServiceUrl =
-        revokeServiceUrl || appendPath(this.loginUrl, 'services/oauth2/revoke');
+        revokeServiceUrl || `${this.loginUrl}/services/oauth2/revoke`;
     } else {
-      this.loginUrl = loginUrl ?? defaultOAuth2Config.loginUrl;
-      this.authzServiceUrl = appendPath(this.loginUrl, 'services/oauth2/authorize');
-      this.tokenServiceUrl = appendPath(this.loginUrl, 'services/oauth2/token');
-      this.revokeServiceUrl = appendPath(this.loginUrl, 'services/oauth2/revoke');
+      this.loginUrl = loginUrl ?? defaultOAuth2Config.loginUrl
+
+      const maybeSlash = this.loginUrl.endsWith('/') ? '' : '/'
+
+      this.authzServiceUrl = `${this.loginUrl}${maybeSlash}services/oauth2/authorize`
+      this.tokenServiceUrl = `${this.loginUrl}${maybeSlash}services/oauth2/token`
+      this.revokeServiceUrl = `${this.loginUrl}${maybeSlash}services/oauth2/revoke`
     }
     this.clientId = clientId;
     this.clientSecret = clientSecret;
