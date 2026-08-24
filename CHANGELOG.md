@@ -1,3 +1,12 @@
+## [3.10.23](https://github.com/jsforce/jsforce/compare/3.10.22...3.10.23) (2026-08-24)
+
+
+### Bug Fixes
+
+* force release ([#1825](https://github.com/jsforce/jsforce/issues/1825)) ([bd91d08](https://github.com/jsforce/jsforce/commit/bd91d08177ac4f3fac3171881a35f11733213953))
+
+
+
 ## [3.10.22](https://github.com/jsforce/jsforce/compare/3.10.21...3.10.22) (2026-08-18)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * docs creation action should work again @W-23176525@ ([#1810](https://github.com/jsforce/jsforce/issues/1810)) ([4eec8e4](https://github.com/jsforce/jsforce/commit/4eec8e45a1ac1b13cb0a75baab65b48009f0822f))
-
-
-
-## [3.10.18](https://github.com/jsforce/jsforce/compare/3.10.17...3.10.18) (2026-06-29)
-
-
-### Bug Fixes
-
-* reenabling proper node tests @W-22477115@ ([#1808](https://github.com/jsforce/jsforce/issues/1808)) ([8babac6](https://github.com/jsforce/jsforce/commit/8babac66213646f1d2110050eeb92caaa0909431))
 
 
 
