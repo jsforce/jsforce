@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { Duplex, Readable, Writable } from 'stream';
-import {fetch, errors, Response, RequestInit, ProxyAgent, Agent, setGlobalDispatcher} from 'undici';
+import {fetch, errors, Response, RequestInit, ProxyAgent, Agent} from 'undici';
 import {
   createHttpRequestHandlerStreams,
   executeWithTimeout,
@@ -11,8 +11,7 @@ import { HttpRequest, HttpRequestOptions } from './types';
 import { getLogger } from './util/logger';
 import is from '@sindresorhus/is';
 
-// undici 8.x defaults to H2, causing crashes on server GOAWAY frames
-setGlobalDispatcher(new Agent({ connect: { allowH2: false } }));
+const jsforceDispatcher = new Agent({ connect: { allowH2: false } });
 
 type CodedError = {
   code?: string;
@@ -124,7 +123,7 @@ async function startFetchRequest(
       duplex: 'half',
       redirect: 'manual',
       signal: controller.signal,
-      dispatcher: agent,
+      dispatcher: agent ?? jsforceDispatcher,
     };
 
     try {
