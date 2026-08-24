@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { Duplex, Readable, Writable } from 'stream';
-import {fetch, errors, Response, RequestInit, ProxyAgent} from 'undici';
+import {fetch, errors, Response, RequestInit, ProxyAgent, Agent, Dispatcher} from 'undici';
 import {
   createHttpRequestHandlerStreams,
   executeWithTimeout,
@@ -10,6 +10,12 @@ import {
 import { HttpRequest, HttpRequestOptions } from './types';
 import { getLogger } from './util/logger';
 import is from '@sindresorhus/is';
+
+let jsforceDispatcher: Dispatcher = new Agent({ connect: { allowH2: false } });
+
+export function setDispatcher(dispatcher?: Dispatcher) {
+  jsforceDispatcher = dispatcher ?? new Agent({ connect: { allowH2: false } });
+}
 
 type CodedError = {
   code?: string;
@@ -40,7 +46,7 @@ async function startFetchRequest(
 ) {
   const logger = getLogger('fetch');
   const { httpProxy, followRedirect } = options;
-  const agent = httpProxy ? new ProxyAgent(httpProxy) : undefined;
+  const agent = httpProxy ? new ProxyAgent({ uri: httpProxy, requestTls: { allowH2: false } }) : undefined;
   const { url, body, ...rrequest } = request;
   const controller = new AbortController();
 
@@ -121,7 +127,7 @@ async function startFetchRequest(
       duplex: 'half',
       redirect: 'manual',
       signal: controller.signal,
-      dispatcher: agent,
+      dispatcher: agent ?? jsforceDispatcher,
     };
 
     try {
