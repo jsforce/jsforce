@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { Duplex, Readable, Writable } from 'stream';
-import {fetch, errors, Response, RequestInit, ProxyAgent, Agent} from 'undici';
+import {fetch, errors, Response, RequestInit, ProxyAgent, Agent, Dispatcher} from 'undici';
 import {
   createHttpRequestHandlerStreams,
   executeWithTimeout,
@@ -11,7 +11,11 @@ import { HttpRequest, HttpRequestOptions } from './types';
 import { getLogger } from './util/logger';
 import is from '@sindresorhus/is';
 
-const jsforceDispatcher = new Agent({ connect: { allowH2: false } });
+let jsforceDispatcher: Dispatcher = new Agent({ connect: { allowH2: false } });
+
+export function setDispatcher(dispatcher?: Dispatcher) {
+  jsforceDispatcher = dispatcher ?? new Agent({ connect: { allowH2: false } });
+}
 
 type CodedError = {
   code?: string;
