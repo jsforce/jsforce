@@ -5,23 +5,22 @@ import { HttpRequest } from '../src/types';
 import { Transport } from '../src/transport';
 import assert from 'assert';
 import xml2js from 'xml2js';
-import {MockAgent, setGlobalDispatcher, getGlobalDispatcher, Dispatcher, errors} from 'undici';
+import {MockAgent, errors} from 'undici';
 import { HttpRequestOptions, HttpResponse } from '../src/types/common';
+import { setDispatcher } from '../src/request';
 
 const loginUrl = 'https://heaven-party-2429-dev-ed.scratch.my.salesforce.com';
 
 let mockAgent: MockAgent;
-let originalDispatcher: Dispatcher;
 
 beforeEach(() => {
-  originalDispatcher = getGlobalDispatcher();
   mockAgent = new MockAgent();
   mockAgent.disableNetConnect();
-  setGlobalDispatcher(mockAgent);
+  setDispatcher(mockAgent);
 });
 
 afterEach(async () => {
-  setGlobalDispatcher(originalDispatcher);
+  setDispatcher();
   await mockAgent.close();
 });
 
