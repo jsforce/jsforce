@@ -801,8 +801,9 @@ describe('SOAP API', () => {
 
   describe('JWT access token guard', () => {
     // A token that isJWTToken() recognizes: 3 dot-separated parts where the
-    // first part is base64-encoded JSON (here: {"alg":"RS256"}).
-    const jwtToken = 'eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxMjMifQ.signature';
+	// first part is base64-encoded JSON (here: {"alg":"RS256"}). The payload
+    // and signature are obvious placeholders, not a real credential.
+    const jwtToken = 'eyJhbGciOiJSUzI1NiJ9.NOT_A_REAL_PAYLOAD.NOT_A_REAL_SIGNATURE';
 
     function createSoap(version: string) {
       const conn = new Connection({
