@@ -799,6 +799,56 @@ describe('SOAP API', () => {
     });
   });
 
+  describe('JWT access token guard', () => {
+    // A token that isJWTToken() recognizes: 3 dot-separated parts where the
+	// first part is base64-encoded JSON (here: {"alg":"RS256"}). The payload
+    // and signature are obvious placeholders, not a real credential.
+    const jwtToken = 'eyJhbGciOiJSUzI1NiJ9.NOT_A_REAL_PAYLOAD.NOT_A_REAL_SIGNATURE';
+
+    function createSoap(version: string) {
+      const conn = new Connection({
+        loginUrl,
+        accessToken: jwtToken,
+        version,
+      });
+      return () =>
+        new SOAP(conn, {
+          xmlns: 'urn:partner.soap.sforce.com',
+          endpointUrl: `${loginUrl}/services/Soap/u/${version}`,
+        });
+    }
+
+    it('throws for a JWT access token on API versions below 68.0', () => {
+      assert.throws(createSoap('67.0'), {
+        message:
+          'SOAP API does not support JWT-based access tokens for API versions below 68.0. Either use API version 68.0 or later, or disable the "Issue JSON Web Token (JWT)-based access tokens" setting in your Connected App or External Client App',
+      });
+    });
+
+    it('allows a JWT access token on API version 68.0 (core 264+)', () => {
+      assert.doesNotThrow(createSoap('68.0'));
+    });
+
+    it('allows a JWT access token on API versions above 68.0', () => {
+      assert.doesNotThrow(createSoap('69.0'));
+    });
+
+    it('allows a non-JWT access token on API versions below 68.0', () => {
+      const conn = new Connection({
+        loginUrl,
+        accessToken: 'not-a-jwt',
+        version: '67.0',
+      });
+      assert.doesNotThrow(
+        () =>
+          new SOAP(conn, {
+            xmlns: 'urn:partner.soap.sforce.com',
+            endpointUrl: `${loginUrl}/services/Soap/u/67.0`,
+          }),
+      );
+    });
+  });
+
   it('parses errors in XML responses', () => {
     const conn = new Connection({
       loginUrl,
