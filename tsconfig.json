@@ -2,17 +2,17 @@
   "compilerOptions": {
     "target": "es2022",
     "rootDir": "src",
-    "baseUrl": ".",
     "outDir": "lib",
     "declaration": true,
     "skipLibCheck": true,
     "lib": ["es2022", "dom"],
-    "module": "commonjs",
+    "module": "nodenext",
     "strict": true,
     "moduleResolution": "nodenext",
     "paths": {
       "jsforce": ["."],
       "jsforce/*": ["./*"],
+      "faye": ["./typings/faye/index.d.ts"],
     },
     "typeRoots": [
       "typings",
