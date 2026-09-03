@@ -181,7 +181,7 @@ export type Field = {
   writeRequiresMasterRead: boolean;
 };
 
-type ActionOverride = {
+export type ActionOverride = {
   formFactor: string;
   isAvailableInTouch: boolean;
   name: string;
@@ -189,7 +189,7 @@ type ActionOverride = {
   url: Optional<string>;
 };
 
-type ChildRelationship = {
+export type ChildRelationship = {
   cascadeDelete: boolean;
   childSObject: string;
   deprecatedAndHidden: boolean;
@@ -200,12 +200,12 @@ type ChildRelationship = {
   restrictedDelete: boolean;
 };
 
-type NamedLayoutInfo = {
+export type NamedLayoutInfo = {
   name: string;
   urls: { [key: string]: string };
 };
 
-type RecordTypeInfo = {
+export type RecordTypeInfo = {
   available: boolean;
   defaultRecordTypeMapping: boolean;
   master: boolean;
@@ -214,12 +214,12 @@ type RecordTypeInfo = {
   urls: { [key: string]: string };
 };
 
-type ScopeInfo = {
+export type ScopeInfo = {
   label: string;
   name: string;
 };
 
-type DescribeGlobalSObjectResult = {
+export type DescribeGlobalSObjectResult = {
   activateable: boolean;
   createable: boolean;
   custom: boolean;
