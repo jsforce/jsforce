@@ -1,3 +1,12 @@
+## [3.10.25](https://github.com/jsforce/jsforce/compare/3.10.24...3.10.25) (2026-09-04)
+
+
+### Bug Fixes
+
+* export describe-related types from common ([#1828](https://github.com/jsforce/jsforce/issues/1828)) ([311b183](https://github.com/jsforce/jsforce/commit/311b183a8fa690bc5e92814d03544b7ef9d2f972))
+
+
+
 ## [3.10.24](https://github.com/jsforce/jsforce/compare/3.10.23...3.10.24) (2026-08-27)
 
 
@@ -26,15 +35,6 @@
 ### Reverts
 
 * Revert "Use URL API for OAuth2 endpoint construction @W-23807280@ (#1819)" (#1821) ([10c8e30](https://github.com/jsforce/jsforce/commit/10c8e30cf618fe2d9207d39d9c30fc5e7e69f715)), closes [#1819](https://github.com/jsforce/jsforce/issues/1819) [#1821](https://github.com/jsforce/jsforce/issues/1821)
-
-
-
-## [3.10.20](https://github.com/jsforce/jsforce/compare/3.10.19...3.10.20) (2026-08-17)
-
-
-### Bug Fixes
-
-* Use URL API for OAuth2 endpoint construction @W-23807280@ ([#1820](https://github.com/jsforce/jsforce/issues/1820)) ([2946d08](https://github.com/jsforce/jsforce/commit/2946d087a036be29343192474cc7773a52c370d5))
 
 
 
