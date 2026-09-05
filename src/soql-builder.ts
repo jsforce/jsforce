@@ -22,6 +22,8 @@ export type QueryConfig = {
   includes?: { [field: string]: QueryConfig };
   table?: string;
   conditions?: Condition;
+  groupBy?: string[];
+  having?: Condition;
   sort?: Sort;
   limit?: number;
   offset?: number;
@@ -246,13 +248,26 @@ export function createSOQL(query: QueryConfig): string {
     ' FROM ',
     query.table,
   ].join('');
-  const cond = createConditionClause(query.conditions);
-  if (cond) {
-    soql += ` WHERE ${cond}`;
+  if (query.conditions) {
+    const cond = createConditionClause(query.conditions);
+    if (cond) {
+      soql += ` WHERE ${cond}`;
+    }
   }
-  const orderby = createOrderByClause(query.sort);
-  if (orderby) {
-    soql += ` ORDER BY ${orderby}`;
+  if (query.groupBy && query.groupBy.length > 0) {
+    soql += ' GROUP BY ' + query.groupBy.join(', ');
+  }
+  if (query.having) {
+    const having = createConditionClause(query.having);
+    if (having) {
+      soql += ' HAVING ' + having;
+    }
+  }
+  if (query.sort) {
+    const orderBy = createOrderByClause(query.sort);
+    if (orderBy) {
+      soql += ` ORDER BY ${orderBy}`;
+    }
   }
   if (query.limit) {
     soql += ` LIMIT ${query.limit}`;

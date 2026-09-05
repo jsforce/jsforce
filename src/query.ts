@@ -304,28 +304,27 @@ export class Query<
         'Cannot set select fields for the query which has already built SOQL.',
       );
     }
-    function toFieldArray(fields: QueryField<S, N, FP>): string[] {
-      return typeof fields === 'string'
-        ? fields.split(/\s*,\s*/)
-        : Array.isArray(fields)
-        ? (fields as Array<string | FP>)
-            .map(toFieldArray)
-            .reduce<string[]>((fs, f) => [...fs, ...f], [])
-        : Object.entries(fields as { [name: string]: QueryField<S, N, FP> })
-            .map(([f, v]) => {
-              if (typeof v === 'number' || typeof v === 'boolean') {
-                return v ? [f] : [];
-              } else {
-                return toFieldArray(v).map((p) => `${f}.${p}`);
-              }
-            })
-            .reduce<string[]>((fs, f) => [...fs, ...f], []);
-    }
     if (fields) {
-      this._config.fields = toFieldArray(fields);
+      this._config.fields = this.toFieldArray(fields);
     }
     // force convert query record type without changing instance;
-    return (this as any) as Query<S, N, R2, QRT>;
+    return this as any as Query<S, N, R2, QRT>;
+  }
+
+  private toFieldArray(fields: QueryField<S, N>): string[] {
+    if (typeof fields === 'string') {
+      return fields.split(/\s*,\s*/);
+    }
+    const unflattened = Array.isArray(fields)
+      ? fields.map((f) => this.toFieldArray(f))
+      : Object.entries(fields).map(([f, v]) => {
+          if (typeof v === 'number' || typeof v === 'boolean') {
+            return v ? [f] : [];
+          } else {
+            return this.toFieldArray(v).map((p) => `${f}.${p}`);
+          }
+        });
+    return unflattened.reduce<string[]>((fs, f) => [...fs, ...f], []);
   }
 
   /**
@@ -338,6 +337,28 @@ export class Query<
       );
     }
     this._config.conditions = conditions;
+    return this;
+  }
+
+  groupBy<FP extends FieldPathSpecifier<S, N> = FieldPathSpecifier<S, N>>(
+    fields: QueryField<S, N, FP>,
+  ) {
+    if (this._soql) {
+      throw Error(
+        'Cannot set groupBy fields for the query which has already built SOQL.',
+      );
+    }
+    this._config.groupBy = this.toFieldArray(fields);
+    return this;
+  }
+
+  having(conditions: QueryCondition<S, N> | string) {
+    if (this._soql) {
+      throw Error(
+        'Cannot set having conditions for the query which has already built SOQL.',
+      );
+    }
+    this._config.having = conditions;
     return this;
   }
 
@@ -1258,6 +1279,16 @@ export class SubQuery<
    */
   where(conditions: QueryCondition<S, CN> | string): this {
     this._query = this._query.where(conditions);
+    return this;
+  }
+
+  groupBy(fields: string[]) {
+    this._query = this._query.groupBy(fields);
+    return this;
+  }
+
+  having(conditions: QueryCondition<S, CN> | string) {
+    this._query = this._query.having(conditions);
     return this;
   }
 
