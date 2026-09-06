@@ -93,6 +93,84 @@ it('should get completions and return completions', async () => {
   assert.ok(isObject(res.completions));
 });
 
+/**
+ * Test Discovery API Tests
+ */
+it('should retrieve tests and return test discovery results', async () => {
+  conn.version = '65.0';
+  const res = await conn.tooling.retrieveTests();
+  
+  assert.ok(isObject(res), 'Response should be an object');
+  assert.ok(Array.isArray(res.apexTestClasses), 'apexTestClasses should be an array');
+  assert.ok(isNumber(res.size), 'size should be a number');
+  assert.ok(isString(res.testSetSignature), 'testSetSignature should be a string');
+  
+  assert.ok(
+    res.message === null || isString(res.message),
+    'message should be null or string'
+  );
+  assert.ok(
+    res.nextRecordsUrl === null || isString(res.nextRecordsUrl),
+    'nextRecordsUrl should be null or string'
+  );
+  
+  if (res.apexTestClasses.length > 0) {
+    const testClass = res.apexTestClasses[0];
+    assert.ok(isString(testClass.id), 'test class id should be a string');
+    assert.ok(isString(testClass.name), 'test class name should be a string');
+    assert.ok(
+      isString(testClass.namespacePrefix),
+      'test class namespacePrefix should be a string'
+    );
+    assert.ok(
+      Array.isArray(testClass.testMethods),
+      'testMethods should be an array'
+    );
+    
+    if (testClass.testMethods.length > 0) {
+      const testMethod = testClass.testMethods[0];
+      assert.ok(isString(testMethod.name), 'test method name should be a string');
+    }
+  }
+  
+  assert.ok(
+    res.size >= res.apexTestClasses.length,
+    'size should be >= apexTestClasses length'
+  );
+});
+
+it('should retrieve tests with query parameters', async () => {
+  conn.version = '65.0';
+  const res = await conn.tooling.retrieveTests({
+    pageSize: 5,
+    showAllMethods: true,
+  });
+  
+  assert.ok(isObject(res), 'Response should be an object');
+  assert.ok(Array.isArray(res.apexTestClasses), 'apexTestClasses should be an array');
+  assert.ok(isNumber(res.size), 'size should be a number');
+  assert.ok(isString(res.testSetSignature), 'testSetSignature should be a string');
+  
+  assert.ok(
+    res.apexTestClasses.length <= 5,
+    'apexTestClasses length should not exceed pageSize'
+  );
+  
+  if (res.apexTestClasses.length > 0) {
+    const testClass = res.apexTestClasses[0];
+    assert.ok(isString(testClass.id), 'test class id should be a string');
+    assert.ok(isString(testClass.name), 'test class name should be a string');
+    assert.ok(
+      isString(testClass.namespacePrefix),
+      'test class namespacePrefix should be a string'
+    );
+    assert.ok(
+      Array.isArray(testClass.testMethods),
+      'testMethods should be an array'
+    );
+  }
+});
+
 it('can create static resource using application/json content type', async () => {
   if (isNodeJS()) {
     const request = createStaticResourceRequest(
