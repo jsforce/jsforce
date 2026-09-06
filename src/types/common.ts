@@ -614,6 +614,7 @@ export type IdentityInfo = {
   };
   user_type: string;
   language: string;
+  active: boolean;  
 };
 
 export type UserInfo = {
