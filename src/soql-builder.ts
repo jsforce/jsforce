@@ -12,9 +12,11 @@ export type Condition =
 
 export type SortDir = 'ASC' | 'DESC' | 'asc' | 'desc' | 1 | -1;
 
+export type SortNulls = 'FIRST' | 'LAST' | 'first' | 'last';
+
 export type Sort =
   | string
-  | Array<[string, SortDir]>
+  | Array<[string, SortDir, SortNulls?]>
   | { [field: string]: SortDir };
 
 export type QueryConfig = {
@@ -129,7 +131,7 @@ function createFieldExpression(field: string, value: any): Optional<string> {
 
 /** @private **/
 function createOrderByClause(sort: Sort = []): string {
-  let _sort: Array<[string, SortDir]> = [];
+  let _sort: Array<[string, SortDir, SortNulls?]> = [];
   if (typeof sort === 'string') {
     if (/,|\s+(asc|desc)\s*$/.test(sort)) {
       // must be specified in pure "order by" clause. Return raw config.
@@ -156,7 +158,7 @@ function createOrderByClause(sort: Sort = []): string {
     );
   }
   return _sort
-    .map(([field, dir]) => {
+    .map(([field, dir, nulls]) => {
       /* eslint-disable no-param-reassign */
       switch (String(dir)) {
         case 'DESC':
@@ -169,7 +171,14 @@ function createOrderByClause(sort: Sort = []): string {
         default:
           dir = 'ASC';
       }
-      return `${field} ${dir}`;
+      let clause = `${field} ${dir}`;
+      if (nulls != null) {
+        const n = String(nulls).toUpperCase();
+        if (n === 'FIRST' || n === 'LAST') {
+          clause += ` NULLS ${n}`;
+        }
+      }
+      return clause;
     })
     .join(', ');
 }

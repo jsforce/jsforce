@@ -316,4 +316,57 @@ describe('soql-builder', () => {
           'LIMIT 10',
     );
   });
+
+  //
+  it('should build query with NULLS LAST on a single field', () => {
+    const soql = createSOQL({
+      table: 'Opportunity',
+      sort: [['CloseDate', 'ASC', 'LAST']],
+      limit: 10,
+    });
+    assert.ok(
+      soql ===
+        'SELECT Id FROM Opportunity ' +
+          'ORDER BY CloseDate ASC NULLS LAST ' +
+          'LIMIT 10',
+    );
+  });
+
+  //
+  it('should build query with NULLS FIRST on a single field', () => {
+    const soql = createSOQL({
+      table: 'Opportunity',
+      sort: [['CloseDate', 'DESC', 'FIRST']],
+      limit: 10,
+    });
+    assert.ok(
+      soql ===
+        'SELECT Id FROM Opportunity ' +
+          'ORDER BY CloseDate DESC NULLS FIRST ' +
+          'LIMIT 10',
+    );
+  });
+
+  //
+  it('should build query with mixed NULLS placement across multiple sort fields', () => {
+    const soql = createSOQL({
+      table: 'Opportunity',
+      conditions: {
+        'Owner.Name': { $like: 'A%' },
+      },
+      sort: [
+        ['CloseDate', 'ASC', 'LAST'],
+        ['CreatedDate', 'DESC'],
+        ['Name', 'ASC', 'FIRST'],
+      ],
+      limit: 10,
+    });
+    assert.ok(
+      soql ===
+        'SELECT Id FROM Opportunity ' +
+          "WHERE Owner.Name LIKE 'A%' " +
+          'ORDER BY CloseDate ASC NULLS LAST, CreatedDate DESC, Name ASC NULLS FIRST ' +
+          'LIMIT 10',
+    );
+  });
 });
