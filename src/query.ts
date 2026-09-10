@@ -668,21 +668,8 @@ export class Query<
     this.totalSize = data.totalSize;
 
     // If autoFetch is true, fetch all records for any subqueries
-    if (autoFetch && data.records.length > 0) {
-      const recordKeys = Object.keys(data.records[0]);
-      for (const record of data.records) {
-        for (const key of recordKeys) {
-          const field = record[key];
-          if (field && typeof field === 'object' && 'records' in field && 'nextRecordsUrl' in field) {
-            record[key] = {
-              ...field,
-              records: await this._fetchAllSubqueryRecords(record, key, headers),
-              done: true,
-              nextRecordsUrl: undefined
-            };
-          }
-        }
-      }
+    if (autoFetch && data.records && data.records.length > 0) {
+      await this._resolveAllSubqueries(data.records, headers);
     }
 
     this.records = this.records?.concat(
@@ -1195,6 +1182,37 @@ export class Query<
     }
 
     return allRecords;
+  }
+
+  /**
+   * Recursively traverses records to find subqueries, fetch their paginated results,
+   * and dive into nested subqueries (grandchildren, etc.).
+   * @private
+   */
+  private async _resolveAllSubqueries(
+    records: Record[],
+    headers: { [name: string]: string }
+  ): Promise<void> {
+    for (const record of records) {
+      if (!record) {
+        continue;
+      }
+      for (const key of Object.keys(record)) {
+        const field = record[key];
+        if (field && typeof field === 'object' && Array.isArray(field.records)) {
+          const allSubqueryRecords = await this._fetchAllSubqueryRecords(record, key, headers);
+          if (allSubqueryRecords.length > 0) {
+            await this._resolveAllSubqueries(allSubqueryRecords, headers);
+          }
+          record[key] = {
+            ...field,
+            records: allSubqueryRecords,
+            done: true,
+            nextRecordsUrl: undefined
+          };
+        }
+      }
+    }
   }
 }
 
