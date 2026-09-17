@@ -651,12 +651,19 @@ export class Batch<
       }
       if (res.state === 'Failed') {
         if (parseInt(res.numberRecordsProcessed, 10) > 0) {
-          this.retrieve();
+          this.retrieve().catch(() => {
+            // retrieve() already emits 'error' itself before rethrowing; the
+            // rethrow only matters to callers awaiting retrieve() directly, not to
+            // this fire-and-forget call, so it's caught here to avoid turning it
+            // into an unhandled promise rejection.
+          });
         } else {
           this.emit('error', new Error(res.stateMessage));
         }
       } else if (res.state === 'Completed') {
-        this.retrieve();
+        this.retrieve().catch(() => {
+          // See comment above.
+        });
       } else if (res.state === 'NotProcessed') {
         this.emit('error', new Error('Job has been aborted'));
       } else {
