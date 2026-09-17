@@ -191,6 +191,7 @@ function toXML(name: object | string | null, value?: any): string {
 export type SOAPOptions = {
   endpointUrl: string;
   xmlns?: string;
+  headers?:object;
 };
 
 /**
@@ -207,6 +208,7 @@ export type SOAPOptions = {
 export class SOAP<S extends Schema> extends HttpApi<S> {
   _endpointUrl: string;
   _xmlns: string;
+  _headers: object | null;
 
   constructor(conn: Connection<S>, options: SOAPOptions) {
     super(conn, options);
@@ -224,6 +226,7 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
     }
     this._endpointUrl = options.endpointUrl;
     this._xmlns = options.xmlns || 'urn:partner.soap.sforce.com';
+    this._headers = options.headers || null;
   }
 
   /**
@@ -293,7 +296,17 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
   /** @override **/
   async getResponseBody(response: HttpResponse) {
     const body = await super.getResponseBody(response);
-    return lookupValue(body, [/:Envelope$/, /:Body$/, /.+/]);
+    const res = lookupValue(body, [/:Envelope$/, /:Body$/, /.+/]) as { result?: any };
+    if (res && res.result != null) {
+      const header = lookupValue(body, [/:Envelope$/, /:Header$/, /.+/]);
+      if (header) {
+        res.result = {
+          ...res.result,
+          ...header,
+        };
+      }
+    }
+    return res;
   }
 
   /**
@@ -315,6 +328,7 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
       ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">',
       '<soapenv:Header xmlns="' + this._xmlns + '">',
       toXML(header),
+      this._headers?toXML(this._headers):'',
       '</soapenv:Header>',
       '<soapenv:Body xmlns="' + this._xmlns + '">',
       toXML(message),

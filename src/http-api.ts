@@ -34,6 +34,28 @@ function parseText(str: string) {
 }
 
 /**
+ * Maximum number of times a single request will be retried after a session-expired
+ * response, even when the refresh delegate reports success. Without this cap, a
+ * refresh that keeps returning a token the server still rejects (e.g. a persistently
+ * broken connected app) would recurse via `HttpApi#request` forever.
+ *
+ * A connection may override this with `_maxSessionRefreshRetries` (jsforce 1/2
+ * leftover that 3.x previously ignored). `0` means fail on the first expired
+ * response without calling the refresh delegate.
+ * @private
+ */
+const MAX_SESSION_REFRESH_RETRIES = 3;
+
+function resolveMaxSessionRefreshRetries(conn: {
+  _maxSessionRefreshRetries?: unknown;
+}): number {
+  const configured = Number(conn?._maxSessionRefreshRetries);
+  return Number.isFinite(configured)
+    ? configured
+    : MAX_SESSION_REFRESH_RETRIES;
+}
+
+/**
  * HTTP based API class with authorization hook
  */
 export class HttpApi<S extends Schema> extends EventEmitter {
@@ -61,7 +83,10 @@ export class HttpApi<S extends Schema> extends EventEmitter {
   /**
    * Callout to API endpoint using http
    */
-  request<R = unknown>(request: HttpRequest): StreamPromise<R> {
+  request<R = unknown>(
+    request: HttpRequest,
+    sessionRefreshCount = 0,
+  ): StreamPromise<R> {
     return StreamPromise.create<R>(() => {
       const { stream, setStream } = createLazyStream();
       const promise = (async () => {
@@ -81,7 +106,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
         */
         if (refreshDelegate && refreshDelegate.isRefreshing()) {
           await refreshDelegate.waitRefresh();
-          const bodyPromise = this.request(request);
+          const bodyPromise = this.request(request, sessionRefreshCount);
           setStream(bodyPromise.stream());
           const body = await bodyPromise;
           return body;
@@ -126,6 +151,14 @@ export class HttpApi<S extends Schema> extends EventEmitter {
         // Refresh token if session has been expired and requires authentication
         // when session refresh delegate is available
         if (this.isSessionExpired(response) && refreshDelegate) {
+          const maxRetries = resolveMaxSessionRefreshRetries(this._conn);
+          if (sessionRefreshCount >= maxRetries) {
+            this._logger.error(
+              `Session still expired after ${sessionRefreshCount} refresh attempts, giving up.`,
+            );
+            const err = await this.getError(response);
+            throw err;
+          }
           await refreshDelegate.refresh(requestTime);
           /* remove the `content-length` header after token refresh
            *
@@ -146,7 +179,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
           ) {
             delete request.headers['content-length'];
           }
-          return this.request(request);
+          return this.request(request, sessionRefreshCount + 1);
         }
         if (this.isErrorResponse(response)) {
           const err = await this.getError(response);
@@ -282,7 +315,11 @@ export class HttpApi<S extends Schema> extends EventEmitter {
       //
       // These usualy come from an CA/ECA, OAuth, IP restriction change in the org that block connections, we need to skip these
       // org jsforce will enter into an infinite loop trying to get a valid token.
-      const responsesToSkip = ['Connected app is not attached to Agent', 'This session is not valid for use with the REST API'];
+      const responsesToSkip = [
+        'Connected app is not attached to Agent',
+        'This session is not valid for use with the REST API',
+        'BlackTab users cannot perform API operations',
+      ];
       for (const p of responsesToSkip) {
         if (response.body.includes(p)) return false
       }
@@ -359,7 +396,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
             message: response.body,
           };
 
-    if (response.headers['content-type'] === 'text/html') {
+    if (response.headers['content-type'] != null && response.headers['content-type'].includes('text/html')) {
       this._logger.debug(`html response.body: ${response.body}`);
       return new HttpApiError(
         `HTTP response contains html content.

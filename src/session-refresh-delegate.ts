@@ -56,6 +56,10 @@ export class SessionRefreshDelegate<S extends Schema> {
             this._conn.accessToken = accessToken;
             this._conn.emit('refresh', accessToken, res);
             resolve();
+          } else if(err.message === 'defaultRefreshFn'){
+            this._logger.debug('Connection refresh failed.');
+            this._conn.emit('sessionExpired', null,res);
+            reject(new Error('SessionId has expired'));
           } else {
             reject(err);
           }
