@@ -41,6 +41,15 @@ export const ApiSchemas = {
       stateDetail: '?string',
       status: 'string',
       success: 'boolean',
+      deployExtensionResults: ['DeployExtensionResult'],
+    },
+  },
+  DeployExtensionResult: {
+    type: 'DeployExtensionResult',
+    props: {
+      type: 'string',
+      status: 'string',
+      message: '?string',
     },
   },
   DeployDetails: {
@@ -9125,6 +9134,13 @@ export type DeployResult = {
   stateDetail?: string | null | undefined;
   status: string;
   success: boolean;
+  deployExtensionResults?: DeployExtensionResult[] | null | undefined;
+};
+
+export type DeployExtensionResult = {
+  type: string;
+  status: string;
+  message?: string | null | undefined;
 };
 
 export type DeployDetails = {
@@ -16154,6 +16170,7 @@ export type LogInfo = {
 export type ApiSchemaTypes = {
   CancelDeployResult: CancelDeployResult;
   DeployResult: DeployResult;
+  DeployExtensionResult: DeployExtensionResult;
   DeployDetails: DeployDetails;
   DeployMessage: DeployMessage;
   RetrieveResult: RetrieveResult;
