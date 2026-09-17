@@ -38,9 +38,22 @@ function parseText(str: string) {
  * response, even when the refresh delegate reports success. Without this cap, a
  * refresh that keeps returning a token the server still rejects (e.g. a persistently
  * broken connected app) would recurse via `HttpApi#request` forever.
+ *
+ * A connection may override this with `_maxSessionRefreshRetries` (jsforce 1/2
+ * leftover that 3.x previously ignored). `0` means fail on the first expired
+ * response without calling the refresh delegate.
  * @private
  */
 const MAX_SESSION_REFRESH_RETRIES = 3;
+
+function resolveMaxSessionRefreshRetries(conn: {
+  _maxSessionRefreshRetries?: unknown;
+}): number {
+  const configured = Number(conn?._maxSessionRefreshRetries);
+  return Number.isFinite(configured)
+    ? configured
+    : MAX_SESSION_REFRESH_RETRIES;
+}
 
 /**
  * HTTP based API class with authorization hook
@@ -138,7 +151,8 @@ export class HttpApi<S extends Schema> extends EventEmitter {
         // Refresh token if session has been expired and requires authentication
         // when session refresh delegate is available
         if (this.isSessionExpired(response) && refreshDelegate) {
-          if (sessionRefreshCount >= MAX_SESSION_REFRESH_RETRIES) {
+          const maxRetries = resolveMaxSessionRefreshRetries(this._conn);
+          if (sessionRefreshCount >= maxRetries) {
             this._logger.error(
               `Session still expired after ${sessionRefreshCount} refresh attempts, giving up.`,
             );
@@ -301,7 +315,11 @@ export class HttpApi<S extends Schema> extends EventEmitter {
       //
       // These usualy come from an CA/ECA, OAuth, IP restriction change in the org that block connections, we need to skip these
       // org jsforce will enter into an infinite loop trying to get a valid token.
-      const responsesToSkip = ['Connected app is not attached to Agent', 'This session is not valid for use with the REST API'];
+      const responsesToSkip = [
+        'Connected app is not attached to Agent',
+        'This session is not valid for use with the REST API',
+        'BlackTab users cannot perform API operations',
+      ];
       for (const p of responsesToSkip) {
         if (response.body.includes(p)) return false
       }

@@ -423,6 +423,92 @@ describe('HTTP API', () => {
       assert.equal(requestCount, 1, 'Should only make one request');
     });
 
+    it('does not refresh session when response contains "BlackTab users cannot perform API operations"', async () => {
+      let refreshCalled = false;
+      const conn = new Connection({
+        loginUrl,
+        accessToken: 'invalid_token',
+        refreshFn: (_c, callback) => {
+          refreshCalled = true;
+          setTimeout(() => callback(null, 'refreshed_token' ?? undefined), 200);
+        },
+      });
+
+      const httpApi = new HttpApi(conn, {});
+
+      let requestCount = 0;
+      httpApi.on('request', (req: HttpRequest) => {
+        requestCount++;
+        assert.equal(req?.headers?.['Authorization'], 'Bearer invalid_token');
+      });
+
+      const errorBody = JSON.stringify([
+        {
+          errorCode: 'INVALID_SESSION_ID',
+          message: 'BlackTab users cannot perform API operations',
+        },
+      ]);
+
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(401, errorBody, {
+        headers: { 'content-type': 'application/json' },
+      });
+
+      await assert.rejects(
+        async () => {
+          await httpApi.request({
+            method: 'GET',
+            url: `${loginUrl}/services/data/v59.0`,
+          });
+        },
+        {
+          message: 'BlackTab users cannot perform API operations',
+          errorCode: 'INVALID_SESSION_ID',
+        },
+      );
+
+      assert.ok(!refreshCalled, 'Refresh function should not be called');
+      assert.equal(requestCount, 1, 'Should only make one request');
+    });
+
+    it('honors _maxSessionRefreshRetries = 0 (no refresh)', async () => {
+      let refreshCount = 0;
+      const conn = new Connection({
+        loginUrl,
+        accessToken: 'invalid_token',
+        refreshFn: (_c, callback) => {
+          refreshCount++;
+          callback(null, `refreshed_token_${refreshCount}`);
+        },
+      });
+      conn._maxSessionRefreshRetries = 0;
+
+      const httpApi = new HttpApi(conn, {});
+
+      let requestCount = 0;
+      httpApi.on('request', () => {
+        requestCount++;
+      });
+
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(401);
+
+      await assert.rejects(
+        async () => {
+          await httpApi.request({
+            method: 'GET',
+            url: `${loginUrl}/services/data/v59.0`,
+          });
+        },
+        {
+          errorCode: 'ERROR_HTTP_401',
+        },
+      );
+
+      assert.equal(requestCount, 1);
+      assert.equal(refreshCount, 0);
+    });
+
     it('gives up after a bounded number of refresh attempts when session stays expired', async () => {
       let refreshCount = 0;
       const conn = new Connection({

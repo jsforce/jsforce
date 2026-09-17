@@ -264,6 +264,11 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   _transport: Transport;
   _sessionType: Optional<'soap' | 'oauth2'>;
   _refreshDelegate: Optional<SessionRefreshDelegate<S>>;
+  /**
+   * Cap for session-refresh retries on a single request. When unset, HttpApi
+   * uses its built-in default. `0` fails immediately on an expired session.
+   */
+  _maxSessionRefreshRetries?: number;
 
   // describe: (name: string) => Promise<DescribeSObjectResult>;
   describe$: CachedFunction<(name: string) => Promise<DescribeSObjectResult>>;
