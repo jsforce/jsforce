@@ -231,7 +231,7 @@ if (isNodeJS()) {
       operation: 'upsert',
       columnDelimiter: 'BACKQUOTE',
       externalIdFieldName: 'Id',
-      lineEnding: require('node:os').platform() === 'win32' ? 'CRLF' : 'LF',
+      lineEnding: require('os').platform() === 'win32' ? 'CRLF' : 'LF',
       input: fstream,
     });
 
