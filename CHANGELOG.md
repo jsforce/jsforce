@@ -1,3 +1,7 @@
+## [3.10.26](https://github.com/jsforce/jsforce/compare/3.10.25...3.10.26) (2026-09-22)
+
+
+
 ## [3.10.25](https://github.com/jsforce/jsforce/compare/3.10.24...3.10.25) (2026-09-04)
 
 
@@ -26,15 +30,6 @@
 ### Bug Fixes
 
 * Use URL API for OAuth2 endpoint construction @W-23807280@ ([#1823](https://github.com/jsforce/jsforce/issues/1823)) ([2b721bc](https://github.com/jsforce/jsforce/commit/2b721bc4da115dbba8c140393d026744e934e71d))
-
-
-
-## [3.10.21](https://github.com/jsforce/jsforce/compare/3.10.20...3.10.21) (2026-08-18)
-
-
-### Reverts
-
-* Revert "Use URL API for OAuth2 endpoint construction @W-23807280@ (#1819)" (#1821) ([10c8e30](https://github.com/jsforce/jsforce/commit/10c8e30cf618fe2d9207d39d9c30fc5e7e69f715)), closes [#1819](https://github.com/jsforce/jsforce/issues/1819) [#1821](https://github.com/jsforce/jsforce/issues/1821)
 
 
 
