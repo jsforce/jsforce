@@ -69,7 +69,7 @@ beforeAll(() => {
   connMgr.establishConnection(conn);
 });
 
-it('should bulk insert records and return result status', async () => {
+it('should bulk2 insert records and return result status', async () => {
   const id = Date.now();
 
   // bulk insert 200 valid records + 1 invalid.
@@ -201,7 +201,6 @@ if (isNodeJS()) {
     );
 
     const res = await conn.bulk2.loadAndWaitForResults({
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
       lineEnding: require('os').platform() === 'win32' ? 'CRLF' : 'LF',
       object: 'Account',
       operation: 'insert',
@@ -225,37 +224,6 @@ if (isNodeJS()) {
     }
   });
 
-  it('should bulk insert from file and return inserted results', async () => {
-    // insert 100 account records from csv file
-    const csvStream = fs.createReadStream(
-      path.join(__dirname, 'data', 'Account_bulk2_test.csv'),
-    );
-
-    const res = await conn.bulk2.loadAndWaitForResults({
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      lineEnding: require('os').platform() === 'win32' ? 'CRLF' : 'LF',
-      object: 'Account',
-      operation: 'insert',
-      input: csvStream,
-    });
-
-    try {
-      ensureSuccessfulBulkResults(res, 100, 'insert');
-    } finally {
-      // cleanup:
-      // always delete successfully inserted records.
-      const deleteRecords = res.successfulResults.map((r) => ({
-        Id: r.sf__Id,
-      }));
-
-      await conn.bulk2.loadAndWaitForResults({
-        object: 'Account',
-        operation: 'delete',
-        input: deleteRecords,
-      });
-    }
-  })
-
   it('should bulk upsert from CSV file using backquote as a delimiter', async () => {
     const fstream = fs.createReadStream(path.join(__dirname, 'data', 'Account_bulk2_test_backquote.csv'));
     const res = await conn.bulk2.loadAndWaitForResults({
@@ -263,7 +231,6 @@ if (isNodeJS()) {
       operation: 'upsert',
       columnDelimiter: 'BACKQUOTE',
       externalIdFieldName: 'Id',
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
       lineEnding: require('node:os').platform() === 'win32' ? 'CRLF' : 'LF',
       input: fstream,
     });
@@ -377,7 +344,7 @@ it('should bulk update using Query#update and return updated status', async () =
     .find({ Name: { $like: `Bulk Account ${id}%` } })
     .update(
       {
-        Name: '${Name} (Updated)', // eslint-disable-line no-template-curly-in-string
+        Name: '${Name} (Updated)',
         BillingState: null,
       },
       {
@@ -411,7 +378,7 @@ it('should bulk update using Query#update with unmatching query and return empty
     .find({ CreatedDate: { $lt: new SfDate('1970-01-01T00:00:00Z') } }) // should not match any records
     .update(
       {
-        Name: '${Name} (Updated)', // eslint-disable-line no-template-curly-in-string
+        Name: '${Name} (Updated)',
         BillingState: null,
       },
       {
@@ -478,7 +445,7 @@ it('should bulk update using Query#update with bulkThreshold modified and return
     .find({ Name: { $like: `Bulk Account ${id}%` } })
     .update(
       {
-        Name: '${Name} (Updated)', // eslint-disable-line no-template-curly-in-string
+        Name: '${Name} (Updated)',
         BillingState: null,
       },
       { bulkThreshold: 0, bulkApiVersion: 2 },

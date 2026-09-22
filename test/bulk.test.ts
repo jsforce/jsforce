@@ -318,7 +318,7 @@ it('should bulk update using Query#update and return updated status', async () =
     .sobject('Account')
     .find({ Name: { $like: `Bulk Account ${id}%` } })
     .update({
-      Name: '${Name} (Updated)', // eslint-disable-line no-template-curly-in-string
+      Name: '${Name} (Updated)',
     });
   assert.ok(Array.isArray(rets));
   assert.ok(rets.length === bulkAccountNum);
@@ -347,7 +347,7 @@ it('should bulk update using Query#update with unmatching query and return empty
     .sobject('Account')
     .find({ CreatedDate: { $lt: new SfDate('1970-01-01T00:00:00Z') } }) // should not match any records
     .update({
-      Name: '${Name} (Updated)', // eslint-disable-line no-template-curly-in-string
+      Name: '${Name} (Updated)',
       BillingState: null,
     });
   assert.ok(Array.isArray(rets));
@@ -416,7 +416,7 @@ it('should bulk update using Query#update with bulkThreshold modified and return
     .find({ Name: { $like: `New Bulk Account ${id}%` } })
     .update(
       {
-        Name: '${Name} (Updated)', // eslint-disable-line no-template-curly-in-string
+        Name: '${Name} (Updated)',
         BillingState: null,
       },
       { bulkThreshold: 0 },

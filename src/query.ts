@@ -285,7 +285,6 @@ export class Query<
       try {
         this._stream.emit('error', err);
       } catch (e) {
-        // eslint-disable-line no-empty
       }
     });
   }
@@ -450,7 +449,6 @@ export class Query<
       offset: options.offset,
       sort: options.sort,
     };
-    // eslint-disable-next-line no-use-before-define
     const childQuery = new SubQuery<S, N, R, QRT, CRN, CN, CR>(
       this._conn,
       childRelName as CRN,

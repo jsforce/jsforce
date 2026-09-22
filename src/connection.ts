@@ -1568,7 +1568,6 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
    * List recently viewed records
    */
   async recent(type?: string | number, limit?: number) {
-    /* eslint-disable no-param-reassign */
     if (typeof type === 'number') {
       limit = type;
       type = undefined;
@@ -1596,7 +1595,6 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
     start: string | Date,
     end: string | Date,
   ): Promise<UpdatedResult> {
-    /* eslint-disable no-param-reassign */
     let url = [this._baseUrl(), 'sobjects', type, 'updated'].join('/');
     if (typeof start === 'string') {
       start = new Date(start);
@@ -1620,7 +1618,6 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
     start: string | Date,
     end: string | Date,
   ): Promise<DeletedResult> {
-    /* eslint-disable no-param-reassign */
     let url = [this._baseUrl(), 'sobjects', type, 'deleted'].join('/');
     if (typeof start === 'string') {
       start = new Date(start);

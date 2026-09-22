@@ -54,7 +54,7 @@ function convertRecordForSerialization(
       const precord = convertRecordForSerialization(value, options);
       return Object.keys(precord).reduce(
         (prec: Record, pkey) => {
-          prec[`${key}.${pkey}`] = precord[pkey]; // eslint-disable-line no-param-reassign
+          prec[`${key}.${pkey}`] = precord[pkey];
           return prec;
         },
         { ...rec },
@@ -84,7 +84,6 @@ const CSVStreamConverter: StreamConverter = {
   serialize(options: RecordStreamSerializeOption = {}) {
     const { nullValue, ...csvOpts } = options;
     return createPipelineStream(
-      // eslint-disable-next-line no-use-before-define
       RecordStream.map((record) =>
         convertRecordForSerialization(record, options),
       ),
