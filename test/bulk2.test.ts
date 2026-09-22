@@ -115,7 +115,7 @@ it('should bulk2 insert records and return result status', async () => {
   assert.ok(unprocessedRecords.length === 0);
 });
 
-it('should bulk update and return updated status', async () => {
+it('should bulk2 update and return updated status', async () => {
   const id = Date.now();
 
   await insertAccounts(id);
@@ -156,7 +156,7 @@ it('should bulk update with empty input and not raise client input error', async
   );
 });
 
-it('should bulk delete and return deleted status', async () => {
+it('should bulk2 delete and return deleted status', async () => {
   const id = Date.now();
 
   await insertAccounts(id);
@@ -257,7 +257,7 @@ if (isNodeJS()) {
 }
 
 /*------------------------------------------------------------------------*/
-it('should call bulk api from invalid session conn with refresh fn, and return result', async () => {
+it('should call bulk2 api from invalid session conn with refresh fn, and return result', async () => {
   const accounts = Array.from(Array(100), (_a, i) => ({
     Name: `Session Expiry Test #${i}`,
   }));
@@ -294,7 +294,7 @@ it('should call bulk api from invalid session conn with refresh fn, and return r
   ensureSuccessfulBulkResults(bulkDelete, 100, 'delete');
 });
 
-it('should call bulk api from invalid session conn without refresh fn, and raise error', async () => {
+it('should call bulk2 api from invalid session conn without refresh fn, and raise error', async () => {
   const conn3 = new Connection({
     instanceUrl: conn.instanceUrl,
     accessToken: 'invalid_token',
@@ -322,7 +322,7 @@ it('should call bulk api from invalid session conn without refresh fn, and raise
 // The num should be more than 200 which fallback from SObject collection API
 const bulkAccountNum = 250;
 
-it('should bulk update using Query#update and return updated status', async () => {
+it('should bulk2 update using Query#update and return updated status', async () => {
   const id = Date.now();
 
   const accounts = Array.from(Array(bulkAccountNum), (_a, i) => ({
@@ -372,7 +372,7 @@ it('should bulk update using Query#update and return updated status', async () =
   }
 });
 
-it('should bulk update using Query#update with unmatching query and return empty array records', async () => {
+it('should bulk2 update using Query#update with unmatching query and return empty array records', async () => {
   const rets = await conn
     .sobject('Account')
     .find({ CreatedDate: { $lt: new SfDate('1970-01-01T00:00:00Z') } }) // should not match any records
@@ -389,7 +389,7 @@ it('should bulk update using Query#update with unmatching query and return empty
   assert.ok(rets.length === 0);
 });
 
-it('should bulk delete using Query#destroy and return deleted status', async () => {
+it('should bulk2 delete using Query#destroy and return deleted status', async () => {
   const id = Date.now();
 
   await insertAccounts(id, bulkAccountNum);
@@ -408,7 +408,7 @@ it('should bulk delete using Query#destroy and return deleted status', async () 
   }
 });
 
-it('should bulk delete using Query#destroy with unmatching query and return empty array records', async () => {
+it('should bulk2 delete using Query#destroy with unmatching query and return empty array records', async () => {
   const rets = await conn
     .sobject('Account')
     .find({ CreatedDate: { $lt: new SfDate('1970-01-01T00:00:00Z') } })
@@ -423,7 +423,7 @@ it('should bulk delete using Query#destroy with unmatching query and return empt
 // This is usually small num to use Bulk API, but forcely use it by modifying bulkThreshold num
 const smallAccountNum = 20;
 
-it('should bulk update using Query#update with bulkThreshold modified and return updated status', async () => {
+it('should bulk2 update using Query#update with bulkThreshold modified and return updated status', async () => {
   const id = Date.now();
 
   const records = Array.from({ length: smallAccountNum }).map((_, i) => ({
@@ -473,7 +473,7 @@ it('should bulk update using Query#update with bulkThreshold modified and return
 /**
  *
  */
-it('should bulk delete using Query#destroy with bulkThreshold modified and return deleted status', async () => {
+it('should bulk2 delete using Query#destroy with bulkThreshold modified and return deleted status', async () => {
   const id = Date.now();
 
   await insertAccounts(id, smallAccountNum);
