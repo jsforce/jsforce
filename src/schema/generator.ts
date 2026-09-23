@@ -6,6 +6,7 @@ import { Cli } from '../cli/cli';
 import { Connection, VERSION } from '..';
 import { Command } from 'commander';
 import { mkdir } from 'fs';
+import { SfdxRegistry } from '../registry/sfdx';
 
 type UnwrapPromise<T> = T extends Promise<infer U> ? U : never;
 
@@ -204,6 +205,7 @@ type GeneratorCommand = {
   password?: string;
   loginUrl?: string;
   sandbox?: boolean;
+  useSfdx?: boolean;
   outputFile: string;
   cache?: boolean;
   clearCache?: boolean;
@@ -236,6 +238,7 @@ function readCommand(): GeneratorCommand {
       './schema.d.ts',
     )
     .option('--sandbox', 'Login to Salesforce sandbox')
+    .option('--use-sfdx', 'Use SF CLI OAuth tokens (REST API).')
     .option(
       '--no-cache',
       'Do not generate cache file for described result in tmp directory',
@@ -255,16 +258,24 @@ function readCommand(): GeneratorCommand {
  */
 export default async function main() {
   const program = readCommand();
-  const cli = new Cli();
-  await cli.connect(program);
-  const conn = cli.getCurrentConnection();
-  if (!conn.userInfo) {
+
+  const sfdxRegistry = new SfdxRegistry({});
+  const sfdxConfig = await sfdxRegistry.getConnectionConfig(
+    program.username || program.connection,
+  );
+
+  if (!sfdxConfig) {
     console.error('Cannot connect to Salesforce');
     return;
   }
+
+  const conn = new Connection(sfdxConfig);
+  const identity = await conn.identity();
+  const orgId = identity.organization_id;
+
   await dumpSchema(
     conn,
-    conn.userInfo.organizationId,
+    orgId,
     program.outputFile,
     program.schemaName,
     program.cache,
