@@ -291,7 +291,6 @@ export class OAuth2 {
     try {
       res = JSON.parse(response.body);
     } catch (e) {
-      /* eslint-disable no-empty */
     }
     if (response.statusCode >= 400) {
       res = res || {

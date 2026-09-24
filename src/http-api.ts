@@ -170,7 +170,6 @@ export class HttpApi<S extends Schema> extends EventEmitter {
    * @protected
    */
   beforeSend(request: HttpRequest) {
-    /* eslint-disable no-param-reassign */
     const headers = request.headers || {};
     if (this._conn.accessToken) {
       headers.Authorization = `Bearer ${this._conn.accessToken}`;
@@ -333,7 +332,6 @@ export class HttpApi<S extends Schema> extends EventEmitter {
     try {
       error = this.parseError(body || (await this.parseResponseBody(response)));
     } catch (e) {
-      // eslint-disable no-empty
     }
 
     if (Array.isArray(error)) {
