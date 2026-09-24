@@ -412,7 +412,3 @@ it('should delete queried records using Query#destroy, with allowBulk = false, a
     assert.ok(ret.success === true);
   }
 });
-
-function expect(totalSize: number) {
-  throw new Error('Function not implemented.');
-}
