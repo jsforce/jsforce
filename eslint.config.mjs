@@ -1,5 +1,5 @@
 import tseslint from 'typescript-eslint';
-import eslintPluginImport from 'eslint-plugin-import';
+import eslintPluginImport from 'eslint-plugin-import-x';
 import eslintPluginJsdoc from 'eslint-plugin-jsdoc';
 import eslintConfigPrettier from 'eslint-config-prettier';
 
@@ -13,7 +13,7 @@ export default tseslint.config(
   {
     files: ['src/**/*.ts', 'test/**/*.ts'],
     plugins: {
-      import: eslintPluginImport,
+      'import-x': eslintPluginImport,
       jsdoc: eslintPluginJsdoc,
     },
     languageOptions: {
@@ -28,7 +28,7 @@ export default tseslint.config(
       },
     },
     rules: {
-      'import/no-extraneous-dependencies': 'off',
+      'import-x/no-extraneous-dependencies': 'off',
       '@typescript-eslint/no-empty-object-type': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
@@ -76,7 +76,7 @@ export default tseslint.config(
   {
     files: ['src/**/*.ts'],
     rules: {
-      'import/no-extraneous-dependencies': [
+      'import-x/no-extraneous-dependencies': [
         'error',
         {
           includeTypes: false,
