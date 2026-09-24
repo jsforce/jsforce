@@ -132,7 +132,7 @@ describe('big tables and autoFetch', () => {
     );
   });
 
-  it('should query big tables with autoFetch using async/await and hit max fetch', async () => {
+  it('should query big tables with autoFetch using async/await and hit max fetch (below limit)', async () => {
     const result = await conn.query(bigTableQuery, {
       autoFetch: true,
       maxFetch: maxFetchThatWillComplete - 1,
@@ -141,7 +141,7 @@ describe('big tables and autoFetch', () => {
     expect(result.records.length).toBe(maxFetchThatWillComplete - 1);
   });
 
-  it('should query big tables with autoFetch using async/await and hit max fetch', async () => {
+  it('should query big tables with autoFetch using async/await and hit max fetch (at limit)', async () => {
     const result = await conn.query(bigTableQuery, {
       autoFetch: true,
       maxFetch: maxFetchThatWillComplete,
@@ -150,7 +150,7 @@ describe('big tables and autoFetch', () => {
     expect(result.records.length).toBe(maxFetchThatWillComplete);
   });
 
-  it('should query big tables with autoFetch using async/await and hit max fetch', async () => {
+  it('should query big tables with autoFetch using async/await and hit max fetch (above limit)', async () => {
     const result = await conn.query(bigTableQuery, {
       autoFetch: true,
       maxFetch: maxFetchThatWillComplete + 1,
@@ -412,3 +412,7 @@ it('should delete queried records using Query#destroy, with allowBulk = false, a
     assert.ok(ret.success === true);
   }
 });
+
+function expect(totalSize: number) {
+  throw new Error('Function not implemented.');
+}
