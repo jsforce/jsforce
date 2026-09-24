@@ -4,9 +4,10 @@
     "skipLibCheck": true,
     "noEmit": true,
     "lib": ["es2022", "dom"],
-    "module": "commonjs",
+    "module": "nodenext",
     "strict": true,
     "moduleResolution": "nodenext",
+    "types": ["jest", "node"],
     "paths": {
       "jsforce": ["../"],
       "jsforce/*": ["../*"]
