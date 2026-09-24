@@ -208,7 +208,7 @@ export class BulkV2<S extends Schema> {
    * // Upsert records to the Account object.
    *
    * const job = connection.bulk2.createJob({
-   *   operation: 'insert'
+   *   operation: 'insert',
    *   object: 'Account',
    * });
    *
