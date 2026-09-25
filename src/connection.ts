@@ -166,6 +166,7 @@ async function oauthRefreshFn<S extends Schema>(
     conn._establish({
       instanceUrl: res.instance_url,
       accessToken: res.access_token,
+      ...res.refresh_token && { refreshToken: res.refresh_token },
       userInfo,
     });
     callback(undefined, res.access_token, res);
