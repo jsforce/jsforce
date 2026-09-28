@@ -499,7 +499,7 @@ it('should update records with and without expression evaluation', async () => {
 
   // Test with expression evaluation (default behavior)
   const updateWithEval = await Account.find({ Id: accountId }).update({
-    Name: '${Name} (Updated)', // eslint-disable-line no-template-curly-in-string
+    Name: '${Name} (Updated)',
   });
   assert.ok(Array.isArray(updateWithEval));
   assert.ok(updateWithEval.length === 1);
@@ -512,7 +512,7 @@ it('should update records with and without expression evaluation', async () => {
   // Test without expression evaluation
   const updateWithoutEval = await Account.find({ Id: accountId }).update(
     {
-      Name: '${Name} (No Eval)', // eslint-disable-line no-template-curly-in-string
+      Name: '${Name} (No Eval)',
     },
     { skipRecordTemplateEval: true },
   );

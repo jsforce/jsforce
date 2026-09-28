@@ -81,9 +81,9 @@ export class Logger {
         ...messages,
       ];
       if (logLevel < LogLevels.ERROR) {
-        console.log(...msgs); // eslint-disable-line no-console
+        console.log(...msgs);
       } else {
-        console.error(...msgs); // eslint-disable-line no-console
+        console.error(...msgs);
       }
     }
   }
