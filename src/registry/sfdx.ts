@@ -1,4 +1,4 @@
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { stripVTControlCharacters } from 'util';
 import Connection from '../connection';
 import { Registry, ConnectionConfig, ClientConfig } from './types';
@@ -46,21 +46,23 @@ export class SfdxRegistry implements Registry {
     this._cliPath = cliPath;
   }
 
-  _createCommand(
+  _buildArgs(
     command: string,
     options: { [option: string]: any } = {},
     args: string[] = [],
-  ) {
-    return `${
-      this._cliPath ? this._cliPath + '/' : ''
-    }sfdx ${command} ${Object.keys(options)
-      .map(
-        (option) =>
-          `${option.length > 1 ? '--' : '-'}${option}${
-            options[option] != null ? ' ' + options[option] : ''
-          }`,
-      )
-      .join(' ')} --json ${args.join(' ')}`;
+  ): { exe: string; argv: string[] } {
+    const exe = this._cliPath ? `${this._cliPath}/sfdx` : 'sfdx';
+    const argv: string[] = [command];
+    for (const option of Object.keys(options)) {
+      const flag = option.length > 1 ? `--${option}` : `-${option}`;
+      argv.push(flag);
+      if (options[option] != null) {
+        argv.push(String(options[option]));
+      }
+    }
+    argv.push('--json');
+    argv.push(...args);
+    return { exe, argv };
   }
 
   async _execCommand<T>(
@@ -68,9 +70,9 @@ export class SfdxRegistry implements Registry {
     options: { [option: string]: any } = {},
     args: string[] = [],
   ) {
-    const cmd = this._createCommand(command, options, args);
+    const { exe, argv } = this._buildArgs(command, options, args);
     const buf = await new Promise<string>((resolve, reject) => {
-      exec(cmd, (err, ret) => {
+      execFile(exe, argv, (err, ret) => {
         if (err && !ret) {
           reject(err);
         } else {
@@ -83,7 +85,7 @@ export class SfdxRegistry implements Registry {
     try {
       ret = JSON.parse(body) as SfdxCommandOutput;
     } catch (e) {
-      throw new Error(`Unexpectedd output from Sfdx cli: ${body}`);
+      throw new Error(`Unexpected output from sfdx cli: ${body}`);
     }
     if (ret.status === 0 && ret.result) {
       return ret.result as T;
