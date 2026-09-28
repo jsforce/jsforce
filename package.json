@@ -10,7 +10,7 @@
     "database.com"
   ],
   "homepage": "http://github.com/jsforce/jsforce",
-  "version": "3.10.26",
+  "version": "3.10.27",
   "repository": {
     "type": "git",
     "url": "git://github.com/jsforce/jsforce.git"
