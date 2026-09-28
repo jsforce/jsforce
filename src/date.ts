@@ -5,7 +5,7 @@ import { zeroPad } from './util/formatter';
 
 /** @private **/
 function createLiteralBuilder(literal: string) {
-  return (num: number) => new SfDate(`${literal}:${String(num)}`); // eslint-disable-line no-use-before-define
+  return (num: number) => new SfDate(`${literal}:${String(num)}`);
 }
 
 /**

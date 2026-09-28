@@ -1,3 +1,12 @@
+## [3.10.27](https://github.com/jsforce/jsforce/compare/3.10.26...3.10.27) (2026-09-28)
+
+
+### Bug Fixes
+
+* bump dependencies-@W-24222954@ ([#1835](https://github.com/jsforce/jsforce/issues/1835)) ([dab4c58](https://github.com/jsforce/jsforce/commit/dab4c5831969770e1f6e500711e2798c2dfad637))
+
+
+
 ## [3.10.26](https://github.com/jsforce/jsforce/compare/3.10.25...3.10.26) (2026-09-22)
 
 
@@ -21,15 +30,6 @@
 ### Bug Fixes
 
 * force release ([#1825](https://github.com/jsforce/jsforce/issues/1825)) ([bd91d08](https://github.com/jsforce/jsforce/commit/bd91d08177ac4f3fac3171881a35f11733213953))
-
-
-
-## [3.10.22](https://github.com/jsforce/jsforce/compare/3.10.21...3.10.22) (2026-08-18)
-
-
-### Bug Fixes
-
-* Use URL API for OAuth2 endpoint construction @W-23807280@ ([#1823](https://github.com/jsforce/jsforce/issues/1823)) ([2b721bc](https://github.com/jsforce/jsforce/commit/2b721bc4da115dbba8c140393d026744e934e71d))
 
 
 
