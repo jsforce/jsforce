@@ -1,61 +1,57 @@
+import { EventEmitter } from 'events';
 import { SfdxRegistry } from '../src/registry/sfdx';
 
-const mockExecFile = jest.fn();
-const mockExec = jest.fn();
+const mockSpawn = jest.fn();
 
-jest.mock('child_process', () => ({
-  execFile: (...args: any[]) => mockExecFile(...args),
-  exec: (...args: any[]) => mockExec(...args),
+jest.mock('cross-spawn', () => ({
+  __esModule: true,
+  default: (...args: any[]) => mockSpawn(...args),
 }));
+
+function fakeProc(stdout: string, exitCode = 0) {
+  const proc = new EventEmitter();
+  const stdoutEmitter = new EventEmitter();
+  (proc as any).stdout = stdoutEmitter;
+  process.nextTick(() => {
+    stdoutEmitter.emit('data', Buffer.from(stdout));
+    proc.emit('close', exitCode);
+  });
+  return proc;
+}
 
 describe('SfdxRegistry', () => {
   afterEach(() => {
-    mockExecFile.mockReset();
-    mockExec.mockReset();
+    mockSpawn.mockReset();
   });
 
   describe('_execCommand', () => {
-    it('should call execFile (not exec) with the correct exe and argv', async () => {
-      mockExecFile.mockImplementation(
-        (_exe: string, _argv: string[], cb: Function) => {
-          cb(
-            null,
-            JSON.stringify({ status: 0, result: { username: 'test' } }),
-          );
-        },
-      );
+    it('should call cross-spawn with the correct exe and argv', async () => {
+      const output = JSON.stringify({ status: 0, result: { username: 'test' } });
+      mockSpawn.mockReturnValue(fakeProc(output));
 
       const registry = new SfdxRegistry({});
       const result = await registry._execCommand('force:org:display', {
         u: 'test',
       });
 
-      expect(mockExecFile).toHaveBeenCalledTimes(1);
-      const [exe, argv] = mockExecFile.mock.calls[0];
+      expect(mockSpawn).toHaveBeenCalledTimes(1);
+      const [exe, argv] = mockSpawn.mock.calls[0];
       expect(exe).toBe('sfdx');
       expect(argv).toEqual(['force:org:display', '-u', 'test', '--json']);
-      expect(mockExec).not.toHaveBeenCalled();
       expect(result).toEqual({ username: 'test' });
     });
 
-    it('should not pass shell metacharacters through a shell when using execFile', async () => {
-      mockExecFile.mockImplementation(
-        (_exe: string, _argv: string[], cb: Function) => {
-          cb(
-            null,
-            JSON.stringify({ status: 0, result: { ok: true } }),
-          );
-        },
-      );
+    it('should not pass shell metacharacters through a shell', async () => {
+      const output = JSON.stringify({ status: 0, result: { ok: true } });
+      mockSpawn.mockReturnValue(fakeProc(output));
 
       const registry = new SfdxRegistry({});
       await registry._execCommand('force:org:display', {
         u: '$(whoami); rm -rf /',
       });
 
-      const [, argv] = mockExecFile.mock.calls[0];
+      const [, argv] = mockSpawn.mock.calls[0];
       expect(argv[2]).toBe('$(whoami); rm -rf /');
-      expect(mockExec).not.toHaveBeenCalled();
     });
   });
 

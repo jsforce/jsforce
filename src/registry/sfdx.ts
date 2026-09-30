@@ -1,4 +1,4 @@
-import { execFile } from 'child_process';
+import spawn from 'cross-spawn';
 import { stripVTControlCharacters } from 'util';
 import Connection from '../connection';
 import { Registry, ConnectionConfig, ClientConfig } from './types';
@@ -72,11 +72,16 @@ export class SfdxRegistry implements Registry {
   ) {
     const { exe, argv } = this._buildArgs(command, options, args);
     const buf = await new Promise<string>((resolve, reject) => {
-      execFile(exe, argv, (err, ret) => {
-        if (err && !ret) {
-          reject(err);
+      const proc = spawn(exe, argv);
+      const chunks: Buffer[] = [];
+      proc.stdout?.on('data', (chunk: Buffer) => chunks.push(chunk));
+      proc.on('error', reject);
+      proc.on('close', (code: number | null) => {
+        const output = Buffer.concat(chunks).toString();
+        if (code !== 0 && !output) {
+          reject(new Error(`sfdx exited with code ${code}`));
         } else {
-          resolve(ret);
+          resolve(output);
         }
       });
     });
