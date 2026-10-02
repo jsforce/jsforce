@@ -9,6 +9,19 @@ import { mkdir } from 'fs';
 
 type UnwrapPromise<T> = T extends Promise<infer U> ? U : never;
 
+export type PicklistEntryInput = {
+  active: boolean;
+  value: string;
+  label?: string | null;
+};
+
+export type FieldTypeInput = {
+  name: string;
+  type: string;
+  restrictedPicklist?: boolean;
+  picklistValues?: PicklistEntryInput[] | null;
+};
+
 function getCacheFileDir() {
   return path.join(os.tmpdir(), 'jsforce-gen-schema-cache');
 }
@@ -94,6 +107,82 @@ function getTSTypeString(type: string): string {
     : 'string';
 }
 
+export function toStringLiteral(value: string): string {
+  return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
+}
+
+export function getActivePicklistValues(
+  picklistValues?: PicklistEntryInput[] | null,
+): PicklistEntryInput['value'][] {
+  if (!picklistValues) {
+    return [];
+  }
+  const seen = new Set<PicklistEntryInput['value']>();
+  const values: PicklistEntryInput['value'][] = [];
+  for (const entry of picklistValues) {
+    if (entry.active && !seen.has(entry.value)) {
+      seen.add(entry.value);
+      values.push(entry.value);
+    }
+  }
+  return values;
+}
+
+export function buildPicklistUnion(
+  objectName: string,
+  field: FieldTypeInput,
+): string | null {
+  if (field.type !== 'picklist' && field.type !== 'multipicklist') {
+    return null;
+  }
+  const values = getActivePicklistValues(field.picklistValues);
+  if (values.length === 0) {
+    return null;
+  }
+  const members = values.map((v) => `  | ${toStringLiteral(v)}`).join('\n');
+  return `export type PicklistValues$${objectName}$${field.name} =\n${members};`;
+}
+
+export function getFieldTSType(
+  objectName: string,
+  field: FieldTypeInput,
+  picklistEnums: boolean,
+): string {
+  if (!picklistEnums) {
+    return getTSTypeString(field.type);
+  }
+  if (field.type === 'picklist') {
+    const values = getActivePicklistValues(field.picklistValues);
+    if (values.length === 0) {
+      return 'string';
+    }
+    const unionName = `PicklistValues$${objectName}$${field.name}`;
+    return field.restrictedPicklist ? unionName : `${unionName} | (string & {})`;
+  }
+  // multipicklist stays `string` (its value union is still emitted separately,
+  // and documented via JSDoc); all other types delegate unchanged.
+  return getTSTypeString(field.type);
+}
+
+export function buildMultipicklistFieldJSDoc(
+  objectName: string,
+  field: FieldTypeInput,
+  picklistEnums: boolean,
+): string | null {
+  if (!picklistEnums || field.type !== 'multipicklist') {
+    return null;
+  }
+  if (getActivePicklistValues(field.picklistValues).length === 0) {
+    return null;
+  }
+  return (
+    '  /**\n' +
+    '   * Multi-select picklist — semicolon-delimited combination of\n' +
+    `   * {@link PicklistValues$${objectName}$${field.name}} values (e.g. \`"A;C"\`).\n` +
+    '   */'
+  );
+}
+
 async function dumpSchema(
   conn: Connection,
   orgId: string,
@@ -101,6 +190,7 @@ async function dumpSchema(
   schemaName: string,
   cache?: boolean,
   filterObjects?: Set<string>,
+  picklistEnums?: boolean,
 ) {
   const sobjects =
     (cache ? await readDescribedCache(orgId) : null) ||
@@ -123,12 +213,29 @@ async function dumpSchema(
         continue;
       }
       const { name, fields, childRelationships } = sobject;
+      if (picklistEnums) {
+        for (const field of fields) {
+          const union = buildPicklistUnion(name, field);
+          if (union) {
+            writeLine(union);
+            writeLine('');
+          }
+        }
+      }
       writeLine(`type Fields$${name} = {`);
       writeLine('  //');
-      for (const { name, type, nillable } of fields) {
-        const tsType = getTSTypeString(type);
-        const orNull = nillable ? ' | null' : '';
-        writeLine(`  ${name}: ${tsType}${orNull};`);
+      for (const field of fields) {
+        const jsDoc = buildMultipicklistFieldJSDoc(
+          name,
+          field,
+          Boolean(picklistEnums),
+        );
+        if (jsDoc) {
+          writeLine(jsDoc);
+        }
+        const tsType = getFieldTSType(name, field, Boolean(picklistEnums));
+        const orNull = field.nillable ? ' | null' : '';
+        writeLine(`  ${field.name}: ${tsType}${orNull};`);
       }
       writeLine('};');
       writeLine('');
@@ -208,6 +315,7 @@ type GeneratorCommand = {
   cache?: boolean;
   clearCache?: boolean;
   filterObjects?: Set<string>;
+  picklistEnums?: boolean;
 } & Command;
 
 function commaSeparatedList(value: string, _dummyPrevious: unknown) {
@@ -246,6 +354,10 @@ function readCommand(): GeneratorCommand {
       'Only output schema for specified objects',
       commaSeparatedList,
     )
+    .option(
+      '--picklistEnums',
+      'Generate literal union types (PicklistValues$<Object>$<Field>) from picklist values instead of plain string',
+    )
     .version(VERSION)
     .parse(process.argv) as GeneratorCommand;
 }
@@ -269,6 +381,7 @@ export default async function main() {
     program.schemaName,
     program.cache,
     program.filterObjects,
+    program.picklistEnums,
   );
   if (program.clearCache) {
     console.log('removing cache files');
