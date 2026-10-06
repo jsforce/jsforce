@@ -132,7 +132,7 @@ describe('big tables and autoFetch', () => {
     );
   });
 
-  it('should query big tables with autoFetch using async/await and hit max fetch', async () => {
+  it('should query big tables with autoFetch using async/await and hit max fetch (below limit)', async () => {
     const result = await conn.query(bigTableQuery, {
       autoFetch: true,
       maxFetch: maxFetchThatWillComplete - 1,
@@ -141,7 +141,7 @@ describe('big tables and autoFetch', () => {
     expect(result.records.length).toBe(maxFetchThatWillComplete - 1);
   });
 
-  it('should query big tables with autoFetch using async/await and hit max fetch', async () => {
+  it('should query big tables with autoFetch using async/await and hit max fetch (at limit)', async () => {
     const result = await conn.query(bigTableQuery, {
       autoFetch: true,
       maxFetch: maxFetchThatWillComplete,
@@ -150,7 +150,7 @@ describe('big tables and autoFetch', () => {
     expect(result.records.length).toBe(maxFetchThatWillComplete);
   });
 
-  it('should query big tables with autoFetch using async/await and hit max fetch', async () => {
+  it('should query big tables with autoFetch using async/await and hit max fetch (above limit)', async () => {
     const result = await conn.query(bigTableQuery, {
       autoFetch: true,
       maxFetch: maxFetchThatWillComplete + 1,
@@ -271,7 +271,7 @@ it('should update queried records using Query#update and return updated records'
     .sobject('Account')
     .find({ Name: { $like: `Bulk Account ${id}%` } })
     .update({
-      Name: '${Name} (Updated)', // eslint-disable-line no-template-curly-in-string
+      Name: '${Name} (Updated)',
       BillingState: null,
     });
 
@@ -301,7 +301,7 @@ it('should update queried records using Query#update, for unmatching query, and 
     .sobject('Account')
     .find({ CreatedDate: { $lt: new SfDate('1970-01-01T00:00:00Z') } }) // should not match any records
     .update({
-      Name: '${Name} (Updated)', // eslint-disable-line no-template-curly-in-string
+      Name: '${Name} (Updated)',
       BillingState: null,
     });
   assert.ok(Array.isArray(rets));
@@ -368,7 +368,7 @@ it('should update queried records using Query#update, with allowBulk = false, an
     .find({ Name: { $like: `Bulk Account ${id}%` } })
     .update(
       {
-        Name: '${Name} (Updated)', // eslint-disable-line no-template-curly-in-string
+        Name: '${Name} (Updated)',
         BillingState: null,
       },
       { allowBulk: false },
