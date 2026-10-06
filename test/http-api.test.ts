@@ -456,7 +456,7 @@ describe('HTTP API', () => {
         const httpApi = new HttpApi(conn, {});
         httpApi.on('request', (req: HttpRequest) => {
           assert.equal(req?.headers?.['Traceparent'], 'custom-value');
-          assert.equal(Object.keys(req!.headers!).filter(k => k.toLowerCase() === 'traceparent').length, 1);
+          assert.equal(Object.keys(req?.headers ?? {}).filter(k => k.toLowerCase() === 'traceparent').length, 1);
           testPassed = true;
         });
         const pool = mockAgent.get(loginUrl);
