@@ -449,6 +449,35 @@ describe('HTTP API', () => {
         await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0`, headers: { traceparent: 'custom-value' } });
         assert.ok(testPassed);
       });
+
+      it('does not override caller-supplied trace headers with different casing', async () => {
+        process.env.TRACEPARENT = '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01';
+        let testPassed = false;
+        const httpApi = new HttpApi(conn, {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.['Traceparent'], 'custom-value');
+          assert.equal(Object.keys(req!.headers!).filter(k => k.toLowerCase() === 'traceparent').length, 1);
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0`, headers: { Traceparent: 'custom-value' } });
+        assert.ok(testPassed);
+      });
+
+      it('trims whitespace from TRACEPARENT env var', async () => {
+        process.env.TRACEPARENT = '  00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01  ';
+        let testPassed = false;
+        const httpApi = new HttpApi(conn, {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.['traceparent'], '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01');
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
+        assert.ok(testPassed);
+      });
     });
 
     it('does not set `Content-Length` when `Transfer-Encoding` header is set', async () => {
