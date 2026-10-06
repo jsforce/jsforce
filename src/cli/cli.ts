@@ -7,7 +7,9 @@ import url from 'url';
 import crypto from 'crypto';
 import openUrl from 'open';
 import { Command } from 'commander';
-import inquirer from 'inquirer';
+import confirm from '@inquirer/confirm';
+import input from '@inquirer/input';
+import password from '@inquirer/password';
 import request from '../request';
 import base64url from 'base64url';
 import Repl from './repl';
@@ -406,35 +408,38 @@ export class Cli {
   /**
    *
    */
-  async prompt(type: string, message: string) {
+  async prompt<T>(ask: () => Promise<T>): Promise<T> {
+    // REPL and prompt both read stdin, so the REPL must not read while the prompt is active.
     this._repl.pause();
-    const answer: { value: string } = await inquirer.prompt([
-      {
-        type,
-        name: 'value',
-        message,
-      },
-    ]);
-    this._repl.resume();
-    return answer.value;
+    try {
+      return await ask();
+    } catch (err) {
+      // Ctrl+C: inquirer 8 killed the process, @inquirer/* throws instead. Keep the old behaviour.
+      if (err instanceof Error && err.name === 'ExitPromptError') {
+        process.kill(process.pid, 'SIGINT');
+      }
+      throw err;
+    } finally {
+      this._repl.resume();
+    }
   }
 
   /**
    *
    */
-  async promptMessage(message: string) {
-    return this.prompt('input', message);
+  async promptMessage(message: string): Promise<string> {
+    return this.prompt(() => input({ message }));
   }
 
-  async promptPassword(message: string) {
-    return this.prompt('password', message);
+  async promptPassword(message: string): Promise<string> {
+    return this.prompt(() => password({ message }));
   }
 
   /**
    *
    */
-  async promptConfirm(message: string) {
-    return this.prompt('confirm', message);
+  async promptConfirm(message: string): Promise<boolean> {
+    return this.prompt(() => confirm({ message }));
   }
 
   /**

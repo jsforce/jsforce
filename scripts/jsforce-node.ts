@@ -49,7 +49,9 @@ function filterBrowserFiles(filePath: string): boolean {
     delete pjson.dependencies['core-js'];
     // CLI deps
     delete pjson.dependencies['commander'];
-    delete pjson.dependencies['inquirer'];
+    delete pjson.dependencies['@inquirer/confirm'];
+    delete pjson.dependencies['@inquirer/input'];
+    delete pjson.dependencies['@inquirer/password'];
     delete pjson.dependencies['open'];
   }
 
