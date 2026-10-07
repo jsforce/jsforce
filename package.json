@@ -292,7 +292,7 @@
     "through2": "^3.0.1",
     "timers-browserify": "^2.0.12",
     "ts-node": "^10.9.1",
-    "typedoc": "^0.25.1",
+    "typedoc": "^0.28.20",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.70.1",
     "util": "^0.12.5",
