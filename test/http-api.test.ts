@@ -344,7 +344,7 @@ describe('HTTP API', () => {
         loginUrl,
         accessToken: 'invalid_token',
         refreshFn: (_c, callback) => {
-          setTimeout(() => callback(null, 'refreshed_token' ?? undefined), 200);
+          setTimeout(() => callback(null, 'refreshed_token'), 200);
         },
       });
 
@@ -384,7 +384,7 @@ describe('HTTP API', () => {
         accessToken: 'invalid_token',
         refreshFn: (_c, callback) => {
           refreshCalled = true;
-          setTimeout(() => callback(null, 'refreshed_token' ?? undefined), 200);
+          setTimeout(() => callback(null, 'refreshed_token'), 200);
         },
       });
 
@@ -761,7 +761,7 @@ describe('SOAP API', () => {
         loginUrl,
         accessToken: 'invalid_token',
         refreshFn: (_c, callback) => {
-          setTimeout(() => callback(null, 'refreshed_token' ?? undefined), 200);
+          setTimeout(() => callback(null, 'refreshed_token'), 200);
         },
       });
 
