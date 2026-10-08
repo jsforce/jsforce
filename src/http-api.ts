@@ -33,6 +33,30 @@ function parseText(str: string) {
   return str;
 }
 
+const TRACEPARENT_RE = /^[0-9a-f]{2}-[0-9a-f]{32}-[0-9a-f]{16}-[0-9a-f]{2}$/i;
+const ALL_ZERO_32 = /^0{32}$/;
+const ALL_ZERO_16 = /^0{16}$/;
+const HEADER_UNSAFE_RE = /[\r\n\0]/;
+
+function getTraceContextHeaders(): Record<string, string> {
+  const headers: Record<string, string> = {};
+  const tp = process.env.TRACEPARENT?.trim();
+  if (tp && TRACEPARENT_RE.test(tp)) {
+    const parts = tp.split('-');
+    const version = parts[0].toLowerCase();
+    const traceId = parts[1].toLowerCase();
+    const parentId = parts[2].toLowerCase();
+    if (version !== 'ff' && !ALL_ZERO_32.test(traceId) && !ALL_ZERO_16.test(parentId)) {
+      headers['traceparent'] = tp.toLowerCase();
+      const ts = process.env.TRACESTATE?.trim();
+      if (ts && !HEADER_UNSAFE_RE.test(ts)) {
+        headers['tracestate'] = ts;
+      }
+    }
+  }
+  return headers;
+}
+
 /**
  * HTTP based API class with authorization hook
  */
@@ -89,6 +113,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
 
         // hook before sending
         this.beforeSend(request);
+        this.applyTraceContextHeaders(request);
 
         this.emit('request', request);
         this._logger.debug(
@@ -201,6 +226,26 @@ export class HttpApi<S extends Schema> extends EventEmitter {
         `missing 'content-length' header, setting it to: ${bodySize}`,
       );
       headers['content-length'] = String(bodySize);
+    }
+    request.headers = headers;
+  }
+
+  /**
+   * Apply W3C trace context headers (traceparent and tracestate) from
+   * environment variables when explicitly enabled on the connection. Headers
+   * are only added when not already set by the caller.
+   * @protected
+   */
+  applyTraceContextHeaders(request: HttpRequest) {
+    if (this._conn._forwardTraceContext !== true) return;
+    const traceHeaders = getTraceContextHeaders();
+    if (Object.keys(traceHeaders).length === 0) return;
+    const headers = request.headers || {};
+    const existing = new Set(Object.keys(headers).map((k) => k.toLowerCase()));
+    for (const [key, value] of Object.entries(traceHeaders)) {
+      if (!existing.has(key.toLowerCase())) {
+        headers[key] = value;
+      }
     }
     request.headers = headers;
   }
