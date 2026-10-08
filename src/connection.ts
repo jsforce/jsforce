@@ -83,6 +83,7 @@ export type ConnectionConfig<S extends Schema = Schema> = {
   httpProxy?: string;
   logLevel?: LogLevelConfig;
   callOptions?: { [name: string]: string };
+  forwardTraceContext?: boolean;
   refreshFn?: SessionRefreshFunc<S>;
 };
 
@@ -247,6 +248,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   sobjects: { [N in SObjectNames<S>]?: SObject<S, N> } = {};
   cache: Cache;
   _callOptions: Optional<{ [name: string]: string }>;
+  _forwardTraceContext?: boolean;
   _maxRequest: number;
   _logger: Logger;
   _logLevel: Optional<LogLevelConfig>;
@@ -354,6 +356,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
       ? new HttpProxyTransport(httpProxy)
       : new Transport();
     this._callOptions = config.callOptions;
+    this._forwardTraceContext = config.forwardTraceContext;
     this.cache = new Cache();
     const describeCacheKey = (type?: string) =>
       type ? `describe.${type}` : 'describe';

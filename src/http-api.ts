@@ -52,10 +52,6 @@ function getTraceContextHeaders(): Record<string, string> {
       if (ts && !HEADER_UNSAFE_RE.test(ts)) {
         headers['tracestate'] = ts;
       }
-      const bg = process.env.BAGGAGE?.trim();
-      if (bg && !HEADER_UNSAFE_RE.test(bg)) {
-        headers['baggage'] = bg;
-      }
     }
   }
   return headers;
@@ -235,12 +231,13 @@ export class HttpApi<S extends Schema> extends EventEmitter {
   }
 
   /**
-   * Apply W3C trace context headers (traceparent, tracestate, baggage) from
-   * environment variables when present. Follows OTEP 0258 (env-based context
-   * propagation). Headers are only added when not already set by the caller.
+   * Apply W3C trace context headers (traceparent and tracestate) from
+   * environment variables when explicitly enabled on the connection. Headers
+   * are only added when not already set by the caller.
    * @protected
    */
   applyTraceContextHeaders(request: HttpRequest) {
+    if (this._conn._forwardTraceContext !== true) return;
     const traceHeaders = getTraceContextHeaders();
     if (Object.keys(traceHeaders).length === 0) return;
     const headers = request.headers || {};
