@@ -40,6 +40,7 @@ jobs:
           SF_HUB_USERNAME: ${{ secrets.SF_HUB_USERNAME }}
           SF_OAUTH2_CLIENT_ID: ${{ secrets.SF_OAUTH2_CLIENT_ID }}
           SF_OAUTH2_JWT_KEY: ${{ secrets.SF_OAUTH2_JWT_KEY }}
+          SF_HUB_INSTANCE: ${{ secrets.SF_HUB_INSTANCE }}
         run: |
           npm run test:setup:org
 
@@ -128,6 +129,7 @@ jobs:
           SF_HUB_USERNAME: ${{ secrets.SF_HUB_USERNAME }}
           SF_OAUTH2_CLIENT_ID: ${{ secrets.SF_OAUTH2_CLIENT_ID }}
           SF_OAUTH2_JWT_KEY: ${{ secrets.SF_OAUTH2_JWT_KEY }}
+          SF_HUB_INSTANCE: ${{ secrets.SF_HUB_INSTANCE }}
         run: |
           npm run test:setup:org
 
@@ -206,6 +208,7 @@ jobs:
           SF_HUB_USERNAME: ${{ secrets.SF_HUB_USERNAME }}
           SF_OAUTH2_CLIENT_ID: ${{ secrets.SF_OAUTH2_CLIENT_ID }}
           SF_OAUTH2_JWT_KEY: ${{ secrets.SF_OAUTH2_JWT_KEY }}
+          SF_HUB_INSTANCE: ${{ secrets.SF_HUB_INSTANCE }}
         run: |
           npm run test:setup:org
 

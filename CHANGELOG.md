@@ -1,3 +1,12 @@
+## [3.10.29](https://github.com/jsforce/jsforce/compare/3.10.28...3.10.29) (2026-10-08)
+
+
+### Bug Fixes
+
+* instance url in jwt auth ([#1847](https://github.com/jsforce/jsforce/issues/1847)) ([0c5d0bb](https://github.com/jsforce/jsforce/commit/0c5d0bb9e43f05242809d41027d4bc3dc7b4b854))
+
+
+
 ## [3.10.28](https://github.com/jsforce/jsforce/compare/3.10.27...3.10.28) (2026-10-02)
 
 
@@ -26,10 +35,6 @@
 ### Bug Fixes
 
 * export describe-related types from common ([#1828](https://github.com/jsforce/jsforce/issues/1828)) ([311b183](https://github.com/jsforce/jsforce/commit/311b183a8fa690bc5e92814d03544b7ef9d2f972))
-
-
-
-## [3.10.24](https://github.com/jsforce/jsforce/compare/3.10.23...3.10.24) (2026-08-27)
 
 
 
