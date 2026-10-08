@@ -198,7 +198,8 @@
     "clean": "rimraf --glob lib/* module/* browser/*",
     "clean-test-failures-file": "rimraf test/karma/karma-failed-tests.txt",
     "jsforce-node": "ts-node scripts/jsforce-node.ts",
-    "jsforce-node:dev": "ts-node scripts/jsforce-node.ts --dev"
+    "jsforce-node:dev": "ts-node scripts/jsforce-node.ts --dev",
+    "prepare": "node -e \"try{require('fs').accessSync('lib/http-api.js')}catch{process.exit(1)}\" || npm run build"
   },
   "files": [
     "README.md",

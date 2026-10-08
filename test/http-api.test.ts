@@ -421,6 +421,355 @@ describe('HTTP API', () => {
       assert.ok(!refreshCalled, 'Refresh function should not be called');
       assert.equal(requestCount, 1, 'Should only make one request');
     });
+
+    it('does not refresh session when response contains "BlackTab users cannot perform API operations"', async () => {
+      let refreshCalled = false;
+      const conn = new Connection({
+        loginUrl,
+        accessToken: 'invalid_token',
+        refreshFn: (_c, callback) => {
+          refreshCalled = true;
+          setTimeout(() => callback(null, 'refreshed_token' ?? undefined), 200);
+        },
+      });
+
+      const httpApi = new HttpApi(conn, {});
+
+      let requestCount = 0;
+      httpApi.on('request', (req: HttpRequest) => {
+        requestCount++;
+        assert.equal(req?.headers?.['Authorization'], 'Bearer invalid_token');
+      });
+
+      const errorBody = JSON.stringify([
+        {
+          errorCode: 'INVALID_SESSION_ID',
+          message: 'BlackTab users cannot perform API operations',
+        },
+      ]);
+
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(401, errorBody, {
+        headers: { 'content-type': 'application/json' },
+      });
+
+      await assert.rejects(
+        async () => {
+          await httpApi.request({
+            method: 'GET',
+            url: `${loginUrl}/services/data/v59.0`,
+          });
+        },
+        {
+          message: 'BlackTab users cannot perform API operations',
+          errorCode: 'INVALID_SESSION_ID',
+        },
+      );
+
+      assert.ok(!refreshCalled, 'Refresh function should not be called');
+      assert.equal(requestCount, 1, 'Should only make one request');
+    });
+
+    it('honors _maxSessionRefreshRetries = 0 (no refresh)', async () => {
+      let refreshCount = 0;
+      const conn = new Connection({
+        loginUrl,
+        accessToken: 'invalid_token',
+        refreshFn: (_c, callback) => {
+          refreshCount++;
+          callback(null, `refreshed_token_${refreshCount}`);
+        },
+      });
+      conn._maxSessionRefreshRetries = 0;
+
+      const httpApi = new HttpApi(conn, {});
+
+      let requestCount = 0;
+      httpApi.on('request', () => {
+        requestCount++;
+      });
+
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(401);
+
+      await assert.rejects(
+        async () => {
+          await httpApi.request({
+            method: 'GET',
+            url: `${loginUrl}/services/data/v59.0`,
+          });
+        },
+        {
+          errorCode: 'ERROR_HTTP_401',
+        },
+      );
+
+      assert.equal(requestCount, 1);
+      assert.equal(refreshCount, 0);
+    });
+
+    it('gives up after a bounded number of refresh attempts when session stays expired', async () => {
+      let refreshCount = 0;
+      const conn = new Connection({
+        loginUrl,
+        accessToken: 'invalid_token',
+        refreshFn: (_c, callback) => {
+          refreshCount++;
+          // Refresh always "succeeds", but the server keeps rejecting the new token.
+          callback(null, `refreshed_token_${refreshCount}`);
+        },
+      });
+
+      const httpApi = new HttpApi(conn, {});
+
+      let requestCount = 0;
+      httpApi.on('request', () => {
+        requestCount++;
+      });
+
+      const pool = mockAgent.get(loginUrl);
+      pool
+        .intercept({ path: '/services/data/v59.0', method: 'GET' })
+        .reply(401)
+        .persist();
+
+      await assert.rejects(
+        async () => {
+          await httpApi.request({
+            method: 'GET',
+            url: `${loginUrl}/services/data/v59.0`,
+          });
+        },
+        {
+          errorCode: 'ERROR_HTTP_401',
+        },
+      );
+
+      // 1 initial request + 3 retries after refresh = 4; 3 refresh attempts.
+      // Pinning exact numbers (not just "< 10") so a future change to the cap
+      // or an accidental removal of the guard is caught precisely.
+      assert.equal(
+        requestCount,
+        4,
+        `Expected exactly 4 requests (1 initial + MAX_SESSION_REFRESH_RETRIES), got ${requestCount}`,
+      );
+      assert.equal(
+        refreshCount,
+        3,
+        `Expected exactly 3 refresh attempts, got ${refreshCount}`,
+      );
+    });
+
+    it('does not give up early if the session recovers within the retry budget', async () => {
+      let refreshCount = 0;
+      const conn = new Connection({
+        loginUrl,
+        accessToken: 'invalid_token',
+        refreshFn: (_c, callback) => {
+          refreshCount++;
+          callback(null, `refreshed_token_${refreshCount}`);
+        },
+      });
+
+      const httpApi = new HttpApi(conn, {});
+
+      let requestCount = 0;
+      httpApi.on('request', () => {
+        requestCount++;
+      });
+
+      const pool = mockAgent.get(loginUrl);
+      // Fails on the initial request and the first retry, succeeds on the second retry
+      // (3rd request overall) -- well within MAX_SESSION_REFRESH_RETRIES.
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(401);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(401);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+
+      const result = await httpApi.request({
+        method: 'GET',
+        url: `${loginUrl}/services/data/v59.0`,
+      });
+
+      assert.equal(result, '{}');
+      assert.equal(requestCount, 3);
+      assert.equal(refreshCount, 2);
+    });
+
+    it('succeeds when recovery happens on the very last allowed retry', async () => {
+      let refreshCount = 0;
+      const conn = new Connection({
+        loginUrl,
+        accessToken: 'invalid_token',
+        refreshFn: (_c, callback) => {
+          refreshCount++;
+          callback(null, `refreshed_token_${refreshCount}`);
+        },
+      });
+
+      const httpApi = new HttpApi(conn, {});
+
+      let requestCount = 0;
+      httpApi.on('request', () => {
+        requestCount++;
+      });
+
+      const pool = mockAgent.get(loginUrl);
+      // 1 initial failure + 2 more failures, then success on the 4th request,
+      // i.e. exactly on the last retry the cap allows (sessionRefreshCount === 3).
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(401);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(401);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(401);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+
+      const result = await httpApi.request({
+        method: 'GET',
+        url: `${loginUrl}/services/data/v59.0`,
+      });
+
+      assert.equal(result, '{}');
+      assert.equal(requestCount, 4);
+      assert.equal(refreshCount, 3);
+    });
+
+    it('stops retrying if the refresh function itself keeps failing', async () => {
+      let refreshCount = 0;
+      const conn = new Connection({
+        loginUrl,
+        accessToken: 'invalid_token',
+        refreshFn: (_c, callback) => {
+          refreshCount++;
+          callback(new Error('refresh backend unreachable'));
+        },
+      });
+
+      const httpApi = new HttpApi(conn, {});
+
+      let requestCount = 0;
+      httpApi.on('request', () => {
+        requestCount++;
+      });
+
+      const pool = mockAgent.get(loginUrl);
+      pool
+        .intercept({ path: '/services/data/v59.0', method: 'GET' })
+        .reply(401)
+        .persist();
+
+      await assert.rejects(async () => {
+        await httpApi.request({
+          method: 'GET',
+          url: `${loginUrl}/services/data/v59.0`,
+        });
+      });
+
+      // The refresh delegate itself throws on the first failure (it doesn't retry
+      // internally), so this should fail fast rather than exhaust the request-level cap.
+      assert.equal(requestCount, 1);
+      assert.equal(refreshCount, 1);
+    });
+
+    it('resets the retry budget for each independent request', async () => {
+      let refreshCount = 0;
+      const conn = new Connection({
+        loginUrl,
+        accessToken: 'invalid_token',
+        refreshFn: (_c, callback) => {
+          refreshCount++;
+          callback(null, `refreshed_token_${refreshCount}`);
+        },
+      });
+
+      const httpApi = new HttpApi(conn, {});
+
+      const pool = mockAgent.get(loginUrl);
+      pool
+        .intercept({ path: '/services/data/v59.0', method: 'GET' })
+        .reply(401)
+        .persist();
+
+      // First independent request exhausts its own budget and fails.
+      await assert.rejects(async () => {
+        await httpApi.request({
+          method: 'GET',
+          url: `${loginUrl}/services/data/v59.0`,
+        });
+      });
+      assert.equal(refreshCount, 3);
+
+      // A brand new request should get its own fresh budget, not inherit
+      // the previous request's exhausted counter.
+      await assert.rejects(async () => {
+        await httpApi.request({
+          method: 'GET',
+          url: `${loginUrl}/services/data/v59.0`,
+        });
+      });
+      assert.equal(refreshCount, 6);
+    });
+
+    it('coalesces concurrent 401s into a single refresh when the session recovers', async () => {
+      let refreshCount = 0;
+      const conn = new Connection({
+        loginUrl,
+        accessToken: 'invalid_token',
+        refreshFn: (_c, callback) => {
+          refreshCount++;
+          setTimeout(() => callback(null, 'refreshed_token'), 50);
+        },
+      });
+
+      const httpApi = new HttpApi(conn, {});
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0/a', method: 'GET' }).reply(401);
+      pool.intercept({ path: '/services/data/v59.0/b', method: 'GET' }).reply(401);
+      pool.intercept({ path: '/services/data/v59.0/c', method: 'GET' }).reply(401);
+      pool.intercept({ path: '/services/data/v59.0/a', method: 'GET' }).reply(200, JSON.stringify({ ok: 'a' }));
+      pool.intercept({ path: '/services/data/v59.0/b', method: 'GET' }).reply(200, JSON.stringify({ ok: 'b' }));
+      pool.intercept({ path: '/services/data/v59.0/c', method: 'GET' }).reply(200, JSON.stringify({ ok: 'c' }));
+
+      const results = await Promise.all([
+        httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0/a` }),
+        httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0/b` }),
+        httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0/c` }),
+      ]);
+
+      assert.equal(refreshCount, 1, 'Concurrent 401s should share a single refresh');
+      assert.deepEqual(results, [
+        JSON.stringify({ ok: 'a' }),
+        JSON.stringify({ ok: 'b' }),
+        JSON.stringify({ ok: 'c' }),
+      ]);
+    });
+
+    it('bails out of concurrent chains without the retry budget multiplying across them', async () => {
+      let refreshCount = 0;
+      const conn = new Connection({
+        loginUrl,
+        accessToken: 'invalid_token',
+        refreshFn: (_c, callback) => {
+          refreshCount++;
+          setTimeout(() => callback(null, `refreshed_token_${refreshCount}`), 20);
+        },
+      });
+
+      const httpApi = new HttpApi(conn, {});
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0/x', method: 'GET' }).reply(401).persist();
+      pool.intercept({ path: '/services/data/v59.0/y', method: 'GET' }).reply(401).persist();
+
+      const outcomes = await Promise.allSettled([
+        httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0/x` }),
+        httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0/y` }),
+      ]);
+
+      assert.ok(outcomes.every((o) => o.status === 'rejected'));
+      // Two concurrent chains sharing one refresh delegate shouldn't need anywhere
+      // near 2x MAX_SESSION_REFRESH_RETRIES worth of refreshes to both give up.
+      assert.ok(
+        refreshCount < 15,
+        `Refresh count grew unexpectedly across concurrent chains: ${refreshCount}`,
+      );
+    }, 15000);
   });
 
   describe('error handling', () => {
@@ -796,6 +1145,43 @@ describe('SOAP API', () => {
         Account: 'test',
       });
       assert.ok(testPassed);
+    });
+
+    it('gives up after a bounded number of refresh attempts when SOAP session stays expired', async () => {
+      let refreshCount = 0;
+      const conn = new Connection({
+        loginUrl,
+        accessToken: 'invalid_token',
+        refreshFn: (_c, callback) => {
+          refreshCount++;
+          callback(null, `refreshed_token_${refreshCount}`);
+        },
+      });
+
+      const soapApi = new SOAP(conn, {
+        xmlns: 'urn:partner.soap.sforce.com',
+        endpointUrl: `${loginUrl}/services/Soap/u/59`,
+      });
+
+      let requestCount = 0;
+      soapApi.on('request', () => {
+        requestCount++;
+      });
+
+      const pool = mockAgent.get(loginUrl);
+      pool
+        .intercept({ path: '/services/Soap/u/59', method: 'POST' })
+        .reply(500, '<faultcode>test:INVALID_SESSION_ID</faultcode>')
+        .persist();
+
+      await assert.rejects(async () => {
+        await soapApi.invoke('create', {
+          Account: 'test',
+        });
+      });
+
+      assert.equal(requestCount, 4);
+      assert.equal(refreshCount, 3);
     });
   });
 
