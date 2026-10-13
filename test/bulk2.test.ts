@@ -203,14 +203,11 @@ it('should bulk delete with empty input and not raise client input error', async
 if (isNodeJS()) {
   it('should bulk insert from file and return inserted results', async () => {
     // insert 100 account records from csv file
-    const csv = await fs.promises.readFile(
-      path.join(__dirname, 'data', 'Account_bulk2_test.csv'),
-      'utf8',
-    );
     const csvStream = stream.Readable.from([
-      csv.replace(
-        /^Bulk Account from CSV \(bulk2\) - #[^,]*/gm,
-        () => Math.random().toString(36).slice(2),
+      'Name\n',
+      ...Array.from(
+        { length: 100 },
+        () => `${Math.random().toString(36).slice(2)}\n`,
       ),
     ]);
 
