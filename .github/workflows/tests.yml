@@ -150,7 +150,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: oauth-diagnostics-${{ matrix.node_version }}
+          name: oauth-diagnostics-${{ runner.os }}-${{ strategy.job-index }}
           path: oauth-diagnostics
           if-no-files-found: ignore
 
@@ -237,7 +237,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: oauth-diagnostics-${{ matrix.node_version }}
+          name: oauth-diagnostics-${{ runner.os }}-${{ strategy.job-index }}
           path: oauth-diagnostics
           if-no-files-found: ignore
 
