@@ -1,6 +1,5 @@
 import assert from 'assert';
 import path from 'path';
-import stream from 'stream';
 import fs from './helper/fs';
 import { Connection, Date as SfDate, Record } from 'jsforce';
 import ConnectionManager from './helper/connection-manager';
@@ -125,16 +124,9 @@ it('should bulk delete with empty input and raise client input error', async () 
 if (isNodeJS()) {
   it('should bulk insert from file and return inserted results', async () => {
     // insert 100 account records from csv file
-    const csv = await fs.promises.readFile(
+    const fstream = fs.createReadStream(
       path.join(__dirname, 'data', 'Account_bulk1_test.csv'),
-      'utf8',
     );
-    const fstream = stream.Readable.from([
-      csv.replace(
-        /^Bulk Account from CSV - #/gm,
-        `Bulk Account from CSV ${Date.now()}-${process.pid} - #`,
-      ),
-    ]);
     const batch = conn.bulk.load('Account', 'insert');
     fstream.pipe(batch.stream());
     const rets = await new Promise<any[]>((resolve, reject) => {
