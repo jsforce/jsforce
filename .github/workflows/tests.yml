@@ -146,6 +146,14 @@ jobs:
           SF_ACCESS_TOKEN=$(sf org auth show-access-token --target-org jsforce-test-org --json | jq -r '.result.accessToken') \
           npm run test:node
 
+      - name: Upload OAuth diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: oauth-diagnostics-${{ matrix.node_version }}
+          path: oauth-diagnostics
+          if-no-files-found: ignore
+
       - name: Delete scratch org
         if: always() && steps.install-sf-cli.outcome == 'success'
         run: sf org delete scratch --target-org jsforce-test-org --no-prompt
@@ -224,6 +232,14 @@ jobs:
           $env:SF_LOGIN_URL=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.instanceUrl')
           $env:SF_ACCESS_TOKEN=$(sf org auth show-access-token --target-org jsforce-test-org --json | jq -r '.result.accessToken')
           npm run test:node
+
+      - name: Upload OAuth diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: oauth-diagnostics-${{ matrix.node_version }}
+          path: oauth-diagnostics
+          if-no-files-found: ignore
 
       - name: Delete scratch org
         if: always() && steps.install-sf-cli.outcome == 'success'

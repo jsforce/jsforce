@@ -203,16 +203,17 @@ it('should bulk delete with empty input and not raise client input error', async
 if (isNodeJS()) {
   it('should bulk insert from file and return inserted results', async () => {
     // insert 100 account records from csv file
+    const lineEnding = require('os').platform() === 'win32' ? '\r\n' : '\n';
     const csvStream = stream.Readable.from([
-      'Name\n',
+      `Name${lineEnding}`,
       ...Array.from(
         { length: 100 },
-        () => `${Math.random().toString(36).slice(2)}\n`,
+        () => `${Math.random().toString(36).slice(2)}${lineEnding}`,
       ),
     ]);
 
     const res = await conn.bulk2.loadAndWaitForResults({
-      lineEnding: require('os').platform() === 'win32' ? 'CRLF' : 'LF',
+      lineEnding: lineEnding === '\r\n' ? 'CRLF' : 'LF',
       object: 'Account',
       operation: 'insert',
       input: csvStream,

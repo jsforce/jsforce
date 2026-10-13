@@ -1,3 +1,5 @@
+import { mkdir, writeFile } from 'node:fs/promises';
+import path from 'node:path';
 import puppeteer, { Page } from 'puppeteer';
 
 const AUTHORIZATION_TIMEOUT = 120000;
@@ -71,14 +73,21 @@ async function clickAndWaitForPageChange(page: Page, selector: string) {
 }
 
 async function authorizationError(page: Page, message: string): Promise<Error> {
-  const screenshotPath = `/tmp/jsforce-oauth-${Date.now()}.png`;
+  const diagnosticDir = path.join(process.cwd(), 'oauth-diagnostics');
+  const timestamp = Date.now();
+  const screenshotPath = path.join(diagnosticDir, `oauth-${timestamp}.png`);
+  const htmlPath = path.join(diagnosticDir, `oauth-${timestamp}.html`);
   try {
-    await page.screenshot({ path: screenshotPath, fullPage: true });
+    await mkdir(diagnosticDir, { recursive: true });
+    await Promise.all([
+      page.screenshot({ path: screenshotPath, fullPage: true }),
+      writeFile(htmlPath, await page.content()),
+    ]);
   } catch {
     // Keep the original authorization error even when screenshot capture fails.
   }
   return new Error(
-    `${message}; URL: ${page.url()}; title: ${await page.title()}; screenshot: ${screenshotPath}`,
+    `${message}; URL: ${page.url()}; title: ${await page.title()}; diagnostics: ${diagnosticDir}`,
   );
 }
 
@@ -93,8 +102,22 @@ export default async function authorize(
     ...(process.env.CHROME_BIN ? { executablePath: process.env.CHROME_BIN } : {}),
   });
   let ret;
+  const browserErrors: string[] = [];
   try {
     const page = await browser.newPage();
+    page.on('console', (message) => {
+      if (message.type() === 'error') {
+        browserErrors.push(`console: ${message.text()}`);
+      }
+    });
+    page.on('pageerror', (error) => {
+      browserErrors.push(`page: ${error.message}`);
+    });
+    page.on('requestfailed', (request) => {
+      browserErrors.push(
+        `request: ${request.url()} (${request.failure()?.errorText ?? 'unknown error'})`,
+      );
+    });
     await page.setRequestInterception(true);
     page.on('request', (request) => {
       const reqUrl = request.url();
@@ -109,7 +132,14 @@ export default async function authorize(
       }
     });
     await page.goto(url);
-    ret = await loginAndApprove(page, username, password);
+    try {
+      ret = await loginAndApprove(page, username, password);
+    } catch (error) {
+      if (error instanceof Error && browserErrors.length > 0) {
+        error.message += `; browser errors: ${browserErrors.join(' | ')}`;
+      }
+      throw error;
+    }
   } finally {
     if (browser) {
       browser.close();
