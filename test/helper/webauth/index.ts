@@ -1,11 +1,17 @@
 import puppeteer, { Page } from 'puppeteer';
 
-function retrieveCallbackedParameters(url: string) {
-  const params: { [name: string]: string } = {};
+const AUTHORIZATION_TIMEOUT = 120000;
+
+type AuthorizationParameters = Record<string, string>;
+
+export function retrieveCallbackedParameters(url: string): AuthorizationParameters {
+  const params: AuthorizationParameters = {};
   const qparams = (url.split('?').pop() || '').split('&');
   for (const qparam of qparams) {
     const pair = qparam.split('=');
-    params[pair[0]] = decodeURIComponent(pair[1]);
+    if (pair.length === 2) {
+      params[pair[0]] = decodeURIComponent(pair[1]);
+    }
   }
   return params;
 }
@@ -14,50 +20,66 @@ async function loginAndApprove(
   page: Page,
   username: string,
   password: string,
-): Promise<any> {
-  const url = page.url();
-  if (url.indexOf('/setup/secur/RemoteAccessAuthorizationPage.apexp') > 0) {
-    // authorization page
-    await Promise.all([
-      page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
-      page.click('#oaapprove'),
-    ]);
-    await delay(1000);
-    return loginAndApprove(page, username, password);
-  } else if (url.indexOf('/?ec=302') > 0) {
-    // login page - may be multi-step (username first, then password)
-    await page.waitForSelector('#username', { timeout: 10000 });
-    await page.type('#username', username);
+): Promise<AuthorizationParameters> {
+  const deadline = Date.now() + AUTHORIZATION_TIMEOUT;
+
+  while (Date.now() < deadline) {
+    const url = page.url();
+    if (url.startsWith('http://localhost')) {
+      return retrieveCallbackedParameters(url);
+    }
+    if (url.includes('/setup/secur/RemoteAccessErrorPage.apexp')) {
+      throw await authorizationError(page, 'Salesforce rejected OAuth authorization');
+    }
+
+    const usernameField = await page.$('#username');
+    if (usernameField) {
+      await page.type('#username', username);
+      const passwordField = await page.$('#password');
+      if (passwordField) {
+        await page.type('#password', password);
+      }
+      await clickAndWaitForPageChange(page, '[name=Login]');
+      continue;
+    }
+
     const passwordField = await page.$('#password');
     if (passwordField) {
       await page.type('#password', password);
-      await Promise.all([
-        page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
-        page.click('[name=Login]'),
-      ]);
-    } else {
-      await Promise.all([
-        page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
-        page.click('[name=Login]'),
-      ]);
-      await page.waitForSelector('#password', { timeout: 10000 });
-      await page.type('#password', password);
-      await Promise.all([
-        page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
-        page.click('[name=Login]'),
-      ]);
+      await clickAndWaitForPageChange(page, '[name=Login]');
+      continue;
     }
-    return loginAndApprove(page, username, password);
-  } else if (url.startsWith('http://localhost')) {
-    // callback response
-    return retrieveCallbackedParameters(url);
-  } else if (url.indexOf('/setup/secur/RemoteAccessErrorPage.apexp') > 0) {
-    // authorization error
-    throw new Error('invalid authorization error');
-  } else {
-    await delay(1000);
-    return loginAndApprove(page, username, password);
+
+    const approveButton = await page.$('#oaapprove');
+    if (approveButton) {
+      await clickAndWaitForPageChange(page, '#oaapprove');
+      continue;
+    }
+
+    await delay(500);
   }
+
+  throw await authorizationError(page, 'Timed out waiting for Salesforce OAuth authorization');
+}
+
+async function clickAndWaitForPageChange(page: Page, selector: string) {
+  const url = page.url();
+  await Promise.all([
+    page.waitForFunction((previousUrl) => location.href !== previousUrl, {}, url),
+    page.click(selector),
+  ]);
+}
+
+async function authorizationError(page: Page, message: string): Promise<Error> {
+  const screenshotPath = `/tmp/jsforce-oauth-${Date.now()}.png`;
+  try {
+    await page.screenshot({ path: screenshotPath, fullPage: true });
+  } catch {
+    // Keep the original authorization error even when screenshot capture fails.
+  }
+  return new Error(
+    `${message}; URL: ${page.url()}; title: ${await page.title()}; screenshot: ${screenshotPath}`,
+  );
 }
 
 export default async function authorize(
