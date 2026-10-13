@@ -207,6 +207,7 @@ if (isNodeJS()) {
           clientId: config.clientId,
           clientSecret: config.clientSecret,
           redirectUri: config.redirectUri,
+          useVerifier: true,
         },
         logLevel: config.logLevel,
         proxyUrl: config.proxyUrl,
