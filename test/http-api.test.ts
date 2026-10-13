@@ -356,6 +356,39 @@ describe('HTTP API', () => {
         assert.ok(testPassed);
       });
 
+      it('truncates TRACESTATE at whole members within the W3C limit', async () => {
+        process.env.TRACEPARENT = '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01';
+        const first = `first=${'a'.repeat(250)}`;
+        const second = `second=${'b'.repeat(250)}`;
+        const third = `third=${'c'.repeat(250)}`;
+        process.env.TRACESTATE = `${first},${second},${third}`;
+        let testPassed = false;
+        const httpApi = new HttpApi(createTraceContextConnection(), {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.['tracestate'], first);
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
+        assert.ok(testPassed);
+      });
+
+      it('omits an oversized TRACESTATE member', async () => {
+        process.env.TRACEPARENT = '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01';
+        process.env.TRACESTATE = `vendor=${'a'.repeat(513)}`;
+        let testPassed = false;
+        const httpApi = new HttpApi(createTraceContextConnection(), {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.['tracestate'], undefined);
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
+        assert.ok(testPassed);
+      });
+
       it('does not include trace headers when env vars are absent', async () => {
         let testPassed = false;
         const httpApi = new HttpApi(createTraceContextConnection(), {});

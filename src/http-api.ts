@@ -37,6 +37,19 @@ const TRACEPARENT_RE = /^[0-9a-f]{2}-[0-9a-f]{32}-[0-9a-f]{16}-[0-9a-f]{2}$/i;
 const ALL_ZERO_32 = /^0{32}$/;
 const ALL_ZERO_16 = /^0{16}$/;
 const HEADER_UNSAFE_RE = /[\r\n\0]/;
+const MAX_TRACESTATE_LENGTH = 512;
+
+function trimTracestate(tracestate: string) {
+  let trimmed = '';
+  for (const member of tracestate.split(',')) {
+    const candidate = trimmed ? `${trimmed},${member}` : member;
+    if (new TextEncoder().encode(candidate).byteLength > MAX_TRACESTATE_LENGTH) {
+      break;
+    }
+    trimmed = candidate;
+  }
+  return trimmed;
+}
 
 function getTraceContextHeaders(): Record<string, string> {
   const headers: Record<string, string> = {};
@@ -50,7 +63,10 @@ function getTraceContextHeaders(): Record<string, string> {
       headers['traceparent'] = tp.toLowerCase();
       const ts = process.env.TRACESTATE?.trim();
       if (ts && !HEADER_UNSAFE_RE.test(ts)) {
-        headers['tracestate'] = ts;
+        const trimmed = trimTracestate(ts);
+        if (trimmed) {
+          headers['tracestate'] = trimmed;
+        }
       }
     }
   }
