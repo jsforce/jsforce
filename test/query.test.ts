@@ -5,7 +5,7 @@ import { SfDate } from 'jsforce';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isString, isNumber } from './util';
-import { insertAccounts } from './bulk.test';
+import { insertAccounts } from './helper/bulk';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();
@@ -265,7 +265,7 @@ it('should setup for query and update / destroy test', async () => {
 it('should update queried records using Query#update and return updated records', async () => {
   const id = Date.now();
 
-  await insertAccounts(id, accountNum);
+  await insertAccounts(conn, id, accountNum);
 
   const rets = await conn
     .sobject('Account')
@@ -314,7 +314,7 @@ it('should update queried records using Query#update, for unmatching query, and 
 it('should delete queried records using Query#destroy and return deleted status', async () => {
   const id = Date.now();
 
-  await insertAccounts(id, accountNum);
+  await insertAccounts(conn, id, accountNum);
 
   const rets = await conn
     .sobject('Account')
@@ -361,7 +361,7 @@ it('should setup for query and update/destroy with allowBulk=false test', async 
 it('should update queried records using Query#update, with allowBulk = false, and return updated records', async () => {
   const id = Date.now();
 
-  await insertAccounts(id, massiveAccountNum);
+  await insertAccounts(conn, id, massiveAccountNum);
 
   const rets = await conn
     .sobject('Account')
@@ -398,7 +398,7 @@ it('should update queried records using Query#update, with allowBulk = false, an
 it('should delete queried records using Query#destroy, with allowBulk = false, and return deleted status', async () => {
   const id = Date.now();
 
-  await insertAccounts(id, massiveAccountNum);
+  await insertAccounts(conn, id, massiveAccountNum);
 
   const rets = await conn
     .sobject('Account')

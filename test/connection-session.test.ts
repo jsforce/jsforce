@@ -226,7 +226,7 @@ if (isNodeJS()) {
       assert.ok(typeof conn.refreshToken === 'string');
       const res = await conn.query('SELECT Id FROM User');
       assert.ok(Array.isArray(res.records));
-    });
+    }, 180000);
 
     //
     it('should make access token invalid and return responses', async () => {

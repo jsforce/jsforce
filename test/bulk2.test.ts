@@ -47,7 +47,13 @@ function ensureSuccessfulBulkResults(
   const { successfulResults, failedResults, unprocessedRecords } = results;
 
   assert.ok(Array.isArray(successfulResults));
-  assert.ok(successfulResults.length === qty);
+  assert.ok(
+    successfulResults.length === qty,
+    `Bulk 2 ${operation} failed: ${JSON.stringify({
+      failedResults,
+      unprocessedRecords,
+    })}`,
+  );
 
   const recordCreated = ['insert', 'upsert'].includes(operation) ? 'true' : 'false';
 
@@ -203,8 +209,8 @@ if (isNodeJS()) {
     );
     const csvStream = stream.Readable.from([
       csv.replace(
-        /^Bulk Account from CSV \(bulk2\) - #/gm,
-        `Bulk Account from CSV (bulk2) ${Date.now()}-${process.pid} - #`,
+        /^Bulk Account from CSV \(bulk2\) - #[^,]*/gm,
+        () => Math.random().toString(36).slice(2),
       ),
     ]);
 
