@@ -18,8 +18,10 @@ async function loginAndApprove(
   const url = page.url();
   if (url.indexOf('/setup/secur/RemoteAccessAuthorizationPage.apexp') > 0) {
     // authorization page
-    await page.click('#oaapprove');
-    await page.waitForNavigation({ waitUntil: 'networkidle2' });
+    await Promise.all([
+      page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
+      page.click('#oaapprove'),
+    ]);
     await delay(1000);
     return loginAndApprove(page, username, password);
   } else if (url.indexOf('/?ec=302') > 0) {
@@ -29,14 +31,22 @@ async function loginAndApprove(
     const passwordField = await page.$('#password');
     if (passwordField) {
       await page.type('#password', password);
-      await page.click('[name=Login]');
+      await Promise.all([
+        page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
+        page.click('[name=Login]'),
+      ]);
     } else {
-      await page.click('[name=Login]');
+      await Promise.all([
+        page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
+        page.click('[name=Login]'),
+      ]);
       await page.waitForSelector('#password', { timeout: 10000 });
       await page.type('#password', password);
-      await page.click('[name=Login]');
+      await Promise.all([
+        page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
+        page.click('[name=Login]'),
+      ]);
     }
-    await page.waitForNavigation({ waitUntil: 'networkidle2' });
     return loginAndApprove(page, username, password);
   } else if (url.startsWith('http://localhost')) {
     // callback response
