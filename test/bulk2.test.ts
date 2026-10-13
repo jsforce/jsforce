@@ -46,13 +46,7 @@ function ensureSuccessfulBulkResults(
   const { successfulResults, failedResults, unprocessedRecords } = results;
 
   assert.ok(Array.isArray(successfulResults));
-  assert.ok(
-    successfulResults.length === qty,
-    `Bulk 2 ${operation} failed: ${JSON.stringify({
-      failedResults,
-      unprocessedRecords,
-    })}`,
-  );
+  assert.ok(successfulResults.length === qty);
 
   const recordCreated = ['insert', 'upsert'].includes(operation) ? 'true' : 'false';
 

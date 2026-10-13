@@ -143,7 +143,7 @@ export type QueryExplainResult = {
     }>;
     relativeCost: number;
     sobjectCardinality: number;
-    sobjectType: string | null;
+    sobjectType: string;
   }>;
 };
 
