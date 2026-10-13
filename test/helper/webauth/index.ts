@@ -66,10 +66,22 @@ async function loginAndApprove(
 
 async function clickAndWaitForPageChange(page: Page, selector: string) {
   const url = page.url();
-  await Promise.all([
-    page.waitForFunction((previousUrl) => location.href !== previousUrl, {}, url),
-    page.click(selector),
-  ]);
+  try {
+    await Promise.all([
+      page.waitForFunction(
+        (previousUrl) => location.href !== previousUrl,
+        {},
+        url,
+      ),
+      page.click(selector),
+    ]);
+  } catch (error) {
+    const detail = error instanceof Error ? `: ${error.message}` : '';
+    throw await authorizationError(
+      page,
+      `OAuth page did not change after clicking ${selector}${detail}`,
+    );
+  }
 }
 
 async function authorizationError(page: Page, message: string): Promise<Error> {
