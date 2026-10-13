@@ -198,7 +198,11 @@ if (isNodeJS()) {
 if (isNodeJS()) {
   // ditto about Device Activation/GHA IPs, can't run these oauth tests
   //
-  (config.clientId ? describe : describe.skip)('oauth2 refresh', () => {
+  // The web-server flow relies on Salesforce's interactive login UI, which is
+  // not stable enough for unattended CI. It remains available for explicit runs.
+  (config.clientId && (!process.env.CI || process.env.SF_RUN_WEB_SERVER_OAUTH_TESTS === 'true')
+    ? describe
+    : describe.skip)('oauth2 refresh', () => {
     let conn: Connection;
 
     it('should authorize web server flow to get access tokens', async () => {
