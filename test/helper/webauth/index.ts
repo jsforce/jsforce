@@ -1,19 +1,11 @@
-import { mkdir, writeFile } from 'node:fs/promises';
-import path from 'node:path';
 import puppeteer, { Page } from 'puppeteer';
 
-const AUTHORIZATION_TIMEOUT = 120000;
-
-type AuthorizationParameters = Record<string, string>;
-
-export function retrieveCallbackedParameters(url: string): AuthorizationParameters {
-  const params: AuthorizationParameters = {};
+function retrieveCallbackedParameters(url: string) {
+  const params: { [name: string]: string } = {};
   const qparams = (url.split('?').pop() || '').split('&');
   for (const qparam of qparams) {
     const pair = qparam.split('=');
-    if (pair.length === 2) {
-      params[pair[0]] = decodeURIComponent(pair[1]);
-    }
+    params[pair[0]] = decodeURIComponent(pair[1]);
   }
   return params;
 }
@@ -22,85 +14,40 @@ async function loginAndApprove(
   page: Page,
   username: string,
   password: string,
-): Promise<AuthorizationParameters> {
-  const deadline = Date.now() + AUTHORIZATION_TIMEOUT;
-
-  while (Date.now() < deadline) {
-    const url = page.url();
-    if (url.startsWith('http://localhost')) {
-      return retrieveCallbackedParameters(url);
-    }
-    if (url.includes('/setup/secur/RemoteAccessErrorPage.apexp')) {
-      throw await authorizationError(page, 'Salesforce rejected OAuth authorization');
-    }
-
-    const usernameField = await page.$('#username');
-    if (usernameField) {
-      await page.type('#username', username);
-      const passwordField = await page.$('#password');
-      if (passwordField) {
-        await page.type('#password', password);
-      }
-      await clickAndWaitForPageChange(page, '[name=Login]');
-      continue;
-    }
-
+): Promise<any> {
+  const url = page.url();
+  if (url.indexOf('/setup/secur/RemoteAccessAuthorizationPage.apexp') > 0) {
+    // authorization page
+    await page.click('#oaapprove');
+    await page.waitForNavigation({ waitUntil: 'networkidle2' });
+    await delay(1000);
+    return loginAndApprove(page, username, password);
+  } else if (url.indexOf('/?ec=302') > 0) {
+    // login page - may be multi-step (username first, then password)
+    await page.waitForSelector('#username', { timeout: 10000 });
+    await page.type('#username', username);
     const passwordField = await page.$('#password');
     if (passwordField) {
       await page.type('#password', password);
-      await clickAndWaitForPageChange(page, '[name=Login]');
-      continue;
+      await page.click('[name=Login]');
+    } else {
+      await page.click('[name=Login]');
+      await page.waitForSelector('#password', { timeout: 10000 });
+      await page.type('#password', password);
+      await page.click('[name=Login]');
     }
-
-    const approveButton = await page.$('#oaapprove');
-    if (approveButton) {
-      await clickAndWaitForPageChange(page, '#oaapprove');
-      continue;
-    }
-
-    await delay(500);
+    await page.waitForNavigation({ waitUntil: 'networkidle2' });
+    return loginAndApprove(page, username, password);
+  } else if (url.startsWith('http://localhost')) {
+    // callback response
+    return retrieveCallbackedParameters(url);
+  } else if (url.indexOf('/setup/secur/RemoteAccessErrorPage.apexp') > 0) {
+    // authorization error
+    throw new Error('invalid authorization error');
+  } else {
+    await delay(1000);
+    return loginAndApprove(page, username, password);
   }
-
-  throw await authorizationError(page, 'Timed out waiting for Salesforce OAuth authorization');
-}
-
-async function clickAndWaitForPageChange(page: Page, selector: string) {
-  const url = page.url();
-  try {
-    await Promise.all([
-      page.waitForFunction(
-        (previousUrl) => location.href !== previousUrl,
-        {},
-        url,
-      ),
-      page.click(selector),
-    ]);
-  } catch (error) {
-    const detail = error instanceof Error ? `: ${error.message}` : '';
-    throw await authorizationError(
-      page,
-      `OAuth page did not change after clicking ${selector}${detail}`,
-    );
-  }
-}
-
-async function authorizationError(page: Page, message: string): Promise<Error> {
-  const diagnosticDir = path.join(process.cwd(), 'oauth-diagnostics');
-  const timestamp = Date.now();
-  const screenshotPath = path.join(diagnosticDir, `oauth-${timestamp}.png`);
-  const htmlPath = path.join(diagnosticDir, `oauth-${timestamp}.html`);
-  try {
-    await mkdir(diagnosticDir, { recursive: true });
-    await Promise.all([
-      page.screenshot({ path: screenshotPath, fullPage: true }),
-      writeFile(htmlPath, await page.content()),
-    ]);
-  } catch {
-    // Keep the original authorization error even when screenshot capture fails.
-  }
-  return new Error(
-    `${message}; URL: ${page.url()}; title: ${await page.title()}; diagnostics: ${diagnosticDir}`,
-  );
 }
 
 export default async function authorize(
@@ -114,22 +61,8 @@ export default async function authorize(
     ...(process.env.CHROME_BIN ? { executablePath: process.env.CHROME_BIN } : {}),
   });
   let ret;
-  const browserErrors: string[] = [];
   try {
     const page = await browser.newPage();
-    page.on('console', (message) => {
-      if (message.type() === 'error') {
-        browserErrors.push(`console: ${message.text()}`);
-      }
-    });
-    page.on('pageerror', (error) => {
-      browserErrors.push(`page: ${error.message}`);
-    });
-    page.on('requestfailed', (request) => {
-      browserErrors.push(
-        `request: ${request.url()} (${request.failure()?.errorText ?? 'unknown error'})`,
-      );
-    });
     await page.setRequestInterception(true);
     page.on('request', (request) => {
       const reqUrl = request.url();
@@ -144,14 +77,7 @@ export default async function authorize(
       }
     });
     await page.goto(url);
-    try {
-      ret = await loginAndApprove(page, username, password);
-    } catch (error) {
-      if (error instanceof Error && browserErrors.length > 0) {
-        error.message += `; browser errors: ${browserErrors.join(' | ')}`;
-      }
-      throw error;
-    }
+    ret = await loginAndApprove(page, username, password);
   } finally {
     if (browser) {
       browser.close();
