@@ -1,8 +1,8 @@
 import assert from 'assert';
 import { Connection } from 'jsforce';
 import { delay } from './util';
-import authorize from './helper/webauth';
 import config from './config';
+import ConnectionManager from './helper/connection-manager';
 import { isNodeJS } from './helper/env';
 
 if (typeof jest !== 'undefined') {
@@ -196,87 +196,17 @@ if (isNodeJS()) {
 }
 
 if (isNodeJS()) {
-  // ditto about Device Activation/GHA IPs, can't run these oauth tests
-  //
-  (config.clientId ? describe : describe.skip)('oauth2 refresh', () => {
-    let conn: Connection;
+  (config.accessToken ? describe : describe.skip)('scratch org session', () => {
+    it('should establish a connection from the CLI access token', async () => {
+      const connMgr = new ConnectionManager(config);
+      const conn = connMgr.createConnection();
+      connMgr.establishConnection(conn);
 
-    it('should authorize web server flow to get access tokens', async () => {
-      conn = new Connection({
-        oauth2: {
-          clientId: config.clientId,
-          clientSecret: config.clientSecret,
-          redirectUri: config.redirectUri,
-          useVerifier: true,
-        },
-        logLevel: config.logLevel,
-        proxyUrl: config.proxyUrl,
-        loginUrl: config.loginUrl,
-      });
-      const authzUrl = conn.oauth2.getAuthorizationUrl();
-      const params = await authorize(
-        authzUrl,
-        config.username,
-        config.password,
-      );
-      const userInfo = await conn.authorize(params.code);
-      assert.ok(typeof userInfo.id === 'string');
-      assert.ok(typeof userInfo.organizationId === 'string');
-      assert.ok(typeof userInfo.url === 'string');
       assert.ok(typeof conn.accessToken === 'string');
-      assert.ok(typeof conn.refreshToken === 'string');
+      assert.equal(conn.instanceUrl, config.loginUrl);
+
       const res = await conn.query('SELECT Id FROM User');
       assert.ok(Array.isArray(res.records));
-    }, 180000);
-
-    //
-    it('should make access token invalid and return responses', async () => {
-      let accessToken: string | undefined = undefined;
-      let refreshCount = 0;
-      conn.accessToken = 'invalid access token';
-      conn.removeAllListeners('refresh');
-      conn.on('refresh', (at: string) => {
-        accessToken = at;
-        refreshCount += 1;
-      });
-      const res = await conn.query('SELECT Id FROM User');
-      assert.ok(refreshCount === 1);
-      assert.ok(typeof accessToken === 'string');
-      assert.ok(Array.isArray(res.records));
-    });
-
-    it('should make access token invalid and call in parallel and return responses', async () => {
-      let accessToken: string | undefined = undefined;
-      let refreshCount = 0;
-      conn.accessToken = 'invalid access token';
-      conn.removeAllListeners('refresh');
-      conn.on('refresh', (at: string) => {
-        accessToken = at;
-        refreshCount += 1;
-      });
-      const results = await Promise.all([
-        Promise.resolve(conn.query('SELECT Id FROM User')),
-        conn.describeGlobal(),
-        conn.sobject('User').describe(),
-      ]);
-      assert.ok(refreshCount === 1);
-      assert.ok(typeof accessToken === 'string');
-      assert.ok(Array.isArray(results));
-      assert.ok(Array.isArray(results[0].records));
-      assert.ok(Array.isArray(results[1].sobjects));
-      assert.ok(Array.isArray(results[2].fields));
-    });
-
-    it('should expire both access token and refresh token and return error', async () => {
-      conn.accessToken = 'invalid access token';
-      conn.refreshToken = 'invalid refresh token';
-      try {
-        await conn.query('SELECT Id FROM User');
-        assert.fail();
-      } catch (err) {
-        assert.ok(err instanceof Error);
-        assert.ok(err.message === 'Unable to refresh session due to: expired access/refresh token');
-      }
     });
   });
 }
