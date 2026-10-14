@@ -1,3 +1,12 @@
+# [3.11.0](https://github.com/jsforce/jsforce/compare/3.10.29...3.11.0) (2026-10-14)
+
+
+### Features
+
+* add opt-in W3C trace context forwarding ([#1836](https://github.com/jsforce/jsforce/issues/1836)) ([04571dc](https://github.com/jsforce/jsforce/commit/04571dc88bdc6b4bbf97ae39ceea0b5a2878cc43))
+
+
+
 ## [3.10.29](https://github.com/jsforce/jsforce/compare/3.10.28...3.10.29) (2026-10-08)
 
 
@@ -26,15 +35,6 @@
 
 
 ## [3.10.26](https://github.com/jsforce/jsforce/compare/3.10.25...3.10.26) (2026-09-22)
-
-
-
-## [3.10.25](https://github.com/jsforce/jsforce/compare/3.10.24...3.10.25) (2026-09-04)
-
-
-### Bug Fixes
-
-* export describe-related types from common ([#1828](https://github.com/jsforce/jsforce/issues/1828)) ([311b183](https://github.com/jsforce/jsforce/commit/311b183a8fa690bc5e92814d03544b7ef9d2f972))
 
 
 
