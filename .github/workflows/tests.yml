@@ -52,14 +52,14 @@ jobs:
           retry_wait_seconds: 60
           command: |
             SF_USERNAME=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.username') \
-            SF_PASSWORD=$(sf org auth show-user-password --target-org jsforce-test-org --json | jq -r '.result.password') \
+            SF_PASSWORD=$(sf org generate password --target-org jsforce-test-org --json | jq -r '.result.password') \
             SF_LOGIN_URL=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.instanceUrl') \
             SF_ACCESS_TOKEN=$(sf org auth show-access-token --target-org jsforce-test-org --json | jq -r '.result.accessToken') \
             DISPLAY=:99 CHROME_BIN=$(which chrome) \
             npm run test:browser-ci
           new_command_on_retry: |
             SF_USERNAME=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.username') \
-            SF_PASSWORD=$(sf org auth show-user-password --target-org jsforce-test-org --json | jq -r '.result.password') \
+            SF_PASSWORD=$(sf org generate password --target-org jsforce-test-org --json | jq -r '.result.password') \
             SF_LOGIN_URL=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.instanceUrl') \
             SF_ACCESS_TOKEN=$(sf org auth show-access-token --target-org jsforce-test-org --json | jq -r '.result.accessToken') \
             DISPLAY=:99 CHROME_BIN=$(which chrome) \
@@ -141,7 +141,7 @@ jobs:
           CHROME_BIN: ${{ steps.setup-chrome.outputs.chrome-path }}
         run: |
           SF_USERNAME=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.username') \
-          SF_PASSWORD=$(sf org auth show-user-password --target-org jsforce-test-org --json | jq -r '.result.password') \
+          SF_PASSWORD=$(sf org generate password --target-org jsforce-test-org --json | jq -r '.result.password') \
           SF_LOGIN_URL=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.instanceUrl') \
           SF_ACCESS_TOKEN=$(sf org auth show-access-token --target-org jsforce-test-org --json | jq -r '.result.accessToken') \
           npm run test:node
@@ -228,7 +228,7 @@ jobs:
           CHROME_BIN: ${{ steps.setup-chrome.outputs.chrome-path }}
         run: |
           $env:SF_USERNAME=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.username')
-          $env:SF_PASSWORD=$(sf org auth show-user-password --target-org jsforce-test-org --json | jq -r '.result.password')
+          $env:SF_PASSWORD=$(sf org generate password --target-org jsforce-test-org --json | jq -r '.result.password')
           $env:SF_LOGIN_URL=$(sf org display user --target-org jsforce-test-org --json | jq -r '.result.instanceUrl')
           $env:SF_ACCESS_TOKEN=$(sf org auth show-access-token --target-org jsforce-test-org --json | jq -r '.result.accessToken')
           npm run test:node
