@@ -1,5 +1,6 @@
 import assert from 'assert';
 import path from 'path';
+import stream from 'stream';
 import fs from './helper/fs';
 import { Connection, Date as SfDate, Schema, Record } from 'jsforce';
 import ConnectionManager from './helper/connection-manager';
@@ -46,7 +47,13 @@ function ensureSuccessfulBulkResults(
   const { successfulResults, failedResults, unprocessedRecords } = results;
 
   assert.ok(Array.isArray(successfulResults));
-  assert.ok(successfulResults.length === qty);
+  assert.ok(
+    successfulResults.length === qty,
+    `Bulk 2 ${operation} failed: ${JSON.stringify({
+      failedResults,
+      unprocessedRecords,
+    })}`,
+  );
 
   const recordCreated = ['insert', 'upsert'].includes(operation) ? 'true' : 'false';
 
@@ -196,12 +203,17 @@ it('should bulk delete with empty input and not raise client input error', async
 if (isNodeJS()) {
   it('should bulk insert from file and return inserted results', async () => {
     // insert 100 account records from csv file
-    const csvStream = fs.createReadStream(
-      path.join(__dirname, 'data', 'Account_bulk2_test.csv'),
-    );
+    const lineEnding = require('os').platform() === 'win32' ? '\r\n' : '\n';
+    const csvStream = stream.Readable.from([
+      `Name${lineEnding}`,
+      ...Array.from(
+        { length: 100 },
+        () => `${Math.random().toString(36).slice(2)}${lineEnding}`,
+      ),
+    ]);
 
     const res = await conn.bulk2.loadAndWaitForResults({
-      lineEnding: require('os').platform() === 'win32' ? 'CRLF' : 'LF',
+      lineEnding: lineEnding === '\r\n' ? 'CRLF' : 'LF',
       object: 'Account',
       operation: 'insert',
       input: csvStream,

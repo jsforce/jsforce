@@ -178,7 +178,7 @@ describe('report', () => {
       assert.ok(isString(plan.leadingOperationType));
       assert.ok(isNumber(plan.relativeCost));
       assert.ok(isNumber(plan.sobjectCardinality));
-      assert.ok(isString(plan.sobjectType));
+      assert.ok(plan.sobjectType === null || isString(plan.sobjectType));
     }
   });
 

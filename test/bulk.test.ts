@@ -1,46 +1,17 @@
 import assert from 'assert';
 import path from 'path';
+import stream from 'stream';
 import fs from './helper/fs';
 import { Connection, Date as SfDate, Record } from 'jsforce';
 import ConnectionManager from './helper/connection-manager';
+import { insertAccounts } from './helper/bulk';
 import config from './config';
 import { isObject, isString } from './util';
 import { isNodeJS } from './helper/env';
-import { BulkIngestBatchResult } from 'jsforce/lib/api/bulk';
 
 const connMgr = new ConnectionManager(config);
 const conn = connMgr.createConnection();
 conn.bulk.pollTimeout = 90 * 1000; // adjust poll timeout to test timeout.
-
-export async function insertAccounts(
-  id: string | number,
-  qty: number = 20,
-): Promise<BulkIngestBatchResult> {
-  if (typeof id === 'number') {
-    id = id.toString();
-  }
-
-  const insertRecords = [
-    ...Array.from(Array(qty), (a, i) => ({
-      Name: `Bulk Account ${id} #${i + 1}`,
-    })),
-  ];
-  const batchInsertRes = await conn.bulk.load(
-    'Account',
-    'insert',
-    insertRecords,
-  );
-
-  assert.ok(Array.isArray(batchInsertRes));
-  assert.ok(batchInsertRes.length === qty);
-  for (const res of batchInsertRes) {
-    assert.ok(isString(res.id));
-    assert.ok(res.success === true);
-    assert.ok(res.created === true);
-  }
-
-  return batchInsertRes;
-}
 
 /**
  *
@@ -86,7 +57,7 @@ it('should bulk insert records and return result status', async () => {
 it('should bulk update and return updated status', async () => {
   const id = Date.now();
 
-  await insertAccounts(id);
+  await insertAccounts(conn, id);
 
   const records = await conn
     .sobject('Account')
@@ -123,7 +94,7 @@ it('should bulk update with empty input and raise client input error', async () 
 it('should bulk delete and return deleted status', async () => {
   const id = Date.now();
 
-  await insertAccounts(id, bulkAccountNum);
+  await insertAccounts(conn, id, bulkAccountNum);
 
   const records = await conn
     .sobject('Account')
@@ -153,9 +124,13 @@ it('should bulk delete with empty input and raise client input error', async () 
 if (isNodeJS()) {
   it('should bulk insert from file and return inserted results', async () => {
     // insert 100 account records from csv file
-    const fstream = fs.createReadStream(
-      path.join(__dirname, 'data', 'Account_bulk1_test.csv'),
-    );
+    const fstream = stream.Readable.from([
+      'Name\n',
+      ...Array.from(
+        { length: 100 },
+        () => `${Math.random().toString(36).slice(2)}\n`,
+      ),
+    ]);
     const batch = conn.bulk.load('Account', 'insert');
     fstream.pipe(batch.stream());
     const rets = await new Promise<any[]>((resolve, reject) => {
@@ -164,12 +139,15 @@ if (isNodeJS()) {
     });
 
     try {
-      assert.ok(Array.isArray(rets));
-      assert.ok(rets.length === 100);
-      for (const ret of rets) {
-        assert.ok(isString(ret.id));
-        assert.ok(ret.success === true);
-      }
+        assert.ok(Array.isArray(rets));
+        assert.ok(rets.length === 100);
+        for (const ret of rets) {
+          assert.ok(
+            isString(ret.id),
+            `Bulk insert failed: ${ret.errors.join('; ')}`,
+          );
+          assert.ok(ret.success === true, `Bulk insert failed: ${ret.errors.join('; ')}`);
+        }
     } finally {
       // cleanup:
       // always delete successfully inserted records.
@@ -184,7 +162,7 @@ if (isNodeJS()) {
   it('should bulk delete from file and return deleted results', async () => {
     const id = Date.now();
 
-    await insertAccounts(id);
+    await insertAccounts(conn, id);
 
     const records = await conn
       .sobject('Account')
@@ -312,7 +290,7 @@ const bulkAccountNum = 250;
 it('should bulk update using Query#update and return updated status', async () => {
   const id = Date.now();
 
-  await insertAccounts(id, bulkAccountNum);
+  await insertAccounts(conn, id, bulkAccountNum);
 
   const rets = await conn
     .sobject('Account')
@@ -360,7 +338,7 @@ it('should bulk update using Query#update with unmatching query and return empty
 it('should bulk delete using Query#destroy and return deleted status', async () => {
   const id = Date.now();
 
-  await insertAccounts(id, bulkAccountNum);
+  await insertAccounts(conn, id, bulkAccountNum);
 
   const batchDeleteRes = await conn
     .sobject('Account')
