@@ -1,3 +1,12 @@
+## [3.11.1](https://github.com/jsforce/jsforce/compare/3.11.0...3.11.1) (2026-10-15)
+
+
+### Bug Fixes
+
+* **deps:** bump lodash from 4.17.21 to 4.18.1 ([#1850](https://github.com/jsforce/jsforce/issues/1850)) ([a0c5665](https://github.com/jsforce/jsforce/commit/a0c566577f04f54ce1fd0660615efbfe1a119ee6))
+
+
+
 # [3.11.0](https://github.com/jsforce/jsforce/compare/3.10.29...3.11.0) (2026-10-14)
 
 
@@ -31,10 +40,6 @@
 ### Bug Fixes
 
 * bump dependencies-@W-24222954@ ([#1835](https://github.com/jsforce/jsforce/issues/1835)) ([dab4c58](https://github.com/jsforce/jsforce/commit/dab4c5831969770e1f6e500711e2798c2dfad637))
-
-
-
-## [3.10.26](https://github.com/jsforce/jsforce/compare/3.10.25...3.10.26) (2026-09-22)
 
 
 
