@@ -315,7 +315,11 @@ describe('HTTP API', () => {
       afterEach(() => {
         delete process.env.TRACEPARENT;
         delete process.env.TRACESTATE;
-        delete process.env.BAGGAGE;
+        delete process.env.B3;
+        delete process.env.X_B3_TRACEID;
+        delete process.env.X_B3_SPANID;
+        delete process.env.X_B3_SAMPLED;
+        delete process.env.X_B3_FLAGS;
       });
 
       const createTraceContextConnection = () =>
@@ -556,6 +560,94 @@ describe('HTTP API', () => {
         pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
         await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
         assert.ok(testPassed);
+      });
+
+      it('forwards B3 single-header context from B3', async () => {
+        process.env.B3 = '0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-d';
+        let testPassed = false;
+        const httpApi = new HttpApi(new Connection({ loginUrl, accessToken, propagators: ['b3'] }), {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.b3, process.env.B3);
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
+        assert.ok(testPassed);
+      });
+
+      it('forwards B3 multi-header context when configured', async () => {
+        process.env.X_B3_TRACEID = '0af7651916cd43dd8448eb211c80319c';
+        process.env.X_B3_SPANID = 'b7ad6b7169203331';
+        process.env.X_B3_SAMPLED = '1';
+        let testPassed = false;
+        const httpApi = new HttpApi(new Connection({ loginUrl, accessToken, propagators: ['b3multi'] }), {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.['X-B3-TraceId'], process.env.X_B3_TRACEID);
+          assert.equal(req?.headers?.['X-B3-SpanId'], process.env.X_B3_SPANID);
+          assert.equal(req?.headers?.['X-B3-Sampled'], '1');
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
+        assert.ok(testPassed);
+      });
+
+      it('prefers B3 single-header context over B3 multi-header context', async () => {
+        process.env.B3 = '0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-1';
+        process.env.X_B3_TRACEID = '463ac35c9f6413ad48485a3953bb6124';
+        process.env.X_B3_SPANID = 'a2fb4a1d1a96d312';
+        let testPassed = false;
+        const httpApi = new HttpApi(new Connection({ loginUrl, accessToken, propagators: ['b3multi'] }), {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.['X-B3-TraceId'], '0af7651916cd43dd8448eb211c80319c');
+          assert.equal(req?.headers?.['X-B3-SpanId'], 'b7ad6b7169203331');
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
+        assert.ok(testPassed);
+      });
+
+      it('forwards both W3C and B3 when configured', async () => {
+        process.env.TRACEPARENT = '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01';
+        process.env.B3 = '0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-1';
+        let testPassed = false;
+        const httpApi = new HttpApi(new Connection({ loginUrl, accessToken, propagators: ['tracecontext', 'b3'] }), {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.traceparent, process.env.TRACEPARENT);
+          assert.equal(req?.headers?.b3, process.env.B3);
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
+        assert.ok(testPassed);
+      });
+
+      it('does not forward any format when propagators includes none', async () => {
+        process.env.TRACEPARENT = '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01';
+        process.env.B3 = '0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-1';
+        let testPassed = false;
+        const httpApi = new HttpApi(new Connection({ loginUrl, accessToken, propagators: ['tracecontext', 'b3', 'none'] }), {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.traceparent, undefined);
+          assert.equal(req?.headers?.b3, undefined);
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
+        assert.ok(testPassed);
+      });
+
+      it('rejects propagators combined with the deprecated boolean option', () => {
+        assert.throws(
+          () => new Connection({ loginUrl, accessToken, propagators: ['tracecontext'], forwardTraceContext: true }),
+          /cannot specify both propagators and forwardTraceContext/
+        );
       });
     });
 
