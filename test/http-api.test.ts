@@ -315,6 +315,7 @@ describe('HTTP API', () => {
       afterEach(() => {
         delete process.env.TRACEPARENT;
         delete process.env.TRACESTATE;
+        delete process.env.BAGGAGE;
         delete process.env.B3;
         delete process.env.X_B3_TRACEID;
         delete process.env.X_B3_SPANID;

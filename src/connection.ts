@@ -89,7 +89,7 @@ export type ConnectionConfig<S extends Schema = Schema> = {
   forwardTraceContext?: boolean;
   /**
    * Trace context formats to forward from normalized OpenTelemetry environment
-   * carriers. `none` disables all forwarding and must not be combined with
+   * carriers. `none` disables all forwarding, including when combined with
    * other formats.
    */
   propagators?: TracePropagator[];
