@@ -612,6 +612,23 @@ describe('HTTP API', () => {
         assert.ok(testPassed);
       });
 
+      it('falls back to B3 multi-header context when B3 is invalid', async () => {
+        process.env.B3 = 'garbage';
+        process.env.X_B3_TRACEID = '0af7651916cd43dd8448eb211c80319c';
+        process.env.X_B3_SPANID = 'b7ad6b7169203331';
+        process.env.X_B3_SAMPLED = '1';
+        let testPassed = false;
+        const httpApi = new HttpApi(new Connection({ loginUrl, accessToken, propagators: ['b3'] }), {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.b3, '0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-1');
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
+        assert.ok(testPassed);
+      });
+
       it('forwards both W3C and B3 when configured', async () => {
         process.env.TRACEPARENT = '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01';
         process.env.B3 = '0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-1';
@@ -642,6 +659,13 @@ describe('HTTP API', () => {
         pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
         await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
         assert.ok(testPassed);
+      });
+
+      it('rejects an unsupported propagator', () => {
+        assert.throws(
+          () => new Connection({ loginUrl, accessToken, propagators: ['tracecontex' as 'tracecontext'] }),
+          /Unsupported trace propagator: tracecontex/
+        );
       });
 
     });

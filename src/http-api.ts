@@ -41,6 +41,7 @@ const HEADER_UNSAFE_RE = /[\r\n\0]/;
 const MAX_TRACESTATE_LENGTH = 512;
 const B3_TRACE_ID_RE = /^(?:[0-9a-f]{16}|[0-9a-f]{32})$/i;
 const B3_SPAN_ID_RE = /^[0-9a-f]{16}$/i;
+const textEncoder = new TextEncoder();
 
 type B3Context = { traceId: string; spanId: string; sampled?: '0' | '1'; debug: boolean };
 
@@ -64,7 +65,6 @@ function getB3Context(): B3Context | undefined {
     if (traceId && spanId && validB3Ids(traceId, spanId) && (sampling === undefined || ['0', '1', 'd'].includes(sampling))) {
       return { traceId: traceId.toLowerCase(), spanId: spanId.toLowerCase(), sampled: sampling === 'd' ? '1' : sampling as '0' | '1' | undefined, debug: sampling === 'd' };
     }
-    return undefined;
   }
 
   const traceId = getEnvironmentValue('x-b3-traceid');
@@ -81,7 +81,7 @@ function trimTracestate(tracestate: string) {
   let trimmed = '';
   for (const member of tracestate.split(',')) {
     const candidate = trimmed ? `${trimmed},${member}` : member;
-    if (new TextEncoder().encode(candidate).byteLength > MAX_TRACESTATE_LENGTH) {
+    if (textEncoder.encode(candidate).byteLength > MAX_TRACESTATE_LENGTH) {
       break;
     }
     trimmed = candidate;
@@ -114,6 +114,7 @@ function getTraceContextHeaders(): Record<string, string> {
 function getPropagationHeaders(propagators: TracePropagator[]): Record<string, string> {
   if (propagators.includes('none')) return {};
   const headers = propagators.includes('tracecontext') ? getTraceContextHeaders() : {};
+  if (!propagators.includes('b3') && !propagators.includes('b3multi')) return headers;
   const b3 = getB3Context();
   if (!b3) return headers;
   if (propagators.includes('b3')) {

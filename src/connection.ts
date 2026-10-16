@@ -69,6 +69,7 @@ import FormData from 'form-data';
  * type definitions
  */
 export type TracePropagator = 'tracecontext' | 'b3' | 'b3multi' | 'none';
+const TRACE_PROPAGATORS = new Set<TracePropagator>(['tracecontext', 'b3', 'b3multi', 'none']);
 
 export type ConnectionConfig<S extends Schema = Schema> = {
   version?: string;
@@ -363,6 +364,9 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
       ? new HttpProxyTransport(httpProxy)
       : new Transport();
     this._callOptions = config.callOptions;
+    if (config.propagators?.some((propagator) => !TRACE_PROPAGATORS.has(propagator))) {
+      throw new Error(`Unsupported trace propagator: ${config.propagators.join(', ')}`);
+    }
     this._propagators = config.propagators ?? ['none'];
     this.cache = new Cache();
     const describeCacheKey = (type?: string) =>
