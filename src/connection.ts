@@ -85,8 +85,6 @@ export type ConnectionConfig<S extends Schema = Schema> = {
   httpProxy?: string;
   logLevel?: LogLevelConfig;
   callOptions?: { [name: string]: string };
-  /** @deprecated Use propagators instead. */
-  forwardTraceContext?: boolean;
   /**
    * Trace context formats to forward from normalized OpenTelemetry environment
    * carriers. `none` disables all forwarding, including when combined with
@@ -365,10 +363,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
       ? new HttpProxyTransport(httpProxy)
       : new Transport();
     this._callOptions = config.callOptions;
-    if (config.propagators && config.forwardTraceContext !== undefined) {
-      throw new Error('Connection config cannot specify both propagators and forwardTraceContext');
-    }
-    this._propagators = config.propagators ?? (config.forwardTraceContext ? ['tracecontext'] : ['none']);
+    this._propagators = config.propagators ?? ['none'];
     this.cache = new Cache();
     const describeCacheKey = (type?: string) =>
       type ? `describe.${type}` : 'describe';

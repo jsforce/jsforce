@@ -327,7 +327,7 @@ describe('HTTP API', () => {
         new Connection({
           loginUrl,
           accessToken,
-          forwardTraceContext: true,
+          propagators: ['tracecontext'],
         });
 
       it('forwards valid TRACEPARENT as a header', async () => {
@@ -434,7 +434,7 @@ describe('HTTP API', () => {
           new Connection({
             loginUrl,
             accessToken,
-            forwardTraceContext: false,
+            propagators: ['none'],
           }),
           {},
         );
@@ -644,12 +644,6 @@ describe('HTTP API', () => {
         assert.ok(testPassed);
       });
 
-      it('rejects propagators combined with the deprecated boolean option', () => {
-        assert.throws(
-          () => new Connection({ loginUrl, accessToken, propagators: ['tracecontext'], forwardTraceContext: true }),
-          /cannot specify both propagators and forwardTraceContext/
-        );
-      });
     });
 
     it('does not set `Content-Length` when `Transfer-Encoding` header is set', async () => {
@@ -1037,7 +1031,7 @@ describe('SOAP API', () => {
       const conn = new Connection({
         loginUrl,
         accessToken: 'access_token',
-        forwardTraceContext: true,
+        propagators: ['tracecontext'],
       });
 
       const soapApi = new SOAP(conn, {
