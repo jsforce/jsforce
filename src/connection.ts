@@ -68,6 +68,9 @@ import FormData from 'form-data';
 /**
  * type definitions
  */
+export type TracePropagator = 'tracecontext' | 'b3' | 'b3multi' | 'none';
+const TRACE_PROPAGATORS = new Set<TracePropagator>(['tracecontext', 'b3', 'b3multi', 'none']);
+
 export type ConnectionConfig<S extends Schema = Schema> = {
   version?: string;
   loginUrl?: string;
@@ -83,7 +86,12 @@ export type ConnectionConfig<S extends Schema = Schema> = {
   httpProxy?: string;
   logLevel?: LogLevelConfig;
   callOptions?: { [name: string]: string };
-  forwardTraceContext?: boolean;
+  /**
+   * Trace context formats to forward from normalized OpenTelemetry environment
+   * carriers. `none` disables all forwarding, including when combined with
+   * other formats.
+   */
+  propagators?: TracePropagator[];
   refreshFn?: SessionRefreshFunc<S>;
 };
 
@@ -248,7 +256,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   sobjects: { [N in SObjectNames<S>]?: SObject<S, N> } = {};
   cache: Cache;
   _callOptions: Optional<{ [name: string]: string }>;
-  _forwardTraceContext?: boolean;
+  _propagators: TracePropagator[];
   _maxRequest: number;
   _logger: Logger;
   _logLevel: Optional<LogLevelConfig>;
@@ -356,7 +364,10 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
       ? new HttpProxyTransport(httpProxy)
       : new Transport();
     this._callOptions = config.callOptions;
-    this._forwardTraceContext = config.forwardTraceContext;
+    if (config.propagators?.some((propagator) => !TRACE_PROPAGATORS.has(propagator))) {
+      throw new Error(`Unsupported trace propagator: ${config.propagators.join(', ')}`);
+    }
+    this._propagators = config.propagators ?? ['none'];
     this.cache = new Cache();
     const describeCacheKey = (type?: string) =>
       type ? `describe.${type}` : 'describe';
