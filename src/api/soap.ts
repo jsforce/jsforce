@@ -63,10 +63,16 @@ export class SoapApi<S extends Schema> {
     method: string,
     message: object,
     schema: SoapSchema | SoapSchemaDef,
+    options?: {
+      headers?: object;
+      xmlns?: string;
+      endpointUrl?: string;
+    },
   ) {
     const soapEndpoint = new SOAP(this._conn, {
-      xmlns: 'urn:partner.soap.sforce.com',
-      endpointUrl: `${this._conn.instanceUrl}/services/Soap/u/${this._conn.version}`,
+      xmlns: options?.xmlns || 'urn:partner.soap.sforce.com',
+      endpointUrl: options?.endpointUrl || `${this._conn.instanceUrl}/services/Soap/u/${this._conn.version}`,
+      headers: options?.headers
     });
     const res = await soapEndpoint.invoke(
       method,
