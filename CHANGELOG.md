@@ -1,3 +1,12 @@
+## [3.13.1](https://github.com/jsforce/jsforce/compare/3.13.0...3.13.1) (2026-10-27)
+
+
+### Bug Fixes
+
+* **ci:** upgrade wireit caching action to v2- @W-24682309@ ([#1856](https://github.com/jsforce/jsforce/issues/1856)) ([bcd16b5](https://github.com/jsforce/jsforce/commit/bcd16b593351a1d7db6665b1043d8168b04b225d))
+
+
+
 # [3.13.0](https://github.com/jsforce/jsforce/compare/3.12.0...3.13.0) (2026-10-27)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * add opt-in W3C trace context forwarding ([#1836](https://github.com/jsforce/jsforce/issues/1836)) ([04571dc](https://github.com/jsforce/jsforce/commit/04571dc88bdc6b4bbf97ae39ceea0b5a2878cc43))
-
-
-
-## [3.10.29](https://github.com/jsforce/jsforce/compare/3.10.28...3.10.29) (2026-10-08)
-
-
-### Bug Fixes
-
-* instance url in jwt auth ([#1847](https://github.com/jsforce/jsforce/issues/1847)) ([0c5d0bb](https://github.com/jsforce/jsforce/commit/0c5d0bb9e43f05242809d41027d4bc3dc7b4b854))
 
 
 
