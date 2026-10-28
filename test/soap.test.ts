@@ -142,7 +142,7 @@ describe('convert and merge', () => {
     assert.ok(ret.success);
     assert.ok(ret.id === leadIds[2]);
     assert.ok(ret.mergedRecordIds.length === 2);
-    leadIds = leadIds.slice(0, 3); // eslint-disable-line require-atomic-updates
+    leadIds = leadIds.slice(0, 3);
   });
 
   /**

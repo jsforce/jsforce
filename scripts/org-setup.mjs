@@ -28,7 +28,10 @@ if (
 
   await writeFile(hubOpts.jwtKeyFile, formatJwtKey());
 
-  await $`sf org login jwt --username ${hubOpts.username} --jwt-key-file "jwtKey.txt" --set-default-dev-hub --client-id ${hubOpts.clientId}`;
+  // Target the hub's instance directly rather than the default login host.
+  const instanceFlag = process.env.SF_HUB_INSTANCE ? ['--instance-url', process.env.SF_HUB_INSTANCE] : [];
+
+  await $`sf org login jwt --username ${hubOpts.username} --jwt-key-file "jwtKey.txt" --set-default-dev-hub --client-id ${hubOpts.clientId} ${instanceFlag}`;
 } else {
   // ensure there's a default devhub
   const defaultHub = JSON.parse(await $`sf config get target-dev-hub --json`);
@@ -76,7 +79,11 @@ await $`sf force data bulk upsert --file ${bigTableCsv} --sobject BigTable__c --
 
 if (!process.env.CI) {
   console.log(
-    `Run tests using this scratch org by setting these env vars: SF_ACCESS_TOKEN=${orgDisplayUserRes.result.accessToken}, SF_LOGIN_URL=${orgDisplayUserRes.result.instanceUrl}, SF_USERNAME=${orgDisplayUserRes.result.username} and SF_PASSWORD=${orgDisplayUserRes.result.password}`,
+    `Run tests using this scratch org by setting these env vars:
+- SF_ACCESS_TOKEN=(Obtain with: sf org auth show-access-token),
+- SF_LOGIN_URL=${orgDisplayUserRes.result.instanceUrl},
+- SF_USERNAME=${orgDisplayUserRes.result.username},
+- SF_PASSWORD=(Obtain with: sf org auth show-user-password)`,
   );
 }
 

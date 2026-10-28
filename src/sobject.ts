@@ -470,7 +470,7 @@ export class SObject<
    * @returns {ListView}
    */
   listview(id: string) {
-    return new ListView(this._conn, this.type, id); // eslint-disable-line no-use-before-define
+    return new ListView(this._conn, this.type, id);
   }
 
   /**

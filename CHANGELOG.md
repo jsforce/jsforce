@@ -1,45 +1,45 @@
-## [3.10.15](https://github.com/jsforce/jsforce/compare/3.10.14...3.10.15) (2026-05-13)
+## [3.13.1](https://github.com/jsforce/jsforce/compare/3.13.0...3.13.1) (2026-10-27)
 
 
 ### Bug Fixes
 
-* timeouts calculate once instead of repeatedly ([#1792](https://github.com/jsforce/jsforce/issues/1792)) ([22705e7](https://github.com/jsforce/jsforce/commit/22705e79380c1414e3d71abb1d79e77657afdb76))
+* **ci:** upgrade wireit caching action to v2- @W-24682309@ ([#1856](https://github.com/jsforce/jsforce/issues/1856)) ([bcd16b5](https://github.com/jsforce/jsforce/commit/bcd16b593351a1d7db6665b1043d8168b04b225d))
 
 
 
-## [3.10.14](https://github.com/jsforce/jsforce/compare/3.10.13...3.10.14) (2026-02-10)
+# [3.13.0](https://github.com/jsforce/jsforce/compare/3.12.0...3.13.0) (2026-10-27)
 
 
-### Bug Fixes
+### Features
 
-* **http:** limit retries on 420 responses W-19971144 ([#1772](https://github.com/jsforce/jsforce/issues/1772)) ([0b210c6](https://github.com/jsforce/jsforce/commit/0b210c61ff7ec29dc8d4916fdc87bd79aa7eed25))
-
-
-
-## [3.10.13](https://github.com/jsforce/jsforce/compare/3.10.11...3.10.13) (2026-01-15)
-
-
-### Bug Fixes
-
-* bump minor ([f65d617](https://github.com/jsforce/jsforce/commit/f65d6179bf804ccd417dcc9beaa8d049abfaf50e))
+* add DeployExtensionResult to metadata schema ([#1832](https://github.com/jsforce/jsforce/issues/1832)) ([4a0b587](https://github.com/jsforce/jsforce/commit/4a0b587612c093935dca46db3bc35e48bb4d788c))
 
 
 
-## [3.10.11](https://github.com/jsforce/jsforce/compare/3.10.10...3.10.11) (2026-01-15)
+# [3.12.0](https://github.com/jsforce/jsforce/compare/3.11.1...3.12.0) (2026-10-16)
 
 
-### Bug Fixes
+### Features
 
-* **http:** reduce buffer allocations when reading responses W-18649787 ([#1784](https://github.com/jsforce/jsforce/issues/1784)) ([f43fc77](https://github.com/jsforce/jsforce/commit/f43fc7773ce8aa15ddfb3a105dbf3ea9ac704885))
+* support configurable trace propagators @W-24547770@ ([#1851](https://github.com/jsforce/jsforce/issues/1851)) ([69686d7](https://github.com/jsforce/jsforce/commit/69686d7f132c6903e2d66098faaad882e34d546a))
 
 
 
-## [3.10.10](https://github.com/jsforce/jsforce/compare/3.10.9...3.10.10) (2025-12-02)
+## [3.11.1](https://github.com/jsforce/jsforce/compare/3.11.0...3.11.1) (2026-10-15)
 
 
 ### Bug Fixes
 
-* update `TokenResponse` type ([#1777](https://github.com/jsforce/jsforce/issues/1777)) ([1535cac](https://github.com/jsforce/jsforce/commit/1535cac7123e44b07950bf64995104e92d15a2b7))
+* **deps:** bump lodash from 4.17.21 to 4.18.1 ([#1850](https://github.com/jsforce/jsforce/issues/1850)) ([a0c5665](https://github.com/jsforce/jsforce/commit/a0c566577f04f54ce1fd0660615efbfe1a119ee6))
+
+
+
+# [3.11.0](https://github.com/jsforce/jsforce/compare/3.10.29...3.11.0) (2026-10-14)
+
+
+### Features
+
+* add opt-in W3C trace context forwarding ([#1836](https://github.com/jsforce/jsforce/issues/1836)) ([04571dc](https://github.com/jsforce/jsforce/commit/04571dc88bdc6b4bbf97ae39ceea0b5a2878cc43))
 
 
 

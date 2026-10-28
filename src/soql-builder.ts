@@ -40,7 +40,6 @@ function createFieldsClause(
   const cqueries: QueryConfig[] = (Object.values(
     childQueries,
   ) as any) as QueryConfig[];
-  // eslint-disable-next-line no-use-before-define
   return [
     ...(fields || ['Id']),
     ...cqueries.map((cquery) => `(${createSOQL(cquery)})`),
@@ -142,9 +141,9 @@ function createOrderByClause(sort: Sort = []): string {
       const flag = field[0];
       if (flag === '-') {
         dir = 'DESC';
-        field = field.substring(1); // eslint-disable-line no-param-reassign
+        field = field.substring(1);
       } else if (flag === '+') {
-        field = field.substring(1); // eslint-disable-line no-param-reassign
+        field = field.substring(1);
       }
       return [field, dir] as [string, SortDir];
     });
@@ -157,7 +156,6 @@ function createOrderByClause(sort: Sort = []): string {
   }
   return _sort
     .map(([field, dir]) => {
-      /* eslint-disable no-param-reassign */
       switch (String(dir)) {
         case 'DESC':
         case 'desc':

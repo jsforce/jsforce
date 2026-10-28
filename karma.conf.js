@@ -40,7 +40,7 @@ module.exports = function (config) {
     frameworks: ['jasmine', 'webpack'],
 
     // list of files / patterns to load in the browser
-    files: ['dist/jsforce.js', 'test/**/!(*http-api).test.ts'],
+    files: ['dist/jsforce.js', 'test/**/!(*http-api|*sfdx-registry).test.ts'],
 
     // list of files / patterns to exclude
     exclude: ['test/perf/**/*.ts'],
