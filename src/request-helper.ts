@@ -32,7 +32,13 @@ export function createHttpRequestHandlerStreams(
       logger.debug('Processing response');
       const start = Date.now();
 
-      const resBody = await readAll(duplex, options.encoding);
+      let resBody: string;
+      try {
+        resBody = await readAll(duplex, options.encoding);
+      } catch (err) {
+        logger.debug(`Failed to read response body: ${(err as Error).message}`);
+        return;
+      }
 
       logger.debug(
         `Response body read: ${(resBody.length / 1024 / 1024).toFixed(1)}MB ` +

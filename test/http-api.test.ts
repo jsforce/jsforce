@@ -6,8 +6,13 @@ import { Transport } from '../src/transport';
 import assert from 'assert';
 import xml2js from 'xml2js';
 import {MockAgent, errors} from 'undici';
+import http from 'node:http';
+import { once } from 'node:events';
+import { AddressInfo } from 'node:net';
+import { setImmediate } from 'node:timers/promises';
+import { types } from 'node:util';
 import { HttpRequestOptions, HttpResponse } from '../src/types/common';
-import { setDispatcher } from '../src/request';
+import request, { setDispatcher } from '../src/request';
 
 const loginUrl = 'https://heaven-party-2429-dev-ed.scratch.my.salesforce.com';
 
@@ -975,7 +980,64 @@ See \`error.data\` for the full html response.`,
       );
     })
 
+    describe('connection dropped while streaming the response body', () => {
+      const settleTimeout = 3000;
+      let server: http.Server;
+      let instanceUrl: string;
 
+      function assertSocketTerminated(err: unknown) {
+        assert.ok(types.isNativeError(err), `expected an Error, got ${String(err)}`);
+        assert.equal(err.message, 'terminated');
+        const { cause } = err;
+        assert.ok(cause && typeof cause === 'object' && 'code' in cause, 'expected a coded cause');
+        assert.equal(cause.code, 'UND_ERR_SOCKET');
+      }
+
+      beforeEach(async () => {
+        setDispatcher();
+
+        server = http.createServer((_req, res) => {
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.write('{"totalSize":1,', () => res.destroy());
+        });
+        server.listen(0, '127.0.0.1');
+        await once(server, 'listening');
+        instanceUrl = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+      });
+
+      afterEach(async () => {
+        server.closeAllConnections();
+        server.close();
+        await once(server, 'close');
+      });
+
+      it('rejects the connection request with the socket error', async () => {
+        const conn = new Connection({ instanceUrl, accessToken });
+
+        const err = await conn.query('SELECT Id FROM Account').then(
+          (res) => assert.fail(`expected a rejection, got ${JSON.stringify(res)}`),
+          (e: unknown) => e,
+        );
+        assertSocketTerminated(err);
+        await setImmediate();
+      }, settleTimeout);
+
+      it('emits the socket error on the raw request stream', async () => {
+        const stream = request({
+          method: 'GET',
+          url: `${instanceUrl}/services/data/v59.0/query?q=SELECT+Id+FROM+Account`,
+        });
+        let ended = false;
+        stream.on('end', () => {
+          ended = true;
+        });
+        stream.resume();
+
+        const [err] = await once(stream, 'error');
+        assertSocketTerminated(err);
+        assert.equal(ended, false, 'stream must not end after a dropped connection');
+      }, settleTimeout);
+    });
   });
 });
 
