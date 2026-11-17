@@ -67,6 +67,8 @@ export type SavedRecord = Record & { Id: string };
 
 export type SaveError = {
   errorCode: string;
+  /** Original `statusCode` as returned by the Composite API */
+  statusCode?: string;
   message: string;
   fields?: string[];
 };
