@@ -1,3 +1,12 @@
+## [3.13.2](https://github.com/jsforce/jsforce/compare/3.13.1...3.13.2) (2026-11-20)
+
+
+### Bug Fixes
+
+* **ci:** fix browser test and scratch org setup failures ([#1865](https://github.com/jsforce/jsforce/issues/1865)) ([f6dbd8a](https://github.com/jsforce/jsforce/commit/f6dbd8a82d7c0f42f09703977473795780adf95f))
+
+
+
 ## [3.13.1](https://github.com/jsforce/jsforce/compare/3.13.0...3.13.1) (2026-10-27)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * **deps:** bump lodash from 4.17.21 to 4.18.1 ([#1850](https://github.com/jsforce/jsforce/issues/1850)) ([a0c5665](https://github.com/jsforce/jsforce/commit/a0c566577f04f54ce1fd0660615efbfe1a119ee6))
-
-
-
-# [3.11.0](https://github.com/jsforce/jsforce/compare/3.10.29...3.11.0) (2026-10-14)
-
-
-### Features
-
-* add opt-in W3C trace context forwarding ([#1836](https://github.com/jsforce/jsforce/issues/1836)) ([04571dc](https://github.com/jsforce/jsforce/commit/04571dc88bdc6b4bbf97ae39ceea0b5a2878cc43))
 
 
 
