@@ -1,3 +1,12 @@
+## [3.13.3](https://github.com/jsforce/jsforce/compare/3.13.2...3.13.3) (2026-11-20)
+
+
+### Bug Fixes
+
+* keep the rotated refresh token after session refresh ([#1864](https://github.com/jsforce/jsforce/issues/1864)) ([63b7e36](https://github.com/jsforce/jsforce/commit/63b7e3697a31aca68884d00efafb1aeb6a08aad0))
+
+
+
 ## [3.13.2](https://github.com/jsforce/jsforce/compare/3.13.1...3.13.2) (2026-11-20)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * support configurable trace propagators @W-24547770@ ([#1851](https://github.com/jsforce/jsforce/issues/1851)) ([69686d7](https://github.com/jsforce/jsforce/commit/69686d7f132c6903e2d66098faaad882e34d546a))
-
-
-
-## [3.11.1](https://github.com/jsforce/jsforce/compare/3.11.0...3.11.1) (2026-10-15)
-
-
-### Bug Fixes
-
-* **deps:** bump lodash from 4.17.21 to 4.18.1 ([#1850](https://github.com/jsforce/jsforce/issues/1850)) ([a0c5665](https://github.com/jsforce/jsforce/commit/a0c566577f04f54ce1fd0660615efbfe1a119ee6))
 
 
 
