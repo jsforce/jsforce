@@ -220,7 +220,7 @@ export class OAuth2 {
 
   /**
    * OAuth2 Username-Password Flow (Resource Owner Password Credentials)
-   * @deprecated The OAuth 2.0 Username-Password Flow will be blocked by Salesforce on February 20, 2027,
+   * @deprecated Salesforce blocks the OAuth 2.0 Username-Password Flow starting February 20, 2027,
    * and it is not supported by External Client Apps.
    * Please use the OAuth 2.0 Web Server Flow with PKCE, the JWT Bearer Flow, or the Client Credentials Flow instead.
    */

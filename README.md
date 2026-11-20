@@ -56,10 +56,10 @@ See [license](LICENSE) (MIT License).
 ## Notes
 
 ### Username/Password Login Deprecation Notice
-Salesforce is retiring both ways that `Connection#login()` authenticates with a username and password:
+Salesforce retires both ways that `Connection#login()` authenticates with a username and password:
 
-- The OAuth 2.0 Username-Password Flow (`loginByOAuth2`, used by `login()` when a client ID and secret are set) will be blocked on February 20, 2027. External Client Apps do not support this flow.
-- The SOAP login() API (`loginBySoap`, used by `login()` otherwise) will be retired in Summer '27 (API version 65.0). For more information, see [Salesforce Release Notes](https://help.salesforce.com/s/articleView?id=release-notes.rn_api_upcoming_retirement_258rn.htm&release=258&type=5).
+- The OAuth 2.0 Username-Password Flow (`loginByOAuth2`, used by `login()` when a client ID and secret are set) is blocked starting February 20, 2027. External Client Apps do not support this flow.
+- The SOAP login() API (`loginBySoap`, used by `login()` otherwise) is retired starting Summer '27 (API version 65.0). For more information, see [Salesforce Release Notes](https://help.salesforce.com/s/articleView?id=release-notes.rn_api_upcoming_retirement_258rn.htm&release=258&type=5).
 
 Session refresh with a username and password stops working at the same time. Please migrate to one of the following flows:
 
