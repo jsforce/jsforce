@@ -34,7 +34,7 @@ if (
   await $`sf org login jwt --username ${hubOpts.username} --jwt-key-file "jwtKey.txt" --set-default-dev-hub --client-id ${hubOpts.clientId} ${instanceFlag}`;
 } else {
   // ensure there's a default devhub
-  const defaultHub = JSON.parse(await $`sf config get target-dev-hub --json`);
+  const defaultHub = JSON.parse((await $`sf config get target-dev-hub --json`).stdout);
 
   if (defaultHub.result.find((res) => res.sucesss && res.value) !== undefined) {
     throw new Error(
@@ -57,7 +57,7 @@ await $`sf project deploy start --metadata-dir ${join(
 await $`sf org assign permset --name JSForceTestPowerUser --target-org jsforce-test-org`;
 
 const orgDisplayUserRes = JSON.parse(
-  await $`sf org display user --target-org jsforce-test-org --json`,
+  (await $`sf org display user --target-org jsforce-test-org --json`).stdout,
 );
 
 const userId = orgDisplayUserRes.result.id;

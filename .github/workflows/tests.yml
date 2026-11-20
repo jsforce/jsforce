@@ -14,9 +14,7 @@ jobs:
         with:
           chrome-version: stable
         id: setup-chrome
-      - uses: nanasess/setup-chromedriver@9cd356a368322c0154e5610c8d4a5aa5f3c146f5
       - run: |
-          chromedriver --url-base=/wd/hub &
           sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
 
       - name: Fix Chrome sandbox permissions
