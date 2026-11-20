@@ -192,7 +192,6 @@ const {
   _ensureVersion,
   create,
   _createSingle,
-  _createMany,
   _createParallel,
   retrieve,
   _retrieveSingle,
@@ -201,12 +200,10 @@ const {
   update,
   _updateSingle,
   _updateParallel,
-  _updateMany,
   upsert,
   destroy,
   _destroySingle,
   _destroyParallel,
-  _destroyMany,
   describe,
   describeGlobal,
   sobject,
@@ -243,7 +240,9 @@ export class Tooling<S extends Schema> {
   create: Connection<S>['create'] = create;
   _createSingle = _createSingle;
   _createParallel = _createParallel;
-  _createMany = _createMany;
+  // The Tooling API has no sObject Collections resource (/composite/sobjects),
+  // so multi-record calls fall back to one request per record.
+  _createMany = this._createParallel;
 
   /**
    * Synonym of Tooling#create()
@@ -264,7 +263,7 @@ export class Tooling<S extends Schema> {
   update: Connection<S>['update'] = update;
   _updateSingle = _updateSingle;
   _updateParallel = _updateParallel;
-  _updateMany = _updateMany;
+  _updateMany = this._updateParallel;
 
   /**
    * Upsert records
@@ -277,7 +276,7 @@ export class Tooling<S extends Schema> {
   destroy: Connection<S>['destroy'] = destroy;
   _destroySingle = _destroySingle;
   _destroyParallel = _destroyParallel;
-  _destroyMany = _destroyMany;
+  _destroyMany = this._destroyParallel;
 
   /**
    * Synonym of Tooling#destroy()
