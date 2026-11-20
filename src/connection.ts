@@ -529,8 +529,16 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
 
   /**
    * Login by OAuth2 username & password flow
+   * @deprecated Salesforce blocks the OAuth 2.0 Username-Password Flow starting February 20, 2027,
+   * and it is not supported by External Client Apps.
+   * Please use the OAuth 2.0 Web Server Flow with PKCE, the JWT Bearer Flow, or the Client Credentials Flow instead.
    */
   async loginByOAuth2(username: string, password: string): Promise<UserInfo> {
+    this._logger.warn(
+      'DEPRECATION WARNING: Salesforce blocks the OAuth 2.0 Username-Password Flow starting February 20, 2027, ' +
+      'and it is not supported by External Client Apps. ' +
+      'Please use the OAuth 2.0 Web Server Flow with PKCE, the JWT Bearer Flow, or the Client Credentials Flow instead.'
+    );
     const res = await this.oauth2.authenticate(username, password);
     const userInfo = parseIdUrl(res.id);
     this._establish({
@@ -546,14 +554,15 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
 
   /**
    * Login by SOAP protocol
-   * @deprecated The SOAP login() API will be retired in Summer '27 (API version 65.0). 
-   * Please use OAuth 2.0 Username-Password Flow instead. 
+   * @deprecated Salesforce retires the SOAP login() API starting Summer '27 (API version 65.0).
+   * Please use the OAuth 2.0 Web Server Flow with PKCE, the JWT Bearer Flow, or the Client Credentials Flow instead.
+   * Do not migrate to the OAuth 2.0 Username-Password Flow (`loginByOAuth2`): it is blocked earlier, starting February 20, 2027.
    * For more information, see https://help.salesforce.com/s/articleView?id=release-notes.rn_api_upcoming_retirement_258rn.htm&release=258&type=5
    */
   async loginBySoap(username: string, password: string): Promise<UserInfo> {
     this._logger.warn(
-      'DEPRECATION WARNING: The SOAP login() API will be retired in Summer \'27 (API version 65.0). ' +
-      'Please use OAuth 2.0 Username-Password Flow instead. ' +
+      'DEPRECATION WARNING: Salesforce retires the SOAP login() API starting Summer \'27 (API version 65.0). ' +
+      'Please use the OAuth 2.0 Web Server Flow with PKCE, the JWT Bearer Flow, or the Client Credentials Flow instead. ' +
       'For more information, see https://help.salesforce.com/s/articleView?id=release-notes.rn_api_upcoming_retirement_258rn.htm&release=258&type=5'
     );
     if (!username || !password) {
