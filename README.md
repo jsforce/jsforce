@@ -55,8 +55,17 @@ See [license](LICENSE) (MIT License).
 
 ## Notes
 
-### SOAP Login API Deprecation Notice
-The SOAP login() API will be retired in Summer '27 (API version 65.0). If you are using the `loginBySoap` method, please migrate to OAuth 2.0 Username-Password Flow instead. For more information, see [Salesforce Release Notes](https://help.salesforce.com/s/articleView?id=release-notes.rn_api_upcoming_retirement_258rn.htm&release=258&type=5).
+### Username/Password Login Deprecation Notice
+Salesforce is retiring both ways that `Connection#login()` authenticates with a username and password:
+
+- The OAuth 2.0 Username-Password Flow (`loginByOAuth2`, used by `login()` when a client ID and secret are set) will be blocked on February 20, 2027. External Client Apps do not support this flow.
+- The SOAP login() API (`loginBySoap`, used by `login()` otherwise) will be retired in Summer '27 (API version 65.0). For more information, see [Salesforce Release Notes](https://help.salesforce.com/s/articleView?id=release-notes.rn_api_upcoming_retirement_258rn.htm&release=258&type=5).
+
+Session refresh with a username and password stops working at the same time. Please migrate to one of the following flows:
+
+- OAuth 2.0 Web Server Flow with PKCE, for interactive login (create `OAuth2` with `useVerifier: true`, then use `OAuth2#getAuthorizationUrl()` and `Connection#authorize()`)
+- OAuth 2.0 JWT Bearer Flow, for server-to-server integration
+- OAuth 2.0 Client Credentials Flow, for server-to-server integration
 
 If you have any questions first file it on [issues](https://github.com/jsforce/jsforce/issues) before contacting authors via e-mail.
 
