@@ -19,12 +19,6 @@ import {
 import { createLazyStream } from './util/stream';
 import { getBodySize } from './util/get-body-size';
 import { getHeader, isHttpsUrl, withoutHeader } from './request-helper';
-import type { DPoP } from './oauth2';
-
-/**
- * The credentials put in a request: the access token, and with DPoP, the proof made for it
- */
-export type RequestCredentials = { accessToken?: string; proof?: string };
 
 /** @private */
 type RetryState = {
@@ -207,20 +201,8 @@ export class HttpApi<S extends Schema> extends EventEmitter {
           return body;
         }
 
-        // take the token and the nonce together, as a refresh may change them while signing
-        const { accessToken, proofNonce } = this._conn;
-        const proof =
-          dpop && accessToken
-            ? await dpop.createProof({
-                method: request.method,
-                url: request.url,
-                accessToken,
-                nonce: proofNonce ?? undefined,
-              })
-            : undefined;
-
         // hook before sending
-        this.beforeSend(request, { accessToken: accessToken ?? undefined, proof });
+        await this.beforeSend(request);
         this.applyTraceContextHeaders(request);
 
         this.emit('request', request);
@@ -230,15 +212,10 @@ export class HttpApi<S extends Schema> extends EventEmitter {
         const requestTime = Date.now();
         const requestPromise = this._transport.httpRequest(
           request,
-          dpop && accessToken && proof && this._options.followRedirect !== false
+          dpop && this._options.followRedirect !== false
             ? {
                 ...this._options,
-                followRedirect: this._createDPoPRedirectHandler(
-                  dpop,
-                  request,
-                  accessToken,
-                  proofNonce ?? undefined,
-                ),
+                followRedirect: this._createDPoPRedirectHandler(request),
               }
             : this._options,
         );
@@ -266,16 +243,12 @@ export class HttpApi<S extends Schema> extends EventEmitter {
           }`,
         );
         this.emit('response', response);
-        if (proof) {
+        if (dpop) {
           // a nonce given by the API (RFC 9449, Section 9)
           const nonce = getHeader(response.headers, 'dpop-nonce');
           if (nonce) {
             this._conn.proofNonce = nonce;
-            if (
-              response.statusCode === 401 &&
-              nonce !== proofNonce &&
-              !retryState.nonceRetried
-            ) {
+            if (response.statusCode === 401 && !retryState.nonceRetried) {
               return this._request<R>(request, {
                 ...retryState,
                 nonceRetried: true,
@@ -288,7 +261,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
         if (
           this.isSessionExpired(response) &&
           refreshDelegate &&
-          !(proof && retryState.refreshed)
+          !(dpop && retryState.refreshed)
         ) {
           await refreshDelegate.refresh(requestTime);
           return this._request<R>(request, { ...retryState, refreshed: true });
@@ -314,14 +287,16 @@ export class HttpApi<S extends Schema> extends EventEmitter {
   /**
    * @protected
    */
-  beforeSend(request: HttpRequest, credentials: RequestCredentials) {
+  beforeSend(request: HttpRequest): void | Promise<void>;
+  async beforeSend(request: HttpRequest) {
     const headers = request.headers || {};
-    const { accessToken, proof } = credentials;
+    const { accessToken } = this._conn;
     if (accessToken) {
+      const proof = await this.createProof(request);
       headers.Authorization = `${proof ? 'DPoP' : 'Bearer'} ${accessToken}`;
-    }
-    if (proof) {
-      headers.DPoP = proof;
+      if (proof) {
+        headers.DPoP = proof;
+      }
     }
     if (this._conn._callOptions) {
       const callOptions = [];
@@ -355,16 +330,30 @@ export class HttpApi<S extends Schema> extends EventEmitter {
   }
 
   /**
+   * Create a DPoP proof of the request for the access token of the connection, when DPoP is used
+   * @protected
+   */
+  async createProof(request: HttpRequest) {
+    const { accessToken, proofNonce } = this._conn;
+    const dpop = this._conn.oauth2?.dpop;
+    return dpop && accessToken
+      ? dpop.createProof({
+          method: request.method,
+          url: request.url,
+          accessToken,
+          nonce: proofNonce ?? undefined,
+        })
+      : undefined;
+  }
+
+  /**
    * `followRedirect` for a DPoP request, with a new proof for the redirected request
+   * when it keeps the access token of the original request
    * @private
    */
-  _createDPoPRedirectHandler(
-    dpop: DPoP,
-    request: HttpRequest,
-    accessToken: string,
-    nonce: string | undefined,
-  ) {
+  _createDPoPRedirectHandler(request: HttpRequest) {
     const { followRedirect } = this._options;
+    const authorization = getHeader(request.headers, 'authorization');
     return async (redirectUrl: string): Promise<HttpRequest | null> => {
       const redirectReq: HttpRequest | null =
         typeof followRedirect === 'function'
@@ -375,23 +364,22 @@ export class HttpApi<S extends Schema> extends EventEmitter {
       }
       const headers = withoutHeader(redirectReq.headers, 'dpop');
       if (
-        typeof followRedirect === 'function' &&
-        getHeader(redirectReq.headers, 'authorization') !== `DPoP ${accessToken}`
+        !authorization?.startsWith('DPoP ') ||
+        getHeader(redirectReq.headers, 'authorization') !== authorization
       ) {
         return { ...redirectReq, headers };
       }
+      const { accessToken } = this._conn;
+      const proof = await this.createProof(redirectReq);
       return {
         ...redirectReq,
-        headers: {
-          ...withoutHeader(headers, 'authorization'),
-          Authorization: `DPoP ${accessToken}`,
-          DPoP: await dpop.createProof({
-            method: redirectReq.method,
-            url: redirectReq.url,
-            accessToken,
-            nonce,
-          }),
-        },
+        headers: proof
+          ? {
+              ...withoutHeader(headers, 'authorization'),
+              Authorization: `DPoP ${accessToken}`,
+              DPoP: proof,
+            }
+          : headers,
       };
     };
   }

@@ -2,7 +2,7 @@
  * @file Manages method call to SOAP endpoint
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
-import HttpApi, { type RequestCredentials, isBrowser } from './http-api';
+import HttpApi, { isBrowser } from './http-api';
 import Connection from './connection';
 import {
   Schema,
@@ -252,8 +252,14 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
   }
 
   /** @override */
-  beforeSend(request: SOAPRequest, credentials: RequestCredentials) {
-    request.body = this._createEnvelope(request._message, credentials);
+  async beforeSend(request: SOAPRequest) {
+    const { accessToken } = this._conn;
+    const proof = await this.createProof(request);
+    request.body = this._createEnvelope(
+      request._message,
+      accessToken ?? undefined,
+      proof,
+    );
 
     const { 'content-length': _contentLength, ...headers } =
       request.headers ?? {};
@@ -309,14 +315,14 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
   /**
    * @private
    */
-  _createEnvelope(message: object, credentials: RequestCredentials) {
+  _createEnvelope(message: object, accessToken?: string, proof?: string) {
     const header: { [name: string]: any } = {};
     const conn = this._conn;
-    if (credentials.accessToken) {
-      header.SessionHeader = { sessionId: credentials.accessToken };
+    if (accessToken) {
+      header.SessionHeader = { sessionId: accessToken };
     }
-    if (credentials.proof) {
-      header.DpopProofHeader = { proof: credentials.proof };
+    if (proof) {
+      header.DpopProofHeader = { proof };
     }
     if (conn._callOptions) {
       header.CallOptions = conn._callOptions;
