@@ -1,3 +1,12 @@
+## [3.13.4](https://github.com/jsforce/jsforce/compare/3.13.3...3.13.4) (2026-11-22)
+
+
+### Bug Fixes
+
+* ignore only the browser build output in .gitignore ([#1868](https://github.com/jsforce/jsforce/issues/1868)) ([4ed3950](https://github.com/jsforce/jsforce/commit/4ed395012e70ba07a3752b57aa2e7866b7584336))
+
+
+
 ## [3.13.3](https://github.com/jsforce/jsforce/compare/3.13.2...3.13.3) (2026-11-20)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * add DeployExtensionResult to metadata schema ([#1832](https://github.com/jsforce/jsforce/issues/1832)) ([4a0b587](https://github.com/jsforce/jsforce/commit/4a0b587612c093935dca46db3bc35e48bb4d788c))
-
-
-
-# [3.12.0](https://github.com/jsforce/jsforce/compare/3.11.1...3.12.0) (2026-10-16)
-
-
-### Features
-
-* support configurable trace propagators @W-24547770@ ([#1851](https://github.com/jsforce/jsforce/issues/1851)) ([69686d7](https://github.com/jsforce/jsforce/commit/69686d7f132c6903e2d66098faaad882e34d546a))
 
 
 
