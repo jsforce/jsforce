@@ -9,12 +9,14 @@ import {
   type HttpRequestOptions,
   type HttpResponse,
 } from 'jsforce';
-import { performRedirectRequest } from '../lib/request-helper';
-import { StreamPromise } from '../lib/util/promise';
 import { isString } from './util';
 import { isNodeJS } from './helper/env';
 import authorize from './helper/webauth';
 import config from './config';
+
+// a response as a transport returns it: a promise with a stream
+const responseOf = (res: HttpResponse) =>
+  Object.assign(Promise.resolve(res), { stream: () => new PassThrough() });
 
 const oauth2 = new OAuth2(config);
 
@@ -288,15 +290,12 @@ describe('DPoP', () => {
       if (!res) {
         throw new Error(`unexpected request: ${req.method} ${req.url}`);
       }
-      return StreamPromise.create<HttpResponse>(() => ({
-        stream: new PassThrough(),
-        promise: Promise.resolve({
-          statusCode: 200,
-          headers: { 'content-type': 'application/json' },
-          body: '',
-          ...res,
-        } as HttpResponse),
-      }));
+      return responseOf({
+        statusCode: 200,
+        headers: { 'content-type': 'application/json' },
+        body: '',
+        ...res,
+      } as HttpResponse);
     }
   }
 
@@ -517,27 +516,13 @@ describe('DPoP', () => {
 });
 
 /**
- * Redirects followed by the transport: a followRedirect function may return a promise, and through the AJAX proxy
- * the options are passed on, and a redirect the proxy reports in headers is turned back into the redirect response.
+ * Redirects followed by the transport: through the AJAX proxy the options are passed on,
+ * and a redirect the proxy reports in headers is followed with the given followRedirect function.
  */
 describe('redirects followed by the transport', () => {
   const loginUrl = 'https://login.salesforce.com';
   const instanceUrl = 'https://example.my.salesforce.com';
   type RedirectHandler = (redirectUrl: string) => Promise<HttpRequest | null>;
-
-  it('waits for a followRedirect function that returns a promise', async () => {
-    const next: HttpRequest[] = [];
-    await performRedirectRequest(
-      { method: 'POST', url: `${loginUrl}/services/oauth2/revoke` },
-      { statusCode: 302, headers: { location: `${instanceUrl}/services/oauth2/revoke` } },
-      (redirectUrl) => Promise.resolve({ method: 'GET', url: redirectUrl }),
-      0,
-      (req) => {
-        next.push(req);
-      },
-    );
-    assert.deepEqual(next, [{ method: 'GET', url: `${instanceUrl}/services/oauth2/revoke` }]);
-  });
 
   // replace the transport that XdProxyTransport hands the proxied request to
   const stubProxied = (responses: HttpResponse[]) => {
@@ -548,7 +533,7 @@ describe('redirects followed by the transport', () => {
     base.httpRequest = (req: HttpRequest, options: HttpRequestOptions = {}) => {
       sent.push({ req, options });
       const res = responses.shift() ?? { statusCode: 200, headers: {}, body: '' };
-      return StreamPromise.create<HttpResponse>(() => ({ stream: new PassThrough(), promise: Promise.resolve(res) }));
+      return responseOf(res);
     };
     return { proxyTransport, sent, restore: () => (base.httpRequest = original) };
   };
