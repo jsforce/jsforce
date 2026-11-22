@@ -18,7 +18,6 @@ import {
 } from './types';
 import { createLazyStream } from './util/stream';
 import { getBodySize } from './util/get-body-size';
-import { getHeader } from './request-helper';
 
 /** @private */
 type RetryState = {
@@ -211,8 +210,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
         );
         const requestTime = Date.now();
         const { followRedirect } = this._options;
-        const requestPromise = this._transport.httpRequest(
-          request,
+        const options =
           dpop && followRedirect !== false
             ? {
                 ...this._options,
@@ -228,8 +226,8 @@ export class HttpApi<S extends Schema> extends EventEmitter {
                     : redirectReq;
                 },
               }
-            : this._options,
-        );
+            : this._options;
+        const requestPromise = this._transport.httpRequest(request, options);
 
         setStream(requestPromise.stream());
 
@@ -256,7 +254,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
         this.emit('response', response);
         if (dpop) {
           // a nonce given by the API (RFC 9449, Section 9)
-          const nonce = getHeader(response.headers, 'dpop-nonce');
+          const nonce = response.headers['dpop-nonce'];
           if (nonce) {
             this._conn.proofNonce = nonce;
             if (response.statusCode === 401 && !retryState.nonceRetried) {

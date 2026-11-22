@@ -58,46 +58,6 @@ export function isRedirect(status: number) {
 }
 
 /**
- * Whether the URL is an HTTPS URL
- */
-export function isHttpsUrl(url: string) {
-  try {
-    return new URL(url).protocol === 'https:';
-  } catch {
-    return false;
-  }
-}
-
-/**
- * The value of a header, with the name matched case-insensitively
- */
-export function getHeader(
-  headers: { [name: string]: string } | undefined,
-  name: string,
-): string | undefined {
-  const lowerName = name.toLowerCase();
-  const key = Object.keys(headers ?? {}).find(
-    (k) => k.toLowerCase() === lowerName,
-  );
-  return key === undefined ? undefined : headers?.[key];
-}
-
-/**
- * The headers without a header, with the name matched case-insensitively
- */
-export function withoutHeader(
-  headers: { [name: string]: string } | undefined,
-  name: string,
-): { [name: string]: string } {
-  const lowerName = name.toLowerCase();
-  return Object.fromEntries(
-    Object.entries(headers ?? {}).filter(
-      ([key]) => key.toLowerCase() !== lowerName,
-    ),
-  );
-}
-
-/**
  *
  */
 const MAX_REDIRECT_COUNT = 10;

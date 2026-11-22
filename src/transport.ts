@@ -127,7 +127,6 @@ function createXdProxyRequest(
     }
   }
   if (reportRedirect) {
-    // browsers cannot read a redirect response, so the proxy reports it in headers
     headers['salesforceproxy-redirect'] = 'report';
   }
   const nocache = `${Date.now()}.${String(Math.random()).substring(2)}`;

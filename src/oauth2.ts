@@ -4,7 +4,6 @@
 import {createHash, randomBytes} from 'crypto';
 import querystring from 'querystring';
 import Transport, {HttpProxyTransport, XdProxyTransport} from './transport';
-import {getHeader, isHttpsUrl, withoutHeader} from './request-helper';
 import {HttpRequest, HttpResponse, Optional} from './types';
 
 const defaultOAuth2Config = {
@@ -163,11 +162,11 @@ export class DPoP {
     accessToken?: string;
     nonce?: string;
   }): Promise<string> {
-    if (!isHttpsUrl(params.url)) {
+    const url = new URL(params.url);
+    if (url.protocol !== 'https:') {
       throw new Error(`DPoP requests can be sent only over HTTPS: ${params.url}`);
     }
     const { signer } = this;
-    const url = new URL(params.url);
     const { crv, kty, x, y } = signer.publicJwk;
     const header = {
       typ: 'dpop+jwt',
@@ -521,28 +520,25 @@ export class OAuth2 {
         { ...request, headers },
         {
           // a new proof for the redirected request
-          followRedirect: async (redirectUrl: string) =>
-            isHttpsUrl(redirectUrl)
-              ? {
-                  method: 'GET',
-                  url: redirectUrl,
-                  headers: {
-                    ...withoutHeader(headers, 'dpop'),
-                    DPoP: await dpop.createProof({ method: 'GET', url: redirectUrl, nonce }),
-                  },
-                }
-              : null,
+          followRedirect: async (redirectUrl: string) => ({
+            method: 'GET',
+            url: redirectUrl,
+            headers: {
+              ...headers,
+              DPoP: await dpop.createProof({ method: 'GET', url: redirectUrl, nonce }),
+            },
+          }),
         },
       );
     };
     const response = await send(undefined);
-    const nonce = getHeader(response.headers, 'dpop-nonce');
+    const nonce = response.headers['dpop-nonce'];
     // RFC 9449, Section 8
     if (nonce && (response.statusCode === 400 || response.statusCode === 401)) {
       const retried = await send(nonce);
       return {
         response: retried,
-        proofNonce: getHeader(retried.headers, 'dpop-nonce') ?? nonce,
+        proofNonce: retried.headers['dpop-nonce'] ?? nonce,
       };
     }
     return { response, proofNonce: nonce };
