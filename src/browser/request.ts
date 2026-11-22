@@ -110,7 +110,7 @@ async function startFetchRequest(
   for (const headerName of res.headers.keys()) {
     headers[headerName.toLowerCase()] = res.headers.get(headerName);
   }
-  const response = restoreReportedRedirect({
+  const response = restoreReportedRedirect(request, {
     statusCode: res.status,
     headers,
   });

@@ -582,8 +582,9 @@ describe('redirects followed by the transport', () => {
     assert.equal(byDefault?.headers?.['salesforceproxy-redirect'], undefined);
   });
 
-  it('treats a redirect that the AJAX proxy reported in headers as the redirect response', () => {
+  it('treats a redirect that the AJAX proxy reported in headers as the redirect response, only when the request asked for it', () => {
     const location = `${instanceUrl}/services/oauth2/revoke`;
+    const asked = { method: 'POST' as const, url: '/proxy', headers: { 'salesforceproxy-redirect': 'report' } };
     const reported = {
       statusCode: 200,
       headers: {
@@ -592,16 +593,19 @@ describe('redirects followed by the transport', () => {
         'sforce-limit-info': 'api-usage=1/100',
       },
     };
-    assert.deepEqual(restoreReportedRedirect(reported), {
+    assert.deepEqual(restoreReportedRedirect(asked, reported), {
       statusCode: 302,
       headers: { location, 'sforce-limit-info': 'api-usage=1/100' },
     });
+    // a request that did not ask for the report keeps the response as it is
+    const notAsked = { method: 'POST' as const, url: location };
+    assert.equal(restoreReportedRedirect(notAsked, reported), reported);
     // other responses are left as they are
     const ok = { statusCode: 200, headers: { 'content-type': 'application/json' } };
-    assert.equal(restoreReportedRedirect(ok), ok);
+    assert.equal(restoreReportedRedirect(asked, ok), ok);
     const notOk = { statusCode: 400, headers: reported.headers };
-    assert.equal(restoreReportedRedirect(notOk), notOk);
+    assert.equal(restoreReportedRedirect(asked, notOk), notOk);
     const notRedirect = { statusCode: 200, headers: { ...reported.headers, 'salesforceproxy-redirect-status': '304' } };
-    assert.equal(restoreReportedRedirect(notRedirect), notRedirect);
+    assert.equal(restoreReportedRedirect(asked, notRedirect), notRedirect);
   });
 });
