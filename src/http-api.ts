@@ -18,7 +18,7 @@ import {
 } from './types';
 import { createLazyStream } from './util/stream';
 import { getBodySize } from './util/get-body-size';
-import { getHeader, isHttpsUrl, withoutHeader } from './request-helper';
+import { getHeader } from './request-helper';
 
 /** @private */
 type RetryState = {
@@ -210,12 +210,23 @@ export class HttpApi<S extends Schema> extends EventEmitter {
           `<request> method=${request.method}, url=${request.url}`,
         );
         const requestTime = Date.now();
+        const { followRedirect } = this._options;
         const requestPromise = this._transport.httpRequest(
           request,
-          dpop && this._options.followRedirect !== false
+          dpop && followRedirect !== false
             ? {
                 ...this._options,
-                followRedirect: this._createDPoPRedirectHandler(request),
+                // a new proof for the redirected request
+                followRedirect: async (redirectUrl: string) => {
+                  const redirectReq =
+                    typeof followRedirect === 'function'
+                      ? await followRedirect(redirectUrl)
+                      : { method: 'GET' as const, url: redirectUrl, headers: request.headers };
+                  const proof = redirectReq && (await this.createProof(redirectReq));
+                  return proof
+                    ? { ...redirectReq, headers: { ...redirectReq.headers, DPoP: proof } }
+                    : redirectReq;
+                },
               }
             : this._options,
         );
@@ -344,44 +355,6 @@ export class HttpApi<S extends Schema> extends EventEmitter {
           nonce: proofNonce ?? undefined,
         })
       : undefined;
-  }
-
-  /**
-   * `followRedirect` for a DPoP request, with a new proof for the redirected request
-   * when it keeps the access token of the original request
-   * @private
-   */
-  _createDPoPRedirectHandler(request: HttpRequest) {
-    const { followRedirect } = this._options;
-    const authorization = getHeader(request.headers, 'authorization');
-    return async (redirectUrl: string): Promise<HttpRequest | null> => {
-      const redirectReq: HttpRequest | null =
-        typeof followRedirect === 'function'
-          ? await followRedirect(redirectUrl)
-          : { method: 'GET', url: redirectUrl, headers: { ...request.headers } };
-      if (!redirectReq || !isHttpsUrl(redirectReq.url)) {
-        return null;
-      }
-      const headers = withoutHeader(redirectReq.headers, 'dpop');
-      if (
-        !authorization?.startsWith('DPoP ') ||
-        getHeader(redirectReq.headers, 'authorization') !== authorization
-      ) {
-        return { ...redirectReq, headers };
-      }
-      const { accessToken } = this._conn;
-      const proof = await this.createProof(redirectReq);
-      return {
-        ...redirectReq,
-        headers: proof
-          ? {
-              ...withoutHeader(headers, 'authorization'),
-              Authorization: `DPoP ${accessToken}`,
-              DPoP: proof,
-            }
-          : headers,
-      };
-    };
   }
 
   /**
