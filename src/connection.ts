@@ -1567,9 +1567,6 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
       url = res.identity;
     }
     url += '?format=json';
-    if (this.accessToken) {
-      url += `&oauth_token=${encodeURIComponent(this.accessToken)}`;
-    }
     const res = await this.request<IdentityInfo>({ method: 'GET', url });
     this.userInfo = {
       id: res.user_id,
