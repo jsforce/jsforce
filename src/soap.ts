@@ -2,7 +2,7 @@
  * @file Manages method call to SOAP endpoint
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
-import HttpApi, { isBrowser } from './http-api';
+import HttpApi, { type DPoPAuth, isBrowser } from './http-api';
 import Connection from './connection';
 import {
   Schema,
@@ -193,6 +193,10 @@ export type SOAPOptions = {
   xmlns?: string;
 };
 
+type SOAPRequest = HttpRequest & {
+  _message: object;
+};
+
 /**
  * Class for SOAP endpoint of Salesforce
  *
@@ -248,12 +252,14 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
   }
 
   /** @override */
-  beforeSend(request: HttpRequest & { _message: object }) {
-    request.body = this._createEnvelope(request._message);
+  beforeSend(request: SOAPRequest, dpop?: DPoPAuth) {
+    request.body = this._createEnvelope(request._message, dpop);
 
-    const headers = request.headers || {};
+    // the body is created again for every attempt, so its length is computed again too
+    const { 'content-length': _contentLength, ...headers } =
+      request.headers ?? {};
 
-    const bodySize = getBodySize(request.body, request.headers);
+    const bodySize = getBodySize(request.body, headers);
 
     if (
       !isBrowser && // Don't set content-length in browsers as it's not allowed
@@ -273,9 +279,15 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
 
   /** @override **/
   isSessionExpired(response: HttpResponse) {
+    // with DPoP, an expired or revoked token is reported as INVALID_AUTH_HEADER
+    const faultCodes = this._conn.oauth2?.dpop
+      ? 'INVALID_SESSION_ID|INVALID_AUTH_HEADER'
+      : 'INVALID_SESSION_ID';
     return (
       response.statusCode === 500 &&
-      /<faultcode>[a-zA-Z]+:INVALID_SESSION_ID<\/faultcode>/.test(response.body)
+      new RegExp(`<faultcode>[a-zA-Z]+:(${faultCodes})</faultcode>`).test(
+        response.body,
+      )
     );
   }
 
@@ -299,11 +311,15 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
   /**
    * @private
    */
-  _createEnvelope(message: object) {
+  _createEnvelope(message: object, dpop?: DPoPAuth) {
     const header: { [name: string]: any } = {};
     const conn = this._conn;
-    if (conn.accessToken) {
-      header.SessionHeader = { sessionId: conn.accessToken };
+    const accessToken = dpop ? dpop.accessToken : conn.accessToken;
+    if (accessToken) {
+      header.SessionHeader = { sessionId: accessToken };
+    }
+    if (dpop) {
+      header.DpopProofHeader = { proof: dpop.proof };
     }
     if (conn._callOptions) {
       header.CallOptions = conn._callOptions;

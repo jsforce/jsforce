@@ -30,7 +30,7 @@ function handleCallbackResponse() {
     const [prefix, promptType] = state.split('.');
     const cli = new BrowserClient(prefix);
     if (res.success) {
-      cli._storeTokens(Object.fromEntries(res.body) as TokenResponse);
+      cli._storeTokens(Object.fromEntries(res.body) as unknown as TokenResponse);
       location.hash = '';
     } else {
       cli._storeError(res.body);

@@ -18,6 +18,21 @@ import {
 } from './types';
 import { createLazyStream } from './util/stream';
 import { getBodySize } from './util/get-body-size';
+import { getHeader, isHttpsUrl, withoutHeader } from './request-helper';
+import type { DPoP } from './oauth2';
+
+/**
+ * The DPoP proof of a request, with the access token that the proof is made for
+ */
+export type DPoPAuth = { proof: string; accessToken: string };
+
+/** @private */
+type RetryState = {
+  // whether the session was already refreshed for this request
+  refreshed?: boolean;
+  // whether the request was already sent again with a nonce the API asked for
+  nonceRetried?: boolean;
+};
 
 /** @private */
 function parseJSON(str: string) {
@@ -158,6 +173,16 @@ export class HttpApi<S extends Schema> extends EventEmitter {
    * Callout to API endpoint using http
    */
   request<R = unknown>(request: HttpRequest): StreamPromise<R> {
+    return this._request<R>(request, {});
+  }
+
+  /**
+   * @private
+   */
+  _request<R = unknown>(
+    request: HttpRequest,
+    retryState: RetryState,
+  ): StreamPromise<R> {
     return StreamPromise.create<R>(() => {
       const { stream, setStream } = createLazyStream();
       const promise = (async () => {
@@ -175,16 +200,37 @@ export class HttpApi<S extends Schema> extends EventEmitter {
           request.url = request.url.replace(lastInstanceUrl,conn.instanceUrl);
         }
         */
+        const dpop = this._conn.oauth2?.dpop;
+        const unsupported = dpop ? this.getDPoPUnsupportedMessage() : undefined;
+        if (unsupported) {
+          throw new Error(unsupported);
+        }
         if (refreshDelegate && refreshDelegate.isRefreshing()) {
           await refreshDelegate.waitRefresh();
-          const bodyPromise = this.request(request);
+          const bodyPromise = this._request<R>(request, retryState);
           setStream(bodyPromise.stream());
           const body = await bodyPromise;
           return body;
         }
 
+        // a new proof for every attempt, with the access token and its nonce taken at the same moment,
+        // as the connection may refresh them while the signer works
+        const { accessToken, proofNonce } = this._conn;
+        const dpopAuth: DPoPAuth | undefined =
+          dpop && accessToken
+            ? {
+                accessToken,
+                proof: await dpop.createProof({
+                  method: request.method,
+                  url: request.url,
+                  accessToken,
+                  nonce: proofNonce ?? undefined,
+                }),
+              }
+            : undefined;
+
         // hook before sending
-        this.beforeSend(request);
+        this.beforeSend(request, dpopAuth);
         this.applyTraceContextHeaders(request);
 
         this.emit('request', request);
@@ -194,7 +240,17 @@ export class HttpApi<S extends Schema> extends EventEmitter {
         const requestTime = Date.now();
         const requestPromise = this._transport.httpRequest(
           request,
-          this._options,
+          dpop && dpopAuth && this._options.followRedirect !== false
+            ? {
+                ...this._options,
+                followRedirect: this._createDPoPRedirectHandler(
+                  dpop,
+                  request,
+                  dpopAuth.accessToken,
+                  proofNonce ?? undefined,
+                ),
+              }
+            : this._options,
         );
 
         setStream(requestPromise.stream());
@@ -220,9 +276,32 @@ export class HttpApi<S extends Schema> extends EventEmitter {
           }`,
         );
         this.emit('response', response);
+        if (dpopAuth) {
+          // a nonce given by the API (RFC 9449, Section 9) is used in later proofs,
+          // and a rejection with a new nonce asks for the request to be sent again with it
+          const nonce = getHeader(response.headers, 'dpop-nonce');
+          if (nonce) {
+            this._conn.proofNonce = nonce;
+            if (
+              response.statusCode === 401 &&
+              nonce !== proofNonce &&
+              !retryState.nonceRetried
+            ) {
+              return this._request<R>(request, {
+                ...retryState,
+                nonceRetried: true,
+              });
+            }
+          }
+        }
         // Refresh token if session has been expired and requires authentication
-        // when session refresh delegate is available
-        if (this.isSessionExpired(response) && refreshDelegate) {
+        // when session refresh delegate is available.
+        // With DPoP, the request is sent again only once after a refresh.
+        if (
+          this.isSessionExpired(response) &&
+          refreshDelegate &&
+          !(dpopAuth && retryState.refreshed)
+        ) {
           await refreshDelegate.refresh(requestTime);
           /* remove the `content-length` header after token refresh
            *
@@ -243,7 +322,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
           ) {
             delete request.headers['content-length'];
           }
-          return this.request(request);
+          return this._request<R>(request, { ...retryState, refreshed: true });
         }
         if (this.isErrorResponse(response)) {
           const err = await this.getError(response);
@@ -266,9 +345,12 @@ export class HttpApi<S extends Schema> extends EventEmitter {
   /**
    * @protected
    */
-  beforeSend(request: HttpRequest) {
+  beforeSend(request: HttpRequest, dpop?: DPoPAuth) {
     const headers = request.headers || {};
-    if (this._conn.accessToken) {
+    if (dpop) {
+      headers.Authorization = `DPoP ${dpop.accessToken}`;
+      headers.DPoP = dpop.proof;
+    } else if (this._conn.accessToken) {
       headers.Authorization = `Bearer ${this._conn.accessToken}`;
     }
     if (this._conn._callOptions) {
@@ -300,6 +382,62 @@ export class HttpApi<S extends Schema> extends EventEmitter {
       headers['content-length'] = String(bodySize);
     }
     request.headers = headers;
+  }
+
+  /**
+   * The error message when this API cannot be called with a DPoP token, or `undefined` when it can.
+   * Requests to an API that cannot fail before they are sent.
+   * @protected
+   */
+  getDPoPUnsupportedMessage(): string | undefined {
+    return undefined;
+  }
+
+  /**
+   * `followRedirect` for a DPoP request: the request to the redirect URL is made
+   * in the same way as the default (GET, without body, with the same headers),
+   * or as the given `followRedirect` function makes it, with a new proof for it.
+   * When the given function does not keep the token in the redirected request
+   * (removed, emptied or replaced), it is sent as made, without the token and without a proof.
+   * A redirect to a URL other than HTTPS is not followed.
+   * @private
+   */
+  _createDPoPRedirectHandler(
+    dpop: DPoP,
+    request: HttpRequest,
+    accessToken: string,
+    nonce: string | undefined,
+  ) {
+    const { followRedirect } = this._options;
+    return async (redirectUrl: string): Promise<HttpRequest | null> => {
+      const redirectReq: HttpRequest | null =
+        typeof followRedirect === 'function'
+          ? await followRedirect(redirectUrl)
+          : { method: 'GET', url: redirectUrl, headers: { ...request.headers } };
+      if (!redirectReq || !isHttpsUrl(redirectReq.url)) {
+        return null;
+      }
+      const headers = withoutHeader(redirectReq.headers, 'dpop');
+      if (
+        typeof followRedirect === 'function' &&
+        getHeader(redirectReq.headers, 'authorization') !== `DPoP ${accessToken}`
+      ) {
+        return { ...redirectReq, headers };
+      }
+      return {
+        ...redirectReq,
+        headers: {
+          ...withoutHeader(headers, 'authorization'),
+          Authorization: `DPoP ${accessToken}`,
+          DPoP: await dpop.createProof({
+            method: redirectReq.method,
+            url: redirectReq.url,
+            accessToken,
+            nonce,
+          }),
+        },
+      };
+    };
   }
 
   /**

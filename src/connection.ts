@@ -76,6 +76,11 @@ export type ConnectionConfig<S extends Schema = Schema> = {
   loginUrl?: string;
   accessToken?: string;
   refreshToken?: string;
+  /**
+   * With DPoP, the nonce of the access token's session, saved with the access token from `proofNonce`
+   * of a connection. Salesforce APIs reject a proof without it.
+   */
+  proofNonce?: string;
   instanceUrl?: string;
   sessionId?: string;
   serverUrl?: string;
@@ -98,6 +103,7 @@ export type ConnectionConfig<S extends Schema = Schema> = {
 export type ConnectionEstablishOptions = {
   accessToken?: Optional<string>;
   refreshToken?: Optional<string>;
+  proofNonce?: Optional<string>;
   instanceUrl?: Optional<string>;
   sessionId?: Optional<string>;
   serverUrl?: Optional<string>;
@@ -176,6 +182,7 @@ async function oauthRefreshFn<S extends Schema>(
       instanceUrl: res.instance_url,
       accessToken: res.access_token,
       refreshToken: res.refresh_token,
+      proofNonce: res.extra?.proofNonce,
       userInfo,
     });
     callback(undefined, res.access_token, res);
@@ -251,6 +258,11 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   instanceUrl: string;
   accessToken: Optional<string>;
   refreshToken: Optional<string>;
+  /**
+   * With DPoP, the nonce of the access token's session, put in the proofs of API requests.
+   * Save it with the access token, and pass it as `proofNonce` when creating a connection with them.
+   */
+  proofNonce: Optional<string>;
   userInfo: Optional<UserInfo>;
   limitInfo: LimitInfo = {};
   oauth2: OAuth2;
@@ -407,6 +419,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
     const {
       accessToken,
       refreshToken,
+      proofNonce,
       sessionId,
       serverUrl,
       signedRequest,
@@ -414,6 +427,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
     this._establish({
       accessToken,
       refreshToken,
+      proofNonce,
       instanceUrl,
       sessionId,
       serverUrl,
@@ -428,6 +442,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
     const {
       accessToken,
       refreshToken,
+      proofNonce,
       instanceUrl,
       sessionId,
       serverUrl,
@@ -437,8 +452,15 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
     this.instanceUrl = serverUrl
       ? serverUrl.split('/').slice(0, 3).join('/')
       : instanceUrl || this.instanceUrl;
+    const prevAccessToken = this.accessToken;
     this.accessToken = sessionId || accessToken || this.accessToken;
     this.refreshToken = refreshToken || this.refreshToken;
+    if (proofNonce) {
+      this.proofNonce = proofNonce;
+    } else if (this.accessToken !== prevAccessToken) {
+      // the nonce belongs to the session of the previous access token
+      this.proofNonce = null;
+    }
     if (this.refreshToken && !this._refreshDelegate) {
       throw new Error(
         'Refresh token is specified without oauth2 client information or refresh function',
@@ -461,6 +483,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   _clearSession() {
     this.accessToken = null;
     this.refreshToken = null;
+    this.proofNonce = null;
     this.instanceUrl = defaultConnectionConfig.instanceUrl;
     this.userInfo = null;
     this._sessionType = null;
@@ -505,6 +528,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
       instanceUrl: res.instance_url,
       accessToken: res.access_token,
       refreshToken: res.refresh_token,
+      proofNonce: res.extra?.proofNonce,
       userInfo,
     });
     this._logger.debug(
@@ -536,6 +560,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
     this._establish({
       instanceUrl: res.instance_url,
       accessToken: res.access_token,
+      proofNonce: res.extra?.proofNonce,
       userInfo,
     });
     this._logger.info(

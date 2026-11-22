@@ -53,6 +53,12 @@ export class SessionRefreshDelegate<S extends Schema> {
         this._refreshFn(this._conn, (err, accessToken, res) => {
           if (!err) {
             this._logger.debug('Connection refresh completed.');
+            if (res?.extra?.proofNonce) {
+              this._conn.proofNonce = res.extra.proofNonce;
+            } else if (this._conn.accessToken !== accessToken) {
+              // the nonce belongs to the session of the previous access token
+              this._conn.proofNonce = null;
+            }
             this._conn.accessToken = accessToken;
             this._conn.emit('refresh', accessToken, res);
             resolve();

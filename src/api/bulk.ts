@@ -743,6 +743,10 @@ export class Batch<
  *
  */
 class BulkApi<S extends Schema> extends HttpApi<S> {
+  getDPoPUnsupportedMessage() {
+    return 'Bulk API 1.0 cannot be called with a DPoP token. Use Bulk API 2.0 instead.';
+  }
+
   beforeSend(request: HttpRequest) {
     request.headers = {
       ...request.headers,

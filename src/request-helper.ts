@@ -58,6 +58,46 @@ export function isRedirect(status: number) {
 }
 
 /**
+ * Whether the URL is an HTTPS URL
+ */
+export function isHttpsUrl(url: string) {
+  try {
+    return new URL(url).protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * The value of a header, with the name matched case-insensitively
+ */
+export function getHeader(
+  headers: { [name: string]: string } | undefined,
+  name: string,
+): string | undefined {
+  const lowerName = name.toLowerCase();
+  const key = Object.keys(headers ?? {}).find(
+    (k) => k.toLowerCase() === lowerName,
+  );
+  return key === undefined ? undefined : headers?.[key];
+}
+
+/**
+ * The headers without a header, with the name matched case-insensitively
+ */
+export function withoutHeader(
+  headers: { [name: string]: string } | undefined,
+  name: string,
+): { [name: string]: string } {
+  const lowerName = name.toLowerCase();
+  return Object.fromEntries(
+    Object.entries(headers ?? {}).filter(
+      ([key]) => key.toLowerCase() !== lowerName,
+    ),
+  );
+}
+
+/**
  *
  */
 const MAX_REDIRECT_COUNT = 10;
@@ -70,7 +110,7 @@ export async function performRedirectRequest(
   res: Omit<HttpResponse, 'body'>,
   followRedirect: NonNullable<HttpRequestOptions['followRedirect']>,
   counter: number,
-  redirectCallback: (req: HttpRequest) => void,
+  redirectCallback: (req: HttpRequest) => void | Promise<void>,
 ) {
   if (counter >= MAX_REDIRECT_COUNT) {
     throw new Error('Reached to maximum redirect count');
@@ -91,7 +131,8 @@ export async function performRedirectRequest(
   if (!nextReqParams) {
     throw new Error('Cannot handle redirect for ' + redirectUrl);
   }
-  redirectCallback(nextReqParams);
+  // wait for the redirected request, so that its failure reaches the caller
+  await redirectCallback(nextReqParams);
 }
 
 /**
