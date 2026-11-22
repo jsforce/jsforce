@@ -255,7 +255,7 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
   beforeSend(request: SOAPRequest, dpop?: DPoPAuth) {
     request.body = this._createEnvelope(request._message, dpop);
 
-    // the body is created again for every attempt, so its length is computed again too
+    // the body changes with every proof, so its length is computed again
     const { 'content-length': _contentLength, ...headers } =
       request.headers ?? {};
 

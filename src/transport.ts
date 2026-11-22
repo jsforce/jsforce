@@ -126,8 +126,7 @@ function createXdProxyRequest(
     }
   }
   if (reportRedirect) {
-    // the AJAX proxy then reports a redirect in headers of a 200 response,
-    // as browsers do not let scripts read a redirect response
+    // browsers cannot read a redirect response, so the proxy reports it in headers
     headers['salesforceproxy-redirect'] = 'report';
   }
   const nocache = `${Date.now()}.${String(Math.random()).substring(2)}`;
@@ -157,7 +156,6 @@ export class XdProxyTransport extends Transport {
     const xdProxyUrl = this._xdProxyUrl;
     const { url, body, ...rreq } = req;
     const canonicalUrl = url.startsWith('/') ? baseUrl + url : url;
-    // a caller that builds the redirected request itself, such as for DPoP, needs to see redirects
     const reportRedirect = typeof options.followRedirect === 'function';
     const xdProxyReq = createXdProxyRequest(
       { ...rreq, url: canonicalUrl, body },

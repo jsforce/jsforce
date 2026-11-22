@@ -76,10 +76,6 @@ export type ConnectionConfig<S extends Schema = Schema> = {
   loginUrl?: string;
   accessToken?: string;
   refreshToken?: string;
-  /**
-   * With DPoP, the nonce of the access token's session, saved with the access token from `proofNonce`
-   * of a connection. Salesforce APIs reject a proof without it.
-   */
   proofNonce?: string;
   instanceUrl?: string;
   sessionId?: string;
@@ -258,10 +254,6 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   instanceUrl: string;
   accessToken: Optional<string>;
   refreshToken: Optional<string>;
-  /**
-   * With DPoP, the nonce of the access token's session, put in the proofs of API requests.
-   * Save it with the access token, and pass it as `proofNonce` when creating a connection with them.
-   */
   proofNonce: Optional<string>;
   userInfo: Optional<UserInfo>;
   limitInfo: LimitInfo = {};

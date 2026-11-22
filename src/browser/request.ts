@@ -168,7 +168,6 @@ export default function request(
     req,
     options,
   );
-  // a failed fetch, such as a network or CORS error or a timeout, ends the request with the error
   startFetchRequest(req, options, input, output, stream).catch((err) => {
     stream.emit('error', err);
   });

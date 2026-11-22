@@ -34,16 +34,12 @@ function base64UrlEscape(base64Encoded: string): string {
  */
 
 /**
- * Signer that creates the signatures of DPoP proofs.
- *
- * Signing is delegated to the signer, so that the private key can stay
- * in WebCrypto, a KMS or an HSM.
+ * Signer of DPoP proofs, so that the private key can stay in WebCrypto, a KMS or an HSM
  */
 export type DPoPSigner = {
   readonly algorithm: 'ES256';
   /**
-   * Format of the signature returned by `sign()`:
-   * 'jose' is r and s concatenated (64 bytes), 'der' is the ASN.1 DER encoding
+   * Format of the signature returned by `sign()`: r and s concatenated ('jose'), or DER
    */
   readonly format: 'jose' | 'der';
   readonly publicJwk: JsonWebKey;
@@ -139,14 +135,11 @@ async function createDPoPSigner(
  * DPoP configuration
  */
 export type DPoPConfig = {
-  /**
-   * Signer of DPoP proofs. Tokens are bound to the signer's key.
-   */
   signer: DPoPSigner;
 };
 
 /**
- * DPoP (RFC 9449) for an OAuth2 client: creates the proofs that bind requests to the signer's key
+ * DPoP (RFC 9449) proofs made with a signer
  */
 export class DPoP {
   readonly signer: DPoPSigner;
@@ -225,11 +218,6 @@ export type OAuth2Config = {
   proxyUrl?: string;
   httpProxy?: string;
   useVerifier?: boolean;
-  /**
-   * DPoP (RFC 9449) configuration, or a DPoP instance.
-   * When it is given, tokens are bound to the signer's key,
-   * and connections using this OAuth2 send their requests with DPoP.
-   */
   dpop?: DPoPConfig | DPoP;
 };
 
@@ -265,12 +253,11 @@ export type TokenResponse = {
   sfdc_community_url?: string;
   sfdc_community_id?: string;
   /**
-   * Information added by jsforce, not part of the response from Salesforce
+   * Added by jsforce, not part of the response from Salesforce
    */
   extra?: {
     /**
-     * With DPoP, the nonce received while obtaining the token.
-     * API requests with the access token need it in their proofs.
+     * With DPoP, the nonce received while obtaining the token
      */
     proofNonce?: string;
   };
@@ -520,10 +507,7 @@ export class OAuth2 {
   }
 
   /**
-   * POST to the token or revoke endpoint.
-   * With DPoP, a proof is attached, and when the endpoint rejects it with a nonce (RFC 9449, Section 8)
-   * the request is sent again once with that nonce. The nonce is kept only within this call.
-   * Returns the response, and the nonce received in this call.
+   * POST to the token or revoke endpoint, with a DPoP proof when DPoP is used
    * @private
    */
   async _postToEndpoint(
@@ -552,8 +536,7 @@ export class OAuth2 {
       return this._transport.httpRequest(
         { ...request, headers },
         {
-          // the request to the redirect URL is made as by default (GET, without body, with the same headers),
-          // with a new proof for it. A redirect to a URL other than HTTPS is not followed.
+          // a new proof for the redirected request
           followRedirect: async (redirectUrl: string) =>
             isHttpsUrl(redirectUrl)
               ? {
@@ -570,7 +553,7 @@ export class OAuth2 {
     };
     const response = await send(undefined);
     const nonce = getHeader(response.headers, 'dpop-nonce');
-    // a rejection with a nonce asks for the request to be sent again with it (RFC 9449, Section 8)
+    // RFC 9449, Section 8
     if (nonce && (response.statusCode === 400 || response.statusCode === 401)) {
       const retried = await send(nonce);
       return {

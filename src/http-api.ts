@@ -28,9 +28,7 @@ export type DPoPAuth = { proof: string; accessToken: string };
 
 /** @private */
 type RetryState = {
-  // whether the session was already refreshed for this request
   refreshed?: boolean;
-  // whether the request was already sent again with a nonce the API asked for
   nonceRetried?: boolean;
 };
 
@@ -209,8 +207,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
           return body;
         }
 
-        // a new proof for every attempt, with the access token and its nonce taken at the same moment,
-        // as the connection may refresh them while the signer works
+        // take the token and the nonce together, as a refresh may change them while signing
         const { accessToken, proofNonce } = this._conn;
         const dpopAuth: DPoPAuth | undefined =
           dpop && accessToken
@@ -273,8 +270,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
         );
         this.emit('response', response);
         if (dpopAuth) {
-          // a nonce given by the API (RFC 9449, Section 9) is used in later proofs,
-          // and a rejection with a new nonce asks for the request to be sent again with it
+          // a nonce given by the API (RFC 9449, Section 9)
           const nonce = getHeader(response.headers, 'dpop-nonce');
           if (nonce) {
             this._conn.proofNonce = nonce;
@@ -291,8 +287,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
           }
         }
         // Refresh token if session has been expired and requires authentication
-        // when session refresh delegate is available.
-        // With DPoP, the request is sent again only once after a refresh.
+        // when session refresh delegate is available
         if (
           this.isSessionExpired(response) &&
           refreshDelegate &&
@@ -362,12 +357,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
   }
 
   /**
-   * `followRedirect` for a DPoP request: the request to the redirect URL is made
-   * in the same way as the default (GET, without body, with the same headers),
-   * or as the given `followRedirect` function makes it, with a new proof for it.
-   * When the given function does not keep the token in the redirected request
-   * (removed, emptied or replaced), it is sent as made, without the token and without a proof.
-   * A redirect to a URL other than HTTPS is not followed.
+   * `followRedirect` for a DPoP request, with a new proof for the redirected request
    * @private
    */
   _createDPoPRedirectHandler(
