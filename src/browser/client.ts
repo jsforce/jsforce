@@ -128,7 +128,11 @@ export class BrowserClient extends EventEmitter {
     localStorage.setItem('jsforce_state', state);
     const authzUrl = oauth2.getAuthorizationUrl({
       response_type: 'token',
-      state,
+      prompt:'login consent',
+      state: state +`#${JSON.stringify({
+        loginUrl:oauth2.loginUrl,
+        redirectUri:oauth2.redirectUri
+    })}`,
       ...(scope ? { scope } : {}),
     });
     const pw = popupWin(
@@ -142,7 +146,11 @@ export class BrowserClient extends EventEmitter {
         localStorage.setItem('jsforce_state', state);
         const authzUrl = oauth2.getAuthorizationUrl({
           response_type: 'token',
-          state,
+          prompt:'consent',
+            state: state +`#${JSON.stringify({
+              loginUrl:oauth2.loginUrl,
+              redirectUri:oauth2.redirectUri
+          })}`,
           ...(scope ? { scope } : {}),
         });
         location.href = authzUrl;
@@ -169,6 +177,7 @@ export class BrowserClient extends EventEmitter {
           }
         } catch (e) {
           //
+          console.log('custom error', e);
         }
       }, 1000);
     });
@@ -212,6 +221,7 @@ export class BrowserClient extends EventEmitter {
         return {
           accessToken: localStorage.getItem(this._prefix + '_access_token'),
           instanceUrl: localStorage.getItem(this._prefix + '_instance_url'),
+          refreshToken: localStorage.getItem(this._prefix + '_refresh_token'),
           userInfo,
         };
       }
@@ -227,6 +237,9 @@ export class BrowserClient extends EventEmitter {
     localStorage.setItem(this._prefix + '_instance_url', params.instance_url);
     localStorage.setItem(this._prefix + '_issued_at', params.issued_at);
     localStorage.setItem(this._prefix + '_id', params.id);
+    if(params.refresh_token){
+      localStorage.setItem(this._prefix + '_refresh_token', params.refresh_token);
+    }
     document.cookie = this._prefix + '_loggedin=true;';
   }
 
