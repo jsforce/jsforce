@@ -299,25 +299,6 @@ export class HttpApi<S extends Schema> extends EventEmitter {
           !(dpopAuth && retryState.refreshed)
         ) {
           await refreshDelegate.refresh(requestTime);
-          /* remove the `content-length` header after token refresh
-           *
-           * SOAP requests include the access token their the body,
-           * if the first req had an invalid token and jsforce successfully
-           * refreshed it we need to remove the `content-length` header
-           * so that it get's re-calculated again with the new body.
-           *
-           * REST request aren't affected by this because the access token
-           * is sent via HTTP headers
-           *
-           * `_message` is only present in SOAP requests
-           */
-          if (
-            '_message' in request &&
-            request.headers &&
-            'content-length' in request.headers
-          ) {
-            delete request.headers['content-length'];
-          }
           return this._request<R>(request, { ...retryState, refreshed: true });
         }
         if (this.isErrorResponse(response)) {
