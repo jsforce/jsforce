@@ -5,6 +5,7 @@ import {
   executeWithTimeout,
   isRedirect,
   performRedirectRequest,
+  restoreReportedRedirect,
 } from '../request-helper';
 import { readAll } from '../util/stream';
 import { HttpRequest, HttpRequestOptions } from '../types';
@@ -109,10 +110,10 @@ async function startFetchRequest(
   for (const headerName of res.headers.keys()) {
     headers[headerName.toLowerCase()] = res.headers.get(headerName);
   }
-  const response = {
+  const response = restoreReportedRedirect({
     statusCode: res.status,
     headers,
-  };
+  });
   if (followRedirect && isRedirect(response.statusCode)) {
     try {
       await performRedirectRequest(
@@ -167,6 +168,9 @@ export default function request(
     req,
     options,
   );
-  startFetchRequest(req, options, input, output, stream);
+  // a failed fetch, such as a network or CORS error or a timeout, ends the request with the error
+  startFetchRequest(req, options, input, output, stream).catch((err) => {
+    stream.emit('error', err);
+  });
   return stream;
 }

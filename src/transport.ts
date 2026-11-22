@@ -112,7 +112,11 @@ export class CanvasTransport extends Transport {
 }
 
 /* @private */
-function createXdProxyRequest(req: HttpRequest, proxyUrl: string): HttpRequest {
+function createXdProxyRequest(
+  req: HttpRequest,
+  proxyUrl: string,
+  reportRedirect: boolean = false,
+): HttpRequest {
   const headers: { [name: string]: string } = {
     'salesforceproxy-endpoint': req.url,
   };
@@ -120,6 +124,11 @@ function createXdProxyRequest(req: HttpRequest, proxyUrl: string): HttpRequest {
     for (const name of Object.keys(req.headers)) {
       headers[name] = req.headers[name];
     }
+  }
+  if (reportRedirect) {
+    // the AJAX proxy then reports a redirect in headers of a 200 response,
+    // as browsers do not let scripts read a redirect response
+    headers['salesforceproxy-redirect'] = 'report';
   }
   const nocache = `${Date.now()}.${String(Math.random()).substring(2)}`;
   return {
@@ -148,9 +157,12 @@ export class XdProxyTransport extends Transport {
     const xdProxyUrl = this._xdProxyUrl;
     const { url, body, ...rreq } = req;
     const canonicalUrl = url.startsWith('/') ? baseUrl + url : url;
+    // a caller that builds the redirected request itself, such as for DPoP, needs to see redirects
+    const reportRedirect = typeof options.followRedirect === 'function';
     const xdProxyReq = createXdProxyRequest(
       { ...rreq, url: canonicalUrl, body },
       xdProxyUrl,
+      reportRedirect,
     );
     return super.httpRequest(xdProxyReq, {
       ...options,
@@ -164,7 +176,7 @@ export class XdProxyTransport extends Transport {
                   ? await followRedirect(redirectUrl)
                   : { ...rreq, method: 'GET' as const, url: redirectUrl };
               return redirectReq
-                ? createXdProxyRequest(redirectReq, xdProxyUrl)
+                ? createXdProxyRequest(redirectReq, xdProxyUrl, reportRedirect)
                 : null;
             },
     });

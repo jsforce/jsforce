@@ -9,7 +9,7 @@ import {
   type HttpRequestOptions,
   type HttpResponse,
 } from 'jsforce';
-import { performRedirectRequest } from '../lib/request-helper';
+import { performRedirectRequest, restoreReportedRedirect } from '../lib/request-helper';
 import { StreamPromise } from '../lib/util/promise';
 import { isString } from './util';
 import { isNodeJS } from './helper/env';
@@ -518,7 +518,7 @@ describe('DPoP', () => {
 
 /**
  * Redirects followed by the transport: a followRedirect function may return a promise, and through the AJAX proxy
- * the options are passed on.
+ * the options are passed on, and a redirect the proxy reports in headers is turned back into the redirect response.
  */
 describe('redirects followed by the transport', () => {
   const loginUrl = 'https://login.salesforce.com';
@@ -567,12 +567,41 @@ describe('redirects followed by the transport', () => {
     }
     assert.equal(received[0].followRedirect, false);
     assert.equal(received[0].timeout, 1000);
+    // the proxy is asked to report redirects only when the caller builds the redirected request itself
+    assert.equal(proxied[0].headers?.['salesforceproxy-redirect'], undefined);
+    assert.equal(proxied[1].headers?.['salesforceproxy-redirect'], 'report');
+    assert.equal(proxied[2].headers?.['salesforceproxy-redirect'], undefined);
     const viaProxy = (options: HttpRequestOptions) => (options.followRedirect as RedirectHandler)(redirectUrl);
     const given = await viaProxy(received[1]);
     assert.equal(given?.headers?.['salesforceproxy-endpoint'], redirectUrl);
     assert.equal(given?.headers?.DPoP, 'proof');
+    assert.equal(given?.headers?.['salesforceproxy-redirect'], 'report');
     const byDefault = await viaProxy(received[2]);
     assert.equal(byDefault?.method, 'GET');
     assert.equal(byDefault?.headers?.['salesforceproxy-endpoint'], redirectUrl);
+    assert.equal(byDefault?.headers?.['salesforceproxy-redirect'], undefined);
+  });
+
+  it('treats a redirect that the AJAX proxy reported in headers as the redirect response', () => {
+    const location = `${instanceUrl}/services/oauth2/revoke`;
+    const reported = {
+      statusCode: 200,
+      headers: {
+        'salesforceproxy-redirect-status': '302',
+        'salesforceproxy-redirect-location': location,
+        'sforce-limit-info': 'api-usage=1/100',
+      },
+    };
+    assert.deepEqual(restoreReportedRedirect(reported), {
+      statusCode: 302,
+      headers: { location, 'sforce-limit-info': 'api-usage=1/100' },
+    });
+    // other responses are left as they are
+    const ok = { statusCode: 200, headers: { 'content-type': 'application/json' } };
+    assert.equal(restoreReportedRedirect(ok), ok);
+    const notOk = { statusCode: 400, headers: reported.headers };
+    assert.equal(restoreReportedRedirect(notOk), notOk);
+    const notRedirect = { statusCode: 200, headers: { ...reported.headers, 'salesforceproxy-redirect-status': '304' } };
+    assert.equal(restoreReportedRedirect(notRedirect), notRedirect);
   });
 });
