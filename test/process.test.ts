@@ -98,7 +98,7 @@ describe('approval process', () => {
     assert.ok(isString(result.instanceId));
     assert.ok(result.instanceStatus === 'Pending');
     assert.ok(Array.isArray(result.newWorkitemIds));
-    workitemId = result.newWorkitemIds[0]; // eslint-disable-line require-atomic-updates
+    workitemId = result.newWorkitemIds[0];
   });
 
   /**

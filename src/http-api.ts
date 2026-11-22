@@ -6,6 +6,7 @@ import xml2js from 'xml2js';
 import { Logger, getLogger } from './util/logger';
 import { StreamPromise } from './util/promise';
 import Connection from './connection';
+import { TracePropagator } from './connection';
 import Transport from './transport';
 import { parseCSV } from './csv';
 import {
@@ -31,6 +32,101 @@ async function parseXML(str: string) {
 /** @private */
 function parseText(str: string) {
   return str;
+}
+
+const TRACEPARENT_RE = /^[0-9a-f]{2}-[0-9a-f]{32}-[0-9a-f]{16}-[0-9a-f]{2}$/i;
+const ALL_ZERO_32 = /^0{32}$/;
+const ALL_ZERO_16 = /^0{16}$/;
+const HEADER_UNSAFE_RE = /[\r\n\0]/;
+const MAX_TRACESTATE_LENGTH = 512;
+const B3_TRACE_ID_RE = /^(?:[0-9a-f]{16}|[0-9a-f]{32})$/i;
+const B3_SPAN_ID_RE = /^[0-9a-f]{16}$/i;
+const textEncoder = new TextEncoder();
+
+type B3Context = { traceId: string; spanId: string; sampled?: '0' | '1'; debug: boolean };
+
+const environmentVariableName = (key: string): string => {
+  const normalized = key.toUpperCase().replace(/[^A-Z0-9_]/g, '_') || '_';
+  return /^[0-9]/.test(normalized) ? `_${normalized}` : normalized;
+};
+
+const getEnvironmentValue = (key: string): string | undefined => process.env[environmentVariableName(key)]?.trim();
+
+const validB3Ids = (traceId: string, spanId: string): boolean =>
+  B3_TRACE_ID_RE.test(traceId) &&
+  B3_SPAN_ID_RE.test(spanId) &&
+  !/^0+$/.test(traceId) &&
+  !/^0+$/.test(spanId);
+
+function getB3Context(): B3Context | undefined {
+  const single = getEnvironmentValue('b3');
+  if (single && !HEADER_UNSAFE_RE.test(single)) {
+    const [traceId, spanId, sampling] = single.split('-');
+    if (traceId && spanId && validB3Ids(traceId, spanId) && (sampling === undefined || ['0', '1', 'd'].includes(sampling))) {
+      return { traceId: traceId.toLowerCase(), spanId: spanId.toLowerCase(), sampled: sampling === 'd' ? '1' : sampling as '0' | '1' | undefined, debug: sampling === 'd' };
+    }
+  }
+
+  const traceId = getEnvironmentValue('x-b3-traceid');
+  const spanId = getEnvironmentValue('x-b3-spanid');
+  const sampled = getEnvironmentValue('x-b3-sampled');
+  const flags = getEnvironmentValue('x-b3-flags');
+  if (!traceId || !spanId || !validB3Ids(traceId, spanId) || (sampled !== undefined && !['0', '1'].includes(sampled)) || (flags !== undefined && flags !== '1')) {
+    return undefined;
+  }
+  return { traceId: traceId.toLowerCase(), spanId: spanId.toLowerCase(), sampled: flags === '1' ? '1' : sampled as '0' | '1' | undefined, debug: flags === '1' };
+}
+
+function trimTracestate(tracestate: string) {
+  let trimmed = '';
+  for (const member of tracestate.split(',')) {
+    const candidate = trimmed ? `${trimmed},${member}` : member;
+    if (textEncoder.encode(candidate).byteLength > MAX_TRACESTATE_LENGTH) {
+      break;
+    }
+    trimmed = candidate;
+  }
+  return trimmed;
+}
+
+function getTraceContextHeaders(): Record<string, string> {
+  const headers: Record<string, string> = {};
+  const tp = getEnvironmentValue('traceparent');
+  if (tp && TRACEPARENT_RE.test(tp)) {
+    const parts = tp.split('-');
+    const version = parts[0].toLowerCase();
+    const traceId = parts[1].toLowerCase();
+    const parentId = parts[2].toLowerCase();
+    if (version !== 'ff' && !ALL_ZERO_32.test(traceId) && !ALL_ZERO_16.test(parentId)) {
+      headers['traceparent'] = tp.toLowerCase();
+      const ts = getEnvironmentValue('tracestate');
+      if (ts && !HEADER_UNSAFE_RE.test(ts)) {
+        const trimmed = trimTracestate(ts);
+        if (trimmed) {
+          headers['tracestate'] = trimmed;
+        }
+      }
+    }
+  }
+  return headers;
+}
+
+function getPropagationHeaders(propagators: TracePropagator[]): Record<string, string> {
+  if (propagators.includes('none')) return {};
+  const headers = propagators.includes('tracecontext') ? getTraceContextHeaders() : {};
+  if (!propagators.includes('b3') && !propagators.includes('b3multi')) return headers;
+  const b3 = getB3Context();
+  if (!b3) return headers;
+  if (propagators.includes('b3')) {
+    headers.b3 = `${b3.traceId}-${b3.spanId}${b3.debug ? '-d' : b3.sampled ? `-${b3.sampled}` : ''}`;
+  }
+  if (propagators.includes('b3multi')) {
+    headers['X-B3-TraceId'] = b3.traceId;
+    headers['X-B3-SpanId'] = b3.spanId;
+    if (b3.debug) headers['X-B3-Flags'] = '1';
+    else if (b3.sampled) headers['X-B3-Sampled'] = b3.sampled;
+  }
+  return headers;
 }
 
 /**
@@ -89,6 +185,7 @@ export class HttpApi<S extends Schema> extends EventEmitter {
 
         // hook before sending
         this.beforeSend(request);
+        this.applyTraceContextHeaders(request);
 
         this.emit('request', request);
         this._logger.debug(
@@ -170,7 +267,6 @@ export class HttpApi<S extends Schema> extends EventEmitter {
    * @protected
    */
   beforeSend(request: HttpRequest) {
-    /* eslint-disable no-param-reassign */
     const headers = request.headers || {};
     if (this._conn.accessToken) {
       headers.Authorization = `Bearer ${this._conn.accessToken}`;
@@ -202,6 +298,24 @@ export class HttpApi<S extends Schema> extends EventEmitter {
         `missing 'content-length' header, setting it to: ${bodySize}`,
       );
       headers['content-length'] = String(bodySize);
+    }
+    request.headers = headers;
+  }
+
+  /**
+   * Apply selected trace propagation headers from environment variables.
+   * Headers are only added when not already set by the caller.
+   * @protected
+   */
+  applyTraceContextHeaders(request: HttpRequest) {
+    const traceHeaders = getPropagationHeaders(this._conn._propagators);
+    if (Object.keys(traceHeaders).length === 0) return;
+    const headers = request.headers || {};
+    const existing = new Set(Object.keys(headers).map((k) => k.toLowerCase()));
+    for (const [key, value] of Object.entries(traceHeaders)) {
+      if (!existing.has(key.toLowerCase())) {
+        headers[key] = value;
+      }
     }
     request.headers = headers;
   }
@@ -333,7 +447,6 @@ export class HttpApi<S extends Schema> extends EventEmitter {
     try {
       error = this.parseError(body || (await this.parseResponseBody(response)));
     } catch (e) {
-      // eslint-disable no-empty
     }
 
     if (Array.isArray(error)) {

@@ -71,7 +71,7 @@ if (isNodeJS()) {
     }
 
     await conn.sobject('PushTopic').findOne({ Name: pushTopicName }).delete();
-  });
+  }, 180000);
 
   /**
    *

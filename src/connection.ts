@@ -68,6 +68,9 @@ import FormData from 'form-data';
 /**
  * type definitions
  */
+export type TracePropagator = 'tracecontext' | 'b3' | 'b3multi' | 'none';
+const TRACE_PROPAGATORS = new Set<TracePropagator>(['tracecontext', 'b3', 'b3multi', 'none']);
+
 export type ConnectionConfig<S extends Schema = Schema> = {
   version?: string;
   loginUrl?: string;
@@ -83,6 +86,12 @@ export type ConnectionConfig<S extends Schema = Schema> = {
   httpProxy?: string;
   logLevel?: LogLevelConfig;
   callOptions?: { [name: string]: string };
+  /**
+   * Trace context formats to forward from normalized OpenTelemetry environment
+   * carriers. `none` disables all forwarding, including when combined with
+   * other formats.
+   */
+  propagators?: TracePropagator[];
   refreshFn?: SessionRefreshFunc<S>;
 };
 
@@ -166,6 +175,7 @@ async function oauthRefreshFn<S extends Schema>(
     conn._establish({
       instanceUrl: res.instance_url,
       accessToken: res.access_token,
+      refreshToken: res.refresh_token,
       userInfo,
     });
     callback(undefined, res.access_token, res);
@@ -247,6 +257,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
   sobjects: { [N in SObjectNames<S>]?: SObject<S, N> } = {};
   cache: Cache;
   _callOptions: Optional<{ [name: string]: string }>;
+  _propagators: TracePropagator[];
   _maxRequest: number;
   _logger: Logger;
   _logLevel: Optional<LogLevelConfig>;
@@ -354,6 +365,10 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
       ? new HttpProxyTransport(httpProxy)
       : new Transport();
     this._callOptions = config.callOptions;
+    if (config.propagators?.some((propagator) => !TRACE_PROPAGATORS.has(propagator))) {
+      throw new Error(`Unsupported trace propagator: ${config.propagators.join(', ')}`);
+    }
+    this._propagators = config.propagators ?? ['none'];
     this.cache = new Cache();
     const describeCacheKey = (type?: string) =>
       type ? `describe.${type}` : 'describe';
@@ -1568,7 +1583,6 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
    * List recently viewed records
    */
   async recent(type?: string | number, limit?: number) {
-    /* eslint-disable no-param-reassign */
     if (typeof type === 'number') {
       limit = type;
       type = undefined;
@@ -1596,7 +1610,6 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
     start: string | Date,
     end: string | Date,
   ): Promise<UpdatedResult> {
-    /* eslint-disable no-param-reassign */
     let url = [this._baseUrl(), 'sobjects', type, 'updated'].join('/');
     if (typeof start === 'string') {
       start = new Date(start);
@@ -1620,7 +1633,6 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
     start: string | Date,
     end: string | Date,
   ): Promise<DeletedResult> {
-    /* eslint-disable no-param-reassign */
     let url = [this._baseUrl(), 'sobjects', type, 'deleted'].join('/');
     if (typeof start === 'string') {
       start = new Date(start);

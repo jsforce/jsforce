@@ -5,10 +5,24 @@ import { HttpRequest } from '../src/types';
 import { Transport } from '../src/transport';
 import assert from 'assert';
 import xml2js from 'xml2js';
-import nock = require('nock');
+import {MockAgent, errors} from 'undici';
 import { HttpRequestOptions, HttpResponse } from '../src/types/common';
+import { setDispatcher } from '../src/request';
 
 const loginUrl = 'https://heaven-party-2429-dev-ed.scratch.my.salesforce.com';
+
+let mockAgent: MockAgent;
+
+beforeEach(() => {
+  mockAgent = new MockAgent();
+  mockAgent.disableNetConnect();
+  setDispatcher(mockAgent);
+});
+
+afterEach(async () => {
+  setDispatcher();
+  await mockAgent.close();
+});
 
 describe('HTTP API', () => {
   const accessToken = '1234';
@@ -40,13 +54,11 @@ describe('HTTP API', () => {
     }
 
     it('returns response after retry limit is reached', async () => {
-      nock(loginUrl)
-        .get('/services/data/v59.0')
-        .times(4)
-        .reply(429, JSON.stringify({
-          errorCode: 'INTERNAL_SERVER_ERROR',
-          message: 'Invalid AiEvaluation identifier'
-        }))
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(429, JSON.stringify({
+        errorCode: 'INTERNAL_SERVER_ERROR',
+        message: 'Invalid AiEvaluation identifier'
+      })).times(4);
 
       const { retryCounter,res } = await fetch({
         method: 'GET',
@@ -63,12 +75,9 @@ describe('HTTP API', () => {
 
     it('retries on specified status code', async () => {
       const attempts = 2;
-      nock(loginUrl)
-        .get('/services/data/v59.0')
-        .times(attempts)
-        .reply(429)
-        .get('/services/data/v59.0')
-        .reply(200, { success: true });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(429).times(attempts);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({ success: true }));
 
       const { retryCounter } = await fetch({
         method: 'GET',
@@ -78,13 +87,8 @@ describe('HTTP API', () => {
     });
 
     it('does not retry on unsupported status codes', async () => {
-      const attempts = 2;
-      nock(loginUrl)
-        .get('/services/data/v60.0')
-        .times(attempts)
-        .reply(404)
-        .get('/services/data/v60.0')
-        .reply(200, { success: true });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v60.0', method: 'GET' }).reply(404);
 
       const { retryCounter } = await fetch({
         method: 'GET',
@@ -95,15 +99,9 @@ describe('HTTP API', () => {
 
     it('retries on socket error until it succeeds', async () => {
       const attempts = 2;
-      nock(loginUrl)
-        .get('/services/data/v59.0')
-        .times(attempts)
-        .replyWithError({
-          message: `request to ${loginUrl} failed, reason: socket hang up`,
-          code: 'ECONNRESET',
-        })
-        .get('/services/data/v59.0')
-        .reply(200, { success: true });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).replyWithError(Object.assign(new Error('ECONNRESET'), {code: 'ECONNRESET'})).times(attempts);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({ success: true }));
 
       const { retryCounter } = await fetch({
         method: 'GET',
@@ -113,13 +111,8 @@ describe('HTTP API', () => {
     });
 
     it('stops retries after max is reached', async () => {
-      nock(loginUrl)
-        .get('/services/data/v59.0')
-        .times(6)
-        .replyWithError({
-          message: `request to ${loginUrl} failed, reason: socket hang up`,
-          code: 'ECONNRESET',
-        });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).replyWithError(Object.assign(new Error('ECONNRESET'), {code: 'ECONNRESET'})).times(6);
 
       const { retryCounter, err } = await fetch(
         {
@@ -134,19 +127,11 @@ describe('HTTP API', () => {
       );
       assert.ok(retryCounter === 5);
       assert.ok(err instanceof Error);
-      assert.ok(err.name === 'FetchError');
     });
 
     it('retries only on specified methods', async () => {
-      nock(loginUrl)
-        .get('/services/data/v59.0/limits')
-        .times(2)
-        .replyWithError({
-          message: `request to ${loginUrl} failed, reason: socket hang up`,
-          code: 'ECONNRESET',
-        })
-        .get('/services/data/v59.0/limits')
-        .reply(200, { success: true });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0/limits', method: 'GET' }).replyWithError(new Error('ECONNRESET'));
 
       const { retryCounter } = await fetch(
         {
@@ -163,15 +148,8 @@ describe('HTTP API', () => {
     });
 
     it('retries only on specified errors', async () => {
-      nock(loginUrl)
-        .get('/services/data/v59.0/limits')
-        .times(2)
-        .replyWithError({
-          message: `request to ${loginUrl} failed, reason: socket hang up`,
-          code: 'ECONNRESET',
-        })
-        .get('/services/data/v59.0/limits')
-        .reply(200, { success: true });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0/limits', method: 'GET' }).replyWithError(new Error('ECONNRESET'));
 
       const { retryCounter } = await fetch(
         {
@@ -188,15 +166,8 @@ describe('HTTP API', () => {
     });
 
     it('does not retry on unsupported errors', async () => {
-      nock(loginUrl)
-        .get('/services/data/v59.0/limits')
-        .times(2)
-        .replyWithError({
-          message: `request to ${loginUrl} failed, reason: socket hang up`,
-          code: 'UNKNOWN_ERROR',
-        })
-        .get('/services/data/v59.0/limits')
-        .reply(200, { success: true });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0/limits', method: 'GET' }).replyWithError(new Error('UNKNOWN_ERROR'));
 
       const { retryCounter } = await fetch({
         method: 'GET',
@@ -206,10 +177,8 @@ describe('HTTP API', () => {
     });
 
     it('should retry only 2 times on 420 response', async () => {
-      nock(loginUrl)
-        .get('/services/data/v59.0')
-        .times(3)
-        .reply(420, { error: 'We\'ve hit a snag' });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(420, JSON.stringify({ error: "We've hit a snag" })).times(3);
 
       const { retryCounter } = await fetch({
         method: 'GET',
@@ -219,14 +188,8 @@ describe('HTTP API', () => {
     });
 
     it('does not retry on unsupported methods', async () => {
-      nock(loginUrl)
-        .post('/services/data/v59.0', 'body')
-        .replyWithError({
-          message: `request to ${loginUrl} failed, reason: socket hang up`,
-          code: 'ECONNRESET',
-        })
-        .post('/services/data/v59.0', 'body')
-        .reply(200, { success: true });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'POST' }).replyWithError(new Error('ECONNRESET'));
 
       const { retryCounter } = await fetch({
         method: 'POST',
@@ -238,16 +201,8 @@ describe('HTTP API', () => {
     });
 
     it('does not retry cancelled requests', async () => {
-      // setting a timeout makes the AbortController instance cancel the request.
-      nock(loginUrl)
-        .get('/services/data/v60.0')
-        .times(2)
-        .replyWithError({
-          message: `request to ${loginUrl} failed, reason: socket hang up`,
-          code: 'ECONNRESET',
-        })
-        .get('/services/data/v60.0')
-        .reply(200, { success: true });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v60.0', method: 'GET' }).reply(200, JSON.stringify({ success: true })).delay(5000);
 
       const { retryCounter } = await fetch(
         {
@@ -255,17 +210,15 @@ describe('HTTP API', () => {
           url: `${loginUrl}/services/data/v60.0`,
         },
         {
-          timeout: 1, // 1ms to ensure it fails before a retry happens.
+          timeout: 1,
         },
       );
       assert.ok(retryCounter === 0);
     });
 
     it('throws after 5 seconds timeout', async () => {
-      nock(loginUrl)
-        .get('/services/data/v59.0')
-        .delay(7000) // Delay response by 7 seconds to exceed timeout
-        .reply(200, { success: true });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({ success: true })).delay(7000);
 
       const { err } = await fetch(
         {
@@ -273,11 +226,11 @@ describe('HTTP API', () => {
           url: `${loginUrl}/services/data/v59.0`,
         },
         {
-          timeout: 5000, // 5 second timeout
+          timeout: 5000,
         },
       );
 
-      assert.ok(err instanceof Error);
+      assert.ok(err instanceof DOMException);
       assert.ok(err.name === 'AbortError' || err.message.includes('aborted'));
     });
   });
@@ -293,7 +246,8 @@ describe('HTTP API', () => {
         testPassed = true;
       });
 
-      nock(loginUrl).get('/services/data/v59.0').reply(200, {});
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
 
       await httpApi.request({
         method: 'GET',
@@ -324,7 +278,8 @@ describe('HTTP API', () => {
         testPassed = true;
       });
 
-      nock(loginUrl).get('/services/data/v59.0').reply(200, {});
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
 
       await httpApi.request({
         method: 'GET',
@@ -343,9 +298,8 @@ describe('HTTP API', () => {
         testPassed = true;
       });
 
-      nock(loginUrl)
-        .post('/services/data/v59.0/sobjects/Account')
-        .reply(200, {});
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0/sobjects/Account', method: 'POST' }).reply(200, JSON.stringify({}));
 
       await httpApi.request({
         method: 'POST',
@@ -355,6 +309,365 @@ describe('HTTP API', () => {
         url: `${loginUrl}/services/data/v59.0/sobjects/Account`,
       });
       assert.ok(testPassed);
+    });
+
+    describe('W3C trace context', () => {
+      afterEach(() => {
+        delete process.env.TRACEPARENT;
+        delete process.env.TRACESTATE;
+        delete process.env.BAGGAGE;
+        delete process.env.B3;
+        delete process.env.X_B3_TRACEID;
+        delete process.env.X_B3_SPANID;
+        delete process.env.X_B3_SAMPLED;
+        delete process.env.X_B3_FLAGS;
+      });
+
+      const createTraceContextConnection = () =>
+        new Connection({
+          loginUrl,
+          accessToken,
+          propagators: ['tracecontext'],
+        });
+
+      it('forwards valid TRACEPARENT as a header', async () => {
+        process.env.TRACEPARENT = '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01';
+        let testPassed = false;
+        const httpApi = new HttpApi(createTraceContextConnection(), {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.['traceparent'], '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01');
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
+        assert.ok(testPassed);
+      });
+
+      it('forwards TRACESTATE but not BAGGAGE when present', async () => {
+        process.env.TRACEPARENT = '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01';
+        process.env.TRACESTATE = 'congo=t61rcWkgMzE';
+        process.env.BAGGAGE = 'client=coding-agent-platform';
+        let testPassed = false;
+        const httpApi = new HttpApi(createTraceContextConnection(), {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.['tracestate'], 'congo=t61rcWkgMzE');
+          assert.equal(req?.headers?.['baggage'], undefined);
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
+        assert.ok(testPassed);
+      });
+
+      it('truncates TRACESTATE at whole members within the W3C limit', async () => {
+        process.env.TRACEPARENT = '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01';
+        const first = `first=${'a'.repeat(250)}`;
+        const second = `second=${'b'.repeat(250)}`;
+        const third = `third=${'c'.repeat(250)}`;
+        process.env.TRACESTATE = `${first},${second},${third}`;
+        let testPassed = false;
+        const httpApi = new HttpApi(createTraceContextConnection(), {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.['tracestate'], first);
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
+        assert.ok(testPassed);
+      });
+
+      it('omits an oversized TRACESTATE member', async () => {
+        process.env.TRACEPARENT = '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01';
+        process.env.TRACESTATE = `vendor=${'a'.repeat(513)}`;
+        let testPassed = false;
+        const httpApi = new HttpApi(createTraceContextConnection(), {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.['tracestate'], undefined);
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
+        assert.ok(testPassed);
+      });
+
+      it('does not include trace headers when env vars are absent', async () => {
+        let testPassed = false;
+        const httpApi = new HttpApi(createTraceContextConnection(), {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.['traceparent'], undefined);
+          assert.equal(req?.headers?.['tracestate'], undefined);
+          assert.equal(req?.headers?.['baggage'], undefined);
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
+        assert.ok(testPassed);
+      });
+
+      it('does not include trace headers unless the connection opts in', async () => {
+        process.env.TRACEPARENT = '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01';
+        process.env.TRACESTATE = 'congo=t61rcWkgMzE';
+        process.env.BAGGAGE = 'client=coding-agent-platform';
+        let testPassed = false;
+        const httpApi = new HttpApi(conn, {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.['traceparent'], undefined);
+          assert.equal(req?.headers?.['tracestate'], undefined);
+          assert.equal(req?.headers?.['baggage'], undefined);
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
+        assert.ok(testPassed);
+      });
+
+      it('does not include trace headers when the connection opts out', async () => {
+        process.env.TRACEPARENT = '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01';
+        let testPassed = false;
+        const httpApi = new HttpApi(
+          new Connection({
+            loginUrl,
+            accessToken,
+            propagators: ['none'],
+          }),
+          {},
+        );
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.['traceparent'], undefined);
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
+        assert.ok(testPassed);
+      });
+
+      it('rejects invalid TRACEPARENT', async () => {
+        process.env.TRACEPARENT = 'not-valid';
+        let testPassed = false;
+        const httpApi = new HttpApi(createTraceContextConnection(), {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.['traceparent'], undefined);
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
+        assert.ok(testPassed);
+      });
+
+      it('rejects version ff (case-insensitive)', async () => {
+        process.env.TRACEPARENT = 'FF-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01';
+        let testPassed = false;
+        const httpApi = new HttpApi(createTraceContextConnection(), {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.['traceparent'], undefined);
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
+        assert.ok(testPassed);
+      });
+
+      it('rejects all-zero trace-id', async () => {
+        process.env.TRACEPARENT = '00-00000000000000000000000000000000-b7ad6b7169203331-01';
+        let testPassed = false;
+        const httpApi = new HttpApi(createTraceContextConnection(), {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.['traceparent'], undefined);
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
+        assert.ok(testPassed);
+      });
+
+      it('normalizes traceparent to lowercase', async () => {
+        process.env.TRACEPARENT = '00-0AF7651916CD43DD8448EB211C80319C-B7AD6B7169203331-01';
+        let testPassed = false;
+        const httpApi = new HttpApi(createTraceContextConnection(), {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.['traceparent'], '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01');
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
+        assert.ok(testPassed);
+      });
+
+      it('rejects TRACESTATE with control characters', async () => {
+        process.env.TRACEPARENT = '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01';
+        process.env.TRACESTATE = 'evil\r\nX-Injected: true';
+        let testPassed = false;
+        const httpApi = new HttpApi(createTraceContextConnection(), {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.['traceparent'], '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01');
+          assert.equal(req?.headers?.['tracestate'], undefined);
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
+        assert.ok(testPassed);
+      });
+
+      it('does not override caller-supplied trace headers', async () => {
+        process.env.TRACEPARENT = '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01';
+        let testPassed = false;
+        const httpApi = new HttpApi(createTraceContextConnection(), {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.['traceparent'], 'custom-value');
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0`, headers: { traceparent: 'custom-value' } });
+        assert.ok(testPassed);
+      });
+
+      it('does not override caller-supplied trace headers with different casing', async () => {
+        process.env.TRACEPARENT = '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01';
+        let testPassed = false;
+        const httpApi = new HttpApi(createTraceContextConnection(), {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.['Traceparent'], 'custom-value');
+          assert.equal(Object.keys(req?.headers ?? {}).filter(k => k.toLowerCase() === 'traceparent').length, 1);
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0`, headers: { Traceparent: 'custom-value' } });
+        assert.ok(testPassed);
+      });
+
+      it('trims whitespace from TRACEPARENT env var', async () => {
+        process.env.TRACEPARENT = '  00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01  ';
+        let testPassed = false;
+        const httpApi = new HttpApi(createTraceContextConnection(), {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.['traceparent'], '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01');
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
+        assert.ok(testPassed);
+      });
+
+      it('forwards B3 single-header context from B3', async () => {
+        process.env.B3 = '0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-d';
+        let testPassed = false;
+        const httpApi = new HttpApi(new Connection({ loginUrl, accessToken, propagators: ['b3'] }), {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.b3, process.env.B3);
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
+        assert.ok(testPassed);
+      });
+
+      it('forwards B3 multi-header context when configured', async () => {
+        process.env.X_B3_TRACEID = '0af7651916cd43dd8448eb211c80319c';
+        process.env.X_B3_SPANID = 'b7ad6b7169203331';
+        process.env.X_B3_SAMPLED = '1';
+        let testPassed = false;
+        const httpApi = new HttpApi(new Connection({ loginUrl, accessToken, propagators: ['b3multi'] }), {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.['X-B3-TraceId'], process.env.X_B3_TRACEID);
+          assert.equal(req?.headers?.['X-B3-SpanId'], process.env.X_B3_SPANID);
+          assert.equal(req?.headers?.['X-B3-Sampled'], '1');
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
+        assert.ok(testPassed);
+      });
+
+      it('prefers B3 single-header context over B3 multi-header context', async () => {
+        process.env.B3 = '0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-1';
+        process.env.X_B3_TRACEID = '463ac35c9f6413ad48485a3953bb6124';
+        process.env.X_B3_SPANID = 'a2fb4a1d1a96d312';
+        let testPassed = false;
+        const httpApi = new HttpApi(new Connection({ loginUrl, accessToken, propagators: ['b3multi'] }), {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.['X-B3-TraceId'], '0af7651916cd43dd8448eb211c80319c');
+          assert.equal(req?.headers?.['X-B3-SpanId'], 'b7ad6b7169203331');
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
+        assert.ok(testPassed);
+      });
+
+      it('falls back to B3 multi-header context when B3 is invalid', async () => {
+        process.env.B3 = 'garbage';
+        process.env.X_B3_TRACEID = '0af7651916cd43dd8448eb211c80319c';
+        process.env.X_B3_SPANID = 'b7ad6b7169203331';
+        process.env.X_B3_SAMPLED = '1';
+        let testPassed = false;
+        const httpApi = new HttpApi(new Connection({ loginUrl, accessToken, propagators: ['b3'] }), {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.b3, '0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-1');
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
+        assert.ok(testPassed);
+      });
+
+      it('forwards both W3C and B3 when configured', async () => {
+        process.env.TRACEPARENT = '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01';
+        process.env.B3 = '0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-1';
+        let testPassed = false;
+        const httpApi = new HttpApi(new Connection({ loginUrl, accessToken, propagators: ['tracecontext', 'b3'] }), {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.traceparent, process.env.TRACEPARENT);
+          assert.equal(req?.headers?.b3, process.env.B3);
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
+        assert.ok(testPassed);
+      });
+
+      it('does not forward any format when propagators includes none', async () => {
+        process.env.TRACEPARENT = '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01';
+        process.env.B3 = '0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-1';
+        let testPassed = false;
+        const httpApi = new HttpApi(new Connection({ loginUrl, accessToken, propagators: ['tracecontext', 'b3', 'none'] }), {});
+        httpApi.on('request', (req: HttpRequest) => {
+          assert.equal(req?.headers?.traceparent, undefined);
+          assert.equal(req?.headers?.b3, undefined);
+          testPassed = true;
+        });
+        const pool = mockAgent.get(loginUrl);
+        pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200, JSON.stringify({}));
+        await httpApi.request({ method: 'GET', url: `${loginUrl}/services/data/v59.0` });
+        assert.ok(testPassed);
+      });
+
+      it('rejects an unsupported propagator', () => {
+        assert.throws(
+          () => new Connection({ loginUrl, accessToken, propagators: ['tracecontex' as 'tracecontext'] }),
+          /Unsupported trace propagator: tracecontex/
+        );
+      });
+
     });
 
     it('does not set `Content-Length` when `Transfer-Encoding` header is set', async () => {
@@ -367,9 +680,8 @@ describe('HTTP API', () => {
         testPassed = true;
       });
 
-      nock(loginUrl)
-        .post('/services/data/v59.0/sobjects/Account')
-        .reply(200, {});
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0/sobjects/Account', method: 'POST' }).reply(200, JSON.stringify({}));
 
       await httpApi.request({
         method: 'POST',
@@ -391,7 +703,7 @@ describe('HTTP API', () => {
         loginUrl,
         accessToken: 'invalid_token',
         refreshFn: (_c, callback) => {
-          setTimeout(() => callback(null, 'refreshed_token' ?? undefined), 200);
+          setTimeout(() => callback(null, 'refreshed_token'), 200);
         },
       });
 
@@ -402,11 +714,9 @@ describe('HTTP API', () => {
 
       httpApi.on('request', (req: HttpRequest) => {
         if (firstRoundTrip) {
-          // access token set in the connection.
           assert.equal(req?.headers?.['Authorization'], 'Bearer invalid_token');
           firstRoundTrip = false;
         } else {
-          // access token set in the connection's refresh function.
           assert.equal(
             req?.headers?.['Authorization'],
             'Bearer refreshed_token',
@@ -415,11 +725,9 @@ describe('HTTP API', () => {
         }
       });
 
-      nock(loginUrl)
-        .get('/services/data/v59.0')
-        .reply(401)
-        .get('/services/data/v59.0')
-        .reply(200);
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(401);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(200);
 
       await httpApi.request({
         method: 'GET',
@@ -435,7 +743,7 @@ describe('HTTP API', () => {
         accessToken: 'invalid_token',
         refreshFn: (_c, callback) => {
           refreshCalled = true;
-          setTimeout(() => callback(null, 'refreshed_token' ?? undefined), 200);
+          setTimeout(() => callback(null, 'refreshed_token'), 200);
         },
       });
 
@@ -452,11 +760,10 @@ describe('HTTP API', () => {
         message: 'This session is not valid for use with the REST API',
       });
 
-      nock(loginUrl)
-        .get('/services/data/v59.0')
-        .reply(401, errorBody, {
-          'content-type': 'application/json',
-        });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'GET' }).reply(401, errorBody, {
+        headers: { 'content-type': 'application/json' },
+      });
 
       await assert.rejects(
         async () => {
@@ -492,11 +799,10 @@ describe('HTTP API', () => {
         },
       ];
 
-      nock(loginUrl)
-        .post('/services/data/v59.0')
-        .reply(400, JSON.stringify(missingRequiredFieldErr), {
-          'content-type': 'application/json',
-        });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'POST' }).reply(400, JSON.stringify(missingRequiredFieldErr), {
+        headers: { 'content-type': 'application/json' },
+      });
 
       await assert.rejects(
         async () => {
@@ -533,11 +839,10 @@ describe('HTTP API', () => {
 	</Error>
 </Errors>`;
 
-      nock(loginUrl)
-        .get('/services/data/v59.0/sobjects/Broker__c/a008N0000032UmoQAA')
-        .reply(400, xmlErr, {
-          'content-type': 'application/xml',
-        });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0/sobjects/Broker__c/a008N0000032UmoQAA', method: 'GET' }).reply(400, xmlErr, {
+        headers: { 'content-type': 'application/xml' },
+      });
 
       await assert.rejects(
         async () => {
@@ -574,11 +879,10 @@ describe('HTTP API', () => {
 </html>
 `;
 
-      nock(loginUrl)
-        .get('/services/data/v59.0/sobjects/Broker__c/a008N0000032UmoQAA')
-        .reply(404, htmlErr, {
-          'content-type': 'text/html',
-        });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0/sobjects/Broker__c/a008N0000032UmoQAA', method: 'GET' }).reply(404, htmlErr, {
+        headers: { 'content-type': 'text/html' },
+      });
 
       await assert.rejects(
         async () => {
@@ -617,9 +921,8 @@ See \`error.data\` for the full html response.`,
         noContentResponse,
       });
 
-      nock(loginUrl)
-        .delete('/services/data/v59.0/sobjects/Broker__c/a008N0000032UmoQAA')
-        .reply(204);
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0/sobjects/Broker__c/a008N0000032UmoQAA', method: 'DELETE' }).reply(204);
 
       const body = await httpApi.request({
         method: 'DELETE',
@@ -650,11 +953,10 @@ See \`error.data\` for the full html response.`,
         }
       ];
 
-      nock(loginUrl)
-        .post('/services/data/v59.0')
-        .reply(400, JSON.stringify(errors), {
-          'content-type': 'application/json',
-        });
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/data/v59.0', method: 'POST' }).reply(400, JSON.stringify(errors), {
+        headers: { 'content-type': 'application/json' },
+      });
 
       await assert.rejects(
         async () => {
@@ -702,7 +1004,8 @@ describe('SOAP API', () => {
         testPassed = true;
       });
 
-      nock(loginUrl).post('/services/Soap/u/59').reply(200);
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/Soap/u/59', method: 'POST' }).reply(200);
 
       await soapApi.invoke('describeMetadata', {
         asOfVersion: '59.0',
@@ -733,12 +1036,48 @@ describe('SOAP API', () => {
         testPassed = true;
       });
 
-      nock(loginUrl).post('/services/Soap/u/59').reply(200);
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/Soap/u/59', method: 'POST' }).reply(200);
 
       await soapApi.invoke('describeMetadata', {
         asOfVersion: '59.0',
       });
 
+      assert.ok(testPassed);
+    });
+
+    it('forwards W3C trace context headers on SOAP requests', async () => {
+      process.env.TRACEPARENT = '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01';
+      process.env.TRACESTATE = 'congo=t61rcWkgMzE';
+      process.env.BAGGAGE = 'client=coding-agent-platform';
+      let testPassed = false;
+
+      const conn = new Connection({
+        loginUrl,
+        accessToken: 'access_token',
+        propagators: ['tracecontext'],
+      });
+
+      const soapApi = new SOAP(conn, {
+        xmlns: 'urn:partner.soap.sforce.com',
+        endpointUrl: `${loginUrl}/services/Soap/u/59`,
+      });
+
+      soapApi.on('request', (req: HttpRequest) => {
+        assert.equal(req?.headers?.['traceparent'], '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01');
+        assert.equal(req?.headers?.['tracestate'], 'congo=t61rcWkgMzE');
+        assert.equal(req?.headers?.['baggage'], undefined);
+        testPassed = true;
+      });
+
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/Soap/u/59', method: 'POST' }).reply(200);
+
+      await soapApi.invoke('describeMetadata', { asOfVersion: '59.0' });
+
+      delete process.env.TRACEPARENT;
+      delete process.env.TRACESTATE;
+      delete process.env.BAGGAGE;
       assert.ok(testPassed);
     });
 
@@ -768,7 +1107,8 @@ describe('SOAP API', () => {
         testPassed = true;
       });
 
-      nock(loginUrl).post('/services/Soap/u/59').reply(200);
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/Soap/u/59', method: 'POST' }).reply(200);
 
       await soapApi.invoke('describeMetadata', {
         asOfVersion: '59.0',
@@ -799,14 +1139,11 @@ describe('SOAP API', () => {
 	</soapenv:Body>
 </soapenv:Envelope>`
 
-      nock(loginUrl)
-        .post('/services/Soap/u/50.0')
-        .reply(200, passwordExpiredXml);
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/Soap/u/50.0', method: 'POST' }).reply(200, passwordExpiredXml);
 
 
       await assert.rejects(async () => {
-        // SOAP login requests will return 200 even with an expired password:
-        // https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_calls_login_loginresult.htm?q=passwordExpired
         await conn.login('username','password')
       }, {
           message: 'Unable to login because the used password has expired.'
@@ -818,7 +1155,7 @@ describe('SOAP API', () => {
         loginUrl,
         accessToken: 'invalid_token',
         refreshFn: (_c, callback) => {
-          setTimeout(() => callback(null, 'refreshed_token' ?? undefined), 200);
+          setTimeout(() => callback(null, 'refreshed_token'), 200);
         },
       });
 
@@ -845,16 +1182,64 @@ describe('SOAP API', () => {
         }
       });
 
-      nock(loginUrl)
-        .post('/services/Soap/u/59')
-        .reply(500, '<faultcode>test:INVALID_SESSION_ID</faultcode>')
-        .post('/services/Soap/u/59')
-        .reply(200);
+      const pool = mockAgent.get(loginUrl);
+      pool.intercept({ path: '/services/Soap/u/59', method: 'POST' }).reply(500, '<faultcode>test:INVALID_SESSION_ID</faultcode>');
+      pool.intercept({ path: '/services/Soap/u/59', method: 'POST' }).reply(200);
 
       await soapApi.invoke('create', {
         Account: 'test',
       });
       assert.ok(testPassed);
+    });
+  });
+
+  describe('JWT access token guard', () => {
+    // A token that isJWTToken() recognizes: 3 dot-separated parts where the
+	// first part is base64-encoded JSON (here: {"alg":"RS256"}). The payload
+    // and signature are obvious placeholders, not a real credential.
+    const jwtToken = 'eyJhbGciOiJSUzI1NiJ9.NOT_A_REAL_PAYLOAD.NOT_A_REAL_SIGNATURE';
+
+    function createSoap(version: string) {
+      const conn = new Connection({
+        loginUrl,
+        accessToken: jwtToken,
+        version,
+      });
+      return () =>
+        new SOAP(conn, {
+          xmlns: 'urn:partner.soap.sforce.com',
+          endpointUrl: `${loginUrl}/services/Soap/u/${version}`,
+        });
+    }
+
+    it('throws for a JWT access token on API versions below 68.0', () => {
+      assert.throws(createSoap('67.0'), {
+        message:
+          'SOAP API does not support JWT-based access tokens for API versions below 68.0. Either use API version 68.0 or later, or disable the "Issue JSON Web Token (JWT)-based access tokens" setting in your Connected App or External Client App',
+      });
+    });
+
+    it('allows a JWT access token on API version 68.0 (core 264+)', () => {
+      assert.doesNotThrow(createSoap('68.0'));
+    });
+
+    it('allows a JWT access token on API versions above 68.0', () => {
+      assert.doesNotThrow(createSoap('69.0'));
+    });
+
+    it('allows a non-JWT access token on API versions below 68.0', () => {
+      const conn = new Connection({
+        loginUrl,
+        accessToken: 'not-a-jwt',
+        version: '67.0',
+      });
+      assert.doesNotThrow(
+        () =>
+          new SOAP(conn, {
+            xmlns: 'urn:partner.soap.sforce.com',
+            endpointUrl: `${loginUrl}/services/Soap/u/67.0`,
+          }),
+      );
     });
   });
 
@@ -880,8 +1265,9 @@ describe('SOAP API', () => {
     </soapenv:Body>
 </soapenv:Envelope>
 `;
-    nock(loginUrl).post('/services/Soap/u/59').reply(400, xmlErr, {
-      'content-type': 'application/xml',
+    const pool = mockAgent.get(loginUrl);
+    pool.intercept({ path: '/services/Soap/u/59', method: 'POST' }).reply(400, xmlErr, {
+      headers: { 'content-type': 'application/xml' },
     });
 
     void assert.rejects(

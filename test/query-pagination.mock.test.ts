@@ -26,7 +26,6 @@ class MockConnection extends Connection<any> {
   }
 
     // Override the request method to return mock responses
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     request<R = any>(request: any, options?: any): StreamPromise<R> {
     if (this.mockResponses.length === 0) {
       throw new Error('No mock responses available');

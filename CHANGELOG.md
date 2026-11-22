@@ -1,45 +1,45 @@
-## [3.10.15](https://github.com/jsforce/jsforce/compare/3.10.14...3.10.15) (2026-05-13)
+## [3.13.4](https://github.com/jsforce/jsforce/compare/3.13.3...3.13.4) (2026-11-22)
 
 
 ### Bug Fixes
 
-* timeouts calculate once instead of repeatedly ([#1792](https://github.com/jsforce/jsforce/issues/1792)) ([22705e7](https://github.com/jsforce/jsforce/commit/22705e79380c1414e3d71abb1d79e77657afdb76))
+* ignore only the browser build output in .gitignore ([#1868](https://github.com/jsforce/jsforce/issues/1868)) ([4ed3950](https://github.com/jsforce/jsforce/commit/4ed395012e70ba07a3752b57aa2e7866b7584336))
 
 
 
-## [3.10.14](https://github.com/jsforce/jsforce/compare/3.10.13...3.10.14) (2026-02-10)
-
-
-### Bug Fixes
-
-* **http:** limit retries on 420 responses W-19971144 ([#1772](https://github.com/jsforce/jsforce/issues/1772)) ([0b210c6](https://github.com/jsforce/jsforce/commit/0b210c61ff7ec29dc8d4916fdc87bd79aa7eed25))
-
-
-
-## [3.10.13](https://github.com/jsforce/jsforce/compare/3.10.11...3.10.13) (2026-01-15)
+## [3.13.3](https://github.com/jsforce/jsforce/compare/3.13.2...3.13.3) (2026-11-20)
 
 
 ### Bug Fixes
 
-* bump minor ([f65d617](https://github.com/jsforce/jsforce/commit/f65d6179bf804ccd417dcc9beaa8d049abfaf50e))
+* keep the rotated refresh token after session refresh ([#1864](https://github.com/jsforce/jsforce/issues/1864)) ([63b7e36](https://github.com/jsforce/jsforce/commit/63b7e3697a31aca68884d00efafb1aeb6a08aad0))
 
 
 
-## [3.10.11](https://github.com/jsforce/jsforce/compare/3.10.10...3.10.11) (2026-01-15)
-
-
-### Bug Fixes
-
-* **http:** reduce buffer allocations when reading responses W-18649787 ([#1784](https://github.com/jsforce/jsforce/issues/1784)) ([f43fc77](https://github.com/jsforce/jsforce/commit/f43fc7773ce8aa15ddfb3a105dbf3ea9ac704885))
-
-
-
-## [3.10.10](https://github.com/jsforce/jsforce/compare/3.10.9...3.10.10) (2025-12-02)
+## [3.13.2](https://github.com/jsforce/jsforce/compare/3.13.1...3.13.2) (2026-11-20)
 
 
 ### Bug Fixes
 
-* update `TokenResponse` type ([#1777](https://github.com/jsforce/jsforce/issues/1777)) ([1535cac](https://github.com/jsforce/jsforce/commit/1535cac7123e44b07950bf64995104e92d15a2b7))
+* **ci:** fix browser test and scratch org setup failures ([#1865](https://github.com/jsforce/jsforce/issues/1865)) ([f6dbd8a](https://github.com/jsforce/jsforce/commit/f6dbd8a82d7c0f42f09703977473795780adf95f))
+
+
+
+## [3.13.1](https://github.com/jsforce/jsforce/compare/3.13.0...3.13.1) (2026-10-27)
+
+
+### Bug Fixes
+
+* **ci:** upgrade wireit caching action to v2- @W-24682309@ ([#1856](https://github.com/jsforce/jsforce/issues/1856)) ([bcd16b5](https://github.com/jsforce/jsforce/commit/bcd16b593351a1d7db6665b1043d8168b04b225d))
+
+
+
+# [3.13.0](https://github.com/jsforce/jsforce/compare/3.12.0...3.13.0) (2026-10-27)
+
+
+### Features
+
+* add DeployExtensionResult to metadata schema ([#1832](https://github.com/jsforce/jsforce/issues/1832)) ([4a0b587](https://github.com/jsforce/jsforce/commit/4a0b587612c093935dca46db3bc35e48bb4d788c))
 
 
 

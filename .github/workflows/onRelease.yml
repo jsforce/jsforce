@@ -21,6 +21,9 @@ on:
         default: latest
 jobs:
   npm-publish:
+    permissions:
+      id-token: write
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -32,17 +35,16 @@ jobs:
           node-version: lts/*
           cache: npm
           registry-url: https://registry.npmjs.org
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Install dependencies
         run: npm install
       - name: Build
         run: npm run clean && npm run build
       - name: Publish
         run: npm publish --tag ${{ inputs.dist-tag || 'latest' }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
   npm-publish-jsforce-node:
+    permissions:
+      id-token: write
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -54,8 +56,6 @@ jobs:
           node-version: lts/*
           cache: npm
           registry-url: https://registry.npmjs.org
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Install dependencies
         run: npm install
       - name: Generate `jsforce-node` pkg
@@ -63,5 +63,4 @@ jobs:
       - name: Build
         run: npm run clean && npm run build:node:cjs
       - name: Publish
-        run: |
-          npm publish --tag ${{ inputs.dist-tag || 'latest' }}
+        run: npm publish --tag ${{ inputs.dist-tag || 'latest' }}

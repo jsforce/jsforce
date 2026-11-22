@@ -2,7 +2,7 @@ import assert from 'assert';
 import ConnectionManager from './helper/connection-manager';
 import config from './config';
 import { isObject, delay } from './util';
-import { insertAccounts } from './bulk.test';
+import { insertAccounts } from './helper/bulk';
 import type { Record, SavedRecord } from 'jsforce';
 
 const connMgr = new ConnectionManager(config);
@@ -199,7 +199,7 @@ describe('search', () => {
   it('should search records', async () => {
     const id = Date.now();
 
-    await insertAccounts(id, 20);
+    await insertAccounts(conn, id, 20);
 
     const testRetryLimit = 5;
     let retryCounter = 0

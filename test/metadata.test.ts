@@ -103,7 +103,7 @@ describe('CRUD based call', () => {
     assert.ok(objMeta[0].label === 'Updated Test Object Sync 2');
     assert.ok(objMeta[0].description == null);
     assert.ok(objMeta[1].deploymentStatus === 'Deployed');
-    rmetadata = results; // eslint-disable-line require-atomic-updates
+    rmetadata = results;
   });
 
   /**
@@ -171,7 +171,7 @@ describe('CRUD based call', () => {
       assert.ok(isString(co.fullName));
       assert.ok(co.fullName === newName);
     } finally {
-      conn.version = origVersion; // eslint-disable-line require-atomic-updates
+      conn.version = origVersion;
     }
   });
 

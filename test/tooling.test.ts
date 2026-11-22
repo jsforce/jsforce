@@ -178,13 +178,12 @@ function createStaticResourceRequest(body: string | Buffer) {
 }
 
 /**
- *
+ * This is a test for the tooling API.
  */
-describe('single record crud', () => {
+describe('tooling single record crud', () => {
   let debugLevelId: string;
   let debugLevel: Record;
 
-  //
   it('should create debuglevel and get created obj', async () => {
     const ret = await conn.tooling.sobject('DebugLevel').create({
       ApexCode: 'ERROR',
@@ -205,7 +204,6 @@ describe('single record crud', () => {
     debugLevelId = ret.id ;
   });
 
-  //
   it('should retrieve debuglevel and return a record', async () => {
     const record = await conn.tooling
       .sobject('DebugLevel')
@@ -215,7 +213,6 @@ describe('single record crud', () => {
     debugLevel = record;
   });
 
-  //
   it('should update debuglevel, get successful result, and retrieve the updated record', async () => {
     const ret = await conn.tooling
       .sobject('DebugLevel')
@@ -230,7 +227,6 @@ describe('single record crud', () => {
     assert.ok(isObject(record.attributes));
   });
 
-  //
   it('should delete debuglevel, get successful results, and not get any records', async () => {
     const ret = await conn.tooling
       .sobject('DebugLevel')
