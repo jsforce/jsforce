@@ -78,60 +78,6 @@ function derToJose(der: Uint8Array): Uint8Array {
 }
 
 /**
- * Create a signer from a WebCrypto key pair or a PKCS#8 PEM P-256 private key,
- * with the Web Crypto API of Node or the browser
- */
-async function createDPoPSigner(
-  key: CryptoKeyPair | string,
-): Promise<DPoPSigner> {
-  const { subtle } = globalThis.crypto;
-  let privateKey: CryptoKey;
-  let publicJwk: JsonWebKey;
-  if (typeof key === 'string') {
-    const pkcs8 = new Uint8Array(
-      Buffer.from(
-        key.replace(/-----(BEGIN|END) PRIVATE KEY-----|\s/g, ''),
-        'base64',
-      ),
-    );
-    // imported as extractable only to read the public members
-    const extractable = await subtle.importKey(
-      'pkcs8',
-      pkcs8,
-      ES256_KEY_ALGORITHM,
-      true,
-      ['sign'],
-    );
-    publicJwk = await subtle.exportKey('jwk', extractable);
-    privateKey = await subtle.importKey(
-      'pkcs8',
-      pkcs8,
-      ES256_KEY_ALGORITHM,
-      false,
-      ['sign'],
-    );
-  } else {
-    privateKey = key.privateKey;
-    // a public key can be exported even when the private key cannot
-    publicJwk = await subtle.exportKey('jwk', key.publicKey);
-  }
-  const { crv, kty, x, y } = publicJwk;
-  return {
-    algorithm: 'ES256',
-    format: 'jose',
-    publicJwk: { crv, kty, x, y },
-    async sign(signingInput: Uint8Array) {
-      const signature = await subtle.sign(
-        { name: 'ECDSA', hash: 'SHA-256' },
-        privateKey,
-        new Uint8Array(signingInput),
-      );
-      return new Uint8Array(signature);
-    },
-  };
-}
-
-/**
  * DPoP configuration
  */
 export type DPoPConfig = {
@@ -147,8 +93,52 @@ export class DPoP {
   /**
    * Create a signer from a WebCrypto key pair or a PKCS#8 PEM P-256 private key
    */
-  static createSigner(key: CryptoKeyPair | string): Promise<DPoPSigner> {
-    return createDPoPSigner(key);
+  static async createSigner(key: CryptoKeyPair | string): Promise<DPoPSigner> {
+    const { subtle } = globalThis.crypto;
+    let privateKey: CryptoKey;
+    let publicJwk: JsonWebKey;
+    if (typeof key === 'string') {
+      const pkcs8 = new Uint8Array(
+        Buffer.from(
+          key.replace(/-----(BEGIN|END) PRIVATE KEY-----|\s/g, ''),
+          'base64',
+        ),
+      );
+      // imported as extractable only to read the public members
+      const extractable = await subtle.importKey(
+        'pkcs8',
+        pkcs8,
+        ES256_KEY_ALGORITHM,
+        true,
+        ['sign'],
+      );
+      publicJwk = await subtle.exportKey('jwk', extractable);
+      privateKey = await subtle.importKey(
+        'pkcs8',
+        pkcs8,
+        ES256_KEY_ALGORITHM,
+        false,
+        ['sign'],
+      );
+    } else {
+      privateKey = key.privateKey;
+      // a public key can be exported even when the private key cannot
+      publicJwk = await subtle.exportKey('jwk', key.publicKey);
+    }
+    const { crv, kty, x, y } = publicJwk;
+    return {
+      algorithm: 'ES256',
+      format: 'jose',
+      publicJwk: { crv, kty, x, y },
+      async sign(signingInput: Uint8Array) {
+        const signature = await subtle.sign(
+          { name: 'ECDSA', hash: 'SHA-256' },
+          privateKey,
+          new Uint8Array(signingInput),
+        );
+        return new Uint8Array(signature);
+      },
+    };
   }
 
   constructor(config: DPoPConfig) {
@@ -252,13 +242,7 @@ export type TokenResponse = {
   instance_url: string;
   sfdc_community_url?: string;
   sfdc_community_id?: string;
-  /**
-   * Added by jsforce, not part of the response from Salesforce
-   */
   extra?: {
-    /**
-     * With DPoP, the nonce received while obtaining the token
-     */
     proofNonce?: string;
   };
 };
