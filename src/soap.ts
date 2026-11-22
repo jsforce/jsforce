@@ -2,7 +2,7 @@
  * @file Manages method call to SOAP endpoint
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
-import HttpApi, { type DPoPAuth, isBrowser } from './http-api';
+import HttpApi, { type RequestCredentials, isBrowser } from './http-api';
 import Connection from './connection';
 import {
   Schema,
@@ -252,10 +252,9 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
   }
 
   /** @override */
-  beforeSend(request: SOAPRequest, dpop?: DPoPAuth) {
-    request.body = this._createEnvelope(request._message, dpop);
+  beforeSend(request: SOAPRequest, credentials: RequestCredentials) {
+    request.body = this._createEnvelope(request._message, credentials);
 
-    // the body changes with every proof, so its length is computed again
     const { 'content-length': _contentLength, ...headers } =
       request.headers ?? {};
 
@@ -279,15 +278,14 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
 
   /** @override **/
   isSessionExpired(response: HttpResponse) {
+    if (response.statusCode !== 500) {
+      return false;
+    }
     // with DPoP, an expired or revoked token is reported as INVALID_AUTH_HEADER
-    const faultCodes = this._conn.oauth2?.dpop
-      ? 'INVALID_SESSION_ID|INVALID_AUTH_HEADER'
-      : 'INVALID_SESSION_ID';
     return (
-      response.statusCode === 500 &&
-      new RegExp(`<faultcode>[a-zA-Z]+:(${faultCodes})</faultcode>`).test(
-        response.body,
-      )
+      /<faultcode>[a-zA-Z]+:INVALID_SESSION_ID<\/faultcode>/.test(response.body) ||
+      (!!this._conn.oauth2?.dpop &&
+        /<faultcode>[a-zA-Z]+:INVALID_AUTH_HEADER<\/faultcode>/.test(response.body))
     );
   }
 
@@ -311,15 +309,14 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
   /**
    * @private
    */
-  _createEnvelope(message: object, dpop?: DPoPAuth) {
+  _createEnvelope(message: object, credentials: RequestCredentials) {
     const header: { [name: string]: any } = {};
     const conn = this._conn;
-    const accessToken = dpop ? dpop.accessToken : conn.accessToken;
-    if (accessToken) {
-      header.SessionHeader = { sessionId: accessToken };
+    if (credentials.accessToken) {
+      header.SessionHeader = { sessionId: credentials.accessToken };
     }
-    if (dpop) {
-      header.DpopProofHeader = { proof: dpop.proof };
+    if (credentials.proof) {
+      header.DpopProofHeader = { proof: credentials.proof };
     }
     if (conn._callOptions) {
       header.CallOptions = conn._callOptions;

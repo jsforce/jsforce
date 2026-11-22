@@ -7,7 +7,7 @@ import { Duplex, PassThrough, Readable, Writable } from 'stream';
 import joinStreams from 'multistream';
 import Connection from '../connection';
 import { Serializable, Parsable } from '../record-stream';
-import HttpApi from '../http-api';
+import HttpApi, { type RequestCredentials } from '../http-api';
 import { registerModule } from '../jsforce';
 import { Logger } from '../util/logger';
 import { concatStreamsAsDuplex } from '../util/stream';
@@ -744,10 +744,10 @@ export class Batch<
  *
  */
 class BulkApi<S extends Schema> extends HttpApi<S> {
-  beforeSend(request: HttpRequest) {
+  beforeSend(request: HttpRequest, credentials: RequestCredentials) {
     request.headers = {
       ...request.headers,
-      'X-SFDC-SESSION': this._conn.accessToken ?? '',
+      'X-SFDC-SESSION': credentials.accessToken ?? '',
     };
   }
 
