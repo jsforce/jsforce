@@ -217,7 +217,7 @@ async function startFetchRequest(
   };
   if (followRedirect && isRedirect(response.statusCode)) {
     try {
-      performRedirectRequest(
+      await performRedirectRequest(
         request,
         response,
         followRedirect,

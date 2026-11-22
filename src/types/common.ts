@@ -47,7 +47,11 @@ export type HttpRequestOptions = {
   };
   httpProxy?: string;
   timeout?: number;
-  followRedirect?: boolean | ((redirectUrl: string) => HttpRequest | null);
+  followRedirect?:
+    | boolean
+    | ((
+        redirectUrl: string,
+      ) => HttpRequest | null | Promise<HttpRequest | null>);
   encoding?: BufferEncoding;
 };
 

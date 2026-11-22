@@ -1,5 +1,9 @@
 import assert from 'assert';
-import { OAuth2 } from 'jsforce';
+import {
+  OAuth2,
+  type HttpRequest,
+} from 'jsforce';
+import { performRedirectRequest } from '../lib/request-helper';
 import { isString } from './util';
 import { isNodeJS } from './helper/env';
 import authorize from './helper/webauth';
@@ -239,5 +243,27 @@ describe('endpoints', () => {
         }),
       { name: 'TypeError', message: /Invalid URL/ },
     );
+  });
+});
+
+/**
+ * Redirects followed by the transport: a followRedirect function may return a promise.
+ */
+describe('redirects followed by the transport', () => {
+  const loginUrl = 'https://login.salesforce.com';
+  const instanceUrl = 'https://example.my.salesforce.com';
+
+  it('waits for a followRedirect function that returns a promise', async () => {
+    const next: HttpRequest[] = [];
+    await performRedirectRequest(
+      { method: 'POST', url: `${loginUrl}/services/oauth2/revoke` },
+      { statusCode: 302, headers: { location: `${instanceUrl}/services/oauth2/revoke` } },
+      (redirectUrl) => Promise.resolve({ method: 'GET', url: redirectUrl }),
+      0,
+      (req) => {
+        next.push(req);
+      },
+    );
+    assert.deepEqual(next, [{ method: 'GET', url: `${instanceUrl}/services/oauth2/revoke` }]);
   });
 });
