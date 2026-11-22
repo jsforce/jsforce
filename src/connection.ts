@@ -452,14 +452,10 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
     this.instanceUrl = serverUrl
       ? serverUrl.split('/').slice(0, 3).join('/')
       : instanceUrl || this.instanceUrl;
-    const prevAccessToken = this.accessToken;
     this.accessToken = sessionId || accessToken || this.accessToken;
     this.refreshToken = refreshToken || this.refreshToken;
     if (proofNonce) {
       this.proofNonce = proofNonce;
-    } else if (this.accessToken !== prevAccessToken) {
-      // the nonce belongs to the session of the previous access token
-      this.proofNonce = null;
     }
     if (this.refreshToken && !this._refreshDelegate) {
       throw new Error(
