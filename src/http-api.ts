@@ -201,10 +201,6 @@ export class HttpApi<S extends Schema> extends EventEmitter {
         }
         */
         const dpop = this._conn.oauth2?.dpop;
-        const unsupported = dpop ? this.getDPoPUnsupportedMessage() : undefined;
-        if (unsupported) {
-          throw new Error(unsupported);
-        }
         if (refreshDelegate && refreshDelegate.isRefreshing()) {
           await refreshDelegate.waitRefresh();
           const bodyPromise = this._request<R>(request, retryState);
@@ -382,15 +378,6 @@ export class HttpApi<S extends Schema> extends EventEmitter {
       headers['content-length'] = String(bodySize);
     }
     request.headers = headers;
-  }
-
-  /**
-   * The error message when this API cannot be called with a DPoP token, or `undefined` when it can.
-   * Requests to an API that cannot fail before they are sent.
-   * @protected
-   */
-  getDPoPUnsupportedMessage(): string | undefined {
-    return undefined;
   }
 
   /**

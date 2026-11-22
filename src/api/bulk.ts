@@ -3,7 +3,7 @@
  * @author Shinichi Tomita <shinichi.tomita@gmail.com>
  */
 import { EventEmitter } from 'events';
-import { Duplex, Readable, Writable } from 'stream';
+import { Duplex, PassThrough, Readable, Writable } from 'stream';
 import joinStreams from 'multistream';
 import Connection from '../connection';
 import { Serializable, Parsable } from '../record-stream';
@@ -11,6 +11,7 @@ import HttpApi from '../http-api';
 import { registerModule } from '../jsforce';
 import { Logger } from '../util/logger';
 import { concatStreamsAsDuplex } from '../util/stream';
+import { StreamPromise } from '../util/promise';
 import {
   HttpMethods,
   HttpRequest,
@@ -743,10 +744,6 @@ export class Batch<
  *
  */
 class BulkApi<S extends Schema> extends HttpApi<S> {
-  getDPoPUnsupportedMessage() {
-    return 'Bulk API 1.0 cannot be called with a DPoP token. Use Bulk API 2.0 instead.';
-  }
-
   beforeSend(request: HttpRequest) {
     request.headers = {
       ...request.headers,
@@ -809,8 +806,17 @@ export class Bulk<S extends Schema> {
   /**
    *
    */
-  public _request<T>(request_: BulkRequest) {
+  public _request<T>(request_: BulkRequest): StreamPromise<T> {
     const conn = this._conn;
+    if (conn.oauth2?.dpop) {
+      const err = new Error(
+        'Bulk API 1.0 cannot be called with a DPoP token. Use Bulk API 2.0 instead.',
+      );
+      return StreamPromise.create<T>(() => ({
+        stream: new PassThrough(),
+        promise: Promise.reject(err),
+      }));
+    }
     const { path, responseType, ...rreq } = request_;
     const baseUrl = [conn.instanceUrl, 'services/async', conn.version].join(
       '/',
