@@ -1,9 +1,14 @@
 import assert from 'assert';
+import { PassThrough } from 'stream';
 import {
+  Connection,
   OAuth2,
   type HttpRequest,
+  type HttpRequestOptions,
+  type HttpResponse,
 } from 'jsforce';
 import { performRedirectRequest } from '../lib/request-helper';
+import { StreamPromise } from '../lib/util/promise';
 import { isString } from './util';
 import { isNodeJS } from './helper/env';
 import authorize from './helper/webauth';
@@ -247,11 +252,13 @@ describe('endpoints', () => {
 });
 
 /**
- * Redirects followed by the transport: a followRedirect function may return a promise.
+ * Redirects followed by the transport: a followRedirect function may return a promise, and through the AJAX proxy
+ * the options are passed on.
  */
 describe('redirects followed by the transport', () => {
   const loginUrl = 'https://login.salesforce.com';
   const instanceUrl = 'https://example.my.salesforce.com';
+  type RedirectHandler = (redirectUrl: string) => Promise<HttpRequest | null>;
 
   it('waits for a followRedirect function that returns a promise', async () => {
     const next: HttpRequest[] = [];
@@ -265,5 +272,42 @@ describe('redirects followed by the transport', () => {
       },
     );
     assert.deepEqual(next, [{ method: 'GET', url: `${instanceUrl}/services/oauth2/revoke` }]);
+  });
+
+  it('passes the options to the AJAX proxy, and makes the redirected request through it', async () => {
+    const proxyTransport = new Connection({ proxyUrl: 'https://proxy.example.com/proxy/' })._transport;
+    // the transport that XdProxyTransport hands the proxied request to
+    const base = Object.getPrototypeOf(Object.getPrototypeOf(proxyTransport));
+    const original = base.httpRequest;
+    const received: HttpRequestOptions[] = [];
+    const proxied: HttpRequest[] = [];
+    base.httpRequest = (proxiedReq: HttpRequest, options: HttpRequestOptions = {}) => {
+      proxied.push(proxiedReq);
+      received.push(options);
+      return StreamPromise.create<HttpResponse>(() => ({
+        stream: new PassThrough(),
+        promise: Promise.resolve({ statusCode: 200, headers: {}, body: '' }),
+      }));
+    };
+    const redirectUrl = `${instanceUrl}/services/data/v59.0/limits`;
+    try {
+      const req: HttpRequest = { method: 'GET', url: `${instanceUrl}/services/data` };
+      void proxyTransport.httpRequest(req, { followRedirect: false, timeout: 1000 });
+      void proxyTransport.httpRequest(req, {
+        followRedirect: (url) => Promise.resolve({ method: 'GET', url, headers: { DPoP: 'proof' } }),
+      });
+      void proxyTransport.httpRequest(req);
+    } finally {
+      base.httpRequest = original;
+    }
+    assert.equal(received[0].followRedirect, false);
+    assert.equal(received[0].timeout, 1000);
+    const viaProxy = (options: HttpRequestOptions) => (options.followRedirect as RedirectHandler)(redirectUrl);
+    const given = await viaProxy(received[1]);
+    assert.equal(given?.headers?.['salesforceproxy-endpoint'], redirectUrl);
+    assert.equal(given?.headers?.DPoP, 'proof');
+    const byDefault = await viaProxy(received[2]);
+    assert.equal(byDefault?.method, 'GET');
+    assert.equal(byDefault?.headers?.['salesforceproxy-endpoint'], redirectUrl);
   });
 });

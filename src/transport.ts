@@ -144,7 +144,7 @@ export class XdProxyTransport extends Transport {
   /**
    * Make HTTP request via AJAX proxy
    */
-  httpRequest(req: HttpRequest, _options: HttpRequestOptions = {}) {
+  httpRequest(req: HttpRequest, options: HttpRequestOptions = {}) {
     const xdProxyUrl = this._xdProxyUrl;
     const { url, body, ...rreq } = req;
     const canonicalUrl = url.startsWith('/') ? baseUrl + url : url;
@@ -153,11 +153,20 @@ export class XdProxyTransport extends Transport {
       xdProxyUrl,
     );
     return super.httpRequest(xdProxyReq, {
-      followRedirect: (redirectUrl) =>
-        createXdProxyRequest(
-          { ...rreq, method: 'GET', url: redirectUrl },
-          xdProxyUrl,
-        ),
+      ...options,
+      followRedirect:
+        options.followRedirect === false
+          ? false
+          : async (redirectUrl) => {
+              const { followRedirect } = options;
+              const redirectReq =
+                typeof followRedirect === 'function'
+                  ? await followRedirect(redirectUrl)
+                  : { ...rreq, method: 'GET' as const, url: redirectUrl };
+              return redirectReq
+                ? createXdProxyRequest(redirectReq, xdProxyUrl)
+                : null;
+            },
     });
   }
 }
