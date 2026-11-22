@@ -5,7 +5,6 @@ import {
   executeWithTimeout,
   isRedirect,
   performRedirectRequest,
-  restoreReportedRedirect,
 } from '../request-helper';
 import { readAll } from '../util/stream';
 import { HttpRequest, HttpRequestOptions } from '../types';
@@ -110,10 +109,10 @@ async function startFetchRequest(
   for (const headerName of res.headers.keys()) {
     headers[headerName.toLowerCase()] = res.headers.get(headerName);
   }
-  const response = restoreReportedRedirect(request, {
+  const response = {
     statusCode: res.status,
     headers,
-  });
+  };
   if (followRedirect && isRedirect(response.statusCode)) {
     try {
       await performRedirectRequest(

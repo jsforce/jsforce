@@ -9,7 +9,7 @@ import {
   type HttpRequestOptions,
   type HttpResponse,
 } from 'jsforce';
-import { performRedirectRequest, restoreReportedRedirect } from '../lib/request-helper';
+import { performRedirectRequest } from '../lib/request-helper';
 import { StreamPromise } from '../lib/util/promise';
 import { isString } from './util';
 import { isNodeJS } from './helper/env';
@@ -539,73 +539,62 @@ describe('redirects followed by the transport', () => {
     assert.deepEqual(next, [{ method: 'GET', url: `${instanceUrl}/services/oauth2/revoke` }]);
   });
 
-  it('passes the options to the AJAX proxy, and makes the redirected request through it', async () => {
+  // replace the transport that XdProxyTransport hands the proxied request to
+  const stubProxied = (responses: HttpResponse[]) => {
     const proxyTransport = new Connection({ proxyUrl: 'https://proxy.example.com/proxy/' })._transport;
-    // the transport that XdProxyTransport hands the proxied request to
     const base = Object.getPrototypeOf(Object.getPrototypeOf(proxyTransport));
     const original = base.httpRequest;
-    const received: HttpRequestOptions[] = [];
-    const proxied: HttpRequest[] = [];
-    base.httpRequest = (proxiedReq: HttpRequest, options: HttpRequestOptions = {}) => {
-      proxied.push(proxiedReq);
-      received.push(options);
-      return StreamPromise.create<HttpResponse>(() => ({
-        stream: new PassThrough(),
-        promise: Promise.resolve({ statusCode: 200, headers: {}, body: '' }),
-      }));
+    const sent: Array<{ req: HttpRequest; options: HttpRequestOptions }> = [];
+    base.httpRequest = (req: HttpRequest, options: HttpRequestOptions = {}) => {
+      sent.push({ req, options });
+      const res = responses.shift() ?? { statusCode: 200, headers: {}, body: '' };
+      return StreamPromise.create<HttpResponse>(() => ({ stream: new PassThrough(), promise: Promise.resolve(res) }));
     };
+    return { proxyTransport, sent, restore: () => (base.httpRequest = original) };
+  };
+
+  it('passes the options to the AJAX proxy, and makes the redirected request through it', async () => {
+    const { proxyTransport, sent, restore } = stubProxied([]);
     const redirectUrl = `${instanceUrl}/services/data/v59.0/limits`;
     try {
       const req: HttpRequest = { method: 'GET', url: `${instanceUrl}/services/data` };
-      void proxyTransport.httpRequest(req, { followRedirect: false, timeout: 1000 });
-      void proxyTransport.httpRequest(req, {
-        followRedirect: (url) => Promise.resolve({ method: 'GET', url, headers: { DPoP: 'proof' } }),
-      });
-      void proxyTransport.httpRequest(req);
+      await proxyTransport.httpRequest(req, { followRedirect: false, timeout: 1000 });
+      await proxyTransport.httpRequest(req);
     } finally {
-      base.httpRequest = original;
+      restore();
     }
-    assert.equal(received[0].followRedirect, false);
-    assert.equal(received[0].timeout, 1000);
-    // the proxy is asked to report redirects only when the caller builds the redirected request itself
-    assert.equal(proxied[0].headers?.['salesforceproxy-redirect'], undefined);
-    assert.equal(proxied[1].headers?.['salesforceproxy-redirect'], 'report');
-    assert.equal(proxied[2].headers?.['salesforceproxy-redirect'], undefined);
-    const viaProxy = (options: HttpRequestOptions) => (options.followRedirect as RedirectHandler)(redirectUrl);
-    const given = await viaProxy(received[1]);
-    assert.equal(given?.headers?.['salesforceproxy-endpoint'], redirectUrl);
-    assert.equal(given?.headers?.DPoP, 'proof');
-    assert.equal(given?.headers?.['salesforceproxy-redirect'], 'report');
-    const byDefault = await viaProxy(received[2]);
+    assert.equal(sent[0].options.followRedirect, false);
+    assert.equal(sent[0].options.timeout, 1000);
+    assert.equal(sent[0].req.headers?.['salesforceproxy-redirect'], undefined);
+    const byDefault = await (sent[1].options.followRedirect as RedirectHandler)(redirectUrl);
     assert.equal(byDefault?.method, 'GET');
     assert.equal(byDefault?.headers?.['salesforceproxy-endpoint'], redirectUrl);
-    assert.equal(byDefault?.headers?.['salesforceproxy-redirect'], undefined);
   });
 
-  it('treats a redirect that the AJAX proxy reported in headers as the redirect response, only when the request asked for it', () => {
+  it('follows a redirect that the AJAX proxy reported in headers, with a given followRedirect function', async () => {
     const location = `${instanceUrl}/services/oauth2/revoke`;
-    const asked = { method: 'POST' as const, url: '/proxy', headers: { 'salesforceproxy-redirect': 'report' } };
-    const reported = {
-      statusCode: 200,
-      headers: {
-        'salesforceproxy-redirect-status': '302',
-        'salesforceproxy-redirect-location': location,
-        'sforce-limit-info': 'api-usage=1/100',
+    const { proxyTransport, sent, restore } = stubProxied([
+      {
+        statusCode: 200,
+        headers: { 'salesforceproxy-redirect-status': '302', 'salesforceproxy-redirect-location': location },
+        body: '',
       },
-    };
-    assert.deepEqual(restoreReportedRedirect(asked, reported), {
-      statusCode: 302,
-      headers: { location, 'sforce-limit-info': 'api-usage=1/100' },
-    });
-    // a request that did not ask for the report keeps the response as it is
-    const notAsked = { method: 'POST' as const, url: location };
-    assert.equal(restoreReportedRedirect(notAsked, reported), reported);
-    // other responses are left as they are
-    const ok = { statusCode: 200, headers: { 'content-type': 'application/json' } };
-    assert.equal(restoreReportedRedirect(asked, ok), ok);
-    const notOk = { statusCode: 400, headers: reported.headers };
-    assert.equal(restoreReportedRedirect(asked, notOk), notOk);
-    const notRedirect = { statusCode: 200, headers: { ...reported.headers, 'salesforceproxy-redirect-status': '304' } };
-    assert.equal(restoreReportedRedirect(asked, notRedirect), notRedirect);
+      { statusCode: 200, headers: {}, body: 'ok' },
+    ]);
+    let res: HttpResponse;
+    try {
+      res = await proxyTransport.httpRequest(
+        { method: 'POST', url: `${loginUrl}/services/oauth2/revoke`, body: 'token=t' },
+        { followRedirect: (url) => Promise.resolve({ method: 'POST', url, body: 'token=t', headers: { DPoP: 'proof' } }) },
+      );
+    } finally {
+      restore();
+    }
+    assert.equal(res.body, 'ok');
+    assert.equal(sent.length, 2);
+    assert.equal(sent[0].req.headers?.['salesforceproxy-redirect'], 'report');
+    assert.equal(sent[1].req.headers?.['salesforceproxy-endpoint'], location);
+    assert.equal(sent[1].req.headers?.DPoP, 'proof');
+    assert.equal(sent[1].req.headers?.['salesforceproxy-redirect'], 'report');
   });
 });

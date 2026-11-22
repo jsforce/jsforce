@@ -58,30 +58,6 @@ export function isRedirect(status: number) {
 }
 
 /**
- * Turn a redirect that the AJAX proxy reported in headers of a 200 response
- * back into the redirect response, when the request asked for it with `SalesforceProxy-Redirect: report`
- */
-export function restoreReportedRedirect<R extends Omit<HttpResponse, 'body'>>(
-  request: HttpRequest,
-  response: R,
-): R {
-  if (getHeader(request.headers, 'salesforceproxy-redirect') !== 'report') {
-    return response;
-  }
-  const status = Number(response.headers['salesforceproxy-redirect-status']);
-  const location = response.headers['salesforceproxy-redirect-location'];
-  if (response.statusCode !== 200 || !isRedirect(status) || typeof location !== 'string') {
-    return response;
-  }
-  const {
-    'salesforceproxy-redirect-status': _status,
-    'salesforceproxy-redirect-location': _location,
-    ...headers
-  } = response.headers;
-  return { ...response, statusCode: status, headers: { ...headers, location } };
-}
-
-/**
  * Whether the URL is an HTTPS URL
  */
 export function isHttpsUrl(url: string) {

@@ -5,6 +5,7 @@ import { Duplex } from 'stream';
 import request, { setDefaults } from './request';
 import { HttpRequest, HttpRequestOptions, HttpResponse } from './types';
 import { StreamPromise } from './util/promise';
+import { isRedirect } from './request-helper';
 import jsonp from './browser/jsonp';
 import canvas from './browser/canvas';
 
@@ -139,6 +140,16 @@ function createXdProxyRequest(
 }
 
 /**
+ * The location of a redirect that the proxy reported in headers
+ * @private
+ */
+function getReportedRedirectLocation(res: HttpResponse): string | undefined {
+  const status = Number(res.headers['salesforceproxy-redirect-status']);
+  const location = res.headers['salesforceproxy-redirect-location'];
+  return res.statusCode === 200 && isRedirect(status) ? location : undefined;
+}
+
+/**
  * Class for HTTP request transport using cross-domain AJAX proxy service
  */
 export class XdProxyTransport extends Transport {
@@ -152,32 +163,52 @@ export class XdProxyTransport extends Transport {
   /**
    * Make HTTP request via AJAX proxy
    */
-  httpRequest(req: HttpRequest, options: HttpRequestOptions = {}) {
+  httpRequest(
+    req: HttpRequest,
+    options: HttpRequestOptions = {},
+  ): StreamPromise<HttpResponse> {
     const xdProxyUrl = this._xdProxyUrl;
     const { url, body, ...rreq } = req;
     const canonicalUrl = url.startsWith('/') ? baseUrl + url : url;
-    const reportRedirect = typeof options.followRedirect === 'function';
-    const xdProxyReq = createXdProxyRequest(
-      { ...rreq, url: canonicalUrl, body },
-      xdProxyUrl,
-      reportRedirect,
-    );
-    return super.httpRequest(xdProxyReq, {
-      ...options,
-      followRedirect:
-        options.followRedirect === false
-          ? false
-          : async (redirectUrl) => {
-              const { followRedirect } = options;
-              const redirectReq =
-                typeof followRedirect === 'function'
-                  ? await followRedirect(redirectUrl)
-                  : { ...rreq, method: 'GET' as const, url: redirectUrl };
-              return redirectReq
-                ? createXdProxyRequest(redirectReq, xdProxyUrl, reportRedirect)
-                : null;
-            },
+    const { followRedirect } = options;
+    // browsers cannot read a redirect response, so with a followRedirect function,
+    // the proxy is asked to report it in headers, and the reported redirect is followed here
+    const reportRedirect = typeof followRedirect === 'function';
+    const send = (proxiedReq: HttpRequest) =>
+      super.httpRequest(
+        createXdProxyRequest(proxiedReq, xdProxyUrl, reportRedirect),
+        {
+          ...options,
+          followRedirect:
+            followRedirect === false
+              ? false
+              : async (redirectUrl) => {
+                  const redirectReq =
+                    typeof followRedirect === 'function'
+                      ? await followRedirect(redirectUrl)
+                      : { ...rreq, method: 'GET' as const, url: redirectUrl };
+                  return redirectReq
+                    ? createXdProxyRequest(redirectReq, xdProxyUrl, reportRedirect)
+                    : null;
+                },
+        },
+      );
+    const first = send({ ...rreq, url: canonicalUrl, body });
+    if (typeof followRedirect !== 'function') {
+      return first;
+    }
+    const promise = first.then(async (res) => {
+      const location = getReportedRedirectLocation(res);
+      if (!location) {
+        return res;
+      }
+      const redirectReq = await followRedirect(location);
+      if (!redirectReq) {
+        throw new Error('Cannot handle redirect for ' + location);
+      }
+      return this.httpRequest(redirectReq, options);
     });
+    return StreamPromise.create(() => ({ stream: first.stream(), promise }));
   }
 }
 
