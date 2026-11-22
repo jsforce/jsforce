@@ -404,6 +404,12 @@ export class HttpApi<S extends Schema> extends EventEmitter {
       return true
     }
 
+    // The identity URL and the OpenID Connect UserInfo endpoint report an expired, revoked or invalid token
+    // as 403 with `Bad_OAuth_Token` in the body, not as 401
+    if (response.statusCode === 403 && response.body?.trim() === 'Bad_OAuth_Token') {
+      return true;
+    }
+
     return false
   }
 
