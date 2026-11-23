@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ExtlClntAppGlobalOauthSettings xmlns="http://soap.sforce.com/2006/04/metadata">
+    <callbackUrl>http://localhost:4000/oauth2/callback</callbackUrl>
+    <certificate>-----BEGIN CERTIFICATE-----
+MIIDCzCCAfOgAwIBAgIUCZ0V00BReBiGc+556ojdIl/pk8cwDQYJKoZIhvcNAQEL
+BQAwFTETMBEGA1UEAwwKanNmb3JjZS1jaTAeFw0yNjExMjMwNDI2NTVaFw0zNjEx
+MjAwNDI2NTVaMBUxEzARBgNVBAMMCmpzZm9yY2UtY2kwggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQCvMiy0E2yP7Z4Bu1IXGbfWIhlbO+hd1U4bB+HYwXQX
+pFaJkXVJcWKFoxD1JoAStyrNMZb1rJceHV3zui3F6nuNqA/csuXSmwfuSyGhQ/HC
+lZCPP/YGKrfiKEj2X36V5uBOG4kNOey5tFfyYpD146Dn3DzZ+RfTEV/6RdzpYJ3o
+PMgXLBq4XnTGe1zqQGAYaSpFp0mzppJd4ujokOlvIG5Auh7wNsaYbpBQrhJ7y6rh
++unoLz8eBRG/Zog/eWXkP/SuKWbInTUNXMY+aoG6Oot+TePXBrcv6LpGLmu6jtKA
+OPu/pLvQzGM98cW4wxoQ7urqbuwhVagRxfZACly3+R7nAgMBAAGjUzBRMB0GA1Ud
+DgQWBBSrkKmdc3czn//NeFtw0uZ8s4JFuTAfBgNVHSMEGDAWgBSrkKmdc3czn//N
+eFtw0uZ8s4JFuTAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQCq
+bBbCHsKYh+/EHEUjGa8bWPgZp2VINnG4qHNdBlsz99KkkjrFUPncMjb0w3/aIAxO
+rvcR8WFXMX74HvlbLO9te2/gXY3MpUJfCYld1ST3s4Taq6YHjmIBfkuGbjYiHOeN
+EwrXQ3zajsJqgyhswtYyC7iV9iXrR/2uzZ5+sMxSEQU1DBjxjtsCav7cWJ5VxuZ3
+h8lakjR+SOmnfGwht3rCfAgLCSVnp3X5ZKJxAYj6klCdN8F2+KFJ8DQPqe0Ee+HO
+Z2T9p4YEKTOn3D79yn0uzebHjGhpVwmlYlIztW3GuZLCh0JkN4FP9WOQqwZYjVTm
+LKhC1IcWSI6i3iBhr59H
+-----END CERTIFICATE-----</certificate>
+    <consumerKey>JSforceTestJwtAppaa024177e4a75a4934eb4b3c339caaf2a41c00d4</consumerKey>
+    <externalClientApplication>JSforceTestJwtApp</externalClientApplication>
+    <isClientCredentialsFlowEnabled>false</isClientCredentialsFlowEnabled>
+    <isCodeCredFlowEnabled>false</isCodeCredFlowEnabled>
+    <isCodeCredPostOnly>false</isCodeCredPostOnly>
+    <isConsumerSecretOptional>true</isConsumerSecretOptional>
+    <isDPopEnabled>false</isDPopEnabled>
+    <isDeviceFlowEnabled>false</isDeviceFlowEnabled>
+    <isEnforceRefreshTokenTTL>true</isEnforceRefreshTokenTTL>
+    <isIntrospectAllTokens>false</isIntrospectAllTokens>
+    <isMtlsEnabled>false</isMtlsEnabled>
+    <isNamedUserJwtEnabled>false</isNamedUserJwtEnabled>
+    <isPkceRequired>true</isPkceRequired>
+    <isRefreshTokenRotationEnabled>true</isRefreshTokenRotationEnabled>
+    <isSecretRequiredForRefreshToken>false</isSecretRequiredForRefreshToken>
+    <isSecretRequiredForTokenExchange>false</isSecretRequiredForTokenExchange>
+    <isTokenExchangeEnabled>false</isTokenExchangeEnabled>
+    <label>JSforceTestJwtApp</label>
+    <shouldRotateConsumerKey>false</shouldRotateConsumerKey>
+    <shouldRotateConsumerSecret>false</shouldRotateConsumerSecret>
+</ExtlClntAppGlobalOauthSettings>
