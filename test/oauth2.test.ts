@@ -455,7 +455,12 @@ describe('DPoP', () => {
           accessToken: conn.accessToken,
           proxyUrl: config.proxyUrl || undefined,
         });
-        await assert.rejects(async () => bearer.query('SELECT Id FROM User LIMIT 1'), { name: 'INVALID_SESSION_ID' });
+        await assert.rejects(
+          async () => {
+            await bearer.query('SELECT Id FROM User LIMIT 1');
+          },
+          { name: 'INVALID_SESSION_ID' },
+        );
       });
 
       it('refreshes an invalid token once, and sends the request again', async () => {
@@ -485,7 +490,9 @@ describe('DPoP', () => {
           instanceUrl,
           accessToken: accessToken!,
         });
-        await assert.rejects(async () => revoked.query('SELECT Id FROM User LIMIT 1'));
+        await assert.rejects(async () => {
+          await revoked.query('SELECT Id FROM User LIMIT 1');
+        });
       });
     });
   }
