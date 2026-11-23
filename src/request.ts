@@ -239,7 +239,9 @@ async function startFetchRequest(
   }
   emitter.emit('response', response);
   if (res.body) {
-    Readable.fromWeb(res.body).pipe(output);
+    Readable.fromWeb(res.body)
+      .on('error', (err) => output.destroy(err))
+      .pipe(output);
   } else {
     output.end();
   }
