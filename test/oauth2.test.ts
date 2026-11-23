@@ -442,12 +442,14 @@ describe('DPoP', () => {
       beforeAll(async () => {
         signer = await createSigner();
         conn = createConnection();
+        await conn.authorize(await jwtGrant());
       });
 
       it('gets a token bound to the key, with the nonce from the token endpoint', async () => {
-        await conn.authorize(await jwtGrant());
         assert.ok(conn.accessToken);
         assert.ok(conn.proofNonce);
+        const res = await conn.query('SELECT Id FROM User LIMIT 1');
+        assert.equal(res.totalSize, 1);
         const bearer = new Connection({
           instanceUrl: conn.instanceUrl,
           accessToken: conn.accessToken,
