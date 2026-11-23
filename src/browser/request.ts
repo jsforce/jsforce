@@ -93,18 +93,24 @@ async function startFetchRequest(
       : undefined;
   const controller =
     typeof AbortController !== 'undefined' ? new AbortController() : undefined;
-  const res = await executeWithTimeout(
-    () =>
-      fetch(url, {
-        ...rreq,
-        ...(body ? { body } : {}),
-        redirect: 'manual',
-        ...(controller ? { signal: controller.signal } : {}),
-        ...({ allowHTTP1ForStreamingUpload: true } as any), // Chrome allows request stream only in HTTP2/QUIC unless this opt-in flag
-      }),
-    options.timeout,
-    () => controller?.abort(),
-  );
+  let res: Response;
+  try {
+    res = await executeWithTimeout(
+      () =>
+        fetch(url, {
+          ...rreq,
+          ...(body ? { body } : {}),
+          redirect: 'manual',
+          ...(controller ? { signal: controller.signal } : {}),
+          ...({ allowHTTP1ForStreamingUpload: true } as any), // Chrome allows request stream only in HTTP2/QUIC unless this opt-in flag
+        }),
+      options.timeout,
+      () => controller?.abort(),
+    );
+  } catch (err) {
+    emitter.emit('error', err);
+    return;
+  }
   const headers: { [key: string]: any } = {};
   for (const headerName of res.headers.keys()) {
     headers[headerName.toLowerCase()] = res.headers.get(headerName);
