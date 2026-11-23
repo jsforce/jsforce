@@ -1,7 +1,37 @@
 // Karma configuration
 
-const { readFileSync } = require('fs');
+const { createSign } = require('crypto');
+const { existsSync, readFileSync } = require('fs');
+
+// the key file that scripts/org-setup.mjs writes from SF_OAUTH2_JWT_KEY
+const jwtKeyFile = 'jwtKey.txt';
+const jwtAssertionPath = '/jwt-assertion';
+if (existsSync(jwtKeyFile)) {
+  process.env.SF_JWT_ASSERTION_URL = jwtAssertionPath;
+}
+
 const webpackConfig = require('./webpack.config.test');
+
+// sign JWT bearer assertions for the browser tests, so that the key stays out of the browser
+function jwtAssertionMiddleware() {
+  return (req, res, next) => {
+    if (req.method !== 'POST' || req.url !== jwtAssertionPath) {
+      return next();
+    }
+    let claims = '';
+    req.on('data', (chunk) => (claims += chunk));
+    req.on('end', () => {
+      const header = Buffer.from(JSON.stringify({ alg: 'RS256' })).toString('base64url');
+      const payload = Buffer.from(claims).toString('base64url');
+      const signature = createSign('RSA-SHA256')
+        .update(`${header}.${payload}`)
+        .sign(readFileSync(jwtKeyFile))
+        .toString('base64url');
+      res.setHeader('Content-Type', 'text/plain');
+      res.end(`${header}.${payload}.${signature}`);
+    });
+  };
+}
 
 // Set BABEL_ENV to use proper preset config
 process.env.NODE_ENV = 'test';
@@ -33,7 +63,10 @@ module.exports = function (config) {
       'karma-jasmine-html-reporter',
       'karma-chrome-launcher',
       require('./test/karma/karma-failed-tests-reporter.js'),
+      { 'middleware:jwt-assertion': ['factory', jwtAssertionMiddleware] },
     ],
+
+    beforeMiddleware: process.env.SF_JWT_ASSERTION_URL ? ['jwt-assertion'] : [],
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
