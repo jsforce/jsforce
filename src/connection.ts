@@ -217,6 +217,25 @@ function createUsernamePasswordRefreshFn<S extends Schema>(
 }
 
 /**
+ * Composite API error entries carry `statusCode` instead of `errorCode`.
+ * Map it so callers can rely on `errorCode` consistently.
+ * @private
+ */
+function normalizeSaveResults(results: any): any {
+  const normalize = (r: any) => {
+    if (r && Array.isArray(r.errors)) {
+      r.errors = r.errors.map((e: any) =>
+        e && typeof e === 'object' && e.errorCode == null && e.statusCode != null
+          ? { ...e, errorCode: e.statusCode }
+          : e,
+      );
+    }
+    return r;
+  };
+  return Array.isArray(results) ? results.map(normalize) : normalize(results);
+}
+
+/**
  * @private
  */
 function toSaveResult(err: SaveError): SaveResult {
@@ -1103,7 +1122,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
       return { attributes: { type: sobjectType }, ...rec };
     });
     const url = [this._baseUrl(), 'composite', 'sobjects'].join('/');
-    return this.request({
+    return this.request<any>({
       method: 'POST',
       url,
       body: JSON.stringify({
@@ -1114,7 +1133,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
         ...(options.headers || {}),
         'content-type': 'application/json',
       },
-    });
+    }).then(normalizeSaveResults);
   }
 
   /**
@@ -1248,7 +1267,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
       return { id, attributes: { type: sobjectType }, ...rec };
     });
     const url = [this._baseUrl(), 'composite', 'sobjects'].join('/');
-    return this.request({
+    return this.request<any>({
       method: 'PATCH',
       url,
       body: JSON.stringify({
@@ -1259,7 +1278,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
         ...(options.headers || {}),
         'content-type': 'application/json',
       },
-    });
+    }).then(normalizeSaveResults);
   }
 
   /**
@@ -1350,7 +1369,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
     });
     const url =
       [this._baseUrl(), 'composite', 'sobjects', type, extIdField].join('/');
-    return this.request({
+    return this.request<any>({
       method: 'PATCH',
       url,
       body: JSON.stringify({
@@ -1361,7 +1380,7 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
         ...(options.headers || {}),
         'content-type': 'application/json',
       }
-    });
+    }).then(normalizeSaveResults);
   }
 
 /** @private */
@@ -1508,11 +1527,11 @@ export class Connection<S extends Schema = Schema> extends EventEmitter {
     if (options.allOrNone) {
       url += '&allOrNone=true';
     }
-    return this.request({
+    return this.request<any>({
       method: 'DELETE',
       url,
       headers: options.headers || {},
-    });
+    }).then(normalizeSaveResults);
   }
 
   /**
