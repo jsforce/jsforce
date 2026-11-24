@@ -54,6 +54,9 @@ export class SessionRefreshDelegate<S extends Schema> {
           if (!err) {
             this._logger.debug('Connection refresh completed.');
             this._conn.accessToken = accessToken;
+            if (res?.extra?.proofNonce) {
+              this._conn.proofNonce = res.extra.proofNonce;
+            }
             this._conn.emit('refresh', accessToken, res);
             resolve();
           } else {

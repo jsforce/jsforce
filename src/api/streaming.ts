@@ -141,6 +141,9 @@ export class Streaming<S extends Schema> extends EventEmitter {
 
   /* @private */
   _createClient(forChannelName?: string | null, extensions?: any[]) {
+    if (this._conn.oauth2?.dpop) {
+      throw new Error('Streaming API cannot be used with a DPoP token.');
+    }
     // forChannelName is advisory, for an API workaround. It does not restrict or select the channel.
     const needsReplayFix =
       typeof forChannelName === 'string' && forChannelName.startsWith('/u/');

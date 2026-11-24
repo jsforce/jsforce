@@ -193,6 +193,10 @@ export type SOAPOptions = {
   xmlns?: string;
 };
 
+type SOAPRequest = HttpRequest & {
+  _message: object;
+};
+
 /**
  * Class for SOAP endpoint of Salesforce
  *
@@ -248,12 +252,19 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
   }
 
   /** @override */
-  beforeSend(request: HttpRequest & { _message: object }) {
-    request.body = this._createEnvelope(request._message);
+  async beforeSend(request: SOAPRequest) {
+    const { accessToken } = this._conn;
+    const proof = await this.createProof(request);
+    request.body = this._createEnvelope(
+      request._message,
+      accessToken ?? undefined,
+      proof,
+    );
 
-    const headers = request.headers || {};
+    const { 'content-length': _contentLength, ...headers } =
+      request.headers ?? {};
 
-    const bodySize = getBodySize(request.body, request.headers);
+    const bodySize = getBodySize(request.body, headers);
 
     if (
       !isBrowser && // Don't set content-length in browsers as it's not allowed
@@ -273,9 +284,14 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
 
   /** @override **/
   isSessionExpired(response: HttpResponse) {
+    if (response.statusCode !== 500) {
+      return false;
+    }
+    // with DPoP, an expired or revoked token is reported as INVALID_AUTH_HEADER
     return (
-      response.statusCode === 500 &&
-      /<faultcode>[a-zA-Z]+:INVALID_SESSION_ID<\/faultcode>/.test(response.body)
+      /<faultcode>[a-zA-Z]+:INVALID_SESSION_ID<\/faultcode>/.test(response.body) ||
+      (!!this._conn.oauth2?.dpop &&
+        /<faultcode>[a-zA-Z]+:INVALID_AUTH_HEADER<\/faultcode>/.test(response.body))
     );
   }
 
@@ -299,11 +315,14 @@ export class SOAP<S extends Schema> extends HttpApi<S> {
   /**
    * @private
    */
-  _createEnvelope(message: object) {
+  _createEnvelope(message: object, accessToken?: string, proof?: string) {
     const header: { [name: string]: any } = {};
     const conn = this._conn;
-    if (conn.accessToken) {
-      header.SessionHeader = { sessionId: conn.accessToken };
+    if (accessToken) {
+      header.SessionHeader = { sessionId: accessToken };
+    }
+    if (proof) {
+      header.DpopProofHeader = { proof };
     }
     if (conn._callOptions) {
       header.CallOptions = conn._callOptions;

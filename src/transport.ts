@@ -5,6 +5,7 @@ import { Duplex } from 'stream';
 import request, { setDefaults } from './request';
 import { HttpRequest, HttpRequestOptions, HttpResponse } from './types';
 import { StreamPromise } from './util/promise';
+import { isRedirect } from './request-helper';
 import jsonp from './browser/jsonp';
 import canvas from './browser/canvas';
 
@@ -112,7 +113,11 @@ export class CanvasTransport extends Transport {
 }
 
 /* @private */
-function createXdProxyRequest(req: HttpRequest, proxyUrl: string): HttpRequest {
+function createXdProxyRequest(
+  req: HttpRequest,
+  proxyUrl: string,
+  reportRedirect: boolean = false,
+): HttpRequest {
   const headers: { [name: string]: string } = {
     'salesforceproxy-endpoint': req.url,
   };
@@ -121,6 +126,9 @@ function createXdProxyRequest(req: HttpRequest, proxyUrl: string): HttpRequest {
       headers[name] = req.headers[name];
     }
   }
+  if (reportRedirect) {
+    headers['salesforceproxy-redirect'] = 'report';
+  }
   const nocache = `${Date.now()}.${String(Math.random()).substring(2)}`;
   return {
     method: req.method,
@@ -128,6 +136,16 @@ function createXdProxyRequest(req: HttpRequest, proxyUrl: string): HttpRequest {
     headers,
     ...(req.body != null ? { body: req.body } : {}),
   };
+}
+
+/**
+ * The location of a redirect that the proxy reported in headers
+ * @private
+ */
+function getReportedRedirectLocation(res: HttpResponse): string | undefined {
+  const status = Number(res.headers['salesforceproxy-redirect-status']);
+  const location = res.headers['salesforceproxy-redirect-location'];
+  return res.statusCode === 200 && isRedirect(status) ? location : undefined;
 }
 
 /**
@@ -144,21 +162,52 @@ export class XdProxyTransport extends Transport {
   /**
    * Make HTTP request via AJAX proxy
    */
-  httpRequest(req: HttpRequest, _options: HttpRequestOptions = {}) {
+  httpRequest(
+    req: HttpRequest,
+    options: HttpRequestOptions = {},
+  ): StreamPromise<HttpResponse> {
     const xdProxyUrl = this._xdProxyUrl;
     const { url, body, ...rreq } = req;
     const canonicalUrl = url.startsWith('/') ? baseUrl + url : url;
-    const xdProxyReq = createXdProxyRequest(
-      { ...rreq, url: canonicalUrl, body },
-      xdProxyUrl,
-    );
-    return super.httpRequest(xdProxyReq, {
-      followRedirect: (redirectUrl) =>
-        createXdProxyRequest(
-          { ...rreq, method: 'GET', url: redirectUrl },
-          xdProxyUrl,
-        ),
+    const { followRedirect } = options;
+    // browsers cannot read a redirect response, so with a followRedirect function,
+    // the proxy is asked to report it in headers, and the reported redirect is followed here
+    const reportRedirect = typeof followRedirect === 'function';
+    const send = (proxiedReq: HttpRequest) =>
+      super.httpRequest(
+        createXdProxyRequest(proxiedReq, xdProxyUrl, reportRedirect),
+        {
+          ...options,
+          followRedirect:
+            followRedirect === false
+              ? false
+              : async (redirectUrl) => {
+                  const redirectReq =
+                    typeof followRedirect === 'function'
+                      ? await followRedirect(redirectUrl)
+                      : { ...rreq, method: 'GET' as const, url: redirectUrl };
+                  return redirectReq
+                    ? createXdProxyRequest(redirectReq, xdProxyUrl, reportRedirect)
+                    : null;
+                },
+        },
+      );
+    const first = send({ ...rreq, url: canonicalUrl, body });
+    if (typeof followRedirect !== 'function') {
+      return first;
+    }
+    const promise = first.then(async (res) => {
+      const location = getReportedRedirectLocation(res);
+      if (!location) {
+        return res;
+      }
+      const redirectReq = await followRedirect(location);
+      if (!redirectReq) {
+        throw new Error('Cannot handle redirect for ' + location);
+      }
+      return this.httpRequest(redirectReq, options);
     });
+    return StreamPromise.create(() => ({ stream: first.stream(), promise }));
   }
 }
 

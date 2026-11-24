@@ -65,12 +65,12 @@ const MAX_REDIRECT_COUNT = 10;
 /**
  *
  */
-export function performRedirectRequest(
+export async function performRedirectRequest(
   req: HttpRequest,
   res: Omit<HttpResponse, 'body'>,
   followRedirect: NonNullable<HttpRequestOptions['followRedirect']>,
   counter: number,
-  redirectCallback: (req: HttpRequest) => void,
+  redirectCallback: (req: HttpRequest) => void | Promise<void>,
 ) {
   if (counter >= MAX_REDIRECT_COUNT) {
     throw new Error('Reached to maximum redirect count');
@@ -87,11 +87,12 @@ export function performRedirectRequest(
           url: redirectUrl,
           headers: req.headers,
         });
-  const nextReqParams = getRedirectRequest(redirectUrl);
+  const nextReqParams = await getRedirectRequest(redirectUrl);
   if (!nextReqParams) {
     throw new Error('Cannot handle redirect for ' + redirectUrl);
   }
-  redirectCallback(nextReqParams);
+  // wait for the redirected request, so that its failure reaches the caller
+  await redirectCallback(nextReqParams);
 }
 
 /**

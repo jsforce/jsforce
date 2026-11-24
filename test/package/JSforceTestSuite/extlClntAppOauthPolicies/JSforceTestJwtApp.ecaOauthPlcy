@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ExtlClntAppOauthConfigurablePolicies xmlns="http://soap.sforce.com/2006/04/metadata">
+    <commaSeparatedProfile>System Administrator</commaSeparatedProfile>
+    <externalClientApplication>JSforceTestJwtApp</externalClientApplication>
+    <ipRelaxationPolicyType>Bypass</ipRelaxationPolicyType>
+    <label>JSforceTestJwtApp</label>
+    <permittedUsersPolicyType>AdminApprovedPreAuthorized</permittedUsersPolicyType>
+    <refreshTokenPolicyType>Infinite</refreshTokenPolicyType>
+</ExtlClntAppOauthConfigurablePolicies>

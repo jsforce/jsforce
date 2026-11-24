@@ -4,7 +4,7 @@
 import {createHash, randomBytes} from 'crypto';
 import querystring from 'querystring';
 import Transport, {HttpProxyTransport, XdProxyTransport} from './transport';
-import {Optional} from './types';
+import {HttpRequest, HttpResponse, Optional} from './types';
 
 const defaultOAuth2Config = {
   loginUrl: 'https://login.salesforce.com',
@@ -28,6 +28,171 @@ function base64UrlEscape(base64Encoded: string): string {
     .replace(/=/g, '');
 }
 
+/*
+ * DPoP (OAuth 2.0 Demonstrating Proof of Possession, RFC 9449)
+ */
+
+/**
+ * Signer of DPoP proofs, so that the private key can stay in WebCrypto, a KMS or an HSM
+ */
+export type DPoPSigner = {
+  readonly algorithm: 'ES256';
+  /**
+   * Format of the signature returned by `sign()`: r and s concatenated ('jose'), or DER
+   */
+  readonly format: 'jose' | 'der';
+  readonly publicJwk: JsonWebKey;
+  sign(signingInput: Uint8Array): Promise<Uint8Array>;
+};
+
+const ES256_KEY_ALGORITHM = { name: 'ECDSA', namedCurve: 'P-256' } as const;
+
+function base64url(data: Uint8Array | string): string {
+  // the Buffer used in the browser build does not support 'base64url'
+  return base64UrlEscape(Buffer.from(data).toString('base64'));
+}
+
+function sha256(data: string): Uint8Array {
+  return createHash('sha256').update(data).digest();
+}
+
+/**
+ * Convert a DER encoded ECDSA signature to r and s concatenated (RFC 7518, Section 3.4)
+ */
+function derToJose(der: Uint8Array): Uint8Array {
+  // SEQUENCE { INTEGER r, INTEGER s }
+  const jose = new Uint8Array(64);
+  let pos = 2;
+  for (let i = 0; i < 2; i++) {
+    const len = der[pos + 1];
+    let int = der.subarray(pos + 2, pos + 2 + len);
+    pos += 2 + len;
+    // drop the leading zero byte of an INTEGER whose top bit is set
+    while (int.length > 32 && int[0] === 0) {
+      int = int.subarray(1);
+    }
+    jose.set(int, i * 32 + (32 - int.length));
+  }
+  return jose;
+}
+
+/**
+ * DPoP configuration
+ */
+export type DPoPConfig = {
+  signer: DPoPSigner;
+};
+
+/**
+ * DPoP (RFC 9449) proofs made with a signer
+ */
+export class DPoP {
+  readonly signer: DPoPSigner;
+
+  /**
+   * Create a signer from a WebCrypto key pair or a PKCS#8 PEM P-256 private key
+   */
+  static async createSigner(key: CryptoKeyPair | string): Promise<DPoPSigner> {
+    const { subtle } = globalThis.crypto;
+    let privateKey: CryptoKey;
+    let publicJwk: JsonWebKey;
+    if (typeof key === 'string') {
+      const pkcs8 = new Uint8Array(
+        Buffer.from(
+          key.replace(/-----(BEGIN|END) PRIVATE KEY-----|\s/g, ''),
+          'base64',
+        ),
+      );
+      // imported as extractable only to read the public members
+      const extractable = await subtle.importKey(
+        'pkcs8',
+        pkcs8,
+        ES256_KEY_ALGORITHM,
+        true,
+        ['sign'],
+      );
+      publicJwk = await subtle.exportKey('jwk', extractable);
+      privateKey = await subtle.importKey(
+        'pkcs8',
+        pkcs8,
+        ES256_KEY_ALGORITHM,
+        false,
+        ['sign'],
+      );
+    } else {
+      privateKey = key.privateKey;
+      // a public key can be exported even when the private key cannot
+      publicJwk = await subtle.exportKey('jwk', key.publicKey);
+    }
+    const { crv, kty, x, y } = publicJwk;
+    return {
+      algorithm: 'ES256',
+      format: 'jose',
+      publicJwk: { crv, kty, x, y },
+      async sign(signingInput: Uint8Array) {
+        const signature = await subtle.sign(
+          { name: 'ECDSA', hash: 'SHA-256' },
+          privateKey,
+          new Uint8Array(signingInput),
+        );
+        return new Uint8Array(signature);
+      },
+    };
+  }
+
+  constructor(config: DPoPConfig) {
+    this.signer = config.signer;
+  }
+
+  /**
+   * JWK thumbprint (RFC 7638) of the signer's public key, used as `dpop_jkt`
+   */
+  get jwkThumbprint(): string {
+    const { crv, kty, x, y } = this.signer.publicJwk;
+    return base64url(sha256(JSON.stringify({ crv, kty, x, y })));
+  }
+
+  /**
+   * Create a DPoP proof JWT (RFC 9449, Section 4.2) for a request.
+   * `accessToken` is given for a request with the access token, and `nonce` when the server asks for one.
+   */
+  async createProof(params: {
+    method: string;
+    url: string;
+    accessToken?: string;
+    nonce?: string;
+  }): Promise<string> {
+    const url = new URL(params.url);
+    if (url.protocol !== 'https:') {
+      throw new Error(`DPoP requests can be sent only over HTTPS: ${params.url}`);
+    }
+    const { signer } = this;
+    const { crv, kty, x, y } = signer.publicJwk;
+    const header = {
+      typ: 'dpop+jwt',
+      alg: signer.algorithm,
+      jwk: { crv, kty, x, y },
+    };
+    const payload = {
+      jti: base64url(globalThis.crypto.getRandomValues(new Uint8Array(16))),
+      htm: params.method.toUpperCase(),
+      // without query and fragment
+      htu: `${url.origin}${url.pathname}`,
+      iat: Math.floor(Date.now() / 1000),
+      ...(params.nonce ? { nonce: params.nonce } : {}),
+      ...(params.accessToken
+        ? { ath: base64url(sha256(params.accessToken)) }
+        : {}),
+    };
+    const signingInput = `${base64url(JSON.stringify(header))}.${base64url(
+      JSON.stringify(payload),
+    )}`;
+    const signature = await signer.sign(new TextEncoder().encode(signingInput));
+    const jose = signer.format === 'der' ? derToJose(signature) : signature;
+    return `${signingInput}.${base64url(jose)}`;
+  }
+}
+
 /**
  * type defs
  */
@@ -42,6 +207,7 @@ export type OAuth2Config = {
   proxyUrl?: string;
   httpProxy?: string;
   useVerifier?: boolean;
+  dpop?: DPoPConfig | DPoP;
 };
 
 export type AuthzRequestParams = {
@@ -53,7 +219,7 @@ export type AuthzRequestParams = {
 };
 
 export type TokenResponse = {
-  token_type: 'Bearer';
+  token_type: 'Bearer' | 'DPoP';
   /**
    * Space-separated list of OAuth scopes associated with the access token
    *
@@ -75,6 +241,9 @@ export type TokenResponse = {
   instance_url: string;
   sfdc_community_url?: string;
   sfdc_community_id?: string;
+  extra?: {
+    proofNonce?: string;
+  };
 };
 
 /**
@@ -89,6 +258,7 @@ export class OAuth2 {
   clientSecret: Optional<string>;
   redirectUri: Optional<string>;
   codeVerifier: Optional<string>;
+  dpop: Optional<DPoP>;
 
   _transport: Transport;
 
@@ -107,7 +277,9 @@ export class OAuth2 {
       proxyUrl,
       httpProxy,
       useVerifier,
+      dpop,
     } = config;
+    this.dpop = dpop instanceof DPoP ? dpop : dpop ? new DPoP(dpop) : undefined;
     if (authzServiceUrl && tokenServiceUrl) {
       this.loginUrl = new URL(authzServiceUrl).origin;
       this.authzServiceUrl = authzServiceUrl;
@@ -148,6 +320,10 @@ export class OAuth2 {
       params.code_challenge = base64UrlEscape(
         createHash('sha256').update(this.codeVerifier).digest('base64'),
       );
+    }
+
+    if (this.dpop) {
+      params.dpop_jkt = this.dpop.jwkThumbprint;
     }
 
     const _params = {
@@ -242,14 +418,10 @@ export class OAuth2 {
    * OAuth2 Revoke Session Token
    */
   async revokeToken(token: string): Promise<void> {
-    const response = await this._transport.httpRequest({
-      method: 'POST',
-      url: this.revokeServiceUrl,
-      body: querystring.stringify({ token }),
-      headers: {
-        'content-type': 'application/x-www-form-urlencoded',
-      },
-    });
+    const { response } = await this._postToEndpoint(
+      'revoke',
+      querystring.stringify({ token }),
+    );
     if (response.statusCode >= 400) {
       let res: any = querystring.parse(response.body);
       if (!res || !res.error) {
@@ -279,14 +451,10 @@ export class OAuth2 {
   async _postParams(params: { [name: string]: string }): Promise<any> {
     if (this.codeVerifier) params.code_verifier = this.codeVerifier;
 
-    const response = await this._transport.httpRequest({
-      method: 'POST',
-      url: this.tokenServiceUrl,
-      body: querystring.stringify(params),
-      headers: {
-        'content-type': 'application/x-www-form-urlencoded',
-      },
-    });
+    const { response, proofNonce } = await this._postToEndpoint(
+      'token',
+      querystring.stringify(params),
+    );
     let res;
     try {
       res = JSON.parse(response.body);
@@ -310,7 +478,70 @@ export class OAuth2 {
         }
       })(res);
     }
+    if (this.dpop && res?.token_type?.toLowerCase() !== 'dpop') {
+      throw new Error(
+        `DPoP token was expected, but the token type returned was: ${res?.token_type}`,
+      );
+    }
+    if (this.dpop && proofNonce) {
+      res.extra = { proofNonce };
+    }
     return res;
+  }
+
+  /**
+   * POST to the token or revoke endpoint, with a DPoP proof when DPoP is used
+   * @private
+   */
+  async _postToEndpoint(
+    endpoint: 'token' | 'revoke',
+    body: string,
+  ): Promise<{ response: HttpResponse; proofNonce?: string }> {
+    const url =
+      endpoint === 'token' ? this.tokenServiceUrl : this.revokeServiceUrl;
+    const request: HttpRequest = {
+      method: 'POST',
+      url,
+      body,
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+      },
+    };
+    const { dpop } = this;
+    if (!dpop) {
+      return { response: await this._transport.httpRequest(request) };
+    }
+    const send = async (nonce: string | undefined) => {
+      const headers = {
+        ...request.headers,
+        DPoP: await dpop.createProof({ method: 'POST', url, nonce }),
+      };
+      return this._transport.httpRequest(
+        { ...request, headers },
+        {
+          // a new proof for the redirected request
+          followRedirect: async (redirectUrl: string) => ({
+            method: 'GET',
+            url: redirectUrl,
+            headers: {
+              ...headers,
+              DPoP: await dpop.createProof({ method: 'GET', url: redirectUrl, nonce }),
+            },
+          }),
+        },
+      );
+    };
+    const response = await send(undefined);
+    const nonce = response.headers['dpop-nonce'];
+    // RFC 9449, Section 8
+    if (nonce && (response.statusCode === 400 || response.statusCode === 401)) {
+      const retried = await send(nonce);
+      return {
+        response: retried,
+        proofNonce: retried.headers['dpop-nonce'] ?? nonce,
+      };
+    }
+    return { response, proofNonce: nonce };
   }
 }
 

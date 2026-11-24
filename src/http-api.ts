@@ -20,6 +20,12 @@ import { createLazyStream } from './util/stream';
 import { getBodySize } from './util/get-body-size';
 
 /** @private */
+type RetryState = {
+  refreshed?: boolean;
+  nonceRetried?: boolean;
+};
+
+/** @private */
 function parseJSON(str: string) {
   return JSON.parse(str);
 }
@@ -158,6 +164,16 @@ export class HttpApi<S extends Schema> extends EventEmitter {
    * Callout to API endpoint using http
    */
   request<R = unknown>(request: HttpRequest): StreamPromise<R> {
+    return this._request<R>(request, {});
+  }
+
+  /**
+   * @private
+   */
+  _request<R = unknown>(
+    request: HttpRequest,
+    retryState: RetryState,
+  ): StreamPromise<R> {
     return StreamPromise.create<R>(() => {
       const { stream, setStream } = createLazyStream();
       const promise = (async () => {
@@ -175,16 +191,17 @@ export class HttpApi<S extends Schema> extends EventEmitter {
           request.url = request.url.replace(lastInstanceUrl,conn.instanceUrl);
         }
         */
+        const dpop = this._conn.oauth2?.dpop;
         if (refreshDelegate && refreshDelegate.isRefreshing()) {
           await refreshDelegate.waitRefresh();
-          const bodyPromise = this.request(request);
+          const bodyPromise = this._request<R>(request, retryState);
           setStream(bodyPromise.stream());
           const body = await bodyPromise;
           return body;
         }
 
         // hook before sending
-        this.beforeSend(request);
+        await this.beforeSend(request);
         this.applyTraceContextHeaders(request);
 
         this.emit('request', request);
@@ -192,10 +209,25 @@ export class HttpApi<S extends Schema> extends EventEmitter {
           `<request> method=${request.method}, url=${request.url}`,
         );
         const requestTime = Date.now();
-        const requestPromise = this._transport.httpRequest(
-          request,
-          this._options,
-        );
+        const { followRedirect } = this._options;
+        const options =
+          dpop && followRedirect !== false
+            ? {
+                ...this._options,
+                // a new proof for the redirected request
+                followRedirect: async (redirectUrl: string) => {
+                  const redirectReq =
+                    typeof followRedirect === 'function'
+                      ? await followRedirect(redirectUrl)
+                      : { method: 'GET' as const, url: redirectUrl, headers: request.headers };
+                  const proof = redirectReq && (await this.createProof(redirectReq));
+                  return proof
+                    ? { ...redirectReq, headers: { ...redirectReq.headers, DPoP: proof } }
+                    : redirectReq;
+                },
+              }
+            : this._options;
+        const requestPromise = this._transport.httpRequest(request, options);
 
         setStream(requestPromise.stream());
 
@@ -220,30 +252,28 @@ export class HttpApi<S extends Schema> extends EventEmitter {
           }`,
         );
         this.emit('response', response);
+        if (dpop) {
+          // a nonce given by the API (RFC 9449, Section 9)
+          const nonce = response.headers['dpop-nonce'];
+          if (nonce) {
+            this._conn.proofNonce = nonce;
+            if (response.statusCode === 401 && !retryState.nonceRetried) {
+              return this._request<R>(request, {
+                ...retryState,
+                nonceRetried: true,
+              });
+            }
+          }
+        }
         // Refresh token if session has been expired and requires authentication
         // when session refresh delegate is available
-        if (this.isSessionExpired(response) && refreshDelegate) {
+        if (
+          this.isSessionExpired(response) &&
+          refreshDelegate &&
+          !(dpop && retryState.refreshed)
+        ) {
           await refreshDelegate.refresh(requestTime);
-          /* remove the `content-length` header after token refresh
-           *
-           * SOAP requests include the access token their the body,
-           * if the first req had an invalid token and jsforce successfully
-           * refreshed it we need to remove the `content-length` header
-           * so that it get's re-calculated again with the new body.
-           *
-           * REST request aren't affected by this because the access token
-           * is sent via HTTP headers
-           *
-           * `_message` is only present in SOAP requests
-           */
-          if (
-            '_message' in request &&
-            request.headers &&
-            'content-length' in request.headers
-          ) {
-            delete request.headers['content-length'];
-          }
-          return this.request(request);
+          return this._request<R>(request, { ...retryState, refreshed: true });
         }
         if (this.isErrorResponse(response)) {
           const err = await this.getError(response);
@@ -266,10 +296,16 @@ export class HttpApi<S extends Schema> extends EventEmitter {
   /**
    * @protected
    */
-  beforeSend(request: HttpRequest) {
+  beforeSend(request: HttpRequest): void | Promise<void>;
+  async beforeSend(request: HttpRequest) {
     const headers = request.headers || {};
-    if (this._conn.accessToken) {
-      headers.Authorization = `Bearer ${this._conn.accessToken}`;
+    const { accessToken } = this._conn;
+    if (accessToken) {
+      const proof = await this.createProof(request);
+      headers.Authorization = `${proof ? 'DPoP' : 'Bearer'} ${accessToken}`;
+      if (proof) {
+        headers.DPoP = proof;
+      }
     }
     if (this._conn._callOptions) {
       const callOptions = [];
@@ -300,6 +336,23 @@ export class HttpApi<S extends Schema> extends EventEmitter {
       headers['content-length'] = String(bodySize);
     }
     request.headers = headers;
+  }
+
+  /**
+   * Create a DPoP proof of the request for the access token of the connection, when DPoP is used
+   * @protected
+   */
+  async createProof(request: HttpRequest) {
+    const { accessToken, proofNonce } = this._conn;
+    const dpop = this._conn.oauth2?.dpop;
+    return dpop && accessToken
+      ? dpop.createProof({
+          method: request.method,
+          url: request.url,
+          accessToken,
+          nonce: proofNonce ?? undefined,
+        })
+      : undefined;
   }
 
   /**

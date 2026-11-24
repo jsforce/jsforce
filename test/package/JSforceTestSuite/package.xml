@@ -57,5 +57,25 @@
         <members>OauthOidc</members>
         <name>Settings</name>
     </types>
-    <version>58.0</version>
+    <types>
+        <members>JSforceTestJwtApp</members>
+        <name>ExternalClientApplication</name>
+    </types>
+    <types>
+        <members>JSforceTestJwtApp</members>
+        <name>ExtlClntAppConfigurablePolicies</name>
+    </types>
+    <types>
+        <members>JSforceTestJwtApp</members>
+        <name>ExtlClntAppGlobalOauthSettings</name>
+    </types>
+    <types>
+        <members>JSforceTestJwtApp</members>
+        <name>ExtlClntAppOauthConfigurablePolicies</name>
+    </types>
+    <types>
+        <members>JSforceTestJwtApp</members>
+        <name>ExtlClntAppOauthSettings</name>
+    </types>
+    <version>68.0</version>
 </Package>

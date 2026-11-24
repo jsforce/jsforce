@@ -56,6 +56,19 @@ await $`sf project deploy start --metadata-dir ${join(
 
 await $`sf org assign permset --name JSForceTestPowerUser --target-org jsforce-test-org`;
 
+// the org generates the consumer key of the external client app on deploy, as a consumer key is unique across orgs
+const ecaRetrieveDir = await fs.mkdtemp(join(os.tmpdir(), 'jsforce-eca-'));
+await $`sf project retrieve start --metadata ExtlClntAppGlobalOauthSettings:JSforceTestJwtApp --target-metadata-dir ${ecaRetrieveDir} --unzip --target-org jsforce-test-org`;
+const ecaOauthSettings = await fs.readFile(
+  join(ecaRetrieveDir, 'unpackaged', 'unpackaged', 'extlClntAppGlobalOauthSets', 'JSforceTestJwtApp.ecaGlblOauth'),
+  'utf8',
+);
+const jwtClientId = ecaOauthSettings.match(/<consumerKey>(.+)<\/consumerKey>/)?.[1];
+if (!jwtClientId) {
+  throw new Error('Cannot find the consumer key of the external client app JSforceTestJwtApp.');
+}
+await writeFile(join(process.cwd(), 'jwtClientId.txt'), jwtClientId);
+
 const orgDisplayUserRes = JSON.parse(
   (await $`sf org display user --target-org jsforce-test-org --json`).stdout,
 );

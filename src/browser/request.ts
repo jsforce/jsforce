@@ -115,7 +115,7 @@ async function startFetchRequest(
   };
   if (followRedirect && isRedirect(response.statusCode)) {
     try {
-      performRedirectRequest(
+      await performRedirectRequest(
         request,
         response,
         followRedirect,
@@ -167,6 +167,8 @@ export default function request(
     req,
     options,
   );
-  startFetchRequest(req, options, input, output, stream);
+  startFetchRequest(req, options, input, output, stream).catch((err) => {
+    stream.emit('error', err);
+  });
   return stream;
 }
