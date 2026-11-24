@@ -1,10 +1,14 @@
 import { createSign } from 'crypto';
 import fs from 'fs';
 
-// the key file that scripts/org-setup.mjs writes from SF_OAUTH2_JWT_KEY
+// the files that scripts/org-setup.mjs writes: the key of SF_OAUTH2_JWT_KEY, and the consumer key
+// of the external client app in test/package/JSforceTestSuite, which the org generates on deploy
 const jwtKeyFile = 'jwtKey.txt';
+const jwtClientIdFile = 'jwtClientId.txt';
 
-export const canSignJwt = fs.existsSync(jwtKeyFile);
+export const jwtClientId = fs.existsSync(jwtClientIdFile) ? fs.readFileSync(jwtClientIdFile, 'utf8').trim() : '';
+
+export const canSignJwt = fs.existsSync(jwtKeyFile) && jwtClientId !== '';
 
 /**
  * Sign a JWT bearer assertion with the key of SF_OAUTH2_JWT_KEY

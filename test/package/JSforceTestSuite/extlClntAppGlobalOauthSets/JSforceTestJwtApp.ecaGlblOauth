@@ -20,7 +20,6 @@ h8lakjR+SOmnfGwht3rCfAgLCSVnp3X5ZKJxAYj6klCdN8F2+KFJ8DQPqe0Ee+HO
 Z2T9p4YEKTOn3D79yn0uzebHjGhpVwmlYlIztW3GuZLCh0JkN4FP9WOQqwZYjVTm
 LKhC1IcWSI6i3iBhr59H
 -----END CERTIFICATE-----</certificate>
-    <consumerKey>JSforceTestJwtAppaa024177e4a75a4934eb4b3c339caaf2a41c00d4</consumerKey>
     <externalClientApplication>JSforceTestJwtApp</externalClientApplication>
     <isClientCredentialsFlowEnabled>false</isClientCredentialsFlowEnabled>
     <isCodeCredFlowEnabled>false</isCodeCredFlowEnabled>

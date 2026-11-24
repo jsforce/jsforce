@@ -44,6 +44,7 @@ module.exports = {
       'SF_OAUTH2_REDIRECT_URI': '',
       'SF_AJAX_PROXY_URL': '',
       'SF_JWT_ASSERTION_URL': '',
+      'SF_JWT_CLIENT_ID': '',
       'DEBUG': '',
     }),
   ],

@@ -2,7 +2,7 @@ import assert from 'assert';
 import { Connection, DPoP, OAuth2, type DPoPSigner } from 'jsforce';
 import { isString } from './util';
 import { isNodeJS } from './helper/env';
-import { canSignJwt, signJwt } from './helper/jwt';
+import { canSignJwt, jwtClientId, signJwt } from './helper/jwt';
 import authorize from './helper/webauth';
 import config from './config';
 
@@ -67,9 +67,6 @@ if (isNodeJS()) {
   });
 }
 
-// the external client app in test/package/JSforceTestSuite, which has the certificate of SF_OAUTH2_JWT_KEY
-const jwtClientId = 'JSforceTestJwtAppaa024177e4a75a4934eb4b3c339caaf2a41c00d4';
-
 const jwtGrant = async () => ({
   grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
   assertion: await signJwt({
@@ -80,7 +77,7 @@ const jwtGrant = async () => ({
   }),
 });
 
-// with the key file that scripts/org-setup.mjs writes from SF_OAUTH2_JWT_KEY
+// with the files that scripts/org-setup.mjs writes
 if (canSignJwt) {
   describe('JWT bearer flow', () => {
     //

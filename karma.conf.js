@@ -3,11 +3,16 @@
 const { createSign } = require('crypto');
 const { existsSync, readFileSync } = require('fs');
 
-// the key file that scripts/org-setup.mjs writes from SF_OAUTH2_JWT_KEY
+// the files that scripts/org-setup.mjs writes: the key of SF_OAUTH2_JWT_KEY, and the consumer key
+// of the external client app in test/package/JSforceTestSuite, which the org generates on deploy
 const jwtKeyFile = 'jwtKey.txt';
+const jwtClientIdFile = 'jwtClientId.txt';
 const jwtAssertionPath = '/jwt-assertion';
 if (existsSync(jwtKeyFile)) {
   process.env.SF_JWT_ASSERTION_URL = jwtAssertionPath;
+}
+if (existsSync(jwtClientIdFile)) {
+  process.env.SF_JWT_CLIENT_ID = readFileSync(jwtClientIdFile, 'utf8').trim();
 }
 
 const webpackConfig = require('./webpack.config.test');
