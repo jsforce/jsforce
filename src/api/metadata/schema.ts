@@ -4146,6 +4146,7 @@ export const ApiSchemas = {
       defaultSelectedChoiceReference: '?string',
       defaultValue: '?FlowElementReferenceOrValue',
       extensionName: '?string',
+      fields: ['FlowScreenField'],
       fieldText: '?string',
       fieldType: 'string',
       helpText: '?string',
