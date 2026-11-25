@@ -6136,6 +6136,7 @@ Copyright 2006-2019 Salesforce.com, inc. All Rights Reserved
        <xsd:element name="defaultSelectedChoiceReference" minOccurs="0" type="xsd:string"/>
        <xsd:element name="defaultValue" minOccurs="0" type="tns:FlowElementReferenceOrValue"/>
        <xsd:element name="extensionName" minOccurs="0" type="xsd:string"/>
+       <xsd:element name="fields" minOccurs="0" maxOccurs="unbounded" type="tns:FlowScreenField"/>
        <xsd:element name="fieldText" minOccurs="0" type="xsd:string"/>
        <xsd:element name="fieldType" type="tns:FlowScreenFieldType"/>
        <xsd:element name="helpText" minOccurs="0" type="xsd:string"/>
